@@ -16,14 +16,16 @@
                         <mat-label>Enter father's/guardian's name</mat-label>
                         <input formControlName="FatherName" autocomplete="Off" #input matInput maxlength="50">
                         <!-- <mat-hint align="end">{{input.value?.length || 0}}/50</mat-hint> -->
-                        <span class="text-danger" *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's name
+                        <span class="text-danger"
+                            *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's name
                             is required.</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Enter mother's name</mat-label>
                         <input formControlName="MotherName" autocomplete="Off" #MotherName matInput maxlength="50">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                        <span class="text-danger" *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's name
+                        <span class="text-danger"
+                            *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's name
                             is required.</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline" fxFlex>
@@ -34,7 +36,39 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Enter address</mat-label>
+                        <input formControlName="Address" autocomplete="Off" #Address matInput maxlength="50">
+                        <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                        <span class="text-danger" *ngIf="f.Address.touched && f.Address.hasError('required')">Address
+                            is required.</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Enter pincode</mat-label>
+                        <input formControlName="Pincode" autocomplete="Off" #Pincode matInput maxlength="10">
+                        <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                        <span class="text-danger" *ngIf="f.Pincode.touched && f.Pincode.hasError('required')">Pin code
+                            is required.</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>select country</mat-label>
+                        <mat-select formControlName="Country">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Country" [value]="p.MasterDataId">{{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="fill" class="example-form-field">
+                        <mat-label>Choose a date</mat-label>
+                        <input matInput [matDatepicker]="datepicker">
+                        <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+                        <mat-datepicker #datepicker>
+                          <mat-datepicker-actions>
+                            <button mat-button matDatepickerCancel>Cancel</button>
+                            <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+                          </mat-datepicker-actions>
+                        </mat-datepicker>
+                      </mat-form-field>
                 </mat-card-content>
             </mat-card>
         </mat-tab>
