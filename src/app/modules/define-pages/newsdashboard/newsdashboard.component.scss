@@ -1,0 +1,66 @@
+.mat-badge-content {
+  width      : 30px;
+  height     : 30px;
+  line-height: 30px;
+}
+
+table {
+  width: 100%;
+}
+
+button {
+  margin-right: 15px;
+}
+
+.example-container {
+  display       : flex;
+  flex-direction: column;
+  min-width     : 100px;
+}
+
+.example-header {
+  min-height: 64px;
+  padding   : 8px 24px 0;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width    : 100%;
+}
+
+.newContainer{
+  width: 85%;
+  box-shadow: 0px 1px lightgray;
+}
+
+.subtitle{
+  color:gray;
+  margin-top: 10px;
+  padding: 10px;
+}
+.content{
+  margin: 10px lightgray;
+  padding: 10px;
+}
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
+  width              : 300px;
+  border-bottom-width: 0px;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+.container {
+  display: flex;
+}
+
+.child1 {
+  flex: 1
+}
+
+.child2 {
+  flex: 2;
+}

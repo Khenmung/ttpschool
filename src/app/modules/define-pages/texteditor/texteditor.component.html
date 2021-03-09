@@ -1,0 +1,53 @@
+<mat-card>
+    <mat-card-title>Define Page</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content fxLayout="column">
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <form [formGroup]="PageDetailForm">
+            <div class="row">
+                <div class="column">
+                    <mat-form-field hintLabel="Max 25 characters" appearance="outline" fxFlex [style.width.px]="350">
+                        <mat-label>Enter Title</mat-label>
+                        <input formControlName="PageTitle" autocomplete="Off" #input matInput maxlength="25">
+                        <mat-hint align="end">{{input.value?.length || 0}}/25</mat-hint>
+                        <span class="text-danger" *ngIf="f.PageTitle.touched && f.PageTitle.hasError('required')">Title
+                            is required.</span>
+                    </mat-form-field>
+                </div>
+                <div class="column">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Select parent</mat-label>
+                        <mat-select formControlName="ParentId">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of PageGroups" [value]="p.PageId">{{p.PageTitle}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div>
+                    <mat-checkbox formControlName="HasSubmenu" fxFlex>
+                    </mat-checkbox>&nbsp; Has Submenu &nbsp;&nbsp;
+                </div>
+                <div>
+                    <button class="mat-raised-button" matTooltip="save as draft" style="justify-items:center" type="button" (click)="onSaveAsDraft()" [disabled]="PageDetailForm.invalid">
+                        <mat-icon aria-label="drafts">drafts</mat-icon>
+                    </button>
+                </div>
+                <div class="column">
+                    <button class="mat-raised-button" matTooltip="publish" type="button" (click)="onSubmit()" [disabled]="PageDetailForm.invalid">
+                        <mat-icon aria-label="publish">publish</mat-icon></button>
+                </div>           
+            </div>
+            <br />
+            <div class="row">
+                <ckeditor formControlName="PageBody" [config]="ckeConfig" debounce="500">
+                </ckeditor>
+            </div>
+           <br>
+            <div class="row">
+                <button type="button" (click)="dashboard()" class="mat-raised-button">
+                     <mat-icon aria-label="arrow_back">arrow_back</mat-icon>
+                </button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

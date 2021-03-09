@@ -1,0 +1,22 @@
+:host{
+    width: 100%;
+    display: grid;
+    place-items: center;    
+}
+.container{
+    display: flex;
+    justify-content: center;
+    
+}
+button{
+    margin-right: 25px;
+}
+.column{
+    margin-right: 15px;
+}
+mat-card{
+    margin-top: 100px;
+    width: 50%;
+  //  height:100vh;
+    //text-align: center;
+}

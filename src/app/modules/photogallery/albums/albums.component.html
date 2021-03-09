@@ -1,0 +1,70 @@
+<mat-card>
+    <mat-card-title>Manage Files/Folders</mat-card-title>
+    <mat-card-content>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <br>
+        <form [formGroup]="searchForm">
+            <div class="example-header" fxLayout="row" fxLayoutAlign="space-between center">
+                <mat-form-field fxFlex="30" appearance="outline">
+                    <mat-label>Enter folder name</mat-label>
+                    <input matInput formControlName="UpdatedFileFolderName" autocomplete="off">
+                </mat-form-field>
+                <button class="mat-raised-button" (click)="getFiles(null,'search')" fxFlex="10">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <div fxFlex>&nbsp;</div>
+            </div>
+        </form>
+        <div>
+            <mat-divider></mat-divider>
+            <div fxLayout="row" *ngIf="Albums!=null" style="padding: 0px 10px 0px 10px;" fxLayoutAlign="space-between center">
+                <div fxFlex="26">
+                    Folder
+                </div>
+                <div fxFlex>
+                    Upload Date
+                </div>
+                <div fxFlex>
+                    <button mat-button matTooltip="1 level up" (click)="getFiles(null,'up')">
+                        <mat-icon>undo</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div fxLayout="row">
+                    <span *ngIf="error.length>0"> {{error}}</span>
+                    <span *ngIf="Albums.length>0">{{folderHierarachy|slice:6}}</span>
+            </div>
+            <div class="item" fxLayout="row" fxLayoutAlign="space-between center" *ngFor="let album of Albums;">
+                <div>
+                    <mat-icon *ngIf="album.FileOrFolder==0">file_present</mat-icon>
+                    <mat-icon *ngIf="album.FileOrFolder==1">folder_open</mat-icon>
+                </div>
+                <div fxFlex="26">
+                    <app-edit-input [data]="album.UpdatedFileFolderName" (tried)="getoldvalue($event)"
+                        (focusOut)='updateAlbum($event)'></app-edit-input>
+                </div>
+                <div fxFlex="10">{{album.UploadDate|date:'dd/MM/yyyy'}}</div>
+                <div fxFlex="5" *ngIf="album.FilePath.length>0">
+                    <button [cdkCopyToClipboard]="album.FilePath" (click)="message()" mat-icon-button matTooltip="copy link">
+                        <mat-icon>content_copy</mat-icon>
+                    </button>                    
+                </div>
+                <div fxFlex>
+                    <button [id]="album.FileId" mat-icon-button color="" [name]="album.UpdatedFileFolderName"
+                        matTooltip="delete" #button (click)="updateActive(button,album)">
+                        <mat-icon aria-label="delete">delete</mat-icon>
+                    </button>&nbsp;
+                    <button [id]="album.FileId" mat-icon-button color="" [name]="album.UpdatedFileFolderName"
+                        matTooltip="view" #view (click)="getFiles(album,'open')">
+                        <mat-icon aria-label="photo">pageview</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- </div>
+            <div style="font-size:xx-large;">...</div> -->
+
+        </div>
+    </mat-card-content>
+</mat-card>

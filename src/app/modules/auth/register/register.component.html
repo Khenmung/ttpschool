@@ -1,0 +1,78 @@
+<mat-card>
+    <mat-card-title>Create login</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <div class="container">
+            <div class="row">
+                <div class="column">
+                    <img src="/assets/images/stpaulslogo.png" width="110px" alt="St Paul's Institute" />
+                </div>
+                <div class="column">
+                    <div class="col-md-12">
+                        <form *ngIf="!isSuccessful" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm"
+                            novalidate>
+
+                            <div class="form-group">
+                                <label for="Email">Email</label>
+                                <input type="Email" class="form-control" name="Email" autocomplete="Off"
+                                    [(ngModel)]="form.Email" required email #Email="ngModel" />
+                                <div class="alert-danger" *ngIf="Email.errors && f.submitted">
+                                    <div *ngIf="Email.errors.required">Email is required</div>
+                                    <div *ngIf="Email.errors.email">
+                                        Email must be a valid email address
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Password">Password</label>
+                                <input type="password" class="form-control" name="Password" [(ngModel)]="form.Password"
+                                    required minlength="6" #Password="ngModel" />
+                                <div class="alert-danger" *ngIf="Password.errors && f.submitted">
+                                    <div *ngIf="Password.errors.required">Password is required</div>
+                                    <div *ngIf="Password.errors.minlength">
+                                        Password must be at least 6 characters
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ConfirmPassword">ConfirmPassword</label>
+                                <input type="password" class="form-control" autocomplete="Off" name="ConfirmPassword"
+                                    [(ngModel)]="form.ConfirmPassword" required minlength="3" maxlength="20"
+                                    #ConfirmPassword="ngModel" />
+                                <div class="alert-danger" *ngIf="ConfirmPassword.errors && f.submitted">
+                                    <div *ngIf="ConfirmPassword.errors.required">ConfirmPassword is required</div>
+                                    <div *ngIf="ConfirmPassword!=Password">
+                                        The password and confirm password do not match
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="mat-raised-button" matTooltip="create">
+                                    <mat-icon>create</mat-icon>   
+                                </button>
+                                <button (click)="gotohome()"  class="mat-raised-button" matTooltip="cancel">
+                                    <mat-icon>cancel</mat-icon>   
+                                </button>
+                                
+                            </div>
+                            <div class="alert alert-warning" *ngIf="f.submitted && isSignUpFailed">
+                                Signup failed!<br />{{ errorMessage }}
+                            </div>
+
+                        </form>
+                        <div class="alert alert-success" *ngIf="isSuccessful">
+                            Login created successfully!<br><br>
+                            <!-- <button class="mat-raised-button" (click)="gotologin()" matTooltip="go to login">
+                                <mat-icon>create</mat-icon>   
+                            </button> -->
+                            <button (click)="gotohome()"  class="mat-raised-button" matTooltip="cancel">
+                                <mat-icon>home</mat-icon>   
+                            </button>
+                            <!-- <a [routerLink]="[ '../login']">Login</a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,19 @@
+<mat-card class="mainContainer">
+  <mat-card-title>Photo Gallery</mat-card-title>
+  <mat-card-content>
+    <!-- <form [formGroup]="searchForm"> -->
+      <mat-spinner *ngIf="loading"></mat-spinner>
+    <div class="example-header">
+      <mat-form-field fxFlex [style.width.px]=350>
+        <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Search album" autocomplete="off">
+      </mat-form-field>
+    </div>
+    <div fxLayout="row wrap" fxLayoutGap="30px">
+      <span class="childMatcard" (click)="view(album.UpdatedFileFolderName)" *ngFor="let album of Albums;let i=index"
+        [style.backgroundColor]="changeColor(i)">
+        {{album.UpdatedFileFolderName|slice:0:30}}<span *ngIf="album.UpdatedFileFolderName.length>30">...</span>
+      </span>
+    </div>
+
+  </mat-card-content>
+</mat-card>

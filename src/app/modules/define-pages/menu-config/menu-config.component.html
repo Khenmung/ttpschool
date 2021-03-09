@@ -1,0 +1,96 @@
+<mat-card>
+    <mat-card-title>Configuration</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content fxLayout="column">
+        <div class="example-header">
+            <mat-form-field>
+                <input matInput autocomplete="Off" (keyup)="applyFilter($any($event.target).value)"
+                    placeholder="Search">
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="row">
+            <div fxFlex="flex-1">
+                Title
+            </div>
+            <div fxFlex="flex-1">
+                Parent
+            </div>
+            <div fxFlex="flex-1">
+                Icon
+            </div>
+            <div fxFlex="flex-1">
+                Link
+            </div>
+            <div fxFlex="flex-1">
+                label
+            </div>
+            <div fxFlex="flex-1">
+                Order
+            </div>
+            <div fxFlex="flex-1">
+                Has submenu
+            </div>
+            <div fxFlex="flex-1">
+                Template
+            </div>
+            <div fxFlex="flex-1">
+                Home Page
+            </div>
+            <div fxFlex="flex-1">
+                Active
+            </div>            
+        </div>        
+        <div class="main" *ngFor="let item of DATA; let i = index;">
+                <div class="child">
+                    <app-edit-input [data]="item.PageTitle" (tried)="getoldvalue($event)" (focusOut)='updateActive("PageTitle",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.ParentPage" (tried)="getoldvalue($event)" (focusOut)='updateActive("ParentPage",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.faIcon" (tried)="getoldvalue($event)" (focusOut)='updateActive("faIcon",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.link" (tried)="getoldvalue($event)" (focusOut)='updateActive("link",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.label" (tried)="getoldvalue($event)" (focusOut)='updateActive("label",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.DisplayOrder" (tried)="getoldvalue($event)" (focusOut)='updateActive("DisplayOrder",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.HasSubmenu" (tried)="getoldvalue($event)" (focusOut)='updateActive("HasSubmenu",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.IsTemplate" (tried)="getoldvalue($event)" (focusOut)='updateActive("IsTemplate",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.HomePage" (tried)="getoldvalue($event)" (focusOut)='updateActive("HomePage",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <div class="child">
+                    <app-edit-input [data]="item.Active" (tried)="getoldvalue($event)" (focusOut)='updateActive("Active",item,$event)'>
+                    </app-edit-input>
+                </div>
+                <!-- <div class="child">
+                    <button mat-mini-fab [id]="item.AlbumId" [name]="item.UpdatableName" matTooltip="DELETE"
+                        class="iconbutton" color="gray" #button (click)="updateActive(button)">
+                 
+                        <mat-icon aria-label="delete">delete</mat-icon>
+                    </button>
+                </div> -->
+                <mat-divider fxLayout="row" fxLayoutAlign=""></mat-divider>
+            </div>
+       
+    </mat-card-content>
+</mat-card>

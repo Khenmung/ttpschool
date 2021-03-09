@@ -1,0 +1,50 @@
+<mat-spinner *ngIf="loading"></mat-spinner>
+<form [formGroup]="studentForm">
+    <mat-tab-group #changeEvent (selectedIndexChange)="tabChanged($event)">
+        <mat-tab label="Personal Info">
+            <mat-card>
+                <mat-card-subtitle>Personal Info</mat-card-subtitle>
+                <mat-card-content>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Enter name</mat-label>
+                        <input formControlName="Name" autocomplete="Off" #input matInput maxlength="50">
+                        <!-- <mat-hint align="end">{{input.value?.length || 0}}/50</mat-hint> -->
+                        <span class="text-danger" *ngIf="f.Name.touched && f.Name.hasError('required')">Name
+                            is required.</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Enter father's/guardian's name</mat-label>
+                        <input formControlName="FatherName" autocomplete="Off" #input matInput maxlength="50">
+                        <!-- <mat-hint align="end">{{input.value?.length || 0}}/50</mat-hint> -->
+                        <span class="text-danger" *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's name
+                            is required.</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Enter mother's name</mat-label>
+                        <input formControlName="MotherName" autocomplete="Off" #MotherName matInput maxlength="50">
+                        <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                        <span class="text-danger" *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's name
+                            is required.</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Select gender</mat-label>
+                        <mat-select formControlName="Gender">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Gender" [value]="p.MasterDataId">{{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                </mat-card-content>
+            </mat-card>
+        </mat-tab>
+        <mat-tab label="ID and Bank Account Info">
+            <mat-card>
+                <mat-card-subtitle>ID and Bank Account Info</mat-card-subtitle>
+                <mat-card-content>
+                    content goes here
+                </mat-card-content>
+            </mat-card>
+        </mat-tab>
+    </mat-tab-group>
+</form>

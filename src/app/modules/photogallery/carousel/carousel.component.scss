@@ -1,0 +1,39 @@
+.carousel-caption{
+  color:black;
+}
+// .imgContainer{
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+mat-card-subtitle{
+  display: flex;
+  justify-content: space-between;
+}
+
+img {
+  width: 100vh;
+  height: 70vh;
+  object-fit:cover;
+  border-radius: 1rem;
+  
+  }
+  *:focus{
+    outline: none;
+  }
+  img{
+    border-radius: 1rem;
+  }
+// .card-container {
+//     padding: 10px;
+//     width: 700px;
+//     height:500px;
+//     display: flex;
+//     justify-content: space-between;
+//   }
+  .row1{
+    flex-basis: 100%;
+  }
+  .container{
+    display:flex;
+  }

@@ -1,0 +1,96 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '~bootstrap/dist/css/bootstrap.min.css'; 
+mat-card{
+    //margin-top: 50px;
+    margin:12px;
+    min-height: 100vh;  
+    //background-image: url('assets/images/25years.png');
+ //   transform: skew(-1deg, 1deg);
+    //box-shadow: 5px 5px 5px lightgray;
+}
+.mat-icon {
+    vertical-align: middle;
+ }
+html, body { 
+    // scrollbar-width: thin;          /* "auto" or "thin" */
+    // scrollbar-color: blue orange;   /* scroll thumb and track */
+     height: 100%; 
+     margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+    }
+    // html::-webkit-scrollbar {
+    //     width: 10px;
+    // }
+
+    // html::-webkit-scrollbar-thumb {
+
+    //     background:rgb(197, 101, 76);
+    //     //border-radius: 1rem;
+    // }
+
+    // html::-webkit-scrollbar-track {
+
+    //     background:rgb(201, 155, 144);
+    // }
+    
+    div::-webkit-scrollbar {
+        width: 10px;
+        -webkit-appearance: none;
+        //width: 7px;
+    }
+    div::-webkit-scrollbar-thumb {
+        background:#20639B;
+        border-radius: 1rem;
+    }
+    div::-webkit-scrollbar-track {
+        background:white;
+    }
+
+input[type="radio"]{
+    width: 25px;
+    height: 25px;
+}
+.confirm-dialog-container .mat-dialog-container{
+    border-radius: .25em .25em .4em .4em;
+    padding: 0px;
+}
+
+.confirm-dialog-container .content-container{
+    margin:5px 5px 15px 5px;
+    color:#8f9cb5;
+    display:flex;
+}
+.confirm-dialog-container #close-icon{
+    margin-left: auto;
+    order:2;
+    font-weight: bolder;
+}
+.confirm-dialog-container #yes-button{
+    height:50px;
+    width:50%;
+    background-color: #b6bece;
+    color:black;
+    border-radius: 0px;
+}
+.confirm-dialog-container #no-button{
+    height:50px;
+    width:50%;
+    background-color: teal;
+    color:black;
+    border-radius: 0px;
+}
+.confirm-dialog-container span.content-span{
+    padding:35px 16px;
+    text-align: center;
+    font-size: 20px;
+}
+.logo{
+    margin-top: 0px;
+    padding-left: 2rem;
+    padding-bottom: 1rem;
+    position: absolute;
+    z-index: 10;
+    width: 150px;
+}
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';

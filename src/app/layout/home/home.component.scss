@@ -1,0 +1,26 @@
+    mat-drawer {
+        margin-top      : 65px;
+        //border-radius   : 10px;
+        width           : 300px;
+        background-color: #20639B;
+        //overflow        : none !important;
+        height: 100%;
+        //box-shadow: 5px 0px lightblue;
+
+    }
+
+    mat-drawer-content {
+        margin-top: 70px;
+    }
+
+    app-sidebar {
+        //width: calc(100vw - 34px);
+        //background-color: lightgray;
+        min-height: 200vh;
+        //max-height: 80vh;
+    }
+
+    // mat-drawer-container{
+    //     position: relative;
+    //     margin-top: 60px;
+    // }

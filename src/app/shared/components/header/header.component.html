@@ -1,0 +1,51 @@
+<mat-toolbar>
+    <mat-toolbar-row fxLayoutAlign="space-between end">
+        <!-- <div> -->
+       
+            <div class="item">
+                <button mat-button (click)="toggleSideBar()">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <button mat-button (click)="home()">
+                    <span style="color:white">ST. PAUL'S INSTITUTE</span>
+                </button>
+            </div>
+            <div style="font-size: medium;height: 45px;">Train up a child in the way he should go. - Proverbs 22:16</div>
+            
+        <div class="rightside">
+            <span>&nbsp;&nbsp;&nbsp;</span>
+            <span style="font-size: small;" *ngIf="userName.length>0"> Hello,
+                {{userName}}</span> 
+            <!-- <div *ngIf="loggedIn" style="font-size: medium;">|</div> -->
+            <button mat-button (click)="newsNEvents()">
+                <mat-icon>announcement</mat-icon>News & Events
+            </button>
+            <button mat-button [matMenuTriggerFor]="contact">
+                <mat-icon>contact_support</mat-icon>
+            </button>
+            <mat-menu #contact="matMenu">
+                <button mat-menu-item (click)="contactus()">
+                    <mat-icon>login</mat-icon>Contact Us
+                </button>
+            </mat-menu>
+            <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
+                <mat-icon>account_circle</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
+                    <mat-icon>login</mat-icon>login
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" (click)="createlogin()">
+                    <mat-icon>create</mat-icon>Create login
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" (click)="changepassword()">
+                    <mat-icon>change_circle</mat-icon>Change password
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" (click)="logout()">
+                    <mat-icon>logout</mat-icon>logout
+                </button>
+            </mat-menu>
+        </div>
+        <!-- </div> -->
+    </mat-toolbar-row>
+</mat-toolbar>
