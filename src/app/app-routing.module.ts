@@ -22,8 +22,9 @@ import { NewsdashboardComponent } from './modules/define-pages/newsdashboard/new
 import { MenuConfigComponent } from './modules/define-pages/menu-config/menu-config.component';
 import { ChangePasswordComponent } from './modules/auth/change-password/change-password.component';
 import { FiledragAndDropComponent } from './modules/files/filedrag-and-drop/filedrag-and-drop.component';
-import { AddstudentComponent } from './modules/FeesManagement/addstudent/addstudent.component';
+import { AddstudentComponent } from './modules/FeesManagement/student/addstudent/addstudent.component';
 import { FeesmanagementhomeComponent } from './modules/FeesManagement/feesmanagementhome/feesmanagementhome.component';
+import { AddstudentclassComponent } from './modules/FeesManagement/studentclass/addstudentclass/addstudentclass.component';
 
 const routes: Routes = [{
   path: '', component: HomeComponent,
@@ -69,6 +70,7 @@ const routes: Routes = [{
   path: 'admin', component: FeesmanagementhomeComponent,
   children: [ 
     { path: 'addstudent', component: AddstudentComponent },
+    { path: 'addstudentcls', component: AddstudentclassComponent },
     { path: '', redirectTo: 'auth', pathMatch: 'full' },
     { path: '**', component: NotfoundComponent }
   ]
