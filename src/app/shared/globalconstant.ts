@@ -9,4 +9,14 @@ export class globalconstants{
     public static CITY:string='city';
     public static STATE:string='state';
     public static COUNTRY:string='country';
+    public static CATEGORY:string='category';
+    public static BLOODGROUP:string='bloodgroup';
+    public static PRIMARYCONTACT:string='primarycontact';
+    public static CLASSES:string='classes';
+    public static BATCH:string='batch';
+    public static FEETYPE:string='feetype';
+    public static SECTION:string='section';
+    public static LANGUAGESUBJECTLOWERCLS:string='languagesubjectlower';
+    public static LANGUAGESUBJECTUPPERCLS:string='languagesubjectupper';
+
 }

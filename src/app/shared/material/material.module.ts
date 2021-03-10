@@ -87,6 +87,8 @@ const MaterialComponents = [
   MatTreeModule,
   PortalModule,
   ScrollingModule,
+  MatDatepickerModule,
+  MatNativeDateModule
   //MatDatepickerModule,
   //MatMomentDateModule
 ]

@@ -1,16 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AddstudentComponent } from './addstudent/addstudent.component';
+import { AddstudentComponent } from './student/addstudent/addstudent.component';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { FeesmanagementhomeComponent } from './feesmanagementhome/feesmanagementhome.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AddstudentclassComponent } from './studentclass/addstudentclass/addstudentclass.component';
+import { AddclassfeeComponent } from './classfee/addclassfee/addclassfee.component';
+import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 
 
 
 @NgModule({
-  declarations: [AddstudentComponent, FeesmanagementhomeComponent],
+  declarations: [AddstudentComponent, FeesmanagementhomeComponent, 
+    AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent],
   imports: [
     CommonModule,
     MaterialModule,

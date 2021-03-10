@@ -13,6 +13,12 @@ export class AddstudentComponent implements OnInit {
   loading = false;
   Country = [];
   Gender = [];
+  Category=[];
+  Bloodgroup=[];
+  Religion =[];
+  States =[];
+  PrimaryContact=[];
+  Location=[];
   allMasterData = [];
   studentForm = new FormGroup({
     Name: new FormControl('', [Validators.required]),
@@ -33,7 +39,10 @@ export class AddstudentComponent implements OnInit {
     AadharNo: new FormControl(''),
     Photo: new FormControl(''),
     Religion: new FormControl(0),
-    ContactNo: new FormControl('', [Validators.required]),
+    ContactNo: new FormControl(''),
+    FatherContactNo: new FormControl(''),
+    MotherContactNo: new FormControl(''),
+    PrimaryContact:new FormControl(0),    
     AlternateContact: new FormControl(''),
     EmailAddress: new FormControl(''),
     TransferFromSchool: new FormControl(''),
@@ -71,6 +80,12 @@ export class AddstudentComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.Gender = this.getDropDownData(globalconstants.GENDER);
         this.Country = this.getDropDownData(globalconstants.COUNTRY);
+        this.Bloodgroup = this.getDropDownData(globalconstants.BLOODGROUP);
+        this.Category = this.getDropDownData(globalconstants.CATEGORY);
+        this.Religion = this.getDropDownData(globalconstants.RELIGION);
+        this.States    =this.getDropDownData(globalconstants.STATE);
+        this.PrimaryContact = this.getDropDownData(globalconstants.PRIMARYCONTACT);
+        this.Location = this.getDropDownData(globalconstants.LOCATION);
       });
 
   }
