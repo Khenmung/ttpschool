@@ -9,12 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddstudentclassComponent } from './studentclass/addstudentclass/addstudentclass.component';
 import { AddclassfeeComponent } from './classfee/addclassfee/addclassfee.component';
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
+import { DashboardclassfeeComponent } from './classfee/dashboardclassfee/dashboardclassfee.component';
+import { DashboardstudentComponent } from './student/dashboardstudent/dashboardstudent.component';
 
 
 
 @NgModule({
   declarations: [AddstudentComponent, FeesmanagementhomeComponent, 
-    AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent],
+    AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent, DashboardclassfeeComponent, DashboardstudentComponent],
   imports: [
     CommonModule,
     MaterialModule,

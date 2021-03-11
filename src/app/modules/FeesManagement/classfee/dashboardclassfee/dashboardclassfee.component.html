@@ -1,0 +1,125 @@
+<mat-card>
+    <mat-card-title></mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <form [formGroup]="searchForm">
+        <mat-form-field appearance="outline" fxFlex>
+            <mat-label>Class</mat-label>
+            <mat-select formControlName="ClassId" #Class>
+                <mat-option value="0">---</mat-option>
+                <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
+                    {{p.MasterDataName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex>
+            <mat-label>Fee name</mat-label>
+            <mat-select formControlName="FeeNameId" #FeeName>
+                <mat-option value="0">---</mat-option>
+                <mat-option *ngFor="let p of FeeNames" [value]="p.MasterDataId">
+                    {{p.MasterDataName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex>
+            <mat-label>Batch/Session</mat-label>
+            <mat-select formControlName="Batch">
+                <mat-option value="0">---</mat-option>
+                <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
+                    {{p.MasterDataName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button class="mat-raised-button" (click)="GetClassFee()">
+            <mat-icon>search</mat-icon>
+        </button><br>
+    </form>
+        <div class="example-container mat-elevation-z8">
+            <mat-table #table [dataSource]="dataSource">
+                
+                <!--- Note that these columns can be defined in any order.
+            The actual rendered columns are set as a property on the row definition" -->
+
+                <!-- Position Column -->
+                <ng-container matColumnDef="SlNo">
+                    <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+
+                </ng-container>
+
+                <ng-container matColumnDef="ClassName">
+                    <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                       {{element.ClassName}}
+                        <!-- <mat-select [(value)]="element.ClassId" placeholder="class" [style.width.px]="100">
+                            <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">{{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select> -->
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="FeeNameId">
+                    <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-select (selectionChange)="enableAction(element)" [(value)]="element.FeeNameId" placeholder="Fee">
+                            <mat-option *ngFor="let item of FeeNames" [value]="item.MasterDataId">
+                                {{item.MasterDataName}} </mat-option>
+                        </mat-select>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Amount">
+                    <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <app-edit-input [data]="element.Amount|number:'1.2-2'" (tried)="getoldvalue($event)"
+                        (focusOut)='enableAction(element)'></app-edit-input>
+                        </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Batch">
+                    <mat-header-cell *matHeaderCellDef> Batch </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-select [(value)]="element.Batch" placeholder="batch" [style.width.px]="100">
+                            <mat-option *ngFor="let item of Batches" [value]="item.MasterDataId">{{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                    <mat-cell style="justify-content: center;" *matCellDef="let element">
+                        <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()" (change)="enableAction(element)">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="LocationId">
+                    <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-select (selectionChange)="enableAction(element)" [(value)]="element.LocationId" placeholder="location">
+                            <mat-option *ngFor="let item of Locations" [value]="item.MasterDataId">{{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button [(disabled)]="!element.Action" mat-fab (click)="UpdateOrSave(element)"><mat-icon>save</mat-icon></button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+        </div>
+
+<!-- 
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item>Item 1</button>
+            <button mat-menu-item>Item 2</button>
+        </mat-menu> -->
+
+    </mat-card-content>
+</mat-card>
+<!-- [checked]="selection.isSelected(element)" -->

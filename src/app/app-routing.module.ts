@@ -25,6 +25,9 @@ import { FiledragAndDropComponent } from './modules/files/filedrag-and-drop/file
 import { AddstudentComponent } from './modules/FeesManagement/student/addstudent/addstudent.component';
 import { FeesmanagementhomeComponent } from './modules/FeesManagement/feesmanagementhome/feesmanagementhome.component';
 import { AddstudentclassComponent } from './modules/FeesManagement/studentclass/addstudentclass/addstudentclass.component';
+import { AddclassfeeComponent } from './modules/FeesManagement/classfee/addclassfee/addclassfee.component';
+import { DashboardclassfeeComponent } from './modules/FeesManagement/classfee/dashboardclassfee/dashboardclassfee.component';
+import { DashboardstudentComponent } from './modules/FeesManagement/student/dashboardstudent/dashboardstudent.component';
 
 const routes: Routes = [{
   path: '', component: HomeComponent,
@@ -70,7 +73,11 @@ const routes: Routes = [{
   path: 'admin', component: FeesmanagementhomeComponent,
   children: [ 
     { path: 'addstudent', component: AddstudentComponent },
+    { path: 'addstudent/:id', component: AddstudentComponent },
     { path: 'addstudentcls', component: AddstudentclassComponent },
+    { path: 'addclassfee', component: AddclassfeeComponent },
+    { path: 'dashboardclassfee', component: DashboardclassfeeComponent },
+    { path: 'dashboardstudent', component: DashboardstudentComponent },
     { path: '', redirectTo: 'auth', pathMatch: 'full' },
     { path: '**', component: NotfoundComponent }
   ]

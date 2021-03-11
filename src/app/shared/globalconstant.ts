@@ -18,5 +18,6 @@ export class globalconstants{
     public static SECTION:string='section';
     public static LANGUAGESUBJECTLOWERCLS:string='languagesubjectlower';
     public static LANGUAGESUBJECTUPPERCLS:string='languagesubjectupper';
-
+    public static FEENAMES:string='feenames';
+   
 }

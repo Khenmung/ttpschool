@@ -1,1 +1,67 @@
-<p>addclassfee works!</p>
+<mat-card>
+    <mat-card-subtitle>Class fee</mat-card-subtitle>
+    <mat-card-content>
+        <form [formGroup]="classfeeForm">
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="ClassId" #Class>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+                <span class="text-danger" *ngIf="f.ClassId.touched && f.ClassId.hasError('required')">Class is
+                    required.</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Fee name</mat-label>
+                <mat-select formControlName="FeeNameId" #FeeName>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of FeeNames" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+                <span class="text-danger" *ngIf="f.FeeNameId.touched && f.FeeNameId.hasError('required')">Fee name is
+                    required.</span>
+            </mat-form-field><br>
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Amount</mat-label>
+                <input formControlName="Amount" autocomplete="Off" #Amt matInput maxlength="5">
+                <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                <span class="text-danger" *ngIf="f.Amount.touched && f.Amount.hasError('required')">
+                    Amount is required.</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Batch/Session</mat-label>
+                <mat-select formControlName="Batch" #BatchId>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+                <span class="text-danger" *ngIf="f.Batch.touched && f.Batch.hasError('required')">Batch is
+                    required.</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Location</mat-label>
+                <mat-select formControlName="LocationId">
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of Locations" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>              
+            </mat-form-field>
+            <mat-checkbox formControlName="Active" fxFlex>
+            </mat-checkbox>&nbsp; Active
+
+            <mat-card-actions flexLayoutAlign="space-between center">
+                <button (click)="save()" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
+                </button>
+                <button class="mat-raised-button">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </mat-card-actions>
+        </form>
+    </mat-card-content>
+</mat-card>
