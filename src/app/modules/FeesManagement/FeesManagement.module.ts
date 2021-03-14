@@ -11,12 +11,16 @@ import { AddclassfeeComponent } from './classfee/addclassfee/addclassfee.compone
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { DashboardclassfeeComponent } from './classfee/dashboardclassfee/dashboardclassfee.component';
 import { DashboardstudentComponent } from './student/dashboardstudent/dashboardstudent.component';
+import { FeeHeaderComponent } from './shared/header/feeheader.component';
+import { FeeSidebarComponent } from './shared/sidebar/sidebar.component';
+import { FeeFooterComponent } from './shared/footer/footer.component';
 
 
 
 @NgModule({
   declarations: [AddstudentComponent, FeesmanagementhomeComponent, 
-    AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent, DashboardclassfeeComponent, DashboardstudentComponent],
+    AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent, 
+    DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent, FeeSidebarComponent, FeeFooterComponent],
   imports: [
     CommonModule,
     MaterialModule,

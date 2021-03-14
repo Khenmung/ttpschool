@@ -4,11 +4,17 @@
 mat-card{
     //margin-top: 50px;
     margin:12px;
-    min-height: 100vh;  
+    min-height: 100vh;
+    //max-width: 75%;  
     //background-image: url('assets/images/25years.png');
  //   transform: skew(-1deg, 1deg);
     //box-shadow: 5px 5px 5px lightgray;
 }
+@media (max-width: 600px) {
+    md-card {
+      width:100%;
+    }
+  }
 .mat-icon {
     vertical-align: middle;
  }

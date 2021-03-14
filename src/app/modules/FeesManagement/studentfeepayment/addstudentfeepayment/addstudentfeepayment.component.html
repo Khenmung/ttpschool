@@ -1,1 +1,76 @@
-<p>addstudentfeepayment works!</p>
+<mat-card>
+    <mat-card-title></mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <div class="example-container mat-elevation-z8">
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="SlNo">
+                    <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="ClassFeeName">
+                    <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                       {{element.ClassFeeName}}                       
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="FeeAmount">
+                    <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                       {{element.FeeAmount}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="PaidAmt">
+                    <mat-header-cell *matHeaderCellDef> Paid Amount </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <app-edit-input [data]="element.PaidAmt|number:'1.2-2'" (tried)="getoldvalue($event)"
+                        (focusOut)='enableAction(element)'></app-edit-input>
+                        </mat-cell>
+                </ng-container>
+               
+                <ng-container matColumnDef="BalanceAmt">
+                    <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                       {{element.BalanceAmt}}
+                    </mat-cell>
+                </ng-container>
+               
+                <ng-container matColumnDef="PaymentDate">
+                    <mat-header-cell *matHeaderCellDef> Payment Date </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="125">
+                            <input [(value)]="element.PaymentDate" matInput [matDatepicker]="picker" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Remarks">
+                    <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <app-edit-input [data]="element.Remarks" (tried)="getoldvalue($event)"
+                        (focusOut)='enableAction(element)'></app-edit-input>
+                        </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                    <mat-cell style="justify-content: center;" *matCellDef="let element">
+                        <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()" (change)="enableAction(element)">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button [(disabled)]="!element.Action" mat-fab (click)="UpdateOrSave(element)"><mat-icon>save</mat-icon></button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+        </div>
+    </mat-card-content>
+</mat-card>

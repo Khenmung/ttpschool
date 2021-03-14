@@ -1,0 +1,48 @@
+mat-card{
+    max-width: 100%;
+}
+.item {
+    float:left;
+    border: none;
+}
+.container{
+    display: flex;
+
+}
+@media screen and (max-width: 600px) {
+    div.trainup {
+      display: none;
+      
+    }
+    .top {
+        max-width: 100%;
+        
+    }
+   
+  }
+mat-toolbar {
+    position: fixed;
+    z-index: 10;
+    color           : white;
+    background-color: #20639b; //#4f8ec2;//
+    box-shadow: 5px 5px 5px lightgray;
+    top:0px;
+    max-width: 100%;
+}
+.mat-button{
+    line-height: 55px;
+}
+.rightside{
+    background-color:black;// rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
+    padding:5px;
+    color:white;
+    //opacity: 1.5;
+    clip-path: polygon(0 30%, 99% 1%, 100% 90%, 0% 100%);
+    }
+button {
+    border : none;
+    outline: none;
+}
+.mat-icon {
+    vertical-align: middle;
+ }

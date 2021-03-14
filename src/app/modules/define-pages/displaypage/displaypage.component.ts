@@ -57,21 +57,27 @@ export class DisplaypageComponent implements OnInit {
       this.route.navigate(['/about/' + this.GroupId]);
   }
   GetLatestPage(phid) {
-    let IdtoDisplay =phid;
+    debugger;
+    let IdtoDisplay = phid;
     if (IdtoDisplay == 0) {
       let list: List = new List();
       list.fields = ["link", "PageId"];
-      list.lookupFields = ["Page"];
+      //list.lookupFields = ["Page"];
       list.PageName = "Pages";
       list.filter = ["HomePage eq 1"];
       this.naomitsuService.get(list)
         .subscribe((data: any) => {
           if (data.value.length > 0) {
-            IdtoDisplay = +data.value[0].link.split('/')[1];
+            IdtoDisplay = +data.value[0].link.split('/')[2];
+            this.getPageFromHistory(IdtoDisplay);
           }
         })
     }
+    else
+      this.getPageFromHistory(IdtoDisplay);
 
+  }
+  getPageFromHistory(IdtoDisplay) {
     let list: List = new List();
     list.fields = ["PageHistoryId", "PageBody", "Page/PageTitle", "ParentPageId"];
     list.lookupFields = ["Page"];

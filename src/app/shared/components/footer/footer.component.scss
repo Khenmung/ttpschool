@@ -5,4 +5,11 @@ footer{
     color:white;
     background-color:rgb(197, 101, 76);// #98bcda;
     font-size: small;
+    max-width: 81%;
 }
+@media screen and (max-width: 600px) {
+   .bottom
+    {
+        max-width: 100%;
+    }
+  }

@@ -1,43 +1,14 @@
-<mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}">
-    <mat-toolbar-row fxLayoutAlign="space-between center">
-        <div>
-            <button mat-button>
-                <mat-icon>home</mat-icon>
-                <span class="logo1">ST. PAUL'S INSTITUTE</span>
-            </button>
-            <button mat-button (click)="toggleSideBar()">
-                <mat-icon *ngIf="toggle">chevron_right</mat-icon>
-                <mat-icon *ngIf="!toggle">chevron_left</mat-icon>
-            </button>
-
-        </div>
-        <div *ngIf="!deviceXs">
-            <button mat-button>Contact</button>
-            <button mat-button>New & Events</button>
-            <button mat-button>About Us</button>
-        </div>
-        <div>
-            <button mat-icon-button (click)="toggleSideBar()">
-                <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
-                <span *ngIf="!deviceXs">menu</span>
-            </button>
-        </div>
-    </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="deviceXs" fxLayoutAlign="space-between end">
-        <button mat-button>Contact</button>
-        <button mat-button>New & Events</button>
-        <button mat-button>About Us</button>
-    </mat-toolbar-row>
-</mat-toolbar>
-<!-- <mat-toolbar class="top">
+<mat-toolbar class="top">
     <mat-toolbar-row fxLayoutAlign="space-between end">
+        <!-- <div> -->
+
         <div class="item">
             <button mat-button (click)="toggleSideBar()">
                 <mat-icon *ngIf="toggle">chevron_right</mat-icon>
                 <mat-icon *ngIf="!toggle">chevron_left</mat-icon>
             </button>
             <button mat-button (click)="home()">
-                <span *ngIf="deviceXs" style="color:white">ST. PAUL'S INSTITUTE</span>
+                <span style="color:white">ST. PAUL'S INSTITUTE</span>
             </button>
         </div>
         <div class="trainup" style="font-size: medium;height: 45px;">Train up a child in the way he should go. -
@@ -46,7 +17,7 @@
             <span>&nbsp;&nbsp;&nbsp;</span>
             <span style="font-size: small;" *ngIf="userName.length>0"> Hello,
                 {{userName}}</span>
-
+            <!-- <div *ngIf="loggedIn" style="font-size: medium;">|</div> -->
             <button mat-button (click)="newsNEvents()">
                 <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
             </button>
@@ -76,6 +47,6 @@
                 </button>
             </mat-menu>
         </div>
-    
+        <!-- </div> -->
     </mat-toolbar-row>
-</mat-toolbar> -->
+</mat-toolbar>

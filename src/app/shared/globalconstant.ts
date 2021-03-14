@@ -19,5 +19,9 @@ export class globalconstants{
     public static LANGUAGESUBJECTLOWERCLS:string='languagesubjectlower';
     public static LANGUAGESUBJECTUPPERCLS:string='languagesubjectupper';
     public static FEENAMES:string='feenames';
+    public static getCurrentBatch(){
+        let currentyear= new Date().getFullYear();
+        return currentyear.toString() + "-" + (currentyear +1).toString(); 
+    }
    
 }

@@ -68,7 +68,7 @@
             </mat-form-field><br>
             <mat-form-field appearance="outline" fxFlex>
                 <mat-label>Fee type</mat-label>
-                <mat-select formControlName="FeeTypeId" #FeeTypeId>
+                <mat-select formControlName="FeeTypeId">
                     <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of FeeType" [value]="p.MasterDataId">
                         {{p.MasterDataName}}

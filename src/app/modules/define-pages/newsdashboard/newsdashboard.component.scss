@@ -29,7 +29,8 @@ button {
 }
 
 .newContainer{
-  width: 85%;
+  max-width: 70ch;
+  min-width: 20ch;
   box-shadow: 0px 1px lightgray;
 }
 

@@ -22,11 +22,8 @@
                 </div>
                 <div class="content">
                   <p>  {{element.Body| slice:0:200}} <a style="color:blue" (click)="view(Id,element.PhId)">more..</a></p>
-                </div>
-                
-            </div>
-            <div style="width: 15%;">
-            </div>
+                </div>                
+            </div>           
             <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
             
         </div>

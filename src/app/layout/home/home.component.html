@@ -1,9 +1,9 @@
-<app-header (toggleSideBarForme)="sideBarToggler()"></app-header>
-<mat-drawer-container>
-    <mat-drawer mode="side" [opened]="openSideBar">
+<app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
+<mat-drawer-container class="example-container" [hasBackdrop]="false">
+    <mat-drawer [mode]="mode" [opened]="openSideBar">
         <app-sidebar></app-sidebar>
     </mat-drawer>
-    <mat-drawer-content>
+    <mat-drawer-content [ngClass]="contentcls">
         <alert></alert>
         <router-outlet></router-outlet>
     </mat-drawer-content>

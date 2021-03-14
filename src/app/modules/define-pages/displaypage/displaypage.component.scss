@@ -8,12 +8,13 @@
 display: flex;
 }
 .child1{
-    flex:8;
+    //flex:3;
     margin-left: 0px;
-    text-align: justify;
+    //text-align: justify;
+    max-width: 70ch;
 }
 .child2{
-    flex:2;
+    flex:1;
 }
 mat-card-subtitle{
     color:rgb(197, 101, 76);

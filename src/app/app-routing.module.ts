@@ -28,12 +28,13 @@ import { AddstudentclassComponent } from './modules/FeesManagement/studentclass/
 import { AddclassfeeComponent } from './modules/FeesManagement/classfee/addclassfee/addclassfee.component';
 import { DashboardclassfeeComponent } from './modules/FeesManagement/classfee/dashboardclassfee/dashboardclassfee.component';
 import { DashboardstudentComponent } from './modules/FeesManagement/student/dashboardstudent/dashboardstudent.component';
+import { AddstudentfeepaymentComponent } from './modules/FeesManagement/studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 
 const routes: Routes = [{
   path: '', component: HomeComponent,
   children:
     [
-      { path: '', redirectTo: 'display/51', pathMatch: 'full' },
+      { path: '', redirectTo: 'display/0', pathMatch: 'full' },
       { path: 'photocarousel',component: CarouselComponent },
       // { path: 'photocarousel', 
       //   loadChildren:()=> import('./modules/photogallery/carousel/carousel.component').then(m=>m.CarouselComponent)
@@ -76,6 +77,7 @@ const routes: Routes = [{
     { path: 'addstudent/:id', component: AddstudentComponent },
     { path: 'addstudentcls', component: AddstudentclassComponent },
     { path: 'addclassfee', component: AddclassfeeComponent },
+    { path: 'addstudentfeepayment/:id', component: AddstudentfeepaymentComponent },
     { path: 'dashboardclassfee', component: DashboardclassfeeComponent },
     { path: 'dashboardstudent', component: DashboardstudentComponent },
     { path: '', redirectTo: 'auth', pathMatch: 'full' },
