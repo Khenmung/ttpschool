@@ -9,24 +9,49 @@
                 <mat-icon *ngIf="toggle">chevron_right</mat-icon>
                 <mat-icon *ngIf="!toggle">chevron_left</mat-icon>
             </button>
-
         </div>
         <div *ngIf="!deviceXs">
-            <button mat-button>Contact</button>
-            <button mat-button>New & Events</button>
-            <button mat-button>About Us</button>
+            <button mat-button><span>Train up a child in the way he should go. -
+            Proverbs 22:16</span></button>            
         </div>
-        <div>
-            <button mat-icon-button (click)="toggleSideBar()">
+        <div>  
+            <span *ngIf="!deviceXs">                
+                <button mat-button (click)="newsNEvents()">
+                    <mat-icon>announcement</mat-icon><span>News & Events</span>
+                </button>
+                <!-- <button mat-button><mat-icon>info</mat-icon>About Us</button> -->
+                <button mat-button (click)="contactus()">
+                    <mat-icon>contact_support</mat-icon><span>Contact Us</span>
+                </button>
+            </span>          
+            <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
-                <span *ngIf="!deviceXs">menu</span>
+                <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>                
             </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
+                    <mat-icon>login</mat-icon>login
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" (click)="createlogin()">
+                    <mat-icon>create</mat-icon>Create login
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" (click)="changepassword()">
+                    <mat-icon>change_circle</mat-icon>Change password
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" (click)="logout()">
+                    <mat-icon>logout</mat-icon>logout
+                </button>
+            </mat-menu>
         </div>
     </mat-toolbar-row>
     <mat-toolbar-row *ngIf="deviceXs" fxLayoutAlign="space-between end">
-        <button mat-button>Contact</button>
-        <button mat-button>New & Events</button>
-        <button mat-button>About Us</button>
+        <button mat-button (click)="newsNEvents()">
+            <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
+        </button>
+        <button mat-button><mat-icon>info</mat-icon>About Us</button>
+        <button mat-button (click)="contactus()">
+            <mat-icon>contact_support</mat-icon><span>Contact Us</span>
+        </button>        
     </mat-toolbar-row>
 </mat-toolbar>
 <!-- <mat-toolbar class="top">

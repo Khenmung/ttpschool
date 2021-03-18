@@ -9,7 +9,8 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ChangePasswordComponent } from './change-password/change-password.component';
-
+import { SharedataService } from '../../shared/sharedata.service'
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -18,20 +19,22 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     RegisterComponent,
     ProfileComponent,
     ChangePasswordComponent,
+
   ],
   imports: [
     CommonModule,
     FormsModule,
     MaterialModule,
     RouterModule,
-    SharedModule
+    SharedModule,
+    FlexLayoutModule
   ],
   exports:[    
     HomeComponent,
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
-]
-  //providers:[]
+],
+providers:[SharedataService]
 })
 export class AuthModule { }

@@ -1,7 +1,8 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
@@ -34,23 +35,27 @@ export class AddstudentfeepaymentComponent implements OnInit {
   dataSource: MatTableDataSource<IStudentFeePayment>;
   allMasterData = [];
   studentClassId = 0;
+  ClassId =0;
   searchForm = new FormGroup({
     StudentId: new FormControl(0),
   });
-  StudentFeePaymentData = {
+  StudentFeePaymentData= {
+    StudentId:0,
     StudentFeeId: 0,
     StudentClassId: 0,
     ClassFeeId: 0,
-    PaidAmt: 0,
-    BalanceAmt: 0,
-    PaymentDate: '',
+    PaidAmt: "0.00",
+    BalanceAmt: "0.00",
+    PaymentDate: new Date(),
     Batch: 0,
     Remarks: '',
-    Active: true
+    Active: 1
   };
   constructor(private dataservice: NaomitsuService,
     private alert: AlertService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private nav:Router,
+    private datepipe:DatePipe) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(param => {
@@ -73,7 +78,6 @@ export class AddstudentfeepaymentComponent implements OnInit {
     'BalanceAmt',
     'PaymentDate',
     'Remarks',
-    'Active',
     'Action'
   ];
 
@@ -108,13 +112,16 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.alert.error("Record already exists!", this.options);
         }
         else {
-          this.StudentFeePaymentData.Active = row.Active;
+          this.StudentFeePaymentData.StudentId =this.StudentId;
+          this.StudentFeePaymentData.Active = 1;
+          this.StudentFeePaymentData.Batch =this.currentbatchId;
           this.StudentFeePaymentData.StudentFeeId = row.StudentFeeId;
           this.StudentFeePaymentData.ClassFeeId = row.ClassFeeId;
           this.StudentFeePaymentData.StudentClassId = row.StudentClassId;
-          this.StudentFeePaymentData.PaidAmt = row.PaidAmt;
-          this.StudentFeePaymentData.BalanceAmt = row.BalanceAmt;
-          this.StudentFeePaymentData.PaymentDate = row.PaymentDate;
+          this.StudentFeePaymentData.PaidAmt = parseFloat(row.PaidAmt).toFixed(2);
+          //this.StudentFeePaymentData.PaidAmt = +this.StudentFeePaymentData.PaidAmt.toFixed(2);
+          this.StudentFeePaymentData.BalanceAmt = parseFloat(row.BalanceAmt).toFixed(2);
+          //this.StudentFeePaymentData.PaymentDate = row.PaymentDate; //,'yyyy-MM-dd HH:mm:ss z');
           this.StudentFeePaymentData.Remarks = row.Remarks;
           if (this.StudentFeePaymentData.StudentFeeId == 0)
             this.insert();
@@ -177,7 +184,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
         this.StudentFeePaymentList = [...data.value];
 
-        this.GetClassFee(this.studentClassId);
+        this.GetClassFee(this.ClassId);
 
       });
   }
@@ -215,7 +222,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 PaymentDate: existing[0].PaymentDate,
                 Batch: existing[0].Batch,
                 Remarks: existing[0].Remarks,
-                Active: existing[0].Active,
+                //Active: existing[0].Active,
                 Action: false
               }
             }
@@ -229,10 +236,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 FeeAmount: StudentClassFee.Amount,
                 PaidAmt: 0,
                 BalanceAmt: 0,
-                PaymentDate: new Date().toString(),
+                PaymentDate: new Date(),
                 Batch: this.currentbatchId,
                 Remarks: '',
-                Active: 0,
+                //Active: 0,
                 Action: false
               }
 
@@ -252,8 +259,6 @@ export class AddstudentfeepaymentComponent implements OnInit {
     if (pstudentId == undefined || pstudentId == 0)
       return;
 
-    //let currentbatchId = this.Batches.filter(item => item.MasterDataName == globalconstants.getCurrentBatch())[0].MasterDataId;
-
     let filterstr = "Active eq 1 and Batch eq " + this.currentbatchId + " and StudentId eq " + pstudentId;
 
     let list: List = new List();
@@ -265,7 +270,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.studentClassId = data.value[0].ClassId
+          this.studentClassId = data.value[0].StudentClassId
+          this.ClassId = data.value[0].ClassId
+          
           this.GetStudentFeePayment();
         }
         else {
@@ -274,9 +281,16 @@ export class AddstudentfeepaymentComponent implements OnInit {
         }
       })
   }
-  enableAction(row) {
-    row.Action = true;
-    console.log('from change', row);
+  back(){
+    this.nav.navigate(['/admin/dashboardstudent']);
+  }
+  enableAction(element,amount) {
+    debugger;
+    element.Action = true;
+    element.BalanceAmt = +element.FeeAmount - +amount
+    element.PaidAmt = amount;
+    console.log('element', element);
+    console.log('$event',amount)
   }
   GetMasterData() {
     let list: List = new List();
@@ -287,13 +301,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
         this.Classes = this.getDropDownData(globalconstants.CLASSES);
         this.Batches = this.getDropDownData(globalconstants.BATCH);
         this.Locations = this.getDropDownData(globalconstants.LOCATION);
-        //this.classfeeForm.patchValue({ "LocationId": this.Locations[0].MasterDataId });
         let currentBatch = globalconstants.getCurrentBatch();
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
         if (currentBatchObj.length > 0) {
@@ -321,13 +333,12 @@ export interface IStudentFeePayment {
   StudentClassId: number;
   ClassFeeId: number;
   ClassFeeName: string;
-  FeeAmount: string;
+  FeeAmount: number;
   PaidAmt: number;
   BalanceAmt: number;
-  PaymentDate: string;
+  PaymentDate: Date;
   Batch: number;
   Remarks: string;
-  Active: number;
   Action: boolean;
 }
 

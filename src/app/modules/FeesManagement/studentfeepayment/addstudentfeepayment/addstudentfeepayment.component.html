@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-card-title></mat-card-title>
+    <mat-card-title>Student Fee Payment Details</mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
         <div class="example-container mat-elevation-z8">
@@ -22,15 +22,13 @@
                        {{element.FeeAmount}}
                     </mat-cell>
                 </ng-container>
-
                 <ng-container matColumnDef="PaidAmt">
                     <mat-header-cell *matHeaderCellDef> Paid Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <app-edit-input [data]="element.PaidAmt|number:'1.2-2'" (tried)="getoldvalue($event)"
-                        (focusOut)='enableAction(element)'></app-edit-input>
+                        (focusOut)='enableAction(element,$event)'></app-edit-input>
                         </mat-cell>
-                </ng-container>
-               
+                </ng-container>               
                 <ng-container matColumnDef="BalanceAmt">
                     <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -55,13 +53,13 @@
                         (focusOut)='enableAction(element)'></app-edit-input>
                         </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Active">
+                <!-- <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell style="justify-content: center;" *matCellDef="let element">
                         <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()" (change)="enableAction(element)">
                         </mat-checkbox>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -73,4 +71,7 @@
             </mat-table>
         </div>
     </mat-card-content>
+    <mat-card-actions>
+        <button (click)="back()" class="mat-raised-button"><mat-icon>arrow_back</mat-icon></button>
+    </mat-card-actions>
 </mat-card>

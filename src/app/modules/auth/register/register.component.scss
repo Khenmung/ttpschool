@@ -9,14 +9,17 @@
     
 }
 button{
-    margin-right: 25px;
+    margin-right: 15px;
 }
 .column{
     margin-right: 15px;
 }
-mat-card{
-    margin-top: 100px;
-    width: 50%;
-  //  height:100vh;
-    //text-align: center;
+.mat-card{
+    top:110px; 
+}
+.width100{
+    width: 100%;
+}
+.width80{
+    width: 40%;
 }

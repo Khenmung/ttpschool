@@ -1,0 +1,36 @@
+    mat-drawer {
+        margin-top      : 65px;
+        width           : 300px;
+        background-color: #20639B;
+        height: 100%;
+    }
+    .top70{
+        top:70px;
+        max-width: 81%;
+    }
+    .top70Width62{
+        top:70px;
+        max-width: 62%;
+    }
+    .top70width100{
+        top:70px;
+        max-width: 100%;
+    }
+    .top80{
+        top:120px;
+        max-width: 100%;
+    }
+    .sidebartop110width100
+    {
+        top:40px;
+        max-width: 100%;
+    }
+    .sidebartop65width100
+    {
+        top:0px;
+        max-width: 100%;
+    }
+
+    app-sidebar {
+        min-height: 200vh;
+    }

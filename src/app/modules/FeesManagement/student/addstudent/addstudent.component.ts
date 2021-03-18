@@ -1,6 +1,7 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -28,40 +29,48 @@ export class AddstudentComponent implements OnInit {
   PrimaryContact = [];
   Location = [];
   allMasterData = [];
-  studentForm = new FormGroup({
-    Name: new FormControl('', [Validators.required]),
-    FatherName: new FormControl('', [Validators.required]),
-    MotherName: new FormControl(''),
-    Gender: new FormControl(0, [Validators.required]),
+  studentData = {};
+  CountryId=0;
+  LocationId=0;
+    
+  studentForm = this.fb.group({
+    StudentId: [0],
+    Name: ['', [Validators.required]],
+    FatherName: ['', [Validators.required]],
+    MotherName: [''],
+    Gender: [0, [Validators.required]],
     Address: new FormControl('', [Validators.required]),
-    City: new FormControl(0),
+    City: [0],
     Pincode: new FormControl('', [Validators.required]),
-    State: new FormControl(0),
-    Country: new FormControl(0),
-    DOB: new FormControl('', [Validators.required]),
-    Bloodgroup: new FormControl(0),
-    Category: new FormControl(0, [Validators.required]),
-    BankAccountNo: new FormControl(''),
-    IFSCCode: new FormControl(''),
-    MICRNo: new FormControl(''),
-    AadharNo: new FormControl(''),
-    Photo: new FormControl(''),
-    Religion: new FormControl(0),
-    ContactNo: new FormControl(''),
-    FatherContactNo: new FormControl(''),
-    MotherContactNo: new FormControl(''),
-    PrimaryContact: new FormControl(0),
-    AlternateContact: new FormControl(''),
-    EmailAddress: new FormControl(''),
-    TransferFromSchool: new FormControl(''),
-    TransferFromSchoolBoard: new FormControl(''),
-    Remarks: new FormControl(''),
-    Active: new FormControl(0),
-    locationId: new FormControl(0)
+    State: [0],
+    Country: [0],
+    DOB: ['', [Validators.required]],
+    Bloodgroup: [0],
+    Category: [0, [Validators.required]],
+    BankAccountNo: [''],
+    IFSCCode: [''],
+    MICRNo: [''],
+    AadharNo: [''],
+    Photo: [''],
+    Religion: [''],
+    ContactNo: [''],
+    FatherContactNo: [''],
+    MotherContactNo: [''],
+    PrimaryContactFatherOrMother: [0],
+    AlternateContact: [''],
+    EmailAddress: [''],
+    TransferFromSchool: [''],
+    TransferFromSchoolBoard: [''],
+    Remarks: [''],
+    Active: [0],
+    LocationId: [0]
   });
   constructor(private dataservice: NaomitsuService,
     private routeUrl: ActivatedRoute,
-    private alert: AlertService) { }
+    private route: Router,
+    private alert: AlertService,
+    private fb: FormBuilder,
+    private formatdate:DatePipe) { }
 
   ngOnInit(): void {
     this.routeUrl.paramMap.subscribe(param => {
@@ -82,6 +91,9 @@ export class AddstudentComponent implements OnInit {
   tabChanged(tabChangeEvent: number) {
     console.log('tab selected: ' + tabChangeEvent);
   }
+  back() {
+    this.route.navigate(['/admin/dashboardstudent']);
+  }
   GetMasterData() {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
@@ -91,7 +103,7 @@ export class AddstudentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        console.log(data.value);
+        //console.log(data.value);
         this.allMasterData = [...data.value];
         this.Gender = this.getDropDownData(globalconstants.GENDER);
         this.Country = this.getDropDownData(globalconstants.COUNTRY);
@@ -101,6 +113,10 @@ export class AddstudentComponent implements OnInit {
         this.States = this.getDropDownData(globalconstants.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.LOCATION);
+        this.CountryId=this.Country.filter(country=>country.MasterDataName=="India")[0].MasterDataId;
+        this.LocationId = this.Location.filter(location=>location.MasterDataName=="Lamka")[0].MasterDataId;
+        this.studentForm.patchValue({Country:this.CountryId});
+        this.studentForm.patchValue({LocationId:this.LocationId});
       });
 
   }
@@ -112,18 +128,81 @@ export class AddstudentComponent implements OnInit {
       return item.ParentId == Id
     });
   }
-  GetStudent() {
+  SaveOrUpdate() {
+    debugger;
+    // let dob=this.studentForm.get("DOB").value
+    
+    // let newDOB =  new Date(dob.getFullYear(), dob.getMonth(), dob.getDate(), 0, 0, 0); 
+    // console.log('this.studentForm.get("DOB").value',this.studentForm.get("DOB").value)
+    // console.log('newDOB',newDOB)
+    this.studentData = {
 
+      Name: this.studentForm.get("Name").value,
+      FatherName: this.studentForm.get("FatherName").value,
+      MotherName: this.studentForm.get("MotherName").value,
+      Gender: this.studentForm.get("Gender").value,
+      Address: this.studentForm.get("Address").value,
+      //City: this.studentForm.get("City").value,
+      Pincode: this.studentForm.get("Pincode").value,
+      State: this.studentForm.get("State").value,
+      //Country: this.studentForm.get("Country").value,
+      DOB: this.studentForm.get("DOB").value,
+      Bloodgroup: this.studentForm.get("Bloodgroup").value,
+      Category: this.studentForm.get("Category").value,
+      BankAccountNo: this.studentForm.get("BankAccountNo").value,
+      IFSCCode: this.studentForm.get("IFSCCode").value,
+      MICRNo: this.studentForm.get("MICRNo").value,
+      AadharNo: this.studentForm.get("AadharNo").value,
+      Photo: this.studentForm.get("Photo").value,
+      Religion: this.studentForm.get("Religion").value,
+      ContactNo: this.studentForm.get("ContactNo").value,
+      FatherContactNo: this.studentForm.get("FatherContactNo").value,
+      MotherContactNo: this.studentForm.get("MotherContactNo").value,
+      PrimaryContactFatherOrMother: this.studentForm.get("PrimaryContactFatherOrMother").value,
+      AlternateContact: this.studentForm.get("AlternateContact").value,
+      EmailAddress: this.studentForm.get("EmailAddress").value,
+      TransferFromSchool: this.studentForm.get("TransferFromSchool").value,
+      TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
+      Remarks: this.studentForm.get("Remarks").value,
+      Active: this.studentForm.get("Active").value,
+      //LocationId: this.studentForm.get("LocationId").value
+    }
+    console.log("datato save",this.studentData);
+    if (this.studentForm.get("StudentId").value == 0)
+      this.save();
+    else
+      this.update();
+  }
+  save() {
+    this.studentForm.patchValue({ AlternateContact: "" });
+  
+    this.dataservice.postPatch('Students', this.studentData, 0, 'post')
+      .subscribe((result: any) => {
+        //if (result.value.length > 0)
+          this.alert.success("Student's data saved successfully.",this.options);
+      },error=>console.log(error))
+  }
+  update() {
+    //console.log('student', this.studentForm.value)
+
+    this.dataservice.postPatch('Students', this.studentData, +this.studentForm.get("StudentId").value, 'patch')
+      .subscribe((result: any) => {
+        //if (result.value.length > 0 )
+        this.alert.success("Student's data updated successfully.",this.options);
+      })
+  }
+  GetStudent() {
     let list: List = new List();
-    list.fields = ["StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
+    list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
     list.filter = ["StudentId eq " + this.Id];
     //list.orderBy = "ParentId";
-
+    debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.studentForm.setValue({
+          this.studentForm.patchValue({
+            StudentId: data.value[0].StudentId,
             Name: data.value[0].Name,
             FatherName: data.value[0].FatherName,
             MotherName: data.value[0].MotherName,
@@ -133,7 +212,7 @@ export class AddstudentComponent implements OnInit {
             Pincode: data.value[0].Pincode,
             State: data.value[0].State,
             Country: data.value[0].Country,
-            DOB: data.value[0].DOB,
+            DOB:  data.value[0].DOB,//this.formatdate.transform(data.value[0].DOB,'dd/MM/yyyy'),
             Bloodgroup: data.value[0].Bloodgroup,
             Category: data.value[0].Category,
             BankAccountNo: data.value[0].BankAccountNo,
@@ -145,14 +224,14 @@ export class AddstudentComponent implements OnInit {
             ContactNo: data.value[0].ContactNo,
             FatherContactNo: data.value[0].FatherContactNo,
             MotherContactNo: data.value[0].MotherContactNo,
-            PrimaryContact: data.value[0].PrimaryContact,
+            PrimaryContactFatherOrMother: data.value[0].PrimaryContactFatherOrMother,
             AlternateContact: data.value[0].AlternateContact,
             EmailAddress: data.value[0].EmailAddress,
-            TransferFromSchool: data.vaue[0].TransferFromSchool,
-            TransferFromSchoolboard: data.value[0].TransferFromSchoolboard,
+            TransferFromSchool: data.value[0].TransferFromSchool,
+            TransferFromSchoolBoard: data.value[0].TransferFromSchoolBoard,
             Remarks: data.value[0].Remarks,
             Active: data.value[0].Active,
-            locationId: data.value[0].locationId,
+            LocationId: data.value[0].LocationId,
 
           })
         }

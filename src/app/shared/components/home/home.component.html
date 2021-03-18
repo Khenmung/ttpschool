@@ -1,6 +1,6 @@
 <app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
 <mat-drawer-container class="example-container" [hasBackdrop]="false">
-    <mat-drawer [mode]="mode" [opened]="openSideBar">
+    <mat-drawer [ngClass]="sidebarcls" [mode]="mode" [opened]="openSideBar">
         <app-sidebar></app-sidebar>
     </mat-drawer>
     <mat-drawer-content [ngClass]="contentcls">

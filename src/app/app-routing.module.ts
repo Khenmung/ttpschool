@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { pageDashboardComponent } from './modules/define-pages/pageDashboard/pageDashboard.component';
 import { TextEditorComponent } from './modules/define-pages/texteditor/texteditor.component';
 import { pageViewComponent } from './modules/define-pages/pageView/pageView.component';
-import { HomeComponent } from './layout/home/home.component';
+import { HomeComponent } from './shared/components/home/home.component';
 import { HomeComponent as authHomeComponent } from './modules/auth/home/home.component';
 import { CarouselComponent } from './modules/photogallery/carousel/carousel.component';
 import { cropNUploadphotoComponent } from './modules/photogallery/cropNuploadphoto/cropNuploadphoto.component';

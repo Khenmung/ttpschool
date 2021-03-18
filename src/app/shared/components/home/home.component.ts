@@ -12,7 +12,8 @@ export class HomeComponent implements OnInit {
   mediaSub: Subscription;
   deviceXs: boolean;
   mode: string;
-  contentcls:string;
+  contentcls: string;
+  sidebarcls: string;
   openSideBar = true;
   constructor(private mediaObserver: MediaObserver) { }
 
@@ -22,12 +23,13 @@ export class HomeComponent implements OnInit {
       if (this.deviceXs) {
         this.openSideBar = false;
         this.mode = "over";
-        this.contentcls ='top80';        
+        this.contentcls = 'top80';
+        this.sidebarcls = 'sidebartop110width100'
       }
-      else
-      {
+      else {
         this.mode = "side";
-        this.contentcls ="top70";
+        this.contentcls = "top70Width62";
+        this.sidebarcls = "sidebartop65width100";
       }
     })
   }
@@ -35,12 +37,20 @@ export class HomeComponent implements OnInit {
     this.mediaSub.unsubscribe();
   }
   sideBarToggler() {
+    debugger;
     this.openSideBar = !this.openSideBar;
-    if(this.openSideBar==true && this.deviceXs==false)
-      this.contentcls ="top70";
-      else if(this.openSideBar==false && this.deviceXs==false)
-      this.contentcls ="top80";
-      else
-      this.contentcls ="top80";
+    if (this.openSideBar == true && this.deviceXs == false) {
+      this.sidebarcls = "sidebartop65width100"
+      this.contentcls = "top70Width62";
+    }
+    else if (this.openSideBar && this.deviceXs)
+    {
+      this.sidebarcls = "sidebartop110width100"
+      this.contentcls = "top80";
+    }
+    else if (this.openSideBar == false && !this.deviceXs)
+      this.contentcls = "top70";
+    else
+      this.contentcls = "top80";
   }
 }

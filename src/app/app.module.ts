@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './shared/material/material.module';
 import { SharedModule } from './shared/shared.module';
-import { HomeModule } from './layout/home/home.module';
+import { HomeModule } from './shared/components/home/home.module';
 import { RouterModule } from '@angular/router';
 import { DefinePagesModule } from './modules/define-pages/define-pages.module';
 import { PhotogalleryModule } from './modules/photogallery/photogallery.module';

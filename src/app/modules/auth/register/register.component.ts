@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../_services/auth.service';
 
 @Component({
@@ -16,11 +18,17 @@ export class RegisterComponent implements OnInit {
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
-
+  mediaSub:Subscription;
+  deviceXs:boolean;
   constructor(private authService: AuthService,
-              private route:Router) { }
+              private route:Router,
+              private mediaObserver:MediaObserver) { }
 
   ngOnInit(): void {
+    this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
+      this.deviceXs = result.mqAlias === "xs" ? true : false;
+      //console.log("authlogin",this.deviceXs);
+    });
   }
   gotohome(){
     this.route.navigate(['/']);

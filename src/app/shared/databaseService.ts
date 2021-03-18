@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { List } from './interface';
 import { globalconstants } from './globalconstant';
@@ -85,7 +85,11 @@ export class NaomitsuService {
     //console.log('hh',`${this.END_POINT}/odata/${model}${id ? '(' + id + ')': ''}`);
     return this.http[method](
       `${this.END_POINT}/odata/${model}${id ? '(' + id + ')': ''}`,
-      data
+      data,{
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    }
     ) as Observable<returnType>;
   }
   postFile(caption:string,fileToUpload:File){

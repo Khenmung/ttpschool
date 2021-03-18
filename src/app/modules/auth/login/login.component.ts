@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 //import { globalconstants } from 'src/app/shared/globalconstant';
 import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -21,16 +23,21 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   roles: string[] = [];
   username:string='';
-
+  mediaSub:Subscription;
+  deviceXs:boolean;
+  
   constructor(private authService: AuthService, 
     private tokenStorage: TokenStorageService,
-    private route:Router) { }
+    private route:Router,
+    private mediaObserver:MediaObserver ) { }
 
   ngOnInit(): void {
+    this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
+      this.deviceXs = result.mqAlias === "xs" ? true : false;
+      console.log("authlogin",this.deviceXs);
+    });
     if (this.tokenStorage.getToken()) {
-      //console.log('a',this.tokenStorage.getToken())
       this.isLoggedIn = true;
-      //this.username = this.tokenStorage.getUser();
       this.route.navigate(['/index.html']);
     }
   }
@@ -55,7 +62,6 @@ export class LoginComponent implements OnInit {
       err => {
         this.errorMessage = err.error.message;
         this.isLoginFailed = true;
-        //console.log(this.errorMessage);
       }
     );
   }

@@ -14,6 +14,8 @@ import { DashboardstudentComponent } from './student/dashboardstudent/dashboards
 import { FeeHeaderComponent } from './shared/header/feeheader.component';
 import { FeeSidebarComponent } from './shared/sidebar/sidebar.component';
 import { FeeFooterComponent } from './shared/footer/footer.component';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 
@@ -27,8 +29,12 @@ import { FeeFooterComponent } from './shared/footer/footer.component';
     SharedModule,
     RouterModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    FlexLayoutModule
   ],
+  providers:[
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+  ]
   //exports:[AddstudentComponent]
 })
 export class StudentsModule { }
