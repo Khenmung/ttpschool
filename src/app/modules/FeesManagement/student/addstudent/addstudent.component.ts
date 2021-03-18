@@ -21,7 +21,7 @@ export class AddstudentComponent implements OnInit {
   Id = 0;
   loading = false;
   Country = [];
-  Gender = [];
+  Genders = [];
   Category = [];
   Bloodgroup = [];
   Religion = [];
@@ -32,7 +32,7 @@ export class AddstudentComponent implements OnInit {
   studentData = {};
   CountryId=0;
   LocationId=0;
-    
+  PrimaryContactDefaultId=0;  
   studentForm = this.fb.group({
     StudentId: [0],
     Name: ['', [Validators.required]],
@@ -105,7 +105,7 @@ export class AddstudentComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Gender = this.getDropDownData(globalconstants.GENDER);
+        this.Genders = this.getDropDownData(globalconstants.GENDER);
         this.Country = this.getDropDownData(globalconstants.COUNTRY);
         this.Bloodgroup = this.getDropDownData(globalconstants.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.CATEGORY);
@@ -115,8 +115,11 @@ export class AddstudentComponent implements OnInit {
         this.Location = this.getDropDownData(globalconstants.LOCATION);
         this.CountryId=this.Country.filter(country=>country.MasterDataName=="India")[0].MasterDataId;
         this.LocationId = this.Location.filter(location=>location.MasterDataName=="Lamka")[0].MasterDataId;
+        this.PrimaryContactDefaultId =this.PrimaryContact.filter(contact=>contact.MasterDataName=="Father")[0].MasterDataId;
         this.studentForm.patchValue({Country:this.CountryId});
         this.studentForm.patchValue({LocationId:this.LocationId});
+        this.studentForm.patchValue({PrimaryContactFatherOrMother:this.PrimaryContactDefaultId});
+        this.studentForm.patchValue({State:this.States.filter(state=>state.MasterDataName.toUpperCase()=="MANIPUR")[0].MasterDataId});
       });
 
   }
@@ -134,7 +137,8 @@ export class AddstudentComponent implements OnInit {
     
     // let newDOB =  new Date(dob.getFullYear(), dob.getMonth(), dob.getDate(), 0, 0, 0); 
     // console.log('this.studentForm.get("DOB").value',this.studentForm.get("DOB").value)
-    // console.log('newDOB',newDOB)
+     console.log('newdate',new Date(this.studentForm.get("DOB").value))
+     console.log('wo newdate',this.studentForm.get("DOB").value)
     this.studentData = {
 
       Name: this.studentForm.get("Name").value,
@@ -146,7 +150,7 @@ export class AddstudentComponent implements OnInit {
       Pincode: this.studentForm.get("Pincode").value,
       State: this.studentForm.get("State").value,
       //Country: this.studentForm.get("Country").value,
-      DOB: this.studentForm.get("DOB").value,
+      DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
       Bloodgroup: this.studentForm.get("Bloodgroup").value,
       Category: this.studentForm.get("Category").value,
       BankAccountNo: this.studentForm.get("BankAccountNo").value,
@@ -167,7 +171,7 @@ export class AddstudentComponent implements OnInit {
       Active: this.studentForm.get("Active").value,
       //LocationId: this.studentForm.get("LocationId").value
     }
-    console.log("datato save",this.studentData);
+    //console.log("datato save",this.studentData);
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else
@@ -178,8 +182,17 @@ export class AddstudentComponent implements OnInit {
   
     this.dataservice.postPatch('Students', this.studentData, 0, 'post')
       .subscribe((result: any) => {
-        //if (result.value.length > 0)
+        debugger;
+        if (result!=undefined)
+        {
+          this.studentForm.patchValue({
+            StudentId: result.StudentId
+          })
+
           this.alert.success("Student's data saved successfully.",this.options);
+
+        }
+          
       },error=>console.log(error))
   }
   update() {
@@ -191,6 +204,10 @@ export class AddstudentComponent implements OnInit {
         this.alert.success("Student's data updated successfully.",this.options);
       })
   }
+  adjustDateForTimeOffset(dateToAdjust) {
+    var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
+    return new Date(dateToAdjust.getTime() - offsetMs);
+    }
   GetStudent() {
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];

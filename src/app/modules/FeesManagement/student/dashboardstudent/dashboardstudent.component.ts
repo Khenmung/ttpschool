@@ -74,6 +74,9 @@ export class DashboardstudentComponent implements OnInit {
   fee(id) {
     this.route.navigate(['/admin/addstudentfeepayment/' + id]);
   }
+  class(id) {
+    this.route.navigate(['/admin/addstudentcls/' + id]);
+  }
   view(id) {
     this.route.navigate(['/admin/addstudent/' + id]);
   }
@@ -84,9 +87,9 @@ export class DashboardstudentComponent implements OnInit {
 
     let checkFilterString = "substringof('" + this.searchForm.get("Name").value + "',Name)"
     if (this.searchForm.get("FatherName").value.trim().length > 0)
-      checkFilterString += " and FatherName eq '" + this.searchForm.get("FatherName").value + "'"
+      checkFilterString += " and substringof('" + this.searchForm.get("FatherName").value + "',FatherName)"
     if (this.searchForm.get("MotherName").value.trim().length > 0)
-      checkFilterString += " and MotherName eq '" + this.searchForm.get("MotherName").value + "'"
+      checkFilterString += " and substringof('" + this.searchForm.get("MotherName").value + "',MotherName)"
 
     let list: List = new List();
     list.fields = ["StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];

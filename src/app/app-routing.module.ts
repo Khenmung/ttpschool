@@ -75,7 +75,7 @@ const routes: Routes = [{
   children: [ 
     { path: 'addstudent', component: AddstudentComponent },
     { path: 'addstudent/:id', component: AddstudentComponent },
-    { path: 'addstudentcls', component: AddstudentclassComponent },
+    { path: 'addstudentcls/:id', component: AddstudentclassComponent },
     { path: 'addclassfee', component: AddclassfeeComponent },
     { path: 'addstudentfeepayment/:id', component: AddstudentfeepaymentComponent },
     { path: 'dashboardclassfee', component: DashboardclassfeeComponent },

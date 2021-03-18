@@ -1,6 +1,17 @@
 mat-form-field{
     margin-right: 20px;
+    padding: 5px;
 }
 button{
     margin-right: 20px;
+}
+mat-header-cell{
+    display: grid;
+    justify-content: center;
+}
+.mat-column-StudentId{
+    width:5%;
+}
+table{
+    min-width: 300px;
 }

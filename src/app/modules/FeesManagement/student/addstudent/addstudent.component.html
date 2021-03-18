@@ -28,8 +28,7 @@
                                 </mat-form-field>
                                 <mat-form-field appearance="outline" fxFlex>
                                     <mat-label>Mother's name</mat-label>
-                                    <input formControlName="MotherName" autocomplete="Off" #MotherName matInput
-                                        maxlength="50">
+                                    <input formControlName="MotherName" autocomplete="Off" matInput maxlength="50">
                                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                                     <span class="text-danger"
                                         *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's name
@@ -39,10 +38,13 @@
                                     <mat-label>Gender</mat-label>
                                     <mat-select formControlName="Gender">
                                         <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of Gender" [value]="p.MasterDataId">
+                                        <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
                                             {{p.MasterDataName}}
                                         </mat-option>
                                     </mat-select>
+                                    <span class="text-danger"
+                                        *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
+                                        is required.</span>
                                 </mat-form-field>
 
                                 <mat-form-field appearance="outline" [style.width.px]="260">
@@ -51,7 +53,7 @@
                                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                     <mat-datepicker #picker></mat-datepicker>
                                 </mat-form-field>
-                                
+
                                 <mat-form-field appearance="outline" fxFlex>
                                     <mat-label>Blood group</mat-label>
                                     <mat-select formControlName="Bloodgroup">
@@ -61,7 +63,7 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field appearance="outline" fxFlex>
+                                <mat-form-field appearance="outline" [style.width.px]="270">
                                     <mat-label>Category</mat-label>
                                     <mat-select formControlName="Category">
                                         <mat-option value="0">---</mat-option>
@@ -70,7 +72,7 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field appearance="outline" fxFlex>
+                                <mat-form-field appearance="outline" [style.width.px]="260">
                                     <mat-label>Religion</mat-label>
                                     <mat-select formControlName="Religion">
                                         <mat-option value="0">---</mat-option>
@@ -78,37 +80,7 @@
                                             {{p.MasterDataName}}
                                         </mat-option>
                                     </mat-select>
-                                </mat-form-field>                   
-                                <mat-form-field appearance="outline" fxFlex>
-                                    <mat-label>State</mat-label>
-                                    <mat-select formControlName="State">
-                                        <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of States" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}
-                                        </mat-option>
-                                    </mat-select>
                                 </mat-form-field>
-             
-                                <mat-form-field appearance="outline" [style.width.pc]="25">
-                                    <mat-label>Address</mat-label>
-                                    <textarea formControlName="Address" autocomplete="Off" #Address matInput
-                                        maxlength="250"></textarea>
-                                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                                    <span class="text-danger"
-                                        *ngIf="f.Address.touched && f.Address.hasError('required')">Address
-                                        is required.</span>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Pincode</mat-label>
-                                    <input formControlName="Pincode" autocomplete="Off" #Pincode matInput
-                                        maxlength="10">
-                                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                                    <span class="text-danger"
-                                        *ngIf="f.Pincode.touched && f.Pincode.hasError('required')">Pin
-                                        code
-                                        is required.</span>
-                                </mat-form-field>                                
-                                
                             </mat-card-content>
                             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                                 <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
@@ -156,7 +128,36 @@
                                             {{p.MasterDataName}}</mat-radio-button>
                                     </mat-radio-group>
                                 </span>
-
+                                <mat-form-field appearance="outline">
+                                    <mat-label>State</mat-label>
+                                    <mat-select formControlName="State">
+                                        <mat-option value="0">---</mat-option>
+                                        <mat-option *ngFor="let p of States" [value]="p.MasterDataId">
+                                            {{p.MasterDataName}}
+                                        </mat-option>
+                                        <span class="text-danger"
+                                            *ngIf="f.State.touched && f.State.hasError('required')">State
+                                            is required.</span>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field appearance="outline" [style.width.pc]="25">
+                                    <mat-label>Address</mat-label>
+                                    <textarea formControlName="Address" autocomplete="Off" #Address matInput
+                                        maxlength="250"></textarea>
+                                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                                    <span class="text-danger"
+                                        *ngIf="f.Address.touched && f.Address.hasError('required')">Address
+                                        is required.</span>
+                                </mat-form-field>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Pincode</mat-label>
+                                    <input formControlName="Pincode" autocomplete="Off" matInput maxlength="10">
+                                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                                    <span class="text-danger"
+                                        *ngIf="f.Pincode.touched && f.Pincode.hasError('required')">Pin
+                                        code
+                                        is required.</span>
+                                </mat-form-field>
                             </mat-card-content>
                             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                                 <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
@@ -218,15 +219,17 @@
                                 </mat-form-field>
                                 <mat-form-field appearance="outline">
                                     <mat-label>Location</mat-label>
-                                    <mat-select formControlName="LocationId" disabled>
+                                    <mat-select formControlName="LocationId">
                                         <mat-option value="0">---</mat-option>
                                         <mat-option *ngFor="let p of Location" [value]="p.MasterDataId">
                                             {{p.MasterDataName}}
                                         </mat-option>
                                     </mat-select>
-                                </mat-form-field><br>
-                                <mat-checkbox formControlName="Active">
-                                </mat-checkbox>&nbsp; Active    
+                                </mat-form-field>
+                                <div>
+                                    <mat-checkbox formControlName="Active">
+                                    </mat-checkbox>&nbsp; Active
+                                </div>
                             </mat-card-content>
                             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                                 <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">

@@ -24,8 +24,8 @@
         </form>
         <div class="example-container mat-elevation-z8">
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="StudentId">
-                    <mat-header-cell *matHeaderCellDef> Student Id </mat-header-cell>
+                <ng-container matColumnDef="StudentId" [style.width.px]="30">
+                    <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.StudentId}} </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Name">
@@ -47,13 +47,13 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FatherContactNo">
-                    <mat-header-cell *matHeaderCellDef>Father's Name </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef>Father's Contact No. </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.FatherContactNo}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="MotherContactNo">
-                    <mat-header-cell *matHeaderCellDef>Mother's Name </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef>Mother's Contact No. </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.MotherContactNo}}
                     </mat-cell>
@@ -68,10 +68,13 @@
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button mat-fab (click)="fee(element.StudentId)">
+                        <button matTooltip="fee payment" mat-mini-fab (click)="fee(element.StudentId)">
                             <mat-icon>view_list</mat-icon>
                         </button>
-                        <button mat-fab (click)="view(element.StudentId)">
+                        <button matTooltip="class" mat-mini-fab (click)="class(element.StudentId)">
+                            <mat-icon>group</mat-icon>
+                        </button>
+                        <button matTooltip="Details" mat-mini-fab (click)="view(element.StudentId)">
                             <mat-icon>pageview</mat-icon>
                         </button>
                     </mat-cell>
