@@ -12,7 +12,7 @@ import { List } from '../../interface';
 })
 export class HeaderComponent implements OnInit {
   @Input() deviceXs:boolean; 
-  _screensize: boolean;
+  //_screensize: boolean;
   toggle: boolean = false;
   userName: string = '';
   loggedIn: boolean;
@@ -69,6 +69,5 @@ export class HeaderComponent implements OnInit {
       .subscribe((data: any) => {
         this.route.navigate(['/about/' + data.value[0].PageId]);
       });
-
   }
 }

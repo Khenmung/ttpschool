@@ -50,7 +50,7 @@ export class FiledragAndDropComponent implements OnInit {
         fileEntry.file((file: File) => {
 
           // Here you can access the real file
-          console.log(droppedFile.relativePath, file);
+          //console.log(droppedFile.relativePath, file);
           if (file.type.includes("image") || file.type == "application/pdf" || 
           file.type == "application/vnd.ms-excel" ||
           file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
