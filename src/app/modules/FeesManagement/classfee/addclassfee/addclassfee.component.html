@@ -1,7 +1,8 @@
 <mat-card>
-    <mat-card-subtitle>Class fee</mat-card-subtitle>
+    <mat-card-title>Add Class Fee</mat-card-title>
+    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <form [formGroup]="classfeeForm">
+        <form [formGroup]="classfeeForm" fxLayoutAlign="space-between center" fxLayout="row wrap">
             <mat-form-field appearance="outline" fxFlex>
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="ClassId" #Class>

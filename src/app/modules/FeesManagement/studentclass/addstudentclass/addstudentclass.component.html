@@ -1,12 +1,12 @@
 <mat-card>
     <mat-card-title>Student class</mat-card-title>
-    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <form [formGroup]="studentclassForm">
             <div fxLayout="row">
                 <mat-form-field fxFlex>
                     <mat-label>Student</mat-label>
-                    <mat-select formControlName="StudentId" fxFlex (selectionChange)="updateId($event)">
+                    <mat-select formControlName="StudentId" fxFlex (selectionChange)="StudentChange($event)">
                         <mat-option *ngFor="let student of Students" [value]="student.StudentId">{{student.studentName}}
                         </mat-option>
                     </mat-select>
@@ -83,7 +83,7 @@
         </form>
     </mat-card-content>
     <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-        <button class="mat-raised-button" (click)="save()">
+        <button class="mat-raised-button" [disabled]="invalidId" (click)="UpdateOrSave()">
             <mat-icon>save</mat-icon>
         </button>
         <button class="mat-raised-button" (click)="back()">

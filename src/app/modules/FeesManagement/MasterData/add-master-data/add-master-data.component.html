@@ -1,0 +1,62 @@
+<mat-card>
+    <mat-card-title>Master Data</mat-card-title>
+    <mat-card-content>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <br>
+        <form [formGroup]="searchForm">
+            <div class="example-header" fxLayout="row" fxLayoutAlign="space-between center">
+                <mat-form-field fxFlex>
+                    <mat-label>Master Name</mat-label>
+                    <mat-select formControlName="ParentId" fxFlex (selectionChange)="GetMasterData($event)">
+                        <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
+                            {{master.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button matTooltip="new item" class="mat-raised-button" (click)="AddData()" fxFlex="10">
+                    <mat-icon>add</mat-icon>
+                </button>
+                <button matTooltip="new master" class="mat-raised-button" (click)="NewTopMaster()" fxFlex="10">
+                    <mat-icon>new_label</mat-icon>
+                </button>
+                <div fxFlex>&nbsp;</div>
+            </div>
+        </form>
+        <div>
+            <mat-divider></mat-divider>
+            <div>
+                <div class="Header" fxLayout="row" fxLayoutAlign="space-around center">
+                    <td>Id</td>
+                    <td>Name</td>
+                    <td>Description</td>
+                    <td>Active</td>
+                </div>
+                <mat-divider></mat-divider>
+                <div [ngClass]="{'highlight':d.MasterDataId==0}" fxLayout="row" fxLayoutAlign="space-around center"
+                    *ngFor="let d of MasterData;">
+                    <div><span>{{d.MasterDataId}}</span></div>
+                    <div>
+                        <app-edit-input [data]="d.MasterDataName" (tried)="getoldvalue($event)"
+                            (focusOut)='updateName($event)'></app-edit-input>
+                    </div>
+                    <div>
+                        <app-edit-input [data]="d.Description" (tried)="getoldvalue($event)"
+                            (focusOut)='updateDescription($event)'></app-edit-input>
+                    </div>
+                    <div fxLayout="row" fxLayoutAlign="center center">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(d,$event)"
+                            [checked]="d.Active">
+                        </mat-checkbox>
+
+                        <!-- <button [id]="d.MasterDataId" mat-icon-button color="" [name]="d.MasterDataName"
+                            matTooltip="delete" #button (click)="updateActive(button)">
+                            <mat-icon aria-label="delete">delete</mat-icon>
+                        </button>&nbsp; -->
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </mat-card-content>
+</mat-card>

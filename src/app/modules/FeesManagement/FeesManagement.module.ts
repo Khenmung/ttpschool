@@ -16,13 +16,14 @@ import { FeeSidebarComponent } from './shared/sidebar/sidebar.component';
 import { FeeFooterComponent } from './shared/footer/footer.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { AddMasterDataComponent } from './MasterData/add-master-data/add-master-data.component';
 
 
 
 @NgModule({
   declarations: [AddstudentComponent, FeesmanagementhomeComponent, 
     AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent, 
-    DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent, FeeSidebarComponent, FeeFooterComponent],
+    DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent, FeeSidebarComponent, FeeFooterComponent, AddMasterDataComponent],
   imports: [
     CommonModule,
     MaterialModule,

@@ -19,7 +19,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
   currentbatch: string;
   currentbatchId: number;
   filteredOptions: Observable<string[]>;
-  options = {
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionAutoClose = {
     autoClose: true,
     keepAfterRouteChange: true
   };
@@ -62,7 +66,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.StudentId = +param.get("id");
     })
     if (this.StudentId == 0) {
-      this.alert.error("Id is missing", this.options);
+      this.alert.error("Id is missing", this.optionsNoAutoClose);
       return;
     }
     this.GetMasterData();
@@ -109,7 +113,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           //    this.duplicate = true;
-          this.alert.error("Record already exists!", this.options);
+          this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
           this.StudentFeePaymentData.StudentId =this.StudentId;
@@ -138,7 +142,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe(
         (data: any) => {
 
-          this.alert.success("Data saved successfully", this.options);
+          this.alert.success("Data saved successfully", this.optionAutoClose);
           //this.router.navigate(['/pages']);
         });
 
@@ -148,7 +152,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.dataservice.postPatch('StudentFeePayments', this.StudentFeePaymentData, this.StudentFeePaymentData.StudentFeeId, 'patch')
       .subscribe(
         (data: any) => {
-          this.alert.success("Data updated successfully", this.options);
+          this.alert.success("Data updated successfully", this.optionAutoClose);
           //this.router.navigate(['/pages']);
         });
   }
@@ -248,7 +252,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         }
         else {
           this.ELEMENT_DATA = [];
-          this.alert.warn("Fees not defined for this class", this.options);
+          this.alert.warn("Fees not defined for this class", this.optionsNoAutoClose);
         }
         this.dataSource = new MatTableDataSource<IStudentFeePayment>(this.ELEMENT_DATA);
 
@@ -276,7 +280,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.GetStudentFeePayment();
         }
         else {
-          this.alert.error("No class defined for this student!", this.options);
+          this.alert.error("No class defined for this student!", this.optionsNoAutoClose);
 
         }
       })
@@ -313,7 +317,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.GetStudentClass(this.StudentId);
         }
         else
-          this.alert.error("Current batch not defined!", this.options);
+          this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
 
       });
 

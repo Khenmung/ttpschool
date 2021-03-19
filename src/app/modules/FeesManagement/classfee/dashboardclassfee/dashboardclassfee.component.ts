@@ -49,7 +49,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
 
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
-  displayedColumns = ['SlNo', 'ClassName', 'FeeNameId', 'Amount', 'Batch', 'Active', 'LocationId', 'Action'];
+  displayedColumns = ['SlNo', 'FeeName', 'Amount', 'Batch', 'Active', 'LocationId', 'Action'];
   updateActive() {
 
   }
@@ -81,8 +81,8 @@ export class DashboardclassfeeComponent implements OnInit {
           this.alert.error("Record already exists!", this.options);
         }
         else {
-          this.classFeeData.Active = row.Active;
-          this.classFeeData.Amount = row.Amount;
+          this.classFeeData.Active = row.Active==true?1:0;
+          this.classFeeData.Amount = row.Amount.toFixed(2);
           this.classFeeData.Batch = row.Batch;
           this.classFeeData.ClassFeeId = row.ClassFeeId;
           this.classFeeData.ClassId = row.ClassId;
@@ -143,12 +143,12 @@ export class DashboardclassfeeComponent implements OnInit {
         if (data.value.length > 0) {
 
           if (this.searchForm.get("FeeNameId").value == 0) {
-            this.ELEMENT_DATA = this.FeeNames.map((item, indx) => {
-              let existing = data.value.filter(fromdb => fromdb.FeeNameId == item.MasterDataId)
+            this.ELEMENT_DATA = this.FeeNames.map((mainFeeName, indx) => {
+              let existing = data.value.filter(fromdb => fromdb.FeeNameId == mainFeeName.MasterDataId)
               if (existing.length > 0) {
                 existing[0].SlNo = indx + 1;
                 existing[0].Active = existing[0].Active == 1 ? true : false;
-                existing[0].ClassName = this.Classes.filter(item => item.MasterDataId == this.searchForm.get("ClassId").value)[0].MasterDataName;
+                existing[0].FeeName = this.FeeNames.filter(item => item.MasterDataId == existing[0].FeeNameId)[0].MasterDataName;
                 existing[0].Action = false;
                 return existing[0];
               }
@@ -156,9 +156,9 @@ export class DashboardclassfeeComponent implements OnInit {
                 return {
                   "SlNo": indx + 1,
                   "ClassFeeId": 0,
-                  "FeeNameId": item.MasterDataId,
+                  "FeeNameId": mainFeeName.MasterDataId,
                   "ClassId": this.searchForm.get("ClassId").value,
-                  "ClassName": this.Classes.filter(item => item.MasterDataId == this.searchForm.get("ClassId").value)[0].MasterDataName,
+                  "FeeName": mainFeeName.MasterDataName,
                   "Amount": 0,
                   "Batch": this.Batches[0].MasterDataId,
                   "Active": false,
@@ -174,7 +174,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "ClassFeeId": item.ClassFeeId,
                 "FeeNameId": item.FeeNameId,
                 "ClassId": item.ClassId,
-                "ClassName": this.Classes.filter(cls => cls.MasterDataId == item.ClassId)[0].MasterDataName,
+                "FeeName": item.MasterDataName, //this.FeeNames.filter(cls => cls.MasterDataId == item.FeeNameId)[0].MasterDataName,
                 "Amount": 0,
                 "Batch": item.Batch,
                 "Active": item.Active == 1 ? true : false,
@@ -192,7 +192,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "ClassFeeId": 0,
                 "FeeNameId": item.MasterDataId,
                 "ClassId": this.searchForm.get("ClassId").value,
-                "ClassName": this.Classes.filter(item => item.MasterDataId == this.searchForm.get("ClassId").value)[0].MasterDataName,
+                "FeeName": this.FeeNames.filter(item => item.MasterDataId == this.searchForm.get("FeeNameId").value)[0].MasterDataName,
                 "Amount": 0,
                 "Batch": this.Batches[0].MasterDataId,
                 "Active": false,

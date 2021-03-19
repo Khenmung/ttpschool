@@ -29,6 +29,7 @@ import { AddclassfeeComponent } from './modules/FeesManagement/classfee/addclass
 import { DashboardclassfeeComponent } from './modules/FeesManagement/classfee/dashboardclassfee/dashboardclassfee.component';
 import { DashboardstudentComponent } from './modules/FeesManagement/student/dashboardstudent/dashboardstudent.component';
 import { AddstudentfeepaymentComponent } from './modules/FeesManagement/studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
+import { AddMasterDataComponent } from './modules/FeesManagement/MasterData/add-master-data/add-master-data.component';
 
 const routes: Routes = [{
   path: '', component: HomeComponent,
@@ -80,6 +81,7 @@ const routes: Routes = [{
     { path: 'addstudentfeepayment/:id', component: AddstudentfeepaymentComponent },
     { path: 'dashboardclassfee', component: DashboardclassfeeComponent },
     { path: 'dashboardstudent', component: DashboardstudentComponent },
+    { path: 'masterdata', component: AddMasterDataComponent },    
     { path: '', redirectTo: 'auth', pathMatch: 'full' },
     { path: '**', component: NotfoundComponent }
   ]

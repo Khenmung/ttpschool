@@ -1,6 +1,6 @@
 <mat-card>
-    <mat-card-title></mat-card-title>
-    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-title>Class Fees</mat-card-title>
+    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <form [formGroup]="searchForm">
         <mat-form-field appearance="outline" fxFlex>
@@ -45,31 +45,34 @@
                 <ng-container matColumnDef="SlNo">
                     <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
-
                 </ng-container>
 
-                <ng-container matColumnDef="ClassName">
+                <!-- <ng-container matColumnDef="ClassName">
                     <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                        {{element.ClassName}}
-                        <!-- <mat-select [(value)]="element.ClassId" placeholder="class" [style.width.px]="100">
-                            <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">{{item.MasterDataName}}
-                            </mat-option>
+                    </mat-cell>
+                </ng-container> -->
+                <ng-container matColumnDef="FeeNameId" hidden>
+                    <mat-header-cell *matHeaderCellDef> FeeID </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.FeeNameId}}
+                        <!-- <mat-select (selectionChange)="enableAction(element)" [(value)]="element.FeeNameId" placeholder="Fee">
+                            <mat-option *ngFor="let item of FeeNames" [value]="item.MasterDataId">
+                                {{item.MasterDataName}} </mat-option>
                         </mat-select> -->
                     </mat-cell>
                 </ng-container>
-
-                <!-- Name Column -->
-                <ng-container matColumnDef="FeeNameId">
+                <ng-container matColumnDef="FeeName">
                     <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-select (selectionChange)="enableAction(element)" [(value)]="element.FeeNameId" placeholder="Fee">
+                        {{element.FeeName}}
+                        <!-- <mat-select (selectionChange)="enableAction(element)" [(value)]="element.FeeNameId" placeholder="Fee">
                             <mat-option *ngFor="let item of FeeNames" [value]="item.MasterDataId">
                                 {{item.MasterDataName}} </mat-option>
-                        </mat-select>
+                        </mat-select> -->
                     </mat-cell>
                 </ng-container>
-
                 <ng-container matColumnDef="Amount">
                     <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -90,7 +93,7 @@
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell style="justify-content: center;" *matCellDef="let element">
-                        <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()" (change)="enableAction(element)">
+                        <mat-checkbox [(checked)]="element.Active" (click)="$event.stopPropagation()" (change)="enableAction(element)">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>
