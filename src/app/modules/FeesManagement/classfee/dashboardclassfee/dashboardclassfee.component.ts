@@ -1,5 +1,6 @@
+import { CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/cdk/overlay/overlay-directives';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -17,18 +18,17 @@ export class DashboardclassfeeComponent implements OnInit {
     keepAfterRouteChange: true
   };
 
+  CurrentBatch = '';
+  CurrentBatchId = 0;
   FeeNames = [];
   Classes = [];
   Batches = [];
   Locations = [];
+  ClassStatuses=[];
   ELEMENT_DATA: Element[];
   dataSource: MatTableDataSource<Element>;
   allMasterData = [];
-  searchForm = new FormGroup({
-    ClassId: new FormControl(0),
-    FeeNameId: new FormControl(0),
-    Batch: new FormControl(0),
-  });
+  searchForm: any;
   classFeeData = {
     ClassFeeId: 0,
     FeeNameId: 0,
@@ -36,23 +36,27 @@ export class DashboardclassfeeComponent implements OnInit {
     Amount: 0,
     Batch: 0,
     Active: 0,
+    PaymentOrder: 0,
     LocationId: 0
   };
   constructor(private dataservice: NaomitsuService,
-    private alert: AlertService) { }
+    private alert: AlertService,
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this.searchForm = this.fb.group({
+      ClassId: [0],
+      FeeNameId: [0],
+      Batch: [0],
+    });
     this.GetMasterData();
     this.GetClassFee();
-
+       
 
   }
 
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
-  displayedColumns = ['SlNo', 'FeeName', 'Amount', 'Batch', 'Active', 'LocationId', 'Action'];
-  updateActive() {
-
-  }
+  displayedColumns = ['SlNo', 'FeeName', 'Amount', 'PaymentOrder', 'Active', 'Action'];
   updateAlbum() {
 
   }
@@ -60,7 +64,11 @@ export class DashboardclassfeeComponent implements OnInit {
 
   }
   UpdateOrSave(row) {
-    //this.duplicate = false;
+    debugger;
+    if (row.Amount == 0) {
+      this.alert.error("Amount should be greater than zero.", this.options);
+      return;
+    }
     let checkFilterString = "Active eq 1 " +
       " and FeeNameId eq " + row.FeeNameId +
       " and ClassId eq " + row.ClassId +
@@ -77,17 +85,19 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          //    this.duplicate = true;
           this.alert.error("Record already exists!", this.options);
         }
         else {
-          this.classFeeData.Active = row.Active==true?1:0;
-          this.classFeeData.Amount = row.Amount.toFixed(2);
+          this.classFeeData.Active = row.Active == true ? 1 : 0;
+          this.classFeeData.Amount = row.Amount;
           this.classFeeData.Batch = row.Batch;
           this.classFeeData.ClassFeeId = row.ClassFeeId;
           this.classFeeData.ClassId = row.ClassId;
           this.classFeeData.FeeNameId = row.FeeNameId;
-          this.classFeeData.LocationId = row.LocationId;
+          this.classFeeData.PaymentOrder = +row.PaymentOrder;
+          this.classFeeData.LocationId = +row.LocationId;
+          //console.log('classfeedata',this.classFeeData);
+
           if (this.classFeeData.ClassFeeId == 0)
             this.insert();
           else
@@ -119,6 +129,41 @@ export class DashboardclassfeeComponent implements OnInit {
         });
 
   }
+  GetDistinctClassFee() {
+    let list: List = new List();
+    list.fields = ["ClassId"];
+    list.PageName = "ClassFees";
+    //list.groupby = "ClassId";
+    list.filter = ["Active eq 1 and Batch eq " + this.CurrentBatchId];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        if (data.value.length > 0) {
+          const unique = [...new Set(data.value.map(item => {
+            return  item.ClassId
+          }))];
+          this.ClassStatuses=this.Classes.map(cls => {
+            let isdefined = unique.filter(definedcls => {
+              return definedcls == cls.MasterDataId;
+            });
+            if (isdefined.length == 0)
+              return {
+                "class": cls.MasterDataName,
+                "Done": false
+              }
+            else
+              return {
+                "class": cls.MasterDataName,
+                "Done": true
+              }
+          })
+          console.log('classes',this.ClassStatuses);
+
+        }
+      })
+  }
   GetClassFee() {
     if (this.searchForm.get("ClassId").value == 0)
       return;
@@ -131,7 +176,7 @@ export class DashboardclassfeeComponent implements OnInit {
       filterstr += " and Batch eq " + this.searchForm.get("Batch").value;
 
     let list: List = new List();
-    list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId"];
+    list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId", "PaymentOrder"];
     list.PageName = "ClassFees";
     list.filter = [filterstr];
     //list.orderBy = "ParentId";
@@ -150,6 +195,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 existing[0].Active = existing[0].Active == 1 ? true : false;
                 existing[0].FeeName = this.FeeNames.filter(item => item.MasterDataId == existing[0].FeeNameId)[0].MasterDataName;
                 existing[0].Action = false;
+                existing[0].PaymentOrder = existing[0].PaymentOrder == null ? 0 : existing[0].PaymentOrder;
                 return existing[0];
               }
               else
@@ -162,6 +208,7 @@ export class DashboardclassfeeComponent implements OnInit {
                   "Amount": 0,
                   "Batch": this.Batches[0].MasterDataId,
                   "Active": false,
+                  "PaymentOrder": 0,
                   "LocationId": this.Locations[0].MasterDataId,
                   "Action": false
                 }
@@ -174,10 +221,11 @@ export class DashboardclassfeeComponent implements OnInit {
                 "ClassFeeId": item.ClassFeeId,
                 "FeeNameId": item.FeeNameId,
                 "ClassId": item.ClassId,
-                "FeeName": item.MasterDataName, //this.FeeNames.filter(cls => cls.MasterDataId == item.FeeNameId)[0].MasterDataName,
-                "Amount": 0,
+                "FeeName": this.FeeNames.filter(cls => cls.MasterDataId == item.FeeNameId)[0].MasterDataName,
+                "Amount": item.Amount,
                 "Batch": item.Batch,
                 "Active": item.Active == 1 ? true : false,
+                "PaymentOrder": 0,
                 "LocationId": item.LocationId,
                 "Action": false
               }
@@ -186,34 +234,51 @@ export class DashboardclassfeeComponent implements OnInit {
         }
         else {
           if (this.searchForm.get("FeeNameId").value == 0) {
-            this.ELEMENT_DATA = this.FeeNames.map((item, indx) => {
+            this.ELEMENT_DATA = this.FeeNames.map((fee, indx) => {
               return {
                 "SlNo": indx + 1,
                 "ClassFeeId": 0,
-                "FeeNameId": item.MasterDataId,
+                "FeeNameId": fee.MasterDataId,
                 "ClassId": this.searchForm.get("ClassId").value,
-                "FeeName": this.FeeNames.filter(item => item.MasterDataId == this.searchForm.get("FeeNameId").value)[0].MasterDataName,
+                "FeeName": fee.MasterDataName,
                 "Amount": 0,
                 "Batch": this.Batches[0].MasterDataId,
                 "Active": false,
+                "PaymentOrder": 0,
                 "LocationId": this.Locations[0].MasterDataId,
                 "Action": false
               }
             });
           }
-          else
-          {
-            this.ELEMENT_DATA=[];
-            this.alert.info("No record found!",this.options);
+          else {
+            this.ELEMENT_DATA = [];
+            this.alert.info("No record found!", this.options);
           }
         }
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
-
+        console.log("element data",this.ELEMENT_DATA)
       });
   }
-  enableAction(row) {
+  updateActive(row, value) {
     row.Action = true;
-    console.log('from change', row);
+    row.Active = value;
+  }
+  updateAmount(row, value) {
+    row.Action = true;
+    row.Amount = value;
+  }
+  updatePaymentOrder(row, value) {
+    row.Action = true;
+    row.PaymentOrder = value;
+  }
+  enableAction(row, value) {
+    row.Action = true;
+    row.Active = !row.Active;
+    //let amount = +value;
+    if (value == NaN)
+      value = 0;
+    row.Amount = parseFloat(value);
+    //console.log('from change', row);
   }
   GetMasterData() {
     let list: List = new List();
@@ -230,7 +295,18 @@ export class DashboardclassfeeComponent implements OnInit {
         this.Classes = this.getDropDownData(globalconstants.CLASSES);
         this.Batches = this.getDropDownData(globalconstants.BATCH);
         this.Locations = this.getDropDownData(globalconstants.LOCATION);
-        //this.classfeeForm.patchValue({ "LocationId": this.Locations[0].MasterDataId });
+        this.CurrentBatch = globalconstants.getCurrentBatch();
+        let currentSession = this.Batches.filter(bat => {
+          return bat.MasterDataName == this.CurrentBatch;
+        });
+        if (currentSession.length == 0) {
+          this.alert.error("Current session not defined in master!", this.options);
+        }
+        else {
+          this.CurrentBatchId = currentSession[0].MasterDataId;
+          this.searchForm.patchValue({ Batch: this.CurrentBatchId });
+          this.GetDistinctClassFee();
+        }
       });
 
   }
@@ -247,8 +323,9 @@ export interface Element {
   ClassFeeId: number;
   FeeNameId: number;
   ClassId: number;
-  Amount: number;
+  Amount: any;
   Batch: number;
   Active: boolean;
+  PaymentOrder: number;
   LocationId: number;
 }

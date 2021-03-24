@@ -13,7 +13,7 @@ import { List } from 'src/app/shared/interface';
   styleUrls: ['./add-master-data.component.scss']
 })
 export class AddMasterDataComponent implements OnInit {
-  topMaster=0;
+  topMaster = 0;
   MasterData = [];
   FeeNames = [];
   Classes = [];
@@ -58,17 +58,17 @@ export class AddMasterDataComponent implements OnInit {
       });
 
   }
-  NewTopMaster(){
-    this.topMaster=1;
-    this.searchForm.patchValue({ParentId:0});
+  NewTopMaster() {
+    this.topMaster = 1;
+    this.searchForm.patchValue({ ParentId: 0 });
+    console.log('searchvalue', this.searchForm.get("ParentId").value)
     this.AddData();
     this.GetTopMasters();
-    this.topMaster=0;
+    this.topMaster = 0;
   }
   AddData() {
-    if(this.searchForm.get("ParentId").value==0 && this.topMaster==0)
-    {
-      this.alert.error("Please select master name to add items to",this.optionAutoClose);
+    if (this.searchForm.get("ParentId").value == 0 && this.topMaster == 0) {
+      this.alert.error("Please select master name to add items to", this.optionAutoClose);
       return;
     }
 
@@ -79,9 +79,15 @@ export class AddMasterDataComponent implements OnInit {
       "ParentId": this.searchForm.get("ParentId").value,
       "Active": 1
     }
-    let alreadyadded = this.MasterData.filter(item => item.MasterDataName == "");
-    if (alreadyadded.length == 0)
+    if (this.searchForm.get("ParentId").value == 0) {
+      this.MasterData = [];
       this.MasterData.push(newrow);
+    }
+    else {
+      let alreadyadded = this.MasterData.filter(item => item.MasterDataName == "edit me..");
+      if (alreadyadded.length == 0)
+        this.MasterData.push(newrow);
+    }
   }
   GetMasterData() {
     debugger;
@@ -92,8 +98,18 @@ export class AddMasterDataComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
-        this.MasterData = [...data.value];
+        //console.log("original",data.value);
+        //this.MasterData = [...data.value];
+        this.MasterData = data.value.map(item => {
+          return {
+            "MasterDataId": item.MasterDataId,
+            "MasterDataName": item.MasterDataName,
+            "Description": item.Description,
+            "ParentId": item.ParentId,
+            "Active": item.Active == 1 ? true : false
+          }
+        })
+        //console.log("after",this.MasterData);
         // this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
         // this.Classes = this.getDropDownData(globalconstants.CLASSES);
         // this.Batches = this.getDropDownData(globalconstants.BATCH);
@@ -104,24 +120,25 @@ export class AddMasterDataComponent implements OnInit {
   }
   updateActive(value) {
     //console.log('clicked',value);
-
+    debugger;
     this.dialog.openConfirmDialog("Are you sure you want to deactivate " + value.MasterDataName + "?")
       .afterClosed().subscribe(res => {
 
-        if(value.MasterDataId==0)
-        {
-          let indx =this.MasterData.map(item=>
-            {
-              return item.MasterDataId
-            }).indexOf(0);
+        if (value.MasterDataId == 0) {
+          let indx = this.MasterData.map(item => {
+            return item.MasterDataId
+          }).indexOf(0);
 
-            this.MasterData.splice(indx,1);
+          this.MasterData.splice(indx, 1);
 
         }
         if (res) {
           let mastertoUpdate = {
-            Active: value.checked == true ? 1 : 0,
-           // UploadDate: new Date()
+            ParentId: this.searchForm.get("ParentId").value,
+            Description: value.Description,
+            MasterDataName: value.MasterDataName,
+            Active: value.Active == true ? 1 : 0,
+            // UploadDate: new Date()
           }
 
           this.dataservice.postPatch('MasterDatas', mastertoUpdate, value.MasterDataId, 'patch')
@@ -134,53 +151,68 @@ export class AddMasterDataComponent implements OnInit {
 
   selected(event) {
     this.selectedData = event.target.value;
-    }
-  getoldvalue(value: string) {
-    this.oldvalue = value;
+  }
+  getoldvalue(value: string, row) {
+    this.oldvalue = row.MasterDataName;
     //  console.log('old value', this.oldvalue);
   }
-  updateName(value) {
-    //console.log(value);
-    //value.stopPropagation();
+  updateName(value, row) {
+    console.log('d', row)
     debugger;
-    if (this.oldvalue == value)
+    if (row.MasterDataName == value)
       return;
     if (value.length == 0 || value.length > 50) {
-      this.alert.error("Character should not be empty or less than 50!",this.optionAutoClose);
+      this.alert.error("Character should not be empty or less than 50!", this.optionAutoClose);
       return;
     }
-    
-    let duplicate = this.MasterData.filter(item=>item.MasterDataName.toLowerCase() ==value.toLowerCase())
-    if(duplicate.length>0)
-    {
-        this.alert.error("Data already exists in this master",this.optionNoAutoClose);
+    if (this.searchForm.get("ParentId").value == 0) {
+      let duplicate = this.TopMasters.filter(item => item.MasterDataName.toLowerCase() == value.toLowerCase())
+      if (duplicate.length > 0) {
+        this.alert.error("Data already exists in this master", this.optionNoAutoClose);
         return;
+      }
     }
+    else {
+      let duplicate = this.MasterData.filter(item => item.MasterDataName.toLowerCase() == value.toLowerCase())
+      if (duplicate.length > 0) {
+        this.alert.error("Data already exists in this master", this.optionNoAutoClose);
+        return;
+      }
+    }
+
     let mastertoUpdate = {
       MasterDataName: value,
-      ParentId :this.searchForm.get("ParentId").value,
+      ParentId: this.searchForm.get("ParentId").value,
       Active: 1
     }
 
     let newlyAddedRow = this.MasterData.filter(item => {
-      return item.MasterDataName == this.oldvalue
+      return item.MasterDataName == row.MasterDataName
     });
-    
-    let selectedMasterDataId = newlyAddedRow[0].MasterDataId;
-    if (selectedMasterDataId == 0) {
-      
+
+    let selectedMasterDataId = 0;
+    if (newlyAddedRow[0].MasterDataId == 0) {
       this.dataservice.postPatch('MasterDatas', mastertoUpdate, 0, 'post')
         .subscribe(res => {
           if (res != undefined) {
-            newlyAddedRow[0].MasterDataId = res["MasterDataId"];
+            //newlyAddedRow[0].MasterDataId =res["MasterDataId"];
+            this.GetTopMasters();
+            if (this.searchForm.get("ParentId").value == 0)
+              this.searchForm.patchValue({ ParentId: res["MasterDataId"] });
+            this.GetMasterData();
+
             this.alert.success("Master data added!", this.optionAutoClose);
           }
         });
     }
     else {
+      selectedMasterDataId = newlyAddedRow[0].MasterDataId;
       this.dataservice.postPatch('MasterDatas', mastertoUpdate, selectedMasterDataId, 'patch')
         .subscribe(res => {
+          this.GetTopMasters();
+          this.GetMasterData();
           this.alert.success("Master data updated!", this.optionAutoClose);
+
         });
     }
   }

@@ -17,6 +17,8 @@ import { FeeFooterComponent } from './shared/footer/footer.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AddMasterDataComponent } from './MasterData/add-master-data/add-master-data.component';
+import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
+import { MultiLevelMenuComponent } from '../dynamicMultiLevelMenu/MultiLevelMenu.component';
 
 
 
@@ -31,11 +33,12 @@ import { AddMasterDataComponent } from './MasterData/add-master-data/add-master-
     RouterModule,
     ReactiveFormsModule,
     FormsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MultiLevelMenuModule
   ],
   providers:[
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
-  ]
-  //exports:[AddstudentComponent]
+  ],
+  exports:[MultiLevelMenuComponent]
 })
 export class StudentsModule { }

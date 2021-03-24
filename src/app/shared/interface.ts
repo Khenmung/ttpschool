@@ -40,6 +40,7 @@ export class List {
     limitTo: number;
     filter: string[];
     orderBy: string;
+    groupby:string;
 
 }
 export interface PagesForMenu {

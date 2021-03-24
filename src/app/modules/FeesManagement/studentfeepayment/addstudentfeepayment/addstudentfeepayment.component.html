@@ -1,7 +1,14 @@
 <mat-card>
     <mat-card-title>Student Fee Payment Details</mat-card-title>
-    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+    <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
+        <br>
+        <div>
+            <b>Name</b> : {{studentInfoTodisplay.StudentName}}<br>
+            <b>Class</b> : {{studentInfoTodisplay.StudentClassName}} - {{studentInfoTodisplay.SectionName}} - ({{studentInfoTodisplay.Currentbatch}})<br>
+            <b>Fee Type</b>: {{studentInfoTodisplay.StudentFeeType}}
+        </div>
+        <br>
         <div class="example-container mat-elevation-z8">
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="SlNo">
@@ -12,30 +19,35 @@
                 <ng-container matColumnDef="ClassFeeName">
                     <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                       {{element.ClassFeeName}}                       
+                        {{element.ClassFeeName}}
                     </mat-cell>
                 </ng-container>
-
                 <ng-container matColumnDef="FeeAmount">
                     <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                       {{element.FeeAmount}}
+                        {{element.FeeAmount}}
                     </mat-cell>
-                </ng-container>
+                </ng-container>             
                 <ng-container matColumnDef="PaidAmt">
                     <mat-header-cell *matHeaderCellDef> Paid Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <app-edit-input [data]="element.PaidAmt|number:'1.2-2'" (tried)="getoldvalue($event)"
-                        (focusOut)='enableAction(element,$event)'></app-edit-input>
-                        </mat-cell>
-                </ng-container>               
+                        {{element.PaidAmt|number:'1.2-2'}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Pay">
+                    <mat-header-cell *matHeaderCellDef> Pay Amount </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <app-edit-input [data]="element.Pay|number:'1.2-2'" (tried)="getoldvalue($event)"
+                            (focusOut)='enableAction(element,$event)'></app-edit-input>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="BalanceAmt">
                     <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                       {{element.BalanceAmt}}
+                        {{element.BalanceAmt}}
                     </mat-cell>
                 </ng-container>
-               
+
                 <ng-container matColumnDef="PaymentDate">
                     <mat-header-cell *matHeaderCellDef> Payment Date </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -50,8 +62,8 @@
                     <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <app-edit-input [data]="element.Remarks" (tried)="getoldvalue($event)"
-                        (focusOut)='enableAction(element)'></app-edit-input>
-                        </mat-cell>
+                            (focusOut)='enableAction(element)'></app-edit-input>
+                    </mat-cell>
                 </ng-container>
                 <!-- <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
@@ -61,9 +73,11 @@
                     </mat-cell>
                 </ng-container> -->
                 <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>  </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [(disabled)]="!element.Action" mat-fab (click)="UpdateOrSave(element)"><mat-icon>save</mat-icon></button>
+                        <button [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -72,6 +86,8 @@
         </div>
     </mat-card-content>
     <mat-card-actions>
-        <button (click)="back()" class="mat-raised-button"><mat-icon>arrow_back</mat-icon></button>
+        <button (click)="back()" class="mat-raised-button">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
     </mat-card-actions>
 </mat-card>

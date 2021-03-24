@@ -1,7 +1,7 @@
-import { R3TargetBinder } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MultilevelNodes, Configuration, ExpandedRTL, ExpandedLTR, MultilevelMenuService, ExpandCollapseStatusEnum, SlideInOut } from 'ng-material-multilevel-menu';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List, PagesForMenu } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../shared/databaseService';
@@ -17,6 +17,10 @@ import { NaomitsuService } from '../../shared/databaseService';
 })
 
 export class MultiLevelMenuComponent implements OnInit {
+  module={
+    admin:"admin",
+    general:""
+  }
   loading=false;
   selectedIndex: number;
   loggedIn: boolean;
@@ -73,6 +77,7 @@ export class MultiLevelMenuComponent implements OnInit {
       rtlLayout: false,
       customTemplate: true
     };
+    //console.log('url',this.navigate.url);
   }
 ngAfterViewInit(): void {
   //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
@@ -96,7 +101,7 @@ ngAfterViewInit(): void {
     //this.list.lookupFields = ["PageGroup", "PageHistories"];
     list.PageName = "Pages";
     list.orderBy = "DisplayOrder";
-    list.filter = ["Active eq 1"]
+    list.filter = ["Active eq 1 and Module eq 2"];
     //const columns = ["PageId", "Page Title", "PageGroupName", "Active", "Action"];
     //if(!this.loggedIn)
 
@@ -234,4 +239,26 @@ ngAfterViewInit(): void {
     // ];
     // console.log("dd",this.appitems);
   }
+  // GetMasterData() {
+  //   let list: List = new List();
+  //   list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+  //   list.PageName = "MasterDatas";
+  //   list.filter = ["Active eq 1"];
+    
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.allMasterData = [...data.value];
+  //       this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
+    
+  //     });
+
+  // }
+  // getDropDownData(dropdowntype) {
+  //   let Id = this.allMasterData.filter((item, indx) => {
+  //     return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+  //   })[0].MasterDataId;
+  //   return this.allMasterData.filter((item, index) => {
+  //     return item.ParentId == Id
+  //   });
+  // }
 }

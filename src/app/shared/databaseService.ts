@@ -46,6 +46,9 @@ export class NaomitsuService {
         if (list.hasOwnProperty('filter') && list.filter && list.filter.toString().length > 0) {
             url += "&$filter=" + list.filter;
         }
+        if (list.hasOwnProperty('groupby') && list.groupby && list.groupby.toString().length > 0) {
+          url += "&$groupby=" + list.groupby;
+      }
         if (list.hasOwnProperty('limitTo') && list.limitTo > 0) {
             url += "&$top=" + list.limitTo.toString();
         }
