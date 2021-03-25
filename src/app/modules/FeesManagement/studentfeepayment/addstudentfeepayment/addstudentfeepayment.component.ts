@@ -1,9 +1,11 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { DataSource } from '@angular/cdk/table';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -12,9 +14,19 @@ import { List } from 'src/app/shared/interface';
 @Component({
   selector: 'app-addstudentfeepayment',
   templateUrl: './addstudentfeepayment.component.html',
-  styleUrls: ['./addstudentfeepayment.component.scss']
+  styleUrls: ['./addstudentfeepayment.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
+      state('expanded', style({ height: '*', visibility: 'visible' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class AddstudentfeepaymentComponent implements OnInit {
+  isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
+  expandedElement: any;
+  CurrentRow: any = {};
   FeePayable = true;
   filteredOptions: Observable<string[]>;
   optionsNoAutoClose = {
@@ -27,7 +39,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   };
   studentInfoTodisplay = {
     Currentbatch: '',
-    currentbatchId:0,  
+    currentbatchId: 0,
     StudentFeeType: '',
     StudentName: '',
     StudentClassName: '',
@@ -36,7 +48,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     studentClassId: 0,
     ClassId: 0,
     SectionName: '',
-    Session:'',
+    Session: '',
     PayAmount: 0
   }
   Sections = [];
@@ -74,6 +86,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     private datepipe: DatePipe) { }
 
   ngOnInit(): void {
+    
     this.route.paramMap.subscribe(param => {
       this.studentInfoTodisplay.StudentId = +param.get("id");
     })
@@ -86,13 +99,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
   displayedColumns = [
     'SlNo',
+    'Paid',
     'ClassFeeName',
     'FeeAmount',
     'PaidAmt',
     'BalanceAmt',
     'Pay',
     'PaymentDate',
-    'Remarks',
     'Action'
   ];
 
@@ -106,6 +119,24 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
   }
   UpdateOrSave(row) {
+
+    let re = /^[0-9]*$/
+    //let str = 'John Smith'
+    let valid = re.test(row.Pay);
+    if (!valid) {
+      this.alert.error("Invalid amount! Please enter numeric value", this.optionsNoAutoClose);
+      return;
+    }
+    let bl = row.FeeAmount - (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount));
+    //console.log(bl);
+    if(bl<0)
+    {
+      this.alert.error("Invalid amount! Please enter pay amount less than or equal to balance amount", this.optionsNoAutoClose);
+      return;
+    }
+
+    this.CurrentRow = row;
+
     //this.duplicate = false;
     let checkFilterString = "Active eq 1 " +
       " and StudentClassId eq " + row.StudentClassId +
@@ -135,9 +166,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.StudentFeePaymentData.ClassFeeId = row.ClassFeeId;
           this.StudentFeePaymentData.StudentClassId = row.StudentClassId;
           this.StudentFeePaymentData.PaidAmt = (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount)).toFixed(2);
-          let bl = this.StudentFeePaymentData.FeeAmount - (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount));
+          
           this.StudentFeePaymentData.BalanceAmt = bl.toString();
-          this.StudentFeePaymentData.Remarks = row.Remarks;
+          //this.StudentFeePaymentData.Remarks = row.Remarks;
           //console.log('data', this.StudentFeePaymentData);
 
           if (this.StudentFeePaymentData.StudentFeeId == 0)
@@ -159,9 +190,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
             PaymentDate: new Date(),
             ParentId: data.StudentFeeId
           }
-          this.dataservice.postPatch('PaymentDetails', data.StudentFeeId, 0, 'post')
+          this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
             .subscribe(
               (data: any) => {
+                this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
+                this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
 
                 this.alert.success("Data saved successfully", this.optionAutoClose);
                 //this.router.navigate(['/pages']);
@@ -179,9 +212,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
             PaymentDate: new Date(),
             ParentId: this.StudentFeePaymentData.StudentFeeId
           }
-          this.dataservice.postPatch('PaymentDetails', data.StudentFeeId, 0, 'post')
+          this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
             .subscribe(
               (data: any) => {
+                this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
+                this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
                 this.alert.success("Data updated successfully", this.optionAutoClose);
                 //this.router.navigate(['/pages']);
               })
@@ -207,11 +242,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
       'BalanceAmt',
       'Batch',
       'PaymentDate',
-      'Remarks',
+      'PaymentDetails/PaymentId',
+      'PaymentDetails/PaymentAmt',
+      'PaymentDetails/PaymentDate',
       'Active'];
 
     list.PageName = "StudentFeePayments";
-    list.lookupFields = ["StudentClass"];
+    list.lookupFields = ["StudentClass","PaymentDetails"];
     list.filter = [filterstr];
     //list.orderBy = "ParentId";
 
@@ -266,9 +303,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 PaymentDate: existing[0].PaymentDate,
                 Batch: existing[0].Batch,
                 PaymentOrder: StudentClassFee.PaymentOrder,
-                Remarks: '&nbsp;',//existing[0].Remarks.length==0?" ":existing[0].Remarks,
-                //Active: existing[0].Active,
-                Action: this.FeePayable
+                Paid: existing[0].BalanceAmt == 0 ? true : false,
+                Action: this.FeePayable,
+                PaymentDetails:existing[0].PaymentDetails
               }
 
             }
@@ -283,13 +320,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 FeeType: this.studentInfoTodisplay.StudentFeeType,
                 PaidAmt: "0.00",
                 Pay: 0,
-                BalanceAmt: StudentClassFee.Amount.toFixed(2),
+                BalanceAmt: parseFloat(StudentClassFee.Amount),
                 PaymentDate: new Date(),
                 Batch: this.studentInfoTodisplay.currentbatchId,
                 PaymentOrder: StudentClassFee.PaymentOrder,
-                Remarks: ' ',
-                //Active: 0,
-                Action: this.FeePayable
+                Paid: false,
+                Action: this.FeePayable,
+                PaymentDetails:[]
               }
           })
 
@@ -309,7 +346,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
             //this.FeePayable =false;
           }
         })
-        this.dataSource = new MatTableDataSource<IStudentFeePayment>(this.ELEMENT_DATA);
+        const rows = [];
+        this.ELEMENT_DATA.forEach(element => rows.push(element, { detailRow: true, element }));
+        console.log(rows);
+        this.dataSource = new MatTableDataSource<IStudentFeePayment>(rows);
 
       })
   }
@@ -342,7 +382,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     let filterstr = "Active eq 1 and Batch eq " + this.studentInfoTodisplay.currentbatchId + " and StudentId eq " + pstudentId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "Section", "StudentId","Batch", "Student/Name", "ClassId", "FeeTypeId"];
+    list.fields = ["StudentClassId", "Section", "StudentId", "Batch", "Student/Name", "ClassId", "FeeTypeId"];
     list.lookupFields = ["Student"];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
@@ -355,8 +395,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.studentInfoTodisplay.ClassId = data.value[0].ClassId
           this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
           this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
-          this.studentInfoTodisplay.Currentbatch = this.Batches.filter(b=>{
-            return b.MasterDataId==this.studentInfoTodisplay.currentbatchId})[0].MasterDataName
+          this.studentInfoTodisplay.Currentbatch = this.Batches.filter(b => {
+            return b.MasterDataId == this.studentInfoTodisplay.currentbatchId
+          })[0].MasterDataName
 
           this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
             return cls.MasterDataId == data.value[0].Section
@@ -379,9 +420,18 @@ export class AddstudentfeepaymentComponent implements OnInit {
   back() {
     this.nav.navigate(['/admin/dashboardstudent']);
   }
+  validate(value) {
+    value = "";
+  }
   enableAction(element, amount) {
     debugger;
-    this.studentInfoTodisplay.PayAmount = amount;
+    if (amount.length == 0)
+      element.Pay = 0.00;
+    else
+      element.Pay = amount;
+
+    this.studentInfoTodisplay.PayAmount = element.Pay;
+
     //element.Action = true;
     //let amt = +amount;
     //element.BalanceAmt = +element.FeeAmount -(+element.PaidAmt + (+amt));
@@ -438,7 +488,18 @@ export interface IStudentFeePayment {
   BalanceAmt: any;
   PaymentDate: Date;
   Batch: number;
-  Remarks: string;
+  Paid: boolean;
   Action: boolean;
+  PaymentDetails:any[];
 }
+// export class StudentPaymentDataSource extends DataSource<any> {
+//   /** Connect function called by the table to retrieve one stream containing the data to render. */
+//   connect(): Observable<IStudentFeePayment[]> {
+//     const rows = [];
+//     data.forEach(element => rows.push(element, { detailRow: true, element }));
+//     console.log(rows);
+//     return of(rows);
+//   }
 
+//   disconnect() { }
+// }

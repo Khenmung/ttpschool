@@ -20,7 +20,8 @@ export class DashboardstudentComponent implements OnInit {
   };
   ELEMENT_DATA: IStudent[];
   dataSource: MatTableDataSource<IStudent>;
-  displayedColumns = ['StudentId', 'Name', 'FatherName', 'MotherName', 'FatherContactNo', 'MotherContactNo', 'Active', 'Action'];
+  displayedColumns = ['StudentId', 'Name','ClassName', 'FatherName', 'MotherName',
+      'Active', 'Action'];
   allMasterData = [];
   Classes = [];
   Batches = [];
@@ -60,6 +61,7 @@ export class DashboardstudentComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
+        this.Classes = this.getDropDownData(globalconstants.CLASSES);
         this.Batches = this.getDropDownData(globalconstants.BATCH);
         let currentBatch = globalconstants.getCurrentBatch();
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
@@ -67,7 +69,7 @@ export class DashboardstudentComponent implements OnInit {
           this.currentbatchId = currentBatchObj[0].MasterDataId
         }
         this.getStudentIDRollNo();
-        //this.Classes = this.getDropDownData(globalconstants.CLASSES);
+        
         // this.Category = this.getDropDownData(globalconstants.CATEGORY);
         // this.Religion = this.getDropDownData(globalconstants.RELIGION);
         // this.States = this.getDropDownData(globalconstants.STATE);
@@ -130,7 +132,8 @@ debugger;
     }
 
     let list: List = new List();
-    list.fields = ["StudentId", "StudentClasses/RollNo", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
+    list.fields = ["StudentId","StudentClasses/ClassId", "StudentClasses/RollNo", "Name", "FatherName"
+                    , "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.lookupFields = ["StudentClasses"];
     list.PageName = "Students";
     list.filter = [checkFilterString];
@@ -138,10 +141,19 @@ debugger;
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-
+          console.log(data.value);
         if (data.value.length > 0) {
           this.ELEMENT_DATA = data.value.map(item => {
+            if(item.StudentClasses.length==0)
+            item.ClassName ='';
+            else
+            {
+              item.ClassName=this.Classes.filter(cls=>{
+                return cls.MasterDataId==item.StudentClasses[0].ClassId}
+              )[0].MasterDataName;
+            }
             item.Action = "";
+            
             return item;
           })
         }

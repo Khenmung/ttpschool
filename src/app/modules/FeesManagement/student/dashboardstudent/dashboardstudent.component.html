@@ -38,6 +38,12 @@
                         {{element.Name}}
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="ClassName">
+                    <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ClassName}}
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="FatherName">
                     <mat-header-cell *matHeaderCellDef>Father's Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -50,7 +56,7 @@
                         {{element.MotherName}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="FatherContactNo">
+                <!-- <ng-container matColumnDef="FatherContactNo">
                     <mat-header-cell *matHeaderCellDef>Father's Contact No. </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.FatherContactNo}}
@@ -61,7 +67,7 @@
                     <mat-cell *matCellDef="let element">
                         {{element.MotherContactNo}}
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell style="justify-content: center;" *matCellDef="let element">
@@ -71,15 +77,15 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <button matTooltip="fee payment" mat-mini-fab (click)="fee(element.StudentId)">
-                            <mat-icon>view_list</mat-icon>
+                    <mat-cell *matCellDef="let element">                        
+                        <button matTooltip="Details" mat-mini-fab (click)="view(element.StudentId)">
+                            <mat-icon>pageview</mat-icon>
                         </button>
                         <button matTooltip="class" mat-mini-fab (click)="class(element.StudentId)">
                             <mat-icon>group</mat-icon>
-                        </button>
-                        <button matTooltip="Details" mat-mini-fab (click)="view(element.StudentId)">
-                            <mat-icon>pageview</mat-icon>
+                        </button>                       
+                        <button matTooltip="fee payment" *ngIf="element.ClassName.length>0" mat-mini-fab (click)="fee(element.StudentId)">
+                            <mat-icon>view_list</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>

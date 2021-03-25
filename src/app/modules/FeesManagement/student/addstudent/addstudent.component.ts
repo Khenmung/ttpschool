@@ -44,7 +44,7 @@ export class AddstudentComponent implements OnInit {
     Pincode: new FormControl('', [Validators.required]),
     State: [0],
     Country: [0],
-    DOB: ['', [Validators.required]],
+    DOB: [new Date(), [Validators.required]],
     Bloodgroup: [0],
     Category: [0, [Validators.required]],
     BankAccountNo: [''],
@@ -137,8 +137,8 @@ export class AddstudentComponent implements OnInit {
     
     // let newDOB =  new Date(dob.getFullYear(), dob.getMonth(), dob.getDate(), 0, 0, 0); 
     // console.log('this.studentForm.get("DOB").value',this.studentForm.get("DOB").value)
-     console.log('newdate',new Date(this.studentForm.get("DOB").value))
-     console.log('wo newdate',this.studentForm.get("DOB").value)
+     //console.log('newdate',new Date(this.studentForm.get("DOB").value))
+     //console.log('wo newdate',this.studentForm.get("DOB").value)
     this.studentData = {
 
       Name: this.studentForm.get("Name").value,
@@ -168,10 +168,10 @@ export class AddstudentComponent implements OnInit {
       TransferFromSchool: this.studentForm.get("TransferFromSchool").value,
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
       Remarks: this.studentForm.get("Remarks").value,
-      Active: this.studentForm.get("Active").value,
-      //LocationId: this.studentForm.get("LocationId").value
+      Active: this.studentForm.get("Active").value==true?1:0,
+      LocationId: this.studentForm.get("LocationId").value
     }
-    //console.log("datato save",this.studentData);
+    console.log("datato save",this.studentData);
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else
@@ -205,6 +205,7 @@ export class AddstudentComponent implements OnInit {
       })
   }
   adjustDateForTimeOffset(dateToAdjust) {
+    //console.log(dateToAdjust)
     var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
     return new Date(dateToAdjust.getTime() - offsetMs);
     }
@@ -229,7 +230,7 @@ export class AddstudentComponent implements OnInit {
             Pincode: data.value[0].Pincode,
             State: data.value[0].State,
             Country: data.value[0].Country,
-            DOB:  data.value[0].DOB,//this.formatdate.transform(data.value[0].DOB,'dd/MM/yyyy'),
+            DOB:  new Date(data.value[0].DOB),//this.formatdate.transform(data.value[0].DOB,'dd/MM/yyyy'),
             Bloodgroup: data.value[0].Bloodgroup,
             Category: data.value[0].Category,
             BankAccountNo: data.value[0].BankAccountNo,

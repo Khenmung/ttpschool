@@ -118,10 +118,11 @@ export class AddMasterDataComponent implements OnInit {
       });
 
   }
-  updateActive(value) {
+  updateActive(row,value) {
     //console.log('clicked',value);
     debugger;
-    this.dialog.openConfirmDialog("Are you sure you want to deactivate " + value.MasterDataName + "?")
+    let message = value.checked==true?"activated":"deactivated";
+    this.dialog.openConfirmDialog("Are you sure you want to "+message + " " + row.MasterDataName + "?")
       .afterClosed().subscribe(res => {
 
         if (value.MasterDataId == 0) {
@@ -135,15 +136,15 @@ export class AddMasterDataComponent implements OnInit {
         if (res) {
           let mastertoUpdate = {
             ParentId: this.searchForm.get("ParentId").value,
-            Description: value.Description,
-            MasterDataName: value.MasterDataName,
-            Active: value.Active == true ? 1 : 0,
+            Description: row.Description,
+            MasterDataName: row.MasterDataName,
+            Active: row.Active == true ? 1 : 0,
             // UploadDate: new Date()
           }
 
-          this.dataservice.postPatch('MasterDatas', mastertoUpdate, value.MasterDataId, 'patch')
+          this.dataservice.postPatch('MasterDatas', mastertoUpdate, row.MasterDataId, 'patch')
             .subscribe(res => {
-              this.alert.success("Master data deactivated successfully.", this.optionAutoClose);
+              this.alert.success("Master data " + message + " successfully.", this.optionAutoClose);
             });
         }
       });

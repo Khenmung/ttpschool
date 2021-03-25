@@ -5,10 +5,9 @@
         <strong>Class Fee Statuses</strong>
         <mat-divider></mat-divider>
         <div fxLayoutGap="10" fxLayout="row wrap" fxLayoutAlign="space-between">
-            <div *ngFor="let item of ClassStatuses">
-                <span><mat-checkbox [disabled]="true" [(checked)]="item.Done">
-                    </mat-checkbox> Class {{item.class}}
-                </span>
+            <div *ngFor="let item of ClassStatuses">{{item.class}}
+                <mat-icon *ngIf="item.Done">done</mat-icon>
+                <mat-icon *ngIf="!item.Done">pending</mat-icon>                
             </div>
         </div>
         <mat-divider></mat-divider>
@@ -83,11 +82,11 @@
                         </mat-select>
                     </mat-cell>
                 </ng-container> -->
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <ng-container matColumnDef="Status">
+                    <mat-header-cell *matHeaderCellDef>Status </mat-header-cell>
                     <mat-cell style="justify-content: center;" *matCellDef="let element">
-                        <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()"
-                            (change)="updateActive(element)">
+                        <mat-checkbox [(checked)]="element.Status" (click)="$event.stopPropagation()"
+                            (change)="updateActive(element,$event)">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>

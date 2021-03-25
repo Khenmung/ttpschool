@@ -4,13 +4,40 @@ mat-form-field{
 }
 button{
     margin-right: 20px;
+    outline: none;
 }
 mat-header-cell{
     display: grid;
     justify-content: center;
 }
+.mat-cell,.mat-header-cell{
+    border-collapse: collapse;
+    border-width: 0px 1px 0px 0px;
+    border-color: lightgray;
+    border-style: solid;
+    padding: 5px;    
+    
+}
+.mat-column-ClassName{
+    flex : none;
+    width: 100px;
+    display:grid;
+    text-align: center;
+    
+}
 .mat-column-StudentId{
-    width:5%;
+    flex : none;
+    width: 60px;
+    display:grid;
+    text-align: center;
+    
+}
+.mat-column-Active{
+    flex : none;
+    width: 60px;
+    display:grid;
+    text-align: center;
+    
 }
 table{
     min-width: 300px;

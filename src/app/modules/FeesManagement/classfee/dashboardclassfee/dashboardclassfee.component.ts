@@ -56,7 +56,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
 
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
-  displayedColumns = ['SlNo', 'FeeName', 'Amount', 'PaymentOrder', 'Active', 'Action'];
+  displayedColumns = ['SlNo', 'FeeName', 'Amount', 'PaymentOrder', 'Status', 'Action'];
   updateAlbum() {
 
   }
@@ -69,7 +69,7 @@ export class DashboardclassfeeComponent implements OnInit {
       this.alert.error("Amount should be greater than zero.", this.options);
       return;
     }
-    let checkFilterString = "Active eq 1 " +
+    let checkFilterString = "1 eq 1 " +
       " and FeeNameId eq " + row.FeeNameId +
       " and ClassId eq " + row.ClassId +
       " and Batch eq " + row.Batch +
@@ -88,7 +88,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.alert.error("Record already exists!", this.options);
         }
         else {
-          this.classFeeData.Active = row.Active == true ? 1 : 0;
+          this.classFeeData.Active = row.Status == true ? 1 : 0;
           this.classFeeData.Amount = row.Amount;
           this.classFeeData.Batch = row.Batch;
           this.classFeeData.ClassFeeId = row.ClassFeeId;
@@ -99,31 +99,31 @@ export class DashboardclassfeeComponent implements OnInit {
           //console.log('classfeedata',this.classFeeData);
 
           if (this.classFeeData.ClassFeeId == 0)
-            this.insert();
+            this.insert(row);
           else
-            this.update();
+            this.update(row);
         }
       });
   }
 
-  insert() {
+  insert(row) {
 
     debugger;
     this.dataservice.postPatch('ClassFees', this.classFeeData, 0, 'post')
       .subscribe(
         (data: any) => {
-
+          row.Action =false;
           this.alert.success("Data saved successfully", this.options);
           //this.router.navigate(['/pages']);
         });
 
   }
-  update() {
+  update(row) {
 
     this.dataservice.postPatch('ClassFees', this.classFeeData, this.classFeeData.ClassFeeId, 'patch')
       .subscribe(
         (data: any) => {
-
+          row.Action =false;
           this.alert.success("Data updated successfully", this.options);
           //this.router.navigate(['/pages']);
         });
@@ -167,7 +167,7 @@ export class DashboardclassfeeComponent implements OnInit {
   GetClassFee() {
     if (this.searchForm.get("ClassId").value == 0)
       return;
-    let filterstr = "Active eq 1 ";
+    let filterstr = "1 eq 1 ";
     if (this.searchForm.get("ClassId").value > 0)
       filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
     if (this.searchForm.get("FeeNameId").value > 0)
@@ -192,9 +192,9 @@ export class DashboardclassfeeComponent implements OnInit {
               let existing = data.value.filter(fromdb => fromdb.FeeNameId == mainFeeName.MasterDataId)
               if (existing.length > 0) {
                 existing[0].SlNo = indx + 1;
-                existing[0].Active = existing[0].Active == 1 ? true : false;
+                existing[0].Status =existing[0].Active == 1 ? true : false;
                 existing[0].FeeName = this.FeeNames.filter(item => item.MasterDataId == existing[0].FeeNameId)[0].MasterDataName;
-                existing[0].Action = false;
+                existing[0].Action = false;                
                 existing[0].PaymentOrder = existing[0].PaymentOrder == null ? 0 : existing[0].PaymentOrder;
                 return existing[0];
               }
@@ -207,7 +207,7 @@ export class DashboardclassfeeComponent implements OnInit {
                   "FeeName": mainFeeName.MasterDataName,
                   "Amount": 0,
                   "Batch": this.Batches[0].MasterDataId,
-                  "Active": false,
+                  "Status": false,
                   "PaymentOrder": 0,
                   "LocationId": this.Locations[0].MasterDataId,
                   "Action": false
@@ -224,7 +224,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "FeeName": this.FeeNames.filter(cls => cls.MasterDataId == item.FeeNameId)[0].MasterDataName,
                 "Amount": item.Amount,
                 "Batch": item.Batch,
-                "Active": item.Active == 1 ? true : false,
+                "Status": item.Active == 1 ? true : false,
                 "PaymentOrder": 0,
                 "LocationId": item.LocationId,
                 "Action": false
@@ -243,7 +243,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "FeeName": fee.MasterDataName,
                 "Amount": 0,
                 "Batch": this.Batches[0].MasterDataId,
-                "Active": false,
+                "Status": false,
                 "PaymentOrder": 0,
                 "LocationId": this.Locations[0].MasterDataId,
                 "Action": false
@@ -261,7 +261,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   updateActive(row, value) {
     row.Action = true;
-    row.Active = value;
+    row.Status = value.checked;
   }
   updateAmount(row, value) {
     row.Action = true;
@@ -325,7 +325,7 @@ export interface Element {
   ClassId: number;
   Amount: any;
   Batch: number;
-  Active: boolean;
+  Status: boolean;
   PaymentOrder: number;
   LocationId: number;
 }
