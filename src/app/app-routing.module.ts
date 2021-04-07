@@ -30,13 +30,15 @@ import { DashboardclassfeeComponent } from './modules/FeesManagement/classfee/da
 import { DashboardstudentComponent } from './modules/FeesManagement/student/dashboardstudent/dashboardstudent.component';
 import { AddstudentfeepaymentComponent } from './modules/FeesManagement/studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { AddMasterDataComponent } from './modules/FeesManagement/MasterData/add-master-data/add-master-data.component';
+import { FeereceiptComponent } from './modules/FeesManagement/feereceipt/feereceipt.component';
+import { ExcelDataManagementComponent } from './modules/FeesManagement/excel-data-management/excel-data-management.component';
 
 const routes: Routes = [{
   path: '', component: HomeComponent,
   children:
     [
       { path: '', redirectTo: 'display/0', pathMatch: 'full' },
-      { path: 'photocarousel',component: CarouselComponent },
+      { path: 'photocarousel', component: CarouselComponent },
       // { path: 'photocarousel', 
       //   loadChildren:()=> import('./modules/photogallery/carousel/carousel.component').then(m=>m.CarouselComponent)
       // },
@@ -61,7 +63,7 @@ const routes: Routes = [{
 },
 {
   path: 'auth', component: authHomeComponent,
-  children: [ 
+  children: [
     { path: 'login', component: LoginComponent },
     { path: 'changepassword', component: ChangePasswordComponent },
     { path: 'createlogin', component: RegisterComponent },
@@ -73,7 +75,7 @@ const routes: Routes = [{
 },
 {
   path: 'admin', component: FeesmanagementhomeComponent,
-  children: [ 
+  children: [
     { path: 'addstudent', component: AddstudentComponent },
     { path: 'addstudent/:id', component: AddstudentComponent },
     { path: 'addstudentcls/:id', component: AddstudentclassComponent },
@@ -81,7 +83,9 @@ const routes: Routes = [{
     { path: 'addstudentfeepayment/:id', component: AddstudentfeepaymentComponent },
     { path: 'dashboardclassfee', component: DashboardclassfeeComponent },
     { path: 'dashboardstudent', component: DashboardstudentComponent },
-    { path: 'masterdata', component: AddMasterDataComponent },    
+    { path: 'masterdata', component: AddMasterDataComponent },
+    { path: 'printreceipt/:id', component: FeereceiptComponent },
+    { path: 'exceldata', component: ExcelDataManagementComponent },
     { path: '', redirectTo: 'auth', pathMatch: 'full' },
     { path: '**', component: NotfoundComponent }
   ]
@@ -96,4 +100,4 @@ const routes: Routes = [{
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule { } 
+export class AppRoutingModule { }

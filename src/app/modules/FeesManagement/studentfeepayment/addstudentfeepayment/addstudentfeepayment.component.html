@@ -1,127 +1,98 @@
-<mat-card>
-    <mat-card-title>Student Fee Payment Details</mat-card-title>
-    <mat-card-subtitle></mat-card-subtitle>
-    <mat-card-content>
-        <br>
-        <div>
-            <b>Name</b> : {{studentInfoTodisplay.StudentName}}<br>
-            <b>Class</b> : {{studentInfoTodisplay.StudentClassName}} - {{studentInfoTodisplay.SectionName}} -
-            ({{studentInfoTodisplay.Currentbatch}})<br>
-            <b>Fee Type</b>: {{studentInfoTodisplay.StudentFeeType}}
-        </div>
-        <br>
-        <div class="example-container mat-elevation-z8">
-            <mat-table #table [dataSource]="dataSource">
+<div style="padding:15px 15px 0px 15px;">
+    <div><strong>Fee Payment Detail</strong></div>
+    <div><strong>Fee Type</strong>: {{studentInfoTodisplay.StudentFeeType}}</div>
+</div>
+<div style="padding: 15px;" fxLayout="row wrap" fxLayoutGap="100px">
+    <div style="width: 100%;">
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="SlNo">
+                <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Paid">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-icon matTooltip="paid" *ngIf="element.Paid">done</mat-icon>
+                    <mat-icon matTooltip="pending" *ngIf="!element.Paid">pending</mat-icon>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ClassFeeName">
+                <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ClassFeeName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FeeAmount">
+                <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FeeAmount}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PaidAmt">
+                <mat-header-cell *matHeaderCellDef> Paid Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.PaidAmt|number:'1.2-2'}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Pay">
+                <mat-header-cell *matHeaderCellDef> Payable Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <app-edit-input *ngIf="element.Action && element.ClassFeeName=='Admission'" [data]="element.Pay|number:'1.2-2'"
+                        (tried)="getoldvalue($event)" (focusOut)='enableAction(element,$event)'
+                        (keyup)="validate($event)">
+                    </app-edit-input>
+                    <span *ngIf="element.Action && element.ClassFeeName!='Admission'">{{element.Pay}}</span>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="BalanceAmt">
+                <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.BalanceAmt}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PaymentDate">
+                <mat-header-cell *matHeaderCellDef> Payment Date </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <span *ngIf="element.Paid">{{element.PaymentDate| date:'dd/MM/yyyy'}}</span>
+                    <mat-form-field *ngIf="!element.Paid && element.Action" appearance="outline" [style.width.px]="125">
+                        <input [(value)]="element.PaymentDate" matInput [matDatepicker]="picker" autocomplete="off"
+                            (focus)="picker.open()" readonly>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
 
-                <ng-container matColumnDef="SlNo">
-                    <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Paid">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                        <mat-icon matTooltip="paid" *ngIf="element.Paid">done</mat-icon>
-                        <mat-icon matTooltip="pending" *ngIf="!element.Paid">pending</mat-icon>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ClassFeeName">
-                    <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ClassFeeName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="FeeAmount">
-                    <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.FeeAmount}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="PaidAmt">
-                    <mat-header-cell *matHeaderCellDef> Paid Amount </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.PaidAmt|number:'1.2-2'}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Pay">
-                    <mat-header-cell *matHeaderCellDef> Pay Amount </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <app-edit-input [data]="element.Pay|number:'1.2-2'" (tried)="getoldvalue($event)"
-                            (focusOut)='enableAction(element,$event)' (keyup)="validate($event)">
-                        </app-edit-input>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="BalanceAmt">
-                    <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.BalanceAmt}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="PaymentDate">
-                    <mat-header-cell *matHeaderCellDef> Payment Date </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span *ngIf="element.Paid">{{element.PaymentDate| date:'dd/MM/yyyy'}}</span>
-                        <mat-form-field *ngIf="!element.Paid && element.Action" appearance="outline"
-                            [style.width.px]="125">
-                            <input [(value)]="element.PaymentDate" matInput [matDatepicker]="picker" autocomplete="off"
-                                (focus)="picker.open()" readonly>
-                            <!-- <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> -->
-                            <mat-datepicker #picker></mat-datepicker>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-
-                <!-- <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
-                    <mat-cell style="justify-content: center;" *matCellDef="let element">
-                        <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()" (change)="enableAction(element)">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container> -->
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
-                            <mat-icon matTooltip="save">save</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="expandedDetail">
-                    <mat-cell *matCellDef="let detail">
-                        <table>
-                            <tr style="background-color: lightgray;">
-                                <td>Sl.No.</td>
-                                <td>Amount</td>
-                                <td>Date</td>
-                            </tr>
-                            <tr *ngFor="let item of detail.element.PaymentDetails;let i=index">
-                                <td>{{i+1}}</td>
-                                <td>{{item.PaymentAmt}}</td>
-                                <td>{{item.PaymentDate|date:'dd/MM/yyyy hh:mm'}}</td>
-                            </tr>
-                        </table>
-                    </mat-cell>
-                </ng-container>
-                <!-- <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-
-                <mat-row *matRowDef="let row; columns: displayedColumns;" fxLayoutAlign="space-between center"
-                    fxLayout="row"></mat-row> -->
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
-                    [class.expanded]="expandedElement == row" (click)="expandedElement = row"></mat-row>
-                <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
-                    [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
-                    style="overflow: hidden">
-                </mat-row>
-
-
-            </mat-table>
-
-        </div>
-    </mat-card-content>
-    <mat-card-actions>
-        <button (click)="back()" class="mat-raised-button">
-            <mat-icon>arrow_back</mat-icon>
-        </button>
-    </mat-card-actions>
-</mat-card>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <mat-icon matTooltip="save">save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="expandedDetail">
+                <mat-cell *matCellDef="let detail">
+                    <table>
+                        <tr style="background-color: lightgray;">
+                            <td>Sl.No.</td>
+                            <td>Amount</td>
+                            <td>Date</td>
+                        </tr>
+                        <tr *ngFor="let item of detail.element.PaymentDetails;let i=index">
+                            <td>{{i+1}}</td>
+                            <td>{{item.PaymentAmt}}</td>
+                            <td>{{item.PaymentDate|date:'dd/MM/yyyy hh:mm'}}</td>
+                        </tr>
+                    </table>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
+                [class.expanded]="expandedElement == row" (click)="expandedElement = row"></mat-row>
+            <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
+                [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'" style="overflow: hidden">
+            </mat-row>
+        </mat-table>
+    </div>
+</div>

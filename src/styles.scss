@@ -27,29 +27,16 @@ html, body {
      height: 100%; 
      margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
     }
-    // html::-webkit-scrollbar {
-    //     width: 10px;
-    // }
-
-    // html::-webkit-scrollbar-thumb {
-
-    //     background:rgb(197, 101, 76);
-    //     //border-radius: 1rem;
-    // }
-
-    // html::-webkit-scrollbar-track {
-
-    //     background:rgb(201, 155, 144);
-    // }
     
     div::-webkit-scrollbar {
-        width: 10px;
-        -webkit-appearance: none;
+        width: 2px;
+        //-webkit-appearance: none;
         //width: 7px;
     }
     div::-webkit-scrollbar-thumb {
         background:#20639B;
         border-radius: 1rem;
+        
     }
     div::-webkit-scrollbar-track {
         background:white;

@@ -1,5 +1,4 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { DataSource } from '@angular/cdk/table';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -49,7 +48,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     ClassId: 0,
     SectionName: '',
     Session: '',
-    PayAmount: 0
+    PayAmount: 0,
+    StudentClassId:0
   }
   Sections = [];
   FeeNames = [];
@@ -86,17 +86,23 @@ export class AddstudentfeepaymentComponent implements OnInit {
     private datepipe: DatePipe) { }
 
   ngOnInit(): void {
+  }
+  PageLoad(){
     
     this.route.paramMap.subscribe(param => {
       this.studentInfoTodisplay.StudentId = +param.get("id");
     })
+    
+    this.route.queryParamMap.subscribe(p=>{      
+      this.studentInfoTodisplay.StudentClassId = +p.get('scid');
+    })
     if (this.studentInfoTodisplay.StudentId == 0) {
-      this.alert.error("Id is missing", this.optionsNoAutoClose);
+      this.alert.error("Id is missing", this.optionAutoClose);
       return;
     }
     this.GetMasterData();
-  }
 
+  }
   displayedColumns = [
     'SlNo',
     'Paid',
@@ -120,19 +126,33 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    let re = /^[0-9]*$/
-    //let str = 'John Smith'
+    let re = /^[.0-9]*$/
+    console.log('pay', row.Pay)
     let valid = re.test(row.Pay);
     if (!valid) {
       this.alert.error("Invalid amount! Please enter numeric value", this.optionsNoAutoClose);
       return;
     }
-    let bl = row.FeeAmount - (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount));
-    //console.log(bl);
-    if(bl<0)
-    {
-      this.alert.error("Invalid amount! Please enter pay amount less than or equal to balance amount", this.optionsNoAutoClose);
-      return;
+    this.studentInfoTodisplay.PayAmount = row.Pay;
+
+    //applied only for admission fee    
+    let bl: any;
+    if (row.ClassFeeName.toLowerCase().includes("admission")) {
+
+      bl = row.FeeAmount - (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount));
+      //console.log(bl);
+      if (bl < 0) {
+        this.alert.error("Invalid amount! Please enter pay amount less than or equal to balance amount", this.optionsNoAutoClose);
+        return;
+      }
+    }
+    //payment order has to start from one
+    if (row.PaymentOrder > 1) {
+      let previousBalance = this.ELEMENT_DATA.filter(d => d.PaymentOrder == (row.PaymentOrder - 1))[0].BalanceAmt;
+      if (previousBalance > 0) {
+        this.alert.error("Previous balance must be cleared!", this.optionsNoAutoClose);
+        return;
+      }
     }
 
     this.CurrentRow = row;
@@ -165,11 +185,14 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.StudentFeePaymentData.StudentFeeId = row.StudentFeeId;
           this.StudentFeePaymentData.ClassFeeId = row.ClassFeeId;
           this.StudentFeePaymentData.StudentClassId = row.StudentClassId;
-          this.StudentFeePaymentData.PaidAmt = (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount)).toFixed(2);
-          
-          this.StudentFeePaymentData.BalanceAmt = bl.toString();
-          //this.StudentFeePaymentData.Remarks = row.Remarks;
-          //console.log('data', this.StudentFeePaymentData);
+          if (row.ClassFeeName.toLowerCase().includes("admission")) {
+            this.StudentFeePaymentData.BalanceAmt = bl.toString();
+            this.StudentFeePaymentData.PaidAmt = (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount)).toFixed(2);
+          }
+          else {
+            this.StudentFeePaymentData.PaidAmt = row.FeeAmount.toFixed(2);
+            this.StudentFeePaymentData.BalanceAmt = "0.00";
+          }
 
           if (this.StudentFeePaymentData.StudentFeeId == 0)
             this.insert();
@@ -188,14 +211,16 @@ export class AddstudentfeepaymentComponent implements OnInit {
           let paymentdetail = {
             PaymentAmt: this.studentInfoTodisplay.PayAmount,
             PaymentDate: new Date(),
-            ParentId: data.StudentFeeId
+            ParentId: data.StudentFeeId,
+            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId
           }
           this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
             .subscribe(
               (data: any) => {
-                this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
-                this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
-
+                this.GetStudentFeePayment();
+                // this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
+                // this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
+                // this.CurrentRow.Action =false;
                 this.alert.success("Data saved successfully", this.optionAutoClose);
                 //this.router.navigate(['/pages']);
               })
@@ -210,16 +235,18 @@ export class AddstudentfeepaymentComponent implements OnInit {
           let paymentdetail = {
             PaymentAmt: this.studentInfoTodisplay.PayAmount,
             PaymentDate: new Date(),
-            ParentId: this.StudentFeePaymentData.StudentFeeId
+            ParentId: this.StudentFeePaymentData.StudentFeeId,
+            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId
           }
-          this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
-            .subscribe(
-              (data: any) => {
-                this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
-                this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
-                this.alert.success("Data updated successfully", this.optionAutoClose);
-                //this.router.navigate(['/pages']);
-              })
+          //   this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
+          //     .subscribe(
+          //       (data: any) => {
+          //         this.GetStudentFeePayment();
+          //         // this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
+          //         // this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
+          //         this.alert.success("Data updated successfully", this.optionAutoClose);
+          //         //this.router.navigate(['/pages']);
+          //       })
         });
   }
 
@@ -228,8 +255,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     if (this.studentInfoTodisplay.StudentId == 0)
       return;
 
-    let filterstr = "Batch eq " + this.studentInfoTodisplay.currentbatchId +
-      " and StudentId eq " + this.studentInfoTodisplay.StudentId;
+    // let filterstr = "Batch eq " + this.studentInfoTodisplay.currentbatchId +
+    //   " and StudentId eq " + this.studentInfoTodisplay.StudentId;
 
     let list: List = new List();
     list.fields = [
@@ -248,8 +275,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
       'Active'];
 
     list.PageName = "StudentFeePayments";
-    list.lookupFields = ["StudentClass","PaymentDetails"];
-    list.filter = [filterstr];
+    list.lookupFields = ["StudentClass", "PaymentDetails"];
+    list.filter = ['StudentClassId eq ' + this.studentInfoTodisplay.studentClassId];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -280,32 +307,39 @@ export class AddstudentfeepaymentComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           this.StudentClassFees = [...data.value];
-          //this.FeePayable = true;
+
+          let FeeName = '';
           this.ELEMENT_DATA = this.StudentClassFees.map((StudentClassFee, indx) => {
+            //console.log('after multi',(DiscountFactor * parseFloat(StudentClassFee.Amount)).toFixed(2))
+            FeeName = this.FeeNames.filter(fee => fee.MasterDataId == StudentClassFee.FeeNameId)[0].MasterDataName;
+
+            let PayablePercent = this.GetDiscountFactor(FeeName, indx);
+            let payableAmount = PayablePercent * parseFloat(StudentClassFee.Amount);
 
             let existing = this.StudentFeePaymentList.filter(fromdb => fromdb.ClassFeeId == StudentClassFee.ClassFeeId)
-
             if (existing.length > 0) {
+              payableAmount = existing[0].BalanceAmt;//+payableAmount - parseFloat(existing[0].PaidAmt)
+
               let paidAmount = parseFloat(existing[0].PaidAmt);
               let bl = paidAmount == 0 ? parseFloat(StudentClassFee.Amount) : existing[0].BalanceAmt;
-              //console.log('bl', bl);
+
               return {
                 SlNo: indx + 1,
                 StudentFeeId: existing[0].StudentFeeId,
                 StudentClassId: existing[0].StudentClassId,
                 ClassFeeId: +existing[0].ClassFeeId,
-                ClassFeeName: this.FeeNames.filter(fee => fee.MasterDataId == StudentClassFee.FeeNameId)[0].MasterDataName,
+                ClassFeeName: FeeName,
                 FeeAmount: parseFloat(StudentClassFee.Amount),
                 FeeType: this.studentInfoTodisplay.StudentFeeType,
                 PaidAmt: parseFloat(existing[0].PaidAmt),
-                Pay: 0,
-                BalanceAmt: existing[0].BalanceAmt == 0 ? "0.00" : parseFloat(existing[0].BalanceAmt),
+                Pay: payableAmount,
+                BalanceAmt: existing[0].BalanceAmt,
                 PaymentDate: existing[0].PaymentDate,
                 Batch: existing[0].Batch,
                 PaymentOrder: StudentClassFee.PaymentOrder,
                 Paid: existing[0].BalanceAmt == 0 ? true : false,
                 Action: this.FeePayable,
-                PaymentDetails:existing[0].PaymentDetails
+                PaymentDetails: existing[0].PaymentDetails
               }
 
             }
@@ -319,14 +353,14 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 FeeAmount: parseFloat(StudentClassFee.Amount),
                 FeeType: this.studentInfoTodisplay.StudentFeeType,
                 PaidAmt: "0.00",
-                Pay: 0,
-                BalanceAmt: parseFloat(StudentClassFee.Amount),
+                Pay: payableAmount,
+                BalanceAmt: payableAmount,
                 PaymentDate: new Date(),
                 Batch: this.studentInfoTodisplay.currentbatchId,
                 PaymentOrder: StudentClassFee.PaymentOrder,
                 Paid: false,
                 Action: this.FeePayable,
-                PaymentDetails:[]
+                PaymentDetails: []
               }
           })
 
@@ -339,7 +373,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.ELEMENT_DATA.forEach((item, index) => {
           if (item.BalanceAmt > 0 && this.FeePayable == true) {
             item.Action = true;
-            this.FeePayable = false;
+            this.FeePayable = true;
           }
           else {
             item.Action = false;
@@ -348,38 +382,59 @@ export class AddstudentfeepaymentComponent implements OnInit {
         })
         const rows = [];
         this.ELEMENT_DATA.forEach(element => rows.push(element, { detailRow: true, element }));
-        console.log(rows);
+        //console.log(rows);
         this.dataSource = new MatTableDataSource<IStudentFeePayment>(rows);
 
       })
   }
-  GetStudent(pstudentId) {
 
-    if (pstudentId == undefined || pstudentId == 0)
-      return;
+  GetDiscountFactor(feeName, indx) {
+    let feeType = this.studentInfoTodisplay.StudentFeeType;
+    let NoOfFreeMonth = 0;
+    let numbericPartInFeetype = 0;
+    let PayablePercent = 0;
+    let splitArray = feeType.toLowerCase().split('%');
+    if (feeName.toLowerCase().includes("admission"))
+      PayablePercent = 1;
+    else if (splitArray.length > 1) {
+      numbericPartInFeetype = parseFloat(splitArray[0]);
+      PayablePercent = (100 - numbericPartInFeetype) / 100;
+    }
+    else {
 
-    let filterstr = "Active eq 1 and Batch eq " + this.studentInfoTodisplay.currentbatchId + " and StudentId eq " + pstudentId;
+      let indexOfmonthFree = feeType.toLowerCase().indexOf('month free');
+      if (indexOfmonthFree > -1) {
+        NoOfFreeMonth = +feeType.substr(0, indexOfmonthFree);
+        //equal to is included since admission is also in the loop
+        if (NoOfFreeMonth > 0 && indx <= NoOfFreeMonth)
+          PayablePercent = 0;
+        else
+          PayablePercent = 1;
+      }
+      else if (feeType.toLowerCase().includes("adjusted"))
+        PayablePercent = 1;
+      else if (feeType.toLowerCase() == "free")
+        PayablePercent = 0;
+    }
 
-    let list: List = new List();
-    list.fields = ["StudentClassId", "StudentId", "ClassId", "FeeTypeId"];
-    list.PageName = "StudentClasses";
-    list.filter = [filterstr];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        if (data.value.length > 0) {
-        }
-      })
+    return PayablePercent;
   }
 
+  isNumeric(str: number) {
+    if (typeof str != "string") return false // we only process strings!  
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+      !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+  }
+  Receipt() {
+    this.nav.navigate(['/admin/printreceipt/' + this.studentInfoTodisplay.StudentId]);
+  }
 
-  GetStudentClass(pstudentId) {
+  GetStudentClass() {
 
-    if (pstudentId == undefined || pstudentId == 0)
+    if (this.studentInfoTodisplay.studentClassId == undefined || this.studentInfoTodisplay.studentClassId == 0)
       return;
 
-    let filterstr = "Active eq 1 and Batch eq " + this.studentInfoTodisplay.currentbatchId + " and StudentId eq " + pstudentId;
+    let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.studentClassId;
 
     let list: List = new List();
     list.fields = ["StudentClassId", "Section", "StudentId", "Batch", "Student/Name", "ClassId", "FeeTypeId"];
@@ -459,7 +514,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
         if (currentBatchObj.length > 0) {
           this.studentInfoTodisplay.currentbatchId = currentBatchObj[0].MasterDataId
-          this.GetStudentClass(this.studentInfoTodisplay.StudentId);
+          this.GetStudentClass();
         }
         else
           this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
@@ -487,19 +542,9 @@ export interface IStudentFeePayment {
   Pay: any;
   BalanceAmt: any;
   PaymentDate: Date;
+  PaymentOrder: number;
   Batch: number;
   Paid: boolean;
   Action: boolean;
-  PaymentDetails:any[];
+  PaymentDetails: any[];
 }
-// export class StudentPaymentDataSource extends DataSource<any> {
-//   /** Connect function called by the table to retrieve one stream containing the data to render. */
-//   connect(): Observable<IStudentFeePayment[]> {
-//     const rows = [];
-//     data.forEach(element => rows.push(element, { detailRow: true, element }));
-//     console.log(rows);
-//     return of(rows);
-//   }
-
-//   disconnect() { }
-// }

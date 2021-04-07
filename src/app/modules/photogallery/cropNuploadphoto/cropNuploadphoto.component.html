@@ -58,8 +58,8 @@
         <tr>
           <td>
             <image-cropper class="column1" [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true"
-              [containWithinAspectRatio]="containWithinAspectRatio" [aspectRatio]="4/3" [resizeToWidth]="300"
-              [cropperMinWidth]="300" [onlyScaleDown]="false" [roundCropper]="false" [canvasRotation]="canvasRotation"
+              [containWithinAspectRatio]="containWithinAspectRatio" [aspectRatio]="4/3" [resizeToWidth]="100"
+              [cropperMinWidth]="100" [onlyScaleDown]="false" [roundCropper]="false" [canvasRotation]="canvasRotation"
               [transform]="transform" [alignImage]="'left'" [style.display]="showCropper ? null : 'none'" format="png"
               (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady($event)"
               (loadImageFailed)="loadImageFailed()"></image-cropper>

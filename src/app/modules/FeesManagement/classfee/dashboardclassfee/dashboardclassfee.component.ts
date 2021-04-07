@@ -24,7 +24,7 @@ export class DashboardclassfeeComponent implements OnInit {
   Classes = [];
   Batches = [];
   Locations = [];
-  ClassStatuses=[];
+  ClassStatuses = [];
   ELEMENT_DATA: Element[];
   dataSource: MatTableDataSource<Element>;
   allMasterData = [];
@@ -51,7 +51,6 @@ export class DashboardclassfeeComponent implements OnInit {
     });
     this.GetMasterData();
     this.GetClassFee();
-       
 
   }
 
@@ -67,6 +66,10 @@ export class DashboardclassfeeComponent implements OnInit {
     debugger;
     if (row.Amount == 0) {
       this.alert.error("Amount should be greater than zero.", this.options);
+      return;
+    }
+    if (row.PaymentOrder < 1) {
+      this.alert.error("Payment order must start from 1.");
       return;
     }
     let checkFilterString = "1 eq 1 " +
@@ -112,7 +115,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.postPatch('ClassFees', this.classFeeData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.Action =false;
+          row.Action = false;
           this.alert.success("Data saved successfully", this.options);
           //this.router.navigate(['/pages']);
         });
@@ -123,7 +126,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.postPatch('ClassFees', this.classFeeData, this.classFeeData.ClassFeeId, 'patch')
       .subscribe(
         (data: any) => {
-          row.Action =false;
+          row.Action = false;
           this.alert.success("Data updated successfully", this.options);
           //this.router.navigate(['/pages']);
         });
@@ -142,9 +145,9 @@ export class DashboardclassfeeComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           const unique = [...new Set(data.value.map(item => {
-            return  item.ClassId
+            return item.ClassId
           }))];
-          this.ClassStatuses=this.Classes.map(cls => {
+          this.ClassStatuses = this.Classes.map(cls => {
             let isdefined = unique.filter(definedcls => {
               return definedcls == cls.MasterDataId;
             });
@@ -159,7 +162,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "Done": true
               }
           })
-          console.log('classes',this.ClassStatuses);
+          console.log('classes', this.ClassStatuses);
 
         }
       })
@@ -178,6 +181,7 @@ export class DashboardclassfeeComponent implements OnInit {
     let list: List = new List();
     list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId", "PaymentOrder"];
     list.PageName = "ClassFees";
+    //list.orderBy ="PaymentOrder";
     list.filter = [filterstr];
     //list.orderBy = "ParentId";
 
@@ -192,9 +196,9 @@ export class DashboardclassfeeComponent implements OnInit {
               let existing = data.value.filter(fromdb => fromdb.FeeNameId == mainFeeName.MasterDataId)
               if (existing.length > 0) {
                 existing[0].SlNo = indx + 1;
-                existing[0].Status =existing[0].Active == 1 ? true : false;
+                existing[0].Status = existing[0].Active == 1 ? true : false;
                 existing[0].FeeName = this.FeeNames.filter(item => item.MasterDataId == existing[0].FeeNameId)[0].MasterDataName;
-                existing[0].Action = false;                
+                existing[0].Action = false;
                 existing[0].PaymentOrder = existing[0].PaymentOrder == null ? 0 : existing[0].PaymentOrder;
                 return existing[0];
               }
@@ -255,8 +259,9 @@ export class DashboardclassfeeComponent implements OnInit {
             this.alert.info("No record found!", this.options);
           }
         }
+        //this.ELEMENT_DATA=this.ELEMENT_DATA.sort((a,b)=>(a.PaymentOrder>b.PaymentOrder?1:-1))
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
-        console.log("element data",this.ELEMENT_DATA)
+        console.log("element data", this.ELEMENT_DATA)
       });
   }
   updateActive(row, value) {

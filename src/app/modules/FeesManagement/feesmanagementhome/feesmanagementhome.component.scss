@@ -1,9 +1,8 @@
 mat-drawer {
     margin-top      : 65px;
     width           : 300px;
-    background-color: #20639B;
+    background-color:  #20639b ;
     height: 100%;
-
 }
 
 mat-drawer-content {
@@ -12,4 +11,8 @@ mat-drawer-content {
 
 app-sidebar {
     min-height: 200vh;
+}
+alert{
+    position: fixed;
+    z-index: 99;
 }

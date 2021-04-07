@@ -19,13 +19,20 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AddMasterDataComponent } from './MasterData/add-master-data/add-master-data.component';
 import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { MultiLevelMenuComponent } from '../dynamicMultiLevelMenu/MultiLevelMenu.component';
-
+import { FeereceiptComponent } from './feereceipt/feereceipt.component';
+import {NgxPrintModule} from 'ngx-print';
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { PhotogalleryModule } from '../photogallery/photogallery.module';
+import { ExcelDataManagementComponent } from './excel-data-management/excel-data-management.component';
+import { StudentDocumentComponent } from './StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
 
 
 @NgModule({
   declarations: [AddstudentComponent, FeesmanagementhomeComponent, 
     AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent, 
-    DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent, FeeSidebarComponent, FeeFooterComponent, AddMasterDataComponent],
+    DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent, 
+    FeeSidebarComponent, FeeFooterComponent, AddMasterDataComponent, 
+    FeereceiptComponent, ExcelDataManagementComponent, StudentDocumentComponent],
   imports: [
     CommonModule,
     MaterialModule,
@@ -34,7 +41,10 @@ import { MultiLevelMenuComponent } from '../dynamicMultiLevelMenu/MultiLevelMenu
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,
-    MultiLevelMenuModule
+    MultiLevelMenuModule,
+    NgxPrintModule,
+    NgxFileDropModule,
+    PhotogalleryModule
   ],
   providers:[
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }

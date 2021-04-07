@@ -1,93 +1,102 @@
-<mat-card>
+<!-- <mat-card>
     <mat-card-title>Student class</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content>
-        <form [formGroup]="studentclassForm">
-            <div fxLayout="row">
-                <mat-form-field fxFlex>
-                    <mat-label>Student</mat-label>
-                    <mat-select formControlName="StudentId" fxFlex (selectionChange)="StudentChange($event)">
-                        <mat-option *ngFor="let student of Students" [value]="student.StudentId">{{student.studentName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div fxLayout="row wrap" fxLayoutGap="100px">
-                <mat-form-field appearance="outline">
-                    <mat-label>Class</mat-label>
-                    <mat-select formControlName="ClassId" #ClassId>
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                    <span class="text-danger" *ngIf="f.ClassId.touched && f.ClassId.hasError('required')">Class is
-                        required.</span>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Roll No.</mat-label>
-                    <input formControlName="RollNo" autocomplete="Off" #RollNo matInput maxlength="50">
-                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                    <span class="text-danger" *ngIf="f.RollNo.touched && f.RollNo.hasError('required')">
-                        Roll No. is required.</span>
-                </mat-form-field><br>
-                <mat-form-field appearance="outline">
-                    <mat-label>Section</mat-label>
-                    <mat-select formControlName="Section" #SectionId>
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Sections" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                    <span class="text-danger" *ngIf="f.Section.touched && f.Section.hasError('required')">Class is
-                        required.</span>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Batch/Session</mat-label>
-                    <mat-select formControlName="Batch" #BatchId>
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                    <span class="text-danger" *ngIf="f.Batch.touched && f.Batch.hasError('required')">Batch is
-                        required.</span>
-                </mat-form-field><br>
-                <mat-form-field appearance="outline">
-                    <mat-label>Fee type</mat-label>
-                    <mat-select formControlName="FeeTypeId">
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of FeeType" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                    <span class="text-danger" *ngIf="f.FeeTypeId.touched && f.FeeTypeId.hasError('required')">Class is
-                        required.</span>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Language subject</mat-label>
-                    <mat-select formControlName="LanguageSubject" #LanguageSubject>
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of LanguageSubjectLower" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field><br>
-                <mat-form-field appearance="outline" [style.width.pc]="32">
-                    <mat-label>Remarks</mat-label>
-                    <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
-                </mat-form-field>
-                <mat-checkbox formControlName="Active">
-                </mat-checkbox>&nbsp; Active
-            </div>
-        </form>
-    </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-        <button class="mat-raised-button" [disabled]="invalidId" (click)="UpdateOrSave()">
-            <mat-icon>save</mat-icon>
-        </button>
-        <button class="mat-raised-button" (click)="back()">
-            <mat-icon>cancel</mat-icon>
-        </button>
-    </mat-card-actions>
-</mat-card>
+    <mat-card-content> -->
+<div style="padding:15px 15px 0px 15px;"><strong>Class</strong></div>
+<div style="padding: 15px;" fxLayout="row wrap" fxLayoutGap="100px">
+
+    <form [formGroup]="studentclassForm">
+        <div fxLayout="row">
+            <mat-form-field fxFlex>
+                <mat-label>Student</mat-label>
+                <mat-select [disabled]="true" formControlName="StudentId" fxFlex
+                    (selectionChange)="StudentChange($event)">
+                    <mat-option *ngFor="let student of Students" [value]="student.StudentId">{{student.studentName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxLayout="row wrap" fxLayoutGap="100px">
+            <mat-form-field appearance="outline">
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="ClassId" #ClassId>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+                <span class="text-danger" *ngIf="f.ClassId.touched && f.ClassId.hasError('required')">Class is
+                    required.</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Roll No.</mat-label>
+                <input formControlName="RollNo" autocomplete="Off" #RollNo matInput maxlength="50">
+                <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                <span class="text-danger" *ngIf="f.RollNo.touched && f.RollNo.hasError('required')">
+                    Roll No. is required.</span>
+            </mat-form-field><br>
+            <mat-form-field appearance="outline">
+                <mat-label>Section</mat-label>
+                <mat-select formControlName="Section" #SectionId>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of Sections" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+                <span class="text-danger" *ngIf="f.Section.touched && f.Section.hasError('required')">Class is
+                    required.</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Batch/Session</mat-label>
+                <mat-select formControlName="Batch" #BatchId>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+                <span class="text-danger" *ngIf="f.Batch.touched && f.Batch.hasError('required')">Batch is
+                    required.</span>
+            </mat-form-field><br>
+            <mat-form-field appearance="outline">
+                <mat-label>Fee type</mat-label>
+                <mat-select formControlName="FeeTypeId">
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of FeeType" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+                <span class="text-danger" *ngIf="f.FeeTypeId.touched && f.FeeTypeId.hasError('required')">Class is
+                    required.</span>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Admission Date</mat-label>
+                <input formControlName="AdmissionDate" matInput [matDatepicker]="picker" autocomplete="off">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Language subject</mat-label>
+                <mat-select formControlName="LanguageSubject" #LanguageSubject>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of LanguageSubjectLower" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field><br>
+            <mat-form-field appearance="outline" [style.width.pc]="32">
+                <mat-label>Remarks</mat-label>
+                <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
+            </mat-form-field>
+            <mat-checkbox formControlName="Active">
+            </mat-checkbox>&nbsp; Active
+        </div>
+    </form>
+</div>
+<mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+    <button class="mat-raised-button" [disabled]="!studentclassForm.valid" (click)="UpdateOrSave()">
+        <mat-icon>save</mat-icon>
+    </button>
+    <button class="mat-raised-button" (click)="back()">
+        <mat-icon>cancel</mat-icon>
+    </button>
+</mat-card-actions>

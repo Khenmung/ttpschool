@@ -2,12 +2,12 @@
     <mat-card-title>Class Fees</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <strong>Class Fee Statuses</strong>
+        <strong>Class Fee Definition Statuses for the current session</strong>
         <mat-divider></mat-divider>
         <div fxLayoutGap="10" fxLayout="row wrap" fxLayoutAlign="space-between">
             <div *ngFor="let item of ClassStatuses">{{item.class}}
-                <mat-icon *ngIf="item.Done">done</mat-icon>
-                <mat-icon *ngIf="!item.Done">pending</mat-icon>                
+                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>                
             </div>
         </div>
         <mat-divider></mat-divider>

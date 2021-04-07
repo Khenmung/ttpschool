@@ -9,15 +9,25 @@ mat-radio-button{
     //width:20%;
     border-collapse: collapse;
     border-radius: 5px;
-    padding: 5px;
+    padding-top: 15px;
+    padding-left: 15px;
+    //padding: 5px;
     //height: 60px;
     border: solid #eee;    
     border-width: 1px 1px;
     display: grid;
     place-items: center;
     margin-bottom: 10px;
-    width: 250px;
+    width: 72%;
     
+}
+.innerspan{
+    padding: 10px;
+}
+.content{
+    padding: 15px;
+    min-height: 350px;
+
 }
 .demo-tab-group {
     border: 1px solid #e8e8e8;
@@ -25,4 +35,8 @@ mat-radio-button{
   
   .demo-tab-content {
     padding: 16px;
+  }
+  .mat-form-field-wrapper
+  {
+      padding-bottom: 0px !important;
   }

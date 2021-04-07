@@ -138,7 +138,7 @@ export class AddMasterDataComponent implements OnInit {
             ParentId: this.searchForm.get("ParentId").value,
             Description: row.Description,
             MasterDataName: row.MasterDataName,
-            Active: row.Active == true ? 1 : 0,
+            Active: value.checked == true ? 1 : 0,
             // UploadDate: new Date()
           }
 
@@ -217,7 +217,7 @@ export class AddMasterDataComponent implements OnInit {
         });
     }
   }
-  updateDescription(value) {
+  updateDescription(value,row) {
     debugger;
     if (this.oldvalue == value)
       return;
@@ -232,7 +232,7 @@ export class AddMasterDataComponent implements OnInit {
     }
 
     let selectedMasterDataId = this.MasterData.filter(item => {
-      return item.Description == this.oldvalue
+      return item.MasterDataId == row.MasterDataId
     })[0].MasterDataId;
 
     this.dataservice.postPatch('MasterDatas', mastertoUpdate, selectedMasterDataId, 'patch')

@@ -1,0 +1,27 @@
+mat-header-cell{
+    display: grid;
+    justify-content: center;
+}
+.mat-cell,.mat-header-cell{
+    border-collapse: collapse;
+    border-width: 0px 1px 0px 0px;
+    border-color: lightgray;
+    border-style: solid;
+    padding: 5px;    
+    
+}
+.mat-column-SlNo{
+    display: grid;
+    place-items: center;
+}
+.mat-column-PaymentAmount,.mat-column-StudentReceiptId,.mat-column-OfflineReceiptNo,.mat-column-TotalAmount{
+    display: grid;
+    place-items: center end;
+}
+.mat-column-ReceiptDate , .mat-column-Action{
+    display: grid;
+    place-items: center;
+}
+.divCls{
+    padding:15px 15px 0px 15px;
+}

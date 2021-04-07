@@ -5,241 +5,338 @@
         <mat-spinner *ngIf="loading"></mat-spinner>
         <div style="margin:5px">
             <form [formGroup]="studentForm">
-                <mat-tab-group #changeEvent (selectedIndexChange)="tabChanged($event)" class="demo-tab-group">
-                    <mat-tab label="Personal">
-                        <mat-card>
-                            <mat-card-subtitle><strong>Personal</strong></mat-card-subtitle>
-                            <mat-card-content fxLayout="row wrap" fxLayoutGap="100px">
-                                <mat-form-field appearance="outline" fxFlex>
-                                    <mat-label>Name</mat-label>
-                                    <input formControlName="Name" autocomplete="Off" #input matInput maxlength="50">
-                                    <!-- <mat-hint align="end">{{input.value?.length || 0}}/50</mat-hint> -->
-                                    <span class="text-danger" *ngIf="f.Name.touched && f.Name.hasError('required')">Name
-                                        is required.</span>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" fxFlex>
-                                    <mat-label>Father's/guardian's name</mat-label>
-                                    <input formControlName="FatherName" autocomplete="Off" #input matInput
-                                        maxlength="50">
-                                    <!-- <mat-hint align="end">{{input.value?.length || 0}}/50</mat-hint> -->
-                                    <span class="text-danger"
-                                        *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's name
-                                        is required.</span>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" fxFlex>
-                                    <mat-label>Mother's name</mat-label>
-                                    <input formControlName="MotherName" autocomplete="Off" matInput maxlength="50">
-                                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                                    <span class="text-danger"
-                                        *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's name
-                                        is required.</span>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" fxFlex>
-                                    <mat-label>Gender</mat-label>
-                                    <mat-select formControlName="Gender">
-                                        <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}
-                                        </mat-option>
-                                    </mat-select>
-                                    <span class="text-danger"
-                                        *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
-                                        is required.</span>
-                                </mat-form-field>
-
-                                <mat-form-field appearance="outline" [style.width.px]="260">
-                                    <mat-label>DOB</mat-label>
-                                    <input formControlName="DOB" matInput [matDatepicker]="picker" autocomplete="off">
-                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                    <mat-datepicker #picker></mat-datepicker>
-                                </mat-form-field>
-
-                                <mat-form-field appearance="outline" fxFlex>
-                                    <mat-label>Blood group</mat-label>
-                                    <mat-select formControlName="Bloodgroup">
-                                        <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" [style.width.px]="270">
-                                    <mat-label>Category</mat-label>
-                                    <mat-select formControlName="Category">
-                                        <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" [style.width.px]="260">
-                                    <mat-label>Religion</mat-label>
-                                    <mat-select formControlName="Religion">
-                                        <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </mat-card-content>
-                            <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                                <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
-                                    <mat-icon>save</mat-icon>
-                                </button>
-                                <button (click)="back()" alt="save" class="mat-raised-button">
-                                    <mat-icon>cancel</mat-icon>
-                                </button>
-                            </mat-card-actions>
-                        </mat-card>
+                <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
+                    class="demo-tab-group">
+                    <mat-tab label="Basic">
+                        <div style="padding:15px 15px 0px 15px;"><strong>Basic</strong>
+                            <!-- <div style="padding: 15px;overflow-x: hidden;" fxLayout="row wrap" fxLayoutGap="100px"> -->
+                            <mat-grid-list cols="3" rowHeight="100px" #basic>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Name</mat-label>
+                                        <input formControlName="Name" autocomplete="Off" #input matInput maxlength="50">
+                                        <span class="text-danger"
+                                            *ngIf="f.Name.touched && f.Name.hasError('required')">Name
+                                            is required.</span>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Father's name</mat-label>
+                                        <input formControlName="FatherName" autocomplete="Off" #input matInput
+                                            maxlength="50">
+                                        <span class="text-danger"
+                                            *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's
+                                            name
+                                            is required.</span>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="2">
+                                    <div *ngIf="Id>0" fxLayout="row" fxLayoutAlign="space-between center">
+                                        <span style="color:red;" *ngIf="message">{{message}}</span>
+                                        <input #inputfile [hidden]="true" type="file" accept='image/*'
+                                            (change)="preview(inputfile.files)" />
+                                        <img [src]="imgURL" height="200" *ngIf="imgURL">
+                                        <span *ngIf="!Edit">
+                                            <button class="mat-raised-button" matTooltip="edit" color="primary"
+                                                (click)="edit()">
+                                                <mat-icon>edit</mat-icon>
+                                            </button>
+                                        </span>
+                                        <span *ngIf="Edit" fxLayout="column" fxLayoutAlign="center center">
+                                            <button class="mat-raised-button" matTooltip="select file" color="primary"
+                                                (click)="inputfile.click()">
+                                                <mat-icon aria-label="photo">photo</mat-icon>
+                                            </button>&nbsp;&nbsp;
+                                            <button type="submit" (click)="uploadFile()" matTooltip="upload file"
+                                                class="mat-raised-button">
+                                                <mat-icon aria-label="file_upload">file_upload</mat-icon>
+                                            </button>&nbsp;&nbsp;
+                                        </span>
+                                    </div>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Father's occupation</mat-label>
+                                        <input formControlName="FatherOccupation" autocomplete="Off" #input matInput
+                                            maxlength="50">
+                                        <span class="text-danger"
+                                            *ngIf="f.FatherOccupation.touched && f.FatherOccupation.hasError('required')">Father's
+                                            occupation is required.</span>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Mother's name</mat-label>
+                                        <input formControlName="MotherName" autocomplete="Off" matInput maxlength="50">
+                                        <span class="text-danger"
+                                            *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's
+                                            name
+                                            is required.</span>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Mother's Occupation</mat-label>
+                                        <input formControlName="MotherOccupation" autocomplete="Off" matInput
+                                            maxlength="50">
+                                        <span class="text-danger"
+                                            *ngIf="f.MotherOccupation.touched && f.MotherOccupation.hasError('required')">Mother's
+                                            occupation
+                                            is required.</span>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Gender</mat-label>
+                                        <mat-select formControlName="Gender">
+                                            <mat-option value="0">---</mat-option>
+                                            <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
+                                                {{p.MasterDataName}}
+                                            </mat-option>
+                                        </mat-select>
+                                        <span class="text-danger"
+                                            *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
+                                            is required.</span>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" [style.width.px]="270">
+                                        <mat-label>DOB</mat-label>
+                                        <input formControlName="DOB" matInput [matDatepicker]="picker"
+                                            autocomplete="off">
+                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                        <mat-datepicker #picker></mat-datepicker>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Blood group</mat-label>
+                                        <mat-select formControlName="Bloodgroup">
+                                            <mat-option value="0">---</mat-option>
+                                            <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
+                                                {{p.MasterDataName}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" fxFlex>
+                                        <mat-label>Category</mat-label>
+                                        <mat-select formControlName="Category">
+                                            <mat-option value="0">---</mat-option>
+                                            <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
+                                                {{p.MasterDataName}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                    <mat-form-field appearance="outline" [style.width.px]="260">
+                                        <mat-label>Religion</mat-label>
+                                        <mat-select formControlName="Religion">
+                                            <mat-option value="0">---</mat-option>
+                                            <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
+                                                {{p.MasterDataName}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </mat-grid-tile>
+                            </mat-grid-list>
+                        </div>
+                        <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+                            <button *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                                class="mat-raised-button">
+                                <mat-icon>navigate_before</mat-icon>
+                            </button>
+                            <button *ngIf="selectedIndex<4" (click)="nextStep()" alt="save" class="mat-raised-button">
+                                <mat-icon>navigate_next</mat-icon>
+                            </button>
+                        </mat-card-actions>
+                        <!-- </mat-card> -->
                     </mat-tab>
                     <mat-tab label="Contact">
-                        <mat-card>
-                            <mat-card-subtitle><strong>Contact</strong></mat-card-subtitle>
-                            <mat-card-content fxLayout="row wrap" fxLayoutGap="100px">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Student's Contact no.</mat-label>
-                                    <input formControlName="ContactNo" autocomplete="Off" #Pincode matInput
-                                        maxlength="10">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Father's contact no.</mat-label>
-                                    <input formControlName="FatherContactNo" autocomplete="Off" #Pincode matInput
-                                        maxlength="10">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Mother's contact no.</mat-label>
-                                    <input formControlName="MotherContactNo" autocomplete="Off" #Pincode matInput
-                                        maxlength="10">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Email Id</mat-label>
-                                    <input formControlName="EmailAddress" autocomplete="Off" #Pincode matInput
-                                        maxlength="50">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Aadhaar No</mat-label>
-                                    <input formControlName="AadharNo" autocomplete="Off" #Pincode matInput
-                                        maxlength="10">
-                                </mat-form-field>
-                                <span class="radio">Primary contact
-                                    <mat-radio-group aria-label="Select an option"
-                                        formControlName="PrimaryContactFatherOrMother">
-                                        <mat-radio-button *ngFor="let p of PrimaryContact" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}</mat-radio-button>
-                                    </mat-radio-group>
+                        <div style="padding:15px 15px 0px 15px;"><strong>Contact</strong></div>
+                        <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Student's Contact no.</mat-label>
+                                <input formControlName="ContactNo" autocomplete="Off" #Pincode matInput maxlength="10">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>WhatsApp No.</mat-label>
+                                <input formControlName="WhatsAppNumber" autocomplete="Off" matInput maxlength="10">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Father's contact no.</mat-label>
+                                <input formControlName="FatherContactNo" autocomplete="Off" #Pincode matInput
+                                    maxlength="10">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Mother's contact no.</mat-label>
+                                <input formControlName="MotherContactNo" autocomplete="Off" #Pincode matInput
+                                    maxlength="10">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Email Id</mat-label>
+                                <input type="email" formControlName="EmailAddress" autocomplete="Off" #Pincode matInput
+                                    maxlength="50">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Aadhaar No</mat-label>
+                                <input formControlName="AadharNo" autocomplete="Off" #Pincode matInput maxlength="10">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" [style.width.pc]="22">
+                                <mat-label>Permanent address</mat-label>
+                                <textarea formControlName="PermanentAddress" autocomplete="Off" matInput
+                                    maxlength="250"></textarea>
+                                <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                                <span class="text-danger"
+                                    *ngIf="f.PermanentAddress.touched && f.PermanentAddress.hasError('required')">Permanent
+                                    Address is required.</span>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" [style.width.pc]="22">
+                                <mat-label>Present address</mat-label>
+                                <textarea formControlName="PresentAddress" autocomplete="Off" matInput
+                                    maxlength="250"></textarea>
+                                <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                                <span class="text-danger"
+                                    *ngIf="f.PresentAddress.touched && f.PresentAddress.hasError('required')">Present
+                                    Address is required.</span>
+                            </mat-form-field>
+                            <span class="radio">Primary contact
+                                <!-- <span fxLayout="row" fxLayoutAlign="space-between top"> -->
+                                <mat-radio-group (change)="displayContact($event)" aria-label="Select an option"
+                                    formControlName="PrimaryContactFatherOrMother">
+                                    <mat-radio-button *ngFor="let p of PrimaryContact" [value]="p.MasterDataId">
+                                        {{p.MasterDataName}}</mat-radio-button>
+                                </mat-radio-group>
+                                <span *ngIf="displayContactPerson">
+                                    <span class="innerspan" fxLayout="row" fxLayoutAlign="space-between center">
+                                        <!-- <div fxLayout="row"></div> -->
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Name Of contact person
+                                            </mat-label>
+                                            <input formControlName="NameOfContactPerson" autocomplete="Off" matInput
+                                                maxlength="50">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Relation with contact person</mat-label>
+                                            <input formControlName="RelationWithContactPerson" autocomplete="Off"
+                                                matInput maxlength="50">
+                                        </mat-form-field>
+                                        <mat-form-field appearance="outline">
+                                            <mat-label>Contact No.</mat-label>
+                                            <input formControlName="ContactPersonContactNo" autocomplete="Off" matInput
+                                                maxlength="50">
+                                        </mat-form-field>
+                                    </span>
                                 </span>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>State</mat-label>
-                                    <mat-select formControlName="State">
-                                        <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of States" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}
-                                        </mat-option>
-                                        <span class="text-danger"
-                                            *ngIf="f.State.touched && f.State.hasError('required')">State
-                                            is required.</span>
-                                    </mat-select>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" [style.width.pc]="25">
-                                    <mat-label>Address</mat-label>
-                                    <textarea formControlName="Address" autocomplete="Off" #Address matInput
-                                        maxlength="250"></textarea>
-                                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                                    <span class="text-danger"
-                                        *ngIf="f.Address.touched && f.Address.hasError('required')">Address
-                                        is required.</span>
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Pincode</mat-label>
-                                    <input formControlName="Pincode" autocomplete="Off" matInput maxlength="10">
-                                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                                    <span class="text-danger"
-                                        *ngIf="f.Pincode.touched && f.Pincode.hasError('required')">Pin
-                                        code
-                                        is required.</span>
-                                </mat-form-field>
-                            </mat-card-content>
-                            <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                                <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
-                                    <mat-icon>save</mat-icon>
-                                </button>
-                                <button (click)="back()" alt="save" class="mat-raised-button">
-                                    <mat-icon>cancel</mat-icon>
-                                </button>
-                            </mat-card-actions>
-                        </mat-card>
+                            </span>
+                            <!-- </span> -->
+                        </div>
+                        <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+                            <button *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                                class="mat-raised-button">
+                                <mat-icon>navigate_before</mat-icon>
+                            </button>
+                            <button *ngIf="selectedIndex<4" (click)="nextStep()" alt="save" class="mat-raised-button">
+                                <mat-icon>navigate_next</mat-icon>
+                            </button>
+                        </mat-card-actions>
                     </mat-tab>
                     <mat-tab label="Bank Account">
-                        <mat-card>
-                            <mat-card-subtitle><strong>Bank Account</strong></mat-card-subtitle>
-                            <mat-card-content fxLayout="row wrap" fxLayoutGap="100px">
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Account no.</mat-label>
-                                    <input formControlName="BankAccountNo" autocomplete="Off" #Pincode matInput
-                                        maxlength="15">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>IFSC</mat-label>
-                                    <input formControlName="IFSCCode" autocomplete="Off" #Pincode matInput
-                                        maxlength="10">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>MICR No.</mat-label>
-                                    <input formControlName="MICRNo" autocomplete="Off" #Pincode matInput maxlength="10">
-                                </mat-form-field>
-                            </mat-card-content>
-                            <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                                <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
-                                    <mat-icon>save</mat-icon>
-                                </button>
-                                <button (click)="back()" alt="save" class="mat-raised-button">
-                                    <mat-icon>cancel</mat-icon>
-                                </button>
-                            </mat-card-actions>
-                        </mat-card>
-                    </mat-tab>
+                        <div style="padding:15px 15px 0px 15px;"><strong>Bank Account</strong></div>
+                        <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Account no.</mat-label>
+                                <input formControlName="BankAccountNo" autocomplete="Off" #Pincode matInput
+                                    maxlength="15">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>IFSC</mat-label>
+                                <input formControlName="IFSCCode" autocomplete="Off" #Pincode matInput maxlength="10">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>MICR No.</mat-label>
+                                <input formControlName="MICRNo" autocomplete="Off" #Pincode matInput maxlength="10">
+                            </mat-form-field>
+                        </div>
+                        <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+                            <button *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                                class="mat-raised-button">
+                                <mat-icon>navigate_before</mat-icon>
+                            </button>
+                            <button *ngIf="selectedIndex<4" (click)="nextStep()" alt="save" class="mat-raised-button">
+                                <mat-icon>navigate_next</mat-icon>
+                            </button>
+                        </mat-card-actions>
+                    </mat-tab>                    
                     <mat-tab label="Additional info.">
-                        <mat-card>
-                            <mat-card-subtitle><strong>Additional</strong></mat-card-subtitle>
-                            <mat-card-content fxLayout="row wrap" fxLayoutGap="100px">
-                                <mat-form-field appearance="outline" [style.width.pc]="20">
-                                    <mat-label>Transfer from school</mat-label>
-                                    <input formControlName="TransferFromSchool" autocomplete="Off" #Pincode matInput
-                                        maxlength="100">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" [style.width.pc]="20">
-                                    <mat-label>Transfer from board</mat-label>
-                                    <input formControlName="TransferFromSchoolBoard" autocomplete="Off" #Pincode
-                                        matInput maxlength="100">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline" [style.width.pc]="20">
-                                    <mat-label>Remarks</mat-label>
-                                    <input formControlName="Remarks" autocomplete="Off" #Pincode matInput
-                                        maxlength="250">
-                                </mat-form-field>
-                                <mat-form-field appearance="outline">
-                                    <mat-label>Location</mat-label>
-                                    <mat-select formControlName="LocationId">
-                                        <mat-option value="0">---</mat-option>
-                                        <mat-option *ngFor="let p of Location" [value]="p.MasterDataId">
-                                            {{p.MasterDataName}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                                <div>
-                                    <mat-checkbox formControlName="Active">
-                                    </mat-checkbox>&nbsp; Active
-                                </div>
-                            </mat-card-content>
-                            <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                                <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
-                                    <mat-icon>save</mat-icon>
-                                </button>
-                                <button (click)="back()" alt="save" class="mat-raised-button">
-                                    <mat-icon>cancel</mat-icon>
-                                </button>
-                            </mat-card-actions>
-                        </mat-card>
+                        <div style="padding:15px 15px 0px 15px;"><strong>Additional Info.</strong></div>
+                        <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
+                            <mat-form-field appearance="outline">
+                                <mat-label>Last school attended</mat-label>
+                                <input formControlName="TransferFromSchool" autocomplete="Off" #Pincode matInput
+                                    maxlength="100">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Percentage obtained in last examination</mat-label>
+                                <input formControlName="LastSchoolPercentage" autocomplete="Off" #Pincode matInput
+                                    maxlength="10">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Class for which admission is sought</mat-label>
+                                <mat-select formControlName="ClassAdmissionSought">
+                                    <mat-option value="0">---</mat-option>
+                                    <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
+                                        {{p.MasterDataName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" [style.width.pc]="50">
+                                <mat-label>Remarks</mat-label>
+                                <input formControlName="Remarks" autocomplete="Off" #Pincode matInput maxlength="250">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Location</mat-label>
+                                <mat-select formControlName="LocationId">
+                                    <mat-option value="0">---</mat-option>
+                                    <mat-option *ngFor="let p of Location" [value]="p.MasterDataId">
+                                        {{p.MasterDataName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div>
+                                <mat-checkbox formControlName="Active">
+                                </mat-checkbox>&nbsp; Active
+                            </div>
+                        </div>
+                        <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+                            <button *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                                class="mat-raised-button">
+                                <mat-icon>navigate_before</mat-icon>
+                            </button>
+                            <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                                <mat-icon>save</mat-icon>
+                            </button>
+
+                            <button (click)="back()" alt="save" class="mat-raised-button">
+                                <mat-icon>arrow_back</mat-icon>
+                            </button>
+                        </mat-card-actions>
+                    </mat-tab>
+                    <mat-tab label="Documents">
+                        <upload-student-document></upload-student-document>
+                    </mat-tab>
+                    <mat-tab *ngIf="Id>0" label="Class">
+                        <app-addstudentclass></app-addstudentclass>
+                    </mat-tab>
+                    <mat-tab *ngIf="Id>0" label="Fee payment">
+                        <app-addstudentfeepayment></app-addstudentfeepayment>
+                    </mat-tab>
+                    <mat-tab *ngIf="Id>0" label="Receipt">
+                        <app-feereceipt></app-feereceipt>
                     </mat-tab>
                 </mat-tab-group>
             </form>

@@ -70,7 +70,7 @@ export class MultiLevelMenuComponent implements OnInit {
     
       //backgroundColor: '#',//`rgb(208, 241, 239)`,
       selectedListFontColor: `orange`,//`rgb(197, 101, 76)`,
-      
+      selectedListFontStyle:'bold',
       highlightOnSelect: true,
       collapseOnSelect: true,
       useDividers: false,

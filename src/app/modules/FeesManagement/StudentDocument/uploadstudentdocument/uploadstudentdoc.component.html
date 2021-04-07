@@ -1,0 +1,68 @@
+<div class="divCls"><strong>Student Documents</strong></div>
+<br>
+<div class="divCls" fxLayout="row wrap" fxLayoutGap="100px">
+    <form [formGroup]="uploadForm" fxLayout="row" fxLayoutAlign="space-between center">
+        <!-- <span style="color:red;" *ngIf="message">{{message}}</span> -->
+        <input #uploadfile [hidden]="true" type="file" (change)="uploadchange(uploadfile.files)" />
+        <!-- <span *ngIf="!Edit">
+                    <button class="mat-raised-button" matTooltip="edit" color="primary"
+                        (click)="edit()">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </span> -->
+        <div>
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Document type</mat-label>
+                <mat-select formControlName="DocTypeId">
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of DocumentTypes" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <span fxLayout="row" fxLayoutAlign="space-between center">
+            <button class="mat-raised-button" matTooltip="select file" color="primary" (click)="uploadfile.click()">
+                <mat-icon aria-label="photo">photo</mat-icon>
+            </button>&nbsp;&nbsp;
+            <button type="submit" (click)="uploadFile()" matTooltip="upload file" class="mat-raised-button">
+                <mat-icon aria-label="file_upload">file_upload</mat-icon>
+            </button>&nbsp;&nbsp;
+        </span>
+    </form>
+</div>
+<div fxLayout="row" fxLayoutAlign="space-between center" class="mat-elevation-z8">
+    <mat-table [dataSource]="documentUploadSource" fxFlex>
+        <ng-container matColumnDef="StudentDocId">
+            <mat-header-cell *matHeaderCellDef> Document Id</mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.StudentDocId}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="DocName">
+            <mat-header-cell *matHeaderCellDef> Document Name </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.DocName}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="DocType">
+            <mat-header-cell *matHeaderCellDef> Document Type </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.DocType}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="UploadDate">
+            <mat-header-cell *matHeaderCellDef> Upload Date </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.UploadDate|date:'dd/MM/yyyy'}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Action">
+            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+               <mat-icon>pageview</mat-icon>    
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="UploadDisplayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: UploadDisplayedColumns;" fxLayoutAlign="space-between center"
+            fxLayout="row"></mat-row>
+    </mat-table>
+</div>

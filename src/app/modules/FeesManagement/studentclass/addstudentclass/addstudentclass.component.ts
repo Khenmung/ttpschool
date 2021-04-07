@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -22,7 +22,9 @@ export class AddstudentclassComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SaveDisable = false;
   Id = 0;
+  StudentClassId=0;
   invalidId = false;
   currentbatch: string;
   currentbatchId = 0;
@@ -34,18 +36,8 @@ export class AddstudentclassComponent implements OnInit {
   FeeType = [];
   LanguageSubjectUpper = [];
   LanguageSubjectLower = [];
-  studentclassForm = new FormGroup({
-    StudentClassId: new FormControl('0'),
-    StudentId: new FormControl(0, [Validators.required]),
-    ClassId: new FormControl(0, [Validators.required]),
-    Section: new FormControl('', [Validators.required]),
-    RollNo: new FormControl('', [Validators.required]),
-    Batch: new FormControl(0, [Validators.required]),
-    FeeTypeId: new FormControl(0, [Validators.required]),
-    LanguageSubject: new FormControl(0),
-    Remarks: new FormControl(''),
-    Active: new FormControl(0, [Validators.required]),
-  });
+  studentclassForm: FormGroup;
+
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
@@ -55,21 +47,42 @@ export class AddstudentclassComponent implements OnInit {
     Batch: 0,
     FeeTypeId: 0,
     LanguageSubject: 0,
+    AdmissionDate: new Date(),
     Remarks: '',
     Active: 1,
   }
   constructor(private dataservice: NaomitsuService,
     private aRoute: ActivatedRoute,
     private alert: AlertService,
-    private nav: Router) { }
+    private nav: Router,
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    this.GetMasterData();
-      
-
+    this.aRoute.paramMap.subscribe(p=>{
+      this.Id= +p.get('id');
+    });
+    this.aRoute.queryParamMap.subscribe(p=>{      
+      this.StudentClassId = +p.get('scid');
+    })
+    
+    this.studentclassForm = this.fb.group({
+      StudentClassId: [0],
+      StudentId: [0, [Validators.required]],
+      ClassId: [0, [Validators.required]],
+      Section: [0, [Validators.required]],
+      RollNo: ['', [Validators.required]],
+      Batch: [0, [Validators.required]],
+      FeeTypeId: [0, [Validators.required]],
+      LanguageSubject: [0, [Validators.required]],
+      Remarks: [''],
+      AdmissionDate: [new Date(), [Validators.required]],
+      Active: [1],
+    });
   }
+  PageLoad(){   
 
-
+    this.GetMasterData();
+  }
   get f() { return this.studentclassForm.controls }
 
   GetMasterData() {
@@ -104,14 +117,19 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   StudentChange(event) {
-   
-    this.Id = event.value;
+    if (this.Id == event.value) {
+      this.SaveDisable = false;
+    }
+    else
+      this.SaveDisable = true;
+
+    //this.Id = event.value;
     this.GetStudentClass();
-    
+
   }
   GetStudent() {
     if (this.Id == 0) {
-      this.alert.error("Invalid StudentId", this.optionsNoAutoClose);
+      this.alert.error("Invalid StudentId", this.optionsAutoClose);
       this.invalidId = true;
       return;
     }
@@ -134,7 +152,7 @@ export class AddstudentclassComponent implements OnInit {
           }
           else {
             this.invalidId = true;
-            this.alert.error("Invalid student Id", this.optionsNoAutoClose);
+            this.alert.error("Invalid student Id", this.optionsAutoClose);
           }
         }
         else
@@ -143,15 +161,20 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   GetStudentClass() {
-    if (this.Id == 0) {
-      this.alert.error("Invalid StudentId", this.optionsNoAutoClose);
-
+    if (this.Id == 0 && this.StudentClassId == 0) {
+      this.alert.error("Invalid Student Id", this.optionsAutoClose);
       return;
     }
+    // let studentId = 0;
+    // if (tempStudentClassId > 0)
+    //   studentId = tempStudentId;
+    // else
+    //   studentId = this.Id;
+
     let list: List = new List();
-    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "Section", "Batch", "FeeTypeId", "LanguageSubject", "Remarks", "Active"];
+    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "Section", "Batch", "FeeTypeId", "LanguageSubject", "AdmissionDate", "Remarks", "Active"];
     list.PageName = "StudentClasses";
-    list.filter = ["Active eq 1 and StudentId eq " + this.Id + ' and Batch eq ' + this.currentbatchId];
+    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -165,6 +188,7 @@ export class AddstudentclassComponent implements OnInit {
             Batch: data.value[0].Batch,
             FeeTypeId: data.value[0].FeeTypeId,
             LanguageSubject: data.value[0].LanguageSubject,
+            AdmissionDate: data.value[0].AdmissionDate,
             Remarks: data.value[0].Remarks,
             Active: data.value[0].Active,
           });
@@ -179,6 +203,7 @@ export class AddstudentclassComponent implements OnInit {
             Batch: this.currentbatchId,
             FeeTypeId: 0,
             LanguageSubject: 0,
+            AdmissionDate: new Date(),
             Remarks: '',
             Active: 1
           });
@@ -191,25 +216,50 @@ export class AddstudentclassComponent implements OnInit {
     this.nav.navigate(['/admin/dashboardstudent']);
   }
   UpdateOrSave() {
+    let ErrorMessage = '';
 
-    this.studentclassData.Active = 1;
-    this.studentclassData.Batch = this.currentbatchId;
-    this.studentclassData.ClassId = this.studentclassForm.get("ClassId").value;
-    this.studentclassData.FeeTypeId = this.studentclassForm.get("FeeTypeId").value;
-    this.studentclassData.LanguageSubject = this.studentclassForm.get("LanguageSubject").value;
-    this.studentclassData.Remarks = this.studentclassForm.get("Remarks").value;
-    this.studentclassData.RollNo = this.studentclassForm.get("RollNo").value;
-    this.studentclassData.Section = this.studentclassForm.get("Section").value;
-    
-    this.studentclassData.StudentId = this.Id;
-    if (this.studentclassForm.get("StudentClassId").value == 0)
-      this.insert();
-    else
-    {
-      this.studentclassData.StudentClassId = this.studentclassForm.get("StudentClassId").value;
-      this.update();
+    if (this.studentclassForm.get("ClassId").value == 0) {
+      ErrorMessage += "Please select class.<br>";
     }
-    
+    if (this.studentclassForm.get("RollNo").value == 0) {
+      ErrorMessage += "Roll no. is required.<br>";
+    }
+    if (this.studentclassForm.get("Section").value == 0) {
+      ErrorMessage += "Please select Section.<br>";
+    }
+    if (this.studentclassForm.get("FeeTypeId").value == 0) {
+      ErrorMessage += "Please select Fee Type.<br>";
+    }
+    if (this.studentclassForm.get("LanguageSubject").value == 0) {
+      ErrorMessage += "Please select Language Subject.<br>";
+    }
+    if (this.studentclassForm.get("AdmissionDate").value == 0) {
+      ErrorMessage += "Admission date is required.<br>";
+    }
+    if (ErrorMessage.length > 0) {
+        this.alert.error(ErrorMessage,this.optionsNoAutoClose);
+        return;
+    }
+    else {
+      this.studentclassData.Active = 1;
+      this.studentclassData.Batch = this.currentbatchId;
+
+      this.studentclassData.ClassId = this.studentclassForm.get("ClassId").value;
+      this.studentclassData.RollNo = this.studentclassForm.get("RollNo").value;
+      this.studentclassData.Section = this.studentclassForm.get("Section").value;
+      this.studentclassData.FeeTypeId = this.studentclassForm.get("FeeTypeId").value;
+      this.studentclassData.LanguageSubject = this.studentclassForm.get("LanguageSubject").value;
+      this.studentclassData.Remarks = this.studentclassForm.get("Remarks").value;
+      this.studentclassData.AdmissionDate = this.studentclassForm.get("AdmissionDate").value;
+
+      this.studentclassData.StudentId = this.Id;
+      if (this.studentclassForm.get("StudentClassId").value == 0)
+        this.insert();
+      else {
+        this.studentclassData.StudentClassId = this.studentclassForm.get("StudentClassId").value;
+        this.update();
+      }
+    }
   }
 
   insert() {

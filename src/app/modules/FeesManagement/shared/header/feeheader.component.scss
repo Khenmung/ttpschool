@@ -20,6 +20,7 @@ mat-card{
     }
    
   }
+
 mat-toolbar {
     position: fixed;
     z-index: 10;
@@ -27,7 +28,7 @@ mat-toolbar {
     background-color: #20639b; //#4f8ec2;//
     box-shadow: 5px 5px 5px lightgray;
     top:0px;
-    max-width: 100%;
+    max-width: 100%;    
 }
 .mat-button{
     line-height: 55px;
