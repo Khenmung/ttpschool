@@ -73,6 +73,7 @@ export class StudentDocumentComponent implements OnInit {
     this.formdata.append("DocTypeId", this.uploadForm.get("DocTypeId").value);
 
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
+    console.log('formdata to save',this.formdata);
     this.uploadImage();
   }
 

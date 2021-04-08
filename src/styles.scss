@@ -2,7 +2,7 @@
 
 @import '~bootstrap/dist/css/bootstrap.min.css'; 
 mat-card{
-    //margin-top: 50px;
+    //top: 150px;
     margin:12px;
     min-height: 100vh;
     //max-width: 75%;  
@@ -26,6 +26,7 @@ html, body {
     // scrollbar-color: blue orange;   /* scroll thumb and track */
      height: 100%; 
      margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #0F5298;
     }
     
     div::-webkit-scrollbar {

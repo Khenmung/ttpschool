@@ -1,7 +1,5 @@
-  <div class="container">
-    <a [routerLink]="[ '/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute" width="110px" /></a>
-  </div>
   <mat-spinner *ngIf="loading"></mat-spinner>
+  <div style="border-radius: 1rem;">
     <ng-material-multilevel-menu [items]='appitems' [configuration]='config' (selectedItem)="selectedItem($event)">
     <ng-template #listTemplate let-item="item" let-configuration="configuration">
         <div class="my-cool-menu-item" [dir]="configuration.rtlLayout  ? 'rtl' : 'ltr'">
@@ -24,5 +22,5 @@
         </div>
     </ng-template>
 </ng-material-multilevel-menu>   
-  
+</div>
 

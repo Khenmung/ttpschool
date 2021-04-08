@@ -13,7 +13,7 @@ import { EncodeHTMLPipe } from '../../encode-html.pipe'
 import { SharedModule} from '../../shared/shared.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
-import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component';
+//import { NewsdashboardComponent } from '../../shared/components/newsdashboard/newsdashboard.component';
 import { RouterModule } from '@angular/router';
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -28,7 +28,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     pageViewComponent,
     DisplaypageComponent,
     EncodeHTMLPipe,
-    NewsdashboardComponent,
+  //  NewsdashboardComponent,
     MenuConfigComponent,
   ],
   imports: [
@@ -51,7 +51,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     pageViewComponent,
     MaterialModule,
     MatFormFieldModule,
-    MatCardModule
+    MatCardModule,
+    //NewsdashboardComponent,
 //    AlertComponent
   ]
 })

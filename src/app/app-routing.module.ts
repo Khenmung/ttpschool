@@ -18,7 +18,7 @@ import { RegisterComponent } from './modules/auth/register/register.component';
 import { ProfileComponent } from './modules/auth/profile/profile.component';
 import { ContactdashboardComponent } from './modules/contact/contactdashboard/contactdashboard.component';
 import { ContactComponent } from './modules/contact/addMessage/contact.component';
-import { NewsdashboardComponent } from './modules/define-pages/newsdashboard/newsdashboard.component';
+import { NewsdashboardComponent } from './shared/components/newsdashboard/newsdashboard.component';
 import { MenuConfigComponent } from './modules/define-pages/menu-config/menu-config.component';
 import { ChangePasswordComponent } from './modules/auth/change-password/change-password.component';
 import { FiledragAndDropComponent } from './modules/files/filedrag-and-drop/filedrag-and-drop.component';

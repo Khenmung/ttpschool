@@ -1,11 +1,14 @@
 <app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
 <mat-drawer-container class="example-container" [hasBackdrop]="false">
-    <mat-drawer [ngClass]="sidebarcls" [mode]="mode" [opened]="openSideBar">
+    <mat-drawer class="left" [mode]="mode" [opened]="openSideBar">
         <app-sidebar></app-sidebar>
     </mat-drawer>
-    <mat-drawer-content [ngClass]="contentcls">
+    <mat-drawer-content class="content">
         <alert></alert>
-        <router-outlet></router-outlet>
+        <div style="padding:0px" fxLayoutAlign="space-between start" fxLayout="row" fxLayoutGap="8px">
+            <router-outlet></router-outlet>
+            <app-right></app-right>
+        </div>
     </mat-drawer-content>
 </mat-drawer-container>
 <app-footer></app-footer>

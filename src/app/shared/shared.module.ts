@@ -13,6 +13,9 @@ import { MatConfirmDialogComponent } from './components/mat-confirm-dialog/mat-c
 import { EditInputComponent } from './components/edit-input/edit-input.component';
 import { AutofocusDirective } from './autofocus.directive';
 import { FormsModule } from '@angular/forms';
+import { RightComponent } from './components/right/right.component';
+import { NewsdashboardComponent } from './components/newsdashboard/newsdashboard.component';
+//import { DefinePagesModule } from '../modules/define-pages/define-pages.module';
 //import {NgMaterialMultilevelMenuModule} from 'ng-material-multilevel-menu'
 //import { CarouselLocalComponent } from '../modules/carousel/carousel.component';
 
@@ -26,7 +29,8 @@ import { FormsModule } from '@angular/forms';
     MatConfirmDialogComponent,
     EditInputComponent,
     AutofocusDirective,
-    
+    RightComponent,
+    NewsdashboardComponent
     //CarouselLocalComponent
   ],
   imports: [
@@ -36,7 +40,8 @@ import { FormsModule } from '@angular/forms';
     MaterialModule,
     MultiLevelMenuModule,    
     //NgMaterialMultilevelMenuModule,
-    FormsModule
+    FormsModule,
+    //DefinePagesModule
   ],
   exports: [
     HeaderComponent,
@@ -45,8 +50,9 @@ import { FormsModule } from '@angular/forms';
     AreaComponent,
     MaterialModule,
     AlertComponent,
-    EditInputComponent
-    //CarouselLocalComponent
+    EditInputComponent,
+    RightComponent,
+    NewsdashboardComponent
   ]
 
 })

@@ -1,36 +1,50 @@
     mat-drawer {
-        margin-top      : 65px;
-        width           : 300px;
-        background: #20639b;
+//        margin-top      : 120px;
+        width           : 280px;
+        background: url('../../../../assets/images/leftimg.svg');
+        background-repeat: no-repeat;
+        background-size: 700px;
+        background-color: #20639b;
         height: 100%;
+        top:150px;
     }
-    .top70{
-        top:70px;
-        max-width: 81%;
+    mat-drawer-content{
+        background-color: #0F5298;
+        top:150px;
+        margin-left: 280px;
+        height:700px;
     }
-    .top70Width62{
-        top:70px;
-        max-width: 62%;
+    .rightpanel{
+            background-color:#20639b ;
     }
-    .top70width100{
-        top:70px;
-        max-width: 100%;
-    }
-    .top80{
-        top:120px;
-        max-width: 100%;
-    }
-    .sidebartop110width100
-    {
-        top:40px;
-        max-width: 100%;
-    }
-    .sidebartop65width100
-    {
-        top:0px;
-        max-width: 100%;
-    }
+    // .top70{
+    //     top:120px;
+    //     max-width: 100%;
+    // }
+    // .top70Width62{
+    //     top:150px;
+    //     max-width: 100%;
+    // }
+    // .top70width100{
+    //     top:100px;
+    //     max-width: 100%;
+    // }
+    // .top80{
+    //     top:120px;
+    //     max-width: 100%;
+    // }
+    // .sidebartop110width100
+    // {
+    //     top:100px;
+    //     max-width: 100%;
+    // }
+    // .sidebartop65width100
+    // {
+    //     top:0px;
+    //     max-width: 100%;
+    // }
 
     app-sidebar {
-        min-height: 200vh;
+        min-height: 300vh;
     }
+    

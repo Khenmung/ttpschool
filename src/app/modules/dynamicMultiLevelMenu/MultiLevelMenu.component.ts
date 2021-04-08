@@ -17,11 +17,11 @@ import { NaomitsuService } from '../../shared/databaseService';
 })
 
 export class MultiLevelMenuComponent implements OnInit {
-  module={
-    admin:"admin",
-    general:""
+  module = {
+    admin: "admin",
+    general: ""
   }
-  loading=false;
+  loading = false;
   selectedIndex: number;
   loggedIn: boolean;
   expandCollapseStatus = 'expand';
@@ -60,17 +60,17 @@ export class MultiLevelMenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loading==true;
+    this.loading == true;
     this.config = {
       paddingAtStart: true,
       interfaceWithRoute: true,
       classname: 'my-custom-class',
       //listBackgroundColor: `rgb(208, 241, 239)`,
       fontColor: `white`,
-    
+
       //backgroundColor: '#',//`rgb(208, 241, 239)`,
       selectedListFontColor: `orange`,//`rgb(197, 101, 76)`,
-      selectedListFontStyle:'bold',
+      selectedListFontStyle: 'bold',
       highlightOnSelect: true,
       collapseOnSelect: true,
       useDividers: false,
@@ -79,15 +79,24 @@ export class MultiLevelMenuComponent implements OnInit {
     };
     //console.log('url',this.navigate.url);
   }
-ngAfterViewInit(): void {
-  //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-  //Add 'implements AfterViewInit' to the class.
-  this.loading=false;
-}
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    this.loading = false;
+  }
   setRow(_index: number) {
     this.selectedIndex = _index;
   }
   GetMenuData() {
+    debugger;
+    let containAdmin = window.location.href.toLowerCase().indexOf('admin');
+    let strFilter = '';
+
+    if (containAdmin>-1)
+      strFilter = "Active eq 1 and Module eq 2";
+    else
+      strFilter = "Active eq 1 and Module eq 1"
+
     let list: List = new List();
     list.fields = [
       "PageId"
@@ -101,7 +110,7 @@ ngAfterViewInit(): void {
     //this.list.lookupFields = ["PageGroup", "PageHistories"];
     list.PageName = "Pages";
     list.orderBy = "DisplayOrder";
-    list.filter = ["Active eq 1 and Module eq 2"];
+    list.filter = [strFilter];
     //const columns = ["PageId", "Page Title", "PageGroupName", "Active", "Action"];
     //if(!this.loggedIn)
 
@@ -244,12 +253,12 @@ ngAfterViewInit(): void {
   //   list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
   //   list.PageName = "MasterDatas";
   //   list.filter = ["Active eq 1"];
-    
+
   //   this.dataservice.get(list)
   //     .subscribe((data: any) => {
   //       this.allMasterData = [...data.value];
   //       this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
-    
+
   //     });
 
   // }

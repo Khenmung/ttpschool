@@ -4,6 +4,9 @@
 //     min-height: 100vh;
 
 // }
+:host{
+    width: 100%;
+}
 .container{
 display: flex;
 }
@@ -11,11 +14,16 @@ display: flex;
     //flex:3;
     margin-left: 0px;
     //text-align: justify;
-    max-width: 70ch;
+    //max-width: 70ch;
 }
 .child2{
     flex:1;
 }
 mat-card-subtitle{
-    color:rgb(197, 101, 76);
+    color:orange;
+}
+.contentbody{
+    background-color:#20639b;
+    color:white;
+//    width: 100%;
 }

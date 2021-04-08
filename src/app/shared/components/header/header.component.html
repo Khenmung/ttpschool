@@ -1,32 +1,35 @@
-<mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}">
+<!-- <mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}"> -->
+<mat-toolbar class="width100">
+    
     <mat-toolbar-row fxLayoutAlign="space-between center">
-        <div>
-            <button mat-button>
-                <mat-icon>home</mat-icon>
-                <span class="logo1">ST. PAUL'S INSTITUTE</span>
-            </button>
+       <div style="padding: 20px;">
             <button mat-button (click)="toggleSideBar()">
                 <mat-icon *ngIf="toggle">chevron_right</mat-icon>
                 <mat-icon *ngIf="!toggle">chevron_left</mat-icon>
             </button>
+            <button mat-button>
+                <!-- <div class="container"> -->
+                <a [routerLink]="[ '/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
+                        width="110px" /></a>
+                <!-- </div> -->
+                <!-- <span class="logo1">ST. PAUL'S INSTITUTE</span><br>
+                <span>Serve For Quality</span> -->
+            </button>
+           
         </div>
         <div *ngIf="!deviceXs">
             <button mat-button><span>Train up a child in the way he should go. -
-            Proverbs 22:16</span></button>            
+                    Proverbs 22:16</span></button>
         </div>
-        <div>  
-            <span *ngIf="!deviceXs">                
-                <button mat-button (click)="newsNEvents()">
-                    <mat-icon>announcement</mat-icon><span>News & Events</span>
-                </button>
-                <!-- <button mat-button><mat-icon>info</mat-icon>About Us</button> -->
+        <div class="rightside">
+            <span *ngIf="!deviceXs">
                 <button mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
                 </button>
-            </span>          
+            </span>
             <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
-                <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>                
+                <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
                 <button mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
@@ -48,10 +51,12 @@
         <button mat-button (click)="newsNEvents()">
             <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
         </button>
-        <button mat-button><mat-icon>info</mat-icon>About Us</button>
+        <button mat-button>
+            <mat-icon>info</mat-icon>About Us
+        </button>
         <button mat-button (click)="contactus()">
             <mat-icon>contact_support</mat-icon><span>Contact Us</span>
-        </button>        
+        </button>
     </mat-toolbar-row>
 </mat-toolbar>
 <!-- <mat-toolbar class="top">

@@ -1,6 +1,5 @@
-<mat-card>
-    <mat-card-title>{{PageTitle}}</mat-card-title>
-    <mat-card-subtitle></mat-card-subtitle>
+<div style="background-color: #20639b;border-radius: 1em;">
+    <span style="font-size:large;display: grid;place-items: center; color: rgb(109, 204, 109)">{{PageTitle}}</span>
     <mat-card-content fxLayout="column">
         <div class="container">
             <div class="child1">
@@ -16,16 +15,16 @@
         </div>
         <!-- <div class="example-container mat-elevation-z8"> -->
         <div>
-            <div class="newContainer" *ngFor="let element of DATA">
-                <div class="subtitle"><a style="color:blue" (click)="view(Id,element.PhId)">{{element.Title|titlecase}}</a>
+            <div *ngFor="let element of DATA">
+                <div class="subtitle"><a style="color:white" (click)="view(Id,element.PhId)">{{element.Title|titlecase}}</a>
                    <br> {{element.Date|date:'dd/MM/yyyy'}}
                 </div>
-                <div class="content">
+                <!-- <div class="content">
                   <p>  {{element.Body| slice:0:200}} <a style="color:blue" (click)="view(Id,element.PhId)">more..</a></p>
-                </div>                
+                </div>                 -->
             </div>           
-            <mat-paginator [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+            <mat-paginator style="background-color: #20639b;" [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
             
         </div>
     </mat-card-content>
-</mat-card>
+</div>
