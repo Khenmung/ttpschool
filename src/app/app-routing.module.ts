@@ -1,96 +1,25 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { pageDashboardComponent } from './modules/define-pages/pageDashboard/pageDashboard.component';
-import { TextEditorComponent } from './modules/define-pages/texteditor/texteditor.component';
-import { pageViewComponent } from './modules/define-pages/pageView/pageView.component';
 import { HomeComponent } from './shared/components/home/home.component';
-import { HomeComponent as authHomeComponent } from './modules/auth/home/home.component';
-import { CarouselComponent } from './modules/photogallery/carousel/carousel.component';
-import { cropNUploadphotoComponent } from './modules/photogallery/cropNuploadphoto/cropNuploadphoto.component';
-import { DisplaypageComponent } from './modules/define-pages/displaypage/displaypage.component';
-import { NotfoundComponent } from './modules/notfound/notfound.component';
-import { ImgDragAndDropComponent } from './modules/photogallery/imgDragAndDrop/imgDragAndDrop'
-import { PhotobrowserComponent } from './modules/photogallery/photobrowser/photobrowser.component';
-import { AlbumsComponent } from './modules/photogallery/albums/albums.component';
-import { PhotosComponent } from './modules/photogallery/photos/photos.component';
-import { LoginComponent } from './modules/auth/login/login.component';
-import { RegisterComponent } from './modules/auth/register/register.component';
-import { ProfileComponent } from './modules/auth/profile/profile.component';
-import { ContactdashboardComponent } from './modules/contact/contactdashboard/contactdashboard.component';
-import { ContactComponent } from './modules/contact/addMessage/contact.component';
-import { NewsdashboardComponent } from './shared/components/newsdashboard/newsdashboard.component';
-import { MenuConfigComponent } from './modules/define-pages/menu-config/menu-config.component';
-import { ChangePasswordComponent } from './modules/auth/change-password/change-password.component';
-import { FiledragAndDropComponent } from './modules/files/filedrag-and-drop/filedrag-and-drop.component';
-import { AddstudentComponent } from './modules/FeesManagement/student/addstudent/addstudent.component';
-import { FeesmanagementhomeComponent } from './modules/FeesManagement/feesmanagementhome/feesmanagementhome.component';
-import { AddstudentclassComponent } from './modules/FeesManagement/studentclass/addstudentclass/addstudentclass.component';
-import { AddclassfeeComponent } from './modules/FeesManagement/classfee/addclassfee/addclassfee.component';
-import { DashboardclassfeeComponent } from './modules/FeesManagement/classfee/dashboardclassfee/dashboardclassfee.component';
-import { DashboardstudentComponent } from './modules/FeesManagement/student/dashboardstudent/dashboardstudent.component';
-import { AddstudentfeepaymentComponent } from './modules/FeesManagement/studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
-import { AddMasterDataComponent } from './modules/FeesManagement/MasterData/add-master-data/add-master-data.component';
-import { FeereceiptComponent } from './modules/FeesManagement/feereceipt/feereceipt.component';
-import { ExcelDataManagementComponent } from './modules/FeesManagement/excel-data-management/excel-data-management.component';
+import { NotfoundComponent } from './shared/components/notfound/notfound.component';
 
-const routes: Routes = [{
-  path: '', component: HomeComponent,
-  children:
-    [
-      { path: '', redirectTo: 'display/0', pathMatch: 'full' },
-      { path: 'photocarousel', component: CarouselComponent },
-      // { path: 'photocarousel', 
-      //   loadChildren:()=> import('./modules/photogallery/carousel/carousel.component').then(m=>m.CarouselComponent)
-      // },
-      { path: 'uploadphoto', component: cropNUploadphotoComponent },
-      { path: 'browsephoto', component: PhotobrowserComponent },
-      { path: 'editor', component: TextEditorComponent },
-      { path: 'page/:id', component: TextEditorComponent },
-      { path: 'pages/:id', component: pageDashboardComponent },
-      { path: 'pages', component: pageDashboardComponent },
-      { path: 'display/:phid', component: DisplaypageComponent },
-      { path: 'details', component: pageViewComponent },
-      { path: 'dragdrop', component: ImgDragAndDropComponent },
-      { path: 'filedragdrop', component: FiledragAndDropComponent },
-      { path: 'photos', component: PhotosComponent },
-      { path: 'managefile', component: AlbumsComponent },
-      { path: 'messages', component: ContactdashboardComponent },
-      { path: 'addmessage', component: ContactComponent },
-      { path: 'message/:id', component: ContactComponent },
-      { path: 'about/:parentid', component: NewsdashboardComponent },
-      { path: 'config', component: MenuConfigComponent },
-    ]
-},
-{
-  path: 'auth', component: authHomeComponent,
-  children: [
-    { path: 'login', component: LoginComponent },
-    { path: 'changepassword', component: ChangePasswordComponent },
-    { path: 'createlogin', component: RegisterComponent },
-    { path: 'profile', component: ProfileComponent },
-    { path: 'user', component: CarouselComponent },
-    { path: '', redirectTo: 'auth', pathMatch: 'full' },
-    { path: '**', component: NotfoundComponent }
-  ]
-},
-{
-  path: 'admin', component: FeesmanagementhomeComponent,
-  children: [
-    { path: 'addstudent', component: AddstudentComponent },
-    { path: 'addstudent/:id', component: AddstudentComponent },
-    { path: 'addstudentcls/:id', component: AddstudentclassComponent },
-    { path: 'addclassfee', component: AddclassfeeComponent },
-    { path: 'addstudentfeepayment/:id', component: AddstudentfeepaymentComponent },
-    { path: 'dashboardclassfee', component: DashboardclassfeeComponent },
-    { path: 'dashboardstudent', component: DashboardstudentComponent },
-    { path: 'masterdata', component: AddMasterDataComponent },
-    { path: 'printreceipt/:id', component: FeereceiptComponent },
-    { path: 'exceldata', component: ExcelDataManagementComponent },
-    { path: '', redirectTo: 'auth', pathMatch: 'full' },
-    { path: '**', component: NotfoundComponent }
-  ]
-},
-{ path: '**', component: NotfoundComponent }
+const routes: Routes = [
+  // {
+  //   path: '',component:HomeComponent
+  // },
+  {
+    path: '',
+    loadChildren: () => import('./modules/website.module').then(m => m.WebsiteModule)
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./modules/FeesManagement/FeesManagement.module').then(m => m.FeesmanagementModule)
+  },
+  { path: '**', component: NotfoundComponent }
 
 ];
 

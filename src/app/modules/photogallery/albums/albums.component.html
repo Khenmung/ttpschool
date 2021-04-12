@@ -41,8 +41,8 @@
                     <mat-icon *ngIf="album.FileOrFolder==1">folder_open</mat-icon>
                 </div>
                 <div fxFlex="26">
-                    <app-edit-input [data]="album.UpdatedFileFolderName" (tried)="getoldvalue($event)"
-                        (focusOut)='updateAlbum($event)'></app-edit-input>
+                    <album-edit-input [data]="album.UpdatedFileFolderName" (tried)="getoldvalue($event)"
+                        (focusOut)='updateAlbum($event)'></album-edit-input>
                 </div>
                 <div fxFlex="10">{{album.UploadDate|date:'dd/MM/yyyy'}}</div>
                 <div fxFlex="5" *ngIf="album.FilePath.length>0">

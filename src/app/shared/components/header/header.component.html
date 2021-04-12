@@ -1,27 +1,25 @@
 <!-- <mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}"> -->
 <mat-toolbar class="width100">
-    
-    <mat-toolbar-row fxLayoutAlign="space-between center">
-       <div style="padding: 20px;">
+    <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+        <div style="padding-top: 15px;">
             <button mat-button (click)="toggleSideBar()">
                 <mat-icon *ngIf="toggle">chevron_right</mat-icon>
                 <mat-icon *ngIf="!toggle">chevron_left</mat-icon>
             </button>
             <button mat-button>
-                <!-- <div class="container"> -->
                 <a [routerLink]="[ '/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
                         width="110px" /></a>
-                <!-- </div> -->
-                <!-- <span class="logo1">ST. PAUL'S INSTITUTE</span><br>
-                <span>Serve For Quality</span> -->
             </button>
-           
+            <span><strong>ST. PAUL'S INSTITUTE</strong></span>
         </div>
-        <div *ngIf="!deviceXs">
-            <button mat-button><span>Train up a child in the way he should go. -
-                    Proverbs 22:16</span></button>
+        <div>
+            <div fxLayout="row" fxLayoutAlign="space-around end"><span style="height: 40px;">&nbsp;</span></div>
+            <div fxLayout="row" fxLayoutAlign="space-around end" *ngIf="!deviceXs">
+                <button mat-button><span>Train up a child in the way he should go. -
+                        Proverbs 22:16</span></button>
+            </div>
         </div>
-        <div class="rightside">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
             <span *ngIf="!deviceXs">
                 <button mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
@@ -47,7 +45,7 @@
             </mat-menu>
         </div>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="deviceXs" fxLayoutAlign="space-between end">
+    <mat-toolbar-row *ngIf="deviceXs" style="height: 50px;" fxLayoutAlign="space-between end">
         <button mat-button (click)="newsNEvents()">
             <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
         </button>

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MultiLevelMenuComponent } from './MultiLevelMenu.component';
 
-describe('CarouselComponent', () => {
+describe('MultiLevelMenuComponent', () => {
   let component: MultiLevelMenuComponent;
   let fixture: ComponentFixture<MultiLevelMenuComponent>;
 

@@ -10,49 +10,54 @@ import { MaterialModule } from './material/material.module';
 import { MultiLevelMenuModule} from '../modules/dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { AlertComponent } from './components/alert/alert.component';
 import { MatConfirmDialogComponent } from './components/mat-confirm-dialog/mat-confirm-dialog.component';
-import { EditInputComponent } from './components/edit-input/edit-input.component';
+//import { EditInputComponent } from '../modules/photogallery/edit-input/edit-input.component';
 import { AutofocusDirective } from './autofocus.directive';
 import { FormsModule } from '@angular/forms';
 import { RightComponent } from './components/right/right.component';
-import { NewsdashboardComponent } from './components/newsdashboard/newsdashboard.component';
-//import { DefinePagesModule } from '../modules/define-pages/define-pages.module';
-//import {NgMaterialMultilevelMenuModule} from 'ng-material-multilevel-menu'
-//import { CarouselLocalComponent } from '../modules/carousel/carousel.component';
-
+import { NewsdashboardComponent } from '../modules/newsdashboard/newsdashboard.component';
+import { HomeComponent } from './components/home/home.component';
+import { NotfoundComponent } from './components/notfound/notfound.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 @NgModule({
   declarations: [
-    HeaderComponent,
-    SidebarComponent,
-    FooterComponent,
+    //HomeComponent,
+    //HeaderComponent,
+    //SidebarComponent,
+    //FooterComponent,
     AreaComponent,
-    AlertComponent,
+    //AlertComponent,
     MatConfirmDialogComponent,
-    EditInputComponent,
     AutofocusDirective,
-    RightComponent,
-    NewsdashboardComponent
-    //CarouselLocalComponent
+    //RightComponent,
+    //NewsdashboardComponent,
+    NotfoundComponent,
+    //CdkCopyToClipboard,
+    //EditInputComponent,
+    
   ],
   imports: [
     CommonModule,
     FlexLayoutModule,
-    RouterModule,
+    //RouterModule,
     MaterialModule,
     MultiLevelMenuModule,    
-    //NgMaterialMultilevelMenuModule,
-    FormsModule,
-    //DefinePagesModule
+    FormsModule,    
+    MatProgressBarModule
   ],
   exports: [
-    HeaderComponent,
-    SidebarComponent,
-    FooterComponent,
+    //HomeComponent,
+    //HeaderComponent,
+    //SidebarComponent,
+    //FooterComponent,
     AreaComponent,
-    MaterialModule,
-    AlertComponent,
-    EditInputComponent,
-    RightComponent,
-    NewsdashboardComponent
+    //AlertComponent,
+    //RightComponent,
+    //NewsdashboardComponent,
+    NotfoundComponent,
+    //EditInputComponent,
+    //CdkCopyToClipboard
   ]
 
 })

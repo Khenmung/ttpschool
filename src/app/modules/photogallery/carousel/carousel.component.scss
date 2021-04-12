@@ -1,19 +1,23 @@
+:host{
+  width: 100%;
+  
+}
+mat-card{
+  background-color: #20639b;
+  //top:35px;
+}
+
 .carousel-caption{
   color:black;
 }
-// .imgContainer{
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// }
 mat-card-subtitle{
   display: flex;
-  justify-content: space-between;
+  justify-content:center;
 }
 
-img {
+ngb-carousel, .single {
   width: 100vh;
-  height: 70vh;
+  height: 50vh;
   object-fit:cover;
   border-radius: 1rem;
   
@@ -21,19 +25,4 @@ img {
   *:focus{
     outline: none;
   }
-  img{
-    border-radius: 1rem;
-  }
-// .card-container {
-//     padding: 10px;
-//     width: 700px;
-//     height:500px;
-//     display: flex;
-//     justify-content: space-between;
-//   }
-  .row1{
-    flex-basis: 100%;
-  }
-  .container{
-    display:flex;
-  }
+  

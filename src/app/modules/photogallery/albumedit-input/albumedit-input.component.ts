@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-edit-input',
-  templateUrl: './edit-input.component.html',
-  styleUrls: ['./edit-input.component.scss'],
+  selector: 'album-edit-input',
+  templateUrl: './albumedit-input.component.html',
+  styleUrls: ['./albumedit-input.component.scss'],
 })
-export class EditInputComponent implements OnInit {
+export class AlbumEditInputComponent implements OnInit {
   @Input() data: string;
   @Output() focusOut: EventEmitter<string> = new EventEmitter<string>();
   @Output() tried: EventEmitter<string> = new EventEmitter<string>();

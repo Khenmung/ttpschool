@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MediaChange, MediaObserver } from '@angular/flex-layout'
+import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -15,23 +16,28 @@ export class HomeComponent implements OnInit {
   contentcls: string;
   sidebarcls: string;
   openSideBar = true;
-  constructor(private mediaObserver: MediaObserver) { }
+  constructor(private mediaObserver: MediaObserver,
+    private ref: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
-      this.deviceXs = result.mqAlias === "xs" ? true : false;
+    this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
+      //console.log('result',result);
+      this.deviceXs = result[0].mqAlias === "xs" ? true : false;
       if (this.deviceXs) {
         this.openSideBar = false;
         this.mode = "over";
-        this.contentcls = 'top80';
-        this.sidebarcls = 'sidebartop110width100'
+        this.contentcls = 'DeviceXs';
+        //this.sidebarcls = 'sidebartop110width100'
       }
       else {
         this.mode = "side";
-        this.contentcls = "top70Width62";
-        this.sidebarcls = "sidebartop65width100";
+        this.contentcls = "NotDeviceXs";
+        //this.sidebarcls = "sidebartop65width100";
       }
+      this.ref.detectChanges();
+      //console.log('contentcls', this.contentcls);
     })
+
   }
   ngOnDestroy() {
     this.mediaSub.unsubscribe();
@@ -39,18 +45,28 @@ export class HomeComponent implements OnInit {
   sideBarToggler() {
     debugger;
     this.openSideBar = !this.openSideBar;
-    if (this.openSideBar == true && this.deviceXs == false) {
-      this.sidebarcls = "sidebartop65width100"
-      this.contentcls = "top70Width62";
-    }
-    else if (this.openSideBar && this.deviceXs)
-    {
-      this.sidebarcls = "sidebartop110width100"
-      this.contentcls = "top80";
-    }
-    else if (this.openSideBar == false && !this.deviceXs)
-      this.contentcls = "top70";
+    //console.log('this.deviceXs in toggle',this.deviceXs)
+    if (!this.openSideBar && this.deviceXs)
+      this.contentcls = "DeviceXs";
+    else if(this.openSideBar && this.deviceXs)
+      this.contentcls ='OpenAndDeviceXs';
     else
-      this.contentcls = "top80";
+      this.contentcls = "NotDeviceXs";
+    this.ref.detectChanges();
+    //   if (this.openSideBar && !this.deviceXs) {
+    //     //this.sidebarcls = "OpenAndDeviceXs"
+    //     this.contentcls = "OpenAndDeviceXs";
+    //   }
+    //   else if (this.openSideBar && this.deviceXs)
+    //   {
+    //     this.sidebarcls = "sidebartop110width100"
+    //     this.contentcls = "top80";
+    //   }
+    //   else if (!this.openSideBar && !this.deviceXs)
+    //     this.contentcls = "top70";
+    //   else
+    //     this.contentcls = "top80";
+    // }
+
   }
 }

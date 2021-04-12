@@ -1,9 +1,8 @@
 // .mainContainer{
-//     margin:12px;
-//     min-height: 81vh;
+//     width: 100%;
 // }
-div{
-    max-width: 60%;
+:host{
+    width: 100%;
 }
 card{
     min-height: 100px;
@@ -38,5 +37,7 @@ span:hover{
     //transform: skewX(-5deg);
 }
 mat-card{
-    background-color: transparent;
+    background-color: #20639b;
+    //top:35px;
+    //max-width: 100%;
 }

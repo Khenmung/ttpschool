@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { A11yModule } from '@angular/cdk/a11y';
-import { ClipboardModule } from '@angular/cdk/clipboard';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PortalModule } from '@angular/cdk/portal';
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -39,6 +38,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule } from '@angular/material/form-field';
 //import { MatTableModule } from '@angular/material/tablec';
 //import { MatPaginator } from '@angular/material/paginator';
 //import { MatSort } from '@angular/material/sort';
@@ -49,7 +49,7 @@ const MaterialComponents = [
   CommonModule,
   MatTableModule,
   A11yModule,
-  ClipboardModule,
+  //ClipboardModule,
   DragDropModule,
   MatAutocompleteModule,
   MatBadgeModule,
@@ -88,7 +88,8 @@ const MaterialComponents = [
   PortalModule,
   ScrollingModule,
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatFormFieldModule
   //MatDatepickerModule,
   //MatMomentDateModule
 ]

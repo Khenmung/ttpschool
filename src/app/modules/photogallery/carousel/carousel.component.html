@@ -3,23 +3,25 @@
   <mat-card-title></mat-card-title>
   <mat-card-subtitle>{{selectedAlbum}}</mat-card-subtitle>
   <mat-card-content>
-    <ngb-carousel class="imgContainer" *ngIf="images.length>1" flex>&nbsp;
-      <ng-template ngbSlide *ngFor="let image of images">
-        <div class="wrapper">
-          <img [src]="image.PhotoPath" alt="{{image.Description}}" layout-fill>
-        </div>
-        <div class="carousel-caption">
-          <h3>{{image.Description}}</h3>
-        </div>
-      </ng-template>
-    </ngb-carousel>
-    <div class="wrapper" *ngIf="images.length==1">
-      <img [src]="images[0].PhotoPath" alt="{{images[0].Description}}">
-    </div>
-    <div>
-      <button mat-button (click)="back()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
+    <div fxLayout="row" fxLayoutAlign="space-around center">
+      <ngb-carousel *ngIf="images.length>1">&nbsp;
+        <ng-template ngbSlide *ngFor="let image of images">
+          <div class="wrapper">
+            <img [src]="image.PhotoPath" alt="{{image.Description}}" layout-fill>
+          </div>
+          <div class="carousel-caption">
+            <h3>{{image.Description}}</h3>
+          </div>
+        </ng-template>
+      </ngb-carousel>
+      <div class="single" *ngIf="images.length==1">
+        <img [src]="images[0].PhotoPath" alt="{{images[0].Description}}">
+      </div>
+      <div>
+        <button mat-button (click)="back()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

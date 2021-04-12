@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HomeComponent } from './home/home.component';
+import { AuthHomeComponent } from './authhome/authhome.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -14,12 +14,12 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
-    HomeComponent,
+    AuthHomeComponent,
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
     ChangePasswordComponent,
-
+    
   ],
   imports: [
     CommonModule,
@@ -30,7 +30,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FlexLayoutModule
   ],
   exports:[    
-    HomeComponent,
+    AuthHomeComponent,
     LoginComponent,
     RegisterComponent,
     ProfileComponent,

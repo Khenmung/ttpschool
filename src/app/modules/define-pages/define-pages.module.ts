@@ -4,22 +4,18 @@ import { CKEditorModule } from 'ng2-ckeditor';
 import { TextEditorComponent } from './texteditor/texteditor.component';
 import { pageDashboardComponent } from './pageDashboard/pageDashboard.component';
 import { pageViewComponent } from './pageView/pageView.component';
-import {MaterialModule } from '../../shared/material/material.module';
-import { FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from '../../shared/material/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DisplaypageComponent } from './displaypage/displaypage.component';
-//import {MatTableDataSource} from '../../shared/material/material.module';
 import { EncodeHTMLPipe } from '../../encode-html.pipe'
-import { SharedModule} from '../../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
-//import { NewsdashboardComponent } from '../../shared/components/newsdashboard/newsdashboard.component';
 import { RouterModule } from '@angular/router';
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-  
-//import { MatBadgeModule } from '@angular/material/badge';
-//import {MatAutocompleteModule} from '@angular/material/autocomplete'
+import { ContactComponent } from '../contact/addMessage/contact.component';
+import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
 
 @NgModule({
   declarations: [
@@ -28,8 +24,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     pageViewComponent,
     DisplaypageComponent,
     EncodeHTMLPipe,
-  //  NewsdashboardComponent,
     MenuConfigComponent,
+    ContactComponent,
+    ContactdashboardComponent
+
   ],
   imports: [
     CommonModule,
@@ -37,23 +35,20 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    BrowserAnimationsModule,
     SharedModule,
     MatFormFieldModule,
     MatCardModule,
     RouterModule,
     FlexLayoutModule,
- 
+
   ],
-  exports:[
+  exports: [
     TextEditorComponent,
     pageDashboardComponent,
     pageViewComponent,
     MaterialModule,
     MatFormFieldModule,
     MatCardModule,
-    //NewsdashboardComponent,
-//    AlertComponent
   ]
 })
 export class DefinePagesModule { }

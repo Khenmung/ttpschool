@@ -26,21 +26,21 @@ html, body {
     // scrollbar-color: blue orange;   /* scroll thumb and track */
      height: 100%; 
      margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
-    background-color: #0F5298;
+    //background-color: #0F5298;
     }
     
     div::-webkit-scrollbar {
-        width: 2px;
+        width: 8px;
         //-webkit-appearance: none;
         //width: 7px;
     }
     div::-webkit-scrollbar-thumb {
-        background:#20639B;
+        background:#4678a0;
         border-radius: 1rem;
         
     }
     div::-webkit-scrollbar-track {
-        background:white;
+        background:#20639B;
     }
 
 input[type="radio"]{

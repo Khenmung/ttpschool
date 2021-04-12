@@ -36,12 +36,12 @@
                     *ngFor="let d of MasterData;">
                     <div><span>{{d.MasterDataId}}</span></div>
                     <div>
-                        <app-edit-input [data]="d.MasterDataName" (tried)="getoldvalue($event,d)"
-                            (focusOut)='updateName($event,d)'></app-edit-input>
+                        <FeeEditInput [data]="d.MasterDataName" (tried)="getoldvalue($event,d)"
+                            (focusOut)='updateName($event,d)'></FeeEditInput>
                     </div>
                     <div>
-                        <app-edit-input [data]="d.Description" (tried)="getoldvalue($event)"
-                            (focusOut)='updateDescription($event,d)'></app-edit-input>
+                        <FeeEditInput [data]="d.Description" (tried)="getoldvalue($event)"
+                            (focusOut)='updateDescription($event,d)'></FeeEditInput>
                     </div>
                     <div fxLayout="row" fxLayoutAlign="center center">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(d,$event)"

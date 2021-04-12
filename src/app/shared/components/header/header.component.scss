@@ -7,12 +7,13 @@
     position: fixed;
     z-index: 10;
     color           : white;
-    background-color: #20639b; //#4f8ec2;//
-    box-shadow: 5px 5px 5px lightgray;
+    background-color:#0F5298;// #20639b; //#4f8ec2;//
+    box-shadow: -5px 5px 5px lightgray;
     top:0px;
     //max-width: 81%;
     //border-radius: 0em 1em 0em 0em;
 }
+
 .width100 {
     position: fixed;
     z-index: 10;
@@ -21,7 +22,7 @@
     background-size: cover;
     //background-repeat: no-repeat;
     //background-size: cover;
-    background-color: #0F5298; //#4f8ec2;//
+    background-color:#0F5298; //#4f8ec2;//
     box-shadow: 5px 5px #0F5298;
     top:0px;
     max-width: 100%;
@@ -42,4 +43,7 @@ button {
 }
 .mat-toolbar-row{
     height: 150px !important;
+}
+.ng-star-inserted{
+    height: 60px !important;
 }

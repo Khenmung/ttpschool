@@ -5,10 +5,10 @@ import { UserService } from 'src/app/_services/user.service';
 import {SharedataService} from '../../../shared/sharedata.service';
 @Component({
   selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  templateUrl: './authhome.component.html',
+  styleUrls: ['./authhome.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class AuthHomeComponent implements OnInit {
   content?: string;
   mediaSub:Subscription;
   deviceXs:boolean;

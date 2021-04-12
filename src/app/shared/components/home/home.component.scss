@@ -1,26 +1,41 @@
     mat-drawer {
 //        margin-top      : 120px;
         width           : 280px;
-        background: url('../../../../assets/images/leftimg.svg');
+        //background: url('../../../../assets/images/leftimg.svg');
         background-repeat: no-repeat;
-        background-size: 700px;
+        //background-size: cover;
         background-color: #20639b;
         height: 100%;
-        top:150px;
+        top:155px;
     }
     mat-drawer-content{
         background-color: #0F5298;
-        top:150px;
-        margin-left: 280px;
-        height:700px;
+        top:145px;
+        border-radius: 2px;
+        //margin-left: 280px;
+        //height:710px;
     }
     .rightpanel{
             background-color:#20639b ;
     }
-    // .top70{
-    //     top:120px;
-    //     max-width: 100%;
-    // }
+    mat-drawer-container{
+        background-color: #0F5298;
+    }
+    .DeviceXs{
+        //position: relative;
+        margin-top:55px !important;
+        //max-width: 100%;
+    }
+    .OpenAndDeviceXs{
+        //position: relative;
+        margin-top:55px !important;
+        //max-width: 100%;
+    }
+    .NotDeviceXs{
+        //position:
+        margin-top:0px !important;
+        //max-width: 100%;
+    }
     // .top70Width62{
     //     top:150px;
     //     max-width: 100%;
@@ -44,7 +59,7 @@
     //     max-width: 100%;
     // }
 
-    app-sidebar {
-        min-height: 300vh;
-    }
+    // app-sidebar {
+    //     min-height: 300vh;
+    // }
     

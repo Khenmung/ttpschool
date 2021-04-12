@@ -38,10 +38,10 @@
             <ng-container matColumnDef="Pay">
                 <mat-header-cell *matHeaderCellDef> Payable Amount </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <app-edit-input *ngIf="element.Action && element.ClassFeeName=='Admission'" [data]="element.Pay|number:'1.2-2'"
+                    <FeeEditInput *ngIf="element.Action && element.ClassFeeName=='Admission'" [data]="element.Pay|number:'1.2-2'"
                         (tried)="getoldvalue($event)" (focusOut)='enableAction(element,$event)'
                         (keyup)="validate($event)">
-                    </app-edit-input>
+                    </FeeEditInput>
                     <span *ngIf="element.Action && element.ClassFeeName!='Admission'">{{element.Pay}}</span>
                 </mat-cell>
             </ng-container>

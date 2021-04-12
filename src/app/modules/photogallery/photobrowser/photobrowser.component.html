@@ -9,7 +9,7 @@
       </mat-form-field>
     </div>
     <div fxLayout="row wrap" fxLayoutGap="30px">
-      <span class="childMatcard" (click)="view(album.UpdatedFileFolderName)" *ngFor="let album of Albums;let i=index"
+      <span class="childMatcard" (click)="view(album.FileId)" *ngFor="let album of Albums;let i=index"
         [style.backgroundColor]="changeColor(i)">
         {{album.UpdatedFileFolderName|slice:0:30}}<span *ngIf="album.UpdatedFileFolderName.length>30">...</span>
       </span>

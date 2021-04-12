@@ -1,28 +1,11 @@
-// mat-card{
-//     height:100%;
-//     margin:12px;
-//     min-height: 100vh;
-
-// }
 :host{
     width: 100%;
-}
-.container{
-display: flex;
-}
-.child1{
-    //flex:3;
-    margin-left: 0px;
-    //text-align: justify;
-    //max-width: 70ch;
-}
-.child2{
-    flex:1;
 }
 mat-card-subtitle{
     color:orange;
 }
 .contentbody{
+    //top:35px;
     background-color:#20639b;
     color:white;
 //    width: 100%;
