@@ -1,6 +1,11 @@
 :host{
-  border-radius: 2em;
-  padding: 3px;
+  border-radius: 1em;
+  //padding: 15px;
+  width: 100%;
+}
+mat-card{
+  background-color: #20639b;
+  border-radius: 1em;
 }
 .mat-badge-content {
   width      : 30px;

@@ -12,7 +12,7 @@ import { ChangeDetectorRef } from '@angular/core';
 export class HomeComponent implements OnInit {
   mediaSub: Subscription;
   deviceXs: boolean;
-  mode: string;
+  mode='side';
   contentcls: string;
   sidebarcls: string;
   openSideBar = true;
@@ -25,12 +25,12 @@ export class HomeComponent implements OnInit {
       this.deviceXs = result[0].mqAlias === "xs" ? true : false;
       if (this.deviceXs) {
         this.openSideBar = false;
-        this.mode = "over";
+        //this.mode = "over";
         this.contentcls = 'DeviceXs';
         //this.sidebarcls = 'sidebartop110width100'
       }
       else {
-        this.mode = "side";
+        //this.mode = "side";
         this.contentcls = "NotDeviceXs";
         //this.sidebarcls = "sidebartop65width100";
       }

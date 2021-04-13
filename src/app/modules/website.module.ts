@@ -60,6 +60,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FlexLayoutModule
     //SharedhomepageModule
   ],
-  exports:[WebsiteComponents]
+  exports:[WebsiteComponents,FlexLayoutModule]
 })
 export class WebsiteModule { }

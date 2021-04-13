@@ -1,38 +1,17 @@
-// .mainContainer{
-//     width: 100%;
+:host {
+   width:100%;
+  }
+// img{
+//     width:"150px";
+//     height:"150px"; 
+//     margin-top: 100px;   
 // }
-:host{
-    width: 100%;
-}
-card{
-    min-height: 100px;
-    max-height: 100px;
-    min-width: 100px;
-    max-width: 100px;
-   
-}
-.childMatcard{
-    display: flex;
-    align-items:center;
-    justify-content: center;
-    min-height: 100px;
-    max-height: 100px;
-    min-width: 100px;
-    max-width: 100px;
-    margin: 10px;
-    margin-left: 15px;
-    padding:8px;
-    //box-shadow: 5px 5px gray;
-    border-radius: 3px;
-    //transform: rotate(10deg);
-    //transform: skew(-10deg);
-}
 span:hover{   
     border-radius: 3px;
     transition: all .3s linear;
     cursor:pointer;
     //background-color: goldenrod;
-    box-shadow: 5px 5px lightgrey;
+//    box-shadow: 5px 5px lightgrey;
     transform: scale(1.1);
     //transform: skewX(-5deg);
 }
@@ -40,4 +19,15 @@ mat-card{
     background-color: #20639b;
     //top:35px;
     //max-width: 100%;
+}
+mat-grid-tile{
+    //position: absolute;
+    // margin-top: 100px;
+    width:200px !important;
+    height: 200px;
+}
+.zero{
+    padding: 0px;
+    margin: 0px;
+    border:none;
 }

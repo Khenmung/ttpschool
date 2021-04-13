@@ -1,6 +1,12 @@
-mat-card{
+:host{
     height:100%;
+    width: 100%;
+}
+mat-card{
+   
     margin-left: 10px;
+    background-color: lightgray;// #20639b;
+    color:white;
 }
 .container{
     margin-left: 5px;

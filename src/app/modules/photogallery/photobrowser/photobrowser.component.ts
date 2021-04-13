@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, VERSION } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { List } from 'src/app/shared/interface';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { globalconstants } from 'src/app/shared/globalconstant';
+import { Subscription } from 'rxjs';
+import { MediaObserver } from '@angular/flex-layout';
 
 @Component({
   selector: 'app-photobrowser',
@@ -12,7 +14,12 @@ import { globalconstants } from 'src/app/shared/globalconstant';
   styleUrls: ['./photobrowser.component.scss']
 })
 export class PhotobrowserComponent implements OnInit {
+  ngVersion: string = VERSION.full;
+  matVersion: string = '5.1.0';
+  breakpoint: number;
+  rowHeight: string;
   //searchForm:FormGroup;
+  folderHierarachy: string;
   blueColorScheme = ["#FCE786",
     "#EC7235",
     "#D22D16",
@@ -26,17 +33,27 @@ export class PhotobrowserComponent implements OnInit {
   images: any[];
   Albums: any[];
   AllAlbums: any[];
+  Photos:any[];
   unique: any[];
   selectedAlbum: string;
   oldvalue: string;
   loading = false;
+  mediaSub:Subscription;
+  deviceXs:boolean;
+
   constructor(
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService
+    private alert: AlertService,
+    private el:ElementRef,
+    private mediaObserver:MediaObserver
   ) { }
 
   ngOnInit() {
+    this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
+      this.deviceXs = result[0].mqAlias === "xs" ? true : false;
+    });
+    //  this.resize(window.innerWidth);
     this.getAlbums();
     this.searchForm.controls.radioAlbum.setValue('');
   }
@@ -78,51 +95,80 @@ export class PhotobrowserComponent implements OnInit {
         });
         let minId = Math.min.apply(Math, this.Albums.map(o => o.FileId))
         //let minId = this.Albums.reduce((a, b.FileId)=>Math.min(a.FileId, b.FileId));
-        console.log('this.Albums', this.Albums)
-        console.log('minId', minId)
+        //console.log('this.Albums', this.Albums)
+        //console.log('minId', minId)
         this.getPhotos(minId);
         this.AllAlbums = data.value;
         this.loading = false;
       }, error => console.log(error))
   }
-  getPhotos(minPhotoId) {
+  getPhotos(minId) {
 
     let list: List = new List();
     list.fields = ["FileId", "FileName", "Description", "UpdatedFileFolderName", "ParentId"];
+    //list.lookupFields = ["Album"];
     list.PageName = "FilesNPhotoes";
-    list.filter = ["Active eq 1 and FileOrPhoto eq 1 and ParentId ge " + minPhotoId];
+    list.filter = ["Active eq 1 and FileOrPhoto eq 1 and ParentId ge " + minId];
     list.orderBy = "UploadDate desc";
+    this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        //debugger;
+        let count=0;
         if (data.value.length > 0) {
-          debugger;
           var browsePath = '';
-          this.images = data.value.map(item => {
-            browsePath = globalconstants.apiUrl + "/Image/" + item.Album.AlbumName + "/" + item.PhotoPath;
-            return {
-              PhotoId: item.PhotoId,
-              PhotoPath: browsePath,
-              ImagePath: item.PhotoPath,
-              Description: item.Description
-            }
-          });
-          this.Albums = this.Albums.map(album => {
-            album.photos = this.images.filter(image => {
-              image.AlbumId == album.FileId
-            })
+          var width=150;
+          var cols=1;
+          this.Albums.forEach(album => {
+            album.photos =
+              data.value.filter(f=> {
+                count++;
+                return f.ParentId==album.FileId
+              })
+              .map((photo,indx) => {
+                
+                browsePath = globalconstants.apiUrl + "/Image/" + album.FileName + "/" + photo.FileName;
+                console.log('count',count); 
+                
+                return {
+                  PhotoId: photo.FileId,
+                  PhotoPath: browsePath,
+                  PhotoName: photo.UpdatedFileFolderName,
+                  Description: photo.Description,
+                  Width:width,
+                  Height:width
+                }
+              });
+              //count=0;
           })
-          console.log(this.Albums);
-          this.selectedAlbum = data.value[0].Album.UpdatableName;// this.images[0].Album.AlbumName;
-          //this.title = this.selectedAlbum;
-          //console.log('this.images',this.images)
         }
-        //else
-        //this.error = "No image to display";
+        
+        console.log('album',this.Albums);
         this.loading = false;
-        //setTimeout(()=>{this.loading=false},3000); 
       })
+  }
 
-
+  getNestedFolders(fileId) {
+    let ParentItem = this.Albums.filter(item => item.FileId == fileId);
+    let fullPath = '';
+    while (ParentItem.length > 0) {
+      fullPath += ParentItem[0].FileName + "/";
+      ParentItem = this.Albums.filter(item => item.FileId == ParentItem[0].ParentId)
+    }
+    return fullPath;
+  }
+  // onResize(event) {
+  //   this.resize(event.target.innerWidth);
+  // }
+  
+  resize() {
+    if (this.deviceXs) {
+      this.breakpoint = 1;
+      this.rowHeight = this.el.nativeElement.offsetWidth + ':' + this.el.nativeElement.offsetHeight / 4;
+    } else {
+      this.breakpoint = 4;
+      this.rowHeight = this.el.nativeElement.offsetWidth / 4 + ':' + this.el.nativeElement.offsetHeight;
+    }
   }
   selected(event) {
     //console.log('event',event)

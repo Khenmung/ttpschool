@@ -1,30 +1,29 @@
-<div style="background-color: #20639b;border-radius: 1em;">
-    <span style="font-size:large;display: grid;place-items: center; color: rgb(44, 238, 44)">{{PageTitle}}</span>
-    <mat-card-content fxLayout="column">
-        <div class="container">
-            <div class="child1">
+<mat-card>
+    <mat-card-title><span
+            style="font-size:large;display: grid;place-items: center; color: rgb(44, 238, 44)">{{PageTitle}}</span>
+    </mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <div>
+            <div fxLayout="row" fxLayoutAlign="space-around center">
                 <mat-form-field>
                     <input matInput #search autocomplete="Off" placeholder="Search">
                 </mat-form-field>
-            </div>
-            <div class="child2">
                 <button mat-button (click)="applyFilter(search.value)">
                     <mat-icon>search</mat-icon>
                 </button>
             </div>
-        </div>
-        <!-- <div class="example-container mat-elevation-z8"> -->
-        <div>
             <div *ngFor="let element of DATA">
-                <div class="subtitle"><a style="color:white" (click)="view(Id,element.PhId)">{{element.Title|titlecase}}</a>
-                   <br> {{element.Date|date:'dd/MM/yyyy'}}
+                <div class="subtitle"><a style="color:white"
+                        (click)="view(Id,element.PhId)">{{element.Title|titlecase}}</a>
+                    <br> {{element.Date|date:'dd/MM/yyyy'}}
                 </div>
                 <!-- <div class="content">
                   <p>  {{element.Body| slice:0:200}} <a style="color:blue" (click)="view(Id,element.PhId)">more..</a></p>
                 </div>                 -->
-            </div>           
+            </div>
             <mat-paginator style="background-color: #20639b;" [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
-            
         </div>
+
     </mat-card-content>
-</div>
+</mat-card>
