@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthHomeComponent } from './authhome/authhome.component';
 //import { CarouselComponent } from 'angular-responsive-carousel';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { LoginComponent } from './login/login.component';
@@ -8,7 +9,7 @@ import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
   {
-    path: '', component: LoginComponent,
+    path: '', component: AuthHomeComponent,
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'changepassword', component: ChangePasswordComponent },
@@ -23,9 +24,11 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AuthenticationRoutingModule { }
-export const AuthRoutingComponents = [
+export const AuthComponents = [
+  AuthHomeComponent,
   ChangePasswordComponent,
   LoginComponent,
   ProfileComponent,
-  RegisterComponent
+  RegisterComponent,
+  AuthHomeComponent
 ]

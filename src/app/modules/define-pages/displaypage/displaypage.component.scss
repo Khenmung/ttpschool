@@ -6,8 +6,13 @@ mat-card-subtitle{
     color:orange;
 }
 .contentbody{
+    border-radius: 1em;
+    margin-top: 9px;
     padding: 25px;
-    background-color:#20639b;
-    color:white;
+    background-color:#1E4A75;//#20639b;
+    // background: url('/assets/images/schoolbuilding2018.jfif' );    
+    //opacity: 0.9;
+    // z-index: 100;
+    color:#fafafa;
 //    width: 100%;
 }

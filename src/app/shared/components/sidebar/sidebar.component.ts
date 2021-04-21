@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
+import { EventEmitter } from 'events';
 
 @Component({
   selector: 'app-sidebar',
@@ -6,22 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent implements OnInit {
-  config = {
-    paddingAtStart: true,
-    classname: 'my-custom-class',
-    listBackgroundColor: 'rgb(208, 241, 239)',
-    fontColor: 'rgb(8, 54, 71)',
-    backgroundColor: 'rgb(208, 241, 239)',
-    selectedListFontColor: 'red',
-  };
-  appitems=[];
+  //@Output() openLeftMenu1:new EventEmitter();
   constructor() { }
 
   ngOnInit(): void {
   }
-  selectedItem(event:any)
-  {
-    console.log(event);
-
+  open(){
+    
   }
 }

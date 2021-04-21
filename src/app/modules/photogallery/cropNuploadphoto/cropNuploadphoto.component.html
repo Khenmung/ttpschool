@@ -4,18 +4,18 @@
   <mat-card-title>Crop and Upload Image</mat-card-title>
   <mat-card-content>
     <form [formGroup]="UploadForm" *ngIf="UploadForm">
-      <div fxLayout="row">
-        <mat-form-field hintLabel="Max 50 characters" appearance="outline" fxFlex [style.width.pc]=23>
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <mat-form-field hintLabel="Max 50 characters" appearance="outline" [style.width.pc]=23>
           <mat-label>Enter album</mat-label>
           <input formControlName="UpdatedFileFolderName" #album matInput maxlength="50" autocomplete="off">
         </mat-form-field>
-        <mat-form-field appearance="outline" fxFlex>
+        <mat-form-field appearance="outline">
           <mat-label>Existing albums</mat-label>
           <mat-select formControlName="parentId">
             <mat-option *ngFor="let album of Albums" [value]="album.FileId">{{album.UpdatedFileFolderName}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field hintLabel="Max 50 characters" appearance="outline" fxFlex [style.width.pc]=21>
+        <mat-form-field hintLabel="Max 50 characters" appearance="outline" [style.width.pc]=21>
           <mat-label>Description</mat-label>
           <input formControlName="description" #Description matInput maxlength="50" autocomplete="off">
         </mat-form-field>

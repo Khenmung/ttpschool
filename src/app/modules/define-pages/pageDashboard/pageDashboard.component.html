@@ -1,17 +1,17 @@
+
 <mat-card>
   <div class="text-right"><button class="mat-raised-button" (click)="createpage()">Create new page</button></div>
   <mat-card-title>Manage Page</mat-card-title>
   <mat-card-subtitle></mat-card-subtitle>
   <mat-card-content fxLayout="column">
     <mat-spinner *ngIf="loading"></mat-spinner>
-    <div class="example-header">
+    <alert></alert>
+    <div>
       <mat-form-field>
         <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Search" autocomplete="Off">
       </mat-form-field>
     </div>
-    
-    <div class="example-container mat-elevation-z8">
-
+    <div>
       <mat-table [dataSource]="dataSource" matSort>
         <!-- <ng-container *ngFor="let col of displayedColumns" [matColumnDef]="col">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ col }} </th>
@@ -36,27 +36,32 @@
           <th mat-header-cell *matHeaderCellDef> Published </th>
           <td mat-cell *matCellDef="let element"> {{element.Published}} </td>
         </ng-container>
-        <ng-container matColumnDef="ParentId" >
+        <ng-container matColumnDef="ParentId">
           <th mat-header-cell *matHeaderCellDef hidden="true"> Parent Id</th>
           <td mat-cell *matCellDef="let element" hidden="true"> </td>
         </ng-container>
-        <ng-container matColumnDef="Active">
+        <!-- <ng-container matColumnDef="Active">
           <th mat-header-cell *matHeaderCellDef>
-             Active 
+            Delete
           </th>
           <td mat-cell *matCellDef="let element">
-            <mat-checkbox (click)="$event.stopPropagation()"
-                          (change)="updateActive(element,$event)"
-                          [checked]="selection.isSelected(element)">
+           
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+              [checked]="selection.isSelected(element)">
             </mat-checkbox>
           </td>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="Action">
           <th mat-header-cell *matHeaderCellDef> </th>
           <td mat-cell *matCellDef="let element">
             <div class="row">
               <button class="mat-raised-button" matTooltip="edit"
-                (click)="view(element.PageId,element.PageTitle,element.ParentId)"><mat-icon>edit</mat-icon></button>
+                (click)="view(element.PageId,element.PageTitle,element.ParentId)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button (click)="del(element,$event)">
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
           </td>
         </ng-container>

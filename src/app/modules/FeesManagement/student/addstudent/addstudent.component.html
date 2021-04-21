@@ -320,17 +320,16 @@
                             <button (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
                                 <mat-icon>save</mat-icon>
                             </button>
-
                             <button (click)="back()" alt="save" class="mat-raised-button">
                                 <mat-icon>arrow_back</mat-icon>
                             </button>
                         </mat-card-actions>
+                    </mat-tab>                    
+                    <mat-tab *ngIf="Id>0" label="Class">
+                        <app-addstudentclass></app-addstudentclass>
                     </mat-tab>
                     <mat-tab *ngIf="Id>0" label="Documents">
                         <upload-student-document></upload-student-document>
-                    </mat-tab>
-                    <mat-tab *ngIf="Id>0" label="Class">
-                        <app-addstudentclass></app-addstudentclass>
                     </mat-tab>
                     <mat-tab *ngIf="Id>0" label="Fee payment">
                         <app-addstudentfeepayment></app-addstudentfeepayment>

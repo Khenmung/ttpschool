@@ -1,11 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';  
 import { HttpClient,HttpHeaders } from '@angular/common/http';  
-import { map } from 'rxjs/operators';
 import { PageDetail } from '../content';
 import {globalconstants} from './globalconstant';
-import { Observable } from 'rxjs';
-import { IPage } from './interface';
-import { IDoesFilterPassParams } from 'ag-grid-community';
 @Injectable({
   providedIn: 'root'
 })

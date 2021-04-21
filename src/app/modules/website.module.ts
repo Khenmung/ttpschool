@@ -22,7 +22,6 @@ import { CKEditorModule } from 'ng2-ckeditor';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDividerModule } from '@angular/material/divider';
-import { ClipboardModule } from '@angular/cdk/clipboard';
 import { MaterialModule } from '../shared/material/material.module';
 import { SharedhomepageModule } from './sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';

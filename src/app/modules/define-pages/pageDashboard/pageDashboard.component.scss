@@ -1,21 +1,28 @@
-
-
-table{
-    width: 100%;
-   }
+:host{
+  max-width: 78%;
+}
+mat-card{
+  border-radius: 1rem;
+//  background-color: lightblue;
+}
+// table{
+//     width: 100%;
+//    }
 button{
        margin-right: 15px;
+       border-style: none;
+       outline: none;
    }   
-   .example-container {
-    display: flex;
-    flex-direction: column;
-    min-width: 300px;
-  }
+  //  .example-container {
+  //   display: flex;
+  //   flex-direction: column;
+  //   min-width: 300px;
+  // }
   
-  .example-header {
-    min-height: 64px;
-    padding: 8px 24px 0;
-  }
+  // .example-header {
+  //   min-height: 64px;
+  //   padding: 8px 24px 0;
+  // }
   
   .mat-form-field {
     font-size: 14px;
@@ -24,9 +31,9 @@ button{
   
   .mat-table {
     overflow: auto;
-    
-    //max-height: 500px;
     padding: 20px;
+    //background-color:lightblue;
+    //color:white;
   }
   th.mat-header-cell, td.mat-cell, td.mat-footer-cell{
     width: 300px;

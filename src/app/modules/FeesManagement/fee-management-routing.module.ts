@@ -14,10 +14,9 @@ import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfee
 import { FeeHeaderComponent } from './shared/header/feeheader.component';
 import { FeeSidebarComponent } from './shared/sidebar/sidebar.component';
 import { FeeFooterComponent } from './shared/footer/footer.component';
-import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
-import { MultiLevelMenuComponent } from '../dynamicMultiLevelMenu/MultiLevelMenu.component';
 import { StudentDocumentComponent } from './StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
 import { FeeEditInputComponent } from './FeeEdit-input/FeeEdit-input.component';
+import { DashboardstudentdocumentComponent } from './StudentDocument/dashboardstudentdocument/dashboardstudentdocument.component';
 //import { EditInputComponent } from 'src/app/modules/photogallery/albumedit-input/albumedit-input.component';
 
 
@@ -49,5 +48,5 @@ export const FeeManagementComponent = [
   DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent,
   FeeSidebarComponent, FeeFooterComponent, AddMasterDataComponent,
   FeereceiptComponent, ExcelDataManagementComponent, StudentDocumentComponent,
-  FeeEditInputComponent
+  DashboardstudentdocumentComponent,FeeEditInputComponent
 ]

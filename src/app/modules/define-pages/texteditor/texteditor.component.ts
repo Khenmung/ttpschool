@@ -26,6 +26,7 @@ export class TextEditorComponent implements OnInit {
     PageId: 0,
     PageTitle: '',
     ParentId: 0,
+    FullPath: '',
     CurrentVersion: 0,
     UpdateDate: new Date(),
     IsTemplate: 1,
@@ -63,7 +64,7 @@ export class TextEditorComponent implements OnInit {
   mycontent: string = '';
   log: string = ''
   res: any;
-  loading=false;
+  loading = false;
   constructor(private naomitsuService: NaomitsuService,
     private router: Router,
     private ar: ActivatedRoute,
@@ -76,7 +77,7 @@ export class TextEditorComponent implements OnInit {
   get f() { return this.PageDetailForm.controls; }
 
   ngOnInit() {
-    this.loading=true;
+    this.loading = true;
     this.checklogin();
     this.GetParentPage();
     debugger;
@@ -91,21 +92,21 @@ export class TextEditorComponent implements OnInit {
           allowedContent: false,
           extraPlugins: 'divarea',
           forcePasteAsPlainText: false,
-          removeButtons : 'About',
-          scayt_autoStartup:true,
-          autoGrow_onStartup:true,
+          removeButtons: 'About',
+          scayt_autoStartup: true,
+          autoGrow_onStartup: true,
           autoGrow_minHeight: 500,
           autoGrow_maxHeight: 600
         };
       });
   }
-  ngAfterViewInit(){
-    this.loading=false;
+  ngAfterViewInit() {
+    this.loading = false;
   }
   dashboard() {
     this.router.navigate(['/pages']);
   }
- 
+
   GetLatestPage(ppId: number) {
 
     let list: List = new List();
@@ -149,6 +150,7 @@ export class TextEditorComponent implements OnInit {
   }
   onSaveAsDraft() {
     this.PublishOrDraft = 0;
+    this.loading = true;
     this.onSave();
   }
   onSubmit() {
@@ -188,6 +190,7 @@ export class TextEditorComponent implements OnInit {
       this.PageDetail.label = this.PageDetailForm.value.PageTitle;
       this.PageDetail.link = this.PageDetailForm.value.link;
       this.PageDetail.ParentId = this.PageDetailForm.value.ParentId;//").value;
+      this.PageDetail.FullPath = this.PageDetailForm.value.ParentId == 0 ? this.PageDetailForm.value.PageTitle : this.PageGroups.filter(g => g.PageId == this.PageDetailForm.value.ParentId)[0].FullPath + ' > ' + this.PageDetailForm.value.PageTitle;
       this.PageDetail.Active = active;
       this.PageDetail.CurrentVersion = 1;
       this.PageDetail.UpdateDate = new Date();
@@ -222,16 +225,17 @@ export class TextEditorComponent implements OnInit {
                   debugger;
                   if (this.PublishOrDraft == 1) {
                     if (this.PageDetailForm.value.PageTitle.toUpperCase().includes("NEWS"))
-                      this.PageDetail.link = '/about/' + this.Id
+                      this.PageDetail.link = '/about/' + this.Id + "/" + pageId;
                     else
-                      this.PageDetail.link = '/display/' + history.PageHistoryId;
+                      this.PageDetail.link = '/display/' + history.PageHistoryId + "/" + pageId;
 
                     delete this.PageDetail.PageId;
                     this.naomitsuService.postPatch('Pages', this.PageDetail, pageId, 'patch')
                       .subscribe(
                         (data: any) => {
-
+                          this.loading = false;
                         }, (error) => {
+                          this.loading = false;
                           console.log(error);
                         })
                   }
@@ -272,18 +276,21 @@ export class TextEditorComponent implements OnInit {
       ///if it has no sub menu, link has to be defined only when it is published.
       if (this.PublishOrDraft == 1) {
         if (this.PageDetailForm.value.PageTitle.toUpperCase().includes("NEWS"))
-          this.PageDetail.link = '/about/' + this.Id
+          this.PageDetail.link = '/about/' + this.Id + "/" + this.Id;
         else
-          this.PageDetail.link = '/display/' + this.PageDetailForm.get("PageHistoryId").value;
+          this.PageDetail.link = '/display/' + this.PageDetailForm.get("PageHistoryId").value + "/" + this.Id;
       }
       else
         this.PageDetail.link = this.PageDetailForm.value.link;
-
-      this.PageDetail.ParentId = this.PageDetailForm.value.ParentId;//").value;
-
-      // if (this.PageDetailForm.value.ParentId > 0)
-
-
+      //console.log('this.PageDetailForm.value.ParentId', this.PageDetailForm.value.ParentId);
+      let FullPath = '';
+      if (this.PageDetailForm.value.ParentId == 0)
+        FullPath = this.PageDetailForm.value.PageTitle;
+      else
+        FullPath = this.PageGroups.filter(g => g.PageId == this.PageDetailForm.value.ParentId)[0].FullPath + ' > ' + this.PageDetailForm.value.PageTitle;
+      
+        this.PageDetail.ParentId = this.PageDetailForm.value.ParentId;//").value;
+      this.PageDetail.FullPath = FullPath;
       this.PageDetail.Active = 1;
       this.PageDetail.CurrentVersion = this.PageHistory.Version + 1;
       this.PageDetail.UpdateDate = new Date();
@@ -302,6 +309,7 @@ export class TextEditorComponent implements OnInit {
             this.naomitsuService.postPatch('PageHistories', this.PageHistory, this.PageHistory.PageHistoryId, 'patch')
               .subscribe(
                 (data: any) => {
+                  this.loading = false;
                   this.alert.success("Data updated Successfully", this.options);
                   this.router.navigate(['/pages']);
                 });
@@ -310,7 +318,7 @@ export class TextEditorComponent implements OnInit {
   }
   GetParentPage() {
     let list: List = new List();
-    list.fields = ["PageId", "PageTitle", "ParentId"];
+    list.fields = ["PageId", "PageTitle", "ParentId", "FullPath"];
     list.PageName = "Pages";
     list.filter = ["Active eq 1"];
     list.orderBy = "ParentId";
@@ -323,4 +331,4 @@ export class TextEditorComponent implements OnInit {
 
   }
 
-}    
+}

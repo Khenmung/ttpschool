@@ -51,19 +51,30 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;" fxLayoutAlign="space-between center"
                     fxLayout="row"></mat-row>
             </mat-table>
+            <div fxLayout="row" fxLayoutAlign="end center">
+                <span style="padding: 10px;"><strong>Total Amount</strong>: {{studentInfoTodisplay.TotalAmount}}
+                </span>
+            </div>
         </div>
-        <div fxLayout="column wrap" fxLayoutAlign="end center">
-            <span style="padding: 10px;"><strong>Total Amount</strong>: {{studentInfoTodisplay.TotalAmount}}
-            </span>
-        </div>
+
     </div>
-    <div fxLayout="row" fxLayoutAlign="center center">
-        <button (click)="whenPrint()" class="mat-raised-button">
+    <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
+        <button *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">
             <mat-icon>save</mat-icon>
         </button>
-        <button *ngIf="Saved" printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
-            <mat-icon>print</mat-icon>
-        </button>
+        <div *ngIf="Saved || studentInfoTodisplay.BillNo>0">
+            <button matTooltip="cancel receipt" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
+                <mat-icon>cancel</mat-icon>
+            </button>
+            <button matTooltip="print" printSectionId="printSection"
+                [useExistingCss]="true" ngxPrint class="mat-raised-button">
+                <mat-icon>print</mat-icon>
+            </button>
+            <button matTooltip="back" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+        </div>
+
     </div>
 </div>
 <div *ngIf="!NewReceipt" fxLayout="row" fxLayoutAlign="space-between center" class="mat-elevation-z8">
@@ -93,7 +104,9 @@
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef> </mat-header-cell>
             <mat-cell *matCellDef="let element">
-               <mat-icon>pageview</mat-icon>    
+                <button mat-mini-fab (click)="GetStudentFeePaymentDetails(element.StudentReceiptId)">
+                    <mat-icon>pageview</mat-icon>
+                </button>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="ReceiptDisplayedColumns"></mat-header-row>

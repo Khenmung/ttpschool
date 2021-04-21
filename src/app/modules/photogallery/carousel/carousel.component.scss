@@ -1,9 +1,10 @@
 :host{
-  width: 100%;
+  width: 100vw;
   
 }
 mat-card{
-  background-color: #20639b;
+  background-color: #1E4A75;
+ // padding:20px;
   //top:35px;
 }
 
@@ -14,15 +15,16 @@ mat-card-subtitle{
   display: flex;
   justify-content:center;
 }
+.photosize{
+  width:100%;  
+  height:400px;
+  object-fit: cover;
+ 
+}
+// img:{   
+//   border-radius: 3px;
+//   transition: all .3s linear;
+//   cursor:pointer;
+//   transform: scale(1.5);
 
-ngb-carousel, .single {
-  width: 100vh;
-  height: 50vh;
-  object-fit:cover;
-  border-radius: 1rem;
-  
-  }
-  *:focus{
-    outline: none;
-  }
-  
+// }

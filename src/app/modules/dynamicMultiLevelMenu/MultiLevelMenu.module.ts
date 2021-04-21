@@ -5,13 +5,14 @@ import { MultilevelMenuService, NgMaterialMultilevelMenuModule} from 'ng-materia
 import { MaterialModule } from '../../shared/material/material.module';
 import { ExpandCollapseRoutingModule } from './MultiLevelMenu-routing.module';
 import { MultiLevelMenuComponent } from './MultiLevelMenu.component';
-
+import {MatIconModule} from '@angular/material/icon'
 
 @NgModule({
   declarations: [MultiLevelMenuComponent],
   imports: [
     CommonModule,
     MaterialModule,
+    MatIconModule,
     ExpandCollapseRoutingModule,
     NgMaterialMultilevelMenuModule,
   ],

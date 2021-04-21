@@ -45,7 +45,7 @@ export class List {
 }
 export interface PagesForMenu {
     PageId: number;
-    LatestPublishedId: number;
+    //LatestPublishedId: number;
     label: string;
     faIcon: string;
     link: string;

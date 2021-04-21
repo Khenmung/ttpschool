@@ -6,22 +6,30 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
-import { SharedataService } from '../../../shared/sharedata.service';
+//import { SharedataService } from '../../../shared/sharedata.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { DialogService } from 'src/app/shared/dialog.service';
 
 @Component({
   selector: 'app-pagecontent',
   templateUrl: './pageDashboard.component.html',
-  styleUrls: ['./pageDashboard.component.scss']
+  styleUrls: ['./pageDashboard.component.scss'],
+  providers: [ConfirmationService, MessageService]
 })
 export class pageDashboardComponent implements OnInit {
+  options = {
+    autoClose: true,
+    keepAfterRouteChange: true
+  };
+
   ParentPages: [{ PageId, PageTitle }];
   PageDetail: IPage;
   //SelectedData:PageDetail[] = [];
   DATA: IPage[] = [];
-  loading=false;
+  loading = false;
   columns: Array<any>;
   title: string;
   Id: number;
@@ -44,19 +52,20 @@ export class pageDashboardComponent implements OnInit {
     this.GetParentPage(this.Id);
   }
   getDetails(parentId) {
-
+    debugger;
     this.list.fields = ["PageId", "PageTitle", "ParentId", "PageHistories/PageHistoryId", "PageHistories/Published", "PageHistories/Version", "Active"];
     this.list.PageName = "Pages";
     this.list.lookupFields = ["PageHistories"];
-    this.list.filter = ['IsTemplate eq 1' + (parentId == 0 ? '' : " and ParentId eq " + parentId)];
+    this.list.filter = ['Active eq 1 and IsTemplate eq 1' + (parentId == 0 ? '' : " and ParentId eq " + parentId)];
     this.list.orderBy = "PageId desc";
-    const columns = ["PageId", "PageTitle", "ParentPage", "ParentId", "Published", "Active", "Action"];
+    const columns = ["PageId", "PageTitle", "ParentPage", "ParentId", "Published", "Action"];
 
     this.naomitsuService
       .get<IPage[]>(this.list)
       .subscribe({
         next: (arrPage: IPage[]) => {
           //console.log('arrpage', arrPage);
+          this.DATA=[];
           let arr = [];
           Object.keys(arrPage).map(function (key) {
             arr.push({ [key]: arrPage[key] })
@@ -97,14 +106,16 @@ export class pageDashboardComponent implements OnInit {
         },
         error: console.error
       });
-      this.loading=false;
+    this.loading = false;
   }
   constructor(private naomitsuService: NaomitsuService,
     private navigate: Router,
     private route: ActivatedRoute,
-    private shareddata: SharedataService,
+    //private shareddata: SharedataService,
     private tokenStorage: TokenStorageService,
-    private alert: AlertService) {
+    private alert: AlertService,
+    private dialog: DialogService,
+    private messageService: MessageService) {
     this.list = new List();
   }
   getmax(pageHistory): number {
@@ -149,6 +160,7 @@ export class pageDashboardComponent implements OnInit {
 
     this.navigate.navigate(['/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId, ptitle: pageTitle } });
   }
+
   createNew() {
     this.navigate.navigate(['/pages/']);
   }
@@ -161,6 +173,35 @@ export class pageDashboardComponent implements OnInit {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
+  }
+  del(element, value) {
+    value.stopPropagation();
+    let confirmYesNo: Boolean = false;
+    // if (value.length == 0 || value.length > 50) {
+    //   this.alert.error("Character should not be empty or less than 50!");
+    //   return;
+    // }
+    this.dialog.openConfirmDialog("Are you sure you want to delete all photos in ${value} album?")
+      .afterClosed().subscribe(res => {
+        confirmYesNo = res;
+        if (confirmYesNo) {
+          //this.uploadImage();
+          let PageDetail = {
+            UpdateDate: new Date(),
+            Active: 0
+          };
+          //let checked = this.selection.toggle(element);
+          //console.log('checked',checked);
+          //PageDetail.Active = event.checked == true ? 1 : 0;
+          PageDetail.UpdateDate = new Date();
+          this.naomitsuService.postPatch('Pages', PageDetail, element.PageId, 'patch')
+            .subscribe(
+              (data: any) => {
+                this.getDetails(0);
+                this.alert.success('Item deleted successfully.',this.options);
+              })
+        }
+      });
   }
   updateActive(element, event) {
     let PageDetail = {
@@ -177,6 +218,25 @@ export class pageDashboardComponent implements OnInit {
           //alert('data updated.')
         })
   }
+  // confirm(event: Event, element, value) {
+  //   debugger;
+  //   try {
+  //     this.confirmationService.confirm({
+  //       target: event.target,
+  //       message: 'Album already exists! Do you want to add to existing album?',
+  //       icon: 'pi pi-exclamation-triangle',
+  //       accept: () => {
+  //         this.updateActive(element, value)
+  //         this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Added to existing album.' });
+  //       },
+  //       reject: () => {
+  //         this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Image not added' });
+  //       }
+  //     });
+  //   } catch ({ error }) {
+  //     console.log(error)
+  //   }
+  // }
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
     this.isAllSelected() ?
@@ -192,7 +252,7 @@ export class pageDashboardComponent implements OnInit {
       list.filter = ["Active eq 1 and ParentId eq 0"];
     else
       list.filter = ["Active eq 1 and ParentId eq " + parentId];
-      this.loading=true;
+    this.loading = true;
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
         this.ParentPages = data.value;
@@ -200,7 +260,7 @@ export class pageDashboardComponent implements OnInit {
 
         this.getDetails(parentId);
         //return data.value;
-        
+
       });
 
   }

@@ -25,12 +25,12 @@ export class FeereceiptComponent implements OnInit {
   studentInfoTodisplay = {
     Currentbatch: '',
     currentbatchId: 0,
-    BillNo: '',
+    BillNo: 0,
     StudentName: '',
     StudentClassName: '',
     ReceiptDate: 0,
     StudentId: 0,
-    studentClassId: 0,
+    StudentClassId: 0,
     ClassId: 0,
     SectionName: '',
     Session: '',
@@ -88,7 +88,7 @@ export class FeereceiptComponent implements OnInit {
     'FeeName',
     'PaymentAmount'
   ];
-  ReceiptDisplayedColumns=[
+  ReceiptDisplayedColumns = [
     'StudentReceiptId',
     'OfflineReceiptNo',
     'TotalAmount',
@@ -100,7 +100,7 @@ export class FeereceiptComponent implements OnInit {
       this.studentInfoTodisplay.StudentId = +param.get("id");
     })
     this.route.queryParamMap.subscribe(param => {
-      this.studentInfoTodisplay.studentClassId = +param.get("scid");
+      this.studentInfoTodisplay.StudentClassId = +param.get("scid");
     })
     if (this.studentInfoTodisplay.StudentId == 0) {
       this.alert.error("Id is missing", this.optionAutoClose);
@@ -114,8 +114,8 @@ export class FeereceiptComponent implements OnInit {
       Less: "0.00",
       OfflineReceiptNo: this.studentInfoTodisplay.OfflineReceiptNo,
       ReceiptDate: new Date(),
-      StudentClassId: this.studentInfoTodisplay.studentClassId,
-      StudentId:this.studentInfoTodisplay.StudentId
+      StudentClassId: this.studentInfoTodisplay.StudentClassId,
+      StudentId: this.studentInfoTodisplay.StudentId
     }
     this.dataservice.postPatch('StudentFeeReceipts', receipt, 0, 'post')
       .subscribe(
@@ -133,10 +133,15 @@ export class FeereceiptComponent implements OnInit {
           });
         })
   }
-  GetStudentFeePaymentDetails() {
-
+  GetStudentFeePaymentDetails(ReceiptNo) {
+    debugger;
     if (this.studentInfoTodisplay.StudentId == 0)
       return;
+    let filterstring = '';
+    if (ReceiptNo == 0)
+      filterstring = 'ReceiptNo eq null';
+    else
+      filterstring = 'ReceiptNo eq ' + ReceiptNo;
 
     let list: List = new List();
     list.fields = [
@@ -144,13 +149,13 @@ export class FeereceiptComponent implements OnInit {
       'StudentFeePayment/StudentClassId',
       'StudentFeePayment/StudentId',
       'ClassFee/FeeNameId',
+      'StudentFeeReceipt/OfflineReceiptNo',
       'PaymentId',
       'PaymentAmt',
       'PaymentDate'];
-
     list.PageName = "PaymentDetails";
-    list.lookupFields = ["StudentFeePayment", "ClassFee"];
-    list.filter = ["ReceiptNo eq null"];
+    list.lookupFields = ["StudentFeePayment", "ClassFee", "StudentFeeReceipt"];
+    list.filter = [filterstring];
     list.orderBy = "PaymentId";
 
     this.dataservice.get(list)
@@ -158,8 +163,11 @@ export class FeereceiptComponent implements OnInit {
         debugger;
         let res: any[];
         if (data.value.length > 0) {
+          this.studentInfoTodisplay.BillNo = ReceiptNo;
+          if (data.value[0].StudentFeeReceipt !== undefined)
+            this.studentInfoTodisplay.OfflineReceiptNo = data.value[0].StudentFeeReceipt.OfflineReceiptNo;
           this.studentInfoTodisplay.ReceiptDate = data.value[0].PaymentDate
-          res = data.value.filter(st => st.StudentFeePayment.StudentId == this.studentInfoTodisplay.StudentId
+          res = data.value.filter(st => st.StudentFeePayment.StudentClassId == this.studentInfoTodisplay.StudentClassId
           ).map((item, indx) => {
             this.studentInfoTodisplay.TotalAmount += +item.PaymentAmt;
             return {
@@ -186,19 +194,19 @@ export class FeereceiptComponent implements OnInit {
             list.PageName = "StudentFeeReceipts";
             //list.lookupFields = ["PaymentDetails", "StudentClass"];
             list.filter = ["StudentId eq " + this.studentInfoTodisplay.StudentId];
-            
+
             this.dataservice.get(list)
               .subscribe((data: any) => {
-                this.dataReceiptSource =new MatTableDataSource<IReceipt>(data.value);
+                this.dataReceiptSource = new MatTableDataSource<IReceipt>(data.value);
               })
           }
+          else {
+            this.NewReceipt = true;
+            this.ELEMENT_DATA = [...res];
+            this.PaymentIds = res.map(id => id.PaymentId);
+            this.dataSource = new MatTableDataSource<IStudentFeePaymentReceipt>(this.ELEMENT_DATA);
+          }
         }
-        else {
-          this.ELEMENT_DATA = [...res];
-          this.PaymentIds = res.map(id => id.PaymentId);
-          this.dataSource = new MatTableDataSource<IStudentFeePaymentReceipt>(this.ELEMENT_DATA);
-        }
-        
       })
   }
 
@@ -221,11 +229,11 @@ export class FeereceiptComponent implements OnInit {
         let currentBatch = globalconstants.getCurrentBatch();
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
         if (currentBatchObj.length > 0) {
-          this.studentInfoTodisplay.currentbatchId = currentBatchObj[0].MasterDataId          
+          this.studentInfoTodisplay.currentbatchId = currentBatchObj[0].MasterDataId
         }
         else
           this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
-          this.GetStudentClass();
+        this.GetStudentClass();
       });
 
   }
@@ -239,10 +247,10 @@ export class FeereceiptComponent implements OnInit {
   }
   GetStudentClass() {
 
-    if (this.studentInfoTodisplay.studentClassId == undefined || this.studentInfoTodisplay.studentClassId == 0)
+    if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0)
       return;
 
-    let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.studentClassId;
+    let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
     list.fields = ["StudentClassId", "Section", "StudentId", "Batch", "Student/Name", "ClassId", "FeeTypeId"];
@@ -254,7 +262,7 @@ export class FeereceiptComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
+          this.studentInfoTodisplay.StudentClassId = data.value[0].StudentClassId
           this.studentInfoTodisplay.ClassId = data.value[0].ClassId
           //this.studentInfoTodisplay.BillNo = data.value[0].FeeTypeId;
           this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
@@ -268,11 +276,8 @@ export class FeereceiptComponent implements OnInit {
           this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
             return cls.MasterDataId == this.studentInfoTodisplay.ClassId
           })[0].MasterDataName;
-          // this.studentInfoTodisplay.StudentFeeType = this.FeeTypes.filter(f => {
-          //   return f.MasterDataId == this.studentInfoTodisplay.FeeTypeId
-          // })[0].MasterDataName;
 
-          this.GetStudentFeePaymentDetails();
+          this.GetStudentFeePaymentDetails(0);
         }
         else {
           this.alert.error("No class defined for this student!", this.optionsNoAutoClose);
@@ -291,9 +296,9 @@ export interface IStudentFeePaymentReceipt {
   FeeName: string;
   PaymentAmount: any;
 }
-export interface IReceipt{
-  StudentReceiptId:number;
-  TotalAmount:number;
-  OfflineReceiptNo,number;
-  ReceiptDate:Date;
+export interface IReceipt {
+  StudentReceiptId: number;
+  TotalAmount: number;
+  OfflineReceiptNo, number;
+  ReceiptDate: Date;
 }

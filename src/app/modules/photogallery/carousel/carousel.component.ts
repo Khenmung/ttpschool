@@ -12,6 +12,7 @@ import {globalconstants } from '../../../shared/globalconstant';
 })
 
 export class CarouselComponent implements OnInit {
+   
   selectedAlbum: string;
   selectedAlbumId: number;
   loading =true;
@@ -110,6 +111,11 @@ export class CarouselComponent implements OnInit {
       .subscribe((data: any) => {
         this.Albums = [...data.value]        
       })
+  }
+  enlargeImg(element){
+    element.style.transform = "scale(1.5)";
+    // Animation effect 
+    element.style.transition = "transform 0.25s ease";
   }
   back() {
     this.nav.navigate(["/browsephoto"]);

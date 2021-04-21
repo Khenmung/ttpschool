@@ -216,6 +216,7 @@ export class AddstudentclassComponent implements OnInit {
     this.nav.navigate(['/admin/dashboardstudent']);
   }
   UpdateOrSave() {
+    debugger;
     let ErrorMessage = '';
 
     if (this.studentclassForm.get("ClassId").value == 0) {

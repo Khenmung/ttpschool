@@ -20,7 +20,9 @@
             <ng-container matColumnDef="ClassFeeName">
                 <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.ClassFeeName}}
+                    <button mat-button (click)="expandedElement = expandedElement === element ? null : element">
+                        {{element.ClassFeeName}}
+                    </button>                    
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="FeeAmount">
@@ -73,7 +75,7 @@
             </ng-container>
             <ng-container matColumnDef="expandedDetail">
                 <mat-cell *matCellDef="let detail">
-                    <table>
+                    <table *ngIf="detail.element.PaymentDetails.length>0">
                         <tr style="background-color: lightgray;">
                             <td>Sl.No.</td>
                             <td>Amount</td>
@@ -89,7 +91,7 @@
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
-                [class.expanded]="expandedElement == row" (click)="expandedElement = row"></mat-row>
+                [class.expanded]="expandedElement == row"></mat-row>
             <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
                 [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'" style="overflow: hidden">
             </mat-row>

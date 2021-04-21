@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -25,8 +25,9 @@ export class StudentDocumentComponent implements OnInit {
   uploadForm: FormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
-    "StudentDocId",
-    "DocName",
+    "FileId",
+    "UpdatedFileFolderName",
+    "DocType",
     "UploadDate",
     "Action"
   ]
@@ -34,12 +35,14 @@ export class StudentDocumentComponent implements OnInit {
   constructor(private fileUploadService: FileUploadService,
     private alertMessage: AlertService,
     private routeUrl: ActivatedRoute,
+    private route: Router,
     private dataservice: NaomitsuService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder
+    ) { }
 
   ngOnInit(): void {
     this.uploadForm = this.fb.group({
-      DocTypeId: [0]
+      DocTypeId: [0,Validators.required]
     })
     this.routeUrl.paramMap.subscribe(param => {
       this.Id = +param.get('id')
@@ -50,8 +53,12 @@ export class StudentDocumentComponent implements OnInit {
     //this.GetMasterData();
   }
   PageLoad() {
-    
     this.GetMasterData();
+
+  }
+  get f()
+  {
+    return this.uploadForm.controls;
   }
   uploadchange(files) {
     if (files.length === 0)
@@ -61,19 +68,18 @@ export class StudentDocumentComponent implements OnInit {
   uploadFile() {
     let error: boolean = false;
     this.formdata = new FormData();
-    //this.formdata.append("description", "Passport photo of student");
     this.formdata.append("fileOrPhoto", "0");
     this.formdata.append("folderName", "Studentdocument");
     this.formdata.append("parentId", "-1");
 
     if (this.Id != null || this.Id != 0)
-      this.formdata.append("StudentId", this.Id.toString());
+      this.formdata.append("StudentId", "-1");
     this.formdata.append("StudentClassId", this.StudentClassId.toString());
-    this.formdata.append("StudentDoc", "-1");
+    //this.formdata.append("StudentDoc", "-1");
     this.formdata.append("DocTypeId", this.uploadForm.get("DocTypeId").value);
 
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
-    console.log('formdata to save',this.formdata);
+    //console.log('formdata to save',this.formdata);
     this.uploadImage();
   }
 
@@ -91,28 +97,37 @@ export class StudentDocumentComponent implements OnInit {
   GetDocuments() {
     let list: List = new List();
     list.fields = [
-      "StudentDocId",
-      "DocName",
+      "FileId",
+      "FileName",
+      "UpdatedFileFolderName",
       "UploadDate",
-      "DocTypeId",
-      "Active"];
-    list.PageName = "StudentDocuments";
-    list.filter = ["StudentClassId eq "];
+      "DocTypeId"];
+    list.PageName = "FilesNPhotoes";
+    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId];
     //list.orderBy = "ParentId";
-
+     // console.log('globalconstants.apiUrl ',globalconstants.apiUrl);
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //console.log(data.value);
-        this.allMasterData = [...data.value];
-        this.DocumentTypes = this.getDropDownData(globalconstants.DOCUMENTTYPE);
-        this.allMasterData = data.value.map(doc => {
-          doc.DocType = this.DocumentTypes.filter(t => t.MasterDataId == doc.DocTypeId)[0].MasterDataName;
-          return {
-            doc
-          }
-        })
+        //this.allMasterData = [...data.value];
+        if (data.value.length > 0) {
+          this.allMasterData = data.value.map(doc => {          
+            return {
+              FileId: doc.FileId,
+              UpdatedFileFolderName: doc.UpdatedFileFolderName,
+              UploadDate: doc.UploadDate,
+              DocType: this.DocumentTypes.filter(t => t.MasterDataId == doc.DocTypeId)[0].MasterDataName,
+              path: globalconstants.apiUrl + "/Image/StudentDocument/" + doc.FileName
+            }
+          })
+          this.documentUploadSource = new MatTableDataSource<IUploadDoc>(this.allMasterData);
+        }
       });
 
+  }
+  pageview(path){
+    window.open(path, "_blank");
+    return;
   }
   GetMasterData() {
     let list: List = new List();
@@ -126,6 +141,7 @@ export class StudentDocumentComponent implements OnInit {
         //console.log(data.value);
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.DOCUMENTTYPE);
+        this.GetDocuments();
       });
 
   }
@@ -140,10 +156,10 @@ export class StudentDocumentComponent implements OnInit {
 
 }
 export interface IUploadDoc {
-  StudentDocId: number;
-  DocName: string;
+  FileId: number;
+  UpdatedFileFolderName: string;
   UploadDate: Date;
-  DocTypeId: number;
+  //DocTypeId: number;
   DocType: string;
   Active: boolean
 }

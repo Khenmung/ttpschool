@@ -13,11 +13,13 @@ import { NaomitsuService } from '../../../shared/databaseService'
   styleUrls: ['./displaypage.component.scss']
 })
 export class DisplaypageComponent implements OnInit {
+  Name={};
   loading: boolean = false;
   color: ThemePalette = 'primary';
   mode: ProgressSpinnerMode = 'determinate';
   value = 50;
   GroupId: number;
+  pId: number;
   HomePageId: number;
   loop: number = 0;
   ParentPage = "";
@@ -33,20 +35,19 @@ export class DisplaypageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    //this.GetLatestPage();
+    //console.log('window', window.location.href);
     this.loading = true;
-    //this.ar.queryParamMap.
     this.GroupId = 0;
-    this.GroupId = this.ar.snapshot.queryParamMap.get("GroupId") == undefined ? 0 : +this.ar.snapshot.queryParamMap.get("GroupId");
-    // this.ar.queryParamMap.subscribe(params => {
-    //   this.GroupId = +params.get("GroupId")
-    //   if (this.GroupId == 0) {
-    //     this.getHomePageId();
-    //   }
-    // },error=>console.log('queryparam',error)
-    // );
+    this.ar.queryParamMap.subscribe(params => {
+      this.GroupId = +params.get("GroupId");
+     
+    });
+    // this.ar.data.subscribe(data=>{
+    //   this.Name = data;
+    // })
+    //console.log('name',this.Name);
     this.ar.paramMap.subscribe(params => {
-      //this.GroupId = 0;
+      this.pId = +params.get("pid");
       this.GetLatestPage(params.get('phid'));
     })
   }
@@ -56,25 +57,41 @@ export class DisplaypageComponent implements OnInit {
     else
       this.route.navigate(['/about/' + this.GroupId]);
   }
-  GetLatestPage(phid) {
+  GetLatestPage(pHistoryId) {
     debugger;
-    let IdtoDisplay = phid;
-    if (IdtoDisplay == 0) {
-      let list: List = new List();
-      list.fields = ["link", "PageId"];
-      //list.lookupFields = ["Page"];
-      list.PageName = "Pages";
-      list.filter = ["HomePage eq 1"];
-      this.naomitsuService.get(list)
-        .subscribe((data: any) => {
-          if (data.value.length > 0) {
-            IdtoDisplay = +data.value[0].link.split('/')[2];
-            this.getPageFromHistory(IdtoDisplay);
-          }
-        })
-    }
+    let IdtoDisplay = pHistoryId;
+    let pages: any[];
+    let filterstring = '';
+    if (pHistoryId == 0)
+      filterstring = "Active eq 1 and HomePage eq 1";
     else
-      this.getPageFromHistory(IdtoDisplay);
+      filterstring = "Active eq 1 and PageId eq " + this.pId;
+
+    let list: List = new List();
+    list.fields = [
+      "link", "PageId", "ParentId",
+      "PageTitle", "HomePage", "FullPath",
+      "PageHistories/PageBody",
+      "PageHistories/PageHistoryId",
+      "PageHistories/ParentPageId"];
+    list.lookupFields = ["PageHistories"];
+    list.PageName = "Pages";
+    list.filter = [filterstring];
+
+    this.naomitsuService.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          let pagetodisplay = [...data.value];
+          if (IdtoDisplay == 0) {
+            IdtoDisplay = +pagetodisplay[0].link.split('/')[2].split('?')[0];
+          }
+
+          this.PageBody = pagetodisplay[0].PageHistories.filter(h => h.PageHistoryId == IdtoDisplay)[0].PageBody;
+          this.ParentPage = pagetodisplay[0].FullPath;
+          this.Title = pagetodisplay[0].PageTitle;
+          this.loading = false;
+        }
+      })
 
   }
   getPageFromHistory(IdtoDisplay) {

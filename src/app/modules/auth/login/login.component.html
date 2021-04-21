@@ -1,11 +1,10 @@
 <mat-card [ngClass]="{'width100':deviceXs,'width80':!deviceXs}">
     <mat-card-title>Login</mat-card-title>
     <mat-card-content>
-        <br>
-        <div fxLayout="row" fxLayoutAlign="space-around start">
-            <div>
+          <div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="15px">
+            <!-- <div>
                 <img *ngIf="!deviceXs" src="/assets/images/stpaulslogo.png" width="120px" alt="St Paul's Institute" />
-            </div>
+            </div> -->
             <div>
                 <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
                     <div class="form-group">

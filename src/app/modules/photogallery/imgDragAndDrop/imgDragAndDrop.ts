@@ -63,22 +63,22 @@ export class ImgDragAndDropComponent implements OnInit {
     this.files.push(...event.addedFiles);
 
     this.formData = new FormData();
-    this.errorMessage='';
-    
-    for (var i = 0; i < this.files.length; i++) {
-      
-      this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
-      .subscribe(result => {
-        this.uploadedImage = result;
-        this.formData.append(result.name, this.uploadedImage, result.name);
+    this.errorMessage = '';
 
-      },
-        error => {
-          this.alert.error(error.reason);
-          //this.files.splice(i,1);
-          this.errorMessage += error.reason;
-          //console.log('error:', error);
-        })
+    for (var i = 0; i < this.files.length; i++) {
+
+      this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
+        .subscribe(result => {
+          this.uploadedImage = result;
+          this.formData.append(result.name, this.uploadedImage, result.name);
+
+        },
+          error => {
+            this.alert.error(error.reason);
+            //this.files.splice(i,1);
+            this.errorMessage += error.reason;
+            //console.log('error:', error);
+          })
 
     }
     // if (this.errorMessage.length > 0)
@@ -86,16 +86,6 @@ export class ImgDragAndDropComponent implements OnInit {
   }
   onImageChange(event) {
     let image = event.target.files[0];
-    // //const file = evt.target.files[0];
-    // if (
-    //   image.type !== 'image/jpeg' &&
-    //   image.type !== 'image/png' &&
-    //   image.type !== 'image/gif' &&
-    //   image.type !== 'image/jpg'
-    // ) {
-    //   this.alert.error("Invalid image", this.options);
-    //   return;
-    // }
 
     this.ng2ImgMax.compressImage(image, 0.075).subscribe(
       result => {
@@ -108,13 +98,11 @@ export class ImgDragAndDropComponent implements OnInit {
     );
   }
   Upload() {
-    if(this.files.length>15)
-    {
+    if (this.files.length > 15) {
       this.alert.error("File count exceeded the maximum of 15");
       return;
     }
-    else if(this.errorMessage.length>0)
-    {
+    else if (this.errorMessage.length > 0) {
       return;
     }
     let error: boolean = false;
@@ -168,8 +156,6 @@ export class ImgDragAndDropComponent implements OnInit {
   }
   onRemove(event) {
 
-    //    console.log(event);
-
     this.files.splice(this.files.indexOf(event), 1);
 
   }
@@ -185,6 +171,8 @@ export class ImgDragAndDropComponent implements OnInit {
         if (data.value.length > 0) {
           this.Albums = [...data.value];
         }
+        else
+          this.Albums = [];
       });
   }
 

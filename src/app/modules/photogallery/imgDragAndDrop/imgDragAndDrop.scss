@@ -1,16 +1,12 @@
-
+:host{
+    width: 78%;
+}
 mat-form-field{
     margin-right: 5px;
 }
 input:hover{
     cursor: inherit;
 }
-// input{
-//     width: 500px;
-// }
-// mat-card{
-//     height: 100%;
-// }
 .mat-icon {
     vertical-align: middle;
  }
@@ -19,3 +15,10 @@ input:hover{
      //width: 80px;
      margin-top: 5px;
  }
+ mat-card {
+    overflow: auto;
+    //background-color: #3171a5;
+  //  margin-left: -2px;
+    //padding: 20px;
+
+  }

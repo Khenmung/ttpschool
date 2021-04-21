@@ -195,10 +195,10 @@ export class AddstudentComponent implements OnInit {
   navigateTab(indx) {
     switch (indx) {
       case 4:
-        this.studentDocument.PageLoad();
+        this.studentClass.PageLoad();
         break;
       case 5:
-        this.studentClass.PageLoad();
+        this.studentDocument.PageLoad();
         break;
       case 6:
         this.studentFeePayment.PageLoad();

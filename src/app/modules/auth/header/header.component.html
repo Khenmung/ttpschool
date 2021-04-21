@@ -1,7 +1,7 @@
 <!-- <mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}"> -->
 <mat-toolbar class="width100">
     <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
-        <div>
+        <div style="padding-top: 15px;">
             <button mat-button (click)="toggleSideBar()">
                 <mat-icon *ngIf="toggle">chevron_right</mat-icon>
                 <mat-icon *ngIf="!toggle">chevron_left</mat-icon>
@@ -10,7 +10,7 @@
                 <a [routerLink]="[ '/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
                         width="110px" /></a>
             </button>
-            <span *ngIf="!deviceXs"><strong>ST. PAUL'S INSTITUTE</strong></span>
+            <span><strong>ST. PAUL'S INSTITUTE</strong></span>
         </div>
         <div>
             <div fxLayout="row" fxLayoutAlign="space-around end"><span style="height: 40px;">&nbsp;</span></div>
@@ -45,13 +45,13 @@
             </mat-menu>
         </div>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="deviceXs" style="height: 20px;" fxLayoutAlign="space-between center">
+    <mat-toolbar-row *ngIf="deviceXs" style="height: 50px;" fxLayoutAlign="space-between end">
         <button mat-button (click)="newsNEvents()">
             <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
         </button>
-        <!-- <button mat-button>
+        <button mat-button>
             <mat-icon>info</mat-icon>About Us
-        </button> -->
+        </button>
         <button mat-button (click)="contactus()">
             <mat-icon>contact_support</mat-icon><span>Contact Us</span>
         </button>

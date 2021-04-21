@@ -1,20 +1,26 @@
 :host{
     height:100%;
     width: 100%;
+    //margin-top: 0px;
 }
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    background-color: white;
+    //border-color: white;
+    outline: white;
+    border-radius: 5px;
+  }
 mat-card{
-   
     margin-left: 10px;
-    background-color: lightgray;// #20639b;
+    //margin-top: 0px;
+    background-color: #1E4A75;// #20639b;
     color:white;
+    border-radius: 1em;
 }
 .container{
-    margin-left: 5px;
-    //height:10rem;
+    padding-left: 10px;
 }
 .row{
     position: relative;
     display: flex;
     margin: 10px;
-    //object-position: center;
 }

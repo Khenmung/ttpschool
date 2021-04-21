@@ -16,8 +16,8 @@ export class AuthHomeComponent implements OnInit {
     private mediaObserver:MediaObserver) { }
 
   ngOnInit(): void {
-    this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
-      this.deviceXs = result.mqAlias === "xs" ? true : false;
+    this.mediaSub = this.mediaObserver.asObservable().subscribe((result: MediaChange[]) => {
+      this.deviceXs = result[0].mqAlias === "xs" ? true : false;
       console.log("auth",this.deviceXs);
     });  
   }

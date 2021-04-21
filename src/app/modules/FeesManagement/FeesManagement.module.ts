@@ -13,7 +13,6 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 
 import { FeeManagementComponent, FeeManagementRoutingModule } from './fee-management-routing.module';
 import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
-import { AppModule } from 'src/app/app.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 
 

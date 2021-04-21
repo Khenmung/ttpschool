@@ -19,16 +19,12 @@ import { PhotosComponent } from './photogallery/photos/photos.component';
 import { EncodeHTMLPipe } from '../encode-html.pipe';
 import { AlbumEditInputComponent } from './photogallery/albumedit-input/albumedit-input.component';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { HeaderComponent } from '../shared/components/header/header.component';
-import { FooterComponent } from '../shared/components/footer/footer.component';
-import { SidebarComponent } from '../shared/components/sidebar/sidebar.component';
-import { AlertComponent } from '../shared/components/alert/alert.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent,
   children:
     [
-      { path: '', redirectTo: 'display/0', pathMatch: 'full' },
+      { path: '', redirectTo: 'display/0/0', pathMatch: 'full' },
       { path: 'photocarousel', component: CarouselComponent },
       { path: 'uploadphoto', component: cropNUploadphotoComponent },
       { path: 'browsephoto', component: PhotobrowserComponent },
@@ -36,7 +32,7 @@ const routes: Routes = [
       { path: 'page/:id', component: TextEditorComponent },
       { path: 'pages/:id', component: pageDashboardComponent },
       { path: 'pages', component: pageDashboardComponent },
-      { path: 'display/:phid', component: DisplaypageComponent },
+      { path: 'display/:phid/:pid', component: DisplaypageComponent,data:{"name":"Kham Khen Mung"} },
       { path: 'details', component: pageViewComponent },
       { path: 'dragdrop', component: ImgDragAndDropComponent },
       { path: 'filedragdrop', component: FiledragAndDropComponent },
@@ -58,11 +54,6 @@ const routes: Routes = [
 })
 export class WebsiteRoutingModule { }
 export const WebsiteComponents=[
-  //HomeComponent,  
-  //HeaderComponent,
-  //SidebarComponent,
-  //FooterComponent,
-  //AlertComponent,
   CarouselComponent,
   cropNUploadphotoComponent ,
   PhotobrowserComponent ,
@@ -80,5 +71,4 @@ export const WebsiteComponents=[
   EncodeHTMLPipe,
   AlbumEditInputComponent,
   CdkCopyToClipboard,  
-  //EditInputComponent,
 ]

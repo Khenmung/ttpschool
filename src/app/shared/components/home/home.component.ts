@@ -3,7 +3,6 @@ import { Subscription } from 'rxjs';
 import { MediaChange, MediaObserver } from '@angular/flex-layout'
 import { ChangeDetectorRef } from '@angular/core';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -30,6 +29,8 @@ export class HomeComponent implements OnInit {
         //this.sidebarcls = 'sidebartop110width100'
       }
       else {
+        if(!this.openSideBar)
+          this.openSideBar =true;
         //this.mode = "side";
         this.contentcls = "NotDeviceXs";
         //this.sidebarcls = "sidebartop65width100";
@@ -41,6 +42,11 @@ export class HomeComponent implements OnInit {
   }
   ngOnDestroy() {
     this.mediaSub.unsubscribe();
+  }
+  DownFromMenu(value){
+    //console.log('from menu',value);
+    if(this.deviceXs)
+    this.openSideBar =!this.openSideBar;
   }
   sideBarToggler() {
     debugger;

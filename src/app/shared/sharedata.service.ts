@@ -1,38 +1,28 @@
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
-import { IPage } from './interface';
+// import { Observable, Subject } from 'rxjs';
+// import { IPage } from './interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SharedataService {
-  private subject = new Subject<any>();
-  PageDetail: IPage;
-  private _messageSource = new Subject<IPage>();
-  message$ = this._messageSource.asObservable();
-
+  items=[];
   constructor() { }
   ngOnInit() {
 
   }
 
-  sendPageDetail(value: IPage) {
-    this._messageSource.next(value);
-    //this.PageDetail =value;
-  }
-  getPageDetail() {
-    return this.PageDetail;
-  }
+  addData(item) {
 
-  sendData(message: string) {
-    this.subject.next(message);
+    this.items=[...item];
   }
 
   clearData() {
-    this.subject.next();
+    this.items=[];
+    return this.items;
   }
 
-  getData(): Observable<any> {
-    return this.subject.asObservable();
+  getData() {
+    return this.items;
   }
 }

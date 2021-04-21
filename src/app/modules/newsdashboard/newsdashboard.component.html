@@ -1,29 +1,22 @@
 <mat-card>
-    <mat-card-title><span
-            style="font-size:large;display: grid;place-items: center; color: rgb(44, 238, 44)">{{PageTitle}}</span>
+    <mat-card-title><span style="margin-top:10px;font-size:large;display: grid;place-items: center; color:orange">{{PageTitle}}</span>
     </mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
-        <div>
-            <div fxLayout="row" fxLayoutAlign="space-around center">
-                <mat-form-field>
-                    <input matInput #search autocomplete="Off" placeholder="Search">
-                </mat-form-field>
-                <button mat-button (click)="applyFilter(search.value)">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </div>
-            <div *ngFor="let element of DATA">
-                <div class="subtitle"><a style="color:white"
-                        (click)="view(Id,element.PhId)">{{element.Title|titlecase}}</a>
-                    <br> {{element.Date|date:'dd/MM/yyyy'}}
+        <mat-divider></mat-divider>
+        <br>
+        <div *ngFor="let element of DATA">
+            <a class="subtitle" style="color:white" (click)="view(Id,element)">
+                <div>{{element.Title|titlecase}}
+                    <br><span style="color:rgb(201, 200, 200);font-size: small;">
+                        {{element.Date|date:'dd/MM/yyyy'}}</span>
                 </div>
-                <!-- <div class="content">
-                  <p>  {{element.Body| slice:0:200}} <a style="color:blue" (click)="view(Id,element.PhId)">more..</a></p>
-                </div>                 -->
-            </div>
-            <mat-paginator style="background-color: #20639b;" [pageSizeOptions]="[10, 25, 100]"></mat-paginator>
+            </a>
+            <mat-divider></mat-divider>
         </div>
+        <mat-divider></mat-divider>
+        <mat-paginator style="color:rgb(201, 200, 200);background-color: #1E4A75;" [pageSizeOptions]="[10, 25, 100]">
+        </mat-paginator>
 
     </mat-card-content>
 </mat-card>

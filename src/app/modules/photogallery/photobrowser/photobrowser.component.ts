@@ -33,20 +33,20 @@ export class PhotobrowserComponent implements OnInit {
   images: any[];
   Albums: any[];
   AllAlbums: any[];
-  Photos:any[];
+  Photos: any[];
   unique: any[];
   selectedAlbum: string;
   oldvalue: string;
   loading = false;
-  mediaSub:Subscription;
-  deviceXs:boolean;
+  mediaSub: Subscription;
+  deviceXs: boolean;
 
   constructor(
     private dataservice: NaomitsuService,
     private route: Router,
     private alert: AlertService,
-    private el:ElementRef,
-    private mediaObserver:MediaObserver
+    private el: ElementRef,
+    private mediaObserver: MediaObserver
   ) { }
 
   ngOnInit() {
@@ -114,36 +114,43 @@ export class PhotobrowserComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        let count=0;
+        let count = 0;
         if (data.value.length > 0) {
           var browsePath = '';
-          var width=150;
-          var cols=1;
+          var width = '150px';
+          var cols = 1;
           this.Albums.forEach(album => {
             album.photos =
-              data.value.filter(f=> {
-                count++;
-                return f.ParentId==album.FileId
+              data.value.filter(f => {
+                return f.ParentId == album.FileId
               })
-              .map((photo,indx) => {
-                
-                browsePath = globalconstants.apiUrl + "/Image/" + album.FileName + "/" + photo.FileName;
-                console.log('count',count); 
-                
-                return {
-                  PhotoId: photo.FileId,
-                  PhotoPath: browsePath,
-                  PhotoName: photo.UpdatedFileFolderName,
-                  Description: photo.Description,
-                  Width:width,
-                  Height:width
-                }
-              });
-              //count=0;
-          })
+          });
+
+          this.Albums.forEach((album) => {
+            count = album.photos.length;
+            width = count > 1 ? '75px' : '150px';
+            //console.log('photo count', count);
+            //console.log('photo width', width);
+
+            album.photos = album.photos.map((photo, indx) => {
+              browsePath = globalconstants.apiUrl + "/Image/" + album.FileName + "/" + photo.FileName
+
+              return {
+                PhotoId: photo.FileId,
+                PhotoPath: browsePath,
+                PhotoName: photo.UpdatedFileFolderName,
+                Description: photo.Description,
+                Width: width,
+                Height: width,
+                PhotoCount: count
+              }
+            })
+          });
+          //count=0;
+
         }
-        
-        console.log('album',this.Albums);
+
+        console.log('album', this.Albums);
         this.loading = false;
       })
   }
@@ -160,7 +167,7 @@ export class PhotobrowserComponent implements OnInit {
   // onResize(event) {
   //   this.resize(event.target.innerWidth);
   // }
-  
+
   resize() {
     if (this.deviceXs) {
       this.breakpoint = 1;

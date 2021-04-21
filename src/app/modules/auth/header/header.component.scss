@@ -22,8 +22,8 @@
     background-size: cover;
     //background-repeat: no-repeat;
     //background-size: cover;
-    background-color:#1E4A75;//#0F5298; //#4f8ec2;//
-    //box-shadow: 5px 5px #00203FFF;
+    background-color:#0F5298; //#4f8ec2;//
+    box-shadow: 5px 5px #0F5298;
     top:0px;
     max-width: 100%;
 }
@@ -43,8 +43,7 @@ button {
 }
 .mat-toolbar-row{
     height: 150px !important;
-    padding:0px;
 }
 .ng-star-inserted{
-    height: 55px !important;
+    height: 60px !important;
 }

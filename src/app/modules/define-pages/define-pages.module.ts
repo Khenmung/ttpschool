@@ -16,6 +16,7 @@ import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ContactComponent } from '../contact/addMessage/contact.component';
 import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
+import { SharedhomepageModule } from '../sharedhomepage.module';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { ContactdashboardComponent } from '../contact/contactdashboard/contactda
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
+    SharedhomepageModule,
     MatFormFieldModule,
     MatCardModule,
     RouterModule,

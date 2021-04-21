@@ -1,65 +1,49 @@
     mat-drawer {
-//        margin-top      : 120px;
-        width           : 280px;
-        //background: url('../../../../assets/images/leftimg.svg');
+        border-top-right-radius: 1em 1em;
+        width            : 280px;
         background-repeat: no-repeat;
-        //background-size: cover;
-        background-color: #20639b;
-        height: 100%;
-        top:155px;
+        background-color : #1E4A75;//#20639b;
+//        opacity: .9;
+        height           : 100%;
+        top              : 150px;
     }
-    mat-drawer-content{
-        background-color: #0F5298;
-        top:145px;
-        border-radius: 2px;
-        //margin-left: 280px;
-        //height:710px;
-    }
-    .rightpanel{
-            background-color:#20639b ;
-    }
-    mat-drawer-container{
-        background-color: #0F5298;
-    }
-    .DeviceXs{
-        //position: relative;
-        margin-top:60px !important;
-        //max-width: 100%;
-    }
-    .OpenAndDeviceXs{
-        //position: relative;
-        margin-top:55px !important;
-        //max-width: 100%;
-    }
-    .NotDeviceXs{
-        //position:
-        margin-top:0px !important;
-        //max-width: 100%;
-    }
-    // .top70Width62{
-    //     top:150px;
-    //     max-width: 100%;
-    // }
-    // .top70width100{
-    //     top:100px;
-    //     max-width: 100%;
-    // }
-    // .top80{
-    //     top:120px;
-    //     max-width: 100%;
-    // }
-    // .sidebartop110width100
-    // {
-    //     top:100px;
-    //     max-width: 100%;
-    // }
-    // .sidebartop65width100
-    // {
-    //     top:0px;
-    //     max-width: 100%;
-    // }
 
-    // app-sidebar {
-    //     min-height: 300vh;
+    mat-drawer-content {
+        //background:url('/assets/images/schoolbuilding2018.jfif') no-repeat 0 0 transparent;
+        //background-color: #0F5298;
+        top             : 140px;
+        border-radius   : 1em;
+        margin-bottom   : 20px;
+        padding-bottom  : 100px;
+    }
+
+    .rightpanel {
+        background-color: #1E4A75;
+    }
+
+    mat-drawer-container {
+        background-color:#00203FFF;//#0e4a8b;// #0F5298;
+        //opacity: .5;
+        //background:url('/assets/images/schoolbuilding2018.jfif') no-repeat 0 0 transparent;
+    }
+
+    app-footer {
+        position: inherit;
+    }
+    // app-right{
+    //     border-radius: 5px;
     // }
+    .DeviceXs {
+        margin-top: 60px !important;
+        margin:2px;
+    }
+
+    .OpenAndDeviceXs {
+        margin-top: 55px !important;
+    }
+
+    .NotDeviceXs {
+        margin-top: 0px !important;
+    }
+
     
