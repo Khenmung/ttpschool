@@ -1,23 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import '~bootstrap/dist/css/bootstrap.min.css'; 
+
 mat-card{
-    //top: 150px;
     margin:12px;
     min-height: 100vh;
-    //max-width: 75%;  
-    //background-image: url('assets/images/25years.png');
- //   transform: skew(-1deg, 1deg);
-    //box-shadow: 5px 5px 5px lightgray;
+  
 }
-@media (max-width: 600px) {
-    md-card {
-      width:100%;
+@media only screen and (max-width: 600px) {
+    mat-card{
+        margin-left:0px;
+        margin-right: 0px;
     }
+  
   }
-//   .mat-form-field-wrapper{
-//     padding-bottom: 0px !important;
-// }
+
 .mat-icon {
     vertical-align: middle;
  }

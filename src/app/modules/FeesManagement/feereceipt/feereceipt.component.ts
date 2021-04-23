@@ -14,6 +14,7 @@ import { List } from 'src/app/shared/interface';
   styleUrls: ['./feereceipt.component.scss']
 })
 export class FeereceiptComponent implements OnInit {
+  editReceipt = false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -35,8 +36,13 @@ export class FeereceiptComponent implements OnInit {
     SectionName: '',
     Session: '',
     PayAmount: 0,
+    BalanceAmt: 0,
+    PaidAmt: 0,
     OfflineReceiptNo: 0,
-    TotalAmount: 0
+    TotalAmount: 0,
+    ClassFeeId: 0,
+    ReceiptNo: 0,
+    PaymentDate: Date
   }
   NewReceipt = true;
   Saved = false;
@@ -86,7 +92,8 @@ export class FeereceiptComponent implements OnInit {
   displayedColumns = [
     'SlNo',
     'FeeName',
-    'PaymentAmount'
+    'PaymentAmount',
+
   ];
   ReceiptDisplayedColumns = [
     'StudentReceiptId',
@@ -107,6 +114,46 @@ export class FeereceiptComponent implements OnInit {
       return;
     }
     this.GetMasterData();
+  }
+  UpdateActive(element) {
+    let toupdatePaymentDetail = {
+      ParentId: +element.ParentId,
+      ClassFeeId: +element.ClassFeeId,
+      ReceiptNo: +element.ReceiptNo,
+      PaymentAmt: parseFloat(element.PaymentAmount).toFixed(2),
+      PaymentDate: new Date(),
+      ReceivedBy: '',
+      Active: 0
+    }
+    //console.log('data to update', toupdatePaymentDetail)
+    //console.log('paymentid', element.PaymentId);
+    this.dataservice.postPatch('PaymentDetails', toupdatePaymentDetail, element.PaymentId, 'patch')
+      .subscribe(
+        (data: any) => {
+          let TotalAmount = this.studentInfoTodisplay.TotalAmount - element.PaymentAmount;
+          //if(TotalAmount==0)
+          let receipt = {
+            TotalAmount: TotalAmount.toFixed(2),
+            //Less: "0.00",
+            //OfflineReceiptNo: this.studentInfoTodisplay.OfflineReceiptNo,
+            UpdateDate: new Date(),
+            Active: TotalAmount == 0 ? 0 : 1
+          }
+          this.dataservice.postPatch('StudentFeeReceipts', receipt, element.ReceiptNo, 'patch')
+            .subscribe(
+              (data: any) => {
+                let toUpdateFeePayment = {
+                  BalanceAmt: (this.studentInfoTodisplay.BalanceAmt + element.PaymentAmount).toFixed(2),
+                  PaidAmt: (this.studentInfoTodisplay.PaidAmt - element.PaymentAmount).toFixed(2)
+                }
+                this.dataservice.postPatch('StudentFeePayments', toUpdateFeePayment, element.ParentId, 'patch')
+                  .subscribe(
+                    (data: any) => {
+                      this.alert.success('Receipt updated successfully.', this.optionAutoClose);
+                    });
+              });
+          //this.Saved = true;
+        })
   }
   whenPrint() {
     let receipt = {
@@ -133,6 +180,24 @@ export class FeereceiptComponent implements OnInit {
           });
         })
   }
+  edit() {
+    this.editReceipt = true;
+    this.displayedColumns = [
+      'SlNo',
+      'FeeName',
+      'PaymentAmount',
+      'Action'
+    ];
+
+  }
+  done() {
+    this.editReceipt = false;
+    this.displayedColumns = [
+      'SlNo',
+      'FeeName',
+      'PaymentAmount',
+    ];
+  }
   GetStudentFeePaymentDetails(ReceiptNo) {
     debugger;
     if (this.studentInfoTodisplay.StudentId == 0)
@@ -142,16 +207,23 @@ export class FeereceiptComponent implements OnInit {
       filterstring = 'ReceiptNo eq null';
     else
       filterstring = 'ReceiptNo eq ' + ReceiptNo;
+    filterstring += ' and Active eq 1';
 
     let list: List = new List();
     list.fields = [
       'StudentFeePayment/StudentFeeId',
       'StudentFeePayment/StudentClassId',
       'StudentFeePayment/StudentId',
+      'StudentFeePayment/PaidAmt',
+      'StudentFeePayment/BalanceAmt',
       'ClassFee/FeeNameId',
       'StudentFeeReceipt/OfflineReceiptNo',
+      'StudentFeeReceipt/TotalAmount',
       'PaymentId',
+      'ParentId',
+      'ClassFeeId',
       'PaymentAmt',
+      'ReceiptNo',
       'PaymentDate'];
     list.PageName = "PaymentDetails";
     list.lookupFields = ["StudentFeePayment", "ClassFee", "StudentFeeReceipt"];
@@ -167,49 +239,67 @@ export class FeereceiptComponent implements OnInit {
           if (data.value[0].StudentFeeReceipt !== undefined)
             this.studentInfoTodisplay.OfflineReceiptNo = data.value[0].StudentFeeReceipt.OfflineReceiptNo;
           this.studentInfoTodisplay.ReceiptDate = data.value[0].PaymentDate
-          res = data.value.filter(st => st.StudentFeePayment.StudentClassId == this.studentInfoTodisplay.StudentClassId
-          ).map((item, indx) => {
-            this.studentInfoTodisplay.TotalAmount += +item.PaymentAmt;
-            return {
-              SlNo: indx + 1,
-              TotalAmount: 0,
-              OfflineReceiptNo: '',
-              StudentClassId: item.StudentFeePayment.StudentClassId,
-              FeeName: item.ClassFee == undefined ? '' : this.FeeNames.filter(fee => fee.MasterDataId == item.ClassFee.FeeNameId)[0].MasterDataName,
-              PaymentAmount: item.PaymentAmt,
-              PaymentId: item.PaymentId
-            }
-
-          })
-          if (res.length == 0) {
-            //this.alert.info("no record found!", this.optionAutoClose);
-            this.NewReceipt = false;
-            let list: List = new List();
-            list.fields = [
-              'StudentReceiptId',
-              'TotalAmount',
-              'OfflineReceiptNo',
-              'ReceiptDate'];
-
-            list.PageName = "StudentFeeReceipts";
-            //list.lookupFields = ["PaymentDetails", "StudentClass"];
-            list.filter = ["StudentId eq " + this.studentInfoTodisplay.StudentId];
-
-            this.dataservice.get(list)
-              .subscribe((data: any) => {
-                this.dataReceiptSource = new MatTableDataSource<IReceipt>(data.value);
-              })
-          }
-          else {
+          this.studentInfoTodisplay.PaidAmt = data.value[0].StudentFeePayment.PaidAmt;
+          this.studentInfoTodisplay.BalanceAmt = data.value[0].StudentFeePayment.BalanceAmt;
+          this.studentInfoTodisplay.ClassFeeId = data.value[0].ClassFeeId;
+          this.studentInfoTodisplay.ReceiptNo = data.value[0].ReceiptNo;
+          this.studentInfoTodisplay.PaymentDate = data.value[0].PaymentDate;
+          res = data.value.filter(st => st.StudentFeePayment.StudentClassId == this.studentInfoTodisplay.StudentClassId)
+            .map((item, indx) => {
+              this.studentInfoTodisplay.TotalAmount += +item.PaymentAmt;
+              return {
+                SlNo: indx + 1,
+                TotalAmount: 0,
+                OfflineReceiptNo: '',
+                StudentClassId: item.StudentFeePayment.StudentClassId,
+                FeeName: item.ClassFee == undefined ? '' : this.FeeNames.filter(fee => fee.MasterDataId == item.ClassFee.FeeNameId)[0].MasterDataName,
+                PaymentAmount: item.PaymentAmt,
+                PaymentId: item.PaymentId,
+                ParentId: item.ParentId,
+                ReceiptNo: item.ReceiptNo,
+                PaymentDate: item.PaymentDate,
+                ClassFeeId: item.ClassFeeId,
+                Action: ''
+              }
+            })
+          if (res.length > 0) {
             this.NewReceipt = true;
             this.ELEMENT_DATA = [...res];
+            //console.log('this.ELEMENT_DATA',this.ELEMENT_DATA)
             this.PaymentIds = res.map(id => id.PaymentId);
             this.dataSource = new MatTableDataSource<IStudentFeePaymentReceipt>(this.ELEMENT_DATA);
           }
+           else {
+             this.NewReceipt = false;
+          //   this.GetBills();
+           }
         }
+        else {
+           this.NewReceipt = false;
+        //   this.GetBills();
+         }
       })
   }
+  GetBills() {
+    let list: List = new List();
+    list.fields = [
+      'StudentReceiptId',
+      'TotalAmount',
+      'OfflineReceiptNo',
+      'ReceiptDate'];
 
+    list.PageName = "StudentFeeReceipts";
+    //list.lookupFields = ["PaymentDetails", "StudentClass"];
+    list.filter = ["StudentId eq " + this.studentInfoTodisplay.StudentId];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(element => {
+          element.Action = '';
+        });
+        this.dataReceiptSource = new MatTableDataSource<IReceipt>(data.value);
+      })
+  }
   GetMasterData() {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
@@ -295,10 +385,12 @@ export interface IStudentFeePaymentReceipt {
   SlNo: number;
   FeeName: string;
   PaymentAmount: any;
+  Action: string;
 }
 export interface IReceipt {
   StudentReceiptId: number;
   TotalAmount: number;
   OfflineReceiptNo, number;
   ReceiptDate: Date;
+  Action: string;
 }

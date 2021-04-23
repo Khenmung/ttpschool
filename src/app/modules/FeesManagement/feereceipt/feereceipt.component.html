@@ -2,16 +2,15 @@
 <br>
 <div *ngIf="NewReceipt">
     <div class="divCls" fxLayoutGap="100px" id="printSection">
-        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
-            <span>
-                <b>Name</b> : {{studentInfoTodisplay.StudentName}}
+        <div fxLayout="column" fxLayoutAlign="space-around center">
+            <span style="font-size: 24pt;">
+                <b>ST. PAUL'S INSTITUTE</b>
             </span>
-            <span>
-                <b>Class</b> : {{studentInfoTodisplay.StudentClassName}} - {{studentInfoTodisplay.SectionName}} -
-                ({{studentInfoTodisplay.Currentbatch}})
-            </span>
+            <span>(CBSE Affiliation No. 1230018)</span>
+            <span>New Lamka, Go Cin Khup Veng, Churachandpur</span>
         </div>
-        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <br>
+        <div fxLayout="row" fxLayoutAlign="space-between center">
             <span>
                 <b>Bill No.</b>: {{studentInfoTodisplay.BillNo}}
             </span>
@@ -19,9 +18,18 @@
                 <b>Bill Date</b>: {{studentInfoTodisplay.ReceiptDate|date:'dd/MM/yyyy'}}
             </span>
         </div>
-        <div fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <div fxLayout="row" fxLayoutAlign="space-between center">
             <span>
-                <span><strong>Offline Receip No.: </strong></span>
+                <b>Name</b> : {{studentInfoTodisplay.StudentName}}
+            </span>
+            <span>
+                <b>Class</b> : {{studentInfoTodisplay.StudentClassName}} - {{studentInfoTodisplay.SectionName}} -
+                ({{studentInfoTodisplay.Currentbatch}})
+            </span>
+        </div>        
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+            <span>
+                <span><strong>Offline Receipt No.: </strong></span>
                 <mat-form-field appearance="legacy">
                     <input matInput [(ngModel)]="studentInfoTodisplay.OfflineReceiptNo">
                 </mat-form-field>
@@ -42,9 +50,19 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PaymentAmount">
-                    <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> Amount &#x20b9; </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.PaymentAmount}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action" *ngIf="editReceipt">
+                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button matTooltip="cancel" (click)="UpdateActive(element)" class="mat-raised-button">
+                            <mat-icon>
+                                cancel
+                            </mat-icon>
+                        </button>
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -52,7 +70,7 @@
                     fxLayout="row"></mat-row>
             </mat-table>
             <div fxLayout="row" fxLayoutAlign="end center">
-                <span style="padding: 10px;"><strong>Total Amount</strong>: {{studentInfoTodisplay.TotalAmount}}
+                <span style="padding: 10px;"><strong>Total &#x20b9;</strong>: {{studentInfoTodisplay.TotalAmount}}
                 </span>
             </div>
         </div>
@@ -63,54 +81,67 @@
             <mat-icon>save</mat-icon>
         </button>
         <div *ngIf="Saved || studentInfoTodisplay.BillNo>0">
-            <button matTooltip="cancel receipt" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
-                <mat-icon>cancel</mat-icon>
+            <button matTooltip="edit receipt" *ngIf="!editReceipt" (click)="edit()" class="mat-raised-button">
+                <mat-icon>edit</mat-icon>
             </button>
-            <button matTooltip="print" printSectionId="printSection"
-                [useExistingCss]="true" ngxPrint class="mat-raised-button">
+            <button matTooltip="done" *ngIf="editReceipt" (click)="done()" class="mat-raised-button">
+                <mat-icon>checked</mat-icon>
+            </button>
+            <button matTooltip="print" *ngIf="!editReceipt" printSectionId="printSection" [useExistingCss]="true"
+                ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
             </button>
             <button matTooltip="back" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
                 <mat-icon>arrow_back</mat-icon>
             </button>
         </div>
-
     </div>
 </div>
-<div *ngIf="!NewReceipt" fxLayout="row" fxLayoutAlign="space-between center" class="mat-elevation-z8">
-    <mat-table [dataSource]="dataReceiptSource" fxFlex>
-        <ng-container matColumnDef="StudentReceiptId">
-            <mat-header-cell *matHeaderCellDef> Receipt No</mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.StudentReceiptId}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="OfflineReceiptNo">
-            <mat-header-cell *matHeaderCellDef> Offline Receipt No. </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.OfflineReceiptNo}}
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="TotalAmount">
-            <mat-header-cell *matHeaderCellDef> Total Amount </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.TotalAmount}}
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="ReceiptDate">
-            <mat-header-cell *matHeaderCellDef> Receipt Date </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.ReceiptDate|date:'dd/MM/yyyy'}}
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="Action">
-            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <button mat-mini-fab (click)="GetStudentFeePaymentDetails(element.StudentReceiptId)">
-                    <mat-icon>pageview</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="ReceiptDisplayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ReceiptDisplayedColumns;" fxLayoutAlign="space-between center"
-            fxLayout="row"></mat-row>
-    </mat-table>
+<div *ngIf="!NewReceipt">
+    <div style="width:100%;padding:20px">
+        <mat-form-field appearance="legacy">
+            <mat-label>Receipt no.</mat-label>
+            <input matInput #receiptno [(ngModel)]="studentInfoTodisplay.ReceiptNo">
+        </mat-form-field>
+        <button class="mat-raised-button" (click)="GetStudentFeePaymentDetails(receiptno.value)">
+            <mat-icon>search</mat-icon>
+        </button>
+    </div>
+    <!-- <div fxLayout="row" fxLayoutAlign="space-between center" style="width:100%">
+        <mat-table [dataSource]="dataReceiptSource">
+            <ng-container matColumnDef="StudentReceiptId">
+                <mat-header-cell *matHeaderCellDef> Receipt No</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.StudentReceiptId}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="OfflineReceiptNo">
+                <mat-header-cell *matHeaderCellDef> Offline Receipt No. </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.OfflineReceiptNo}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="TotalAmount">
+                <mat-header-cell *matHeaderCellDef> Total Amount &#x20b9; </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.TotalAmount}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ReceiptDate">
+                <mat-header-cell *matHeaderCellDef> Receipt Date </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ReceiptDate|date:'dd/MM/yyyy'}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-mini-fab (click)="GetStudentFeePaymentDetails(element.StudentReceiptId)">
+                        <mat-icon>pageview</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="ReceiptDisplayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: ReceiptDisplayedColumns;" fxLayoutAlign="space-between center"
+                fxLayout="row"></mat-row>
+        </mat-table>
+    </div> -->
 </div>

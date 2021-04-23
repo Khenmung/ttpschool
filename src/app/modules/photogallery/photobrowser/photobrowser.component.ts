@@ -128,7 +128,7 @@ export class PhotobrowserComponent implements OnInit {
 
           this.Albums.forEach((album) => {
             count = album.photos.length;
-            width = count > 1 ? '75px' : '150px';
+            width = count > 1 ? '100px' : '200px';
             //console.log('photo count', count);
             //console.log('photo width', width);
 

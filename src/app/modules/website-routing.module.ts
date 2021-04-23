@@ -19,20 +19,21 @@ import { PhotosComponent } from './photogallery/photos/photos.component';
 import { EncodeHTMLPipe } from '../encode-html.pipe';
 import { AlbumEditInputComponent } from './photogallery/albumedit-input/albumedit-input.component';
 import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+import { LandingpageComponent } from '../shared/components/landingpage/landingpage.component';
 
 const routes: Routes = [
   {path: '', component: HomeComponent,
   children:
     [
-      { path: '', redirectTo: 'display/0/0', pathMatch: 'full' },
+      { path: '',component:LandingpageComponent },
+      { path: 'display/:phid/:pid', component: DisplaypageComponent },
       { path: 'photocarousel', component: CarouselComponent },
       { path: 'uploadphoto', component: cropNUploadphotoComponent },
       { path: 'browsephoto', component: PhotobrowserComponent },
       { path: 'editor', component: TextEditorComponent },
       { path: 'page/:id', component: TextEditorComponent },
       { path: 'pages/:id', component: pageDashboardComponent },
-      { path: 'pages', component: pageDashboardComponent },
-      { path: 'display/:phid/:pid', component: DisplaypageComponent,data:{"name":"Kham Khen Mung"} },
+      { path: 'pages', component: pageDashboardComponent },      
       { path: 'details', component: pageViewComponent },
       { path: 'dragdrop', component: ImgDragAndDropComponent },
       { path: 'filedragdrop', component: FiledragAndDropComponent },

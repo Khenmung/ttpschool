@@ -12,6 +12,7 @@ import { MultiLevelMenuComponent } from './dynamicMultiLevelMenu/MultiLevelMenu.
 import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { LandingpageComponent } from '../shared/components/landingpage/landingpage.component';
 
 const sharedComponent=[
   HomeComponent,
@@ -20,7 +21,8 @@ const sharedComponent=[
     FooterComponent,
     AlertComponent,
     RightComponent,
-    NewsdashboardComponent
+    NewsdashboardComponent,
+    LandingpageComponent
     //MultiLevelMenuComponent
 ]
 

@@ -25,11 +25,19 @@
     background-color:#1E4A75;//#0F5298; //#4f8ec2;//
     //box-shadow: 5px 5px #00203FFF;
     top:0px;
+    //height:300px;
     max-width: 100%;
 }
-// .mat-button{
-//     line-height: 55px;
-// }
+// @media only screen and (max-width: 600px) {
+//     mat-card{
+//         margin-left:0px;
+//         margin-right: 0px;
+//     }
+  
+//   }
+
+
+
 .rightside{
     background-color:black;// rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
     padding:5px;

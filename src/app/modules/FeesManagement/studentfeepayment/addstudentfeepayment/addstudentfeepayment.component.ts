@@ -212,7 +212,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
             PaymentAmt: this.studentInfoTodisplay.PayAmount.toFixed(2),
             PaymentDate: new Date(),
             ParentId: data.StudentFeeId,
-            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId
+            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId,
+            Active:1
           }
           this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
             .subscribe(

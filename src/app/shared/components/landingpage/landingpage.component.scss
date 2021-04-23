@@ -1,0 +1,63 @@
+html,
+body {
+    height: 100%;
+}
+
+.image-cropper {
+    //width: 800px;
+    height       : 450px;
+    position     : relative;
+    overflow     : hidden;
+    border-radius: 50%;
+}
+
+.header {
+    // background: url('../../../../assets/images/headerimg.svg');
+    // background-size: cover;
+    background-color: #00203FFF;
+    height          : 20%;
+    //border-color: honeydew;
+}
+
+img {
+    display: inline;
+    margin : 0 auto;
+    height : 100%;
+    width  : auto;
+
+    //   height: 420px;
+    //   width:100%;
+    //   object-fit: contain;
+    //   opacity: 1.1;
+}
+
+.content {
+    //background       : url('../../../../assets/images/homeimg.PNG');
+ //   background-size  : contain;
+ //   background-repeat: no-repeat;
+    background       : linear-gradient(150deg, #00203F 15%, #198CFF  70%, #006EDB 94%);
+    height           : 100%;
+    opacity          : 1.1;
+    border-radius: 1em;
+    z-index: 999;
+    //border:1px solid honeydew;
+}
+
+.footer {
+    // background: url('../../../../assets/images/footerimg.svg');
+    // background-size:cover ;
+    // background-repeat: no-repeat;
+    background-color: #00203F;
+    height          : 20%;
+    border-color    : honeydew;
+}
+
+.imgcls {
+    //max-height: 400px;
+    height    : auto;
+    width     : 100%;
+    box-shadow:3px 3px 3px #00203F;
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+    
+}

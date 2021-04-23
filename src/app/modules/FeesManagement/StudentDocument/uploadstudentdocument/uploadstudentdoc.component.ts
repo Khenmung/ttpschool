@@ -15,6 +15,14 @@ import { FileUploadService } from 'src/app/shared/upload.service';
   styleUrls: ['./uploadstudentdoc.component.scss']
 })
 export class StudentDocumentComponent implements OnInit {
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionsAutoClose = {
+    autoClose: true,
+    keepAfterRouteChange: true
+  };
   formdata: FormData;
   selectedFile: any;
   Id: number = 0;
@@ -66,7 +74,19 @@ export class StudentDocumentComponent implements OnInit {
     this.selectedFile = files[0];
   }
   uploadFile() {
-    let error: boolean = false;
+
+    if(this.selectedFile.length==0)
+    {
+      this.alertMessage.error('Please select a file!',this.optionsNoAutoClose);
+      return;
+    }
+    if(this.uploadForm.get("DocTypeId").value==0)
+    {
+      this.alertMessage.error('Please select document type!',this.optionsNoAutoClose);
+      return;
+    }
+
+      let error: boolean = false;
     this.formdata = new FormData();
     this.formdata.append("fileOrPhoto", "0");
     this.formdata.append("folderName", "Studentdocument");

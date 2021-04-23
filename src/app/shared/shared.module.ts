@@ -9,12 +9,14 @@ import { AutofocusDirective } from './autofocus.directive';
 import { FormsModule } from '@angular/forms';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { LandingpageComponent } from './components/landingpage/landingpage.component';
 @NgModule({
   declarations: [
     AreaComponent,
     MatConfirmDialogComponent,
     AutofocusDirective,
-    NotfoundComponent,    
+    NotfoundComponent,
+    //LandingpageComponent,    
   ],
   imports: [
     CommonModule,

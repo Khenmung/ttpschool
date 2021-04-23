@@ -5,7 +5,7 @@ import {
   ExpandedLTR, MultilevelMenuService, ExpandCollapseStatusEnum, SlideInOut
 } from 'ng-material-multilevel-menu';
 import { List, PagesForMenu } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
+//import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../shared/databaseService';
 @Component({
@@ -25,6 +25,7 @@ export class MultiLevelMenuComponent implements OnInit {
     admin: "admin",
     general: ""
   }
+  data:any[];
   loading = false;
   selectedIndex: number;
   loggedIn: boolean;
@@ -35,12 +36,12 @@ export class MultiLevelMenuComponent implements OnInit {
   menuWithID: MultilevelNodes[] = null
   constructor(
     private multilevelMenuService: MultilevelMenuService,
-    private shareddata: SharedataService,
+    //private shareddata: SharedataService,
     private navigate: Router,
-    //private route: ActivatedRoute,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService
   ) {
+    
     this.loggedIn = tokenStorage.getToken() == null ? false : true;
   }
   menuIsReady(menus: MultilevelNodes[]) {
@@ -86,19 +87,22 @@ export class MultiLevelMenuComponent implements OnInit {
       rtlLayout: false,
       customTemplate: false
     };
-    this.GetMenuData();
-
-    //console.log('url',this.navigate.url);
+    //this.GetMenuData();
+    // this.data = this.shareddata.data$.value;
+    // this.shareddata.data$.
+    //   next(res => this.data = res);
+    // console.log('from service',this.data);
   }
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
+    this.GetMenuData();
     this.loading = false;
   }
   setRow(_index: number) {
     this.selectedIndex = _index;
   }
-  GetMenuData() {
+  async GetMenuData() {
     debugger;
     let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
@@ -124,24 +128,14 @@ export class MultiLevelMenuComponent implements OnInit {
     //const columns = ["PageId", "Page Title", "PageGroupName", "Active", "Action"];
     //if(!this.loggedIn)
 
-    this.dataservice
+    await this.dataservice
       .get(list)
       .subscribe({
         next: (arrPageMenu) => {
-          //console.log('menudata',arrPageMenu);
-          //          this.shareddata.addData(arrPageMenu["value"]);
-          //console.log('stored',this.shareddata.getData());
           let arr = [...arrPageMenu["value"]];
-          // Object.keys(arrPageMenu).map(function (key) {
-          //   arr.push({ [key]: arrPageMenu[key] })
-          //   return arr;
-          // });
-
-          //let topmenu: PagesForMenu[] = [];
           let topmenu = [];
           arr.forEach((ele, key) => {
             ele.items = [];
-            //ele.data = ele.LatestPublishedId;
             topmenu.push(ele);
 
           });
@@ -211,8 +205,8 @@ export class MultiLevelMenuComponent implements OnInit {
 
           //this.appitems = [...final];
           //this.appitem =this.menudata();
-          console.log('final', this.appitem);
-          console.log('ori', this.menudata());
+          //console.log('final', this.appitem);
+          //console.log('ori', this.menudata());
         }
       });
   }
