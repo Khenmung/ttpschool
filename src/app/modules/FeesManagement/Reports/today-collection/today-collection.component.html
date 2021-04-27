@@ -1,0 +1,69 @@
+<mat-card>
+    <mat-card-title>Date wise collection</mat-card-title>
+    <mat-card-content>
+        <br>
+        <form [formGroup]="SearchForm">
+            <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="30px">
+                <mat-form-field appearance="outline" [style.width.px]="270">
+                    <mat-label>From Date</mat-label>
+                    <input formControlName="FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
+                    <mat-datepicker #FromDate></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline" [style.width.px]="270">
+                    <mat-label>To Date</mat-label>
+                    <input formControlName="ToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
+                    <mat-datepicker #ToDate></mat-datepicker>
+                </mat-form-field>
+                <button mat-raised-button (click)="GetStudentFeePaymentDetails()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </div>
+        </form>
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <span *ngIf="TotalAmount>0" style="padding: 10px;"><strong>Total &#x20b9;</strong>: {{TotalAmount}}
+            </span>
+            <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort>            
+            <ng-container matColumnDef="SlNo">
+                <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ReceiptNo">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Receipt No. </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.ReceiptNo}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Student </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Name}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ClassNameSection">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ClassNameSection}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="RollNo">
+                <mat-header-cell *matHeaderCellDef> Roll No. </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.RollNo}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="TotalAmount">
+                <mat-header-cell *matHeaderCellDef> Amount &#x20b9;</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.TotalAmount}}
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
+            </mat-row>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[10,25,100]">
+        </mat-paginator>
+    </mat-card-content>
+</mat-card>

@@ -1,17 +1,18 @@
+<div style="margin: 15px;" fxLayout="column" fxLayoutAlign="center center">
+    <strong>Class Fee definition statuses for the current batch.</strong>
+    <mat-divider></mat-divider>
+    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-between">
+        <div *ngFor="let item of ClassStatuses">{{item.class}}
+            <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+            <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+</div>
 <mat-card>
     <mat-card-title>Class Fees</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <strong>Class Fee Definition Statuses for the current session</strong>
-        <mat-divider></mat-divider>
-        <div fxLayoutGap="10" fxLayout="row wrap" fxLayoutAlign="space-between">
-            <div *ngFor="let item of ClassStatuses">{{item.class}}
-                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>                
-            </div>
-        </div>
-        <mat-divider></mat-divider>
-        <br>
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
@@ -32,7 +33,7 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Batch/Session</mat-label>
+                <mat-label>Batch</mat-label>
                 <mat-select formControlName="Batch">
                     <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
@@ -46,7 +47,7 @@
             </button><br>
         </form>
         <div class="example-container mat-elevation-z8">
-            <mat-table #table [dataSource]="dataSource">
+            <mat-table #table [dataSource]="dataSource" matSort>
 
                 <ng-container matColumnDef="SlNo">
                     <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
@@ -60,19 +61,19 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FeeName">
-                    <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Fee </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.FeeName}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Amount">
-                    <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <FeeEditInput [data]="element.Amount|number:'1.2-2'" (tried)="getoldvalue($event)"
                             (focusOut)='updateAmount(element,$event)'></FeeEditInput>
                     </mat-cell>
                 </ng-container>
-<!-- 
+                <!-- 
                 <ng-container matColumnDef="Batch">
                     <mat-header-cell *matHeaderCellDef> Batch </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -91,7 +92,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PaymentOrder">
-                    <mat-header-cell *matHeaderCellDef> Payment Order </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Order </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <FeeEditInput [data]="element.PaymentOrder" (tried)="getoldvalue($event)"
                             (focusOut)='updatePaymentOrder(element,$event)'></FeeEditInput>

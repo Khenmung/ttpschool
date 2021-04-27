@@ -33,7 +33,7 @@
                     Amount is required.</span>
             </mat-form-field>
             <mat-form-field appearance="outline" fxFlex>
-                <mat-label>Batch/Session</mat-label>
+                <mat-label>Batch</mat-label>
                 <mat-select formControlName="Batch" #BatchId>
                     <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">

@@ -9,6 +9,7 @@ import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 
 @Component({
   selector: 'app-addstudentfeepayment',
@@ -23,6 +24,7 @@ import { List } from 'src/app/shared/interface';
   ],
 })
 export class AddstudentfeepaymentComponent implements OnInit {
+  exceptionColumns: boolean;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   CurrentRow: any = {};
@@ -37,18 +39,16 @@ export class AddstudentfeepaymentComponent implements OnInit {
     keepAfterRouteChange: true
   };
   studentInfoTodisplay = {
-    Currentbatch: '',
-    currentbatchId: 0,
+    BatchId: 0,
     StudentFeeType: '',
     StudentName: '',
     StudentClassName: '',
     FeeTypeId: 0,
     StudentId: 0,
     ClassId: 0,
-    SectionName: '',
-    Session: '',
+    SectionName: '',    
     PayAmount: 0,
-    StudentClassId:0
+    StudentClassId: 0
   }
   Sections = [];
   FeeNames = [];
@@ -57,7 +57,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   Locations = [];
   StudentClassFees: any[] = [];
   FeeTypes = [];
-  ELEMENT_DATA: IStudentFeePayment[];
+  ELEMENT_DATA: IStudentFeePayment[] = [];
   StudentFeePaymentList: IStudentFeePayment[];
   Students: string[];
   dataSource: MatTableDataSource<IStudentFeePayment>;
@@ -70,6 +70,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     StudentFeeId: 0,
     StudentClassId: 0,
     ClassFeeId: 0,
+    FeeNameId: 0,
     FeeAmount: 0,
     PaidAmt: "0.00",
     BalanceAmt: "0.00",
@@ -78,30 +79,6 @@ export class AddstudentfeepaymentComponent implements OnInit {
     Remarks: '',
     Active: 1
   };
-  constructor(private dataservice: NaomitsuService,
-    private alert: AlertService,
-    private route: ActivatedRoute,
-    private nav: Router,
-    private datepipe: DatePipe) { }
-
-  ngOnInit(): void {
-  }
-  PageLoad(){
-    
-    this.route.paramMap.subscribe(param => {
-      this.studentInfoTodisplay.StudentId = +param.get("id");
-    })
-    
-    this.route.queryParamMap.subscribe(p=>{      
-      this.studentInfoTodisplay.StudentClassId = +p.get('scid');
-    })
-    if (this.studentInfoTodisplay.StudentId == 0) {
-      this.alert.error("Id is missing", this.optionAutoClose);
-      return;
-    }
-    this.GetMasterData();
-
-  }
   displayedColumns = [
     'SlNo',
     'Paid',
@@ -114,144 +91,126 @@ export class AddstudentfeepaymentComponent implements OnInit {
     'Action'
   ];
 
-  updateActive() {
+  constructor(private dataservice: NaomitsuService,
+    private alert: AlertService,
+    private route: ActivatedRoute,
+    private nav: Router,
+    private datepipe: DatePipe,
+    private shareddata: SharedataService) { }
+
+  ngOnInit(): void {
+  }
+  PageLoad() {
+
+    // this.route.paramMap.subscribe(param => {
+    //   this.studentInfoTodisplay.StudentId = +param.get("id");
+    // })
+    // if (this.studentInfoTodisplay.StudentId == 0) {
+    //   this.alert.error("Id is missing", this.optionAutoClose);
+    //   return;
+    // }
+    // this.route.queryParamMap.subscribe(p => {
+    //   this.studentInfoTodisplay.StudentClassId = +p.get('scid');
+    //   this.studentInfoTodisplay.BatchId = +p.get('bid');
+    //   this.GetMasterData();
+    // })
+    
+    this.shareddata.CurrentStudentId.subscribe(fy=>(this.studentInfoTodisplay.StudentId=fy)); 
+    this.shareddata.CurrentStudentClassId.subscribe(fy=>(this.studentInfoTodisplay.StudentClassId=fy));
+    this.shareddata.CurrentBatchId.subscribe(fy=>(this.studentInfoTodisplay.BatchId =fy));
+
+    this.shareddata.currentFeeNames.subscribe(fy=>(this.FeeNames=fy)); 
+    this.shareddata.CurrentClasses.subscribe(fy=>(this.Classes=fy));
+    this.shareddata.CurrentBatch.subscribe(fy=>(this.Batches =fy));
+    this.shareddata.CurrentLocation.subscribe(fy=>(this.Locations=fy));
+    this.shareddata.currentFeeType.subscribe(fy=>(this.FeeTypes=fy));
+    this.shareddata.currentSection.subscribe(fy=>(this.Sections=fy));
 
   }
-  updateAlbum() {
+  GetMasterData() {
+    let list: List = new List();
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+    list.PageName = "MasterDatas";
+    list.filter = ["Active eq 1"];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.allMasterData = [...data.value];
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+        this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.FEETYPE);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        // let currentBatch = globalconstants.getCurrentBatch();
+        // let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch.toLowerCase());
+        // if (currentBatchObj.length > 0) {
+        //   this.studentInfoTodisplay.BatchId = currentBatchObj[0].MasterDataId
+          this.GetStudentClass();
+        // }
+        // else
+        //   this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
+
+      });
 
   }
-  getoldvalue() {
-
+  getDropDownData(dropdowntype) {
+    let Id = this.allMasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    })[0].MasterDataId;
+    return this.allMasterData.filter((item, index) => {
+      return item.ParentId == Id
+    });
   }
-  UpdateOrSave(row) {
+  GetStudentClass() {
 
-    let re = /^[.0-9]*$/
-    //console.log('pay', row.Pay)
-    let valid = re.test(row.Pay);
-    if (!valid) {
-      this.alert.error("Invalid amount! Please enter numeric value", this.optionsNoAutoClose);
+    if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0)
       return;
-    }
-    this.studentInfoTodisplay.PayAmount = row.Pay;
 
-    //applied only for admission fee    
-    let bl: any;
-    if (row.ClassFeeName.toLowerCase().includes("admission")) {
-
-      bl = row.FeeAmount - (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount));
-      //console.log(bl);
-      if (bl < 0) {
-        this.alert.error("Invalid amount! Please enter pay amount less than or equal to balance amount", this.optionsNoAutoClose);
-        return;
-      }
-    }
-    //payment order has to start from one
-    if (row.PaymentOrder > 1) {
-      let previousBalance = this.ELEMENT_DATA.filter(d => d.PaymentOrder == (row.PaymentOrder - 1))[0].BalanceAmt;
-      if (previousBalance > 0) {
-        this.alert.error("Previous balance must be cleared!", this.optionsNoAutoClose);
-        return;
-      }
-    }
-
-    this.CurrentRow = row;
-
-    //this.duplicate = false;
-    let checkFilterString = "Active eq 1 " +
-      " and StudentClassId eq " + row.StudentClassId +
-      " and ClassFeeId eq " + row.ClassFeeId +
-      " and Batch eq " + row.Batch
-
-    if (row.StudentFeeId > 0)
-      checkFilterString += " and StudentFeeId ne " + row.StudentFeeId;
+    let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
-    list.fields = ["StudentFeeId"];
-    list.PageName = "StudentFeePayments";
-    list.filter = [checkFilterString];
+    list.fields = ["StudentClassId", "Section", "StudentId", "Batch", "Student/Name", "ClassId", "FeeTypeId"];
+    list.lookupFields = ["Student"];
+    list.PageName = "StudentClasses";
+    list.filter = [filterstr];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          //    this.duplicate = true;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
+          this.studentInfoTodisplay.ClassId = data.value[0].ClassId
+          this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
+          this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
+          // this.studentInfoTodisplay.Currentbatch = this.Batches.filter(b => {
+          //   return b.MasterDataId == this.studentInfoTodisplay.BatchId
+          // })[0].MasterDataName
+
+          this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
+            return cls.MasterDataId == data.value[0].Section
+          })[0].MasterDataName;
+          this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
+            return cls.MasterDataId == this.studentInfoTodisplay.ClassId
+          })[0].MasterDataName;
+          this.studentInfoTodisplay.StudentFeeType = this.FeeTypes.filter(f => {
+            return f.MasterDataId == this.studentInfoTodisplay.FeeTypeId
+          })[0].MasterDataName;
+
+          this.GetStudentFeePayment();
         }
         else {
-          this.StudentFeePaymentData.StudentId = this.studentInfoTodisplay.StudentId;
-          this.StudentFeePaymentData.Active = 1;
-          this.StudentFeePaymentData.FeeAmount = row.FeeAmount.toFixed(2);
-          this.StudentFeePaymentData.Batch = this.studentInfoTodisplay.currentbatchId;
-          this.StudentFeePaymentData.StudentFeeId = row.StudentFeeId;
-          this.StudentFeePaymentData.ClassFeeId = row.ClassFeeId;
-          this.StudentFeePaymentData.StudentClassId = row.StudentClassId;
-          if (row.ClassFeeName.toLowerCase().includes("admission")) {
-            this.StudentFeePaymentData.BalanceAmt = bl.toString();
-            this.StudentFeePaymentData.PaidAmt = (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount)).toFixed(2);
-          }
-          else {
-            this.StudentFeePaymentData.PaidAmt = row.BalanceAmt.toFixed(2); //.FeeAmount.toFixed(2);
-            this.StudentFeePaymentData.BalanceAmt = "0.00";
-          }
+          this.alert.error("No class defined for this student!", this.optionsNoAutoClose);
 
-          if (this.StudentFeePaymentData.StudentFeeId == 0)
-            this.insert();
-          else
-            this.update();
         }
-      });
+      })
   }
-
-  insert() {
-
-    debugger;
-    this.dataservice.postPatch('StudentFeePayments', this.StudentFeePaymentData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-          let paymentdetail = {
-            PaymentAmt: this.studentInfoTodisplay.PayAmount.toFixed(2),
-            PaymentDate: new Date(),
-            ParentId: data.StudentFeeId,
-            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId,
-            Active:1
-          }
-          this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
-            .subscribe(
-              (data: any) => {
-                this.GetStudentFeePayment();
-                this.alert.success("Data saved successfully", this.optionAutoClose);
-              })
-        });
-
-  }
-  update() {
-
-    this.dataservice.postPatch('StudentFeePayments', this.StudentFeePaymentData, this.StudentFeePaymentData.StudentFeeId, 'patch')
-      .subscribe(
-        (data: any) => {
-          let paymentdetail = {
-            PaymentAmt: this.studentInfoTodisplay.PayAmount.toFixed(2),
-            PaymentDate: new Date(),
-            ParentId: this.StudentFeePaymentData.StudentFeeId,
-            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId
-          }
-          //   this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
-          //     .subscribe(
-          //       (data: any) => {
-          //         this.GetStudentFeePayment();
-          //         // this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
-          //         // this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
-          //         this.alert.success("Data updated successfully", this.optionAutoClose);
-          //         //this.router.navigate(['/pages']);
-          //       })
-        });
-  }
-
   GetStudentFeePayment() {
-debugger;
+    debugger;
     if (this.studentInfoTodisplay.StudentId == 0)
       return;
-   
+
     let list: List = new List();
     list.fields = [
       'StudentFeeId',
@@ -283,12 +242,16 @@ debugger;
 
       });
   }
+    
   GetClassFee(pclassId) {
 
-    if (pclassId == undefined || pclassId == 0)
-      return;
-
-    let filterstr = "Active eq 1 and Batch eq " + this.studentInfoTodisplay.currentbatchId + " and ClassId eq " + pclassId;
+    if (pclassId == undefined || pclassId == 0 || this.studentInfoTodisplay.BatchId==0)
+    {
+        this.alert.error('Invalid Id',this.optionsNoAutoClose);
+        return;
+    }
+      
+    let filterstr = "Active eq 1 and Batch eq " + this.studentInfoTodisplay.BatchId + " and ClassId eq " + pclassId;
 
     let list: List = new List();
     list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId", "PaymentOrder"];
@@ -301,63 +264,110 @@ debugger;
         debugger;
         if (data.value.length > 0) {
           this.StudentClassFees = [...data.value];
-
+          let itemcount = 0;
           let FeeName = '';
-          this.ELEMENT_DATA = this.StudentClassFees.map((StudentClassFee, indx) => {
+          this.ELEMENT_DATA = [];
+          this.StudentClassFees.forEach((StudentClassFee, indx) => {
+            //itemcount += indx + 1;
             //console.log('after multi',(DiscountFactor * parseFloat(StudentClassFee.Amount)).toFixed(2))
             FeeName = this.FeeNames.filter(fee => fee.MasterDataId == StudentClassFee.FeeNameId)[0].MasterDataName;
+            let PayablePercent = 0;
+            let payableAmount = 0;
+            if (FeeName.toLowerCase().includes('admission') || FeeName.toLowerCase().includes('misc')) {
+              this.exceptionColumns = true;
+              PayablePercent = 1;
+            } else
+              PayablePercent = this.GetDiscountFactor(FeeName, indx);
 
-            let PayablePercent = this.GetDiscountFactor(FeeName, indx);
-            let payableAmount = PayablePercent * parseFloat(StudentClassFee.Amount);
+            payableAmount = PayablePercent * parseFloat(StudentClassFee.Amount);
 
             let existing = this.StudentFeePaymentList.filter(fromdb => fromdb.ClassFeeId == StudentClassFee.ClassFeeId)
+            //let toAdd;
             if (existing.length > 0) {
-              payableAmount = existing[0].BalanceAmt;//+payableAmount - parseFloat(existing[0].PaidAmt)
+              existing.forEach(exitem => {
+                itemcount += 1;
 
-              let paidAmount = parseFloat(existing[0].PaidAmt);
-              let bl = paidAmount == 0 ? parseFloat(StudentClassFee.Amount) : existing[0].BalanceAmt;
+                payableAmount = exitem.BalanceAmt;//+payableAmount - parseFloat(existing[0].PaidAmt)
+                let paidAmount = parseFloat(exitem.PaidAmt);
+                let bl = paidAmount == 0 ? parseFloat(StudentClassFee.Amount) : exitem.BalanceAmt;
 
-              return {
-                SlNo: indx + 1,
-                StudentFeeId: existing[0].StudentFeeId,
-                StudentClassId: existing[0].StudentClassId,
-                ClassFeeId: +existing[0].ClassFeeId,
-                ClassFeeName: FeeName,
-                FeeAmount: parseFloat(StudentClassFee.Amount),
-                FeeType: this.studentInfoTodisplay.StudentFeeType,
-                PaidAmt: parseFloat(existing[0].PaidAmt),
-                Pay: payableAmount,
-                BalanceAmt: existing[0].BalanceAmt,
-                PaymentDate: existing[0].PaymentDate,
-                Batch: existing[0].Batch,
-                PaymentOrder: StudentClassFee.PaymentOrder,
-                Paid: existing[0].BalanceAmt == 0 ? true : false,
-                Action: this.FeePayable,
-                PaymentDetails: existing[0].PaymentDetails
-              }
-
+                this.ELEMENT_DATA.push({
+                  SlNo: itemcount,
+                  StudentFeeId: exitem.StudentFeeId,
+                  StudentClassId: exitem.StudentClassId,
+                  ClassFeeId: +exitem.ClassFeeId,
+                  ClassFeeName: FeeName,
+                  FeeNameId: StudentClassFee.FeeNameId,
+                  FeeAmount: parseFloat(StudentClassFee.Amount),
+                  FeeType: this.studentInfoTodisplay.StudentFeeType,
+                  PaidAmt: parseFloat(exitem.PaidAmt),
+                  Pay: payableAmount,
+                  BalanceAmt: exitem.BalanceAmt,
+                  PaymentDate: exitem.PaymentDate,
+                  Batch: exitem.Batch,
+                  PaymentOrder: StudentClassFee.PaymentOrder,
+                  Paid: exitem.BalanceAmt == 0 ? true : false,
+                  Action: this.FeePayable,
+                  ExceptionColumns: this.exceptionColumns,
+                  PaymentDetails: exitem.PaymentDetails
+                })
+                //this.ELEMENT_DATA.push(toAdd);
+              })
             }
             else
-              return {
-                SlNo: indx + 1,
+              this.ELEMENT_DATA.push({
+                SlNo: itemcount + 1,
                 StudentFeeId: 0,
                 StudentClassId: this.studentInfoTodisplay.StudentClassId,
                 ClassFeeId: +StudentClassFee.ClassFeeId,
                 ClassFeeName: this.FeeNames.filter(fee => fee.MasterDataId == StudentClassFee.FeeNameId)[0].MasterDataName,
+                FeeNameId: StudentClassFee.FeeNameId,
                 FeeAmount: parseFloat(StudentClassFee.Amount),
                 FeeType: this.studentInfoTodisplay.StudentFeeType,
                 PaidAmt: "0.00",
                 Pay: payableAmount,
                 BalanceAmt: payableAmount,
                 PaymentDate: new Date(),
-                Batch: this.studentInfoTodisplay.currentbatchId,
+                Batch: this.studentInfoTodisplay.BatchId,
                 PaymentOrder: StudentClassFee.PaymentOrder,
                 Paid: false,
+                ExceptionColumns: this.exceptionColumns,
                 Action: this.FeePayable,
                 PaymentDetails: []
-              }
-          })
+              });
 
+          })
+          debugger;
+
+          //let miscId = this.FeeNames.filter(misc => misc.MasterDataName.toLowerCase() == 'misc')[0].MasterDataId;
+          let MiscItem = this.ELEMENT_DATA.filter(m => m.ClassFeeName.toLowerCase().includes('misc'))
+          //only if misc fee type is assigned to the particular class.
+          if (MiscItem.length > 0) {
+            let unpaidmisc = MiscItem.filter(mi => mi.BalanceAmt > 0)
+            //misc fee type exist and paid = false is not present.
+            if (unpaidmisc.length == 0) {
+              this.ELEMENT_DATA.push({
+                SlNo: itemcount + 1,
+                StudentFeeId: 0,
+                StudentClassId: this.studentInfoTodisplay.StudentClassId,
+                ClassFeeId: +MiscItem[0].ClassFeeId,
+                ClassFeeName: 'Misc',
+                FeeNameId: MiscItem[0].FeeNameId,
+                FeeAmount: parseFloat(MiscItem[0].FeeAmount),
+                PaidAmt: "0.00",
+                FeeType: '',
+                Pay: parseFloat(MiscItem[0].FeeAmount),
+                BalanceAmt: parseFloat(MiscItem[0].FeeAmount),
+                PaymentDate: new Date(),
+                Batch: this.studentInfoTodisplay.BatchId,
+                PaymentOrder: MiscItem[0].PaymentOrder,
+                Paid: false,
+                ExceptionColumns: true,
+                Action: this.FeePayable,
+                PaymentDetails: []
+              })
+            }
+          }
         }
         else {
           this.ELEMENT_DATA = [];
@@ -381,7 +391,130 @@ debugger;
 
       })
   }
+  UpdateOrSave(row) {
 
+    let re = /^[.0-9]*$/
+    //console.log('pay', row.Pay)
+    let valid = re.test(row.Pay);
+    if (!valid) {
+      this.alert.error("Invalid amount! Please enter numeric value", this.optionsNoAutoClose);
+      return;
+    }
+    this.studentInfoTodisplay.PayAmount = row.Pay;
+
+    //applied only for admission fee    
+    let bl: any;
+    if (row.ClassFeeName.toLowerCase().includes("admission")) {
+
+      bl = row.FeeAmount - (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount));
+      //console.log(bl);
+      if (bl < 0) {
+        this.alert.error("Invalid amount! Please enter pay amount less than or equal to balance amount", this.optionsNoAutoClose);
+        return;
+      }
+    }
+    //payment order has to start from one
+    if (row.PaymentOrder > 1) {
+      let previousBalance = this.ELEMENT_DATA.filter(d => d.PaymentOrder == (row.PaymentOrder - 1))[0].BalanceAmt;
+      if (previousBalance > 0 && !row.ClassFeeName.toLowerCase().includes('misc')) {
+        this.alert.error("Previous balance must be cleared!", this.optionsNoAutoClose);
+        return;
+      }
+    }
+
+    this.CurrentRow = row;
+
+    //this.duplicate = false;
+    let checkFilterString = "Active eq 1 " +
+      " and StudentClassId eq " + row.StudentClassId +
+      " and ClassFeeId eq " + row.ClassFeeId +
+      " and Batch eq " + row.Batch
+
+    if (row.StudentFeeId > 0)
+      checkFilterString += " and StudentFeeId ne " + row.StudentFeeId;
+
+    let list: List = new List();
+    list.fields = ["StudentFeeId"];
+    list.PageName = "StudentFeePayments";
+    list.filter = [checkFilterString];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        if (data.value.length > 0 && !row.ExceptionColumns) {
+          //    this.duplicate = true;
+          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+        }
+        else {
+          this.StudentFeePaymentData.StudentId = this.studentInfoTodisplay.StudentId;
+          this.StudentFeePaymentData.Active = 1;
+          this.StudentFeePaymentData.FeeAmount = row.FeeAmount.toFixed(2);
+          this.StudentFeePaymentData.Batch = this.studentInfoTodisplay.BatchId;
+          this.StudentFeePaymentData.StudentFeeId = row.StudentFeeId;
+          this.StudentFeePaymentData.ClassFeeId = row.ClassFeeId;
+          this.StudentFeePaymentData.FeeNameId = row.FeeNameId;
+          this.StudentFeePaymentData.StudentClassId = row.StudentClassId;
+          if (row.ClassFeeName.toLowerCase().includes("admission")) {
+            this.StudentFeePaymentData.BalanceAmt = bl.toString();
+            this.StudentFeePaymentData.PaidAmt = (+row.PaidAmt + (+this.studentInfoTodisplay.PayAmount)).toFixed(2);
+          }
+          else {
+            this.StudentFeePaymentData.PaidAmt = row.BalanceAmt.toString(); //.FeeAmount.toFixed(2);
+            this.StudentFeePaymentData.BalanceAmt = "0.00";
+          }
+
+          if (this.StudentFeePaymentData.StudentFeeId == 0)
+            this.insert();
+          else
+            this.update();
+        }
+      });
+  }
+
+  insert() {
+
+    debugger;
+    this.dataservice.postPatch('StudentFeePayments', this.StudentFeePaymentData, 0, 'post')
+      .subscribe(
+        (data: any) => {
+          let paymentdetail = {
+            PaymentAmt: this.studentInfoTodisplay.PayAmount.toString(),
+            PaymentDate: new Date(),
+            ParentId: data.StudentFeeId,
+            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId,
+            Active: 1
+          }
+          this.dataservice.postPatch('PaymentDetails', paymentdetail, 0, 'post')
+            .subscribe(
+              (data: any) => {
+                this.GetStudentFeePayment();
+                this.alert.success("Data saved successfully", this.optionAutoClose);
+              })
+        });
+
+  }
+  update() {
+
+    this.dataservice.postPatch('StudentFeePayments', this.StudentFeePaymentData, this.StudentFeePaymentData.StudentFeeId, 'patch')
+      .subscribe(
+        (data: any) => {
+          let paymentdetail = {
+            PaymentAmt: this.studentInfoTodisplay.PayAmount.toString(),
+            PaymentDate: new Date(),
+            ParentId: this.StudentFeePaymentData.StudentFeeId,
+            ClassFeeId: +this.StudentFeePaymentData.ClassFeeId
+          }
+          // this.dataservice.postPatch('PaymentDetails', paymentdetail, this.StudentFeePaymentData.StudentFeeId, 'post')
+          //   .subscribe(
+          //     (data: any) => {
+          //       this.GetStudentFeePayment();
+          //       // this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
+          //       // this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
+          //       this.alert.success("Data updated successfully", this.optionAutoClose);
+          //       //this.router.navigate(['/pages']);
+          //     })
+        });
+  }
   GetDiscountFactor(feeName, indx) {
     let feeType = this.studentInfoTodisplay.StudentFeeType;
     let NoOfFreeMonth = 0;
@@ -423,49 +556,7 @@ debugger;
     this.nav.navigate(['/admin/printreceipt/' + this.studentInfoTodisplay.StudentId]);
   }
 
-  GetStudentClass() {
-
-    if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0)
-      return;
-
-    let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
-
-    let list: List = new List();
-    list.fields = ["StudentClassId", "Section", "StudentId", "Batch", "Student/Name", "ClassId", "FeeTypeId"];
-    list.lookupFields = ["Student"];
-    list.PageName = "StudentClasses";
-    list.filter = [filterstr];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        if (data.value.length > 0) {
-          //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
-          this.studentInfoTodisplay.ClassId = data.value[0].ClassId
-          this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
-          this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
-          this.studentInfoTodisplay.Currentbatch = this.Batches.filter(b => {
-            return b.MasterDataId == this.studentInfoTodisplay.currentbatchId
-          })[0].MasterDataName
-
-          this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
-            return cls.MasterDataId == data.value[0].Section
-          })[0].MasterDataName;
-          this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
-            return cls.MasterDataId == this.studentInfoTodisplay.ClassId
-          })[0].MasterDataName;
-          this.studentInfoTodisplay.StudentFeeType = this.FeeTypes.filter(f => {
-            return f.MasterDataId == this.studentInfoTodisplay.FeeTypeId
-          })[0].MasterDataName;
-
-          this.GetStudentFeePayment();
-        }
-        else {
-          this.alert.error("No class defined for this student!", this.optionsNoAutoClose);
-
-        }
-      })
-  }
+  
   back() {
     this.nav.navigate(['/admin/dashboardstudent']);
   }
@@ -488,42 +579,7 @@ debugger;
     //console.log('element', element);
     //console.log('$event', amount)
   }
-  GetMasterData() {
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
-        this.Classes = this.getDropDownData(globalconstants.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.BATCH);
-        this.Locations = this.getDropDownData(globalconstants.LOCATION);
-        this.FeeTypes = this.getDropDownData(globalconstants.FEETYPE);
-        this.Sections = this.getDropDownData(globalconstants.SECTION);
-        let currentBatch = globalconstants.getCurrentBatch();
-        let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
-        if (currentBatchObj.length > 0) {
-          this.studentInfoTodisplay.currentbatchId = currentBatchObj[0].MasterDataId
-          this.GetStudentClass();
-        }
-        else
-          this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
-
-      });
-
-  }
-  getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
-    });
-  }
+  
 }
 export interface IStudentFeePayment {
   SlNo: number;
@@ -531,7 +587,9 @@ export interface IStudentFeePayment {
   StudentClassId: number;
   ClassFeeId: number;
   ClassFeeName: string;
+  FeeNameId: number;
   FeeAmount: any;
+  FeeType: string;
   PaidAmt: any;
   Pay: any;
   BalanceAmt: any;
@@ -539,6 +597,7 @@ export interface IStudentFeePayment {
   PaymentOrder: number;
   Batch: number;
   Paid: boolean;
+  ExceptionColumns: boolean;
   Action: boolean;
   PaymentDetails: any[];
 }

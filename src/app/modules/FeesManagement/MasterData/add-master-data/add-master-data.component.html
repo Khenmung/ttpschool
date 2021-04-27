@@ -1,30 +1,83 @@
+<div fxLayout="column" fxLayoutAlign="center center" style="margin: 15px;">
+    <strong>Masters definition Statuses</strong>
+    <mat-divider></mat-divider>
+    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="center center">
+        <div *ngFor="let item of MasterDataStatus">{{item.MasterDataName}}
+            <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+            <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+</div>
+
 <mat-card>
     <mat-card-title>Master Data</mat-card-title>
     <mat-card-content>
         <mat-spinner *ngIf="loading"></mat-spinner>
         <br>
         <form [formGroup]="searchForm">
-            <div class="example-header" fxLayout="row" fxLayoutAlign="space-between center">
-                <mat-form-field fxFlex>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
+                <mat-form-field fxFlex appearance="outline">
                     <mat-label>Master Name</mat-label>
-                    <mat-select formControlName="ParentId" fxFlex (selectionChange)="GetMasterData($event)">
+                    <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
                         <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
                             {{master.MasterDataName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button matTooltip="new item" class="mat-raised-button" (click)="AddData()" fxFlex="10">
-                    <mat-icon>add</mat-icon>
+                <button matTooltip="search" class="mat-raised-button" (click)="GetMasterData()" fxFlex="10">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <button matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button" (click)="EditTopMaster()" fxFlex="10">
+                    <mat-icon>work outline</mat-icon>
                 </button>
                 <button matTooltip="new master" class="mat-raised-button" (click)="NewTopMaster()" fxFlex="10">
                     <mat-icon>new_label</mat-icon>
                 </button>
+                
                 <div fxFlex>&nbsp;</div>
             </div>
         </form>
         <div>
             <mat-divider></mat-divider>
-            <div>
+            <mat-table [dataSource]="datasource" matSort>            
+                <ng-container matColumnDef="Id">
+                    <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <FeeEditInput [data]="element.Name" (tried)="getoldvalue($event,element)"
+                        (focusOut)='updateName($event,element)'></FeeEditInput>
+                        </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Description">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <FeeEditInput [data]="element.Description" (tried)="getoldvalue($event)"
+                        (focusOut)='updateDescription($event,element)'></FeeEditInput>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef> 
+                        <button matTooltip="new item" *ngIf="enableAddNew" class="mat-raised-button" (click)="AddData()" fxFlex="10">
+                            <mat-icon>add</mat-icon>
+                        </button>    
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                        [checked]="element.Active">
+                    </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+             
+                <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
+                </mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+            <!-- <div>
                 <div class="Header" fxLayout="row" fxLayoutAlign="space-around center">
                     <td>Id</td>
                     <td>Name</td>
@@ -48,14 +101,11 @@
                             [checked]="d.Active">
                         </mat-checkbox>
 
-                        <!-- <button [id]="d.MasterDataId" mat-icon-button color="" [name]="d.MasterDataName"
-                            matTooltip="delete" #button (click)="updateActive(button)">
-                            <mat-icon aria-label="delete">delete</mat-icon>
-                        </button>&nbsp; -->
+                 
                     </div>
 
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </mat-card-content>

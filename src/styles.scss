@@ -85,5 +85,11 @@ input[type="radio"]{
     z-index: 10;
     width: 150px;
 }
+.mat-form-field-wrapper {
+    padding-bottom: .6em !important;
+}
+.mat-form-field-infix{
+    padding:1em !important;
+}
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';

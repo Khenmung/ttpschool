@@ -1,6 +1,7 @@
 import { CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/cdk/overlay/overlay-directives';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -13,6 +14,7 @@ import { List } from 'src/app/shared/interface';
   styleUrls: ['./dashboardclassfee.component.scss']
 })
 export class DashboardclassfeeComponent implements OnInit {
+@ViewChild(MatSort) sort:MatSort;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -261,7 +263,8 @@ export class DashboardclassfeeComponent implements OnInit {
         }
         //this.ELEMENT_DATA=this.ELEMENT_DATA.sort((a,b)=>(a.PaymentOrder>b.PaymentOrder?1:-1))
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
-        console.log("element data", this.ELEMENT_DATA)
+        this.dataSource.sort = this.sort;
+        //console.log("element data", this.ELEMENT_DATA)
       });
   }
   updateActive(row, value) {
@@ -296,16 +299,16 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
-        this.Classes = this.getDropDownData(globalconstants.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.BATCH);
-        this.Locations = this.getDropDownData(globalconstants.LOCATION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
         this.CurrentBatch = globalconstants.getCurrentBatch();
         let currentSession = this.Batches.filter(bat => {
-          return bat.MasterDataName == this.CurrentBatch;
+          return bat.MasterDataName.toLowerCase() == this.CurrentBatch.toLowerCase();
         });
         if (currentSession.length == 0) {
-          this.alert.error("Current session not defined in master!", this.options);
+          this.alert.error("Current batch not defined in master!", this.options);
         }
         else {
           this.CurrentBatchId = currentSession[0].MasterDataId;

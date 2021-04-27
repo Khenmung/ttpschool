@@ -17,6 +17,8 @@ import { FeeFooterComponent } from './shared/footer/footer.component';
 import { StudentDocumentComponent } from './StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
 import { FeeEditInputComponent } from './FeeEdit-input/FeeEdit-input.component';
 import { DashboardstudentdocumentComponent } from './StudentDocument/dashboardstudentdocument/dashboardstudentdocument.component';
+import { TodayCollectionComponent } from './Reports/today-collection/today-collection.component';
+import { FeecollectionreportComponent } from './Reports/feecollectionreport/feecollectionreport.component';
 //import { EditInputComponent } from 'src/app/modules/photogallery/albumedit-input/albumedit-input.component';
 
 
@@ -33,6 +35,8 @@ const routes: Routes = [{
     { path: 'masterdata', component: AddMasterDataComponent },
     { path: 'printreceipt/:id', component: FeereceiptComponent },
     { path: 'exceldata', component: ExcelDataManagementComponent },
+    { path: 'collectionreport', component: TodayCollectionComponent },
+    { path: 'feepaymentreport', component: FeecollectionreportComponent },
 
   ]
 }];
@@ -48,5 +52,7 @@ export const FeeManagementComponent = [
   DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent,
   FeeSidebarComponent, FeeFooterComponent, AddMasterDataComponent,
   FeereceiptComponent, ExcelDataManagementComponent, StudentDocumentComponent,
-  DashboardstudentdocumentComponent,FeeEditInputComponent
+  DashboardstudentdocumentComponent,FeeEditInputComponent,
+  TodayCollectionComponent,
+  FeecollectionreportComponent
 ]

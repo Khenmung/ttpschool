@@ -19,6 +19,7 @@ export class ExcelDataManagementComponent implements OnInit {
     private alert: AlertService) {
 
   }
+  
   ngOnInit() {
     this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     this.GetMasterData();
@@ -54,6 +55,7 @@ export class ExcelDataManagementComponent implements OnInit {
   worksheet: any;
   selectedFile: string;
   Classes = [];
+  Batches=[];
   //Country = [];
   Genders = [];
   Category = [];
@@ -143,37 +145,37 @@ export class ExcelDataManagementComponent implements OnInit {
             this.ErrorMessage += d + " is required at row " + slno + ".<br>";
         })
 
-        let GenderFilter = this.Genders.filter(g => g.MasterDataName == element.Gender);
+        let GenderFilter = this.Genders.filter(g => g.MasterDataName.toLowerCase() == element.Gender.toLowerCase());
         if (GenderFilter.length > 0)
           element.Gender = GenderFilter[0].MasterDataId;
         else
           this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
 
-        let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName == element.Bloodgroup);
+        let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase());
         if (BloodgroupFilter.length > 0)
           element.Bloodgroup = BloodgroupFilter[0].MasterDataId;
         else
           this.ErrorMessage += "Invalid Bloodgroup at row " + slno + ":" + element.Bloodgroup + "<br>";
 
-        let Categoryfilter = this.Category.filter(g => g.MasterDataName == element.Category);
+        let Categoryfilter = this.Category.filter(g => g.MasterDataName.toLowerCase() == element.Category.toLowerCase());
         if (Categoryfilter.length > 0)
           element.Category = Categoryfilter[0].MasterDataId;
         else
           this.ErrorMessage += "Invalid Category at row " + slno + ":" + element.Category + "<br>";
 
-        let ReligionFilter = this.Religion.filter(g => g.MasterDataName == element.Religion);
+        let ReligionFilter = this.Religion.filter(g => g.MasterDataName.toLowerCase() == element.Religion.toLowerCase());
         if (ReligionFilter.length > 0)
           element.Religion = ReligionFilter[0].MasterDataId;
         else
           this.ErrorMessage += "Invalid Religion at row " + slno + ":" + element.Religion + "<br>";
 
-        let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName == element.PrimaryContactFatherOrMother);
+        let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName.toLowerCase() == element.PrimaryContactFatherOrMother.toLowerCase());
         if (PrimaryContactFatherOrMotherFilter.length > 0)
           element.PrimaryContactFatherOrMother = PrimaryContactFatherOrMotherFilter[0].MasterDataId;
         else
           this.ErrorMessage += "Invalid PrimaryContactFatherOrMother at row " + slno + ":" + element.PrimaryContactFatherOrMother + "<br>";
 
-        let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.MasterDataName == element.ClassAdmissionSought);
+        let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.MasterDataName.toLowerCase() == element.ClassAdmissionSought.toLowerCase());
         if (ClassAdmissionSoughtFilter.length > 0)
           element.ClassAdmissionSought = ClassAdmissionSoughtFilter[0].MasterDataId;
         else
@@ -254,15 +256,16 @@ export class ExcelDataManagementComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.AllMasterData = [...data.value];
-        this.UploadTypes = this.getDropDownData(globalconstants.UPLOADTYPE);
-        this.Genders = this.getDropDownData(globalconstants.GENDER);
-        this.Bloodgroup = this.getDropDownData(globalconstants.BLOODGROUP);
-        this.Category = this.getDropDownData(globalconstants.CATEGORY);
-        this.Religion = this.getDropDownData(globalconstants.RELIGION);
-        this.States = this.getDropDownData(globalconstants.STATE);
-        this.PrimaryContact = this.getDropDownData(globalconstants.PRIMARYCONTACT);
-        this.Location = this.getDropDownData(globalconstants.LOCATION);
-        this.Classes = this.getDropDownData(globalconstants.CLASSES);
+        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.UPLOADTYPE);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.GENDER);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.CATEGORY);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.RELIGION);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.STATE);
+        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.PRIMARYCONTACT);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
         //this.PrimaryContactFatherOrMother= this.getDropDownData(globalconstants.PRIMARYCONTACT);
       });
 

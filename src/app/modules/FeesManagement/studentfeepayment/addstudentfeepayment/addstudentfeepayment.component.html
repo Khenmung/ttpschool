@@ -40,11 +40,11 @@
             <ng-container matColumnDef="Pay">
                 <mat-header-cell *matHeaderCellDef> Payable Amount </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <FeeEditInput *ngIf="element.Action && element.ClassFeeName=='Admission'" [data]="element.Pay|number:'1.2-2'"
-                        (tried)="getoldvalue($event)" (focusOut)='enableAction(element,$event)'
+                    <FeeEditInput *ngIf="element.Action && exceptionColumns" [data]="element.Pay|number:'1.2-2'"
+                        (focusOut)='enableAction(element,$event)'
                         (keyup)="validate($event)">
                     </FeeEditInput>
-                    <span *ngIf="element.Action && element.ClassFeeName!='Admission'">{{element.Pay}}</span>
+                    <span *ngIf="element.Action && !exceptionColumns">{{element.Pay}}</span>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="BalanceAmt">

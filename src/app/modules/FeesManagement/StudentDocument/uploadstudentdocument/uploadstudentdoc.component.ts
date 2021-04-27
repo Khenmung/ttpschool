@@ -28,8 +28,10 @@ export class StudentDocumentComponent implements OnInit {
   Id: number = 0;
   StudentClassId: number = 0;
   Edit: boolean;
+  BatchId=0;
   allMasterData = [];
   DocumentTypes = [];
+  Batches =[];
   uploadForm: FormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
@@ -50,13 +52,15 @@ export class StudentDocumentComponent implements OnInit {
 
   ngOnInit(): void {
     this.uploadForm = this.fb.group({
+      BatchId:[0],
       DocTypeId: [0,Validators.required]
     })
     this.routeUrl.paramMap.subscribe(param => {
       this.Id = +param.get('id')
     })
     this.routeUrl.queryParamMap.subscribe(param => {
-      this.StudentClassId = +param.get('scid')
+      this.StudentClassId = +param.get('scid');
+      this.BatchId = +param.get('bid');
     })
     //this.GetMasterData();
   }
@@ -88,18 +92,17 @@ export class StudentDocumentComponent implements OnInit {
 
       let error: boolean = false;
     this.formdata = new FormData();
+    this.formdata.append("batch", this.BatchId.toString());
     this.formdata.append("fileOrPhoto", "0");
-    this.formdata.append("folderName", "Studentdocument");
+    this.formdata.append("folderName", "StudentDocument");
     this.formdata.append("parentId", "-1");
 
     if (this.Id != null || this.Id != 0)
       this.formdata.append("StudentId", "-1");
     this.formdata.append("StudentClassId", this.StudentClassId.toString());
-    //this.formdata.append("StudentDoc", "-1");
     this.formdata.append("DocTypeId", this.uploadForm.get("DocTypeId").value);
 
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
-    //console.log('formdata to save',this.formdata);
     this.uploadImage();
   }
 
@@ -116,6 +119,7 @@ export class StudentDocumentComponent implements OnInit {
   }
   GetDocuments() {
     let list: List = new List();
+   
     list.fields = [
       "FileId",
       "FileName",
@@ -123,13 +127,9 @@ export class StudentDocumentComponent implements OnInit {
       "UploadDate",
       "DocTypeId"];
     list.PageName = "FilesNPhotoes";
-    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId];
-    //list.orderBy = "ParentId";
-     // console.log('globalconstants.apiUrl ',globalconstants.apiUrl);
+    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId + ' and Batch eq ' + this.BatchId];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
-        //this.allMasterData = [...data.value];
         if (data.value.length > 0) {
           this.allMasterData = data.value.map(doc => {          
             return {
@@ -154,13 +154,12 @@ export class StudentDocumentComponent implements OnInit {
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterDatas";
     list.filter = ["Active eq 1"];
-    //list.orderBy = "ParentId";
-
+ 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.DocumentTypes = this.getDropDownData(globalconstants.DOCUMENTTYPE);
+        this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.DOCUMENTTYPE);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
         this.GetDocuments();
       });
 
@@ -179,7 +178,6 @@ export interface IUploadDoc {
   FileId: number;
   UpdatedFileFolderName: string;
   UploadDate: Date;
-  //DocTypeId: number;
   DocType: string;
   Active: boolean
 }

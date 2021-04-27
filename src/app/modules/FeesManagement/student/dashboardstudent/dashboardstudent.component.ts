@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TableUtil } from 'src/app/modules/TableUtil';
@@ -7,6 +9,7 @@ import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -16,6 +19,8 @@ import * as XLSX from 'xlsx';
 })
 export class DashboardstudentComponent implements OnInit {
   @ViewChild("table") tableRef: ElementRef;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -25,6 +30,7 @@ export class DashboardstudentComponent implements OnInit {
   displayedColumns = ['StudentId', 'Name', 'ClassName', 'FatherName', 'MotherName',
     'Active', 'Action'];
   allMasterData = [];
+  Genders =[];
   Classes = [];
   Batches = [];
   Bloodgroup = [];
@@ -33,21 +39,30 @@ export class DashboardstudentComponent implements OnInit {
   States = []
   PrimaryContact = [];
   Location = [];
-  currentbatchId = 0;
+  LanguageSubjUpper=[];
+  LanguageSubjLower=[];
+  FeeType=[];
+  FeeNames=[];
+  Sections=[];
+  BatchId = 0;
   StudentIDRollNo = [];
-  StudentClassId=0;
+  StudentClassId = 0;
   searchForm: FormGroup;
-  
+
   constructor(private dataservice: NaomitsuService,
     private route: Router,
     private alert: AlertService,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private shareddata:SharedataService) { }
 
   ngOnInit(): void {
     this.GetMasterData();
-    this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
+    // this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
     this.searchForm = this.fb.group({
-      StudentId: [''],
+      BatchId: [0, Validators.required],
+      StudentId: [0],
       Name: [''],
       FatherName: [''],
       MotherName: ['']
@@ -64,21 +79,62 @@ export class DashboardstudentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //console.log(data.value);
+        this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
-        this.Classes = this.getDropDownData(globalconstants.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.BATCH);
-        let currentBatch = globalconstants.getCurrentBatch();
-        let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
+        
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+        this.shareddata.ChangeClasses(this.Classes);
+        
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
+        this.shareddata.ChangeBatch(this.Batches);
+
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.CATEGORY);
+        this.shareddata.ChangeCategory(this.Category);
+
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.RELIGION);
+        this.shareddata.ChangeReligion(this.Religion);
+
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.STATE);
+        this.shareddata.ChangeStates(this.States);
+
+        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.PRIMARYCONTACT);
+        this.shareddata.ChangePrimaryContact(this.PrimaryContact);
+
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+        this.shareddata.ChangeLocation(this.Location);
+
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.GENDER);
+        this.shareddata.ChangeGenders(this.Genders);
+
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
+        this.shareddata.ChangeBloodgroup(this.Bloodgroup);
+
+        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions.FEETYPE);
+        this.shareddata.ChangeFeeType(this.FeeType);
+
+        this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTUPPERCLS);
+        this.shareddata.ChangeLanguageSubjectUpper(this.LanguageSubjUpper);
+
+        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
+        this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
+
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
+        this.shareddata.ChangeFeeNames(this.FeeNames);
+
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        this.shareddata.ChangeSection(this.Sections);
+
+        let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions.CURRENTBATCH);
+        let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch[0].MasterDataName.toLowerCase());
         if (currentBatchObj.length > 0) {
-          this.currentbatchId = currentBatchObj[0].MasterDataId
+          this.BatchId = currentBatchObj[0].MasterDataId
+          this.searchForm.patchValue({ BatchId: this.BatchId });
+          this.shareddata.ChangeBatchId(this.BatchId);
         }
+        
         this.getStudentIDRollNo();
 
-        // this.Category = this.getDropDownData(globalconstants.CATEGORY);
-        // this.Religion = this.getDropDownData(globalconstants.RELIGION);
-        // this.States = this.getDropDownData(globalconstants.STATE);
-        // this.PrimaryContact = this.getDropDownData(globalconstants.PRIMARYCONTACT);
-        // this.Location = this.getDropDownData(globalconstants.LOCATION);
+        
       });
 
   }
@@ -98,8 +154,15 @@ export class DashboardstudentComponent implements OnInit {
   }
   view(id) {
     debugger;
-    this.StudentClassId =this.StudentIDRollNo.filter(sid=>sid.StudentId==id)[0].StudentClassId;
-    this.route.navigate(['/admin/addstudent/' + id],{queryParams:{scid:this.StudentClassId}});
+    let studentclass = this.StudentIDRollNo.filter(sid => sid.StudentId == id);
+    if (studentclass.length > 0)
+    {
+      this.StudentClassId = studentclass[0].StudentClassId
+      this.shareddata.ChangeStudentClassId(this.StudentClassId);
+      this.shareddata.ChangeStudentId(id);
+    }
+    //  this.route.navigate(['/admin/addstudent/' + id], { queryParams: { scid: this.StudentClassId, bid: this.BatchId } });
+    this.route.navigate(['/admin/addstudent/' + id]);
   }
   new() {
     this.route.navigate(['/admin/addstudent']);
@@ -126,13 +189,13 @@ export class DashboardstudentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentId", "RollNo", "StudentClassId", "ClassId"];
     list.PageName = "StudentClasses";
-    list.filter = ["Batch eq " + this.currentbatchId];
+    list.filter = ["Batch eq " + this.BatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.StudentIDRollNo = [...data.value];
-          
+
         }
       })
   }
@@ -150,10 +213,10 @@ export class DashboardstudentComponent implements OnInit {
     if (this.searchForm.get("StudentId").value > 0) {
       checkFilterString += " and StudentId eq " + this.searchForm.get("StudentId").value
     }
-    
+
     let list: List = new List();
-    list.fields = ["StudentId", "StudentClasses/StudentClassId", "StudentClasses/ClassId", "StudentClasses/RollNo", "Name", "FatherName"
-      , "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
+    list.fields = ["StudentId", "StudentClasses/StudentClassId", "StudentClasses/Batch", "StudentClasses/ClassId", "StudentClasses/RollNo",
+      "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.lookupFields = ["StudentClasses"];
     list.PageName = "Students";
     list.filter = [checkFilterString];
@@ -161,27 +224,33 @@ export class DashboardstudentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        console.log(data.value);
+        //console.log(data.value);
         if (data.value.length > 0) {
-          this.ELEMENT_DATA = data.value.map(item => {
-            if (item.StudentClasses.length == 0)
-              item.ClassName = '';
-            else {
-              item.ClassName = this.Classes.filter(cls => {
-                return cls.MasterDataId == item.StudentClasses[0].ClassId
-              }
-              )[0].MasterDataName;
-            }
-            item.Action = "";
-
-            return item;
+          this.ELEMENT_DATA = data.value.filter(sc => {
+            sc.StudentClasses = sc.StudentClasses.filter(c => c.Batch == this.BatchId)
+            return sc;
           })
+            .map(item => {
+              if (item.StudentClasses.length == 0)
+                item.ClassName = '';
+              else {
+                item.ClassName = this.Classes.filter(cls => {
+                  return cls.MasterDataId == item.StudentClasses[0].ClassId
+                }
+                )[0].MasterDataName;
+              }
+              item.Action = "";
+
+              return item;
+            })
         }
         else {
           this.ELEMENT_DATA = [];
           this.alert.warn("No student found!", this.options);
         }
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
       });
 
   }

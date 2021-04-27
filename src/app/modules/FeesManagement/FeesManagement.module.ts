@@ -9,8 +9,6 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {NgxPrintModule} from 'ngx-print';
 import { NgxFileDropModule } from 'ngx-file-drop';
-
-
 import { FeeManagementComponent, FeeManagementRoutingModule } from './fee-management-routing.module';
 import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
@@ -33,8 +31,6 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
     NgxFileDropModule,
     FeeManagementRoutingModule,
     SharedhomepageModule
-    //AppModule
-//    PhotogalleryModule
   ],
   providers:[
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }

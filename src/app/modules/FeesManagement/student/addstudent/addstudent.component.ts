@@ -14,6 +14,7 @@ import { AddstudentclassComponent } from '../../studentclass/addstudentclass/add
 import { AddstudentfeepaymentComponent } from '../../studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from '../../feereceipt/feereceipt.component';
 import { StudentDocumentComponent } from '../../StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 
 @Component({
   selector: 'app-addstudent',
@@ -152,17 +153,45 @@ export class AddstudentComponent implements OnInit {
     private fb: FormBuilder,
     private formatdate: DatePipe,
     private alertMessage: AlertService,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    private shareddata:SharedataService
   ) { }
 
   ngOnInit(): void {
-    this.routeUrl.paramMap.subscribe(param => {
-      this.Id = +param.get('id')
-    })
-    this.routeUrl.queryParamMap.subscribe(p => {
-      this.StudentClassId = +p.get('scid');
-    })
-    this.GetMasterData();
+    this.shareddata.currentMasterData.subscribe(message => (this.allMasterData= message));
+    this.shareddata.CurrentGenders.subscribe(genders=>(this.Genders=genders));
+    this.shareddata.CurrentCountry.subscribe(country=>(this.Country==country));
+    this.shareddata.CurrentBloodgroup.subscribe(bg=>(this.Bloodgroup==bg));
+    this.shareddata.CurrentCategory.subscribe(cat=>(this.Category=cat));
+    this.shareddata.CurrentReligion.subscribe(re=>(this.Religion=re));
+    this.shareddata.CurrentStates.subscribe(st=>(this.States=st));
+    this.shareddata.CurrentClasses.subscribe(cls=>(this.Classes=cls));
+    this.shareddata.CurrentLocation.subscribe(lo=>(this.Location=lo));
+    this.shareddata.currentPrimaryContact.subscribe(pr=>(this.PrimaryContact=pr));
+    this.shareddata.CurrentStudentId.subscribe(id=>(this.Id=id));
+    this.shareddata.CurrentStudentClassId.subscribe(scid=>(this.StudentClassId=scid));
+    this.shareddata.CurrentBloodgroup.subscribe(bg=>(this.Bloodgroup=bg));
+
+    // this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.GENDER);
+    // this.Country = this.getDropDownData(globalconstants.MasterDefinitions.COUNTRY);
+    // this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
+    // this.Category = this.getDropDownData(globalconstants.MasterDefinitions.CATEGORY);
+    // this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.RELIGION);
+    // this.States = this.getDropDownData(globalconstants.MasterDefinitions.STATE);
+    // this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.PRIMARYCONTACT);
+    // this.Location = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+    // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+
+    console.log('inside add student',this.Genders);
+
+    
+    // this.routeUrl.paramMap.subscribe(param => {
+    //   this.Id = +param.get('id')
+    // })
+    // this.routeUrl.queryParamMap.subscribe(p => {
+    //   this.StudentClassId = +p.get('scid');
+    // })
+    //this.GetMasterData();
     if (this.Id > 0)
       this.GetStudent();
   }
@@ -222,15 +251,15 @@ export class AddstudentComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Genders = this.getDropDownData(globalconstants.GENDER);
-        this.Country = this.getDropDownData(globalconstants.COUNTRY);
-        this.Bloodgroup = this.getDropDownData(globalconstants.BLOODGROUP);
-        this.Category = this.getDropDownData(globalconstants.CATEGORY);
-        this.Religion = this.getDropDownData(globalconstants.RELIGION);
-        this.States = this.getDropDownData(globalconstants.STATE);
-        this.PrimaryContact = this.getDropDownData(globalconstants.PRIMARYCONTACT);
-        this.Location = this.getDropDownData(globalconstants.LOCATION);
-        this.Classes = this.getDropDownData(globalconstants.CLASSES);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.GENDER);
+        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.COUNTRY);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.CATEGORY);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.RELIGION);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.STATE);
+        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.PRIMARYCONTACT);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
         this.CountryId = this.Country.filter(country => country.MasterDataName == "India")[0].MasterDataId;
         this.LocationId = this.Location.filter(location => location.MasterDataName == "Lamka")[0].MasterDataId;
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName == "Father")[0].MasterDataId;

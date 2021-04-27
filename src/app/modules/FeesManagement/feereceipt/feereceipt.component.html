@@ -14,28 +14,28 @@
             <span>
                 <b>Bill No.</b>: {{studentInfoTodisplay.BillNo}}
             </span>
+            <div fxLayout="row" fxLayoutAlign="space-around center">
+                <span>
+                    <span><strong>Offline Receipt No.: </strong></span>
+                    <mat-form-field appearance="outline" [style.width.px]="100">
+                        <input matInput [(ngModel)]="studentInfoTodisplay.OfflineReceiptNo">
+                    </mat-form-field>
+                </span>
+            </div>
+    
             <span>
                 <b>Bill Date</b>: {{studentInfoTodisplay.ReceiptDate|date:'dd/MM/yyyy'}}
             </span>
         </div>
+        <br>
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <span>
-                <b>Name</b> : {{studentInfoTodisplay.StudentName}}
-            </span>
-            <span>
-                <b>Class</b> : {{studentInfoTodisplay.StudentClassName}} - {{studentInfoTodisplay.SectionName}} -
-                ({{studentInfoTodisplay.Currentbatch}})
-            </span>
-        </div>        
-        <div fxLayout="row" fxLayoutAlign="space-between center">
-            <span>
-                <span><strong>Offline Receipt No.: </strong></span>
-                <mat-form-field appearance="legacy">
-                    <input matInput [(ngModel)]="studentInfoTodisplay.OfflineReceiptNo">
-                </mat-form-field>
+                Received with thanks from <b>{{studentInfoTodisplay.StudentName}}</b>,
+                Class : {{studentInfoTodisplay.StudentClassName}} - Sec. {{studentInfoTodisplay.SectionName}} -
+                Roll no. {{studentInfoTodisplay.RollNo}}.
             </span>
         </div>
-        <mat-divider></mat-divider>
+                <mat-divider></mat-divider>
         <br>
         <div>
             <mat-table #table [dataSource]="dataSource">
@@ -77,8 +77,8 @@
 
     </div>
     <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
-        <button *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">
-            <mat-icon>save</mat-icon>
+        <button matTooltip="generate receipt" *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">
+            <mat-icon>Create New Folder</mat-icon>
         </button>
         <div *ngIf="Saved || studentInfoTodisplay.BillNo>0">
             <button matTooltip="edit receipt" *ngIf="!editReceipt" (click)="edit()" class="mat-raised-button">
@@ -90,18 +90,18 @@
             <button matTooltip="print" *ngIf="!editReceipt" printSectionId="printSection" [useExistingCss]="true"
                 ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
-            </button>
-            <button matTooltip="back" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
-                <mat-icon>arrow_back</mat-icon>
-            </button>
+            </button>            
         </div>
+        <button matTooltip="back" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
     </div>
 </div>
 <div *ngIf="!NewReceipt">
-    <div style="width:100%;padding:20px">
-        <mat-form-field appearance="legacy">
+    <div style="width:100%;padding:20px" fxLayoutAlign="center center" fxLayout="row" fxLayoutGap="20px">
+        <mat-form-field appearance="outline">
             <mat-label>Receipt no.</mat-label>
-            <input matInput #receiptno [(ngModel)]="studentInfoTodisplay.ReceiptNo">
+            <input matInput #receiptno [(ngModel)]="studentInfoTodisplay.ReceiptNo" autocomplete="off">
         </mat-form-field>
         <button class="mat-raised-button" (click)="GetStudentFeePaymentDetails(receiptno.value)">
             <mat-icon>search</mat-icon>

@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 
 @Component({
   selector: 'app-addstudentclass',
@@ -14,6 +13,8 @@ import { List } from 'src/app/shared/interface';
   styleUrls: ['./addstudentclass.component.scss']
 })
 export class AddstudentclassComponent implements OnInit {
+  @Input() BatchId: number;
+
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -24,10 +25,9 @@ export class AddstudentclassComponent implements OnInit {
   };
   SaveDisable = false;
   Id = 0;
-  StudentClassId=0;
+  StudentClassId = 0;
   invalidId = false;
-  currentbatch: string;
-  currentbatchId = 0;
+  //BatchId = 0;
   allMasterData = [];
   Students = [];
   Classes = [];
@@ -55,23 +55,30 @@ export class AddstudentclassComponent implements OnInit {
     private aRoute: ActivatedRoute,
     private alert: AlertService,
     private nav: Router,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private shareddata: SharedataService) { }
 
   ngOnInit(): void {
-    this.aRoute.paramMap.subscribe(p=>{
-      this.Id= +p.get('id');
-    });
-    this.aRoute.queryParamMap.subscribe(p=>{      
-      this.StudentClassId = +p.get('scid');
-    })
-    
+    // this.aRoute.paramMap.subscribe(p=>{
+    //   this.Id= +p.get('id');
+    // });
+    // this.aRoute.queryParamMap.subscribe(p=>{      
+    //   this.StudentClassId = +p.get('scid');
+    //   this.BatchId =+p.get('bid');
+    //   let checkbatchid=this.Batches.filter(b=>b.MasterDataId==this.BatchId);
+    //     if(checkbatchid.length==0)
+    //     {
+    //       this.alert.error('Invalid Batch Id',this.optionsNoAutoClose);
+    //       return;
+    //     }
+    // })
+
     this.studentclassForm = this.fb.group({
       StudentClassId: [0],
       StudentId: [0, [Validators.required]],
       ClassId: [0, [Validators.required]],
       Section: [0, [Validators.required]],
       RollNo: ['', [Validators.required]],
-      Batch: [0, [Validators.required]],
       FeeTypeId: [0, [Validators.required]],
       LanguageSubject: [0, [Validators.required]],
       Remarks: [''],
@@ -79,9 +86,18 @@ export class AddstudentclassComponent implements OnInit {
       Active: [1],
     });
   }
-  PageLoad(){   
-
-    this.GetMasterData();
+  PageLoad() {
+    
+    this.shareddata.CurrentBatch.subscribe(t => (this.Batches = t));
+    this.shareddata.currentFeeType.subscribe(t => (this.FeeType = t));
+    this.shareddata.currentLanguageSubjectLower.subscribe(t => (this.LanguageSubjectLower = t));
+    this.shareddata.currentLanguageSubjectUpper.subscribe(t => (this.LanguageSubjectUpper = t));
+    this.shareddata.currentSection.subscribe(t => (this.Sections = t));
+    this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
+    this.shareddata.CurrentStudentId.subscribe(id => (this.Id = id));
+    this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
+    this.shareddata.CurrentBatchId.subscribe(bid => (this.BatchId = bid));
+    
   }
   get f() { return this.studentclassForm.controls }
 
@@ -96,18 +112,18 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Classes = this.getDropDownData(globalconstants.CLASSES);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
         //debugger;
-        this.Batches = this.getDropDownData(globalconstants.BATCH);
-        this.FeeType = this.getDropDownData(globalconstants.FEETYPE);
-        this.LanguageSubjectLower = this.getDropDownData(globalconstants.LANGUAGESUBJECTLOWERCLS);
-        this.LanguageSubjectUpper = this.getDropDownData(globalconstants.LANGUAGESUBJECTUPPERCLS);
-        this.Sections = this.getDropDownData(globalconstants.SECTION);
-        let currentBatch = globalconstants.getCurrentBatch();
-        let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
-        if (currentBatchObj.length > 0) {
-          this.currentbatchId = currentBatchObj[0].MasterDataId
-        }
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
+        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions.FEETYPE);
+        this.LanguageSubjectLower = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTLOWERCLS);
+        this.LanguageSubjectUpper = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTUPPERCLS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        // let currentBatch = globalconstants.getCurrentBatch();
+        // let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
+        // if (currentBatchObj.length > 0) {
+        //   this.currentbatchId = currentBatchObj[0].MasterDataId
+        // }
 
         this.aRoute.paramMap.subscribe(param => {
           this.Id = +param.get("id");
@@ -200,7 +216,7 @@ export class AddstudentclassComponent implements OnInit {
             ClassId: 0,
             Section: 0,
             RollNo: '',
-            Batch: this.currentbatchId,
+            Batch: this.BatchId,
             FeeTypeId: 0,
             LanguageSubject: 0,
             AdmissionDate: new Date(),
@@ -238,26 +254,26 @@ export class AddstudentclassComponent implements OnInit {
       ErrorMessage += "Admission date is required.<br>";
     }
     if (ErrorMessage.length > 0) {
-        this.alert.error(ErrorMessage,this.optionsNoAutoClose);
-        return;
+      this.alert.error(ErrorMessage, this.optionsNoAutoClose);
+      return;
     }
     else {
       this.studentclassData.Active = 1;
-      this.studentclassData.Batch = this.currentbatchId;
+      this.studentclassData.Batch = this.BatchId;
 
-      this.studentclassData.ClassId = this.studentclassForm.get("ClassId").value;
-      this.studentclassData.RollNo = this.studentclassForm.get("RollNo").value;
-      this.studentclassData.Section = this.studentclassForm.get("Section").value;
-      this.studentclassData.FeeTypeId = this.studentclassForm.get("FeeTypeId").value;
-      this.studentclassData.LanguageSubject = this.studentclassForm.get("LanguageSubject").value;
-      this.studentclassData.Remarks = this.studentclassForm.get("Remarks").value;
-      this.studentclassData.AdmissionDate = this.studentclassForm.get("AdmissionDate").value;
+      this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
+      this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
+      this.studentclassData.Section = this.studentclassForm.value.Section;
+      this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
+      this.studentclassData.LanguageSubject = this.studentclassForm.value.LanguageSubject;
+      this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
+      this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
 
       this.studentclassData.StudentId = this.Id;
-      if (this.studentclassForm.get("StudentClassId").value == 0)
+      if (this.studentclassForm.value.StudentClassId == 0)
         this.insert();
       else {
-        this.studentclassData.StudentClassId = this.studentclassForm.get("StudentClassId").value;
+        this.studentclassData.StudentClassId = this.studentclassForm.value.StudentClassId;
         this.update();
       }
     }

@@ -34,7 +34,7 @@ export class FeereceiptComponent implements OnInit {
     StudentClassId: 0,
     ClassId: 0,
     SectionName: '',
-    Session: '',
+    RollNo:0,
     PayAmount: 0,
     BalanceAmt: 0,
     PaidAmt: 0,
@@ -143,8 +143,8 @@ export class FeereceiptComponent implements OnInit {
             .subscribe(
               (data: any) => {
                 let toUpdateFeePayment = {
-                  BalanceAmt: (this.studentInfoTodisplay.BalanceAmt + element.PaymentAmount).toFixed(2),
-                  PaidAmt: (this.studentInfoTodisplay.PaidAmt - element.PaymentAmount).toFixed(2)
+                  BalanceAmt: (this.studentInfoTodisplay.BalanceAmt + element.PaymentAmount).toString(),
+                  PaidAmt: (this.studentInfoTodisplay.PaidAmt - element.PaymentAmount).toString()
                 }
                 this.dataservice.postPatch('StudentFeePayments', toUpdateFeePayment, element.ParentId, 'patch')
                   .subscribe(
@@ -244,6 +244,7 @@ export class FeereceiptComponent implements OnInit {
           this.studentInfoTodisplay.ClassFeeId = data.value[0].ClassFeeId;
           this.studentInfoTodisplay.ReceiptNo = data.value[0].ReceiptNo;
           this.studentInfoTodisplay.PaymentDate = data.value[0].PaymentDate;
+          this.studentInfoTodisplay.TotalAmount =0;
           res = data.value.filter(st => st.StudentFeePayment.StudentClassId == this.studentInfoTodisplay.StudentClassId)
             .map((item, indx) => {
               this.studentInfoTodisplay.TotalAmount += +item.PaymentAmt;
@@ -310,12 +311,12 @@ export class FeereceiptComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
-        this.Classes = this.getDropDownData(globalconstants.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.BATCH);
-        //this.Locations = this.getDropDownData(globalconstants.LOCATION);
-        //this.FeeTypes = this.getDropDownData(globalconstants.FEETYPE);
-        this.Sections = this.getDropDownData(globalconstants.SECTION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
+        //this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.FEETYPE);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
         let currentBatch = globalconstants.getCurrentBatch();
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
         if (currentBatchObj.length > 0) {
@@ -343,7 +344,7 @@ export class FeereceiptComponent implements OnInit {
     let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "Section", "StudentId", "Batch", "Student/Name", "ClassId", "FeeTypeId"];
+    list.fields = ["StudentClassId", "Section", "StudentId", "Batch","RollNo", "Student/Name", "ClassId", "FeeTypeId"];
     list.lookupFields = ["Student"];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
@@ -352,8 +353,9 @@ export class FeereceiptComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.studentInfoTodisplay.StudentClassId = data.value[0].StudentClassId
-          this.studentInfoTodisplay.ClassId = data.value[0].ClassId
+          this.studentInfoTodisplay.StudentClassId = data.value[0].StudentClassId;
+          this.studentInfoTodisplay.ClassId = data.value[0].ClassId;
+          this.studentInfoTodisplay.RollNo =data.value[0].RollNo;
           //this.studentInfoTodisplay.BillNo = data.value[0].FeeTypeId;
           this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
           this.studentInfoTodisplay.Currentbatch = this.Batches.filter(b => {

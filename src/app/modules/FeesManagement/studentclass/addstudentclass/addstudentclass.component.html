@@ -16,7 +16,7 @@
                 </mat-select>
             </mat-form-field>
         </div>
-        <div fxLayout="row wrap" fxLayoutGap="100px">
+        <div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayoutGap="100px">
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="ClassId" #ClassId>
@@ -46,8 +46,8 @@
                 <span class="text-danger" *ngIf="f.Section.touched && f.Section.hasError('required')">Class is
                     required.</span>
             </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Batch/Session</mat-label>
+            <!-- <mat-form-field appearance="outline">
+                <mat-label>Batch</mat-label>
                 <mat-select formControlName="Batch" #BatchId>
                     <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
@@ -56,7 +56,7 @@
                 </mat-select>
                 <span class="text-danger" *ngIf="f.Batch.touched && f.Batch.hasError('required')">Batch is
                     required.</span>
-            </mat-form-field><br>
+            </mat-form-field><br> -->
             <mat-form-field appearance="outline">
                 <mat-label>Fee type</mat-label>
                 <mat-select formControlName="FeeTypeId">
@@ -69,12 +69,6 @@
                     required.</span>
             </mat-form-field>
             <mat-form-field appearance="outline">
-                <mat-label>Admission Date</mat-label>
-                <input formControlName="AdmissionDate" matInput [matDatepicker]="picker" autocomplete="off">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
                 <mat-label>Language subject</mat-label>
                 <mat-select formControlName="LanguageSubject" #LanguageSubject>
                     <mat-option value="0">---</mat-option>
@@ -82,7 +76,13 @@
                         {{p.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field><br>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Admission Date</mat-label>
+                <input formControlName="AdmissionDate" matInput [matDatepicker]="picker" autocomplete="off">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
             <mat-form-field appearance="outline" [style.width.pc]="32">
                 <mat-label>Remarks</mat-label>
                 <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
