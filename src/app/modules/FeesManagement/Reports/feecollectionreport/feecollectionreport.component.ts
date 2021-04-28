@@ -7,6 +7,7 @@ import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 
 @Component({
   selector: 'app-feecollectionreport',
@@ -58,12 +59,20 @@ export class FeecollectionreportComponent implements OnInit {
   constructor(private dataservice: NaomitsuService,
     private formatdate: DatePipe,
     private fb: FormBuilder,
-    private alert: AlertService) { }
+    private alert: AlertService,
+    private shareddata:SharedataService) { }
 
   ngOnInit(): void {
-    this.GetMasterData();
+    //this.GetMasterData();
+    this.shareddata.CurrentBatchId.subscribe(c=>(this.BatchId=c));
+    this.shareddata.CurrentFeeNames.subscribe(c=>(this.FeeNames=c));
+    this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+    this.shareddata.CurrentClasses.subscribe(c=>(this.Classes=c));
+    this.shareddata.CurrentSection.subscribe(c=>(this.Sections=c));
+
+    
     this.SearchForm = this.fb.group({
-      BatchId: [0, Validators.required],
+      BatchId: [this.BatchId, Validators.required],
       FeeNameId: [0, Validators.required],
       PaidOrNotPaid: [0, Validators.required],
     })

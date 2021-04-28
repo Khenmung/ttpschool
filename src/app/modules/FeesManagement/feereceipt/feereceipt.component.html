@@ -17,7 +17,7 @@
             <div fxLayout="row" fxLayoutAlign="space-around center">
                 <span>
                     <span><strong>Offline Receipt No.: </strong></span>
-                    <mat-form-field appearance="outline" [style.width.px]="100">
+                    <mat-form-field appearance="legacy" [style.width.px]="100">
                         <input matInput [(ngModel)]="studentInfoTodisplay.OfflineReceiptNo">
                     </mat-form-field>
                 </span>
@@ -78,7 +78,7 @@
     </div>
     <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
         <button matTooltip="generate receipt" *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">
-            <mat-icon>Create New Folder</mat-icon>
+            <mat-icon>create_new_folder</mat-icon>
         </button>
         <div *ngIf="Saved || studentInfoTodisplay.BillNo>0">
             <button matTooltip="edit receipt" *ngIf="!editReceipt" (click)="edit()" class="mat-raised-button">

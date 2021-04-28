@@ -25,6 +25,7 @@ import { FeecollectionreportComponent } from './Reports/feecollectionreport/feec
 const routes: Routes = [{
   path: '', component: FeesmanagementhomeComponent,
   children: [
+    { path: '', redirectTo:'dashboardstudent',pathMatch:'full'},
     { path: 'addstudent', component: AddstudentComponent },
     { path: 'addstudent/:id', component: AddstudentComponent },
     { path: 'addstudentcls/:id', component: AddstudentclassComponent },

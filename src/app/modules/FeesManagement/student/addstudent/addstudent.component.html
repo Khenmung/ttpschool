@@ -1,13 +1,16 @@
 <mat-card>
     <mat-card-title>Student's Info</mat-card-title>
-    <!-- <mat-card-subtitle>Student's Info</mat-card-subtitle> -->
+    <mat-card-subtitle>{{StudentName}}</mat-card-subtitle>
     <mat-card-content>
         <mat-spinner *ngIf="loading"></mat-spinner>
         <div style="margin:5px">
             <form [formGroup]="studentForm">
                 <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
                     class="demo-tab-group">
-                    <mat-tab label="Basic">
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>info</mat-icon>Primary
+                        </ng-template>
                         <div style="padding:15px 15px 0px 15px;"><strong>Basic</strong>
                             <!-- <div style="padding: 15px;overflow-x: hidden;" fxLayout="row wrap" fxLayoutGap="100px"> -->
                             <mat-grid-list cols="3" rowHeight="100px" #basic>
@@ -155,7 +158,10 @@
                         </mat-card-actions>
                         <!-- </mat-card> -->
                     </mat-tab>
-                    <mat-tab label="Contact">
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>contact_page</mat-icon>Contact
+                        </ng-template>
                         <div style="padding:15px 15px 0px 15px;"><strong>Contact</strong></div>
                         <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
                             <mat-form-field appearance="outline">
@@ -244,7 +250,10 @@
                             </button>
                         </mat-card-actions>
                     </mat-tab>
-                    <mat-tab label="Bank Account">
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>account_balance</mat-icon>Bank Account
+                        </ng-template>
                         <div style="padding:15px 15px 0px 15px;"><strong>Bank Account</strong></div>
                         <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
 
@@ -272,7 +281,10 @@
                             </button>
                         </mat-card-actions>
                     </mat-tab>                    
-                    <mat-tab label="Additional info.">
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>note_add</mat-icon>Additional info.
+                        </ng-template>
                         <div style="padding:15px 15px 0px 15px;"><strong>Additional Info.</strong></div>
                         <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
                             <mat-form-field appearance="outline">
@@ -325,16 +337,30 @@
                             </button>
                         </mat-card-actions>
                     </mat-tab>                    
-                    <mat-tab *ngIf="Id>0" label="Class">
+                    <mat-tab *ngIf="Id>0">
+                        <ng-template mat-tab-label>
+                            <mat-icon>class</mat-icon>Class
+                        </ng-template>
                         <app-addstudentclass></app-addstudentclass>
                     </mat-tab>
-                    <mat-tab *ngIf="Id>0" label="Documents">
+                    <mat-tab *ngIf="StudentClassId>0">
+                        <ng-template mat-tab-label>
+                            <mat-icon>file_present</mat-icon>Documents
+                        </ng-template>
                         <upload-student-document></upload-student-document>
                     </mat-tab>
-                    <mat-tab *ngIf="Id>0" label="Fee payment">
+                    <mat-tab *ngIf="StudentClassId>0">
+                        <ng-template mat-tab-label>
+                            <mat-icon>payment</mat-icon>Fee payment
+                        </ng-template>
                         <app-addstudentfeepayment></app-addstudentfeepayment>
                     </mat-tab>
-                    <mat-tab *ngIf="Id>0" label="Receipt">
+                    <mat-tab *ngIf="StudentClassId>0">
+                        <ng-template mat-tab-label>
+                            <mat-icon>
+                                receipt
+                            </mat-icon>Receipt
+                        </ng-template>
                         <app-feereceipt></app-feereceipt>
                     </mat-tab>
                 </mat-tab-group>

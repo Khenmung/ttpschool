@@ -13,8 +13,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
   styleUrls: ['./addstudentclass.component.scss']
 })
 export class AddstudentclassComponent implements OnInit {
-  @Input() BatchId: number;
-
+  breakpoint=0;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -24,8 +23,9 @@ export class AddstudentclassComponent implements OnInit {
     keepAfterRouteChange: true
   };
   SaveDisable = false;
-  Id = 0;
+  StudentId = 0;
   StudentClassId = 0;
+  BatchId=0;
   invalidId = false;
   //BatchId = 0;
   allMasterData = [];
@@ -37,7 +37,7 @@ export class AddstudentclassComponent implements OnInit {
   LanguageSubjectUpper = [];
   LanguageSubjectLower = [];
   studentclassForm: FormGroup;
-
+  StudentName='';
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
@@ -72,10 +72,10 @@ export class AddstudentclassComponent implements OnInit {
     //       return;
     //     }
     // })
-
-    this.studentclassForm = this.fb.group({
-      StudentClassId: [0],
-      StudentId: [0, [Validators.required]],
+    this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
+    //console.log('breakpoint',this.breakpoint);
+    this.studentclassForm = this.fb.group({      
+      StudentName: [{value:this.StudentName,disabled:true}],
       ClassId: [0, [Validators.required]],
       Section: [0, [Validators.required]],
       RollNo: ['', [Validators.required]],
@@ -87,17 +87,18 @@ export class AddstudentclassComponent implements OnInit {
     });
   }
   PageLoad() {
-    
+    debugger;
     this.shareddata.CurrentBatch.subscribe(t => (this.Batches = t));
-    this.shareddata.currentFeeType.subscribe(t => (this.FeeType = t));
-    this.shareddata.currentLanguageSubjectLower.subscribe(t => (this.LanguageSubjectLower = t));
-    this.shareddata.currentLanguageSubjectUpper.subscribe(t => (this.LanguageSubjectUpper = t));
-    this.shareddata.currentSection.subscribe(t => (this.Sections = t));
+    this.shareddata.CurrentFeeType.subscribe(t => (this.FeeType = t));
+    this.shareddata.CurrentLanguageSubjectLower.subscribe(t => (this.LanguageSubjectLower = t));
+    this.shareddata.CurrentLanguageSubjectUpper.subscribe(t => (this.LanguageSubjectUpper = t));
+    this.shareddata.CurrentSection.subscribe(t => (this.Sections = t));
     this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
-    this.shareddata.CurrentStudentId.subscribe(id => (this.Id = id));
+    this.shareddata.CurrentStudentId.subscribe(id => (this.StudentId = id));
     this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
     this.shareddata.CurrentBatchId.subscribe(bid => (this.BatchId = bid));
-    
+    this.shareddata.CurrentStudentName.subscribe(name=>(this.StudentName=name));
+    this.GetStudentClass();
   }
   get f() { return this.studentclassForm.controls }
 
@@ -126,14 +127,14 @@ export class AddstudentclassComponent implements OnInit {
         // }
 
         this.aRoute.paramMap.subscribe(param => {
-          this.Id = +param.get("id");
+          //this.Id = +param.get("id");
           this.GetStudent();
         })
       });
 
   }
   StudentChange(event) {
-    if (this.Id == event.value) {
+    if (this.StudentId == event.value) {
       this.SaveDisable = false;
     }
     else
@@ -144,7 +145,7 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   GetStudent() {
-    if (this.Id == 0) {
+    if (this.StudentId == 0) {
       this.alert.error("Invalid StudentId", this.optionsAutoClose);
       this.invalidId = true;
       return;
@@ -161,9 +162,9 @@ export class AddstudentclassComponent implements OnInit {
             student.studentName = student.StudentId + " " + student.Name + " " + student.FatherName + " " + student.MotherName;
             return student;
           })
-          let ValidStudent = this.Students.filter(student => student.StudentId == this.Id)
+          let ValidStudent = this.Students.filter(student => student.StudentId == this.StudentId)
           if (ValidStudent.length > 0) {
-            this.studentclassForm.patchValue({ StudentId: this.Id });
+            this.studentclassForm.patchValue({ StudentId: this.StudentId });
             this.GetStudentClass();
           }
           else {
@@ -177,7 +178,7 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   GetStudentClass() {
-    if (this.Id == 0 && this.StudentClassId == 0) {
+    if (this.StudentId == 0 && this.StudentClassId == 0) {
       this.alert.error("Invalid Student Id", this.optionsAutoClose);
       return;
     }
@@ -195,8 +196,8 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
+           
           this.studentclassForm.patchValue({
-            StudentClassId: data.value[0].StudentClassId,
             StudentId: data.value[0].StudentId,
             ClassId: data.value[0].ClassId,
             Section: data.value[0].Section,
@@ -212,7 +213,7 @@ export class AddstudentclassComponent implements OnInit {
         else {
           this.studentclassForm.patchValue({
             StudentClassId: 0,
-            StudentId: this.Id,
+            StudentName: this.StudentName,
             ClassId: 0,
             Section: 0,
             RollNo: '',
@@ -223,10 +224,13 @@ export class AddstudentclassComponent implements OnInit {
             Remarks: '',
             Active: 1
           });
-          this.alert.info("No class defined for this student", this.optionsAutoClose);
+          this.alert.info("Class yet to be defined for this student", this.optionsAutoClose);
         }
       });
 
+  }
+  onResize(event) {
+    this.breakpoint = (event.target.innerWidth <= 400) ? 1 : 3;
   }
   back() {
     this.nav.navigate(['/admin/dashboardstudent']);
@@ -269,11 +273,11 @@ export class AddstudentclassComponent implements OnInit {
       this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
       this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
 
-      this.studentclassData.StudentId = this.Id;
-      if (this.studentclassForm.value.StudentClassId == 0)
+      this.studentclassData.StudentId = this.StudentId;
+      if (this.StudentClassId == 0)
         this.insert();
       else {
-        this.studentclassData.StudentClassId = this.studentclassForm.value.StudentClassId;
+        this.studentclassData.StudentClassId = this.StudentClassId;
         this.update();
       }
     }
@@ -285,7 +289,11 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {
-
+          //console.log('before',this.StudentClassId);
+          this.StudentClassId = data.StudentClassId;
+          this.shareddata.ChangeStudentClassId(this.StudentClassId);
+          //console.log('after',this.StudentClassId);
+          
           this.alert.success("Data saved successfully", this.optionsAutoClose);
           //this.router.navigate(['/pages']);
         });
@@ -293,7 +301,7 @@ export class AddstudentclassComponent implements OnInit {
   }
   update() {
 
-    this.dataservice.postPatch('StudentClasses', this.studentclassData, this.studentclassData.StudentClassId, 'patch')
+    this.dataservice.postPatch('StudentClasses', this.studentclassData, this.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
           this.alert.success("Data updated successfully", this.optionsAutoClose);

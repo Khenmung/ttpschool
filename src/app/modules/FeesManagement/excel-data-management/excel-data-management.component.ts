@@ -7,6 +7,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 
 @Component({
   selector: 'app-excel-data-management',
@@ -16,14 +17,28 @@ import { AlertService } from 'src/app/shared/components/alert/alert.service';
 export class ExcelDataManagementComponent implements OnInit {
   constructor(private dataservice: NaomitsuService,
     private fb: FormBuilder,
-    private alert: AlertService) {
+    private alert: AlertService,
+    private shareddata:SharedataService) {
 
   }
   
   ngOnInit() {
-    this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
-    this.GetMasterData();
+    //this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
+    //this.GetMasterData();
+    this.shareddata.CurrentGenders.subscribe(c=>(this.Genders=c));
+    this.shareddata.CurrentBloodgroup.subscribe(c=>(this.Bloodgroup=c));
+    this.shareddata.CurrentCategory.subscribe(c=>(this.Category=c));
+    this.shareddata.CurrentReligion.subscribe(c=>(this.Religion=c));
+    this.shareddata.CurrentStates.subscribe(c=>(this.States=c));
+    this.shareddata.CurrentPrimaryContact.subscribe(c=>(this.PrimaryContact=c));
+    this.shareddata.CurrentLocation.subscribe(c=>(this.Location=c));
+    this.shareddata.CurrentClasses.subscribe(c=>(this.Classes=c));
+    this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+    this.shareddata.CurrentBatchId.subscribe(c=>(this.BatchId=c));
+    this.shareddata.CurrentUploadType.subscribe(c=>(this.UploadTypes=c));
+    
     this.uploadForm = this.fb.group({
+      BatchId:[this.BatchId],
       UploadTypeId: [0, [Validators.required]]
     })
   }
@@ -66,9 +81,10 @@ export class ExcelDataManagementComponent implements OnInit {
   Location = [];
   PrimaryContactFatherOrMother = [];
   studentData: any[];
+  BatchId=0;
   onselectchange(event) {
     //debugger;
-    console.log('event', event);
+//    console.log('event', event);
     let Uploadtype = this.UploadTypes.filter(item => {
       return item.MasterDataId == event.value
     })[0].MasterDataName

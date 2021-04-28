@@ -119,13 +119,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.shareddata.CurrentStudentClassId.subscribe(fy=>(this.studentInfoTodisplay.StudentClassId=fy));
     this.shareddata.CurrentBatchId.subscribe(fy=>(this.studentInfoTodisplay.BatchId =fy));
 
-    this.shareddata.currentFeeNames.subscribe(fy=>(this.FeeNames=fy)); 
+    this.shareddata.CurrentFeeNames.subscribe(fy=>(this.FeeNames=fy)); 
     this.shareddata.CurrentClasses.subscribe(fy=>(this.Classes=fy));
     this.shareddata.CurrentBatch.subscribe(fy=>(this.Batches =fy));
     this.shareddata.CurrentLocation.subscribe(fy=>(this.Locations=fy));
-    this.shareddata.currentFeeType.subscribe(fy=>(this.FeeTypes=fy));
-    this.shareddata.currentSection.subscribe(fy=>(this.Sections=fy));
-
+    this.shareddata.CurrentFeeType.subscribe(fy=>(this.FeeTypes=fy));
+    this.shareddata.CurrentSection.subscribe(fy=>(this.Sections=fy));
+    this.GetStudentClass();
   }
   GetMasterData() {
     let list: List = new List();

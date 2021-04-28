@@ -4,7 +4,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { FileSystemDirectoryEntry, FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { base64ToFile, Dimensions, ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -31,6 +30,7 @@ export class AddstudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  StudentName='';
   StudentClassId = 0;
   selectedIndex: number = 0;
   imagePath: string;
@@ -58,48 +58,8 @@ export class AddstudentComponent implements OnInit {
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
-
-  studentForm = this.fb.group({
-    StudentId: [0],
-    Name: ['', [Validators.required]],
-    FatherName: ['', [Validators.required]],
-    FatherOccupation: ['', [Validators.required]],
-    MotherName: ['', [Validators.required]],
-    MotherOccupation: ['', [Validators.required]],
-    Gender: [0, [Validators.required]],
-    PresentAddress: ['', [Validators.required]],
-    PermanentAddress: ['', [Validators.required]],
-    City: [0],
-    //Pincode: new FormControl('', [Validators.required]),
-    //State: [0],
-    Country: [0],
-    DOB: [new Date(), [Validators.required]],
-    Bloodgroup: [0],
-    Category: [0, [Validators.required]],
-    BankAccountNo: [''],
-    IFSCCode: [''],
-    MICRNo: [''],
-    AadharNo: [''],
-    Photo: [''],
-    Religion: [''],
-    ContactNo: [''],
-    WhatsAppNumber: [''],
-    FatherContactNo: [''],
-    MotherContactNo: [''],
-    PrimaryContactFatherOrMother: [0],
-    NameOfContactPerson: [''],
-    RelationWithContactPerson: [''],
-    ContactPersonContactNo: [''],
-    AlternateContact: [''],
-    EmailAddress: [''],
-    ClassAdmissionSought: [0],
-    LastSchoolPercentage: [''],
-    TransferFromSchool: [''],
-    TransferFromSchoolBoard: [''],
-    Remarks: [''],
-    Active: [1],
-    LocationId: [0]
-  });
+  studentForm:FormGroup;
+  
   public files: NgxFileDropEntry[] = [];
   @ViewChild(ImageCropperComponent, { static: true }) imageCropper: ImageCropperComponent;
 
@@ -155,10 +115,8 @@ export class AddstudentComponent implements OnInit {
     private alertMessage: AlertService,
     private fileUploadService: FileUploadService,
     private shareddata:SharedataService
-  ) { }
-
-  ngOnInit(): void {
-    this.shareddata.currentMasterData.subscribe(message => (this.allMasterData= message));
+  ) {
+    this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData= message));
     this.shareddata.CurrentGenders.subscribe(genders=>(this.Genders=genders));
     this.shareddata.CurrentCountry.subscribe(country=>(this.Country==country));
     this.shareddata.CurrentBloodgroup.subscribe(bg=>(this.Bloodgroup==bg));
@@ -167,11 +125,57 @@ export class AddstudentComponent implements OnInit {
     this.shareddata.CurrentStates.subscribe(st=>(this.States=st));
     this.shareddata.CurrentClasses.subscribe(cls=>(this.Classes=cls));
     this.shareddata.CurrentLocation.subscribe(lo=>(this.Location=lo));
-    this.shareddata.currentPrimaryContact.subscribe(pr=>(this.PrimaryContact=pr));
+    this.shareddata.CurrentPrimaryContact.subscribe(pr=>(this.PrimaryContact=pr));
     this.shareddata.CurrentStudentId.subscribe(id=>(this.Id=id));
     this.shareddata.CurrentStudentClassId.subscribe(scid=>(this.StudentClassId=scid));
     this.shareddata.CurrentBloodgroup.subscribe(bg=>(this.Bloodgroup=bg));
+    this.shareddata.CurrentStudentName.subscribe(s=>(this.StudentName=s));
+    this.studentForm = this.fb.group({
+      StudentId: [0],
+      Name: ['', [Validators.required]],
+      FatherName: ['', [Validators.required]],
+      FatherOccupation: ['', [Validators.required]],
+      MotherName: ['', [Validators.required]],
+      MotherOccupation: ['', [Validators.required]],
+      Gender: [0, [Validators.required]],
+      PresentAddress: ['', [Validators.required]],
+      PermanentAddress: ['', [Validators.required]],
+      City: [0],
+      //Pincode: new FormControl('', [Validators.required]),
+      //State: [0],
+      Country: [0],
+      DOB: [new Date(), [Validators.required]],
+      Bloodgroup: [0],
+      Category: [0, [Validators.required]],
+      BankAccountNo: [''],
+      IFSCCode: [''],
+      MICRNo: [''],
+      AadharNo: [''],
+      Photo: [''],
+      Religion: [''],
+      ContactNo: [''],
+      WhatsAppNumber: [''],
+      FatherContactNo: [''],
+      MotherContactNo: [''],
+      PrimaryContactFatherOrMother: [0],
+      NameOfContactPerson: [''],
+      RelationWithContactPerson: [''],
+      ContactPersonContactNo: [''],
+      AlternateContact: [''],
+      EmailAddress: [''],
+      ClassAdmissionSought: [0],
+      LastSchoolPercentage: [''],
+      TransferFromSchool: [''],
+      TransferFromSchoolBoard: [''],
+      Remarks: [''],
+      Active: [1],
+      LocationId: [0]
+    });
 
+   }
+
+  ngOnInit(): void {
+    
     // this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.GENDER);
     // this.Country = this.getDropDownData(globalconstants.MasterDefinitions.COUNTRY);
     // this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
@@ -330,7 +334,7 @@ export class AddstudentComponent implements OnInit {
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       LocationId: this.studentForm.get("LocationId").value
     }
-    console.log("datato save", this.studentData);
+    //console.log("datato save", this.studentData);
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else

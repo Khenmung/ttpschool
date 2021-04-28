@@ -28,14 +28,17 @@ export class SharedataService {
   private LanguageSubjectUpperSource = new BehaviorSubject(this.items);
   private LanguageSubjectLowerSource = new BehaviorSubject(this.items);
   private FeeNamesSource = new BehaviorSubject(this.items);
-  
-  currentFeeNames = this.FeeNamesSource.asObservable();  
-  currentLanguageSubjectLower = this.LanguageSubjectLowerSource.asObservable();
-  currentLanguageSubjectUpper = this.LanguageSubjectUpperSource.asObservable();
-  currentFeeType = this.FeeTypeSource.asObservable();
-  currentSection = this.SectionSource.asObservable();
-  currentPrimaryContact = this.PrimaryContactSource.asObservable();
-  currentMasterData = this.MasterDataSource.asObservable();
+  private StudentNameSource = new BehaviorSubject('');
+  private UploadTypeSource = new BehaviorSubject(this.items);
+
+  CurrentUploadType = this.UploadTypeSource.asObservable();  
+  CurrentFeeNames = this.FeeNamesSource.asObservable();  
+  CurrentLanguageSubjectLower = this.LanguageSubjectLowerSource.asObservable();
+  CurrentLanguageSubjectUpper = this.LanguageSubjectUpperSource.asObservable();
+  CurrentFeeType = this.FeeTypeSource.asObservable();
+  CurrentSection = this.SectionSource.asObservable();
+  CurrentPrimaryContact = this.PrimaryContactSource.asObservable();
+  CurrentMasterData = this.MasterDataSource.asObservable();
   CurrentBatchId = this.BatchIdSource.asObservable();
   CurrentBatch = this.BatchSource.asObservable();
   CurrentStudentId = this.StudentIdSource.asObservable();
@@ -48,11 +51,20 @@ export class SharedataService {
   CurrentStates = this.StatesSource.asObservable();
   CurrentLocation = this.LocationSource.asObservable();
   CurrentClasses = this.ClassesSource.asObservable();
+  CurrentStudentName = this.StudentNameSource.asObservable();
 
   constructor() {
   }
   ngOnInit() {
 
+  }
+  ChangeUploadType(item)
+  {
+    this.UploadTypeSource.next(item);
+  }
+  ChangeStudentName(item)
+  {
+    this.StudentNameSource.next(item);
   }
   ChangeFeeNames(item)
   {
@@ -86,14 +98,13 @@ export class SharedataService {
     this.BatchIdSource.next(item);
   }
   ChangeBatch(item) {
-
     this.BatchSource.next(item);
   }
   ChangeStudentId(item) {
     this.StudentIdSource.next(item);
   }
   ChangeStudentClassId(item) {
-    this.StudentClassIdSource
+    this.StudentClassIdSource.next(item);
   }
   ChangeCountry(item) {
     this.CountrySource.next(item);

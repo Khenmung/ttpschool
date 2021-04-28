@@ -30,7 +30,7 @@ export class DashboardstudentComponent implements OnInit {
   displayedColumns = ['StudentId', 'Name', 'ClassName', 'FatherName', 'MotherName',
     'Active', 'Action'];
   allMasterData = [];
-  Genders =[];
+  Genders = [];
   Classes = [];
   Batches = [];
   Bloodgroup = [];
@@ -39,13 +39,14 @@ export class DashboardstudentComponent implements OnInit {
   States = []
   PrimaryContact = [];
   Location = [];
-  LanguageSubjUpper=[];
-  LanguageSubjLower=[];
-  FeeType=[];
-  FeeNames=[];
-  Sections=[];
+  LanguageSubjUpper = [];
+  LanguageSubjLower = [];
+  FeeType = [];
+  FeeNames = [];
+  Sections = [];
+  UploadTypes=[];
   BatchId = 0;
-  StudentIDRollNo = [];
+  SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
   searchForm: FormGroup;
 
@@ -53,7 +54,7 @@ export class DashboardstudentComponent implements OnInit {
     private route: Router,
     private alert: AlertService,
     private fb: FormBuilder,
-    private shareddata:SharedataService) { }
+    private shareddata: SharedataService) { }
 
   ngOnInit(): void {
     this.GetMasterData();
@@ -81,10 +82,10 @@ export class DashboardstudentComponent implements OnInit {
         //console.log(data.value);
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
-        
+
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
         this.shareddata.ChangeClasses(this.Classes);
-        
+
         this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
         this.shareddata.ChangeBatch(this.Batches);
 
@@ -115,7 +116,7 @@ export class DashboardstudentComponent implements OnInit {
         this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTUPPERCLS);
         this.shareddata.ChangeLanguageSubjectUpper(this.LanguageSubjUpper);
 
-        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
+        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
@@ -124,6 +125,9 @@ export class DashboardstudentComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
         this.shareddata.ChangeSection(this.Sections);
 
+        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.UPLOADTYPE);
+        this.shareddata.ChangeUploadType(this.UploadTypes);
+
         let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions.CURRENTBATCH);
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch[0].MasterDataName.toLowerCase());
         if (currentBatchObj.length > 0) {
@@ -131,10 +135,10 @@ export class DashboardstudentComponent implements OnInit {
           this.searchForm.patchValue({ BatchId: this.BatchId });
           this.shareddata.ChangeBatchId(this.BatchId);
         }
-        
-        this.getStudentIDRollNo();
 
-        
+        this.getSelectedBatchStudentIDRollNo();
+
+
       });
 
   }
@@ -152,17 +156,20 @@ export class DashboardstudentComponent implements OnInit {
   class(id) {
     this.route.navigate(['/admin/addstudentcls/' + id]);
   }
-  view(id) {
+  view(element) {
     debugger;
-    let studentclass = this.StudentIDRollNo.filter(sid => sid.StudentId == id);
+    let StudentName = element.StudentId + ' ' + element.Name  + ' ' + element.FatherName  + ' ' + element.MotherName;  
+    this.shareddata.ChangeStudentName(StudentName);
+
+    let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0)
-    {
       this.StudentClassId = studentclass[0].StudentClassId
-      this.shareddata.ChangeStudentClassId(this.StudentClassId);
-      this.shareddata.ChangeStudentId(id);
-    }
+
+    this.shareddata.ChangeStudentClassId(this.StudentClassId);
+    this.shareddata.ChangeStudentId(element.StudentId);
+
     //  this.route.navigate(['/admin/addstudent/' + id], { queryParams: { scid: this.StudentClassId, bid: this.BatchId } });
-    this.route.navigate(['/admin/addstudent/' + id]);
+    this.route.navigate(['/admin/addstudent/' + element.StudentId]);
   }
   new() {
     this.route.navigate(['/admin/addstudent']);
@@ -185,7 +192,7 @@ export class DashboardstudentComponent implements OnInit {
     }));
     TableUtil.exportArrayToExcel(datatoExport, "ExampleArray");
   }
-  getStudentIDRollNo() {
+  getSelectedBatchStudentIDRollNo() {
     let list: List = new List();
     list.fields = ["StudentId", "RollNo", "StudentClassId", "ClassId"];
     list.PageName = "StudentClasses";
@@ -194,7 +201,7 @@ export class DashboardstudentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.StudentIDRollNo = [...data.value];
+          this.SelectedBatchStudentIDRollNo = [...data.value];
 
         }
       })

@@ -7,6 +7,7 @@ import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 
 @Component({
   selector: 'app-feereceipt',
@@ -80,7 +81,8 @@ export class FeereceiptComponent implements OnInit {
     private alert: AlertService,
     private route: ActivatedRoute,
     private nav: Router,
-    private datepipe: DatePipe) { }
+    private datepipe: DatePipe,
+    private shareddata:SharedataService) { }
 
   ngOnInit(): void {
 
@@ -103,17 +105,26 @@ export class FeereceiptComponent implements OnInit {
     'Action'
   ]
   PageLoad() {
-    this.route.paramMap.subscribe(param => {
-      this.studentInfoTodisplay.StudentId = +param.get("id");
-    })
-    this.route.queryParamMap.subscribe(param => {
-      this.studentInfoTodisplay.StudentClassId = +param.get("scid");
-    })
-    if (this.studentInfoTodisplay.StudentId == 0) {
-      this.alert.error("Id is missing", this.optionAutoClose);
-      return;
-    }
-    this.GetMasterData();
+    this.shareddata.CurrentClasses.subscribe(cls=>(this.Classes=cls));
+    this.shareddata.CurrentBatch.subscribe(lo=>(this.Batches=lo));
+    this.shareddata.CurrentSection.subscribe(pr=>(this.Sections=pr));
+    this.shareddata.CurrentStudentId.subscribe(id=>(this.studentInfoTodisplay.StudentId=id));
+    this.shareddata.CurrentStudentClassId.subscribe(scid=>(this.studentInfoTodisplay.StudentClassId=scid));
+    this.shareddata.CurrentBatchId.subscribe(b=>(this.studentInfoTodisplay.currentbatchId=b));
+    this.shareddata.CurrentFeeNames.subscribe(b=>(this.FeeNames=b));
+    
+    this.GetStudentClass();
+    // this.route.paramMap.subscribe(param => {
+    //   this.studentInfoTodisplay.StudentId = +param.get("id");
+    // })
+    // this.route.queryParamMap.subscribe(param => {
+    //   this.studentInfoTodisplay.StudentClassId = +param.get("scid");
+    // })
+    // if (this.studentInfoTodisplay.StudentId == 0) {
+    //   this.alert.error("Id is missing", this.optionAutoClose);
+    //   return;
+    // }
+    // this.GetMasterData();
   }
   UpdateActive(element) {
     let toupdatePaymentDetail = {
@@ -314,9 +325,8 @@ export class FeereceiptComponent implements OnInit {
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
         this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
-        //this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
-        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        
         let currentBatch = globalconstants.getCurrentBatch();
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
         if (currentBatchObj.length > 0) {

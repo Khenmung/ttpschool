@@ -68,14 +68,15 @@
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell style="justify-content: center;" *matCellDef="let element">
-                        <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()">
-                        </mat-checkbox>
+                        {{element.Active==1?'Yes':'No'}}
+                        <!-- <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()">
+                        </mat-checkbox> -->
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">                        
-                        <button matTooltip="Details" mat-mini-fab (click)="view(element.StudentId)">
+                        <button matTooltip="Details" mat-mini-fab (click)="view(element)">
                             <mat-icon>pageview</mat-icon>
                         </button>                     
                     </mat-cell>
