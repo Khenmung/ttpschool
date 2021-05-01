@@ -6,6 +6,7 @@ import { List, IPage } from 'src/app/shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { FileUploadService } from 'src/app/shared/upload.service';
 //import { FormsModule} from '@angular/forms';
 @Component({
 
@@ -18,6 +19,14 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 
 export class TextEditorComponent implements OnInit {
+  Edit = false;
+  imagePath: string;
+  message: string;
+  imgURL: any;
+  selectedFile: any;
+  //Albums: any;
+  errorMessage = '';
+  formdata: FormData;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -31,6 +40,7 @@ export class TextEditorComponent implements OnInit {
     UpdateDate: new Date(),
     IsTemplate: 1,
     HasSubmenu: 1,
+    Module:1,
     label: '',
     link: '',
     Active: 1
@@ -70,7 +80,8 @@ export class TextEditorComponent implements OnInit {
     private ar: ActivatedRoute,
     private shareddata: SharedataService,
     protected alert: AlertService,
-    private tokenStorage: TokenStorageService) {
+    private tokenStorage: TokenStorageService,    
+    private fileUploadService: FileUploadService,) {
     //this.PageDetail =[];
   }
 
@@ -103,8 +114,54 @@ export class TextEditorComponent implements OnInit {
   ngAfterViewInit() {
     this.loading = false;
   }
+  preview(files) {
+    if (files.length === 0)
+      return;
+
+    var mimeType = files[0].type;
+    if (mimeType.match(/image\/*/) == null) {
+      this.message = "Only images are supported.";
+      return;
+    }
+    this.selectedFile = files[0];
+    var reader = new FileReader();
+    this.imagePath = files;
+    reader.readAsDataURL(files[0]);
+    reader.onload = (_event) => {
+      this.imgURL = reader.result;
+    }
+  }
+  edit() {
+    this.Edit = true;
+  }
+  uploadFile() {
+    let error: boolean = false;
+    this.formdata = new FormData();
+    this.formdata.append("description", "Page photo");
+    this.formdata.append("fileOrPhoto", "0");
+    this.formdata.append("folderName", "PagePhoto");
+    this.formdata.append("parentId", "-1");
+
+    if (this.Id != null || this.Id != 0)
+      this.formdata.append("PageId", this.Id.toString());
+    this.formdata.append("image", this.selectedFile, this.selectedFile.name);
+    this.uploadImage();
+  }
+
+  uploadImage() {
+    let options = {
+      autoClose: true,
+      keepAfterRouteChange: true
+    };
+    //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
+    this.fileUploadService.postFile(this.formdata).subscribe(res => {
+      this.alert.success("Files Uploaded successfully.", options);
+      this.Edit = false;
+    });
+  }
+
   dashboard() {
-    this.router.navigate(['/pages']);
+    this.router.navigate(['/home/pages']);
   }
 
   GetLatestPage(ppId: number) {
@@ -145,7 +202,7 @@ export class TextEditorComponent implements OnInit {
 
     if (token == null) {
       this.alert.error("Access denied! login required.", options);
-      this.router.navigate(['/']);
+      this.router.navigate(['/home']);
     }
   }
   onSaveAsDraft() {
@@ -225,9 +282,9 @@ export class TextEditorComponent implements OnInit {
                   debugger;
                   if (this.PublishOrDraft == 1) {
                     if (this.PageDetailForm.value.PageTitle.toUpperCase().includes("NEWS"))
-                      this.PageDetail.link = '/about/' + this.Id + "/" + pageId;
+                      this.PageDetail.link = '/home/about/' + this.Id + "/" + pageId;
                     else
-                      this.PageDetail.link = '/display/' + history.PageHistoryId + "/" + pageId;
+                      this.PageDetail.link = '/home/display/' + history.PageHistoryId + "/" + pageId;
 
                     delete this.PageDetail.PageId;
                     this.naomitsuService.postPatch('Pages', this.PageDetail, pageId, 'patch')
@@ -239,7 +296,7 @@ export class TextEditorComponent implements OnInit {
                           console.log(error);
                         })
                   }
-                  this.router.navigate(['/pages']);
+                  this.router.navigate(['/home/pages']);
                 }, (error) => {
                   console.log('update histories', error);
                 });
@@ -276,9 +333,9 @@ export class TextEditorComponent implements OnInit {
       ///if it has no sub menu, link has to be defined only when it is published.
       if (this.PublishOrDraft == 1) {
         if (this.PageDetailForm.value.PageTitle.toUpperCase().includes("NEWS"))
-          this.PageDetail.link = '/about/' + this.Id + "/" + this.Id;
+          this.PageDetail.link = '/home/about/' + this.Id + "/" + this.Id;
         else
-          this.PageDetail.link = '/display/' + this.PageDetailForm.get("PageHistoryId").value + "/" + this.Id;
+          this.PageDetail.link = '/home/display/' + this.PageDetailForm.get("PageHistoryId").value + "/" + this.Id;
       }
       else
         this.PageDetail.link = this.PageDetailForm.value.link;
@@ -311,7 +368,7 @@ export class TextEditorComponent implements OnInit {
                 (data: any) => {
                   this.loading = false;
                   this.alert.success("Data updated Successfully", this.options);
-                  this.router.navigate(['/pages']);
+                  this.router.navigate(['/home/pages']);
                 });
           });
     }

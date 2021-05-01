@@ -1,19 +1,30 @@
-import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 //import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 
 //@Pipe({ name: 'safeHtml' })
 @Component({
+
   selector: 'app-displaypage',
   templateUrl: './displaypage.component.html',
   styleUrls: ['./displaypage.component.scss']
 })
 export class DisplaypageComponent implements OnInit {
-  Name={};
+  images = ["assets/images/notebook.jpg",
+    "assets/images/schoolbuilding2018.jfif",
+    "assets/images/karatedance.png",
+    "assets/images/sportteam.jpg",
+    "assets/images/aothtaking.jpg",
+    "assets/images/safetycampaign.JPG",
+    "assets/images/childrendance.jpg"
+  ];
+  Name = {};
+  ImgUrl = '';
   loading: boolean = false;
   color: ThemePalette = 'primary';
   mode: ProgressSpinnerMode = 'determinate';
@@ -28,7 +39,8 @@ export class DisplaypageComponent implements OnInit {
   constructor(
     private naomitsuService: NaomitsuService,
     private ar: ActivatedRoute,
-    private route: Router
+    private route: Router,
+    private cdref: ChangeDetectorRef
     //private sanitized: DomSanitizer
   ) {
 
@@ -40,27 +52,43 @@ export class DisplaypageComponent implements OnInit {
     this.GroupId = 0;
     this.ar.queryParamMap.subscribe(params => {
       this.GroupId = +params.get("GroupId");
-     
+
     });
+    this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
     // this.ar.data.subscribe(data=>{
     //   this.Name = data;
     // })
     //console.log('name',this.Name);
+    // this.images=["assets/images/notebook.jpg",
+    //         "assets/images/schoolbuilding2018.jfif",
+    //         "assets/images/25years.png"
+    //       ];
+    //      this.imgRand();
     this.ar.paramMap.subscribe(params => {
       this.pId = +params.get("pid");
       this.GetLatestPage(params.get('phid'));
     })
   }
+  ngAfterContentChecked() {
+    //this.imgRand();
+    //this.cdref.detectChanges();
+    //this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
+
+  }
+  imgRand() {
+    this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
+    //return img;
+  }
   back() {
     if (this.GroupId == 0)
-      this.route.navigate(['/']);
+      this.route.navigate(['/home']);
     else
-      this.route.navigate(['/about/' + this.GroupId]);
+      this.route.navigate(['/home/about/' + this.GroupId]);
   }
   GetLatestPage(pHistoryId) {
     debugger;
     let IdtoDisplay = pHistoryId;
-    let pages: any[];
+    //let pages: any[];
     let filterstring = '';
     if (pHistoryId == 0)
       filterstring = "Active eq 1 and HomePage eq 1";
@@ -69,7 +97,7 @@ export class DisplaypageComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "link", "PageId", "ParentId",
+      "link", "PageId", "ParentId", "PhotoPath",
       "PageTitle", "HomePage", "FullPath",
       "PageHistories/PageBody",
       "PageHistories/PageHistoryId",
@@ -83,10 +111,16 @@ export class DisplaypageComponent implements OnInit {
         if (data.value.length > 0) {
           let pagetodisplay = [...data.value];
           if (IdtoDisplay == 0) {
-            IdtoDisplay = +pagetodisplay[0].link.split('/')[2].split('?')[0];
+            ///home/display/44/87
+            IdtoDisplay = +pagetodisplay[0].link.split('/')[3];
           }
+          if (pagetodisplay[0].PhotoPath == "" || pagetodisplay[0].PhotoPath == null)
+            this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
+          else
+            this.ImgUrl = globalconstants.apiUrl + "/Image/PagePhoto/" + pagetodisplay[0].PhotoPath;
+          //console.log('imgurl',this.ImgUrl);
 
-          this.PageBody = pagetodisplay[0].PageHistories.filter(h => h.PageHistoryId == IdtoDisplay)[0].PageBody;
+            this.PageBody = pagetodisplay[0].PageHistories.filter(h => h.PageHistoryId == IdtoDisplay)[0].PageBody;
           this.ParentPage = pagetodisplay[0].FullPath;
           this.Title = pagetodisplay[0].PageTitle;
           this.loading = false;

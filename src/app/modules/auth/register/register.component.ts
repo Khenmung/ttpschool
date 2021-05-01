@@ -31,7 +31,7 @@ export class RegisterComponent implements OnInit {
     });
   }
   gotohome(){
-    this.route.navigate(['/']);
+    this.route.navigate(['/home']);
   }
   gotologin(){
     this.route.navigate(['/auth/login']);

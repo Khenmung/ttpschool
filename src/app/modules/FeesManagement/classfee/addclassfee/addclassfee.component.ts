@@ -118,7 +118,7 @@ export class AddclassfeeComponent implements OnInit {
         (data: any) => {
 
           this.alert.success("Data saved successfully", this.options);
-          //this.router.navigate(['/pages']);
+          //this.router.navigate(['/home/pages']);
         });
 
   }
@@ -136,7 +136,7 @@ export class AddclassfeeComponent implements OnInit {
         (data: any) => {
 
           this.alert.success("Data updated successfully", this.options);
-          //this.router.navigate(['/pages']);
+          //this.router.navigate(['/home/pages']);
         });
 
   }

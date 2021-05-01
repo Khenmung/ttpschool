@@ -3,11 +3,12 @@
     <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
         <div>
             <button mat-button (click)="toggleSideBar()">
-                <mat-icon *ngIf="toggle">chevron_right</mat-icon>
-                <mat-icon *ngIf="!toggle">chevron_left</mat-icon>
+                <mat-icon>menu</mat-icon>
+                <!-- <mat-icon *ngIf="toggle">chevron_right</mat-icon> -->
+                <!-- <mat-icon *ngIf="!toggle">chevron_left</mat-icon> -->
             </button>
             <button mat-button>
-                <a [routerLink]="[ '/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
+                <a [routerLink]="[ '/home/display/0/0/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
                         width="110px" /></a>
             </button>
             <span *ngIf="!deviceXs"><strong>ST. PAUL'S INSTITUTE</strong></span>
@@ -45,7 +46,7 @@
             </mat-menu>
         </div>
     </mat-toolbar-row>
-    <mat-toolbar-row *ngIf="deviceXs" style="height: 20px;" fxLayoutAlign="space-between center">
+    <mat-toolbar-row *ngIf="deviceXs" style="height: 20px;box-shadow: 3px 3px 3px #00203F;" fxLayoutAlign="space-between center">
         <button mat-button (click)="newsNEvents()">
             <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
         </button>

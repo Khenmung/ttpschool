@@ -30,7 +30,14 @@ export class SharedataService {
   private FeeNamesSource = new BehaviorSubject(this.items);
   private StudentNameSource = new BehaviorSubject('');
   private UploadTypeSource = new BehaviorSubject(this.items);
+  private PagesDataSource = new BehaviorSubject(this.items);
+  private NewsNEventIdSource = new BehaviorSubject(0);
+  private ReasonForLeavingSource = new BehaviorSubject(this.items);
 
+  CurrentReasonForLeaving = this.ReasonForLeavingSource.asObservable();
+
+  CurrentNewsNEventId = this.NewsNEventIdSource.asObservable();
+  CurrentPagesData = this.PagesDataSource.asObservable();
   CurrentUploadType = this.UploadTypeSource.asObservable();  
   CurrentFeeNames = this.FeeNamesSource.asObservable();  
   CurrentLanguageSubjectLower = this.LanguageSubjectLowerSource.asObservable();
@@ -57,6 +64,17 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangeReasonForLeaving(item){
+    this.ReasonForLeavingSource.next(item);
+  }
+  ChangeNewsNEventId(item)
+  {
+    this.NewsNEventIdSource.next(item);
+  }
+  ChangePageData(item)
+  {
+    this.PagesDataSource.next(item);
   }
   ChangeUploadType(item)
   {

@@ -64,6 +64,12 @@
                     <mat-cell *matCellDef="let element">
                         {{element.MotherName}}
                     </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ReasonForLeaving">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Reason For Leaving </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ReasonForLeaving}}
+                    </mat-cell>
                 </ng-container>            
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
@@ -82,7 +88,7 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{ 'highlight': row.ReasonForLeaving.toLowerCase() == 'admitted and left' }"></mat-row>
             </mat-table>
             <mat-paginator [pageSizeOptions]="[10,25,50]"></mat-paginator>
         </div>

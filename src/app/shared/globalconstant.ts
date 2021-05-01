@@ -24,7 +24,8 @@ export class globalconstants {
         "FEENAMES":"fee names",
         "UPLOADTYPE":"upload type",
         "DOWNLOADTYPE":"download type",
-        "CURRENTBATCH":"current batch"
+        "CURRENTBATCH":"current batch",
+        "REASONFORLEAVING":"reason for leaving"
         };
     // public static DOCUMENTTYPE: string = 'document type';
     // public static ORGANIZATION: string = 'organization';

@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FileSystemDirectoryEntry, FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
-import { base64ToFile, Dimensions, ImageCroppedEvent, ImageCropperComponent } from 'ngx-image-cropper';
+import { NgxFileDropEntry } from 'ngx-file-drop';
+import { ImageCropperComponent } from 'ngx-image-cropper';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -30,7 +30,8 @@ export class AddstudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StudentName='';
+  StudentLeaving = false;
+  StudentName = '';
   StudentClassId = 0;
   selectedIndex: number = 0;
   imagePath: string;
@@ -52,14 +53,15 @@ export class AddstudentComponent implements OnInit {
   PrimaryContact = [];
   Location = [];
   allMasterData = [];
+  ReasonForLeaving = [];
   studentData = {};
   CountryId = 0;
   LocationId = 0;
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
-  studentForm:FormGroup;
-  
+  studentForm: FormGroup;
+
   public files: NgxFileDropEntry[] = [];
   @ViewChild(ImageCropperComponent, { static: true }) imageCropper: ImageCropperComponent;
 
@@ -114,23 +116,25 @@ export class AddstudentComponent implements OnInit {
     private formatdate: DatePipe,
     private alertMessage: AlertService,
     private fileUploadService: FileUploadService,
-    private shareddata:SharedataService
+    private shareddata: SharedataService
   ) {
-    this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData= message));
-    this.shareddata.CurrentGenders.subscribe(genders=>(this.Genders=genders));
-    this.shareddata.CurrentCountry.subscribe(country=>(this.Country==country));
-    this.shareddata.CurrentBloodgroup.subscribe(bg=>(this.Bloodgroup==bg));
-    this.shareddata.CurrentCategory.subscribe(cat=>(this.Category=cat));
-    this.shareddata.CurrentReligion.subscribe(re=>(this.Religion=re));
-    this.shareddata.CurrentStates.subscribe(st=>(this.States=st));
-    this.shareddata.CurrentClasses.subscribe(cls=>(this.Classes=cls));
-    this.shareddata.CurrentLocation.subscribe(lo=>(this.Location=lo));
-    this.shareddata.CurrentPrimaryContact.subscribe(pr=>(this.PrimaryContact=pr));
-    this.shareddata.CurrentStudentId.subscribe(id=>(this.Id=id));
-    this.shareddata.CurrentStudentClassId.subscribe(scid=>(this.StudentClassId=scid));
-    this.shareddata.CurrentBloodgroup.subscribe(bg=>(this.Bloodgroup=bg));
-    this.shareddata.CurrentStudentName.subscribe(s=>(this.StudentName=s));
+    this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
+    this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
+    this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
+    this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
+    this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
+    this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
+    this.shareddata.CurrentStates.subscribe(st => (this.States = st));
+    this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
+    this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
+    this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
+    this.shareddata.CurrentStudentId.subscribe(id => (this.Id = id));
+    this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
+    this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
+    this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
+    this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
     this.studentForm = this.fb.group({
+      ReasonForLeavingId: [0],
       StudentId: [0],
       Name: ['', [Validators.required]],
       FatherName: ['', [Validators.required]],
@@ -172,30 +176,10 @@ export class AddstudentComponent implements OnInit {
       LocationId: [0]
     });
 
-   }
+  }
 
   ngOnInit(): void {
-    
-    // this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.GENDER);
-    // this.Country = this.getDropDownData(globalconstants.MasterDefinitions.COUNTRY);
-    // this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
-    // this.Category = this.getDropDownData(globalconstants.MasterDefinitions.CATEGORY);
-    // this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.RELIGION);
-    // this.States = this.getDropDownData(globalconstants.MasterDefinitions.STATE);
-    // this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.PRIMARYCONTACT);
-    // this.Location = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
-    // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
 
-    console.log('inside add student',this.Genders);
-
-    
-    // this.routeUrl.paramMap.subscribe(param => {
-    //   this.Id = +param.get('id')
-    // })
-    // this.routeUrl.queryParamMap.subscribe(p => {
-    //   this.StudentClassId = +p.get('scid');
-    // })
-    //this.GetMasterData();
     if (this.Id > 0)
       this.GetStudent();
   }
@@ -244,6 +228,14 @@ export class AddstudentComponent implements OnInit {
   back() {
     this.route.navigate(['/admin/dashboardstudent']);
   }
+  deActivate(event) {
+    if (!event.checked)
+      this.StudentLeaving = true;
+    else {
+      this.StudentLeaving = false;
+      this.studentForm.patchValue({ReasonForLeavingId:this.ReasonForLeaving.filter(r=>r.MasterDataName.toLowerCase()=='active')[0].MasterDataId});
+    }
+  }
   GetMasterData() {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
@@ -264,14 +256,15 @@ export class AddstudentComponent implements OnInit {
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
-        this.CountryId = this.Country.filter(country => country.MasterDataName == "India")[0].MasterDataId;
-        this.LocationId = this.Location.filter(location => location.MasterDataName == "Lamka")[0].MasterDataId;
-        this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName == "Father")[0].MasterDataId;
-        this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName == "Other")[0].MasterDataId;
+        this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
+        this.LocationId = this.Location.filter(location => location.MasterDataName.toLowerCase() == "lamka")[0].MasterDataId;
+        this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
+        this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
         this.studentForm.patchValue({ Country: this.CountryId });
         this.studentForm.patchValue({ LocationId: this.LocationId });
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
         this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
+        this.studentForm.patchValue({ReasonForLeavingId:this.ReasonForLeaving.filter(r=>r.MasterDataName.toLowerCase()=='active')[0].MasterDataId});
       });
 
   }
@@ -332,7 +325,8 @@ export class AddstudentComponent implements OnInit {
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
       Remarks: this.studentForm.get("Remarks").value,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
-      LocationId: this.studentForm.get("LocationId").value
+      LocationId: this.studentForm.get("LocationId").value,
+      ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
     }
     //console.log("datato save", this.studentData);
     if (this.studentForm.get("StudentId").value == 0)
@@ -423,6 +417,7 @@ export class AddstudentComponent implements OnInit {
             Remarks: data.value[0].Remarks,
             Active: data.value[0].Active,
             LocationId: data.value[0].LocationId,
+            ReasonForLeavingId: data.value[0].ReasonForLeavingId
 
           })
           if (data.value[0].PrimaryContactFatherOrMother == this.PrimaryContactOtherId)

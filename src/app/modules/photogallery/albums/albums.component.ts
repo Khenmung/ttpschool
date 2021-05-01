@@ -78,7 +78,7 @@ export class AlbumsComponent implements OnInit {
 
     if (token == null) {
       this.alert.error("Access denied! login required.", options);
-      this.route.navigate(['/']);
+      this.route.navigate(['/home']);
     }
   }
   getAlbums() {
@@ -242,7 +242,7 @@ export class AlbumsComponent implements OnInit {
       });
   }
   display(albumId) {
-    this.route.navigate(["/photos"], { queryParams: { "AlbumId": albumId } });
+    this.route.navigate(["/home/photos"], { queryParams: { "AlbumId": albumId } });
   }
   Delete(value) {
     //console.log(value);

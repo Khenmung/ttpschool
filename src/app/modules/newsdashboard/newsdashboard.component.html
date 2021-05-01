@@ -5,11 +5,11 @@
     <mat-card-content>
         <mat-divider></mat-divider>
         <br>
-        <div *ngFor="let element of DATA">
-            <a class="subtitle" style="color:white" (click)="view(Id,element)">
+        <div *ngFor="let element of AllData">
+            <a class="subtitle" style="color:white" (click)="view(element)">
                 <div>{{element.Title|titlecase}}
                     <br><span style="color:rgb(201, 200, 200);font-size: small;">
-                        {{element.Date|date:'dd/MM/yyyy'}}</span>
+                        {{element.UpdateDate|date:'dd/MM/yyyy'}}</span>
                 </div>
             </a>
             <mat-divider></mat-divider>

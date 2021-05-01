@@ -121,7 +121,7 @@ export class FiledragAndDropComponent implements OnInit {
       this.formdata = null;
       this.files = [];
       this.getAlbums();
-      this.route.navigate(['/managefile']);
+      this.route.navigate(['/home/managefile']);
 
     });
   }

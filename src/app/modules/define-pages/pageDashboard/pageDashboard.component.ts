@@ -56,7 +56,7 @@ export class pageDashboardComponent implements OnInit {
     this.list.fields = ["PageId", "PageTitle", "ParentId", "PageHistories/PageHistoryId", "PageHistories/Published", "PageHistories/Version", "Active"];
     this.list.PageName = "Pages";
     this.list.lookupFields = ["PageHistories"];
-    this.list.filter = ['Active eq 1 and IsTemplate eq 1' + (parentId == 0 ? '' : " and ParentId eq " + parentId)];
+    this.list.filter = ['Active eq 1 and Module eq 1 and IsTemplate eq 1' + (parentId == 0 ? '' : " and ParentId eq " + parentId)];
     this.list.orderBy = "PageId desc";
     const columns = ["PageId", "PageTitle", "ParentPage", "ParentId", "Published", "Action"];
 
@@ -150,19 +150,19 @@ export class pageDashboardComponent implements OnInit {
 
     if (token == null) {
       this.alert.error("Access denied! login required.", options);
-      this.navigate.navigate(['/']);
+      this.navigate.navigate(['/home']);
     }
   }
   createpage() {
-    this.navigate.navigate(['/editor']);
+    this.navigate.navigate(['/home/editor']);
   }
   view(pageId, pageTitle, parentId) {
 
-    this.navigate.navigate(['/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId, ptitle: pageTitle } });
+    this.navigate.navigate(['/home/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId, ptitle: pageTitle } });
   }
 
   createNew() {
-    this.navigate.navigate(['/pages/']);
+    this.navigate.navigate(['/home/pages/']);
   }
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
@@ -249,9 +249,9 @@ export class pageDashboardComponent implements OnInit {
     list.fields = ["PageId", "PageTitle"];
     list.PageName = "Pages";
     if (parentId == undefined)
-      list.filter = ["Active eq 1 and ParentId eq 0"];
+      list.filter = ["Active eq 1 and ParentId eq 0 and Module eq 1"];
     else
-      list.filter = ["Active eq 1 and ParentId eq " + parentId];
+      list.filter = ["Active eq 1 and ParentId eq " + parentId + ' and Module eq 1'];
     this.loading = true;
     this.naomitsuService.get(list)
       .subscribe((data: any) => {

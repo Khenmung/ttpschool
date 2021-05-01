@@ -511,7 +511,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           //       // this.CurrentRow.PaidAmt = this.StudentFeePaymentData.PaidAmt;
           //       // this.CurrentRow.BalanceAmt = this.StudentFeePaymentData.BalanceAmt;
           //       this.alert.success("Data updated successfully", this.optionAutoClose);
-          //       //this.router.navigate(['/pages']);
+          //       //this.router.navigate(['/home/pages']);
           //     })
         });
   }

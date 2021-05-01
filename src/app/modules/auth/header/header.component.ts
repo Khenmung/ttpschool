@@ -49,13 +49,13 @@ export class AuthHeaderComponent implements OnInit {
   logout() {
     debugger;
     this.tokenStorage.signOut();
-    this.route.navigate(['/']);
+    this.route.navigate(['/home']);
   }
   contactus() {
-    this.route.navigate(["/addmessage"]);
+    this.route.navigate(["/home/addmessage"]);
   }
   home() {
-    this.route.navigate(["/"]);
+    this.route.navigate(["/home/"]);
   }
   newsNEvents() {
     let list: List = new List();
@@ -65,7 +65,7 @@ export class AuthHeaderComponent implements OnInit {
 
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
-        this.route.navigate(['/about/' + data.value[0].PageId]);
+        this.route.navigate(['/home/about/' + data.value[0].PageId]);
       });
   }
 }

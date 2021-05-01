@@ -28,7 +28,7 @@ export class DashboardstudentComponent implements OnInit {
   ELEMENT_DATA: IStudent[];
   dataSource: MatTableDataSource<IStudent>;
   displayedColumns = ['StudentId', 'Name', 'ClassName', 'FatherName', 'MotherName',
-    'Active', 'Action'];
+    'Active','ReasonForLeaving', 'Action'];
   allMasterData = [];
   Genders = [];
   Classes = [];
@@ -45,6 +45,7 @@ export class DashboardstudentComponent implements OnInit {
   FeeNames = [];
   Sections = [];
   UploadTypes=[];
+  ReasonForLeaving=[];
   BatchId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
@@ -82,6 +83,9 @@ export class DashboardstudentComponent implements OnInit {
         //console.log(data.value);
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
+
+        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.REASONFORLEAVING);
+        this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
         this.shareddata.ChangeClasses(this.Classes);
@@ -223,7 +227,7 @@ export class DashboardstudentComponent implements OnInit {
 
     let list: List = new List();
     list.fields = ["StudentId", "StudentClasses/StudentClassId", "StudentClasses/Batch", "StudentClasses/ClassId", "StudentClasses/RollNo",
-      "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
+      "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active","ReasonForLeavingId"];
     list.lookupFields = ["StudentClasses"];
     list.PageName = "Students";
     list.filter = [checkFilterString];
@@ -234,7 +238,9 @@ export class DashboardstudentComponent implements OnInit {
         //console.log(data.value);
         if (data.value.length > 0) {
           this.ELEMENT_DATA = data.value.filter(sc => {
+           let reason= this.ReasonForLeaving.filter(r=>r.MasterDataId == sc.ReasonForLeavingId)
             sc.StudentClasses = sc.StudentClasses.filter(c => c.Batch == this.BatchId)
+            sc.ReasonForLeaving = reason.length>0?reason[0].MasterDataName:'';
             return sc;
           })
             .map(item => {

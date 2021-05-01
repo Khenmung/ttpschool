@@ -68,7 +68,7 @@ export class PhotobrowserComponent implements OnInit {
     // let selectedAlbumId = this.Albums.filter(item => {
     //   return item.UpdatedFileFolderName == this.selectedAlbum
     // })[0].FileId;
-    this.route.navigate(["/photocarousel"], { queryParams: { fileId: event } });
+    this.route.navigate(["/home/photocarousel"], { queryParams: { fileId: event } });
   }
   applyFilter(strFilter) {
     let count = 0;
@@ -128,7 +128,7 @@ export class PhotobrowserComponent implements OnInit {
 
           this.Albums.forEach((album) => {
             count = album.photos.length;
-            width = count > 1 ? '100px' : '200px';
+            width = count > 1 ? '200px' : '350px';
             //console.log('photo count', count);
             //console.log('photo width', width);
 

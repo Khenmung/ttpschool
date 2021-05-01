@@ -55,7 +55,7 @@ export class ImgDragAndDropComponent implements OnInit {
 
     if (token == null) {
       this.alert.error("Access denied! login required.", options);
-      this.route.navigate(['/']);
+      this.route.navigate(['/home']);
     }
   }
   onSelect(event) {
@@ -148,7 +148,7 @@ export class ImgDragAndDropComponent implements OnInit {
       this.formData = null;
       this.files = [];
       this.getAlbums();
-      this.route.navigate(['/managefile']);
+      this.route.navigate(['/home/managefile']);
       //this.messages.push("Upload complete");
       //album.value=null;
       //image.value =null;

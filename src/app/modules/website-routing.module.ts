@@ -22,10 +22,11 @@ import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 import { LandingpageComponent } from '../shared/components/landingpage/landingpage.component';
 
 const routes: Routes = [
+  
   {path: '', component: HomeComponent,
   children:
     [
-      { path: '',component:LandingpageComponent },
+      { path: '',redirectTo:'display/0/0',pathMatch:'full'},  
       { path: 'display/:phid/:pid', component: DisplaypageComponent },
       { path: 'photocarousel', component: CarouselComponent },
       { path: 'uploadphoto', component: cropNUploadphotoComponent },

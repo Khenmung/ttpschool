@@ -47,7 +47,7 @@ export class MenuConfigComponent implements OnInit {
     this.list.fields = ["*", "PageHistories/PageBody", "PageHistories/Version"];
     this.list.lookupFields = ["PageHistories"];
     this.list.PageName = "Pages";
-    //this.list.filter = ['IsTemplate eq 1' + (parentId==0?'':" and ParentId eq "+ parentId)];
+    //this.list.filter = ['Module eq 1'];
     this.list.orderBy = "PageId desc";
     const columns = ["PageId", "PageTitle", "ParentPage", "ParentId", "Active", "Action"];
 
@@ -108,14 +108,14 @@ export class MenuConfigComponent implements OnInit {
     // }
   }
   createpage() {
-    this.navigate.navigate(['/editor']);
+    this.navigate.navigate(['/home/editor']);
   }
   view(pageId, pageTitle, parentId) {
 
-    this.navigate.navigate(['/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId, ptitle: pageTitle } });
+    this.navigate.navigate(['/home/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId, ptitle: pageTitle } });
   }
   createNew() {
-    this.navigate.navigate(['/pages/']);
+    this.navigate.navigate(['/home/pages/']);
   }
   applyFilter(filterValue: string) {
     //console.log("this.AllData", this.AllData.length)
@@ -211,7 +211,7 @@ export class MenuConfigComponent implements OnInit {
     delete element.ParentPage;
     //PartialPage.push(element.faIcon);
     //PartialPage.UpdateDate = new Date();
-    console.log('PageDetail', PartialPage);
+    //console.log('PageDetail', PartialPage);
     //PageDetail.Active = event.checked == true ? 1 : 0;
     //PageDetail.UpdateDate = new Date();
     PartialPage = element;

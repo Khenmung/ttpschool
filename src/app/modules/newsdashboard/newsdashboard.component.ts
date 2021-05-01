@@ -3,11 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+//import { MatSort } from '@angular/material/sort';
 import { INews, IPage, List } from '../../shared/interface';
 import { NaomitsuService } from '../../shared/databaseService';
 import { SharedataService } from '../../shared/sharedata.service';
-import { SelectionModel } from '@angular/cdk/collections';
+//import { SelectionModel } from '@angular/cdk/collections';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 @Component({
@@ -20,9 +20,9 @@ export class NewsdashboardComponent implements OnInit {
   ParentPages: [{ PageId, PageTitle }];
   PageDetail: IPage;
   //SelectedData:PageDetail[] = [];
-  DATA: INews[] = [];
-  AllData: INews[] = [];
-  columns: Array<any>;
+  DATA = [];
+  AllData = [];
+  //columns: Array<any>;
   title: string;
   Id: number = 0;
   query: string;//displayedColumns: Array<any>;
@@ -32,87 +32,97 @@ export class NewsdashboardComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  //@ViewChild(MatSort) sort: MatSort;
 
-  selection = new SelectionModel<IPage>(true, []);
+  //selection = new SelectionModel<IPage>(true, []);
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      this.Id = +params.get("parentid");
-    })
-    if (this.Id == 0)
-      this.getNewsNEventID()
-    else
-      this.getDetails(this.Id);
-     // console.log('shared data', this.shareddata.getData());
-  }
-  getNewsNEventID() {
-    let list: List = new List();
-    list.fields = ["PageId"];
-    list.PageName = "Pages";
-    list.filter = ["Active eq 1 and label eq 'News N Events'"];
+    // this.route.paramMap.subscribe(params => {
+    //   this.Id = +params.get("parentid");
+    // })
+    // if (this.Id == 0)
+    //   this.getNewsNEventID()
+    // else
+    
+    this.shareddata.CurrentNewsNEventId.subscribe(e => {
+      this.Id = e
+      //this.getDetails(this.Id);
+      this.shareddata.CurrentPagesData.subscribe(m=>{
+        this.DATA=m
+        this.getDetails();
+      })
+    
+    });
+    
+    // console.log('shared data', this.shareddata.getData());
+  } 
+  getDetails() {
 
-    this.naomitsuService.get(list)
-      .subscribe((data: any) => {
-        this.Id = data.value[0].PageId;
-        this.getDetails(this.Id);
-      });
-  }
-  getDetails(parentId) {
+    // this.list.fields = ["PageId", "PageTitle", "ParentId",
+    //   "PageHistories/PageHistoryId", "PageHistories/PageBody",
+    //   "PageHistories/Version", "UpdateDate", "Active"];
+    // this.list.lookupFields = ["PageHistories"];
+    // this.list.PageName = "Pages";
+    // this.list.filter = ['IsTemplate eq 1' + (parentId == undefined ? '' : " and ParentId eq " + parentId)];
+    // this.list.orderBy = "PageId desc";
+    // this.list.limitTo = 20;
+    // const columns = ["Title", "Body", "Date", "Action", "NewsId"];
 
-    this.list.fields = ["PageId", "PageTitle", "ParentId",
-      "PageHistories/PageHistoryId", "PageHistories/PageBody",
-      "PageHistories/Version", "UpdateDate", "Active"];
-    this.list.lookupFields = ["PageHistories"];
-    this.list.PageName = "Pages";
-    this.list.filter = ['IsTemplate eq 1' + (parentId == undefined ? '' : " and ParentId eq " + parentId)];
-    this.list.orderBy = "PageId desc";
-    this.list.limitTo = 20;
-    const columns = ["Title", "Body", "Date", "Action","NewsId"];
+    // this.naomitsuService
+    //   .get<IPage[]>(this.list)
+    //   .subscribe({
+    //     next: (arrPage: IPage[]) => {
+    //       let arr = [];
+    //       Object.keys(arrPage).map(function (key) {
+    //         arr.push({ [key]: arrPage[key] })
+    //         return arr;
+    //       });
+    //       //console.log("data", arr[1]);
+    //       debugger;
+    //       this.DATA = arr[1].value.filter(item => { return item.PageHistories.length > 0 })
+    //         .map(item => {
+    //           return {
+    //             NewsId: item.PageId,
+    //             Title: item.PageTitle,
+    //             Body: item.PageHistories[0].PageBody.replace(/<[^>]*>/g, ''),//this.sanitize.bypassSecurityTrustHtml(item.PageHistories[0].PageBody),
+    //             Date: item.UpdateDate,
+    //             PhId: item.PageHistories[0].PageHistoryId,
+    //             Action: ""
+    //           }
+    //         })
 
-    this.naomitsuService
-      .get<IPage[]>(this.list)
-      .subscribe({
-        next: (arrPage: IPage[]) => {
-          let arr = [];
-          Object.keys(arrPage).map(function (key) {
-            arr.push({ [key]: arrPage[key] })
-            return arr;
-          });
-          //console.log("data", arr[1]);
-          debugger;
-          this.DATA = arr[1].value.filter(item => { return item.PageHistories.length > 0 })
-            .map(item => {
-              return {
-                NewsId: item.PageId,
-                Title: item.PageTitle,
-                Body: item.PageHistories[0].PageBody.replace(/<[^>]*>/g, ''),//this.sanitize.bypassSecurityTrustHtml(item.PageHistories[0].PageBody),
-                Date: item.UpdateDate,
-                PhId: item.PageHistories[0].PageHistoryId,
-                Action: ""
-              }
-            })
-
-          this.columns = columns.map(column => {
+          // this.columns = columns.map(column => {
+          //   return {
+          //     columnDef: column,
+          //     header: column,
+          //     cell: (element: any) => `${element[column] ? element[column] : ``}`
+          //   };
+          // });
+          //let SelectedArr = [];
+          //SelectedArr = this.DATA.filter(key => key.Active === 1)
+          //this.AllData = [...this.DATA];
+          this.AllData = this.DATA.filter(f=>{
+            return f.ParentId==this.Id;
+          }).sort((a,b)=> {
+            return +new Date(b.UpdateDate) - +new Date(a.UpdateDate)
+          })
+          .map(item=>{
             return {
-              columnDef: column,
-              header: column,
-              cell: (element: any) => `${element[column] ? element[column] : ``}`
-            };
-          });
-          let SelectedArr = [];
-          SelectedArr = this.DATA.filter(key => key.Active === 1)
-          this.AllData = [...this.DATA];
-
-          this.displayedColumns = this.columns.map(c => c.columnDef);
-          this.dataSource = new MatTableDataSource(this.DATA);
+              Title:item.label,
+              //:item.link.split('/')[3],
+              Link:item.link,
+              UpdateDate: item.UpdateDate
+            }
+          })
+          this.displayedColumns = ["Title","UpdateDate"];//this.columns.map(c => c.columnDef);
+          this.dataSource = new MatTableDataSource(this.AllData);
           this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
-          this.selection = new SelectionModel<IPage>(true, SelectedArr);
+          //this.dataSource.sort = this.sort;
+          //this.selection = new SelectionModel<IPage>(true, SelectedArr);
           //   });
-        },
-        error: console.error
-      });
+      //   },
+      //   error: console.error
+      // });
 
   }
   constructor(private naomitsuService: NaomitsuService,
@@ -145,11 +155,12 @@ export class NewsdashboardComponent implements OnInit {
     //console.log(newsdate<badgeDate);
     return NewsDate < badgeDate ? true : false;
   }
-  view(NewsGroupId, element) {
-    this.navigate.navigate(['/display/' + element.PhId + '/' + element.NewsId], { queryParams: { GroupId: NewsGroupId } });
+  view(element) {
+    //this.navigate.navigate(['/home/display/' + element.PhId + '/' + element.PageId], { queryParams: { GroupId: this.Id } });
+    this.navigate.navigate([element.Link], { queryParams: { GroupId: this.Id } });
   }
   createNew() {
-    this.navigate.navigate(['/pages/']);
+    this.navigate.navigate(['/home/pages/']);
   }
   applyFilter(filterValue: string) {
     debugger;
@@ -163,56 +174,6 @@ export class NewsdashboardComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.AllData);
     }
   }
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-  updateActive(element, event) {
-    let PageDetail = {
-      UpdateDate: new Date(),
-      Active: 1
-    };
-    let checked = this.selection.toggle(element);
-    //console.log('checked',checked);
-    PageDetail.Active = event.checked == true ? 1 : 0;
-    PageDetail.UpdateDate = new Date();
-    this.naomitsuService.postPatch('Pages', PageDetail, element.PageId, 'patch')
-      .subscribe(
-        (data: any) => {
-          //alert('data updated.')
-        })
-  }
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
-  }
-
 
 }
 
-function flatten(data) {
-  var result = {};
-  function recurse(cur, prop) {
-    if (Object(cur) !== cur) {
-      result[prop] = cur;
-    } else if (Array.isArray(cur)) {
-      for (var i = 0, l = cur.length; i < l; i++)
-        recurse(cur[i], prop + "[" + i + "]");
-      if (l == 0)
-        result[prop] = [];
-    } else {
-      var isEmpty = true;
-      for (var p in cur) {
-        isEmpty = false;
-        recurse(cur[p], prop ? prop + "." + p : p);
-      }
-      if (isEmpty && prop)
-        result[prop] = {};
-    }
-  }
-  recurse(data, "");
-  return result;
-}

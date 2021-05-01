@@ -118,7 +118,7 @@ export class CarouselComponent implements OnInit {
     element.style.transition = "transform 0.25s ease";
   }
   back() {
-    this.nav.navigate(["/browsephoto"]);
+    this.nav.navigate(["/home/browsephoto"]);
   }
 
 }

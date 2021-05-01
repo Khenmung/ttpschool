@@ -295,7 +295,7 @@ export class AddstudentclassComponent implements OnInit {
           //console.log('after',this.StudentClassId);
           
           this.alert.success("Data saved successfully", this.optionsAutoClose);
-          //this.router.navigate(['/pages']);
+          //this.router.navigate(['/home/pages']);
         });
 
   }
@@ -305,7 +305,7 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.alert.success("Data updated successfully", this.optionsAutoClose);
-          //this.router.navigate(['/pages']);
+          //this.router.navigate(['/home/pages']);
         });
   }
   getDropDownData(dropdowntype) {

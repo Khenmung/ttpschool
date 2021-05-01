@@ -119,7 +119,7 @@ export class DashboardclassfeeComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           this.alert.success("Data saved successfully", this.options);
-          //this.router.navigate(['/pages']);
+          //this.router.navigate(['/home/pages']);
         });
 
   }
@@ -130,7 +130,7 @@ export class DashboardclassfeeComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           this.alert.success("Data updated successfully", this.options);
-          //this.router.navigate(['/pages']);
+          //this.router.navigate(['/home/pages']);
         });
 
   }

@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.username = this.tokenStorage.getUser();   
-        this.route.navigate(['/']);
+        this.route.navigate(['/home']);
         //this.reloadPage();
       },
       err => {
@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
     );
   }
   gotohome(){
-    this.route.navigate(['/']);
+    this.route.navigate(['/home']);
   }
   reloadPage(): void {
     window.location.reload();

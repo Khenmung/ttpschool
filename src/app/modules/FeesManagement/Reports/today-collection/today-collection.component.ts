@@ -1,5 +1,4 @@
 import { DatePipe } from '@angular/common';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { IStudentFeePaymentReceipt } from '../../feereceipt/feereceipt.component';
+//import { IStudentFeePaymentReceipt } from '../../feereceipt/feereceipt.component';
 
 @Component({
   selector: 'app-today-collection',
@@ -16,26 +15,23 @@ import { IStudentFeePaymentReceipt } from '../../feereceipt/feereceipt.component
   styleUrls: ['./today-collection.component.scss']
 })
 export class TodayCollectionComponent implements OnInit {
-@ViewChild(MatPaginator) paginator:MatPaginator;
-@ViewChild(MatSort) sort:MatSort;
-allMasterData = [];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  allMasterData = [];
   FeeNames = [];
   Classes = [];
   Batches = [];
   Sections = [];
   ELEMENT_DATA = [];
-  TotalAmount = 0;
+  GrandTotalAmount = 0;
   DisplayColumns = [
     "SlNo",
-    "ReceiptNo",
-    "Name",
-    "ClassNameSection",
-    "RollNo",
-    "TotalAmount",
+    "FeeName",
+    "TotalAmount"
   ]
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: FormGroup;
-  ErrorMessage: string='';
+  ErrorMessage: string = '';
   constructor(private dataservice: NaomitsuService,
     private formatdate: DatePipe,
     private fb: FormBuilder) { }
@@ -50,46 +46,61 @@ allMasterData = [];
   }
   GetStudentFeePaymentDetails() {
     debugger;
-    this.ErrorMessage ='';
+    this.ErrorMessage = '';
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
     let filterstring = '';
-    filterstring = "Active eq 1 and ReceiptDate ge datetime'" + this.formatdate.transform(fromDate, 'yyyy-MM-dd') + "' and ReceiptDate le datetime'" + this.formatdate.transform(toDate.setDate(toDate.getDate() + 1), 'yyyy-MM-dd') + "'";
+    filterstring = "ReceiptNo ne null and Active eq 1 and PaymentDate ge datetime'" + this.formatdate.transform(fromDate, 'yyyy-MM-dd') + "' and PaymentDate le datetime'" + this.formatdate.transform(toDate.setDate(toDate.getDate() + 1), 'yyyy-MM-dd') + "'";
 
     let list: List = new List();
     list.fields = [
-      'Student/Name',
-      'StudentClass/ClassId',
-      'StudentClass/RollNo',
-      'StudentClass/Section',
-      'OfflineReceiptNo',
-      'TotalAmount',
-      'ReceiptDate',
-      'StudentReceiptId'
+      'StudentFeePayment/StudentFeeId',
+      'StudentFeePayment/FeeNameId',
+      'PaymentAmt',
     ];
-    list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["Student", "StudentClass"];
+    list.PageName = "PaymentDetails";
+    list.lookupFields = ["StudentFeePayment"];
     list.filter = [filterstring];
-    //list.orderBy = "PaymentId";
-
+    
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        this.TotalAmount = 0;
+        this.GrandTotalAmount = 0;
         if (data.value.length > 0) {
-          this.ELEMENT_DATA = data.value.map((item, indx) => {
-            this.TotalAmount += +item.TotalAmount;
+
+          var result=[];
+
+          let ValidFeeNameIds = data.value.filter(f => {
+            return f.StudentFeePayment.FeeNameId != null
+          })
+          
+          ValidFeeNameIds.forEach(element => {
+
+           let addedItem =result.filter(item=> item.FeeNameId == element.FeeNameId);
+         
+            if(addedItem.length==0)
+            {
+              result.push({
+                FeeNameId:element.StudentFeePayment.FeeNameId,
+                TotalAmount: element.PaymentAmt
+              })
+            }
+            else
+            {
+              addedItem["TotalAmount"] += +element.PaymentAmt; 
+            }
+
+          });
+          this.ELEMENT_DATA = result.map((item, indx) => {
+            this.GrandTotalAmount += +item.TotalAmount;
+            debugger;
             return {
-              SlNo: indx + 1,
-              Name: item.Student.Name,
-              ClassNameSection: this.Classes.filter(c => c.MasterDataId == item.StudentClass.ClassId)[0].MasterDataName
-               + ' - ' + this.Sections.filter(s => s.MasterDataId == item.StudentClass.Section)[0].MasterDataName,
-               RollNo: item.StudentClass.RollNo,              
-              TotalAmount: item.TotalAmount,
-              ReceiptNo: item.StudentReceiptId,
-              Date: item.ReceiptDate
+              SlNo: indx+1,
+              FeeName: this.FeeNames.filter(f => f.MasterDataId == +item.FeeNameId)[0].MasterDataName,
+              TotalAmount: item.TotalAmount
             }
           })
+          //console.log('my result1', this.ELEMENT_DATA);
         }
         else {
           this.ErrorMessage = "No record found!";
@@ -98,7 +109,7 @@ allMasterData = [];
 
         this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort =this.sort;
+        this.dataSource.sort = this.sort;
 
       })
   }
@@ -138,10 +149,6 @@ allMasterData = [];
 }
 export interface ITodayReceipt {
   "SlNo": number,
-  "Name": string,
-  "ClassNameSection": string,
-  "RollNo":number;
-  "TotalAmount": number,
-  "ReceiptNo": number,
-  // "Date":Date
+  "FeeName": string,
+  "TotalAmount": string,
 }

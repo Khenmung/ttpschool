@@ -320,9 +320,18 @@
                                 </mat-select>
                             </mat-form-field>
                             <div>
-                                <mat-checkbox formControlName="Active">
+                                <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                                 </mat-checkbox>&nbsp; Active
                             </div>
+                            <mat-form-field *ngIf="StudentLeaving" appearance="outline">
+                                <mat-label>Reason For Leaving</mat-label>
+                                <mat-select formControlName="ReasonForLeavingId">
+                                    <mat-option value="0">---</mat-option>
+                                    <mat-option *ngFor="let p of ReasonForLeaving" [value]="p.MasterDataId">
+                                        {{p.MasterDataName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                             <button *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"

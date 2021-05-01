@@ -1,20 +1,27 @@
-
 <mat-card class="contentbody">
-    <mat-card-title>{{Title|titlecase}}</mat-card-title>
-    <mat-card-subtitle *ngIf="ParentPage.length>0">{{ParentPage}}</mat-card-subtitle>
+    <mat-card-title><span style="padding: 20px;">{{Title|titlecase}}</span></mat-card-title>
+    <mat-card-subtitle *ngIf="ParentPage.length>0"><span style="padding: 20px;">{{ParentPage}}</span></mat-card-subtitle>
     <mat-card-content>
         <!-- <mat-progress-spinner *ngIf="loading" class="example-margin" [color]="color" [mode]="mode" [value]="value">
         </mat-progress-spinner> -->
         <mat-spinner *ngIf="loading"></mat-spinner>
-        <div>
-            <div>
+        <div class="container">
+            <img [src]="ImgUrl" style="width:100%;height:auto;object-fit: contain;opacity: .9;">
+            <!-- <img src="assets/images/schoolbuilding2018.jfif" alt="Notebook" style="width:100%;"> -->
+            <div class="content">
                 <p [innerHTML]="PageBody|encodeHTML"></p>
             </div>
         </div>
-        <mat-card-actions>
+
+        <!-- <div>
+            <div>
+                <p [innerHTML]="PageBody|encodeHTML"></p>
+            </div>
+        </div> -->
+        <!-- <mat-card-actions>
             <button mat-button (click)="back()">
                 <mat-icon>arrow_back</mat-icon>
             </button>
-        </mat-card-actions>
+        </mat-card-actions> -->
     </mat-card-content>
 </mat-card>

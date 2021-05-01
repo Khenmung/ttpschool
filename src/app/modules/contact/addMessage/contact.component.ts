@@ -69,7 +69,7 @@ export class ContactComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.alert.success("Data saved Successfully", this.options);
-          this.route.navigate(["/messages"]);
+          //this.route.navigate(["/home/messages"]);
         },
         (error) => {
           console.log('messages page', error);
@@ -89,7 +89,7 @@ export class ContactComponent implements OnInit {
 
   }
   back(){
-    this.route.navigate(['/messages']);
+    this.route.navigate(['/home/messages']);
   }
 
 }

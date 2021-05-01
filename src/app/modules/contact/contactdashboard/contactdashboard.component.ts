@@ -57,7 +57,7 @@ export class ContactdashboardComponent implements OnInit {
 
     if (token == null) {
       this.alert.error("Access denied! login required.", this.options);
-      this.navigate.navigate(['/']);
+      this.navigate.navigate(['/home']);
     }
   }
   getDetails() {
@@ -109,7 +109,7 @@ export class ContactdashboardComponent implements OnInit {
   }
 
   view(MessageId) {
-    this.navigate.navigate(['/message/' + MessageId]);
+    this.navigate.navigate(['/home/message/' + MessageId]);
   }
 
   applyFilter(filterValue: string) {

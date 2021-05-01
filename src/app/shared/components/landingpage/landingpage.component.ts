@@ -14,6 +14,6 @@ export class LandingpageComponent implements OnInit {
   }
   home()
   {
-    this.route.navigate(['/display/0/0']);
+    this.route.navigate(['/home/display/0/0']);
   }
 }

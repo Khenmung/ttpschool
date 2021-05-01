@@ -56,7 +56,7 @@ export class PhotosComponent implements OnInit {
 
     if (token == null) {
         this.alert.error("Access denied! login required.", options);
-        this.nav.navigate(['/']);
+        this.nav.navigate(['/home']);
     }
 }
   getPhotos() {
@@ -96,7 +96,7 @@ export class PhotosComponent implements OnInit {
   }
   display(albumId)
   {
-    this.nav.navigate(["/photos"],{queryParams:{"photoId":albumId}});
+    this.nav.navigate(["/home/photos"],{queryParams:{"photoId":albumId}});
   }
   Update(event,button, photoPath) {
     console.log('button._elementRef.nativeElement.id',button);
@@ -127,7 +127,7 @@ export class PhotosComponent implements OnInit {
       });
   }
   back(){
-    this.nav.navigate(["/managefile"]);    
+    this.nav.navigate(["/home/managefile"]);    
   }
 
 }

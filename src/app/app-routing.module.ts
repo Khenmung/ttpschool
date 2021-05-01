@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './shared/components/home/home.component';
+import { LandingpageComponent } from './shared/components/landingpage/landingpage.component';
 import { NotfoundComponent } from './shared/components/notfound/notfound.component';
 
 const routes: Routes = [
-  // {
-  //   path: '',component:HomeComponent
-  // },
   {
-    path: '',
+    path: '',component:LandingpageComponent
+  },
+  {
+    path: 'home',
     loadChildren: () => import('./modules/website.module').then(m => m.WebsiteModule)
   },
   {

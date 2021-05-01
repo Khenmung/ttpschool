@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MediaChange, MediaObserver } from '@angular/flex-layout'
 import { ChangeDetectorRef } from '@angular/core';
+import { NaomitsuService } from '../../databaseService';
+import { SharedataService } from '../../sharedata.service';
+import { List } from '../../interface';
 
 @Component({
   selector: 'app-home',
@@ -15,8 +18,12 @@ export class HomeComponent implements OnInit {
   contentcls: string;
   sidebarcls: string;
   openSideBar = true;
+  MenuData = [];
+  NewsNEventPageId = 0;
   constructor(private mediaObserver: MediaObserver,
-    private ref: ChangeDetectorRef) { }
+    private ref: ChangeDetectorRef,
+    private databaseservice: NaomitsuService,
+    private shareddata: SharedataService) { }
 
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
@@ -38,6 +45,7 @@ export class HomeComponent implements OnInit {
       this.ref.detectChanges();
       //console.log('contentcls', this.contentcls);
     })
+    //this.GetMenuData();
 
   }
   ngOnDestroy() {
@@ -45,7 +53,7 @@ export class HomeComponent implements OnInit {
   }
   DownFromMenu(value) {
     //console.log('from menu',value);
-    if (this.deviceXs)
+    //if (this.deviceXs)
       this.openSideBar = !this.openSideBar;
   }
   sideBarToggler() {
@@ -59,20 +67,6 @@ export class HomeComponent implements OnInit {
     else
       this.contentcls = "NotDeviceXs";
     this.ref.detectChanges();
-    //   if (this.openSideBar && !this.deviceXs) {
-    //     //this.sidebarcls = "OpenAndDeviceXs"
-    //     this.contentcls = "OpenAndDeviceXs";
-    //   }
-    //   else if (this.openSideBar && this.deviceXs)
-    //   {
-    //     this.sidebarcls = "sidebartop110width100"
-    //     this.contentcls = "top80";
-    //   }
-    //   else if (!this.openSideBar && !this.deviceXs)
-    //     this.contentcls = "top70";
-    //   else
-    //     this.contentcls = "top80";
-    // }
 
   }
 }

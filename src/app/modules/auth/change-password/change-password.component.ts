@@ -31,7 +31,7 @@ export class ChangePasswordComponent implements OnInit {
     });
   }
   gotohome() {
-    this.route.navigate(['/']);
+    this.route.navigate(['/home']);
   }
   onSubmit(): void {
     const { ConfirmPassword, OldPassword, NewPassword } = this.form;

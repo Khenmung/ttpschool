@@ -1,63 +1,143 @@
-html,
 body {
-    height: 100%;
+//    height: 100%;
+    padding: 0;
+    margin : 0;
 }
 
-.image-cropper {
-    //width: 800px;
-    height       : 450px;
-    position     : relative;
-    overflow     : hidden;
-    border-radius: 50%;
-}
+// .image-cropper {
+//     //width: 800px;
+//     height       : 450px;
+//     position     : relative;
+//     overflow     : hidden;
+//     border-radius: 50%;
+// }
 
-.header {
-    // background: url('../../../../assets/images/headerimg.svg');
-    // background-size: cover;
-    background-color: #00203FFF;
-    height          : 20%;
-    //border-color: honeydew;
-}
-
-img {
-    display: inline;
-    margin : 0 auto;
-    height : 100%;
-    width  : auto;
-
-    //   height: 420px;
-    //   width:100%;
-    //   object-fit: contain;
-    //   opacity: 1.1;
-}
+// .header {
+//     // background: url('../../../../assets/images/headerimg.svg');
+//     // background-size: cover;
+//     background-color: #00203FFF;
+//     height          : 20%;
+//     //border-color: honeydew;
+// }
 
 .content {
-    //background       : url('../../../../assets/images/homeimg.PNG');
- //   background-size  : contain;
- //   background-repeat: no-repeat;
-    background       : linear-gradient(150deg, #00203F 15%, #198CFF  70%, #006EDB 94%);
-    height           : 100%;
-    opacity          : 1.1;
-    border-radius: 1em;
-    z-index: 999;
-    //border:1px solid honeydew;
+    background     : linear-gradient(150deg, #00203F 15%, #198CFF 70%, #006EDB 94%);
+    height         : 100%;
+    width:60%;
+    opacity        : 1.1;
+    text-align: center;
+    //border-radius: 1em;
+    z-index        : 999;
+    border-collapse: collapse;
+    //padding   : 15% 0 10% 0;
+    //    border:1px solid black;
+}
+@media only screen and (max-width: 800px) {
+    .content{
+        width:100%;
+    } 
 }
 
-.footer {
-    // background: url('../../../../assets/images/footerimg.svg');
-    // background-size:cover ;
-    // background-repeat: no-repeat;
-    background-color: #00203F;
-    height          : 20%;
-    border-color    : honeydew;
+// .imgcls {
+//     //max-height: 400px;
+//     height                    : 100%;
+//     width                     : auto;
+//     box-shadow                : 3px 3px 3px #00203F;
+//     margin-bottom             : 0px;
+//     padding-bottom            : 0px;
+//     object-fit                : cover;
+//     // border-top-left-radius: 1em;
+//     // border-top-right-radius: 1em;
+
+// }
+
+:host{
+    width:100%;
+}
+.container {
+    float     : center;
+    //width     : 100%;
+    height: 100%;
+    background-color:#00203F ;
+    //background: #f4fbfe url("../../../../assets/images/lines.png") repeat;
 }
 
-.imgcls {
-    //max-height: 400px;
-    height    : auto;
-    width     : 100%;
-    box-shadow:3px 3px 3px #00203F;
-    border-top-left-radius: 1em;
-    border-top-right-radius: 1em;
+.center {
+    margin          : auto;
+    width           : 50%;
+    height          : 100vh !important;
+    background-color: #1d4a8c;
+    background-image: none;
+    outline         : 2px solid;
+    box-shadow      : 0px 0px 6px black inset;
+}
+
+// .content {
     
+
+//     //padding   : 15% 0 10% 0;
+// }
+
+// .logo {
+//     display: inline-block;
+//     //width:100px;
+// }
+
+.name {
+    font-family: Roboto, Arial;
+    font-size  : 1.5em;
+    font-weight: 400;
+    padding    : 0 0 0 0;
+    color      : #ffffff;
+}
+
+.enter {
+    font-family    : roboto, arial;
+    font-weight    : 400;
+    text-decoration: none;
+    text-align     : center;
+    color          : #ffffff;
+    padding        : 50px 0 25px 0;
+    position       : relative;
+}
+
+.school {
+    margin-top:100px;
+    position:absolute;
+    //width : 100%;
+    //margin-bottom: 0px;
+    clear : both;
+}
+
+// .school>img {
+//     width     : 50%;
+//     object-fit: contain;
+//     position  : absolute;
+//     bottom    : 0;
+// }
+
+.button {
+    border             : none;
+    border-radius      : 24px;
+    color              : white;
+    padding            : 6px 32px;
+    text-align         : center;
+    text-decoration    : none;
+    display            : inline-block;
+    font-size          : 16px;
+    font-weight        : bold;
+    margin             : 4px 2px;
+    transition-duration: 0.4s;
+    cursor             : pointer;
+}
+
+.buttonon {
+    background-color: #f44336;
+    color           : white;
+    border          : 2px solid #f44336;
+}
+
+.buttonon:hover {
+    background-color: white;
+    color           : #1d4a8c;
 }

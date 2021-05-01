@@ -13,6 +13,7 @@ import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.mod
 import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { LandingpageComponent } from '../shared/components/landingpage/landingpage.component';
+import { NestedmenuComponent } from './shared/components/nestedmenu/nestedmenu.component';
 
 const sharedComponent=[
   HomeComponent,
@@ -28,7 +29,8 @@ const sharedComponent=[
 
 @NgModule({
   declarations: [
-    sharedComponent
+    sharedComponent,
+    NestedmenuComponent
   ],
   imports: [
     CommonModule,

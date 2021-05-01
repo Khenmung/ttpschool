@@ -7,10 +7,9 @@
         <form [formGroup]="PageDetailForm">
             <div class="row">
                 <div class="column">
-                    <mat-form-field hintLabel="Max 25 characters" appearance="outline" fxFlex [style.width.px]="350">
+                    <mat-form-field appearance="outline" fxFlex [style.width.px]="350">
                         <mat-label>Enter Title</mat-label>
                         <input formControlName="PageTitle" autocomplete="Off" #input matInput maxlength="25">
-                        <mat-hint align="end">{{input.value?.length || 0}}/25</mat-hint>
                         <span class="text-danger" *ngIf="f.PageTitle.touched && f.PageTitle.hasError('required')">Title
                             is required.</span>
                     </mat-form-field>
@@ -36,6 +35,30 @@
                 <div class="column">
                     <button class="mat-raised-button" matTooltip="publish" type="button" (click)="onSubmit()" [disabled]="PageDetailForm.invalid">
                         <mat-icon aria-label="publish">publish</mat-icon></button>
+                </div>
+                
+                <div style="border-collapse: collapse;border: 1px solid lightgray;padding: 20px;" *ngIf="Id>0" fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-between center">
+                    <span>Photo</span>
+                    <span style="color:red;" *ngIf="message">{{message}}</span>
+                    <input #inputfile [hidden]="true" type="file" accept='image/*'
+                        (change)="preview(inputfile.files)" />
+                    <img [src]="imgURL" height="200" *ngIf="imgURL">
+                    <span *ngIf="!Edit">
+                        <button class="mat-raised-button" matTooltip="update photo" color="primary"
+                            (click)="edit()">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </span>
+                    <span *ngIf="Edit" fxLayout="row" fxLayoutAlign="center center">
+                        <button class="mat-raised-button" matTooltip="select file" color="primary"
+                            (click)="inputfile.click()">
+                            <mat-icon aria-label="photo">photo</mat-icon>
+                        </button>&nbsp;&nbsp;
+                        <button type="submit" (click)="uploadFile()" matTooltip="upload file"
+                            class="mat-raised-button">
+                            <mat-icon aria-label="file_upload">file_upload</mat-icon>
+                        </button>&nbsp;&nbsp;
+                    </span>
                 </div>           
             </div>
             <br />

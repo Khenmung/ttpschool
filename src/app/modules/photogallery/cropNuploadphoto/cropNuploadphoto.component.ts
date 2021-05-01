@@ -62,7 +62,7 @@ export class cropNUploadphotoComponent implements OnInit {
 
         if (token == null) {
             this.alertMessage.error("Access denied! login required.", options);
-            this.route.navigate(['/']);
+            this.route.navigate(['/home']);
         }
     }
     fileName: string;
@@ -140,7 +140,7 @@ export class cropNUploadphotoComponent implements OnInit {
         //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
         this.uploadService.postFile(this.formData).subscribe(res => {
             this.alertMessage.success("Files Uploaded successfully.", options);
-            this.route.navigate(["/managefile"]);
+            this.route.navigate(["/home/managefile"]);
         });
     }
    
