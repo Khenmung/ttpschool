@@ -26,6 +26,7 @@ export class AddstudentclassComponent implements OnInit {
   StudentId = 0;
   StudentClassId = 0;
   BatchId=0;
+  SelectedBatchId=0;
   invalidId = false;
   //BatchId = 0;
   allMasterData = [];
@@ -98,6 +99,8 @@ export class AddstudentclassComponent implements OnInit {
     this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
     this.shareddata.CurrentBatchId.subscribe(bid => (this.BatchId = bid));
     this.shareddata.CurrentStudentName.subscribe(name=>(this.StudentName=name));
+    this.shareddata.CurrentSelectedBatchId.subscribe(Id=>(this.SelectedBatchId=Id));
+
     this.GetStudentClass();
   }
   get f() { return this.studentclassForm.controls }
@@ -263,7 +266,7 @@ export class AddstudentclassComponent implements OnInit {
     }
     else {
       this.studentclassData.Active = 1;
-      this.studentclassData.Batch = this.BatchId;
+      this.studentclassData.Batch = this.SelectedBatchId==0?this.BatchId:this.SelectedBatchId;
 
       this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
       this.studentclassData.RollNo = this.studentclassForm.value.RollNo;

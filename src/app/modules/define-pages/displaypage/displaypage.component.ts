@@ -5,6 +5,8 @@ import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService'
 
 //@Pipe({ name: 'safeHtml' })
@@ -15,14 +17,15 @@ import { NaomitsuService } from '../../../shared/databaseService'
   styleUrls: ['./displaypage.component.scss']
 })
 export class DisplaypageComponent implements OnInit {
-  images = ["assets/images/notebook.jpg",
-    "assets/images/schoolbuilding2018.jfif",
-    "assets/images/karatedance.png",
-    "assets/images/sportteam.jpg",
-    "assets/images/aothtaking.jpg",
-    "assets/images/safetycampaign.JPG",
-    "assets/images/childrendance.jpg"
-  ];
+  images = [];
+  //   "assets/images/notebook.jpg",
+  //   "assets/images/schoolbuilding2018.jfif",
+  //   //"assets/images/karatedance.png",
+  //   //"assets/images/sportteam.jpg",
+  //   "assets/images/aothtaking.jpg",
+  //   //"assets/images/safetycampaign.JPG",
+  //   "assets/images/childrendance.jpg"
+  // ];
   Name = {};
   ImgUrl = '';
   loading: boolean = false;
@@ -36,11 +39,14 @@ export class DisplaypageComponent implements OnInit {
   ParentPage = "";
   Title: string = "";
   PageBody: string = '';
+  ParentLink = '';
   constructor(
     private naomitsuService: NaomitsuService,
     private ar: ActivatedRoute,
     private route: Router,
-    private cdref: ChangeDetectorRef
+    private shareddata: SharedataService,
+    private dataStorage: TokenStorageService
+    //private cdref: ChangeDetectorRef
     //private sanitized: DomSanitizer
   ) {
 
@@ -54,31 +60,27 @@ export class DisplaypageComponent implements OnInit {
       this.GroupId = +params.get("GroupId");
 
     });
-    this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
-    // this.ar.data.subscribe(data=>{
-    //   this.Name = data;
-    // })
-    //console.log('name',this.Name);
-    // this.images=["assets/images/notebook.jpg",
-    //         "assets/images/schoolbuilding2018.jfif",
-    //         "assets/images/25years.png"
-    //       ];
-    //      this.imgRand();
+
+    //if (this.images.length == 0)
+    //  this.getRandomDisplayPhotoes();
+
     this.ar.paramMap.subscribe(params => {
       this.pId = +params.get("pid");
-      this.GetLatestPage(params.get('phid'));
+      this.shareddata.CurrentReasonForLeaving.subscribe(r => {
+        this.images = r;
+        if (this.images.length == 0)
+          this.getRandomDisplayPhotoes(params.get('phid'));
+        else
+          this.GetLatestPage(params.get('phid'));
+      })
     })
-  }
-  ngAfterContentChecked() {
-    //this.imgRand();
-    //this.cdref.detectChanges();
-    //this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
+
 
   }
-  imgRand() {
-    this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
-    //return img;
+  ngAfterContentChecked() {
+
   }
+
   back() {
     if (this.GroupId == 0)
       this.route.navigate(['/home']);
@@ -114,19 +116,66 @@ export class DisplaypageComponent implements OnInit {
             ///home/display/44/87
             IdtoDisplay = +pagetodisplay[0].link.split('/')[3];
           }
-          if (pagetodisplay[0].PhotoPath == "" || pagetodisplay[0].PhotoPath == null)
-            this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
-          else
-            this.ImgUrl = globalconstants.apiUrl + "/Image/PagePhoto/" + pagetodisplay[0].PhotoPath;
+          // this.images = JSON.parse(this.dataStorage.getImages());
+          // if (this.images.length == 0) {
+          //   this.getRandomDisplayPhotoes(pagetodisplay[0].PhotoPath);
+          // }
+          // else {
+          this.AssignImageUrl(pagetodisplay[0].PhotoPath);
+          //}
+          this.getParentPageLink(pagetodisplay[0].ParentId);
+
           //console.log('imgurl',this.ImgUrl);
 
-            this.PageBody = pagetodisplay[0].PageHistories.filter(h => h.PageHistoryId == IdtoDisplay)[0].PageBody;
-          this.ParentPage = pagetodisplay[0].FullPath;
+          this.PageBody = pagetodisplay[0].PageHistories.filter(h => h.PageHistoryId == IdtoDisplay)[0].PageBody;
+          //this.ParentPage = pagetodisplay[0].PageTitle;
           this.Title = pagetodisplay[0].PageTitle;
           this.loading = false;
         }
       })
 
+  }
+  AssignImageUrl(photoPath) {
+    if (photoPath == "" || photoPath == null)
+      this.ImgUrl = this.images[Math.floor(Math.random() * this.images.length)];
+    else
+      this.ImgUrl = globalconstants.apiUrl + "/Image/PagePhoto/" + photoPath;
+  }
+  getParentPageLink(ParentId) {
+    let Parent;
+    this.ParentPage = '';
+    this.shareddata.CurrentPagesData.subscribe(p => {
+      Parent = p.filter(item => item.PageId == ParentId);
+      if (Parent.length > 0) {
+        this.ParentLink = Parent[0].link;
+        this.ParentPage = Parent[0].label;
+      }
+    })
+
+  }
+  getRandomDisplayPhotoes(PhId) {
+    let list: List = new List();
+    list.fields = ["FileId", "FileName", "ParentId"];
+    list.PageName = "FilesNPhotoes";
+    list.filter = ['Active eq 1 and FileOrPhoto eq 0'];//  eq ' + this.searchForm.get("FilesNPhoto").value];
+    this.naomitsuService.get(list)
+      .subscribe((data: any) => {
+        //this.images =
+        let RandomImagesParentId = data.value.filter(image => {
+          return image.FileName.toLowerCase() == "random images"
+        });
+        if (RandomImagesParentId.length > 0) {
+          this.images = data.value.filter(rimg => rimg.ParentId == RandomImagesParentId[0].FileId)
+            .map(element => {
+              return globalconstants.apiUrl + "/Image/random images/" + element.FileName
+
+            });
+          this.shareddata.ChangeRandomImages(this.images);
+          this.GetLatestPage(PhId);
+          //this.dataStorage.saveRandomImages(this.images);
+          //this.AssignImageUrl(photoPath);
+        }
+      })
   }
   getPageFromHistory(IdtoDisplay) {
     let list: List = new List();

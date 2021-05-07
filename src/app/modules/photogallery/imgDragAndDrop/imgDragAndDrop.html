@@ -13,10 +13,10 @@
             </div>
             <br>
             <div fxLayout="row wrap" fxLayoutAlign="space-between center">
-                <mat-form-field hintLabel="Max 100 characters" appearance="outline">
+                <mat-form-field appearance="outline">
                     <mat-label>Enter album</mat-label>
                     <input formControlName="UpdatedFileFolderName" #album matInput maxlength="100" autocomplete="off">
-                    <mat-hint align="end">{{album.value?.length || 0}}/100</mat-hint>
+                    <!-- <mat-hint align="end">{{album.value?.length || 0}}/100</mat-hint> -->
                 </mat-form-field>       
                 <span style="margin: 5px;">or</span>         
                 <mat-form-field appearance="outline">

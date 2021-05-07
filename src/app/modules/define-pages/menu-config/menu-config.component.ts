@@ -8,6 +8,8 @@ import { IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { SelectionModel } from '@angular/cdk/collections';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { AlertService } from 'src/app/shared/components/alert/alert.service';
 
 @Component({
   selector: 'app-menu-config',
@@ -37,10 +39,23 @@ export class MenuConfigComponent implements OnInit {
   selection = new SelectionModel<IPage>(true, []);
 
   ngOnInit() {
+    this.checklogin();
     this.route.paramMap.subscribe(params => {
       this.Id = +params.get("parentid");
     })
     this.GetParentPage(this.Id);
+  }
+  checklogin() {
+    let options = {
+      autoClose: true,
+      keepAfterRouteChange: true
+    };
+    let token = this.tokenStorage.getToken();
+
+    if (token == null) {
+      this.alert.error("Access denied! login required.", options);
+      this.navigate.navigate(['/home']);
+    }
   }
   getDetails(parentId) {
 
@@ -92,7 +107,9 @@ export class MenuConfigComponent implements OnInit {
   constructor(private naomitsuService: NaomitsuService,
     private navigate: Router,
     private route: ActivatedRoute,
-    private shareddata: SharedataService) {
+    private shareddata: SharedataService,
+    private tokenStorage:TokenStorageService,
+    private alert:AlertService) {
     this.list = new List();
   }
 

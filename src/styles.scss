@@ -3,7 +3,7 @@
 @import '~bootstrap/dist/css/bootstrap.min.css'; 
 
 mat-card{
-    margin:12px;
+    margin:5px;
     min-height: 100vh;
   
 }
@@ -14,7 +14,7 @@ mat-card{
     }
   
   }
-
+  
 .mat-icon {
     vertical-align: middle;
  }
@@ -91,5 +91,6 @@ input[type="radio"]{
 .mat-form-field-infix{
     padding-bottom:1em !important;
 }
+
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';

@@ -1,6 +1,14 @@
 <mat-card class="contentbody">
     <mat-card-title><span style="padding: 20px;">{{Title|titlecase}}</span></mat-card-title>
-    <mat-card-subtitle *ngIf="ParentPage.length>0"><span style="padding: 20px;">{{ParentPage}}</span></mat-card-subtitle>
+    <mat-card-subtitle *ngIf="ParentPage.length>0">
+        <span *ngIf="ParentLink!=null" style="padding: 20px;color:#007bff">
+        <a style="text-decoration: none;" [routerLink]="[ParentLink]">{{ParentPage}}</a>>{{Title}}
+          
+    </span>
+    <span *ngIf="ParentLink==null" style="padding: 20px;color:#007bff">
+        <span *ngIf="ParentLink==null">{{ParentPage }}>{{ Title}}</span>
+    </span>
+    </mat-card-subtitle>
     <mat-card-content>
         <!-- <mat-progress-spinner *ngIf="loading" class="example-margin" [color]="color" [mode]="mode" [value]="value">
         </mat-progress-spinner> -->

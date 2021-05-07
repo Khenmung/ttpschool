@@ -15,10 +15,9 @@ input:hover{
      //width: 80px;
      margin-top: 5px;
  }
- mat-card {
-    overflow: auto;
-    //background-color: #3171a5;
-  //  margin-left: -2px;
-    //padding: 20px;
-
-  }
+ mat-card{
+   // width: 100%;
+    background-color: rgb(255,255,255,.9);
+    margin-top: 10px;
+    
+}

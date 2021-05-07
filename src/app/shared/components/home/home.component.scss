@@ -23,6 +23,8 @@
 
     mat-drawer-container {
         background-color:#00203F;//#0e4a8b;// #0F5298;
+        overflow: auto;
+        display: inline-block;
         //opacity: .5;
         //background:url('/assets/images/schoolbuilding2018.jfif') no-repeat 0 0 transparent;
     }
@@ -34,12 +36,21 @@
     //     border-radius: 5px;
     // }
     .DeviceXs {
-        margin-top: 60px !important;
-        margin:2px;
+        //position:absolute;
+        //position: absolute;
+        top: 235px !important;
+        //margin:2px;
+        
+        // float:right;
+        // display:flex;
     }
 
     .OpenAndDeviceXs {
-        margin-top: 55px !important;
+
+        //position: absolute;
+        top: 235px !important;        
+        
+        //transform: translate(-50%, -50%);
     }
 
     .NotDeviceXs {

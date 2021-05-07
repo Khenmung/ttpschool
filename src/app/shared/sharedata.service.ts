@@ -33,7 +33,11 @@ export class SharedataService {
   private PagesDataSource = new BehaviorSubject(this.items);
   private NewsNEventIdSource = new BehaviorSubject(0);
   private ReasonForLeavingSource = new BehaviorSubject(this.items);
+  private SelectedBatchIdSource = new BehaviorSubject(0);
+  private RandomImagesSource = new BehaviorSubject(this.items);
 
+  CurrentRandomImages = this.RandomImagesSource.asObservable();
+  CurrentSelectedBatchId = this.SelectedBatchIdSource.asObservable();
   CurrentReasonForLeaving = this.ReasonForLeavingSource.asObservable();
 
   CurrentNewsNEventId = this.NewsNEventIdSource.asObservable();
@@ -64,6 +68,12 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangeRandomImages(item){
+    this.RandomImagesSource.next(item);
+  }
+  ChangeSelectedBatchId(item){
+    this.SelectedBatchIdSource.next(item);
   }
   ChangeReasonForLeaving(item){
     this.ReasonForLeavingSource.next(item);

@@ -1,58 +1,75 @@
-.logo1{
-    padding: 0px 5px;
-    font-size: 26px;
+.logo1 {
+    padding    : 0px 5px;
+    font-size  : 26px;
     line-height: 18px;
 }
+
 .width81 {
-    position: fixed;
-    z-index: 10;
+    position        : fixed;
+    z-index         : 10;
     color           : white;
-    background-color:#0F5298;// #20639b; //#4f8ec2;//
-    box-shadow: -5px 5px 5px lightgray;
-    top:0px;
+    background-color: #0F5298; // #20639b; //#4f8ec2;//
+    box-shadow      : -5px 5px 5px lightgray;
+    top             : 0px;
     //max-width: 81%;
     //border-radius: 0em 1em 0em 0em;
 }
 
 .width100 {
-    position: fixed;
-    z-index: 10;
-    color           : white;
-    background: url('../../../../assets/images/headerimg.svg');
-    background-size: cover;
+    position           : fixed;
+    z-index            : 10;
+    color              : white;
+    background         : url('../../../../assets/images/headerimg.svg');
+    background-size    : cover;
     //background-repeat: no-repeat;
     //background-size: cover;
-    background-color:#1E4A75;//#0F5298; //#4f8ec2;//
+    background-color   : #1E4A75; //#0F5298; //#4f8ec2;//
     //box-shadow: 5px 5px #00203FFF;
-    top:0px;
+    top                : 0px;
     //height:300px;
-    max-width: 100%;
+    max-width          : 100%;
 }
+
 // @media only screen and (max-width: 600px) {
 //     mat-card{
 //         margin-left:0px;
 //         margin-right: 0px;
 //     }
-  
+
 //   }
 
 
 
-.rightside{
-    background-color:black;// rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
-    padding:5px;
-    color:white;
+.rightside {
+    background-color: black; // rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
+    padding         : 5px;
+    color           : white;
     //opacity: 1.5;
-    clip-path: polygon(0 30%, 99% 1%, 100% 90%, 0% 100%);
-    }
+    clip-path       : polygon(0 30%, 99% 1%, 100% 90%, 0% 100%);
+}
+
 button {
     border : none;
     outline: none;
 }
-.mat-toolbar-row{
-    height: 150px !important;
-    padding:0px;
+
+@media only screen and (max-width: 600px) {
+    .mat-toolbar-row {
+        height: 170px !important;
+
+        //padding:20px;
+    }
+
 }
-.ng-star-inserted{
+
+@media only screen and (min-width: 601px) {
+    .mat-toolbar-row {
+        height: 150px !important;
+
+        //padding:20px;
+    }
+}
+
+.ng-star-inserted {
     height: 55px !important;
 }

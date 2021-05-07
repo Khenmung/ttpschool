@@ -2,9 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../databaseService';
-//import { globalconstants } from '../../globalconstant';
 import { SharedataService } from '../../sharedata.service'
-import { List } from '../../interface';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -64,15 +62,7 @@ export class HeaderComponent implements OnInit {
     this.route.navigate(["/home/"]);
   }
   newsNEvents() {
-    // let list: List = new List();
-    // list.fields = ["PageId"];
-    // list.PageName = "Pages";
-    // list.filter = ["Active eq 1 and label eq 'News N Events'"];
-
-    // this.naomitsuService.get(list)
-    //   .subscribe((data: any) => {
     this.route.navigate(['/home/about/' + this.NewsNEventPageId]);
-    // });
   }
 
 }

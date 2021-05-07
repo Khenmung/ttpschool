@@ -138,6 +138,7 @@ export class DashboardstudentComponent implements OnInit {
           this.BatchId = currentBatchObj[0].MasterDataId
           this.searchForm.patchValue({ BatchId: this.BatchId });
           this.shareddata.ChangeBatchId(this.BatchId);
+          //console.log('batchid from service',this.BatchId)
         }
 
         this.getSelectedBatchStudentIDRollNo();
@@ -159,6 +160,10 @@ export class DashboardstudentComponent implements OnInit {
   }
   class(id) {
     this.route.navigate(['/admin/addstudentcls/' + id]);
+  }
+  UpdateSelectedBatchId(event){
+    this.shareddata.ChangeSelectedBatchId(event);
+    //this.shareddata.CurrentSelectedBatchId.subscribe(s=>console.log("selected batchid",s));
   }
   view(element) {
     debugger;
@@ -239,7 +244,7 @@ export class DashboardstudentComponent implements OnInit {
         if (data.value.length > 0) {
           this.ELEMENT_DATA = data.value.filter(sc => {
            let reason= this.ReasonForLeaving.filter(r=>r.MasterDataId == sc.ReasonForLeavingId)
-            sc.StudentClasses = sc.StudentClasses.filter(c => c.Batch == this.BatchId)
+            sc.StudentClasses = sc.StudentClasses.filter(c => c.Batch == this.searchForm.get('BatchId').value)
             sc.ReasonForLeaving = reason.length>0?reason[0].MasterDataName:'';
             return sc;
           })

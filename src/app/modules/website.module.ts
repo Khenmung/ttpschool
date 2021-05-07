@@ -25,6 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MaterialModule } from '../shared/material/material.module';
 import { SharedhomepageModule } from './sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { AlbumsModule } from './photogallery/albums/albums.module';
 
 @NgModule({
   declarations: [WebsiteComponents],
@@ -56,8 +57,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     WebsiteRoutingModule,
     //ClipboardModule  
     MaterialModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    AlbumsModule
     //SharedhomepageModule
+    
+  
   ],
   exports:[WebsiteComponents,FlexLayoutModule]
 })

@@ -48,3 +48,7 @@ div[dir=ltr] .icon-container {
   margin-left: 80px;
   
 }
+::ng-deep .side-nav-menu .mat-list-item:hover {
+  /*color: dodgerblue;*/
+  background: dodgerblue !important;
+}

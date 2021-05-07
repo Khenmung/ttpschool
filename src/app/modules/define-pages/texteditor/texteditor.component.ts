@@ -375,7 +375,7 @@ export class TextEditorComponent implements OnInit {
   }
   GetParentPage() {
     let list: List = new List();
-    list.fields = ["PageId", "PageTitle", "ParentId", "FullPath"];
+    list.fields = ["PageId", "PageTitle", "ParentId","link", "FullPath"];
     list.PageName = "Pages";
     list.filter = ["Active eq 1"];
     list.orderBy = "ParentId";

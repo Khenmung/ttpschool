@@ -21,9 +21,10 @@ export class HomeComponent implements OnInit {
   MenuData = [];
   NewsNEventPageId = 0;
   constructor(private mediaObserver: MediaObserver,
-    private ref: ChangeDetectorRef,
-    private databaseservice: NaomitsuService,
-    private shareddata: SharedataService) { }
+    // private ref: ChangeDetectorRef,
+    // private databaseservice: NaomitsuService,
+    // private shareddata: SharedataService
+    ) { }
 
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
@@ -42,7 +43,7 @@ export class HomeComponent implements OnInit {
         this.contentcls = "NotDeviceXs";
         //this.sidebarcls = "sidebartop65width100";
       }
-      this.ref.detectChanges();
+      //this.ref.detectChanges();
       //console.log('contentcls', this.contentcls);
     })
     //this.GetMenuData();
@@ -53,7 +54,7 @@ export class HomeComponent implements OnInit {
   }
   DownFromMenu(value) {
     //console.log('from menu',value);
-    //if (this.deviceXs)
+    if (this.deviceXs)
       this.openSideBar = !this.openSideBar;
   }
   sideBarToggler() {
@@ -66,7 +67,7 @@ export class HomeComponent implements OnInit {
       this.contentcls = 'OpenAndDeviceXs';
     else
       this.contentcls = "NotDeviceXs";
-    this.ref.detectChanges();
+    //this.ref.detectChanges();
 
   }
 }

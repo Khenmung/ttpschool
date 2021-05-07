@@ -8,11 +8,9 @@ import { AlertComponent } from '../shared/components/alert/alert.component';
 import { MaterialModule } from '../shared/material/material.module';
 import { RouterModule } from '@angular/router';
 import { RightComponent } from '../shared/components/right/right.component';
-import { MultiLevelMenuComponent } from './dynamicMultiLevelMenu/MultiLevelMenu.component';
 import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { LandingpageComponent } from '../shared/components/landingpage/landingpage.component';
 import { NestedmenuComponent } from './shared/components/nestedmenu/nestedmenu.component';
 
 const sharedComponent=[
@@ -23,7 +21,7 @@ const sharedComponent=[
     AlertComponent,
     RightComponent,
     NewsdashboardComponent,
-    LandingpageComponent
+    //LandingpageComponent
     //MultiLevelMenuComponent
 ]
 

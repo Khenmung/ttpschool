@@ -1,14 +1,21 @@
-:host{
+:host {
   border-radius: 1em;
   //padding: 15px;
-  width: 100%;
+  width        : 100%;
 }
-mat-card{
+
+mat-card {
   background-color: #1E4A75;
-  border-radius: 1em;
-  margin-top: 10px;
+  //border-color: gainsboro;
+  border-radius   : 1em;
+  margin-top      : 10px;
   //padding-top: 20px;
 }
+
+.mat-card-subtitle {
+  margin-bottom: 4px;
+}
+
 .mat-badge-content {
   width      : 30px;
   height     : 30px;
@@ -23,12 +30,31 @@ button {
   margin-right: 15px;
 }
 
-.subtitle{
-  //color:gray;
-  //margin-bottom: 5px;
-  // margin-top: 5px;
-  // margin-bottom: 5px;
+.subtitle {
   padding: 3px;
+}
+.mat-card-title{
+  margin-bottom: 2px;
+}
+div.ng-star-inserted{
+  height: 60px;
+}
+.title {
+  border-top-left-radius   : 5px;
+  border-top-right-radius   : 5px;
+  padding         : 5px;
+  background-color: rgb(255, 255, 255, 20%);
+  margin-top      : 10px;
+  font-size       : large;
+  display         : grid;
+  place-items     : center;
+  color           :orange;
+}
+
+.contentbox {
+  border         : thin solid rgb(255, 255, 255, 20%);
+  border-collapse: collapse;
+  padding        : 10px;
 }
 
 th.mat-header-cell,
@@ -44,12 +70,4 @@ a:hover {
 
 .container {
   display: flex;
-}
-
-.child1 {
-  color: white;
-}
-
-.child2 {
-  flex: 2;
 }

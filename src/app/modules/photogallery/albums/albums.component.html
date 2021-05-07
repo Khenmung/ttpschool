@@ -16,51 +16,79 @@
             </div>
         </form>
         <div>
-            <mat-divider></mat-divider>
-            <div fxLayout="row" *ngIf="Albums!=null" style="padding: 0px 10px 0px 10px;" fxLayoutAlign="space-between center">
-                <div fxFlex="26">
-                    Folder
-                </div>
-                <div fxFlex>
-                    Upload Date
-                </div>
-                <div fxFlex>
-                    <button mat-button matTooltip="1 level up" (click)="getFiles(null,'up')">
-                        <mat-icon>undo</mat-icon>
-                    </button>
-                </div>
-            </div>
-            <mat-divider></mat-divider>
             <div fxLayout="row">
-                    <span *ngIf="error.length>0"> {{error}}</span>
-                    <span *ngIf="Albums.length>0">{{folderHierarachy|slice:6}}</span>
+                <span *ngIf="error.length>0"> {{error}}</span>
+                <span *ngIf="Albums.length>0">{{folderHierarachy|slice:6}}</span>
             </div>
-            <div class="item" fxLayout="row" fxLayoutAlign="space-between center" *ngFor="let album of Albums;">
+            <mat-table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="PageId" hidden="true">
+                    <mat-header-cell *matHeaderCellDef hidden="true"> No. </mat-header-cell>
+                    <mat-cell *matCellDef="let element" hidden="true">
+                        <mat-icon *ngIf="element.FileOrFolder==0">file_present</mat-icon>
+                        <mat-icon *ngIf="element.FileOrFolder==1">folder_open</mat-icon>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="UpdatedFileFolderName">
+                    <mat-header-cell *matHeaderCellDef> Folder/File </mat-header-cell>
+                    <mat-cell mat-cell *matCellDef="let element">
+                        <album-edit-input [data]="element.UpdatedFileFolderName" (tried)="getoldvalue($event)"
+                            (focusOut)='updateAlbum($event)'></album-edit-input>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="UploadDate">
+                    <mat-header-cell *matHeaderCellDef> Upload Date </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.UploadDate|date:'dd/MM/yyyy'}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Copy">
+                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button [cdkCopyToClipboard]="element.FilePath" (click)="message()" mat-icon-button
+                            matTooltip="copy link">
+                            <mat-icon>content_copy</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="View">
+                    <mat-header-cell *matHeaderCellDef> <button mat-button matTooltip="1 level up"
+                            (click)="getFiles(null,'up')">
+                            <mat-icon>undo</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button [id]="element.FileId" mat-icon-button color="" [name]="element.UpdatedFileFolderName"
+                            matTooltip="delete" #button (click)="updateActive(button,element)">
+                            <mat-icon aria-label="delete">delete</mat-icon>
+                        </button>&nbsp;
+                        <button [id]="element.FileId" mat-icon-button color="" [name]="element.UpdatedFileFolderName"
+                            matTooltip="view" #view (click)="getFiles(element,'open')">
+                            <mat-icon aria-label="photo">pageview</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;">
+                </mat-row>
+            </mat-table>
+
+            <!-- <div class="item" fxLayout="row" fxLayoutAlign="space-between center" *ngFor="let album of Albums;">
                 <div>
                     <mat-icon *ngIf="album.FileOrFolder==0">file_present</mat-icon>
                     <mat-icon *ngIf="album.FileOrFolder==1">folder_open</mat-icon>
                 </div>
                 <div fxFlex="26">
-                    <album-edit-input [data]="album.UpdatedFileFolderName" (tried)="getoldvalue($event)"
-                        (focusOut)='updateAlbum($event)'></album-edit-input>
+
                 </div>
                 <div fxFlex="10">{{album.UploadDate|date:'dd/MM/yyyy'}}</div>
                 <div fxFlex="5" *ngIf="album.FilePath.length>0">
-                    <button [cdkCopyToClipboard]="album.FilePath" (click)="message()" mat-icon-button matTooltip="copy link">
+                    <button [cdkCopyToClipboard]="album.FilePath" (click)="message()" mat-icon-button
+                        matTooltip="copy link">
                         <mat-icon>content_copy</mat-icon>
-                    </button>                    
-                </div>
-                <div fxFlex>
-                    <button [id]="album.FileId" mat-icon-button color="" [name]="album.UpdatedFileFolderName"
-                        matTooltip="delete" #button (click)="updateActive(button,album)">
-                        <mat-icon aria-label="delete">delete</mat-icon>
-                    </button>&nbsp;
-                    <button [id]="album.FileId" mat-icon-button color="" [name]="album.UpdatedFileFolderName"
-                        matTooltip="view" #view (click)="getFiles(album,'open')">
-                        <mat-icon aria-label="photo">pageview</mat-icon>
                     </button>
                 </div>
-            </div>
+                <div fxFlex>
+
+                </div>
+            </div> -->
 
             <!-- </div>
             <div style="font-size:xx-large;">...</div> -->

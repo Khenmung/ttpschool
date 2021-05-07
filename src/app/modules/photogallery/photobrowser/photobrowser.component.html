@@ -1,9 +1,7 @@
-<mat-card class="mainContainer">
+<mat-card>
   <mat-card-title style="color:blanchedalmond;">Photo Gallery</mat-card-title>
   <mat-card-content>
-    <!-- <form [formGroup]="searchForm"> -->
     <mat-spinner *ngIf="loading"></mat-spinner>
-    <!-- <div style="width: 100%;" fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="100px"> -->
     <mat-form-field appearance="outline">
       <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Search album" autocomplete="off">
     </mat-form-field>
@@ -12,21 +10,13 @@
       
       <div class="whole" fxLayout="column" *ngFor="let album of Albums" (click)="view(album.FileId)">
         <div fxLayout="row" fxLayoutAlign="center">
-          <div [ngClass]="{'dynamicimgborder': album.photos.length==1}" *ngFor="let photo of album.photos;let i=index;">
-            <img [src]="photo.PhotoPath" *ngIf="i<2" [ngStyle]="{'width': photo.Width,'max-height': photo.Height}">
-            <!-- </div>
-          <div *ngIf="i>1">
-            <img [src]="photo.PhotoPath" *ngIf="i>1" [ngStyle]="{'width': photo.Width,'max-height': photo.Height}"> -->
-            <!-- </div> -->
+          <div class="dynamicimgborder" *ngFor="let photo of album.photos;let i=index;">
+            <img [src]="photo.PhotoPath" [ngStyle]="{'width': photo.Width,'max-height': photo.Height}">
           </div>
-          <div [ngClass]="{'dynamicimgborder': album.photos.length==1}" fxLayout="row wrap" fxLayoutAlign="center"
+          <!-- <div class="dynamicimgborder" fxLayout="row wrap" fxLayoutAlign="center"
             *ngFor="let photo of album.photos;let i=index;">
             <img [src]="photo.PhotoPath" *ngIf="i>1" [ngStyle]="{'width': photo.Width,'max-height': photo.Height}">
-            <!-- </div>
-          <div *ngIf="i>1">
-            <img [src]="photo.PhotoPath" *ngIf="i>1" [ngStyle]="{'width': photo.Width,'max-height': photo.Height}"> -->
-            <!-- </div> -->
-          </div>
+          </div> -->
         </div>
         <div fxLayout="row" fxLayoutAlign="center center">
           <span style="color:white;padding:5px"> {{album.UpdatedFileFolderName|slice:0:30}}</span><span
@@ -34,31 +24,6 @@
         </div>
       </div>
     </div>
-
-
-    <!-- <div fxLayout="row wrap" fxLayoutAlign="space-between start" fxLayoutGap="32px">
-      <div *ngFor="let album of Albums" (click)="view(album.FileId)">
-        <mat-grid-list cols="2" rowHeight="150px" *ngFor="let photo of album.photos;let i=index;">
-          <mat-grid-tile colspan="1" rowspan="1">
-            <img [src]="photo.PhotoPath" width="100px" height="100px">
-          </mat-grid-tile>
-        </mat-grid-list>
-      </div>
-    </div> -->
-    <!-- </div> -->
-    <!-- 
-    <div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayoutGap="100px">
-      <div (click)="view(album.FileId)" *ngFor="let album of Albums">
-        <mat-grid-list [cols]="2">
-          <mat-grid-tile [colspan]="photo.Cols" [rowspan]="photo.Rows" *ngFor="let photo of album.photos;let i=index;">
-            <img [src]="photo.PhotoPath" *ngIf="i<6">
-          </mat-grid-tile>
-        </mat-grid-list>
-     
-        {{album.UpdatedFileFolderName|slice:0:30}}<span *ngIf="album.UpdatedFileFolderName.length>30">...</span>
-      </div>
-    </div> -->
-
   </mat-card-content>
 </mat-card>
 <!-- <div *ngFor="let photo of album.photos" style="border: 0px; padding: 0px;">

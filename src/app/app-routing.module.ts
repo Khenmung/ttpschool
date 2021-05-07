@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './shared/components/home/home.component';
-import { LandingpageComponent } from './shared/components/landingpage/landingpage.component';
 import { NotfoundComponent } from './shared/components/notfound/notfound.component';
 
 const routes: Routes = [
   {
-    path: '',component:LandingpageComponent
+    path: '',
+    loadChildren:()=>import('./shared/components/landingpage/landingpage.module').then(c=>c.LandingpageModule)
   },
   {
     path: 'home',

@@ -5,7 +5,8 @@
         <form [formGroup]="searchForm" fxLayout="row wrap" fxLayoutAlign="center center">
             <mat-form-field fxFlex appearance="outline">
                 <mat-label>Batch</mat-label>
-                <mat-select formControlName="BatchId">
+                <mat-select formControlName="BatchId" #BatchId (selectionChange)="UpdateSelectedBatchId($event.value)">
+                    <mat-option value="0">--select--</mat-option>
                     <mat-option *ngFor="let master of Batches" [value]="master.MasterDataId">
                         {{master.MasterDataName}}
                     </mat-option>

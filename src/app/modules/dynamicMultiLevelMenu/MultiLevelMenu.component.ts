@@ -1,3 +1,4 @@
+import { R3TargetBinder } from '@angular/compiler';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -79,10 +80,10 @@ export class MultiLevelMenuComponent implements OnInit {
       interfaceWithRoute: false,
       //classname: 'my-custom-class',
       //listBackgroundColor: `rgb(208, 241, 239)`,
-      fontColor: `#fafafa`,
+      fontColor:'rgb(255,255,255,.6)',
 
       //backgroundColor: '#',//`rgb(208, 241, 239)`,
-      selectedListFontColor: `orange`,//`rgb(197, 101, 76)`,
+      selectedListFontColor: `white`,//`rgb(197, 101, 76)`,
       selectedListFontStyle: 'bold',
       highlightOnSelect: true,
       collapseOnSelect: true,
@@ -146,36 +147,7 @@ export class MultiLevelMenuComponent implements OnInit {
   }
 
   async buildMenu() {
-    // debugger;
-    // let containAdmin = window.location.href.toLowerCase().indexOf('admin');
-    // let strFilter = '';
-
-    // if (containAdmin > -1)
-    //   strFilter = "Active eq 1 and Module eq 2";
-    // else
-    //   strFilter = "Active eq 1 and Module eq 1"
-
-    // let list: List = new List();
-    // list.fields = [
-    //   "PageId"
-    //   , "label"
-    //   , "faIcon"
-    //   , "link"
-    //   , "ParentId"
-    //   , "HasSubmenu"
-    // ];
-    // //this.list.lookupFields = ["PageGroup", "PageHistories"];
-    // list.PageName = "Pages";
-    // list.orderBy = "DisplayOrder";
-    // list.filter = [strFilter];
-    // //const columns = ["PageId", "Page Title", "PageGroupName", "Active", "Action"];
-    // //if(!this.loggedIn)
-
-    // await this.dataservice
-    //   .get(list)
-    //   .subscribe({
-    //     next: (arrPageMenu) => {
-
+    
     let arr = [];
     this.shareddata.CurrentPagesData.subscribe(m => (arr = m));
     //console.log('accessing menu data from left menu', arr);
@@ -194,7 +166,7 @@ export class MultiLevelMenuComponent implements OnInit {
     })
 
     if (!this.loggedIn) {
-      top = top.filter(item => item.label != "Admin");
+      top = top.filter(item => item.label.toLowerCase() != "admin");
     }
     top = top.filter(item => item.label.toUpperCase() != "NEWS N EVENTS");
     top.forEach(item => {

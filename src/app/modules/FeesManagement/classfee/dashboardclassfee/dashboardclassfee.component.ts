@@ -1,12 +1,13 @@
-import { CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/cdk/overlay/overlay-directives';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
-import { globalconstants } from 'src/app/shared/globalconstant';
+//import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 
 @Component({
   selector: 'app-dashboardclassfee',
@@ -14,7 +15,7 @@ import { List } from 'src/app/shared/interface';
   styleUrls: ['./dashboardclassfee.component.scss']
 })
 export class DashboardclassfeeComponent implements OnInit {
-@ViewChild(MatSort) sort:MatSort;
+  @ViewChild(MatSort) sort: MatSort;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -22,6 +23,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
   CurrentBatch = '';
   CurrentBatchId = 0;
+  SelectedBatchId = 0;
   FeeNames = [];
   Classes = [];
   Batches = [];
@@ -43,7 +45,9 @@ export class DashboardclassfeeComponent implements OnInit {
   };
   constructor(private dataservice: NaomitsuService,
     private alert: AlertService,
-    private fb: FormBuilder) { }
+    private route:Router,
+    private fb: FormBuilder,
+    private shareddata: SharedataService) { }
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
@@ -63,6 +67,9 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   getoldvalue() {
 
+  }
+  UpdateSelectedBatchId(value){
+    this.SelectedBatchId =value;
   }
   UpdateOrSave(row) {
     debugger;
@@ -164,7 +171,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "Done": true
               }
           })
-          console.log('classes', this.ClassStatuses);
+          //console.log('classes', this.ClassStatuses);
 
         }
       })
@@ -212,7 +219,7 @@ export class DashboardclassfeeComponent implements OnInit {
                   "ClassId": this.searchForm.get("ClassId").value,
                   "FeeName": mainFeeName.MasterDataName,
                   "Amount": 0,
-                  "Batch": this.Batches[0].MasterDataId,
+                  "Batch": this.searchForm.get("Batch").value,// this.Batches[0].MasterDataId,
                   "Status": false,
                   "PaymentOrder": 0,
                   "LocationId": this.Locations[0].MasterDataId,
@@ -238,7 +245,7 @@ export class DashboardclassfeeComponent implements OnInit {
             })
           }
         }
-        else {
+        else { //no existing data
           if (this.searchForm.get("FeeNameId").value == 0) {
             this.ELEMENT_DATA = this.FeeNames.map((fee, indx) => {
               return {
@@ -248,7 +255,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "ClassId": this.searchForm.get("ClassId").value,
                 "FeeName": fee.MasterDataName,
                 "Amount": 0,
-                "Batch": this.Batches[0].MasterDataId,
+                "Batch": this.searchForm.get("Batch").value,
                 "Status": false,
                 "PaymentOrder": 0,
                 "LocationId": this.Locations[0].MasterDataId,
@@ -289,42 +296,22 @@ export class DashboardclassfeeComponent implements OnInit {
     //console.log('from change', row);
   }
   GetMasterData() {
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1"];
-    //list.orderBy = "ParentId";
+    this.shareddata.CurrentFeeNames.subscribe(f => (this.FeeNames = f));
+    this.shareddata.CurrentClasses.subscribe(f => (this.Classes = f));
+    this.shareddata.CurrentBatch.subscribe(f => (this.Batches = f));
+    this.shareddata.CurrentLocation.subscribe(f => (this.Locations = f));
+    this.shareddata.CurrentBatchId.subscribe(b => this.CurrentBatchId = b);
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //console.log(data.value);
-        this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
-        this.CurrentBatch = globalconstants.getCurrentBatch();
-        let currentSession = this.Batches.filter(bat => {
-          return bat.MasterDataName.toLowerCase() == this.CurrentBatch.toLowerCase();
-        });
-        if (currentSession.length == 0) {
-          this.alert.error("Current batch not defined in master!", this.options);
-        }
-        else {
-          this.CurrentBatchId = currentSession[0].MasterDataId;
-          this.searchForm.patchValue({ Batch: this.CurrentBatchId });
-          this.GetDistinctClassFee();
-        }
-      });
+    if (this.CurrentBatchId == 0) {
+      //this.alert.error("Current batch not defined in master!", this.options);
+      this.route.navigate(['/admin']);
+    }
+    else {
+      this.searchForm.patchValue({ Batch: this.CurrentBatchId });
+      this.GetDistinctClassFee();
+    }
 
-  }
-  getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
-    });
+
   }
 }
 export interface Element {

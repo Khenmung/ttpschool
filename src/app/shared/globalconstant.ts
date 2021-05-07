@@ -1,5 +1,5 @@
 export class globalconstants {
-    public static apiUrl: string = "http://localhost:8070";//"https://ettest.ttpsolutions.in";//
+    public static apiUrl: string = "https://ettest.ttpsolutions.in";//"http://localhost:8070";//
     public static fileUrl: string = '';
     public static MasterDefinitions=
         {
@@ -25,7 +25,8 @@ export class globalconstants {
         "UPLOADTYPE":"upload type",
         "DOWNLOADTYPE":"download type",
         "CURRENTBATCH":"current batch",
-        "REASONFORLEAVING":"reason for leaving"
+        "REASONFORLEAVING":"reason for leaving",
+        "RANDOMIMAGES":"random images"
         };
     // public static DOCUMENTTYPE: string = 'document type';
     // public static ORGANIZATION: string = 'organization';
@@ -52,5 +53,6 @@ export class globalconstants {
         let currentyear = new Date().getFullYear();
         return currentyear.toString() + "-" + (currentyear + 1).toString();
     }
+    
 
 }

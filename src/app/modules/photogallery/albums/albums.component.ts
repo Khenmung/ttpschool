@@ -7,6 +7,7 @@ import { DialogService } from 'src/app/shared/dialog.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { globalconstants } from 'src/app/shared/globalconstant';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-albums',
@@ -19,7 +20,8 @@ export class AlbumsComponent implements OnInit {
   activeSkill() {
     (<any>this.button).color = 'accent';
   }
-
+  dataSource: MatTableDataSource<IAlbum>;
+  displayedColumns=["UpdatedFileFolderName","UploadDate","Copy","View"]
   ParentId = 0;
   folderHierarachy: string = 'Image/';
   title: string = '';
@@ -164,7 +166,9 @@ export class AlbumsComponent implements OnInit {
               UploadDate: item.UploadDate,
               FileOrFolder: item.FileOrFolder,
               ParentId: item.ParentId,
-              UpdatedFileFolderName: item.UpdatedFileFolderName
+              UpdatedFileFolderName: item.UpdatedFileFolderName,
+              Copy:'',
+              View:''
             }
           });
           this.error ='';
@@ -176,7 +180,7 @@ export class AlbumsComponent implements OnInit {
           this.error = "No file/folder found.";
           this.Albums = [];
         }
-
+        this.dataSource = new MatTableDataSource<IAlbum>(this.Albums);
         this.loading = false;
         //setTimeout(()=>{this.loading=false},3000); 
       })
@@ -274,4 +278,12 @@ export class AlbumsComponent implements OnInit {
         }
       });
   }
+}
+export interface IAlbum{
+  FileId:number;  
+  FileOrFolder:number;
+  UpdatedFileFolderName:string;
+  UploadDate:Date;
+  FilePath:string;
+
 }

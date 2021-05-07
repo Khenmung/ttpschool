@@ -17,9 +17,9 @@ import { ImgDragAndDropComponent } from './photogallery/imgDragAndDrop/imgDragAn
 import { PhotobrowserComponent } from './photogallery/photobrowser/photobrowser.component';
 import { PhotosComponent } from './photogallery/photos/photos.component';
 import { EncodeHTMLPipe } from '../encode-html.pipe';
-import { AlbumEditInputComponent } from './photogallery/albumedit-input/albumedit-input.component';
-import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-import { LandingpageComponent } from '../shared/components/landingpage/landingpage.component';
+//import { AlbumEditInputComponent } from './photogallery/albumedit-input/albumedit-input.component';
+//import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
+//import { MatConfirmDialogComponent } from '../shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 
 const routes: Routes = [
   
@@ -66,11 +66,12 @@ export const WebsiteComponents=[
   ImgDragAndDropComponent,
   FiledragAndDropComponent,
   PhotosComponent,
-  AlbumsComponent,
+  //AlbumsComponent,
   ContactdashboardComponent,
   ContactComponent,
   MenuConfigComponent ,
   EncodeHTMLPipe,
-  AlbumEditInputComponent,
-  CdkCopyToClipboard,  
+  //AlbumEditInputComponent,
+//  CdkCopyToClipboard, 
+  //MatConfirmDialogComponent 
 ]

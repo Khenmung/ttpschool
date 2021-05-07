@@ -6,6 +6,7 @@ import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { List } from 'src/app/shared/interface';
 import { FileUploadService } from 'src/app/shared/upload.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-filedrag-and-drop',
@@ -30,10 +31,24 @@ export class FiledragAndDropComponent implements OnInit {
   constructor(private uploadService: FileUploadService,
     private naomitsuService: NaomitsuService,
     private route: Router,
+    private tokenStorage:TokenStorageService,
     private alert: AlertService) { }
 
   ngOnInit(): void {
+    this.checklogin();
     this.getAlbums();
+  }
+  checklogin() {
+    let options = {
+      autoClose: true,
+      keepAfterRouteChange: true
+    };
+    let token = this.tokenStorage.getToken();
+
+    if (token == null) {
+      this.alert.error("Access denied! login required.", options);
+      this.route.navigate(['/home']);
+    }
   }
   public files: NgxFileDropEntry[] = [];
 
@@ -85,6 +100,7 @@ export class FiledragAndDropComponent implements OnInit {
     if (selectedAlbum == '' && selectedAlbumId == 0) {
       error = true;
       this.alert.error("Please enter folder or select existing folder", this.options);
+      return;
     }
     else {
       if (selectedAlbumId != 0) {

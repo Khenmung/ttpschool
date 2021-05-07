@@ -1,21 +1,22 @@
 <mat-card>
-    <mat-card-title><span style="margin-top:10px;font-size:large;display: grid;place-items: center; color:orange">{{PageTitle}}</span>
+    <mat-card-title><span class="title">{{PageTitle}}</span>
     </mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
-        <mat-divider></mat-divider>
-        <br>
-        <div *ngFor="let element of AllData">
-            <a class="subtitle" style="color:white" (click)="view(element)">
-                <div>{{element.Title|titlecase}}
-                    <br><span style="color:rgb(201, 200, 200);font-size: small;">
-                        {{element.UpdateDate|date:'dd/MM/yyyy'}}</span>
-                </div>
-            </a>
-            <mat-divider></mat-divider>
+        <!-- <mat-divider></mat-divider> -->
+        <div class="contentbox">
+            <div *ngFor="let element of AllData">
+                <a class="subtitle" style="color:rgb(201, 200, 200)" (click)="view(element)">
+                    <div>{{element.Title|titlecase}}
+                        <br><span style="color:rgb(201, 200, 200,.9);font-size: small;">
+                            {{element.UpdateDate|date:'dd/MM/yyyy'}}</span>
+                    </div>
+                </a>
+                <!-- <mat-divider></mat-divider> -->
+            </div>
         </div>
         <mat-divider></mat-divider>
-        <mat-paginator style="color:rgb(201, 200, 200);background-color: #1E4A75;" [pageSizeOptions]="[10, 25, 100]">
+        <mat-paginator *ngIf="AllData.length>0" style="color:rgb(201, 200, 200);background-color: #1E4A75;" [pageSizeOptions]="[10, 25, 100]">
         </mat-paginator>
 
     </mat-card-content>

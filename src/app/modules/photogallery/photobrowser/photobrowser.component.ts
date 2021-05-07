@@ -73,7 +73,7 @@ export class PhotobrowserComponent implements OnInit {
   applyFilter(strFilter) {
     let count = 0;
     if (strFilter.length > 2)
-      this.Albums = [...this.AllAlbums.filter(item => { return item.UpdatedFileFolderName.includes(strFilter) })];
+      this.Albums = [...this.AllAlbums.filter(item => { return item.UpdatedFileFolderName.toLowerCase().includes(strFilter.toLowerCase()) })];
     else if (strFilter.length == 0)
       this.Albums = this.AllAlbums.filter((item, indx) => indx < 10);
     else
@@ -128,7 +128,7 @@ export class PhotobrowserComponent implements OnInit {
 
           this.Albums.forEach((album) => {
             count = album.photos.length;
-            width = count > 1 ? '200px' : '350px';
+            width = count > 1 ? '160px' : '320px';
             //console.log('photo count', count);
             //console.log('photo width', width);
 
