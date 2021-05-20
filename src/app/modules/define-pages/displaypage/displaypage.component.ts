@@ -162,7 +162,7 @@ export class DisplaypageComponent implements OnInit {
       .subscribe((data: any) => {
         //this.images =
         let RandomImagesParentId = data.value.filter(image => {
-          return image.FileName.toLowerCase() == "random images"
+          return image.FileName !=null && image.FileName.toLowerCase() == "random images"
         });
         if (RandomImagesParentId.length > 0) {
           this.images = data.value.filter(rimg => rimg.ParentId == RandomImagesParentId[0].FileId)

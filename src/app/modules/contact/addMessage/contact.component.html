@@ -2,7 +2,7 @@
     <mat-card-title>{{title}}</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <form [formGroup]="ContactForm" (ngSubmit)="onSubmit()">
+        <form [formGroup]="ContactForm" *ngIf="SuccessMessage.length==0">
             <div fxLayout="column" class="container">
                 <mat-form-field appearance="outline" [style.width.px]="300">
                     <mat-label>Name</mat-label>
@@ -30,7 +30,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex [style.width.px]="300">
                     <mat-label>Message</mat-label>
-                    <textarea formControlName="MessageBody" #MessageBody matInput maxlength="250" autocomplete="Off"
+                    <textarea formControlName="MessageBody" #MessageBody [style.height.px]="100" matInput maxlength="250" autocomplete="Off"
                         cdkTextareaAutosize required></textarea>
                     <!-- <mat-hint align="end">{{MessageBody.value?.length || 0}}/250</mat-hint> -->
                     <span class="text-danger"
@@ -45,8 +45,11 @@
             </button> -->
         </div>
         </form>
+        <div style="background-color: grey;padding: 20px;color: white;" *ngIf="SuccessMessage.length>0">
+            {{SuccessMessage}}
+        </div>
     </mat-card-content>
     <mat-card-actions>
-    
+    <button class="mat-raised-button" (click)="back()"><mat-icon>arrow_back</mat-icon></button>
     </mat-card-actions>
 </mat-card>

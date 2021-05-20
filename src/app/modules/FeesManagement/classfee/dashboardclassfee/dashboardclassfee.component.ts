@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { isNumeric } from 'jquery';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 //import { globalconstants } from 'src/app/shared/globalconstant';
@@ -45,7 +46,7 @@ export class DashboardclassfeeComponent implements OnInit {
   };
   constructor(private dataservice: NaomitsuService,
     private alert: AlertService,
-    private route:Router,
+    private route: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }
 
@@ -68,8 +69,8 @@ export class DashboardclassfeeComponent implements OnInit {
   getoldvalue() {
 
   }
-  UpdateSelectedBatchId(value){
-    this.SelectedBatchId =value;
+  UpdateSelectedBatchId(value) {
+    this.SelectedBatchId = value;
   }
   UpdateOrSave(row) {
     debugger;
@@ -77,10 +78,21 @@ export class DashboardclassfeeComponent implements OnInit {
       this.alert.error("Amount should be greater than zero.", this.options);
       return;
     }
+    if (+row.Amount>99999) {
+      this.alert.error("Amount cannot be greater than 99999.");
+      return;
+    }
     if (row.PaymentOrder < 1) {
       this.alert.error("Payment order must start from 1.");
       return;
     }
+    
+    // if(isNumeric(row.Amount))
+    // {
+    //   this.alert.error("Please enter valid amount.");
+    //   return;
+    // }
+
     let checkFilterString = "1 eq 1 " +
       " and FeeNameId eq " + row.FeeNameId +
       " and ClassId eq " + row.ClassId +
@@ -179,6 +191,9 @@ export class DashboardclassfeeComponent implements OnInit {
   GetClassFee() {
     if (this.searchForm.get("ClassId").value == 0)
       return;
+    if (this.searchForm.get("Batch").value == 0)
+      return;
+
     let filterstr = "1 eq 1 ";
     if (this.searchForm.get("ClassId").value > 0)
       filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;

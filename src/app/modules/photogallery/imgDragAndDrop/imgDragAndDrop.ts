@@ -11,6 +11,7 @@ import { Ng2ImgMaxService } from 'ng2-img-max';
 import { base64ToFile } from 'ngx-image-cropper';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { async } from '@angular/core/testing';
+import { globalconstants } from 'src/app/shared/globalconstant';
 @Component({
   selector: 'app-file-drag-and-drop',
   templateUrl: './imgDragAndDrop.html',
@@ -19,15 +20,17 @@ import { async } from '@angular/core/testing';
 })
 export class ImgDragAndDropComponent implements OnInit {
   options = {
-    autoClose: true,
+    autoClose: false,
     keepAfterRouteChange: true
   };
+  Processing=false;
   Albums: any[];
   title = 'Dropzone';
   files: File[] = [];
   formData: FormData;
   uploadedImage: File;
   errorMessage = '';
+  Requestsize = 0;
   constructor(
     private naomitsuService: NaomitsuService,
     private alert: AlertService,
@@ -59,30 +62,40 @@ export class ImgDragAndDropComponent implements OnInit {
     }
   }
   onSelect(event) {
-
+    debugger;
     this.files.push(...event.addedFiles);
 
     this.formData = new FormData();
     this.errorMessage = '';
-
+    this.Processing =true;
+    let resultCount=0;
     for (var i = 0; i < this.files.length; i++) {
-
+      this.Requestsize += this.files[i].size;
+      if (this.Requestsize + this.files[i].size > globalconstants.RequestLimit) {
+        this.alert.error('File upload limit is 20mb!', this.options);
+        this.alert.info('File size is : ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb' )
+        break;
+      }
       this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
         .subscribe(result => {
+          resultCount +=1;
           this.uploadedImage = result;
           this.formData.append(result.name, this.uploadedImage, result.name);
-
+          if(resultCount+1 >= this.files.length)
+          {
+            this.Processing =false;
+          }
         },
           error => {
-            this.alert.error(error.reason);
+            this.Processing =false;
+            this.alert.error(error.reason,this.options);
             //this.files.splice(i,1);
             this.errorMessage += error.reason;
             //console.log('error:', error);
           })
-
     }
-    // if (this.errorMessage.length > 0)
-    //   this.alert.error(this.errorMessage, this.options);
+    
+    console.log('request', this.Requestsize)
   }
   onImageChange(event) {
     let image = event.target.files[0];
@@ -98,6 +111,11 @@ export class ImgDragAndDropComponent implements OnInit {
     );
   }
   Upload() {
+    debugger;
+    if (this.Requestsize > globalconstants.RequestLimit) {
+      this.alert.error("File upload limit is 20mb!", this.options);
+      return;
+    }
     if (this.files.length > 15) {
       this.alert.error("File count exceeded the maximum of 15");
       return;
@@ -157,6 +175,8 @@ export class ImgDragAndDropComponent implements OnInit {
   onRemove(event) {
 
     this.files.splice(this.files.indexOf(event), 1);
+    this.Requestsize -= event.size;
+    this.alert.info('File size: ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb', this.options);
 
   }
 

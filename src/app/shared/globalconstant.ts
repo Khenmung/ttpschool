@@ -1,6 +1,8 @@
 export class globalconstants {
     public static apiUrl: string = "https://ettest.ttpsolutions.in";//"http://localhost:8070";//
     public static fileUrl: string = '';
+    public static RequestLimit =20971520; //536870912;
+                                
     public static MasterDefinitions=
         {
         "DOCUMENTTYPE":"document type",

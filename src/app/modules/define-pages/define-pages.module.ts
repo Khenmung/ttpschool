@@ -14,9 +14,10 @@ import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ContactComponent } from '../contact/addMessage/contact.component';
-import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
+//import { ContactComponent } from '../contact/addMessage/contact.component';
+//import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
 import { SharedhomepageModule } from '../sharedhomepage.module';
+import { AlbumsModule } from '../photogallery/albums/albums.module';
 
 @NgModule({
   declarations: [
@@ -26,8 +27,8 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
     DisplaypageComponent,
     EncodeHTMLPipe,
     MenuConfigComponent,
-    ContactComponent,
-    ContactdashboardComponent
+    //ContactComponent,
+    //ContactdashboardComponent
 
   ],
   imports: [
@@ -42,15 +43,15 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
     MatCardModule,
     RouterModule,
     FlexLayoutModule,
-
+    AlbumsModule
   ],
   exports: [
     TextEditorComponent,
     pageDashboardComponent,
     pageViewComponent,
-    MaterialModule,
-    MatFormFieldModule,
-    MatCardModule,
+    //MaterialModule,
+    //MatFormFieldModule,
+    //MatCardModule,
   ]
 })
 export class DefinePagesModule { }

@@ -11,15 +11,24 @@ export class FeeEditInputComponent implements OnInit {
   @Output() tried: EventEmitter<string> = new EventEmitter<string>();
   currency = '$';
   editMode = false;
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   onFocusOut() {
     this.focusOut.emit(this.data);
   }
-  oninputfocus(){
+  oninputfocus() {
     this.tried.emit(this.data);
     //console.log(this.data);
   }
+  keypress(event): boolean {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+
+  }
 }
+

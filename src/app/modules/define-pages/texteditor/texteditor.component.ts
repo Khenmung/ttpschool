@@ -7,6 +7,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
+import { globalconstants } from 'src/app/shared/globalconstant';
 //import { FormsModule} from '@angular/forms';
 @Component({
 
@@ -19,10 +20,12 @@ import { FileUploadService } from 'src/app/shared/upload.service';
 })
 
 export class TextEditorComponent implements OnInit {
+  OneMB =1048576;
+  processing =false;
   Edit = false;
-  imagePath: string;
+  imageCount=0;
   message: string;
-  imgURL: any;
+  imgURL: any='';
   selectedFile: any;
   //Albums: any;
   errorMessage = '';
@@ -36,18 +39,19 @@ export class TextEditorComponent implements OnInit {
     PageTitle: '',
     ParentId: 0,
     FullPath: '',
+    PhotoPath:'',
     CurrentVersion: 0,
     UpdateDate: new Date(),
     IsTemplate: 1,
     HasSubmenu: 1,
-    Module:1,
+    Module: 1,
     label: '',
     link: '',
     Active: 1
   };
   PublishOrDraft: number = 0;
   PageDetailForm = new FormGroup({
-    PageTitle: new FormControl('', [Validators.required, Validators.maxLength(25)]),
+    PageTitle: new FormControl('', [Validators.required, Validators.maxLength(50)]),
     ParentId: new FormControl(0),
     PageBody: new FormControl(""),
     PageHistoryId: new FormControl(0),
@@ -80,7 +84,7 @@ export class TextEditorComponent implements OnInit {
     private ar: ActivatedRoute,
     private shareddata: SharedataService,
     protected alert: AlertService,
-    private tokenStorage: TokenStorageService,    
+    private tokenStorage: TokenStorageService,
     private fileUploadService: FileUploadService,) {
     //this.PageDetail =[];
   }
@@ -124,8 +128,17 @@ export class TextEditorComponent implements OnInit {
       return;
     }
     this.selectedFile = files[0];
+    console.log('image size',this.selectedFile.size);
+    
+    if(this.selectedFile.size > this.OneMB)
+    {
+      this.alert.error('Image size is too big! Please try to upload image size less than 1mb');
+      return;
+    }
+
+    this.selectedFile.size
     var reader = new FileReader();
-    this.imagePath = files;
+    this.imageCount = files.length;
     reader.readAsDataURL(files[0]);
     reader.onload = (_event) => {
       this.imgURL = reader.result;
@@ -134,8 +147,23 @@ export class TextEditorComponent implements OnInit {
   edit() {
     this.Edit = true;
   }
+  delete() {
+    let pageData ={
+      UpdateDate:new Date(),
+      PhotoPath:""
+    }
+      this.processing =true;
+    this.naomitsuService.postPatch('Pages', pageData, this.Id, 'patch')
+    .subscribe(
+      (data: any) => {
+        this.imgURL ="";
+        this.alert.success("Photo deleted successfully.",this.options);
+        this.processing=false;
+      });
+  }
   uploadFile() {
     let error: boolean = false;
+    this.processing =true;
     this.formdata = new FormData();
     this.formdata.append("description", "Page photo");
     this.formdata.append("fileOrPhoto", "0");
@@ -157,6 +185,7 @@ export class TextEditorComponent implements OnInit {
     this.fileUploadService.postFile(this.formdata).subscribe(res => {
       this.alert.success("Files Uploaded successfully.", options);
       this.Edit = false;
+      this.processing =false;
     });
   }
 
@@ -167,7 +196,7 @@ export class TextEditorComponent implements OnInit {
   GetLatestPage(ppId: number) {
 
     let list: List = new List();
-    list.fields = ["PageHistoryId", "PageBody", "Version", "Published", "Page/HasSubmenu", "Page/PageTitle", "Page/link"];
+    list.fields = ["PageHistoryId", "PageBody", "Version", "Published", "Page/PhotoPath", "Page/HasSubmenu", "Page/PageTitle", "Page/link"];
     list.PageName = "PageHistories";
     list.lookupFields = ["Page"];
     list.filter = ["ParentPageId eq " + ppId];
@@ -177,6 +206,11 @@ export class TextEditorComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
+          if (data.value[0].Page.PhotoPath == null || data.value[0].Page.PhotoPath == "")
+            this.imgURL = "";
+          else
+            this.imgURL = globalconstants.apiUrl + "/Image/PagePhoto/" + data.value[0].Page.PhotoPath
+
           this.PageDetailForm.patchValue({
             PageTitle: data.value[0].Page.PageTitle,
             ParentId: +this.ar.snapshot.queryParams.pgid,
@@ -186,6 +220,7 @@ export class TextEditorComponent implements OnInit {
             Published: data.value[0].Published,
             HasSubmenu: data.value[0].Page.HasSubmenu,
             link: data.value[0].Page.link,
+            //PhotoPath: globalconstants.apiUrl + "/Image/PagePhoto/" + data.value[0].Page.PhotoPath,
             PageId: ppId
           });
           //this.selected = this.ar.snapshot.queryParams.pgid;          
@@ -345,8 +380,8 @@ export class TextEditorComponent implements OnInit {
         FullPath = this.PageDetailForm.value.PageTitle;
       else
         FullPath = this.PageGroups.filter(g => g.PageId == this.PageDetailForm.value.ParentId)[0].FullPath + ' > ' + this.PageDetailForm.value.PageTitle;
-      
-        this.PageDetail.ParentId = this.PageDetailForm.value.ParentId;//").value;
+
+      this.PageDetail.ParentId = this.PageDetailForm.value.ParentId;//").value;
       this.PageDetail.FullPath = FullPath;
       this.PageDetail.Active = 1;
       this.PageDetail.CurrentVersion = this.PageHistory.Version + 1;
@@ -375,7 +410,7 @@ export class TextEditorComponent implements OnInit {
   }
   GetParentPage() {
     let list: List = new List();
-    list.fields = ["PageId", "PageTitle", "ParentId","link", "FullPath"];
+    list.fields = ["PageId", "PageTitle", "ParentId", "link", "FullPath"];
     list.PageName = "Pages";
     list.filter = ["Active eq 1"];
     list.orderBy = "ParentId";

@@ -12,19 +12,18 @@ export class NestedmenuComponent implements OnInit {
 
   ngOnInit() { }
 
-@ViewChild('submenu')
-set subMenu(value: MatMenu)  {
-  this.menuItems[1].elementRef = value;
-}
+  @ViewChild('submenu')
+  set subMenu(value: MatMenu) {
+    this.menuItems[1].elementRef = value;
+  }
 
-  selected :string;
-menuItems: Array<{text: string, elementRef: MatMenu}> = [
-    {text: "Tabledriven.Item1", elementRef: null },
-    {text: "Tabledriven.Item2", elementRef: null},
+  selected: string;
+  menuItems: Array<{ text: string, elementRef: MatMenu }> = [
+    { text: "Tabledriven.Item1", elementRef: null },
+    { text: "Tabledriven.Item2", elementRef: null },
   ];
 
-  select(pText :string)
-  {
+  select(pText: string) {
     this.selected = pText;
   }
 }

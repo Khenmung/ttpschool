@@ -55,7 +55,7 @@ export class NaomitsuService {
         if (list.hasOwnProperty('orderBy') && list.orderBy) {
             url += "&$orderby=" + list.orderBy.toString();
         }
-        console.log("GetListItems URL: " + url);
+//        console.log("GetListItems URL: " + url);
 
         var req = {
             method: 'GET',
@@ -81,7 +81,7 @@ export class NaomitsuService {
     model: string,
     data: any,
     id: number = null,
-    method: 'post' | 'patch' = 'post'
+    method: string='post'//'post' | 'patch' | 'delete' = 'post'
   ): Observable<returnType> {
     //const cfqu = this.correctFormatForQueryUrl(qp);
     //Config.ServiceBaseURL + '/odata/' + model + '/(' + id + ')',

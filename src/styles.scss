@@ -1,95 +1,125 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import '~bootstrap/dist/css/bootstrap.min.css'; 
+@import '~bootstrap/dist/css/bootstrap.min.css';
 
-mat-card{
-    margin:5px;
-    min-height: 100vh;
-  
+:root {
+    --maincolor1: #1E4A75;
+    --maincolor2: #00203F;
+    --mainTitleColor:#28629C;
+    --onHoverColor:blueviolet;
 }
+
+mat-card {
+    margin-left: 5px;
+    min-height : 100vh;
+
+}
+
 @media only screen and (max-width: 600px) {
-    mat-card{
-        margin-left:0px;
+    mat-card {
+        margin-left : 0px;
         margin-right: 0px;
     }
-  
-  }
-  
+
+}
+
 .mat-icon {
     vertical-align: middle;
- }
-html, body { 
-     
-    height: 100%; 
-     margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;
-    //background-color: #0F5298;
-    }
-    
-    div::-webkit-scrollbar {
-        width: 8px;
-        //-webkit-appearance: none;
-        //width: 7px;
-    }
-    div::-webkit-scrollbar-thumb {
-        background:#4678a0;
-        border-radius: 1rem;
-        
-    }
-    div::-webkit-scrollbar-track {
-        background:#20639B;
-    }
+}
 
-input[type="radio"]{
-    width: 25px;
+
+html,
+body {
+    height            : 100%;
+    margin            : 0;
+    font-family       : Roboto, "Helvetica Neue", sans-serif;
+    //background-color: #0F5298;
+}
+
+div::-webkit-scrollbar {
+    width               : 8px;
+    //-webkit-appearance: none;
+    //width: 7px;
+}
+
+div::-webkit-scrollbar-thumb {
+    background   : #4678a0;
+    border-radius: 1rem;
+
+}
+
+div::-webkit-scrollbar-track {
+    background: #20639B;
+}
+
+a .ng-star-inserted:hover {
+    cursor          : pointer;
+    background-color: var(--onHoverColor);
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    color: white;
+    //clip-path       : polygon(0 0, 90% 0, 100% 50%, 90% 100%,0% 100%);
+}
+
+input[type="radio"] {
+    width : 25px;
     height: 25px;
 }
-.confirm-dialog-container .mat-dialog-container{
+
+.confirm-dialog-container .mat-dialog-container {
     border-radius: .25em .25em .4em .4em;
-    padding: 0px;
+    padding      : 0px;
 }
 
-.confirm-dialog-container .content-container{
-    margin:5px 5px 15px 5px;
-    color:#8f9cb5;
-    display:flex;
+.confirm-dialog-container .content-container {
+    margin : 5px 5px 15px 5px;
+    color  : #8f9cb5;
+    display: flex;
 }
-.confirm-dialog-container #close-icon{
+
+.confirm-dialog-container #close-icon {
     margin-left: auto;
-    order:2;
+    order      : 2;
     font-weight: bolder;
 }
-.confirm-dialog-container #yes-button{
-    height:50px;
-    width:50%;
+
+.confirm-dialog-container #yes-button {
+    height          : 50px;
+    width           : 50%;
     background-color: #b6bece;
-    color:black;
-    border-radius: 0px;
+    color           : black;
+    border-radius   : 0px;
 }
-.confirm-dialog-container #no-button{
-    height:50px;
-    width:50%;
+
+.confirm-dialog-container #no-button {
+    height          : 50px;
+    width           : 50%;
     background-color: teal;
-    color:black;
-    border-radius: 0px;
+    color           : black;
+    border-radius   : 0px;
 }
-.confirm-dialog-container span.content-span{
-    padding:35px 16px;
+
+.confirm-dialog-container span.content-span {
+    padding   : 35px 16px;
     text-align: center;
-    font-size: 20px;
+    font-size : 20px;
 }
-.logo{
-    margin-top: 0px;
-    padding-left: 2rem;
+
+.logo {
+    margin-top    : 0px;
+    padding-left  : 2rem;
     padding-bottom: 1rem;
-    position: absolute;
-    z-index: 10;
-    width: 150px;
+    position      : absolute;
+    z-index       : 10;
+    width         : 150px;
 }
+
 .mat-form-field-wrapper {
     padding-bottom: .6em !important;
 }
-.mat-form-field-infix{
-    padding-bottom:1em !important;
+
+.mat-form-field-infix {
+    padding-bottom: 1em !important;
 }
 
 /* Importing Bootstrap SCSS file. */

@@ -85,7 +85,7 @@ export class cropNUploadphotoComponent implements OnInit {
             }
         this.imageChangedEvent = event;
         this.fileName = this.imageChangedEvent.target.files[0].name;
-        console.log('this.fileName',this.fileName);
+        //console.log('this.fileName',this.fileName);
     }
 
     imageCropped(event: ImageCroppedEvent) {
@@ -172,15 +172,15 @@ export class cropNUploadphotoComponent implements OnInit {
 
     imageLoaded() {
         this.showCropper = true;
-        console.log('Image loaded');
+        //console.log('Image loaded');
     }
 
     cropperReady(sourceImageDimensions: Dimensions) {
-        console.log('Cropper ready', sourceImageDimensions);
+        //console.log('Cropper ready', sourceImageDimensions);
     }
 
     loadImageFailed() {
-        console.log('Load failed');
+        //console.log('Load failed');
     }
 
     rotateLeft() {

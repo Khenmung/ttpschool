@@ -2,29 +2,29 @@
         border-top-right-radius: 1em 1em;
         width            : 280px;
         background-repeat: no-repeat;
-        background-color : #1E4A75;//#20639b;
+        background-color :var(--maincolor1);// #1E4A75;//#20639b;
 //        opacity: .9;
         height           : 100%;
-        top              : 150px;
+        top              : 115px;
     }
 
     mat-drawer-content {
         //background:url('/assets/images/schoolbuilding2018.jfif') no-repeat 0 0 transparent;
         //background-color: #0F5298;
-        top             : 140px;
+        top             : 100px;
         border-radius   : 1em;
         margin-bottom   : 20px;
         padding-bottom  : 100px;
     }
 
     .rightpanel {
-        background-color: #1E4A75;
+        background-color: var(--maincolor1);// #1E4A75;
     }
 
     mat-drawer-container {
-        background-color:#00203F;//#0e4a8b;// #0F5298;
-        overflow: auto;
-        display: inline-block;
+        background-color:var(--maincolor2);//#00203F;//#0e4a8b;// #0F5298;
+        //overflow: auto;
+        //display: inline-block;
         //opacity: .5;
         //background:url('/assets/images/schoolbuilding2018.jfif') no-repeat 0 0 transparent;
     }
@@ -38,7 +38,7 @@
     .DeviceXs {
         //position:absolute;
         //position: absolute;
-        top: 235px !important;
+        top: 155px !important;
         //margin:2px;
         
         // float:right;
@@ -48,7 +48,7 @@
     .OpenAndDeviceXs {
 
         //position: absolute;
-        top: 235px !important;        
+        top: 155px !important;        
         
         //transform: translate(-50%, -50%);
     }

@@ -150,7 +150,7 @@ export class PhotobrowserComponent implements OnInit {
 
         }
 
-        console.log('album', this.Albums);
+        //console.log('album', this.Albums);
         this.loading = false;
       })
   }
@@ -188,7 +188,7 @@ export class PhotobrowserComponent implements OnInit {
   }
   getoldvalue(value: string) {
     this.oldvalue = value;
-    console.log('old value', this.oldvalue);
+    //console.log('old value', this.oldvalue);
   }
   saveCost(value) {
     if (value.length == 0 || value.length > 50) {
@@ -204,10 +204,10 @@ export class PhotobrowserComponent implements OnInit {
     let selectedAlbumId = this.Albums.filter(item => {
       return item.UpdatedFileFolderName == this.oldvalue
     })[0].FileId;
-    console.log('selectedAlbumId', selectedAlbumId);
+    //console.log('selectedAlbumId', selectedAlbumId);
     this.dataservice.postPatch('FilesNPhotoes', albumtoUpdate, selectedAlbumId, 'patch')
       .subscribe(res => {
-        console.log(res);
+        //console.log(res);
       });
   }
 }

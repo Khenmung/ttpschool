@@ -43,7 +43,7 @@ ngOnInit(): void {
                                  'Content-Type': 'application/json',
                                  'Authorization': 'Bearer ' + this.token.getToken()})
     };
-    console.log(this.httpOptions);
+    //console.log(this.httpOptions);
     return this.http.post(this.AUTH_API + '/api/Account/ChangePassword', {
       OldPassword: OldPassword,
       NewPassword: password,

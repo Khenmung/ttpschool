@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-card-title>Manage Files/Folders</mat-card-title>
+    <mat-card-title style="padding: 20px;">Manage Files/Folders</mat-card-title>
     <mat-card-content>
         <mat-spinner *ngIf="loading"></mat-spinner>
         <br>
@@ -18,7 +18,7 @@
         <div>
             <div fxLayout="row">
                 <span *ngIf="error.length>0"> {{error}}</span>
-                <span *ngIf="Albums.length>0">{{folderHierarachy|slice:6}}</span>
+                <span *ngIf="Albums.length>0">{{folderDisplayHierachy|slice:6}}</span>
             </div>
             <mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="PageId" hidden="true">

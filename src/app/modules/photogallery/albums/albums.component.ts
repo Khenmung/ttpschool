@@ -24,6 +24,7 @@ export class AlbumsComponent implements OnInit {
   displayedColumns=["UpdatedFileFolderName","UploadDate","Copy","View"]
   ParentId = 0;
   folderHierarachy: string = 'Image/';
+  folderDisplayHierachy:string='Image/';
   title: string = '';
   loading: boolean=false;
   error: string = '';
@@ -104,6 +105,7 @@ export class AlbumsComponent implements OnInit {
     debugger;
     while (ParentItem.length > 0) {
       this.folderHierarachy += ParentItem[0].FileName + "/";
+      this.folderDisplayHierachy += ParentItem[0].UpdatedFileFolderName + "/";
       ParentItem = this.AllAlbums.filter(item => item.FileId == ParentItem[0].ParentId)
     }
   }
@@ -154,6 +156,7 @@ export class AlbumsComponent implements OnInit {
           var browsePath = '';
           this.Albums = data.value.map(item => {
             this.folderHierarachy='Image/';
+            this.folderDisplayHierachy ='Image/';
             this.getNestedFolders(item.ParentId);
             
             if (this.folderHierarachy.length > 0)
@@ -161,6 +164,7 @@ export class AlbumsComponent implements OnInit {
             return {
               FileId: item.FileId,
               FilePath: browsePath,
+              DisplayPath: globalconstants.apiUrl + "/" + this.folderDisplayHierachy + item.FileName,
               FileName: item.FileName,
               Description: item.Description,
               UploadDate: item.UploadDate,

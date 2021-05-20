@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -18,7 +19,12 @@ export class FiledragAndDropComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  Processing = false;
+  Requestsize = 0;
   Albums: any[];
   errorMessage = '';
   formdata: FormData;
@@ -31,22 +37,20 @@ export class FiledragAndDropComponent implements OnInit {
   constructor(private uploadService: FileUploadService,
     private naomitsuService: NaomitsuService,
     private route: Router,
-    private tokenStorage:TokenStorageService,
+    private tokenStorage: TokenStorageService,
     private alert: AlertService) { }
 
   ngOnInit(): void {
+    this.formdata = new FormData();
     this.checklogin();
     this.getAlbums();
   }
   checklogin() {
-    let options = {
-      autoClose: true,
-      keepAfterRouteChange: true
-    };
+    
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.alert.error("Access denied! login required.", options);
+      this.alert.error("Access denied! login required.", this.options);
       this.route.navigate(['/home']);
     }
   }
@@ -54,21 +58,28 @@ export class FiledragAndDropComponent implements OnInit {
 
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
-    console.log('this.files', this.files)
-    this.formdata = new FormData();
+    //console.log('this.files', this.files)
     debugger;
+    this.Processing = true;
     for (const droppedFile of files) {
 
+      //20971520
       // Is it a file?
       if (droppedFile.fileEntry.isFile) {
         const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
         fileEntry.file((file: File) => {
 
+          if (this.Requestsize + file.size > globalconstants.RequestLimit) {
+            let mb = (globalconstants.RequestLimit / (1024 * 1024)).toFixed(2);
+            this.alert.error('File upload limit is ${mb}mb!', this.optionsNoAutoClose);
+            return;
+          }
+          this.Requestsize += file.size
           // Here you can access the real file
           //console.log(droppedFile.relativePath, file);
-          if (file.type.includes("image") || file.type == "application/pdf" || 
-          file.type == "application/vnd.ms-excel" ||
-          file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+          if (file.type.includes("image") || file.type == "application/pdf" ||
+            file.type == "application/vnd.ms-excel" ||
+            file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
             //this.filesForDisplayOnly.push(file);
             this.formdata.append(droppedFile.fileEntry.name, file, droppedFile.fileEntry.name)
           }
@@ -84,11 +95,19 @@ export class FiledragAndDropComponent implements OnInit {
     }
     if (this.errorMessage.length > 0)
       this.alert.error(this.errorMessage, this.options);
-    //console.log('this.formdata',this.filesForDisplayOnly);
+    this.Processing =false;
+      //console.log('this.formdata',this.filesForDisplayOnly);
   }
   Upload() {
+
+    if (this.Requestsize > globalconstants.RequestLimit) {
+      this.alert.error("File upload limit is 20mb!", this.optionsNoAutoClose);
+      return;
+    }
+
     let error: boolean = false;
     debugger;
+
     let selectedAlbum = this.dragdropForm.get("folderName").value;
     let selectedAlbumId = this.dragdropForm.get("parentId").value;
     //console.log(this.Albums);//alert(selectedAlbum);
@@ -126,17 +145,15 @@ export class FiledragAndDropComponent implements OnInit {
     }
   }
   uploadFile() {
-    let options = {
-      autoClose: true,
-      keepAfterRouteChange: true
-    };
-    //console.log('form dasta',this.formdata);
+      //console.log('form dasta',this.formdata);
+    this.Processing =true;
     this.uploadService.postFiles(this.formdata).subscribe(res => {
       //console.log("Upload complete");
-      this.alert.success("Files Uploaded successfully.", options);
+      this.alert.success("Files Uploaded successfully.", this.options);
       this.formdata = null;
       this.files = [];
       this.getAlbums();
+      this.Processing =false;
       this.route.navigate(['/home/managefile']);
 
     });

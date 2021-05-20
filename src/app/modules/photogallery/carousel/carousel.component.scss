@@ -1,26 +1,33 @@
-:host{
+:host {
   width: 100vw;
-  
+
 }
-mat-card{
-  background-color: #1E4A75;
- // padding:20px;
+
+mat-card {
+  background-color: var(--maincolor1);
+  margin-top      : 15px;
+  // padding:20px;
   //top:35px;
 }
 
-.carousel-caption{
-  color:black;
+.carousel-caption {
+  color: black;
 }
-mat-card-subtitle{
-  display: flex;
-  justify-content:center;
+
+mat-card-subtitle {
+  display        : flex;
+  justify-content: center;
 }
-.photosize{
-  width:100%;  
-  height:435px;
-  object-fit: contain;
- 
+
+.photosize {
+  border-collapse: collapse;
+  border         : 2px medium #19283f;
+  width          : 100%;
+  height         : 435px;
+  object-fit     : contain;
+
 }
+
 // img:{   
 //   border-radius: 3px;
 //   transition: all .3s linear;

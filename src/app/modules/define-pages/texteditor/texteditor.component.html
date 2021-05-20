@@ -9,7 +9,7 @@
                 <div class="column">
                     <mat-form-field appearance="outline" fxFlex [style.width.px]="350">
                         <mat-label>Enter Title</mat-label>
-                        <input formControlName="PageTitle" autocomplete="Off" #input matInput maxlength="25">
+                        <input formControlName="PageTitle" autocomplete="Off" #input matInput maxlength="50">
                         <span class="text-danger" *ngIf="f.PageTitle.touched && f.PageTitle.hasError('required')">Title
                             is required.</span>
                     </mat-form-field>
@@ -28,48 +28,58 @@
                     </mat-checkbox>&nbsp; Has Submenu &nbsp;&nbsp;
                 </div>
                 <div>
-                    <button class="mat-raised-button" matTooltip="save as draft" style="justify-items:center" type="button" (click)="onSaveAsDraft()" [disabled]="PageDetailForm.invalid">
+                    <button class="mat-raised-button" matTooltip="save as draft" style="justify-items:center"
+                        type="button" (click)="onSaveAsDraft()" [disabled]="PageDetailForm.invalid">
                         <mat-icon aria-label="drafts">drafts</mat-icon>
                     </button>
                 </div>
                 <div class="column">
-                    <button class="mat-raised-button" matTooltip="publish" type="button" (click)="onSubmit()" [disabled]="PageDetailForm.invalid">
-                        <mat-icon aria-label="publish">publish</mat-icon></button>
+                    <button class="mat-raised-button" matTooltip="publish" type="button" (click)="onSubmit()"
+                        [disabled]="PageDetailForm.invalid">
+                        <mat-icon aria-label="publish">publish</mat-icon>
+                    </button>
                 </div>
-                
-                <div style="border-collapse: collapse;border: 1px solid lightgray;padding: 20px;" *ngIf="Id>0" fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-between center">
-                    <span>Photo</span>
-                    <span style="color:red;" *ngIf="message">{{message}}</span>
-                    <input #inputfile [hidden]="true" type="file" accept='image/*'
-                        (change)="preview(inputfile.files)" />
-                    <img [src]="imgURL" height="200" *ngIf="imgURL">
-                    <span *ngIf="!Edit">
-                        <button class="mat-raised-button" matTooltip="update photo" color="primary"
+            </div>
+            <div>
+                <div style="border: 1px solid gray;margin-top:10px;padding: 20px;" *ngIf="Id>0">
+                    <span>Photo</span>&nbsp;
+                    <div class="photo">
+                        <span style="color:red;" *ngIf="message">{{message}}</span>
+                        <input #inputfile [hidden]="true" type="file" accept='image/*'
+                            (change)="preview(inputfile.files)" />
+                        <img [src]="imgURL" height="200" *ngIf="imgURL">
+
+                    </div>
+                    <div class="buttons" fxLayout="row" fxLayoutAlign="start center">
+                        <!-- <button *ngIf="!Edit" class="mat-raised-button" matTooltip="update photo" color="primary"
                             (click)="edit()">
                             <mat-icon>edit</mat-icon>
+                        </button> -->
+                        <button *ngIf="imgURL.length>0" class="mat-raised-button" [disabled]="processing"
+                            matTooltip="delete photo" color="primary" (click)="delete()">
+                            <mat-icon>delete</mat-icon>
                         </button>
-                    </span>
-                    <span *ngIf="Edit" fxLayout="row" fxLayoutAlign="center center">
                         <button class="mat-raised-button" matTooltip="select file" color="primary"
                             (click)="inputfile.click()">
                             <mat-icon aria-label="photo">photo</mat-icon>
                         </button>&nbsp;&nbsp;
-                        <button type="submit" (click)="uploadFile()" matTooltip="upload file"
-                            class="mat-raised-button">
+                        <button type="submit" *ngIf="imageCount>0" [disabled]="processing"
+                            (click)="uploadFile()" matTooltip="upload file" class="mat-raised-button">
                             <mat-icon aria-label="file_upload">file_upload</mat-icon>
                         </button>&nbsp;&nbsp;
-                    </span>
-                </div>           
+
+                    </div>
+                </div>
             </div>
             <br />
             <div class="row">
                 <ckeditor formControlName="PageBody" [config]="ckeConfig" debounce="500">
                 </ckeditor>
             </div>
-           <br>
+            <br>
             <div class="row">
                 <button type="button" (click)="dashboard()" class="mat-raised-button">
-                     <mat-icon aria-label="arrow_back">arrow_back</mat-icon>
+                    <mat-icon aria-label="arrow_back">arrow_back</mat-icon>
                 </button>
             </div>
         </form>

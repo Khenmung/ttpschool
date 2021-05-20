@@ -23,8 +23,8 @@
     background-size    : cover;
     //background-repeat: no-repeat;
     //background-size: cover;
-    background-color   : #1E4A75; //#0F5298; //#4f8ec2;//
-    //box-shadow: 5px 5px #00203FFF;
+    background-color   : var(--maincolor1); //#0F5298; //#4f8ec2;//
+    box-shadow         : 3px 3px 3px var(--maincolor2);
     top                : 0px;
     //height:300px;
     max-width          : 100%;
@@ -38,14 +38,21 @@
 
 //   }
 
+.transparent {
+    color                    : transparent;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #a7a6a6;
+    font-size                : 20px;
 
+}
 
-.rightside {
-    background-color: black; // rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
-    padding         : 5px;
-    color           : white;
+.rightside:hover {
+    background-color  : purple; // rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
+    cursor            : pointer;
+    //padding         : 5px;
+    //color           : white;
     //opacity: 1.5;
-    clip-path       : polygon(0 30%, 99% 1%, 100% 90%, 0% 100%);
+    //clip-path       : polygon(0 30%, 99% 1%, 100% 90%, 0% 100%);
 }
 
 button {
@@ -55,21 +62,27 @@ button {
 
 @media only screen and (max-width: 600px) {
     .mat-toolbar-row {
-        height: 170px !important;
-
-        //padding:20px;
+        height : 95px !important;
+        padding: 0px;
     }
 
+    img {
+        margin-top  : 10px;
+        margin-right: 10px;
+    }
 }
 
 @media only screen and (min-width: 601px) {
     .mat-toolbar-row {
-        height: 150px !important;
+        height: 110px !important;
+    }
 
-        //padding:20px;
+    img {
+        margin-right: 10px;
     }
 }
 
-.ng-star-inserted {
-    height: 55px !important;
+sub {
+    vertical-align: sub;
+    font-size     : smaller;
 }

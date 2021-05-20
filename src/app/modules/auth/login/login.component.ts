@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
-      console.log("authlogin",this.deviceXs);
+      //console.log("authlogin",this.deviceXs);
     });
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
       
       data => {
         debugger;
-        console.log("login data",data);
+        //console.log("login data",data);
         this.tokenStorage.saveToken(data.access_token);
         this.tokenStorage.saveUser(data.userName);
 

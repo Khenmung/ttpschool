@@ -1,33 +1,31 @@
 <!-- <mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}"> -->
 <mat-toolbar class="width100">
     <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
-        <div fxLayout="row wrap" fxLayoutAlign="start center">           
+        <div fxLayout="row wrap" fxLayoutAlign="start center">
             <button mat-button (click)="toggleSideBar()">
                 <mat-icon>menu</mat-icon>
             </button>
-            <button mat-button>
-                <a [routerLink]="[ '/home/display/0/0/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
-                        width="110px" /></a>
-            </button>
-            <div fxHide.xs fxLayout="row" fxLayoutAlign="space-between center">              
+            <a [routerLink]="['/home/display/0/0/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
+                    width="70px" /></a>
+            <div fxLayout="row" fxLayoutAlign="space-between center">
                 <span><strong>ST. PAUL'S INSTITUTE</strong></span>
             </div>
         </div>
-        
+
         <div>
             <div fxLayout="row" fxLayoutAlign="space-around end"><span style="height: 40px;">&nbsp;</span></div>
             <div fxLayout="row" fxLayoutAlign="space-around end" *ngIf="!deviceXs">
-                <button mat-button><span>Train up a child in the way he should go. -
-                        Proverbs 22:16</span></button>
+                   <span class="transparent">TRAIN UP A CHILD IN THE WAY HE SHOULD GO.</span> 
+                        <sub style="font-size:14px;color:lightgray">-Proverbs 22:16</sub>
             </div>
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
-            <span *ngIf="!deviceXs">
+            <span class="rightside" *ngIf="!deviceXs">
                 <button mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
                 </button>
             </span>
-            <button fxHide.xs mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
+            <button class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
                 <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
             </button>
@@ -47,15 +45,12 @@
             </mat-menu>
         </div>
     </mat-toolbar-row>
-    <mat-toolbar-row fxShow.gt-xs fxHide.gt-xs style="height: 70px !important;box-shadow: 3px 3px 3px #00203F;"
-     fxLayout="row wrap" fxLayoutAlign="space-between center">
-        <div style="padding-left: 70px;padding-bottom: 10px;" fxLayout="row" fxLayoutAlign="center center">             
+    <mat-toolbar-row fxShow.gt-xs fxHide.gt-xs style="height: 70px !important;box-shadow: 3px 3px 3px var(--maincolor2);"
+        fxLayout="row wrap" fxLayoutAlign="space-between center">
+        <!-- <div style="padding-left: 70px;padding-bottom: 10px;" fxLayout="row" fxLayoutAlign="center center">             
            
-            <!-- <button mat-button (click)="toggleSideBar()">
-                <mat-icon>menu</mat-icon>
-            </button> -->
             <span><strong>ST. PAUL'S INSTITUTE</strong></span>            
-        </div>
+        </div> -->
         <button mat-button (click)="newsNEvents()">
             <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
         </button>

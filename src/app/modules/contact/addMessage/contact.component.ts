@@ -15,6 +15,7 @@ export class ContactComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SuccessMessage='';
   title: string;
   Id: number = 0;
   ContactForm = new FormGroup({
@@ -23,7 +24,7 @@ export class ContactComponent implements OnInit {
     Subject: new FormControl("", [Validators.required, Validators.maxLength(25)]),
     MessageBody: new FormControl("", [Validators.required, Validators.maxLength(250)]),
     CreatedDate: new FormControl(new Date()),
-    Active: new FormControl(0),
+    Active: new FormControl(1),
     MessageId: new FormControl(0)
   });
 
@@ -65,11 +66,13 @@ export class ContactComponent implements OnInit {
         })
   }
   insert() {
+    debugger;
     this.naomitsuService.postPatch('Messages', this.ContactForm.value, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.alert.success("Data saved Successfully", this.options);
-          //this.route.navigate(["/home/messages"]);
+          //this.alert.success("Data saved Successfully", this.options);
+          this.SuccessMessage ="We have received your message! Thank you for contacting us.";
+          //this.route.navigate(["/home"]);
         },
         (error) => {
           console.log('messages page', error);

@@ -26,6 +26,7 @@ import { MaterialModule } from '../shared/material/material.module';
 import { SharedhomepageModule } from './sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AlbumsModule } from './photogallery/albums/albums.module';
+import { DefinePagesModule } from './define-pages/define-pages.module';
 
 @NgModule({
   declarations: [WebsiteComponents],
@@ -58,8 +59,9 @@ import { AlbumsModule } from './photogallery/albums/albums.module';
     //ClipboardModule  
     MaterialModule,
     FlexLayoutModule,
-    AlbumsModule
+    AlbumsModule,
     //SharedhomepageModule
+    DefinePagesModule
     
   
   ],

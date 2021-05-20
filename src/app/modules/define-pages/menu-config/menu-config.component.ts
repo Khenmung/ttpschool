@@ -70,7 +70,7 @@ export class MenuConfigComponent implements OnInit {
       .get(this.list)
       .subscribe({
         next: (arrPage) => {
-          console.log('arrpage', arrPage);
+          //console.log('arrpage', arrPage);
           let arr = [];
           Object.keys(arrPage).map(function (key) {
             arr.push({ [key]: arrPage[key] })
