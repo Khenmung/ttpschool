@@ -6,7 +6,7 @@
     //border-color:gray;
 }
 mat-card{
-    background-color: lightgray;
+    background-color: var(--ControlPanelColor);
     margin-top: 15px;
 }
 app-edit-input{
