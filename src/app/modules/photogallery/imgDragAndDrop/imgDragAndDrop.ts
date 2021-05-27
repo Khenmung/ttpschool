@@ -3,15 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { FileUploadService } from '../../../shared/upload.service'
 import { AlertService } from '../../../shared/components/alert/alert.service'
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { List } from 'src/app/shared/interface';
+import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { DialogService } from '../../../shared/dialog.service';
 import { Router } from '@angular/router';
 import { Ng2ImgMaxService } from 'ng2-img-max';
 import { base64ToFile } from 'ngx-image-cropper';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { TokenStorageService } from '../../../_services/token-storage.service';
 import { async } from '@angular/core/testing';
-import { globalconstants } from 'src/app/shared/globalconstant';
+import { globalconstants } from '../../../shared/globalconstant';
 @Component({
   selector: 'app-file-drag-and-drop',
   templateUrl: './imgDragAndDrop.html',

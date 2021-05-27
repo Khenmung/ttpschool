@@ -8,9 +8,9 @@ import { IMessage, IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { globalconstants } from 'src/app/shared/globalconstant';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { globalconstants } from '../../../shared/globalconstant';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { TokenStorageService } from '../../../_services/token-storage.service';
 
 @Component({
   selector: 'app-contactdashboard',

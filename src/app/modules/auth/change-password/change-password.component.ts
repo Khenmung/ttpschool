@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthService } from 'src/app/_services/auth.service';
+import { AuthService } from '../../../_services/auth.service';
 
 @Component({
   selector: 'app-change-password',

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 const RANDOMIMAGE_KEY = 'random-images';
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
+const USER_DETAIL = 'userdetail';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +40,18 @@ export class TokenStorageService {
     localStorage.removeItem(USER_KEY);
     localStorage.setItem(USER_KEY, JSON.stringify(user));
   }
+  public saveUserdetail(userdetail: any): void {
+    localStorage.removeItem(USER_DETAIL);
+    localStorage.setItem(USER_DETAIL, JSON.stringify(userdetail));
+  }
+  public getUserDetail(): any {
+    const userdetail = localStorage.getItem(USER_DETAIL);
+    if (userdetail) {
+      return JSON.parse(userdetail);
+    }
 
+    return "";
+  }
   public getUser(): any {
     const user = localStorage.getItem(USER_KEY);
     if (user) {

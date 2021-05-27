@@ -1,8 +1,8 @@
 export class globalconstants {
-    public static apiUrl: string = "http://localhost:8070";//"https://ettest.ttpsolutions.in";//
+    public static apiUrl: string = "http://localhost:8090";//"https://ettest.ttpsolutions.in";//
     public static fileUrl: string = '';
     public static RequestLimit =20971520; //536870912;
-                                
+    public static TrialPeriod =30;                            
     public static MasterDefinitions=
         {
         "DOCUMENTTYPE":"document type",
@@ -28,7 +28,9 @@ export class globalconstants {
         "DOWNLOADTYPE":"download type",
         "CURRENTBATCH":"current batch",
         "REASONFORLEAVING":"reason for leaving",
-        "RANDOMIMAGES":"random images"
+        "RANDOMIMAGES":"random images",
+        "APPLICATIONS":"applications",
+        "ROLES":"roles"
         };
     // public static DOCUMENTTYPE: string = 'document type';
     // public static ORGANIZATION: string = 'organization';

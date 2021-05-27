@@ -3,15 +3,15 @@ import { Dimensions, ImageCroppedEvent, ImageCropperComponent, ImageTransform } 
 import { base64ToFile } from 'ngx-image-cropper';
 import { DatePipe } from '@angular/common';
 import { FileUploadService } from '../../../shared/upload.service'
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { AlertService } from '../../../shared/components/alert/alert.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { List } from 'src/app/shared/interface';
-import { NaomitsuService } from 'src/app/shared/databaseService';
+import { List } from '../../../shared/interface';
+import { NaomitsuService } from '../../../shared/databaseService';
 import { Router } from '@angular/router';
-import { DialogService } from 'src/app/shared/dialog.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
-//import { formmodule } from 'src/app/interface';
+import { DialogService } from '../../../shared/dialog.service';
+import { TokenStorageService } from '../../../_services/token-storage.service';
+//import { formmodule } from '../../../interface';
 const MAX_SIZE: number = 1048576;
 
 @Component({

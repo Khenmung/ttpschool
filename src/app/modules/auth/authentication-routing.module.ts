@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ApproleuseraddComponent } from './approleuseradd/approleuseradd.component';
+import { ApproleuserdashboardComponent } from './approleuserdashboard/approleuserdashboard.component';
+import { AppuserComponent } from './appuser/appuser.component';
+import { AppuserdashboardComponent } from './appuserdashboard/appuserdashboard.component';
 import { AuthHomeComponent } from './authhome/authhome.component';
-//import { CarouselComponent } from 'angular-responsive-carousel';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -15,6 +18,8 @@ const routes: Routes = [
       { path: 'changepassword', component: ChangePasswordComponent },
       { path: 'createlogin', component: RegisterComponent },
       { path: 'profile', component: ProfileComponent },
+      { path: 'signup', component: AppuserComponent },
+      { path: 'addapproleuser', component: ApproleuseraddComponent },
     ]
   },
 ];
@@ -30,5 +35,9 @@ export const AuthComponents = [
   LoginComponent,
   ProfileComponent,
   RegisterComponent,
-  AuthHomeComponent
+  AuthHomeComponent,
+  AppuserComponent,
+  AppuserdashboardComponent,
+  ApproleuseraddComponent,
+  ApproleuserdashboardComponent,
 ]

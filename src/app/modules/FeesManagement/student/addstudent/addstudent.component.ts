@@ -4,16 +4,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { ImageCropperComponent } from 'ngx-image-cropper';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { NaomitsuService } from 'src/app/shared/databaseService';
-import { globalconstants } from 'src/app/shared/globalconstant';
-import { List } from 'src/app/shared/interface';
-import { FileUploadService } from 'src/app/shared/upload.service';
+import { AlertService } from '../../../../shared/components/alert/alert.service';
+import { NaomitsuService } from '../../../../shared/databaseService';
+import { globalconstants } from '../../../../shared/globalconstant';
+import { List } from '../../../../shared/interface';
+import { FileUploadService } from '../../../../shared/upload.service';
 import { AddstudentclassComponent } from '../../studentclass/addstudentclass/addstudentclass.component';
 import { AddstudentfeepaymentComponent } from '../../studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from '../../feereceipt/feereceipt.component';
 import { StudentDocumentComponent } from '../../StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
-import { SharedataService } from 'src/app/shared/sharedata.service';
+import { SharedataService } from '../../../../shared/sharedata.service';
 
 @Component({
   selector: 'app-addstudent',

@@ -1,9 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { NaomitsuService } from 'src/app/shared/databaseService';
-import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { NaomitsuService } from '../../../../shared/databaseService';
+import { List } from '../../../../shared/interface';
+import { SharedataService } from '../../../../shared/sharedata.service';
+import { TokenStorageService } from '../../../../_services/token-storage.service';
 
 @Component({
   selector: 'FeeHeader',

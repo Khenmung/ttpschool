@@ -8,10 +8,10 @@ import { IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 //import { SharedataService } from '../../../shared/sharedata.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { TokenStorageService } from '../../../_services/token-storage.service';
+import { AlertService } from '../../../shared/components/alert/alert.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { DialogService } from 'src/app/shared/dialog.service';
+import { DialogService } from '../../../shared/dialog.service';
 
 @Component({
   selector: 'app-pagecontent',

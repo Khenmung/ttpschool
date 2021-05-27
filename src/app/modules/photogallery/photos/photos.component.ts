@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { NaomitsuService } from 'src/app/shared/databaseService';
-import { DialogService } from 'src/app/shared/dialog.service';
-import { List } from 'src/app/shared/interface';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { DialogService } from '../../../shared/dialog.service';
+import { List } from '../../../shared/interface';
+import { TokenStorageService } from '../../../_services/token-storage.service';
 import { globalconstants } from '../../../shared/globalconstant';
 
 @Component({

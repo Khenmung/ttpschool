@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { NaomitsuService } from 'src/app/shared/databaseService';
-import { List } from 'src/app/shared/interface';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { List } from '../../../shared/interface';
 
 @Component({
   selector: 'app-contact',

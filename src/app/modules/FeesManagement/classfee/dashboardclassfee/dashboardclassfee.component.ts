@@ -4,11 +4,11 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { isNumeric } from 'jquery';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { NaomitsuService } from 'src/app/shared/databaseService';
-//import { globalconstants } from 'src/app/shared/globalconstant';
-import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
+import { AlertService } from '../../../../shared/components/alert/alert.service';
+import { NaomitsuService } from '../../../../shared/databaseService';
+//import { globalconstants } from '../../../shared/globalconstant';
+import { List } from '../../../../shared/interface';
+import { SharedataService } from '../../../../shared/sharedata.service';
 
 @Component({
   selector: 'app-dashboardclassfee',

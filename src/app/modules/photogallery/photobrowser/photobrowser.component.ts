@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnInit, VERSION } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { List } from 'src/app/shared/interface';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { List } from '../../../shared/interface';
+import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService'
-import { globalconstants } from 'src/app/shared/globalconstant';
+import { globalconstants } from '../../../shared/globalconstant';
 import { Subscription } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout';
 

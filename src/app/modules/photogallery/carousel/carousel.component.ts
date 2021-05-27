@@ -1,6 +1,6 @@
 import { Component, OnInit, VERSION } from '@angular/core';
 import { NgbCarouselConfig } from "@ng-bootstrap/ng-bootstrap";
-import { List } from 'src/app/shared/interface';
+import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { ActivatedRoute, Router } from '@angular/router';
 import {globalconstants } from '../../../shared/globalconstant';

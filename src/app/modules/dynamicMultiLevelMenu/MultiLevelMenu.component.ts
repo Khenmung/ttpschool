@@ -5,10 +5,10 @@ import {
   MultilevelNodes, Configuration, ExpandedRTL,
   ExpandedLTR, MultilevelMenuService, ExpandCollapseStatusEnum, SlideInOut
 } from 'ng-material-multilevel-menu';
-import { List, PagesForMenu } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
-//import { SharedataService } from 'src/app/shared/sharedata.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { List, PagesForMenu } from '../../shared/interface';
+import { SharedataService } from '../../shared/sharedata.service';
+//import { SharedataService } from '../../../shared/sharedata.service';
+import { TokenStorageService } from '../../_services/token-storage.service';
 import { NaomitsuService } from '../../shared/databaseService';
 @Component({
   selector: 'app-MultiLevelMenu',

@@ -1,12 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NaomitsuService } from 'src/app/shared/databaseService';
-import { List } from 'src/app/shared/interface';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { DialogService } from 'src/app/shared/dialog.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { List } from '../../../shared/interface';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { DialogService } from '../../../shared/dialog.service';
+import { TokenStorageService } from '../../../_services/token-storage.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { globalconstants } from 'src/app/shared/globalconstant';
+import { globalconstants } from '../../../shared/globalconstant';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({

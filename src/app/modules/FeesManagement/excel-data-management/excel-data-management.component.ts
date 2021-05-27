@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
-import { List } from 'src/app/shared/interface';
-import { NaomitsuService } from 'src/app/shared/databaseService';
-import { globalconstants } from 'src/app/shared/globalconstant';
+import { List } from '../../../shared/interface';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { globalconstants } from '../../../shared/globalconstant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { SharedataService } from 'src/app/shared/sharedata.service';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { SharedataService } from '../../../shared/sharedata.service';
 
 @Component({
   selector: 'app-excel-data-management',

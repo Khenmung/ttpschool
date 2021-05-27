@@ -18,6 +18,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 //import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { AlbumsModule } from '../photogallery/albums/albums.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { AlbumsModule } from '../photogallery/albums/albums.module';
     SharedhomepageModule,
     MatFormFieldModule,
     MatCardModule,
+    MatProgressSpinnerModule,
     RouterModule,
     FlexLayoutModule,
     AlbumsModule

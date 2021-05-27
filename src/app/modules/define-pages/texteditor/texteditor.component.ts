@@ -2,12 +2,12 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NaomitsuService } from '../../../shared/databaseService';
-import { List, IPage } from 'src/app/shared/interface';
+import { List, IPage } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { FileUploadService } from 'src/app/shared/upload.service';
-import { globalconstants } from 'src/app/shared/globalconstant';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { TokenStorageService } from '../../../_services/token-storage.service';
+import { FileUploadService } from '../../../shared/upload.service';
+import { globalconstants } from '../../../shared/globalconstant';
 //import { FormsModule} from '@angular/forms';
 @Component({
 

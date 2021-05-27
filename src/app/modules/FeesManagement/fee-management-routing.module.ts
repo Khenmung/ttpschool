@@ -19,7 +19,7 @@ import { FeeEditInputComponent } from './FeeEdit-input/FeeEdit-input.component';
 import { DashboardstudentdocumentComponent } from './StudentDocument/dashboardstudentdocument/dashboardstudentdocument.component';
 import { TodayCollectionComponent } from './Reports/today-collection/today-collection.component';
 import { FeecollectionreportComponent } from './Reports/feecollectionreport/feecollectionreport.component';
-//import { EditInputComponent } from 'src/app/modules/photogallery/albumedit-input/albumedit-input.component';
+//import { EditInputComponent } from '../../../modules/photogallery/albumedit-input/albumedit-input.component';
 
 
 const routes: Routes = [{

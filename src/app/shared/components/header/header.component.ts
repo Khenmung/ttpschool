@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { TokenStorageService } from '../../../_services/token-storage.service';
 import { NaomitsuService } from '../../databaseService';
 import { SharedataService } from '../../sharedata.service'
 @Component({
@@ -49,6 +49,9 @@ export class HeaderComponent implements OnInit {
   }
   createlogin() {
     this.route.navigate(["/auth/createlogin"]);
+  }
+  addUser(){
+    this.route.navigate(["/auth/signup"]);
   }
   logout() {
     debugger;

@@ -1,0 +1,59 @@
+<mat-card>
+    <mat-card-title>Sign up</mat-card-title>
+    <mat-card-content>
+        <alert></alert>
+        <div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayout.xs="column" fxLayoutGap="50px">
+            <form [formGroup]="AppUsersForm">
+                <mat-form-field appearance="outline">
+                    <mat-label>User Name</mat-label>
+                    <input formControlName="UserName" autocomplete="Off" #RollNo matInput maxlength="50">
+                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                    <span class="text-danger" *ngIf="f.UserName.touched && f.UserName.hasError('required')">
+                        UserName is required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input formControlName="EmailAddress" matInput autocomplete="off">
+                    <span class="text-danger" *ngIf="f.EmailAddress.touched && f.EmailAddress.hasError('required')">
+                        Email is required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Address</mat-label>
+                    <input formControlName="Address" matInput autocomplete="off">
+                    <span class="text-danger" *ngIf="f.Address.touched && f.Address.hasError('required')">
+                        Address is required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Contact No.</mat-label>
+                    <input formControlName="ContactNo" matInput autocomplete="off">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Valid From</mat-label>
+                    <input formControlName="ValidFrom" matInput [matDatepicker]="ValidFrom" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="ValidFrom"></mat-datepicker-toggle>
+                    <mat-datepicker #ValidFrom></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Valid To</mat-label>
+                    <input formControlName="ValidTo" matInput [matDatepicker]="ValidTo" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
+                    <mat-datepicker #ValidTo></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline" [style.width.pc]="32">
+                    <mat-label>Remarks</mat-label>
+                    <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
+                </mat-form-field>
+                <mat-checkbox formControlName="Active">
+                </mat-checkbox>&nbsp; Active
+            </form>
+        </div>
+    </mat-card-content>
+    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+        <button class="mat-raised-button" (click)="UpdateOrSave()">
+            <mat-icon>save</mat-icon>
+        </button>
+        <button class="mat-raised-button" (click)="back()">
+            <mat-icon>cancel</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Subscription } from 'rxjs';
-import { UserService } from 'src/app/_services/user.service';
+import { UserService } from '../../../_services/user.service';
 import {SharedataService} from '../../../shared/sharedata.service';
 @Component({
   selector: 'app-home',
