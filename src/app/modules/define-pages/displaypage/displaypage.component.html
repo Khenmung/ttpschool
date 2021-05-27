@@ -1,5 +1,5 @@
 <mat-card class="contentbody">
-    <mat-card-title style="padding-bottom: 0px;">{{Title|titlecase}}</mat-card-title>
+    <mat-card-title style="padding-bottom: 0px;">{{Title}}</mat-card-title>
     <mat-card-subtitle style="padding-bottom: 5px;" *ngIf="ParentPage.length>0">
         <span *ngIf="ParentLink!=null" style="color:lightgray">
         <a class="clickable" [routerLink]="[ParentLink]">{{ParentPage}}</a> > {{Title}}          
