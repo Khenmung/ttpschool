@@ -10,12 +10,13 @@ import { SharedataService } from '../../shared/sharedata.service';
 //import { SelectionModel } from '@angular/cdk/collections';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
+import { MatSort } from '@angular/material/sort';
 @Component({
-  selector: 'app-newsdashboard',
-  templateUrl: './newsdashboard.component.html',
-  styleUrls: ['./newsdashboard.component.scss']
+  selector: 'app-allnewsdashboard',
+  templateUrl: './allnewsdashboard.component.html',
+  styleUrls: ['./allnewsdashboard.component.scss']
 })
-export class NewsdashboardComponent implements OnInit {
+export class AllNewsdashboardComponent implements OnInit {
   PageTitle: string = "News & Events";
   ParentPages: [{ PageId, PageTitle }];
   PageDetail: IPage;
@@ -32,7 +33,7 @@ export class NewsdashboardComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  //@ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;
 
   //selection = new SelectionModel<IPage>(true, []);
 
@@ -63,7 +64,6 @@ export class NewsdashboardComponent implements OnInit {
           }).sort((a,b)=> {
             return +new Date(b.UpdateDate) - +new Date(a.UpdateDate)
           })
-          .slice(0,5)
           .map(item=>{
             return {
               Title:item.label,
@@ -75,6 +75,7 @@ export class NewsdashboardComponent implements OnInit {
           this.displayedColumns = ["Title","UpdateDate"];//this.columns.map(c => c.columnDef);
           this.dataSource = new MatTableDataSource(this.AllData);
           this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
 
   }
   constructor(private naomitsuService: NaomitsuService,
@@ -111,11 +112,6 @@ export class NewsdashboardComponent implements OnInit {
     //this.navigate.navigate(['/home/display/' + element.PhId + '/' + element.PageId], { queryParams: { GroupId: this.Id } });
     this.navigate.navigate([element.Link], { queryParams: { GroupId: this.Id } });
   }
-  allnews()
-  {
-    this.navigate.navigate(['/home/allnews']);
-  }
-
   createNew() {
     this.navigate.navigate(['/home/pages/']);
   }
