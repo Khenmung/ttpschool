@@ -4,9 +4,8 @@
     place-items: center;    
 }
 .container{
-    display: flex;
-    justify-content: center;
-    
+    margin: auto;
+    align-self: center;
 }
 button{
     margin-right: 15px;
@@ -16,11 +15,14 @@ button{
 }
 .mat-card{
     position: relative;
-    margin-top:220px; 
+    margin-top:120px; 
 }
 .width100{
     width: 100%;
 }
 .width80{
     width: 40%;
+}
+mat-form-field{
+    margin-right: 20px;
 }

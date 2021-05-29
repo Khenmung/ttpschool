@@ -4,6 +4,7 @@
   <br><br>
   <mat-card-subtitle style="color:white">{{selectedAlbum}}</mat-card-subtitle>
   <mat-card-content>
+    <div style="background-color:  var(--maincolor1);height: 5px;">&nbsp;</div>
     <div fxLayout="column" fxLayoutAlign="space-around center" style="background-color:#19283f">
       <ngb-carousel *ngIf="images.length>1">&nbsp;
         <ng-template ngbSlide *ngFor="let image of images">

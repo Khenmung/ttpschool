@@ -77,7 +77,7 @@ export class ApproleuseraddComponent implements OnInit {
   GetAppUsers() {
 
     let list: List = new List();
-    list.fields = ["ApplicationUserId","UserName"];
+    list.fields = ["ApplicationUserId", "UserName"];
     list.PageName = "AppUsers";
     list.filter = ["Active eq 1 and OrgId eq " + this.UserDetail["OrgId"]];
 
@@ -123,81 +123,88 @@ export class ApproleuseraddComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
+    let Ids = this.allMasterData.filter((item, indx) => {
       return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
     });
-  }
 
-  UpdateOrSave() {
+    if (Ids.length > 0) {
+      let Id = Ids[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      })
+    }
+    else {
+      return [];
+    }
+}
 
-    // let re = /^[.0-9]*$/
-    // //console.log('pay', row.Pay)
-    // let valid = re.test(row.Pay);
-    // if (!valid) {
-    //   this.alert.error("Invalid amount! Please enter numeric value", this.optionsNoAutoClose);
-    //   return;
-    // }
+UpdateOrSave() {
 
-    let checkFilterString = "Active eq 1 " +
-      " and ApplicationId eq " + this.AppRoleUserForm.get("ApplicationId").value +
-      " and RoleId eq " + this.AppRoleUserForm.get("RoleId").value +
-      " and UserId eq " + this.AppRoleUserForm.get("RoleId").value +
-      " and Active eq 1";
+  // let re = /^[.0-9]*$/
+  // //console.log('pay', row.Pay)
+  // let valid = re.test(row.Pay);
+  // if (!valid) {
+  //   this.alert.error("Invalid amount! Please enter numeric value", this.optionsNoAutoClose);
+  //   return;
+  // }
 
-    if (this.ApplicationRoleUserData.ApplicationRoleUserId > 0)
-      checkFilterString += " and ApplicationRoleUserId ne " + this.ApplicationRoleUserData.ApplicationRoleUserId;
+  let checkFilterString = "Active eq 1 " +
+    " and ApplicationId eq " + this.AppRoleUserForm.get("ApplicationId").value +
+    " and RoleId eq " + this.AppRoleUserForm.get("RoleId").value +
+    " and UserId eq " + this.AppRoleUserForm.get("RoleId").value +
+    " and Active eq 1";
 
-    let list: List = new List();
-    list.fields = ["ApplicationRoleUserId"];
-    list.PageName = "ApplicationRoleUsers";
-    list.filter = [checkFilterString];
+  if (this.ApplicationRoleUserData.ApplicationRoleUserId > 0)
+    checkFilterString += " and ApplicationRoleUserId ne " + this.ApplicationRoleUserData.ApplicationRoleUserId;
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+  let list: List = new List();
+  list.fields = ["ApplicationRoleUserId"];
+  list.PageName = "ApplicationRoleUsers";
+  list.filter = [checkFilterString];
+
+  this.dataservice.get(list)
+    .subscribe((data: any) => {
+      debugger;
+      if (data.value.length > 0) {
+        this.alert.error("Record already exists!", this.optionsNoAutoClose);
+      }
+      else {
+        this.ApplicationRoleUserData.Active = 1;
+        this.ApplicationRoleUserData.ApplicationId = this.AppRoleUserForm.get("ApplicationId").value;
+        this.ApplicationRoleUserData.RoleId = this.AppRoleUserForm.get("RoleId").value;
+        this.ApplicationRoleUserData.UserId = this.AppRoleUserForm.get("UserId").value;
+        this.ApplicationRoleUserData.ValidFrom = this.AppRoleUserForm.get("ValidFrom").value;
+        this.ApplicationRoleUserData.ValidTo = this.AppRoleUserForm.get("ValidTo").value;
+
+        if (this.ApplicationRoleUserData.ApplicationRoleUserId == 0) {
+          this.ApplicationRoleUserData.CreatedDate = new Date();
+          this.ApplicationRoleUserData.CreatedBy = this.tokenstorage.getUser();
+          this.insert();
         }
         else {
-          this.ApplicationRoleUserData.Active = 1;
-          this.ApplicationRoleUserData.ApplicationId = this.AppRoleUserForm.get("ApplicationId").value;
-          this.ApplicationRoleUserData.RoleId = this.AppRoleUserForm.get("RoleId").value;
-          this.ApplicationRoleUserData.UserId = this.AppRoleUserForm.get("UserId").value;
-          this.ApplicationRoleUserData.ValidFrom = this.AppRoleUserForm.get("ValidFrom").value;
-          this.ApplicationRoleUserData.ValidTo = this.AppRoleUserForm.get("ValidTo").value;
-
-          if (this.ApplicationRoleUserData.ApplicationRoleUserId == 0) {
-            this.ApplicationRoleUserData.CreatedDate = new Date();
-            this.ApplicationRoleUserData.CreatedBy = this.tokenstorage.getUser();
-            this.insert();
-          }
-          else {
-            this.ApplicationRoleUserData.UpdatedDate = new Date();
-            this.ApplicationRoleUserData.UpdatedBy = this.tokenstorage.getUser();
-            this.update();
-          }
+          this.ApplicationRoleUserData.UpdatedDate = new Date();
+          this.ApplicationRoleUserData.UpdatedBy = this.tokenstorage.getUser();
+          this.update();
         }
+      }
+    });
+}
+
+insert() {
+
+  debugger;
+  this.dataservice.postPatch('ApplicationRoleUsers', this.ApplicationRoleUserData, 0, 'post')
+    .subscribe(
+      (data: any) => {
+
       });
-  }
+}
+update() {
 
-  insert() {
-
-    debugger;
-    this.dataservice.postPatch('ApplicationRoleUsers', this.ApplicationRoleUserData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-
-        });
-  }
-  update() {
-
-    this.dataservice.postPatch('ApplicationRoleUsers', this.ApplicationRoleUserData, this.ApplicationRoleUserData.ApplicationRoleUserId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
-        });
-  }
+  this.dataservice.postPatch('ApplicationRoleUsers', this.ApplicationRoleUserData, this.ApplicationRoleUserData.ApplicationRoleUserId, 'patch')
+    .subscribe(
+      (data: any) => {
+        this.alert.success("Data updated successfully.", this.optionAutoClose);
+      });
+}
 }

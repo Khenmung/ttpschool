@@ -12,6 +12,7 @@ import { TokenStorageService } from '../../../../_services/token-storage.service
 })
 export class FeeHeaderComponent implements OnInit {
   //IsXS:boolean;
+  Applications=[];  
   toggle:boolean=false;
   userName:string='';
   loggedIn: boolean;
@@ -29,12 +30,15 @@ export class FeeHeaderComponent implements OnInit {
     //this.IsXS = this.screensize.isXS();
     //console.log('isxs',this.IsXS);
     this.userName = this.tokenStorage.getUser();
-
+    this.Applications = this.tokenStorage.getUserDetail().ApplicationRoleUsers;
     if (this.userName === undefined || this.userName === null || this.userName=='')
       this.loggedIn = false;
     else
       this.loggedIn = true;
 //    console.log("loggedin", this.loggedIn)
+  }
+  changeApplication(value){
+
   }
   toggleSideBar() {
     this.toggleSideBarForme.emit();

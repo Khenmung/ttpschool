@@ -71,17 +71,17 @@ export class LoginComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      'UserName',
-      'ApplicationUserId',
-      'Email',
-      'OrgId',
-      'ManagerId',
-      'ApplicationRoleUsers/ApplicationId',
-      'ApplicationRoleUsers/RoleId',
+      'AppUsers/UserName',
+      'AppUsers/ApplicationUserId',
+      'AppUsers/Email',
+      'AppUsers/OrgId',
+      'AppUsers/ManagerId',
+      'ApplicationId',
+      'MasterData',
       'Active'];
 
-    list.PageName = "AppUsers";
-    list.lookupFields = ["ApplicationRoleUsers"];
+    list.PageName = "ApplicationRoleUsers";
+    list.lookupFields = ["AppUsers","MasterData","MasterData1"];
     list.filter = ["Active eq 1 and Email eq '" + email + "'"];
     //list.orderBy = "ParentId";
 
@@ -92,11 +92,17 @@ export class LoginComponent implements OnInit {
           console.log('userdetail', data.value);
           let userDetail = data.value.map(element => {
             return {
+              userId:element.ApplicationUserId,
               username: element.UserName,
               email: element.Email,
-              OrgId:element.OrgId,
-              ManagerId:element.ManagerId,
-              ApplicationRoleUsers: element.ApplicationRoleUsers
+              orgId:element.OrgId,
+              managerId:element.ManagerId,
+              ApplicationRoleUsers: element.ApplicationRoleUsers.map(element=>{
+                return{
+                  applicationId:element.ApplicationId,
+                  roleId: element.RoleId
+              }
+            })
             }
           })
           this.tokenStorage.saveUserdetail(userDetail);

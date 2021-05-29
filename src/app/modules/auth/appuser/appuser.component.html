@@ -4,47 +4,86 @@
         <alert></alert>
         <div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayout.xs="column" fxLayoutGap="50px">
             <form [formGroup]="AppUsersForm">
-                <mat-form-field appearance="outline">
-                    <mat-label>User Name</mat-label>
-                    <input formControlName="UserName" autocomplete="Off" #RollNo matInput maxlength="50">
-                    <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                    <span class="text-danger" *ngIf="f.UserName.touched && f.UserName.hasError('required')">
-                        UserName is required.</span>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Email</mat-label>
-                    <input formControlName="EmailAddress" matInput autocomplete="off">
-                    <span class="text-danger" *ngIf="f.EmailAddress.touched && f.EmailAddress.hasError('required')">
-                        Email is required.</span>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Address</mat-label>
-                    <input formControlName="Address" matInput autocomplete="off">
-                    <span class="text-danger" *ngIf="f.Address.touched && f.Address.hasError('required')">
-                        Address is required.</span>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Contact No.</mat-label>
-                    <input formControlName="ContactNo" matInput autocomplete="off">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Valid From</mat-label>
-                    <input formControlName="ValidFrom" matInput [matDatepicker]="ValidFrom" autocomplete="off">
-                    <mat-datepicker-toggle matSuffix [for]="ValidFrom"></mat-datepicker-toggle>
-                    <mat-datepicker #ValidFrom></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Valid To</mat-label>
-                    <input formControlName="ValidTo" matInput [matDatepicker]="ValidTo" autocomplete="off">
-                    <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
-                    <mat-datepicker #ValidTo></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.pc]="32">
-                    <mat-label>Remarks</mat-label>
-                    <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
-                </mat-form-field>
-                <mat-checkbox formControlName="Active">
-                </mat-checkbox>&nbsp; Active
+                <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
+                    class="demo-tab-group">
+                    <mat-tab>
+                        <div>
+                            <ng-template mat-tab-label>
+                                <mat-icon>info</mat-icon>Primary
+                            </ng-template>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Name</mat-label>
+                                <input formControlName="UserName" autocomplete="Off" #UserName matInput maxlength="50">
+                                <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
+                                <span class="text-danger" *ngIf="f.UserName.touched && f.UserName.hasError('required')">
+                                    UserName is required.</span>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Email</mat-label>
+                                <input formControlName="EmailAddress" #EmailAddress matInput autocomplete="off">
+                                <span class="text-danger"
+                                    *ngIf="f.EmailAddress.touched && f.EmailAddress.hasError('required')">
+                                    Email is required.</span>
+                            </mat-form-field>                            
+                            <!-- <mat-form-field appearance="outline">
+                                <mat-label>Contact No.</mat-label>
+                                <input formControlName="ContactNo" matInput autocomplete="off">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Address</mat-label>
+                                <input formControlName="Address" #Address matInput autocomplete="off">
+                                <span class="text-danger" *ngIf="f.Address.touched && f.Address.hasError('required')">
+                                    Address is required.</span>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Valid From</mat-label>
+                                <input formControlName="ValidFrom" matInput [matDatepicker]="ValidFrom"
+                                    autocomplete="off">
+                                <mat-datepicker-toggle matSuffix [for]="ValidFrom"></mat-datepicker-toggle>
+                                <mat-datepicker #ValidFrom></mat-datepicker>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Valid To</mat-label>
+                                <input formControlName="ValidTo" matInput [matDatepicker]="ValidTo" autocomplete="off">
+                                <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
+                                <mat-datepicker #ValidTo></mat-datepicker>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" [style.width.pc]="32">
+                                <mat-label>Remarks</mat-label>
+                                <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
+                            </mat-form-field>
+                            <mat-checkbox formControlName="Active">
+                            </mat-checkbox>&nbsp; Active -->
+                        </div>
+
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>info</mat-icon>Organisation
+                        </ng-template>
+                        <div>
+                   <app-add-master-data></app-add-master-data>
+                            <!-- <mat-form-field appearance="outline">
+                                <mat-label>Organisation</mat-label>
+                                <input formControlName="OrgId" matInput autocomplete="off" maxlength="50">
+                                <span class="text-danger" *ngIf="f.OrgId.touched && f.OrgId.hasError('required')">
+                                    Organisation Name is required.</span>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Department</mat-label>
+                                <input formControlName="DepartmentId" matInput autocomplete="off">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Location</mat-label>
+                                <input formControlName="LocationId" matInput autocomplete="off">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline">
+                                <mat-label>Manager</mat-label>
+                                <input formControlName="ManagerId" matInput autocomplete="off">
+                            </mat-form-field> -->
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
             </form>
         </div>
     </mat-card-content>

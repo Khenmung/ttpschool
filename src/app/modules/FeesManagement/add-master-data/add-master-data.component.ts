@@ -1,14 +1,15 @@
-import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { AlertService } from '../../../../shared/components/alert/alert.service';
-import { NaomitsuService } from '../../../../shared/databaseService';
-import { DialogService } from '../../../../shared/dialog.service';
-import { globalconstants } from '../../../../shared/globalconstant';
-import { List } from '../../../../shared/interface';
+import { Router } from '@angular/router';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { DialogService } from '../../../shared/dialog.service';
+import { globalconstants } from '../../../shared/globalconstant';
+import { List } from '../../../shared/interface';
 
 @Component({
   selector: 'app-add-master-data',
@@ -35,12 +36,23 @@ export class AddMasterDataComponent implements OnInit {
     "Description",
     "Active"
   ];
-  constructor(private fb: FormBuilder,
+  UserDetails=[];
+  
+  constructor(
+    private fb: FormBuilder,
+    private route:Router,
+    private tokenStorage:TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
     private dialog: DialogService) { }
 
   ngOnInit(): void {
+    this.UserDetails = this.tokenStorage.getUserDetail();
+    if(this.UserDetails==null)
+    {
+      this.alert.error('Please login to be able to add masters!',this.optionAutoClose);
+      this.route.navigate(['auth/login']);
+    }
     this.GetTopMasters();
   }
   enableAddNew=false;
@@ -75,7 +87,7 @@ export class AddMasterDataComponent implements OnInit {
           this.MasterDataStatus = Object.entries(globalconstants.MasterDefinitions).map(globalcons => {
             //console.log('inside',globalcons)
             defined = this.TopMasters.filter(fromdb => {
-              return globalcons[1].toLowerCase() == fromdb.MasterDataName.toLowerCase();
+              return globalcons[1] == fromdb.MasterDataName;
             });
 
             if (defined.length > 0) {
@@ -187,12 +199,7 @@ export class AddMasterDataComponent implements OnInit {
         this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
-        //console.log("after",this.MasterData);
-        // this.FeeNames = this.getDropDownData(globalconstants.FEENAMES);
-        // this.Classes = this.getDropDownData(globalconstants.CLASSES);
-        // this.Batches = this.getDropDownData(globalconstants.BATCH);
-        // this.Locations = this.getDropDownData(globalconstants.LOCATION);
-        //this.classfeeForm.patchValue({ "LocationId": this.Locations[0].MasterDataId });
+       
       });
 
   }
@@ -217,6 +224,7 @@ export class AddMasterDataComponent implements OnInit {
             Description: row.Description,
             MasterDataName: row.Name,
             Active: value.checked == true ? 1 : 0,
+
             // UploadDate: new Date()
           }
 
@@ -238,7 +246,7 @@ export class AddMasterDataComponent implements OnInit {
   updateName(value, row) {
     //console.log('d', row)
     debugger;
-    if (row.Name == value)
+    if (row.Name.toLowerCase() == value.toLowerCase())
       return;
     if (value.length == 0 || value.length > 50) {
       this.alert.error("Character should not be empty or less than 50!", this.optionAutoClose);
@@ -271,6 +279,9 @@ export class AddMasterDataComponent implements OnInit {
 
     let selectedMasterDataId = 0;
     if (newlyAddedRow[0].Id == 0) {
+      mastertoUpdate["CreatedBy"]= this.UserDetails["userId"];
+      mastertoUpdate["OrgId"]= this.UserDetails["orgId"];
+      mastertoUpdate["ApplicationId"]= this.UserDetails["applicationId"];
       this.dataservice.postPatch('MasterDatas', mastertoUpdate, 0, 'post')
         .subscribe(res => {
           if (res != undefined) {
@@ -298,7 +309,7 @@ export class AddMasterDataComponent implements OnInit {
   }
   updateDescription(value, row) {
     debugger;
-    if (this.oldvalue == value)
+    if (row.Description.toLowerCase() == value.toLowerCase())
       return;
     let confirmYesNo: Boolean = false;
     if (value.length == 0 || value.length > 50) {
