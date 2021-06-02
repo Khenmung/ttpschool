@@ -118,8 +118,8 @@ export class ApproleuseraddComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ROLES);
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.APPLICATIONS);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
       });
   }
   getDropDownData(dropdowntype) {
@@ -173,9 +173,7 @@ UpdateOrSave() {
         this.ApplicationRoleUserData.ApplicationId = this.AppRoleUserForm.get("ApplicationId").value;
         this.ApplicationRoleUserData.RoleId = this.AppRoleUserForm.get("RoleId").value;
         this.ApplicationRoleUserData.UserId = this.AppRoleUserForm.get("UserId").value;
-        this.ApplicationRoleUserData.ValidFrom = this.AppRoleUserForm.get("ValidFrom").value;
-        this.ApplicationRoleUserData.ValidTo = this.AppRoleUserForm.get("ValidTo").value;
-
+       
         if (this.ApplicationRoleUserData.ApplicationRoleUserId == 0) {
           this.ApplicationRoleUserData.CreatedDate = new Date();
           this.ApplicationRoleUserData.CreatedBy = this.tokenstorage.getUser();

@@ -11,11 +11,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FeesmanagementModule } from '../FeesManagement/FeesManagement.module';
 
 @NgModule({
-  declarations: [
-    AuthComponents,
-
-    
-  ],
+  declarations: [AuthComponents],
   imports: [
     CommonModule,
     FormsModule,

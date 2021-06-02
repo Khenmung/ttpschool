@@ -1,0 +1,36 @@
+<mat-card>
+    <mat-card-title>Sign up</mat-card-title>
+    <mat-card-content>
+        <div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayout.xs="column" fxLayoutGap="30px">
+            <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
+                class="demo-tab-group">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>Primary
+                    </ng-template>
+                    <app-register>
+                    </app-register>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>settings_applications</mat-icon> Essential Data
+                    </ng-template>
+                    <app-add-master-data></app-add-master-data>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>settings_applications</mat-icon> Users
+                    </ng-template>
+                    <app-appuserdashboard></app-appuserdashboard>
+                </mat-tab>
+                
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>users</mat-icon> Application Role Assignment
+                    </ng-template>
+                   <!-- <app-approleuserdashboard></app-approleuserdashboard> -->
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-card-content>
+</mat-card>

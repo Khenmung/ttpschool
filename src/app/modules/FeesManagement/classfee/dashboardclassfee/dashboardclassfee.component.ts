@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { isNumeric } from 'jquery';
+//import { isNumeric } from 'jquery';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 //import { globalconstants } from '../../../shared/globalconstant';

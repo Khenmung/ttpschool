@@ -1,16 +1,28 @@
-<div fxLayout="column" fxLayoutAlign="center center" style="margin: 15px;">
-    <strong>Masters definition Statuses</strong>
-    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid grey;">
-    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
-        <div style="width:200px" *ngFor="let item of MasterDataStatus">{{item.MasterDataName}}
-            <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-            <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+
+<div fxLayout="column" fxLayoutAlign="center center" class="boxes">
+    <strong>Essential data for Application setting Statuses</strong>
+    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid lightgrey;">
+        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <div style="width:200px" *ngFor="let item of ApplicationDataStatus">{{item.MasterDataName}}
+                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+            </div>
         </div>
     </div>
 </div>
+<div fxLayout="column" fxLayoutAlign="center center" class="boxes">
+    <strong>Essential data for <b>School Application</b> setting Statuses</strong>
+    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid grey;">
+        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <div style="width:200px" *ngFor="let item of SchoolDataStatus">{{item.MasterDataName}}
+                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+            </div>
+        </div>
+    </div>
 </div>
-<mat-card>
-    <mat-card-title>Master Data</mat-card-title>
+<mat-card class="boxes">
+    <mat-card-title>Essential data setting</mat-card-title>
     <mat-card-content>
         <mat-spinner *ngIf="loading"></mat-spinner>
         <alert></alert>
@@ -28,7 +40,8 @@
                 <button matTooltip="search" class="mat-raised-button" (click)="GetMasterData()" fxFlex="10">
                     <mat-icon>search</mat-icon>
                 </button>
-                <button matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button" (click)="EditTopMaster()" fxFlex="10">
+                <button matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button"
+                    (click)="EditTopMaster()" fxFlex="10">
                     <mat-icon>work outline</mat-icon>
                 </button>
                 <button matTooltip="new master" class="mat-raised-button" (click)="NewTopMaster()" fxFlex="10">
@@ -39,7 +52,7 @@
         </form>
         <div>
             <mat-divider></mat-divider>
-            <mat-table [dataSource]="datasource" matSort>            
+            <mat-table [dataSource]="datasource" matSort>
                 <ng-container matColumnDef="Id">
                     <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
@@ -47,35 +60,37 @@
                 <ng-container matColumnDef="Name">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <FeeEditInput [data]="element.Name" (tried)="getoldvalue($event,element)"
-                        (focusOut)='updateName($event,element)'></FeeEditInput>
-                        </mat-cell>
+                        <edit-input [data]="element.Name" (tried)="getoldvalue($event,element)"
+                            (focusOut)='updateName($event,element)'></edit-input>
+                    </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Description">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <FeeEditInput [data]="element.Description" 
-                        (focusOut)='updateDescription($event,element)'></FeeEditInput>
+                        <edit-input [data]="element.Description" (focusOut)='updateDescription($event,element)'>
+                        </edit-input>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef> 
-                        <button matTooltip="new item" *ngIf="enableAddNew" class="mat-raised-button" (click)="AddData()" fxFlex="10">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button matTooltip="new item" *ngIf="enableAddNew" class="mat-raised-button" (click)="AddData()"
+                            fxFlex="10">
                             <mat-icon>add</mat-icon>
-                        </button>    
+                        </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                        [checked]="element.Active">
-                    </mat-checkbox>
+                            [checked]="element.Active">
+                        </mat-checkbox>
                     </mat-cell>
                 </ng-container>
-             
+
                 <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
+                <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center"
+                    fxLayout="row">
                 </mat-row>
             </mat-table>
-            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>           
+            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
         </div>
     </mat-card-content>
 </mat-card>

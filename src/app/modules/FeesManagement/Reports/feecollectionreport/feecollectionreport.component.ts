@@ -192,12 +192,12 @@ export class FeecollectionreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
         //since only one current batch is accepted
-        this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions.BATCH)[0].MasterDataId;
+        this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH)[0].MasterDataId;
         this.SearchForm.patchValue({ 'BatchId': this.BatchId });
       });
 

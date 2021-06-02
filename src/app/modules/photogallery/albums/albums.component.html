@@ -31,8 +31,8 @@
                 <ng-container matColumnDef="UpdatedFileFolderName">
                     <mat-header-cell *matHeaderCellDef> Folder/File </mat-header-cell>
                     <mat-cell mat-cell *matCellDef="let element">
-                        <album-edit-input [data]="element.UpdatedFileFolderName" (tried)="getoldvalue($event)"
-                            (focusOut)='updateAlbum($event)'></album-edit-input>
+                        <edit-input [data]="element.UpdatedFileFolderName" (tried)="getoldvalue($event)"
+                            (focusOut)='updateAlbum($event)'></edit-input>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="UploadDate">

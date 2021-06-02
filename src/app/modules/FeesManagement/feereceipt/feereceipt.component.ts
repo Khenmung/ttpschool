@@ -322,10 +322,10 @@ export class FeereceiptComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
         
         let currentBatch = globalconstants.getCurrentBatch();
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);

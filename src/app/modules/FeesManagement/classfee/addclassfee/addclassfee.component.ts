@@ -60,10 +60,10 @@ export class AddclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.classfeeForm.patchValue({ "LocationId": this.Locations[0].MasterDataId });
       });
 

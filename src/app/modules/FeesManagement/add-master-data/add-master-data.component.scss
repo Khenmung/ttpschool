@@ -2,9 +2,11 @@
     border        : 1px thin gray;
     //border-color:gray;
 }
-.highlight{
+
+.highlight {
     background-color: lightgray;
 }
+
 app-edit-input {
     display       : inline-block;
     vertical-align: baseline;
@@ -14,24 +16,35 @@ app-edit-input {
     //padding: 5px;
 }
 
+.boxes {
+    border-collapse: collapse;
+    border         : 1px solid lightgrey;
+    background-color: lightgray;
+    padding:15px;
+    margin         : 15px;
+}
+
 .Header {
     height     : 40px;
     //min-width: 300px;
     margin-left: 15px;
 
 }
-table{
+
+table {
     border-collapse: collapse;
 }
+
 div {
     margin-right: 5px;
 }
+
 mat-checkbox {
     margin-right: 15px;
 }
 
 button {
- //   margin : 5px;
+    //   margin : 5px;
     outline: none;
 }
 

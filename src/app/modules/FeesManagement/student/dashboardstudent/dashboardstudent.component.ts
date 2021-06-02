@@ -84,55 +84,55 @@ export class DashboardstudentComponent implements OnInit {
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
-        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.REASONFORLEAVING);
+        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].REASONFORLEAVING);
         this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
         this.shareddata.ChangeClasses(this.Classes);
 
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         this.shareddata.ChangeBatch(this.Batches);
 
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.CATEGORY);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
 
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.RELIGION);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].RELIGION);
         this.shareddata.ChangeReligion(this.Religion);
 
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.STATE);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].STATE);
         this.shareddata.ChangeStates(this.States);
 
-        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.PRIMARYCONTACT);
+        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].PRIMARYCONTACT);
         this.shareddata.ChangePrimaryContact(this.PrimaryContact);
 
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.LOCATION);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.shareddata.ChangeLocation(this.Location);
 
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.GENDER);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].GENDER);
         this.shareddata.ChangeGenders(this.Genders);
 
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.BLOODGROUP);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BLOODGROUP);
         this.shareddata.ChangeBloodgroup(this.Bloodgroup);
 
-        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions.FEETYPE);
+        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEETYPE);
         this.shareddata.ChangeFeeType(this.FeeType);
 
-        this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTUPPERCLS);
+        this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTUPPERCLS);
         this.shareddata.ChangeLanguageSubjectUpper(this.LanguageSubjUpper);
 
-        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTLOWERCLS);
+        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.FEENAMES);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
         this.shareddata.ChangeFeeNames(this.FeeNames);
 
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
         this.shareddata.ChangeSection(this.Sections);
 
-        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.UPLOADTYPE);
+        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions.CURRENTBATCH);
+        let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CURRENTBATCH);
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch[0].MasterDataName.toLowerCase());
         if (currentBatchObj.length > 0) {
           this.BatchId = currentBatchObj[0].MasterDataId

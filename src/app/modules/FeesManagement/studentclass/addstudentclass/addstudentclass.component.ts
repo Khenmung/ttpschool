@@ -116,13 +116,13 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.CLASSES);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
         //debugger;
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.BATCH);
-        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions.FEETYPE);
-        this.LanguageSubjectLower = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTLOWERCLS);
-        this.LanguageSubjectUpper = this.getDropDownData(globalconstants.MasterDefinitions.LANGUAGESUBJECTUPPERCLS);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.SECTION);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEETYPE);
+        this.LanguageSubjectLower = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTLOWERCLS);
+        this.LanguageSubjectUpper = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTUPPERCLS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
         // let currentBatch = globalconstants.getCurrentBatch();
         // let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
         // if (currentBatchObj.length > 0) {

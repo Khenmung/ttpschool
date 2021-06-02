@@ -35,6 +35,12 @@
                     {{element.ValidTo}}
                 </mat-cell>
             </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Active}}
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">

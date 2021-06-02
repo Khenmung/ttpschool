@@ -106,8 +106,8 @@ export class ApproleuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ROLES);
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.APPLICATIONS);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
       });
   }
   getDropDownData(dropdowntype) {

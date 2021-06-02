@@ -16,10 +16,6 @@ import { cropNUploadphotoComponent } from './photogallery/cropNuploadphoto/cropN
 import { ImgDragAndDropComponent } from './photogallery/imgDragAndDrop/imgDragAndDrop';
 import { PhotobrowserComponent } from './photogallery/photobrowser/photobrowser.component';
 import { PhotosComponent } from './photogallery/photos/photos.component';
-//import { EncodeHTMLPipe } from '../encode-html.pipe';
-//import { AlbumEditInputComponent } from './photogallery/albumedit-input/albumedit-input.component';
-//import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
-//import { MatConfirmDialogComponent } from '../shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 
 const routes: Routes = [
   
@@ -59,19 +55,9 @@ export const WebsiteComponents=[
   CarouselComponent,
   cropNUploadphotoComponent ,
   PhotobrowserComponent ,
-  //TextEditorComponent ,
-  //pageDashboardComponent ,
-  //DisplaypageComponent,
-  //pageViewComponent,
   ImgDragAndDropComponent,
   FiledragAndDropComponent,
   PhotosComponent,
-  //AlbumsComponent,
   ContactdashboardComponent,
   ContactComponent,
-  //MenuConfigComponent ,
-  //EncodeHTMLPipe,
-  //AlbumEditInputComponent,
-//  CdkCopyToClipboard, 
-  //MatConfirmDialogComponent 
 ]

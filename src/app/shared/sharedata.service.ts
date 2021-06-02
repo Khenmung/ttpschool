@@ -9,6 +9,7 @@ export class SharedataService {
   BatchId = 0;
   StudentId = 0;
   StudentClassId = 0;
+  
   private MasterDataSource = new BehaviorSubject(this.items);
   private BatchIdSource = new BehaviorSubject(this.BatchId);
   private BatchSource = new BehaviorSubject(this.items);
@@ -35,7 +36,16 @@ export class SharedataService {
   private ReasonForLeavingSource = new BehaviorSubject(this.items);
   private SelectedBatchIdSource = new BehaviorSubject(0);
   private RandomImagesSource = new BehaviorSubject(this.items);
-
+  private OrganizationSource = new BehaviorSubject(this.items);
+  private DepartmentSource = new BehaviorSubject(this.items);
+  private ApplicationSource = new BehaviorSubject(this.items);
+  private RolesSource = new BehaviorSubject(this.items);
+  
+  CurrentRoles = this.RolesSource.asObservable(); 
+  CurrentApplication = this.ApplicationSource.asObservable();
+  
+  CurrentDepartment = this.DepartmentSource.asObservable();
+  CurrentOrganization = this.OrganizationSource.asObservable();
   CurrentRandomImages = this.RandomImagesSource.asObservable();
   CurrentSelectedBatchId = this.SelectedBatchIdSource.asObservable();
   CurrentReasonForLeaving = this.ReasonForLeavingSource.asObservable();
@@ -68,6 +78,18 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangeRoles(item){
+    this.RolesSource.next(item);
+  }
+  ChangeApplication(item){
+    this.ApplicationSource.next(item);
+  }
+  ChangeOrganization(item){
+    this.OrganizationSource.next(item);
+  }
+  ChangeDepartment(item){
+    this.DepartmentSource.next(item);
   }
   ChangeRandomImages(item){
     this.RandomImagesSource.next(item);

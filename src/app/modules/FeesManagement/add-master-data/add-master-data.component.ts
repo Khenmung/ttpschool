@@ -17,8 +17,8 @@ import { List } from '../../../shared/interface';
   styleUrls: ['./add-master-data.component.scss']
 })
 export class AddMasterDataComponent implements OnInit {
-@ViewChild(MatPaginator) paginator:MatPaginator;
-@ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   topMaster = 0;
   MasterData = [];
   FeeNames = [];
@@ -29,33 +29,34 @@ export class AddMasterDataComponent implements OnInit {
   oldvalue = '';
   selectedData = '';
   datasource: MatTableDataSource<IMaster>;
-  MasterDataStatus = [];
+  ApplicationDataStatus = [];
+  SchoolDataStatus = [];
   DisplayColumns = [
     "Id",
     "Name",
     "Description",
     "Active"
   ];
-  UserDetails=[];
-  
+  UserDetails = [];
+
   constructor(
     private fb: FormBuilder,
-    private route:Router,
-    private tokenStorage:TokenStorageService,
+    private route: Router,
+    private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
     private dialog: DialogService) { }
 
   ngOnInit(): void {
-    this.UserDetails = this.tokenStorage.getUserDetail();
-    if(this.UserDetails==null)
-    {
-      this.alert.error('Please login to be able to add masters!',this.optionAutoClose);
-      this.route.navigate(['auth/login']);
-    }
-    this.GetTopMasters();
+    // this.UserDetails = this.tokenStorage.getUserDetail();
+    // if(this.UserDetails==null)
+    // {
+    //   this.alert.error('Please login to be able to add masters!',this.optionAutoClose);
+    //   this.route.navigate(['auth/login']);
+    // }
+    // this.GetTopMasters();
   }
-  enableAddNew=false;
+  enableAddNew = false;
   enableTopEdit = false;
   loading: boolean = false;
   error: string = '';
@@ -73,40 +74,81 @@ export class AddMasterDataComponent implements OnInit {
       ParentId: [0]
 
     })
+  PageLoad() {
+    this.UserDetails = this.tokenStorage.getUserDetail();
+    if (this.UserDetails == null) {
+      this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
+      this.route.navigate(['auth/login']);
+    }
+    this.GetTopMasters();
+  }
+
   GetTopMasters() {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "Description", "Active"];
     list.PageName = "MasterDatas";
     list.filter = ["ParentId eq 0 and Active eq 1"];//this.searchForm.get("ParentId").value];
-
+    debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          let defined;
+          
+          
           this.TopMasters = [...data.value];
-          this.MasterDataStatus = Object.entries(globalconstants.MasterDefinitions).map(globalcons => {
-            //console.log('inside',globalcons)
-            defined = this.TopMasters.filter(fromdb => {
-              return globalcons[1] == fromdb.MasterDataName;
-            });
+          let applicationData = globalconstants.MasterDefinitions[0].application;
+          this.ApplicationDataStatus=this.getSettingStatus(applicationData);
+          
+          let schoolData = globalconstants.MasterDefinitions[1].school;
+          this.SchoolDataStatus=this.getSettingStatus(schoolData);
+          console.log('this.SchoolDataStatus',this.SchoolDataStatus);
+          // this.ApplicationDataStatus = Object.keys(applicationData[0]).map(globalcons => {
+          //   //console.log('inside',globalcons)
 
-            if (defined.length > 0) {
-              return {
-                MasterDataName: globalcons[1],
-                Done: true
-              }
-            }
-            else {
-              return {
-                MasterDataName: globalcons[1],
-                Done: false
-              }
-            }
-          });
+          //   defined = this.TopMasters.filter(fromdb => {
+          //     return applicationData[0][globalcons].toLowerCase().trim() == fromdb.MasterDataName.toLowerCase().trim();
+          //   });
+
+          //   if (defined.length > 0) {
+          //     return {
+          //       MasterDataName: applicationData[0][globalcons],
+          //       Done: true
+          //     }
+          //   }
+          //   else {
+          //     return {
+          //       MasterDataName: applicationData[0][globalcons],
+          //       Done: false
+          //     }
+          //   }
+          // });
           //console.log('globalconstants', Object.entries(globalconstants.MasterDefinitions))
-          //console.log('ok', this.MasterDataStatus)
+      //    console.log('ok', this.SchoolDataStatus)
         }
       });
+  }
+  getSettingStatus(data){
+    let defined;
+      
+    return Object.keys(data[0]).map(globalcons => {
+      
+      defined = this.TopMasters.filter(fromdb => {
+        return data[0][globalcons].toLowerCase().trim() == fromdb.MasterDataName.toLowerCase().trim();
+      });
+
+      if (defined.length > 0) {
+        return {
+          MasterDataName: data[0][globalcons],
+          Done: true
+        }
+      }
+      else {
+        return {
+          MasterDataName: data[0][globalcons],
+          Done: false
+        }
+      }
+    });
+
   }
   enable(elment) {
     debugger;
@@ -125,7 +167,7 @@ export class AddMasterDataComponent implements OnInit {
       let newrow = {
         "Id": this.searchForm.get("ParentId").value,
         "Name": toedit[0].MasterDataName,
-        "Description": toedit[0].Description==null?'edit me..':toedit[0].Description,
+        "Description": toedit[0].Description == null ? 'edit me..' : toedit[0].Description,
         "ParentId": 0,
         "Active": toedit[0].Active
       }
@@ -134,12 +176,12 @@ export class AddMasterDataComponent implements OnInit {
         this.MasterData.push(newrow);
       }
       this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
-      this.datasource.paginator =this.paginator;
+      this.datasource.paginator = this.paginator;
       this.datasource.sort = this.sort;
     }
   }
   NewTopMaster() {
-    this.enableTopEdit=false;
+    this.enableTopEdit = false;
     this.topMaster = 1;
     this.searchForm.patchValue({ ParentId: 0 });
     //console.log('searchvalue', this.searchForm.get("ParentId").value)
@@ -149,7 +191,7 @@ export class AddMasterDataComponent implements OnInit {
   }
   AddData() {
     debugger;
-    this.enableTopEdit=false;
+    this.enableTopEdit = false;
 
     if (this.searchForm.get("ParentId").value == 0 && this.topMaster == 0) {
       this.alert.error("Please select master name to add items to", this.optionAutoClose);
@@ -161,6 +203,7 @@ export class AddMasterDataComponent implements OnInit {
       "Name": "edit me..",
       "Description": "edit me..",
       "ParentId": this.searchForm.get("ParentId").value,
+      "OrgId": 0,
       "Active": 1
     }
     if (this.searchForm.get("ParentId").value == 0) {
@@ -175,13 +218,13 @@ export class AddMasterDataComponent implements OnInit {
     this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
   }
   GetMasterData() {
-    this.enableTopEdit=false;
-    this.enableAddNew =true;
+    this.enableTopEdit = false;
+    this.enableAddNew = true;
     debugger;
     let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Active"];
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "OrgId", "Active"];
     list.PageName = "MasterDatas";
-    list.filter = ["ParentId eq " + this.searchForm.get("ParentId").value];
+    list.filter = ["ParentId eq " + this.searchForm.get("ParentId").value + " and OrgId eq " + this.UserDetails[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -193,13 +236,14 @@ export class AddMasterDataComponent implements OnInit {
             "Name": item.MasterDataName,
             "Description": item.Description == null ? 'edit me..' : item.Description,
             "ParentId": item.ParentId,
+            "OrgId": item.OrgId,
             "Active": item.Active == 1 ? true : false
           }
         })
         this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
-       
+
       });
 
   }
@@ -223,6 +267,7 @@ export class AddMasterDataComponent implements OnInit {
             ParentId: this.searchForm.get("ParentId").value,
             Description: row.Description,
             MasterDataName: row.Name,
+            OrgId: row.OrgId,
             Active: value.checked == true ? 1 : 0,
 
             // UploadDate: new Date()
@@ -269,7 +314,7 @@ export class AddMasterDataComponent implements OnInit {
 
     let mastertoUpdate = {
       MasterDataName: value,
-      ParentId: this.enableTopEdit?0:this.searchForm.get("ParentId").value,
+      ParentId: this.enableTopEdit ? 0 : this.searchForm.get("ParentId").value,
       Active: 1
     }
 
@@ -279,9 +324,9 @@ export class AddMasterDataComponent implements OnInit {
 
     let selectedMasterDataId = 0;
     if (newlyAddedRow[0].Id == 0) {
-      mastertoUpdate["CreatedBy"]= this.UserDetails["userId"];
-      mastertoUpdate["OrgId"]= this.UserDetails["orgId"];
-      mastertoUpdate["ApplicationId"]= this.UserDetails["applicationId"];
+      mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
+      mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
+      mastertoUpdate["ApplicationId"] = this.UserDetails[0]["applicationId"];
       this.dataservice.postPatch('MasterDatas', mastertoUpdate, 0, 'post')
         .subscribe(res => {
           if (res != undefined) {
@@ -305,7 +350,7 @@ export class AddMasterDataComponent implements OnInit {
 
         });
     }
-    this.enableTopEdit=false;
+    this.enableTopEdit = false;
   }
   updateDescription(value, row) {
     debugger;

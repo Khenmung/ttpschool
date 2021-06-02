@@ -55,7 +55,7 @@ export class NaomitsuService {
         if (list.hasOwnProperty('orderBy') && list.orderBy) {
             url += "&$orderby=" + list.orderBy.toString();
         }
-//        console.log("GetListItems URL: " + url);
+        console.log("GetListItems URL: " + url);
 
         var req = {
             method: 'GET',

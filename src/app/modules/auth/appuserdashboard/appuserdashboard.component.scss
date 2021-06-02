@@ -1,0 +1,23 @@
+// .Container{
+//     //position: relative;
+//     margin-top: 110px;
+// }
+mat-form-field{
+    margin-right: 20px;
+}
+button{
+    padding:5px;
+}  
+ .mat-column-UserId{
+   flex:0 0 5%;
+}
+.mat-column-Email{
+    flex:0 0 15%;
+}
+.mat-column-User{
+    flex:0 0 15%;
+}
+.mat-column-User,.mat-column-Email,.mat-column-ContactNo,.mat-column-Organization,.mat-column-Department,.mat-column-Location{
+    display: grid;
+    place-items: center start;
+}

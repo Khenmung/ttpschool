@@ -4,22 +4,22 @@ import { AlbumsComponent } from './albums.component';
 import {ClipboardModule} from '@angular/cdk/clipboard'
 import { MaterialModule } from '../../../shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AlbumEditInputComponent } from '../albumedit-input/albumedit-input.component';
+import { EditInputModule } from 'src/app/shared/edit-input/edit-input.module';
 
 @NgModule({
   declarations: [AlbumsComponent,
-    AlbumEditInputComponent],
+    ],
   imports: [
     CommonModule,
     ClipboardModule,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    EditInputModule
     
   ],
   exports:[
     AlbumsComponent,
-    AlbumEditInputComponent
   ]
 })
 export class AlbumsModule { }

@@ -9,6 +9,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
+import { settingsComponent } from './Settings/settings.component';
 
 const routes: Routes = [
   {
@@ -18,8 +19,10 @@ const routes: Routes = [
       { path: 'changepassword', component: ChangePasswordComponent },
       { path: 'createlogin', component: RegisterComponent },
       { path: 'profile', component: ProfileComponent },
-      { path: 'signup', component: AppuserComponent },
       { path: 'addapproleuser', component: ApproleuseraddComponent },
+      { path: 'appuserdashboard', component: AppuserdashboardComponent },
+      { path: 'settings', component: settingsComponent },      
+      
     ]
   },
 ];
@@ -40,4 +43,5 @@ export const AuthComponents = [
   AppuserdashboardComponent,
   ApproleuseraddComponent,
   ApproleuserdashboardComponent,
+  settingsComponent
 ]
