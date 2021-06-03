@@ -18,14 +18,6 @@ import { NaomitsuService } from '../../../shared/databaseService'
 })
 export class DisplaypageComponent implements OnInit {
   images = [];
-  //   "assets/images/notebook.jpg",
-  //   "assets/images/schoolbuilding2018.jfif",
-  //   //"assets/images/karatedance.png",
-  //   //"assets/images/sportteam.jpg",
-  //   "assets/images/aothtaking.jpg",
-  //   //"assets/images/safetycampaign.JPG",
-  //   "assets/images/childrendance.jpg"
-  // ];
   Name = {};
   ImgUrl = '';
   loading: boolean = false;
@@ -66,7 +58,7 @@ export class DisplaypageComponent implements OnInit {
 
     this.ar.paramMap.subscribe(params => {
       this.pId = +params.get("pid");
-      this.shareddata.CurrentReasonForLeaving.subscribe(r => {
+      this.shareddata.CurrentRandomImages.subscribe(r => {
         this.images = r;
         if (this.images.length == 0)
           this.getRandomDisplayPhotoes(params.get('phid'));
@@ -107,7 +99,9 @@ export class DisplaypageComponent implements OnInit {
     list.lookupFields = ["PageHistories"];
     list.PageName = "Pages";
     list.filter = [filterstring];
-
+    this.ImgUrl = '';
+    this.PageBody ='';
+    this.loading =true;
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
@@ -116,16 +110,11 @@ export class DisplaypageComponent implements OnInit {
             ///home/display/44/87
             IdtoDisplay = +pagetodisplay[0].link.split('/')[3];
           }
-          // this.images = JSON.parse(this.dataStorage.getImages());
-          // if (this.images.length == 0) {
-          //   this.getRandomDisplayPhotoes(pagetodisplay[0].PhotoPath);
-          // }
-          // else {
+          
           this.AssignImageUrl(pagetodisplay[0].PhotoPath);
-          //}
+          
+          //for link below title
           this.getParentPageLink(pagetodisplay[0].ParentId);
-
-          //console.log('imgurl',this.ImgUrl);
 
           this.PageBody = pagetodisplay[0].PageHistories.filter(h => h.PageHistoryId == IdtoDisplay)[0].PageBody;
           //this.ParentPage = pagetodisplay[0].PageTitle;
@@ -162,7 +151,7 @@ export class DisplaypageComponent implements OnInit {
       .subscribe((data: any) => {
         //this.images =
         let RandomImagesParentId = data.value.filter(image => {
-          return image.FileName !=null && image.FileName.toLowerCase() == "random images"
+          return image.FileName != null && image.FileName.toLowerCase() == "random images"
         });
         if (RandomImagesParentId.length > 0) {
           this.images = data.value.filter(rimg => rimg.ParentId == RandomImagesParentId[0].FileId)

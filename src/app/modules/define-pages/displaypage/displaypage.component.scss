@@ -75,6 +75,9 @@ mat-card-title {
 //         margin-top: -50px;
 //     }
 // }
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: white;
+    }
 mat-card-title:not(:first-child), .mat-card-subtitle:not(:first-child){
     margin-top: -8px;
 }
