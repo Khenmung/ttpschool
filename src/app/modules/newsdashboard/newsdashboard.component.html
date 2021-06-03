@@ -1,4 +1,4 @@
-<div>
+
 <img src="../../../assets/images/25years.png" width="100%" class="img"/>
 <mat-card>
     <mat-card-title><span class="title">{{PageTitle}}</span>
@@ -18,11 +18,9 @@
                 </a>
                 <!-- <mat-divider></mat-divider> -->
             </div>
-            <button style="margin-top: 20px;float: right;" *ngIf="AllData.length>4" class="mat-raised-button"
-                (click)="allnews()">
-                All news & events
-            </button>
+            
         </div>
+      
         <mat-divider></mat-divider>
 
 
@@ -30,5 +28,10 @@
         </mat-paginator> -->
 
     </mat-card-content>
+    <mat-card-actions style="padding: 0px;">
+        <button style="margin-left:20px;" *ngIf="AllData.length>4" class="mat-raised-button"
+            (click)="allnews()">
+            All news & events
+        </button>
+    </mat-card-actions>
 </mat-card>
-</div>
