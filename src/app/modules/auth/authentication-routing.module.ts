@@ -9,6 +9,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
+import { RoleuserdashboardComponent } from './roleuserdashboard/roleuserdashboard.component';
 import { settingsComponent } from './Settings/settings.component';
 
 const routes: Routes = [
@@ -44,5 +45,6 @@ export const AuthComponents = [
   AppuserdashboardComponent,
   ApproleuseraddComponent,
   ApproleuserdashboardComponent,
-  settingsComponent
+  settingsComponent,
+  RoleuserdashboardComponent
 ]

@@ -74,3 +74,6 @@ mat-card-title:not(:first-child), .mat-card-subtitle:not(:first-child){
 .mat-card-content>:first-child {
     margin-top: 15px;
 }
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
+    stroke: #bada55;
+}

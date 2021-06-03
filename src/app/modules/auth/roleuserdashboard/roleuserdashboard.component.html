@@ -1,0 +1,56 @@
+<div style="padding:15px 15px 0px 15px;">
+    <div><strong>Application Roles Users</strong></div>    
+</div>
+<div style="padding: 15px;" fxLayout="row wrap" fxLayoutGap="100px">
+    <div style="width: 100%;">
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="User">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    {{element.User}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Application">
+                <mat-header-cell *matHeaderCellDef> Application </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{element.Application}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Role">
+                <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Role}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ValidFrom">
+                <mat-header-cell *matHeaderCellDef> Valid From </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ValidFrom}}
+                </mat-cell>
+            </ng-container>            
+            <ng-container matColumnDef="ValidTo">
+                <mat-header-cell *matHeaderCellDef> ValidTo </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ValidTo}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Active}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [(disabled)]="!element.Action" mat-mini-fab (click)="Update(element)">
+                        <mat-icon matTooltip="save">save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>            
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>            
+        </mat-table>
+    </div>
+</div>
