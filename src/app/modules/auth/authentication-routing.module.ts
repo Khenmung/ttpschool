@@ -20,6 +20,7 @@ const routes: Routes = [
       { path: 'createlogin', component: RegisterComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'addapproleuser', component: ApproleuseraddComponent },
+      { path: 'appuser', component: AppuserComponent },      
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
       { path: 'settings', component: settingsComponent },      
       

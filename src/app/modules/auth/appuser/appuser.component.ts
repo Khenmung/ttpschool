@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
+//import { EventEmitter } from 'events';
+//import { filter } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -14,6 +15,10 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
   styleUrls: ['./appuser.component.scss']
 })
 export class AppuserComponent implements OnInit {
+@Input("UserId") UserId:number;
+@Output() UserIdOutput=new EventEmitter();
+
+title ='';
   breakpoint = 0;
   optionsNoAutoClose = {
     autoClose: false,
@@ -23,11 +28,12 @@ export class AppuserComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  UserId = 0;
   SaveDisable = false;
   ApplicationUserId = 0;
   allMasterData = [];
   AppUsers = [];
+  Departments=[];
+  Locations=[];
   AppUsersForm: FormGroup;
   AppUsersData = {
     ApplicationUserId: 0,
@@ -57,12 +63,10 @@ export class AppuserComponent implements OnInit {
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {
+    
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     //console.log('breakpoint',this.breakpoint);
-    this.aRoute.queryParamMap.subscribe(params => {
-      this.UserId = +params.get("uid");
-
-    });
+    this.title=this.UserId>0?'Update Detail':'Add User';
     var date = new Date();
     var validto = date.setDate(date.getDate() + globalconstants.TrialPeriod);
     this.AppUsersForm = this.fb.group({
@@ -74,12 +78,13 @@ export class AppuserComponent implements OnInit {
       ValidFrom: [new Date()],
       ValidTo: [validto],
       OrgId: [0],
-      DepartmentId: [0],
-      LocationId: [0],
-      ManagerId: [0],
+      DepartmentId: [null],
+      LocationId: [null],
+      ManagerId: [null],
       Remarks: [''],
       Active: [1],
     });
+    this.GetAppUsers();
   }
   PageLoad() {
     //debugger;
@@ -150,10 +155,13 @@ export class AppuserComponent implements OnInit {
     this.breakpoint = (event.target.innerWidth <= 400) ? 1 : 3;
   }
   back() {
-    this.nav.navigate(['/admin/dashboardstudent']);
+    this.UserIdOutput.emit(0);
+    
+    //this.nav.navigate(['/admin/dashboardstudent']);
   }
   UpdateOrSave() {
     debugger;
+
     let ErrorMessage = '';
 
     // if (this.AppUsersForm.get("ContactNo").value == 0) {
@@ -196,6 +204,7 @@ export class AppuserComponent implements OnInit {
       else {
         this.update();
       }
+      this.UserIdOutput.emit(0);
     }
   }
   tabChanged($event) {

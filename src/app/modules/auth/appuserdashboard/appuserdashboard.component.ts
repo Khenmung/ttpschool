@@ -1,8 +1,8 @@
 //import { DatePipe } from '@angular/common';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -23,6 +23,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   ],
 })
 export class AppuserdashboardComponent implements OnInit {
+@ViewChild("table") mattable;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -50,8 +51,10 @@ export class AppuserdashboardComponent implements OnInit {
     'OrgName',
     'Department',
     'Location',
-    'Active'
+    'Active',
+    'Action'
   ]
+  UserId=0;
   AppUsers = [];
   searchForm: FormGroup;
   constructor(
@@ -81,7 +84,17 @@ export class AppuserdashboardComponent implements OnInit {
   search() {
 
   }
-  UpdateOrSave(element) { }
+  SetUser(value){
+    this.UserId =value;
+    this.mattable._elementRef.nativeElement.style.backgroundColor="";
+  }
+  view(element) {
+    console.log('this.mattable',this.mattable);
+    this.UserId = element.UserId;
+    this.mattable._elementRef.nativeElement.style.backgroundColor="grey";
+    //this.mattable._elementRef.nativeElement.style.disabled=true;
+    //this.route.navigate(['/auth/appuser']);
+   }
   GetAppUsers() {
     debugger;
     let filterStr = "";

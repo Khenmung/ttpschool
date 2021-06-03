@@ -36,7 +36,6 @@ export class globalconstants {
                 "CURRENTBATCH": "current batch",
                 "REASONFORLEAVING": "reason for leaving",
                 "RANDOMIMAGE": "random image"
-
             }]
         }
     ];

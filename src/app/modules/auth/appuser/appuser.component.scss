@@ -1,21 +1,13 @@
-// .Container{
-//     //display:flex;
-//     margin-top: 170px;
-//     width: 70%;
-//     align-items: center;
-//     //box-sizing: border-box;
-//     padding:15px 15px 0px 15px;
-//     background-color: white;
-// }
 :host{
     display: flex;
     align-items: center;
 }
 mat-card{
     margin: auto;
-    margin-top: 120px;
     align-self: center;
-    width:50%;
+    margin-top: -280px;
+    //background-color: lightgray;
+    width:80%;
 }
 mat-form-field{
     margin-right: 15px;

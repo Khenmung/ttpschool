@@ -5,7 +5,8 @@ import { NotfoundComponent } from './shared/components/notfound/notfound.compone
 const routes: Routes = [
   {
     path: '',
-    loadChildren:()=>import('./shared/components/landingpage/landingpage.module').then(c=>c.LandingpageModule)
+    loadChildren: () => import('./modules/website.module').then(m => m.WebsiteModule)
+    //loadChildren:()=>import('./shared/components/landingpage/landingpage.module').then(c=>c.LandingpageModule)
   },
   {
     path: 'home',
