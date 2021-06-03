@@ -172,8 +172,6 @@ export class DisplaypageComponent implements OnInit {
             });
           this.shareddata.ChangeRandomImages(this.images);
           this.GetLatestPage(PhId);
-          //this.dataStorage.saveRandomImages(this.images);
-          //this.AssignImageUrl(photoPath);
         }
       })
   }

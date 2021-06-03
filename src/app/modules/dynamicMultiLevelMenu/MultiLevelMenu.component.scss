@@ -1,31 +1,34 @@
-ng-material-multilevel-menu{
-  margin-top:200px;
+ng-material-multilevel-menu {
+  margin-top: 200px;
 }
+
 .my-cool-menu-item {
-  display: flex;
-  padding-left: 10px;
+  display      : flex;
+  padding-left : 10px;
   padding-right: 10px;
   border-bottom: solid 1px gray;
-  height: 48px;
+  height       : 48px;
 }
-img{
+
+img {
   margin-top: 10px;
 }
+
 .my-cool-menu-item .title-and-image {
-  width: 90%;
-  display: flex;
+  width          : 90%;
+  display        : flex;
   justify-content: flex-start;
 }
 
 .my-cool-menu-item .title-and-image .icon-container {
-  display: flex;
-  flex-direction: column;
+  display        : flex;
+  flex-direction : column;
   justify-content: center;
 }
 
 div[dir=rtl] .icon-container {
   padding-left: 5px;
-  
+
 }
 
 div[dir=ltr] .icon-container {
@@ -33,22 +36,40 @@ div[dir=ltr] .icon-container {
 }
 
 .my-cool-menu-item .title-and-image .label-container {
-  display: flex;
-  flex-direction: column;
+  display        : flex;
+  flex-direction : column;
   justify-content: center;
 }
 
 .my-cool-menu-item .icon-arrow-container {
-  display: flex;
+  display    : flex;
   align-items: center;
 }
-.container{
-  margin: 10px;
-  display: flex;
+
+.container {
+  margin     : 10px;
+  display    : flex;
   margin-left: 80px;
-  
+
 }
-::ng-deep .side-nav-menu .mat-list-item:hover {
-  /*color: dodgerblue;*/
-  background: dodgerblue !important;
+
+::ng-deep .ng-trigger-SlideInOut {
+  background-color: var(--mainTitleColor);
+  margin-right    : 18px;
+  //padding-bottom: 1px;
 }
+
+::ng-deep .ng-trigger-SlideInOut:hover {
+  a .ng-star-inserted:hover {
+    //margin-top: 3px;
+    //margin-bottom: 3px;
+    //line-height: 35px;
+    background-color: var(--maincolor1);
+  }
+}
+
+// ::ng-deep .side-nav-menu .mat-list-item:hover {
+//   /*color: dodgerblue;*/
+//   background: dodgerblue !important;
+//   margin-top: 5px;
+// }

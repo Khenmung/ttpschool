@@ -24,7 +24,7 @@ export class ContactComponent implements OnInit {
     Subject: new FormControl("", [Validators.required, Validators.maxLength(25)]),
     MessageBody: new FormControl("", [Validators.required, Validators.maxLength(250)]),
     CreatedDate: new FormControl(new Date()),
-    Active: new FormControl(1),
+    Active: new FormControl(0),
     MessageId: new FormControl(0)
   });
 

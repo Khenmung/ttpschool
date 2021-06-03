@@ -7,16 +7,17 @@
             </button>
             <a [routerLink]="['/home/display/0/0/']"><img src="assets/images/stpaulslogo.png" alt="St Paul's Institute"
                     width="70px" /></a>
-            <div fxLayout="row" fxLayoutAlign="space-between center">
+            <div fxLayout="column" fxLayoutAlign="start start">
                 <span><strong>ST. PAUL'S INSTITUTE</strong></span>
+                <span style="font-size:14px;color: grey;line-height: 16pt;">Serve For Quality</span>
             </div>
         </div>
 
         <div>
             <div fxLayout="row" fxLayoutAlign="space-around end"><span style="height: 40px;">&nbsp;</span></div>
-            <div fxLayout="row" fxLayoutAlign="space-around end" *ngIf="!deviceXs">
+            <div fxLayout="column" fxLayoutAlign="space-around end" *ngIf="!deviceXs">
                    <span class="transparent">TRAIN UP A CHILD IN THE WAY HE SHOULD GO.</span> 
-                        <sub style="font-size:14px;color:lightgray">-Proverbs 22:16</sub>
+                        <span style="line-height: 14px; font-size:14px;color:grey">-Proverbs 22:16</span>
             </div>
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">

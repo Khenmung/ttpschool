@@ -47,7 +47,7 @@
 }
 
 .rightside:hover {
-    background-color  : purple; // rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
+    background-color  :var(--mainTitleColor);// purple; // rgb(218, 143, 125);//rgb(197, 101, 76); //rgb(128, 60, 94);//navy;
     cursor            : pointer;
     //padding         : 5px;
     //color           : white;

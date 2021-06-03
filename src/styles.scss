@@ -54,9 +54,11 @@ div::-webkit-scrollbar-track {
 
 a .ng-star-inserted:hover {
     cursor          : pointer;
-    background-color: var(--onHoverColor);
+    background-color: var(--mainTitleColor);
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    border-bottom:2px solid var(--maincolor1);
+    border-top:2px solid var(--maincolor1);
     color: white;
     //clip-path       : polygon(0 0, 90% 0, 100% 50%, 90% 100%,0% 100%);
 }
