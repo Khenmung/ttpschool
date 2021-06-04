@@ -7,7 +7,7 @@ ng-material-multilevel-menu {
   padding-left : 10px;
   padding-right: 10px;
   border-bottom: solid 1px gray;
-  height       : 48px;
+  height       : 0px;
 }
 
 img {
@@ -39,6 +39,7 @@ div[dir=ltr] .icon-container {
   display        : flex;
   flex-direction : column;
   justify-content: center;
+ 
 }
 
 .my-cool-menu-item .icon-arrow-container {
@@ -59,15 +60,26 @@ div[dir=ltr] .icon-container {
   //padding-bottom: 1px;
 }
 
-::ng-deep .ng-trigger-SlideInOut:hover {
-  a .ng-star-inserted:hover {
-    //margin-top: 3px;
-    //margin-bottom: 3px;
-    //line-height: 35px;
-    background-color: var(--maincolor1);
-  }
+// ::ng-deep .ng-trigger-SlideInOut:hover {
+//   a .ng-star-inserted:hover {
+//     //margin-top: 3px;
+//     //margin-bottom: 3px;
+//     //line-height: 35px;
+//     background-color: var(--maincolor1);
+//   }
+// }
+::ng-deep .label{
+  margin: auto;
+  margin-left: 0px;
+  line-height: unset !important;
+  word-wrap: break-word;  
 }
-
+// .span{
+//   display: inline-block;
+//   vertical-align: middle;
+//   line-height: 0 !important;
+//   overflow-wrap: break-word;
+// }
 // ::ng-deep .side-nav-menu .mat-list-item:hover {
 //   /*color: dodgerblue;*/
 //   background: dodgerblue !important;

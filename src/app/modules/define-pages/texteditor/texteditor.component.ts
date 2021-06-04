@@ -50,15 +50,16 @@ export class TextEditorComponent implements OnInit {
     Active: 1
   };
   PublishOrDraft: number = 0;
-  PageDetailForm = new FormGroup({
-    PageTitle: new FormControl('', [Validators.required, Validators.maxLength(50)]),
-    ParentId: new FormControl(0),
-    PageBody: new FormControl(""),
-    PageHistoryId: new FormControl(0),
-    Published: new FormControl(0),
-    HasSubmenu: new FormControl(false),
-    PageId: new FormControl(0),
-    link: new FormControl('')
+  PageDetailForm = this.fb.group({
+    PhotoPath:[''],
+    PageTitle: ['',[Validators.required, Validators.maxLength(50)]],
+    ParentId: [0],
+    PageBody: [''],
+    PageHistoryId: [0],
+    Published: [0],
+    HasSubmenu: [false],
+    PageId: [0],
+    link: [''],
   });
   PageHistory = {
     PageHistoryId: 0,
@@ -79,7 +80,9 @@ export class TextEditorComponent implements OnInit {
   log: string = ''
   res: any;
   loading = false;
-  constructor(private naomitsuService: NaomitsuService,
+  constructor(
+    private fb:FormBuilder,
+    private naomitsuService: NaomitsuService,
     private router: Router,
     private ar: ActivatedRoute,
     private shareddata: SharedataService,
@@ -116,7 +119,7 @@ export class TextEditorComponent implements OnInit {
       });
   }
   ngAfterViewInit() {
-    this.loading = false;
+    //this.loading = false;
   }
   preview(files) {
     if (files.length === 0)
@@ -183,9 +186,13 @@ export class TextEditorComponent implements OnInit {
     };
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFile(this.formdata).subscribe(res => {
+      //let filename = this.selectedFile.name.substring(0,10).replace(' ','-').
+      this.PageDetailForm.patchValue({"PhotoPath": res});
+      //console.log('res',res);
       this.alert.success("Files Uploaded successfully.", options);
+      this.imageCount =0;
       this.Edit = false;
-      this.processing =false;
+      this.processing =false;      
     });
   }
 
@@ -196,7 +203,10 @@ export class TextEditorComponent implements OnInit {
   GetLatestPage(ppId: number) {
 
     let list: List = new List();
-    list.fields = ["PageHistoryId", "PageBody", "Version", "Published", "Page/PhotoPath", "Page/HasSubmenu", "Page/PageTitle", "Page/link"];
+    list.fields = ["PageHistoryId", "PageBody", "Version", 
+                   "Published", "Page/PhotoPath", 
+                   "Page/HasSubmenu", "Page/PageTitle",
+                   "Page/link",];
     list.PageName = "PageHistories";
     list.lookupFields = ["Page"];
     list.filter = ["ParentPageId eq " + ppId];
@@ -212,6 +222,7 @@ export class TextEditorComponent implements OnInit {
             this.imgURL = globalconstants.apiUrl + "/Image/PagePhoto/" + data.value[0].Page.PhotoPath
 
           this.PageDetailForm.patchValue({
+            PhotoPath:data.value[0].Page.PhotoPath,
             PageTitle: data.value[0].Page.PageTitle,
             ParentId: +this.ar.snapshot.queryParams.pgid,
             PageBody: data.value[0].PageBody,
@@ -220,12 +231,12 @@ export class TextEditorComponent implements OnInit {
             Published: data.value[0].Published,
             HasSubmenu: data.value[0].Page.HasSubmenu,
             link: data.value[0].Page.link,
-            //PhotoPath: globalconstants.apiUrl + "/Image/PagePhoto/" + data.value[0].Page.PhotoPath,
             PageId: ppId
           });
           //this.selected = this.ar.snapshot.queryParams.pgid;          
           //this.PageDetailForm.controls.PageGroupId.patchValue(this.ar.snapshot.queryParams.pgid);
         }
+      this.loading=false;
       });
   }
   checklogin() {
@@ -278,15 +289,17 @@ export class TextEditorComponent implements OnInit {
       this.alert.error('There is already a page named ' + this.PageDetailForm.value.PageTitle, this.options);
     }
     else {
-      this.PageDetail.PageTitle = this.PageDetailForm.value.PageTitle;// .get("PageTitle").value;
-      this.PageDetail.label = this.PageDetailForm.value.PageTitle;
-      this.PageDetail.link = this.PageDetailForm.value.link;
-      this.PageDetail.ParentId = this.PageDetailForm.value.ParentId;//").value;
-      this.PageDetail.FullPath = this.PageDetailForm.value.ParentId == 0 ? this.PageDetailForm.value.PageTitle : this.PageGroups.filter(g => g.PageId == this.PageDetailForm.value.ParentId)[0].FullPath + ' > ' + this.PageDetailForm.value.PageTitle;
+      let PageTitle = this.PageDetailForm.get("PageTitle").value;
+      this.PageDetail.PageTitle = PageTitle;// .get("PageTitle").value;
+      this.PageDetail.label = PageTitle;
+      this.PageDetail.link = this.PageDetailForm.get("link").value;
+      this.PageDetail.ParentId = this.PageDetailForm.get("ParentId").value;
+      this.PageDetail.FullPath = this.PageDetailForm.get("ParentId").value == 0 ? PageTitle : this.PageGroups.filter(g => g.PageId == this.PageDetailForm.get("ParentId").value)[0].FullPath + ' > ' + PageTitle;
       this.PageDetail.Active = active;
       this.PageDetail.CurrentVersion = 1;
       this.PageDetail.UpdateDate = new Date();
-      this.PageDetail.HasSubmenu = this.PageDetailForm.value.HasSubmenu == true ? 1 : 0;
+      this.PageDetail.PhotoPath = this.PageDetailForm.get("PhotoPath").value;
+      this.PageDetail.HasSubmenu = this.PageDetailForm.get("HasSubmenu").value == true ? 1 : 0;
       let mode: 'patch' | 'post' = 'post';
 
       //if save as draft the Pages should be updated but histories to be inserted.
@@ -383,6 +396,7 @@ export class TextEditorComponent implements OnInit {
 
       this.PageDetail.ParentId = this.PageDetailForm.value.ParentId;//").value;
       this.PageDetail.FullPath = FullPath;
+      this.PageDetail.PhotoPath = this.PageDetailForm.get("PhotoPath").value;
       this.PageDetail.Active = 1;
       this.PageDetail.CurrentVersion = this.PageHistory.Version + 1;
       this.PageDetail.UpdateDate = new Date();
