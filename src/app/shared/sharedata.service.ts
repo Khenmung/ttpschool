@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'any'
 })
 export class SharedataService {
   items = [];
@@ -40,6 +40,17 @@ export class SharedataService {
   private DepartmentSource = new BehaviorSubject(this.items);
   private ApplicationSource = new BehaviorSubject(this.items);
   private RolesSource = new BehaviorSubject(this.items);
+  private AppUsersSource = new BehaviorSubject(this.items);
+  private OrganizationMastersSource = new BehaviorSubject(this.items);
+  private ApplicationRolesSource = new BehaviorSubject(this.items);
+  private SubjectsSource = new BehaviorSubject(this.items);
+  private SubjectTypesSource = new BehaviorSubject(this.items);
+
+  CurrentSubjectTypes = this.SubjectTypesSource.asObservable(); 
+  CurrentSubjects = this.SubjectsSource.asObservable(); 
+  CurrentApplicationRoles = this.ApplicationRolesSource.asObservable(); 
+  CurrentOrganizationMasters = this.OrganizationMastersSource.asObservable(); 
+  CurrentAppUsers = this.AppUsersSource.asObservable(); 
   
   CurrentRoles = this.RolesSource.asObservable(); 
   CurrentApplication = this.ApplicationSource.asObservable();
@@ -78,6 +89,22 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangeSubjects(item){
+    this.SubjectsSource.next(item);
+  }
+  ChangeSubjectTypes(item){
+    this.SubjectTypesSource.next(item);
+  }
+
+  ChangeApplicationRoles(item){
+    this.ApplicationRolesSource.next(item);
+  }
+  ChangeOrganizationMasters(item){
+    this.OrganizationMastersSource.next(item);
+  }
+  ChangeAppUsers(item){
+    this.AppUsersSource.next(item);
   }
   ChangeRoles(item){
     this.RolesSource.next(item);

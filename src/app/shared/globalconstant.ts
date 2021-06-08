@@ -35,6 +35,10 @@ export class globalconstants {
                 "DOCUMENTTYPE": "document type",
                 "CURRENTBATCH": "current batch",
                 "REASONFORLEAVING": "reason for leaving",
+                "EXAMNAME":"exam name",
+                "EXAMSLOTNAME":"exam slot name",
+                "SUBJECT":"subject",
+                "SUBJECTTYPE":"subject type",
                 "RANDOMIMAGE": "random image"
             }]
         }

@@ -1,0 +1,50 @@
+<div style="padding:15px 15px 0px 15px;">
+    <div><strong>Application Role Permission Mapping</strong></div>
+</div>
+<mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+<div style="padding: 15px;" fxLayout="row wrap">
+    <div style="width: 100%;">
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="Application">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Application
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    {{element.Application}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Role">
+                <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Role}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Permission">
+                <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Permission}}
+                </mat-cell>
+            </ng-container>          
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                   <mat-checkbox (click)="update(element)" [checked]="element.Active==1?true:false">
+                   </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef><button matTooltip="add new" mat-mini-fab (click)="addnew()"><mat-icon>add</mat-icon></button>
+                 </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button matTooltip="view/edit" mat-mini-fab (click)="View(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+    </div>
+    <app-roleappAdd *ngIf="ApplicationRoleId!=0" [AppRoleId]="ApplicationRoleId" (CallParentPageFunction)="GetApplicationRoles()" (OutAppRoleId)="GetApplicationRoleId($event)">
+    </app-roleappAdd>
+</div>

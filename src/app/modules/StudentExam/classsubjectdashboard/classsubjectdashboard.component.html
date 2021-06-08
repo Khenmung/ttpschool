@@ -1,0 +1,109 @@
+<div style="padding:15px 15px 0px 15px;">
+    <div><strong>Class Subject</strong></div>
+</div>
+<mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+<div style="padding: 15px;" fxLayout="row wrap">
+
+    <div style="width: 100%;">
+        <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline">
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="searchClassId">
+                    <mat-option value="0">--select--</mat-option>
+                    <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Subject</mat-label>
+                <mat-select formControlName="searchSubjectId">
+                    <mat-option value="0">--select--</mat-option>
+                    <mat-option *ngFor="let item of Subjects" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Subject Type</mat-label>
+                <mat-select formControlName="searchSubjectTypeId">
+                    <mat-option value="0">--select--</mat-option>
+                    <mat-option *ngFor="let item of SubjectTypes" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>            
+            <button class="mat-raised-button" (click)="GetClassSubject()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </form>
+    
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="Class">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    {{element.Class}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Subject">
+                <mat-header-cell *matHeaderCellDef> Subject </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Subject}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="SubjectType">
+                <mat-header-cell *matHeaderCellDef> Subject Type </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.SubjectType}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="TheoryFullMark">
+                <mat-header-cell *matHeaderCellDef> Theory Full Mark </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.TheoryFullMark}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="TheoryPassMark">
+                <mat-header-cell *matHeaderCellDef> Theory Pass Mark </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.TheoryPassMark}}
+                </mat-cell>
+            </ng-container>          
+            <ng-container matColumnDef="PracticalFullMark">
+                <mat-header-cell *matHeaderCellDef> Practical Full Mark </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.PracticalFullMark}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PracticalPassMark">
+                <mat-header-cell *matHeaderCellDef> Practical Pass Mark </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.PracticalPassMark}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                   <mat-checkbox (click)="update(element)" [checked]="element.Active==1?true:false">
+                   </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef><button matTooltip="add new" mat-mini-fab (click)="addnew()"><mat-icon>add</mat-icon></button>
+                 </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button matTooltip="view/edit" mat-mini-fab (click)="View(element)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+    </div>
+    <app-roleappAdd *ngIf="ApplicationRoleId!=0" [AppRoleId]="ApplicationRoleId" (CallParentPageFunction)="GetApplicationRoles()" (OutAppRoleId)="GetApplicationRoleId($event)">
+    </app-roleappAdd>
+</div>

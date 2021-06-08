@@ -1,0 +1,15 @@
+:host{
+    width: 100%;
+    display: flex;
+    justify-content: center;   
+}
+mat-card{
+    margin: auto;
+    align-self: center;
+    margin-top: -180px;
+    //background-color: lightgray;
+    width:80%;
+}
+alert{
+    z-index: 999;
+}

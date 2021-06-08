@@ -1,0 +1,42 @@
+<mat-card>
+    <mat-card-title>Edit User Role</mat-card-title>
+    <mat-card-content>
+        <alert></alert>
+        <form [formGroup]="AppRoleUserForm">
+            <div fxLayout="column" fxLayoutAlign="start center" fxLayout.xs="column">
+                <mat-form-field appearance="outline">
+                    <mat-label>User</mat-label>
+                    <mat-select formControlName="UserId" #UserId>
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Users" [value]="p.ApplicationUserId">
+                            {{p.UserName}}
+                        </mat-option>
+                    </mat-select>
+                    <span class="text-danger" *ngIf="f.UserId.touched && f.UserId.hasError('required')">Role is
+                        required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Role</mat-label>
+                    <mat-select formControlName="RoleId" #RoleId>
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Roles" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                    <span class="text-danger" *ngIf="f.RoleId.touched && f.RoleId.hasError('required')">Role is
+                        required.</span>
+                </mat-form-field>
+                <mat-checkbox formControlName="Active" [checked]="f.Active.value==1?true:false">
+                </mat-checkbox>&nbsp; Active
+            </div>
+        </form>
+    </mat-card-content>
+    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+        <button class="mat-raised-button" (click)="UpdateOrSave()">
+            <mat-icon>save</mat-icon>
+        </button>
+        <button class="mat-raised-button" (click)="back()">
+            <mat-icon>cancel</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>

@@ -99,7 +99,7 @@ export class LoginComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.GetMasterData(data.value);
+          this.GetMasterData(data.value[0]);
 
         }
       })
@@ -109,7 +109,7 @@ export class LoginComponent implements OnInit {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + UserApp[0].OrgId + ")"];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + UserApp.OrgId + ")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -133,51 +133,50 @@ export class LoginComponent implements OnInit {
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
         this.shareddata.ChangeRoles(this.Roles);
 
-        this.UserDetail = UserApp.map(element => {
-          this.RoleFilter = ' and (RoleId eq 0';
-          var _location = '';
-          if (this.Locations.length > 0 && element.LocationId != null)
-            _location = this.Locations.filter(l => l.MasterDataId == element.LocationId)[0].MasterDataName;
-          var _department = '';
-          if (this.Departments.length > 0 && element.DepartmentId != null)
-            _department = this.Departments.filter(l => l.MasterDataId == element.DepartmentId)[0].MasterDataName;
+        this.RoleFilter = ' and (RoleId eq 0';
+        var _location = '';
+        if (this.Locations.length > 0 && UserApp.LocationId != null)
+          _location = this.Locations.filter(l => l.MasterDataId == UserApp.LocationId)[0].MasterDataName;
+        var _department = '';
+        if (this.Departments.length > 0 && UserApp.DepartmentId != null)
+          _department = this.Departments.filter(l => l.MasterDataId == UserApp.DepartmentId)[0].MasterDataName;
+        var __organization = '';
+        if (this.Organizations.length > 0 && UserApp.OrgId != null)
+          __organization = this.Organizations.filter(l => l.MasterDataId == UserApp.OrgId)[0].MasterDataName;
 
-          return {
-            userId: element.ApplicationUserId,
-            userName: element.UserName,
-            email: element.EmailAddress,
-            orgId: element.OrgId,
-            org: this.Organizations.filter(l => l.MasterDataId == element.OrgId)[0].MasterDataName,
-            locationId: element.LocationId,
-            location: _location,
-            departmentId: element.DepartmentId,
-            department: _department,
-            validfrom: element.ValidFrom,
-            validto: element.ValidTo,
-            managerId: element.ManagerId,
-            RoleUsers: element.RoleUsers.map(roleuser => {
-              if (roleuser.Active == 1 && roleuser.RoleId != null) {
-                this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
-                var _role = '';
-                if (this.Roles.length > 0 && roleuser.RoleId != null)
-                  _role = this.Roles.filter(a => a.MasterDataId == roleuser.RoleId)[0].MasterDataName;
-                return {
-                  roleId: roleuser.RoleId,
-                  role: _role,
-                }
+        this.UserDetail = [{
+          userId: UserApp.ApplicationUserId,
+          userName: UserApp.UserName,
+          email: UserApp.EmailAddress,
+          orgId: UserApp.OrgId,
+          org: __organization,
+          locationId: UserApp.LocationId,
+          location: _location,
+          departmentId: UserApp.DepartmentId,
+          department: _department,
+          validfrom: UserApp.ValidFrom,
+          validto: UserApp.ValidTo,
+          managerId: UserApp.ManagerId,
+          RoleUsers: UserApp.RoleUsers.map(roleuser => {
+            if (roleuser.Active == 1 && roleuser.RoleId != null) {
+              this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
+              var _role = '';
+              if (this.Roles.length > 0 && roleuser.RoleId != null)
+                _role = this.Roles.filter(a => a.MasterDataId == roleuser.RoleId)[0].MasterDataName;
+              return {
+                roleId: roleuser.RoleId,
+                role: _role,
               }
-              else
-                return false;
-            })
-          }
-        })
-
+            }
+            else
+              return false;
+          })
+        }]
         if (this.RoleFilter.length > 0)
           this.RoleFilter += ')';
 
         this.GetApplicationRoles();
-
-      })
+      });
   }
   getDropDownData(dropdowntype) {
     let Ids = this.allMasterData.filter((item, indx) => {
@@ -192,7 +191,7 @@ export class LoginComponent implements OnInit {
     else
       return [];
   }
-  
+
   GetApplicationRoles() {
 
     let list: List = new List();
@@ -231,6 +230,7 @@ export class LoginComponent implements OnInit {
           this.isLoginFailed = false;
           this.isLoggedIn = true;
           this.username = this.tokenStorage.getUser();
+          this.route.navigate([this.tokenStorage.getRedirectUrl()]);
         }
       })
   }

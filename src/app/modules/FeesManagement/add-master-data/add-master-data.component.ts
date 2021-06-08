@@ -56,6 +56,7 @@ export class AddMasterDataComponent implements OnInit {
     // }
     // this.GetTopMasters();
   }
+  
   enableAddNew = false;
   enableTopEdit = false;
   loading: boolean = false;
@@ -75,6 +76,7 @@ export class AddMasterDataComponent implements OnInit {
 
     })
   PageLoad() {
+  this.loading=true;
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails == null) {
       this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
@@ -100,29 +102,8 @@ export class AddMasterDataComponent implements OnInit {
           
           let schoolData = globalconstants.MasterDefinitions[1].school;
           this.SchoolDataStatus=this.getSettingStatus(schoolData);
-          console.log('this.SchoolDataStatus',this.SchoolDataStatus);
-          // this.ApplicationDataStatus = Object.keys(applicationData[0]).map(globalcons => {
-          //   //console.log('inside',globalcons)
-
-          //   defined = this.TopMasters.filter(fromdb => {
-          //     return applicationData[0][globalcons].toLowerCase().trim() == fromdb.MasterDataName.toLowerCase().trim();
-          //   });
-
-          //   if (defined.length > 0) {
-          //     return {
-          //       MasterDataName: applicationData[0][globalcons],
-          //       Done: true
-          //     }
-          //   }
-          //   else {
-          //     return {
-          //       MasterDataName: applicationData[0][globalcons],
-          //       Done: false
-          //     }
-          //   }
-          // });
-          //console.log('globalconstants', Object.entries(globalconstants.MasterDefinitions))
-      //    console.log('ok', this.SchoolDataStatus)
+          this.loading =false;
+         
         }
       });
   }

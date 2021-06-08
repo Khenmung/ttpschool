@@ -3,6 +3,7 @@ const RANDOMIMAGE_KEY = 'random-images';
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
 const USER_DETAIL = 'userdetail';
+const REDIRECT_URL = 'redirecturl';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,17 @@ export class TokenStorageService {
   public saveUserdetail(userdetail: any): void {
     localStorage.removeItem(USER_DETAIL);
     localStorage.setItem(USER_DETAIL, JSON.stringify(userdetail));
+  }
+  public saveredirectionurl(url: any): void {
+    localStorage.removeItem(REDIRECT_URL);
+    localStorage.setItem(REDIRECT_URL, JSON.stringify(url));
+  }
+  public getRedirectUrl(): any {
+    const redirecturl = localStorage.getItem(REDIRECT_URL);
+    if (redirecturl) {
+      return JSON.parse(redirecturl);
+    }
+    return "";
   }
   public getUserDetail(): any {
     const userdetail = localStorage.getItem(USER_DETAIL);

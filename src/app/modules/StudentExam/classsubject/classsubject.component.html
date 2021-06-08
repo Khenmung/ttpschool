@@ -1,0 +1,77 @@
+<mat-card>
+    <mat-card-title>Edit Application Role Permission</mat-card-title>
+    <mat-card-content>
+        <alert></alert>
+        <form [formGroup]="AppRoleForm">
+            <div fxLayout="column" fxLayoutAlign="start center" fxLayout.xs="column">
+                <mat-form-field appearance="outline">
+                    <mat-label>Class</mat-label>
+                    <mat-select formControlName="ClassId" >
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                    <span class="text-danger" *ngIf="f.ClassId.touched && f.ClassId.hasError('required')">Class is
+                        required.</span>
+                </mat-form-field>                
+                <mat-form-field appearance="outline">
+                    <mat-label>Subject</mat-label>
+                    <mat-select formControlName="SubjectId">
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Subjects" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                    <span class="text-danger" *ngIf="f.Subject.touched && f.Subject.hasError('required')">Subject is
+                        required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Subject Type</mat-label>
+                    <mat-select formControlName="SubjectTypeId">
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of SubjectTypes" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                    <span class="text-danger" *ngIf="f.SubjectTypeId.touched && f.SubjectTypeId.hasError('required')">Subject type is
+                        required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Theory Full Mark</mat-label>
+                    <input matInput formControlName="TheoryFullMark">                      
+                    <span class="text-danger" *ngIf="f.TheoryFullMark.touched && f.TheoryFullMark.hasError('required')">Theory full mark is
+                        required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Theory Pass Mark</mat-label>
+                    <input matInput formControlName="TheoryPassMark">                      
+                    <span class="text-danger" *ngIf="f.TheoryPassMark.touched && f.TheoryPassMark.hasError('required')">Theory pass mark is
+                        required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Practical Full Mark</mat-label>
+                    <input matInput formControlName="PracticalFullMark">                      
+                    <span class="text-danger" *ngIf="f.PracticalFullMark.touched && f.PracticalFullMark.hasError('required')">Practical full mark is
+                        required.</span>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Practical Pass Mark</mat-label>
+                    <input matInput formControlName="PracticalPassMark">                      
+                    <span class="text-danger" *ngIf="f.PracticalPassMark.touched && f.PracticalPassMark.hasError('required')">Practical Pass mark is
+                        required.</span>
+                </mat-form-field>
+                <mat-checkbox formControlName="Active" [checked]="f.Active.value==1?true:false">
+                </mat-checkbox>&nbsp; Active
+            </div>
+        </form>
+    </mat-card-content>
+    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+        <button class="mat-raised-button" (click)="UpdateOrSave()">
+            <mat-icon>save</mat-icon>
+        </button>
+        <button class="mat-raised-button" (click)="back()">
+            <mat-icon>cancel</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>

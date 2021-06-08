@@ -1,16 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ApproleuseraddComponent } from './approleuseradd/approleuseradd.component';
-import { ApproleuserdashboardComponent } from './approleuserdashboard/approleuserdashboard.component';
-import { AppuserComponent } from './appuser/appuser.component';
-import { AppuserdashboardComponent } from './appuserdashboard/appuserdashboard.component';
+// import { roleuseraddComponent } from '../AdminSettings/roleuser/roleuseradd/roleuseradd.component';
+// import { roleuserdashboardComponent } from '../AdminSettings/roleuser/roleuserdashboard/roleuserdashboard.component';
+// import { userComponent } from '../AdminSettings/users/appuser/user.component';
+// import { AppuserdashboardComponent } from '../AdminSettings/users/appuserdashboard/appuserdashboard.component';
 import { AuthHomeComponent } from './authhome/authhome.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
-import { RoleuserdashboardComponent } from './roleuserdashboard/roleuserdashboard.component';
-import { settingsComponent } from './Settings/settings.component';
 
 const routes: Routes = [
   {
@@ -20,10 +18,6 @@ const routes: Routes = [
       { path: 'changepassword', component: ChangePasswordComponent },
       { path: 'createlogin', component: RegisterComponent },
       { path: 'profile', component: ProfileComponent },
-      { path: 'addapproleuser', component: ApproleuseraddComponent },
-      { path: 'appuser', component: AppuserComponent },      
-      { path: 'appuserdashboard', component: AppuserdashboardComponent },
-      { path: 'settings', component: settingsComponent },      
       
     ]
   },
@@ -41,10 +35,5 @@ export const AuthComponents = [
   ProfileComponent,
   RegisterComponent,
   AuthHomeComponent,
-  AppuserComponent,
-  AppuserdashboardComponent,
-  ApproleuseraddComponent,
-  ApproleuserdashboardComponent,
-  settingsComponent,
-  RoleuserdashboardComponent
+  
 ]
