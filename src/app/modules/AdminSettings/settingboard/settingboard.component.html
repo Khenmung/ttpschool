@@ -1,0 +1,36 @@
+
+<mat-card>
+    <mat-card-title>Admin</mat-card-title>
+    <mat-card-content>
+        <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayout.xs="column" fxLayoutGap="30px">
+            <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
+                class="demo-tab-group">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>first_page</mat-icon> Essential Data
+                    </ng-template>
+                    <app-add-master-data></app-add-master-data>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>people</mat-icon> Users
+                    </ng-template>
+                    <app-appuserdashboard></app-appuserdashboard>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>group_work</mat-icon> Role User mapping
+                    </ng-template>
+                    <app-roleuserdashboard></app-roleuserdashboard>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>apps
+                        </mat-icon> Application Role Permission
+                    </ng-template>
+                    <app-RoleAppdashboard></app-RoleAppdashboard>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-card-content>
+</mat-card>
