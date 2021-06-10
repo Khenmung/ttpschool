@@ -32,6 +32,7 @@ export class RoleAppdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  common: globalconstants;
   loading = false;
   Departments = [];
   Locations = [];
@@ -51,6 +52,7 @@ export class RoleAppdashboardComponent implements OnInit {
     RoleId: 0,
     Active: 1
   };
+
   displayedColumns = [
     'Application',
     'Role',
@@ -77,9 +79,15 @@ export class RoleAppdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+
       this.shareddata.CurrentApplication.subscribe(a => this.Applications = a);
-      if (this.Applications.length == 0)
+      if (this.Applications.length == 0) {
+        this.shareddata.GetApplication().subscribe((data: any) => {
+          this.Applications = data.value.map(item => item);
+          this.shareddata.ChangeApplication(this.Applications);
+        });
         this.GetMasterData();
+      }
       else {
         this.shareddata.CurrentRoles.subscribe(r => this.Roles = r);
         this.shareddata.CurrentDepartment.subscribe(a => this.Departments = a);
@@ -92,7 +100,9 @@ export class RoleAppdashboardComponent implements OnInit {
   GetApplicationRoleId(event) {
     this.ApplicationRoleId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
-    this.GetApplicationRoles();
+    setTimeout(() => {
+      this.GetApplicationRoles();  
+    }, 10);    
   }
 
   View(element) {
@@ -100,7 +110,7 @@ export class RoleAppdashboardComponent implements OnInit {
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     setTimeout(() => {
       this.roleappadd.PageLoad();
-    }, 50);
+    }, 10);
   }
 
   addnew() {
@@ -108,7 +118,7 @@ export class RoleAppdashboardComponent implements OnInit {
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     setTimeout(() => {
       this.roleappadd.PageLoad();
-    }, 50);
+    }, 10);
   }
 
   GetApplicationRoles() {
@@ -145,9 +155,9 @@ export class RoleAppdashboardComponent implements OnInit {
           if (_roleId.length > 0)
             role = _roleId[0].MasterDataName;
 
-          let applicationId = this.Applications.filter(a => a.MasterDataId == item.ApplicationId);
+          let applicationId = this.Applications.filter(a => a.ApplicationId == item.ApplicationId);
           if (applicationId.length > 0)
-            application = applicationId[0].MasterDataName;
+            application = applicationId[0].ApplicationName;
 
           return {
             ApplicationRoleId: item.ApplicationRoleId,
@@ -169,28 +179,28 @@ export class RoleAppdashboardComponent implements OnInit {
   }
 
   update(element) {
-    let toupdate={
+    let toupdate = {
       //ApplicationId:element.ApplicationId,      
-      Active:element.Active==1?0:1
+      Active: element.Active == 1 ? 0 : 1
     }
     this.dataservice.postPatch('ApplicationRoles', toupdate, element.ApplicationRoleId, 'patch')
       .subscribe(
         (data: any) => {
-         // this.GetApplicationRoles();
+          // this.GetApplicationRoles();
           this.alert.success("Data updated successfully.", this.optionAutoClose);
-          
+
         });
   }
-  delete(element){
-    let toupdate={
-      Active:element.Active==1?0:1
+  delete(element) {
+    let toupdate = {
+      Active: element.Active == 1 ? 0 : 1
     }
     this.dataservice.postPatch('ApplicationRoles', toupdate, element.ApplicationRoleId, 'delete')
       .subscribe(
         (data: any) => {
-         // this.GetApplicationRoles();
+          // this.GetApplicationRoles();
           this.alert.success("Data deleted successfully.", this.optionAutoClose);
-          
+
         });
   }
   isNumeric(str: number) {
@@ -213,7 +223,7 @@ export class RoleAppdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
 

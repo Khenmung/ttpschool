@@ -20,10 +20,10 @@
                             Contact No. is required.</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
-                        <mat-label>Organisation Name</mat-label>
-                        <input formControlName="OrganisationName" autocomplete="Off" matInput maxlength="50">
+                        <mat-label>Organization Name</mat-label>
+                        <input formControlName="OrganizationName" autocomplete="Off" matInput maxlength="50">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
-                        <span class="text-danger" *ngIf="f.OrganisationName.touched && f.OrganisationName.hasError('required')">
+                        <span class="text-danger" *ngIf="f.OrganizationName.touched && f.OrganizationName.hasError('required')">
                             Organisation name is required.</span>
                     </mat-form-field>                    
                     <mat-form-field appearance="outline">
@@ -71,7 +71,7 @@
                 </form>
                 <div class="alert alert-success" *ngIf="isSuccessful">
                     Please check and click on the link provided in your email for verification.
-
+                    <button class="mat-raised-button" (click)="gotologin()">click to login</button>    
                 </div>
             </div>
         <!-- </div> -->

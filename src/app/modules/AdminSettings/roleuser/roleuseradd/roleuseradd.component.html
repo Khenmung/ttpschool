@@ -1,7 +1,6 @@
 <mat-card>
-    <mat-card-title>Edit User Role</mat-card-title>
+    <mat-card-title>Add/Edit User Role</mat-card-title>
     <mat-card-content>
-        <alert></alert>
         <form [formGroup]="AppRoleUserForm">
             <div fxLayout="column" fxLayoutAlign="start center" fxLayout.xs="column">
                 <mat-form-field appearance="outline">
@@ -31,7 +30,7 @@
             </div>
         </form>
     </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+    <mat-card-actions style="margin-left: 0px;" fxLayout="row" fxLayoutAlign="center center">
         <button class="mat-raised-button" (click)="UpdateOrSave()">
             <mat-icon>save</mat-icon>
         </button>

@@ -2,7 +2,8 @@
     <mat-card-title>Student</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <form [formGroup]="searchForm" fxLayout="row wrap" fxLayoutAlign="center center">
+        <alert></alert>
+        <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
             <mat-form-field fxFlex appearance="outline">
                 <mat-label>Batch</mat-label>
                 <mat-select formControlName="BatchId" #BatchId (selectionChange)="UpdateSelectedBatchId($event.value)">

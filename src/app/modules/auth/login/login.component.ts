@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -15,6 +16,14 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionsAutoClose = {
+    autoClose: true,
+    keepAfterRouteChange: true
+  };
   allMasterData = [];
   Organizations = [];
   Departments = [];
@@ -33,13 +42,15 @@ export class LoginComponent implements OnInit {
   username: string = '';
   mediaSub: Subscription;
   deviceXs: boolean;
-
+  common:globalconstants;
   constructor(private authService: AuthService,
+    private alert:AlertService,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
     private route: Router,
     private shareddata: SharedataService,
-    private mediaObserver: MediaObserver) { }
+    private mediaObserver: MediaObserver,
+) { }
 
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
@@ -50,6 +61,9 @@ export class LoginComponent implements OnInit {
       this.isLoggedIn = true;
       this.route.navigate(['/']);
     }
+    this.shareddata.GetApplication().subscribe((data:any)=>{
+      this.Applications =[...data.value];
+   });
   }
 
   onSubmit(): void {
@@ -72,6 +86,7 @@ export class LoginComponent implements OnInit {
       }
     );
   }
+  
   GetApplicationRoleUser() {
 
     let list: List = new List();
@@ -87,10 +102,12 @@ export class LoginComponent implements OnInit {
       'ValidTo',
       'RoleUsers/RoleId',
       'RoleUsers/Active',
+      'Organization/OrganizationName',
+      'Organization/LogoPath',
       'Active'];
 
     list.PageName = "AppUsers";
-    list.lookupFields = ["RoleUsers"];
+    list.lookupFields = ["RoleUsers","Organization"];
 
     list.filter = ["Active eq 1 and EmailAddress eq '" + this.tokenStorage.getUser() + "'"];
     //list.orderBy = "ParentId";
@@ -104,6 +121,7 @@ export class LoginComponent implements OnInit {
         }
       })
   }
+  
   GetMasterData(UserApp) {
     debugger;
     let list: List = new List();
@@ -118,14 +136,14 @@ export class LoginComponent implements OnInit {
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
-        this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ORGANIZATION);
-        this.shareddata.ChangeOrganization(this.Organizations);
+        // this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ORGANIZATION);
+        // this.shareddata.ChangeOrganization(this.Organizations);
 
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
         this.shareddata.ChangeDepartment(this.Departments);
 
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
-        this.shareddata.ChangeApplication(this.Applications);
+        // this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
+        // this.shareddata.ChangeApplication(this.Applications);
 
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.shareddata.ChangeLocation(this.Locations);
@@ -141,8 +159,8 @@ export class LoginComponent implements OnInit {
         if (this.Departments.length > 0 && UserApp.DepartmentId != null)
           _department = this.Departments.filter(l => l.MasterDataId == UserApp.DepartmentId)[0].MasterDataName;
         var __organization = '';
-        if (this.Organizations.length > 0 && UserApp.OrgId != null)
-          __organization = this.Organizations.filter(l => l.MasterDataId == UserApp.OrgId)[0].MasterDataName;
+        if (UserApp.OrgId != null)
+          __organization = UserApp.Organization.OrganizationName;
 
         this.UserDetail = [{
           userId: UserApp.ApplicationUserId,
@@ -172,6 +190,9 @@ export class LoginComponent implements OnInit {
               return false;
           })
         }]
+        //login detail is save even though roles are not defined.
+        //so that user can continue their settings.
+        this.tokenStorage.saveUserdetail(this.UserDetail);
         if (this.RoleFilter.length > 0)
           this.RoleFilter += ')';
 
@@ -231,6 +252,11 @@ export class LoginComponent implements OnInit {
           this.isLoggedIn = true;
           this.username = this.tokenStorage.getUser();
           this.route.navigate([this.tokenStorage.getRedirectUrl()]);
+        }
+        else
+        {
+          this.alert.info("Initial minimal settings must be done.",this.optionsNoAutoClose);
+          this.route.navigate(['control/settings']);
         }
       })
   }

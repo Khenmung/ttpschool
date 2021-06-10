@@ -1,8 +1,8 @@
 <mat-card>
-    <mat-card-title>Edit Application Role Permission</mat-card-title>
+    <mat-card-title style="font-size: 16px;">{{action}} class/stream/group subject</mat-card-title>
     <mat-card-content>
         <alert></alert>
-        <form [formGroup]="AppRoleForm">
+        <form [formGroup]="ClassSubjectForm">
             <div fxLayout="column" fxLayoutAlign="start center" fxLayout.xs="column">
                 <mat-form-field appearance="outline">
                     <mat-label>Class</mat-label>
@@ -23,7 +23,7 @@
                             {{p.MasterDataName}}
                         </mat-option>
                     </mat-select>
-                    <span class="text-danger" *ngIf="f.Subject.touched && f.Subject.hasError('required')">Subject is
+                    <span class="text-danger" *ngIf="f.SubjectId.touched && f.SubjectId.hasError('required')">Subject is
                         required.</span>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
@@ -66,8 +66,8 @@
             </div>
         </form>
     </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-        <button class="mat-raised-button" (click)="UpdateOrSave()">
+    <mat-card-actions style="margin-left: 0px;" fxLayout="row" fxLayoutAlign="center center">
+        <button [disabled]="!SaveEnable" class="mat-raised-button" (click)="UpdateOrSave()">
             <mat-icon>save</mat-icon>
         </button>
         <button class="mat-raised-button" (click)="back()">

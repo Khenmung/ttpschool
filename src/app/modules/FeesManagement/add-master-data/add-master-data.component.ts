@@ -26,6 +26,7 @@ export class AddMasterDataComponent implements OnInit {
   Batches = [];
   Locations = [];
   TopMasters = [];
+  DefinedMaster =[];
   oldvalue = '';
   selectedData = '';
   datasource: MatTableDataSource<IMaster>;
@@ -87,16 +88,20 @@ export class AddMasterDataComponent implements OnInit {
 
   GetTopMasters() {
     let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "Active"];
+    list.fields = ["MasterDataId","ParentId", "MasterDataName", "Description", "Active","OrgId"];
     list.PageName = "MasterDatas";
-    list.filter = ["ParentId eq 0 and Active eq 1"];//this.searchForm.get("ParentId").value];
+    list.filter = ["(ParentId eq 0 or OrgId eq "+ this.UserDetails[0]["orgId"] +") and Active eq 1"];//this.searchForm.get("ParentId").value];
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           
           
-          this.TopMasters = [...data.value];
+          this.TopMasters = data.value.filter(m=> {
+            return m.ParentId==0
+          });
+          console.log("top",this.TopMasters);
+          this.DefinedMaster = data.value.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
           let applicationData = globalconstants.MasterDefinitions[0].application;
           this.ApplicationDataStatus=this.getSettingStatus(applicationData);
           
@@ -112,7 +117,7 @@ export class AddMasterDataComponent implements OnInit {
       
     return Object.keys(data[0]).map(globalcons => {
       
-      defined = this.TopMasters.filter(fromdb => {
+      defined = this.DefinedMaster.filter(fromdb => {
         return data[0][globalcons].toLowerCase().trim() == fromdb.MasterDataName.toLowerCase().trim();
       });
 

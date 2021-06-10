@@ -1,14 +1,12 @@
+<alert></alert>
 <mat-card>
-    <mat-card-title>Application Users</mat-card-title>
-    <!-- <div style="padding:15px 15px 0px 15px;">
-        <div><strong>Application Users</strong></div>
-    </div> -->
-    <mat-card-content>
-        <div style="padding: 15px;" fxLayout="row wrap">
+    <mat-card-title>Application Users</mat-card-title>   
+    <mat-card-content>        
+        <div #container  [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;" fxLayout="row wrap">
             <div style="height:350px;width: 100%;">
                 <div>
                     <form [formGroup]="searchForm">
-                        <mat-form-field appearance="outline">
+                        <!-- <mat-form-field appearance="outline">
                             <mat-label>Organization</mat-label>
                             <mat-select formControlName="Organization">
                                 <mat-option value="0">--select--</mat-option>
@@ -17,7 +15,7 @@
 
                                 </mat-option>
                             </mat-select>
-                        </mat-form-field>
+                        </mat-form-field> -->
                         <mat-form-field appearance="outline">
                             <mat-label>Department</mat-label>
                             <mat-select formControlName="Department">
@@ -77,7 +75,7 @@
                             {{element.ContactNo}}
                         </mat-cell>
                     </ng-container>
-                    <ng-container matColumnDef="OrgName">
+                    <!-- <ng-container matColumnDef="OrgName">
                         <mat-header-cell *matHeaderCellDef> Organization </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             {{element.OrgName}}
@@ -106,7 +104,7 @@
                         <mat-cell *matCellDef="let element">
                             {{element.ValidTo|date:'dd/MM/yyyy'}}
                         </mat-cell>
-                    </ng-container>
+                    </ng-container> -->
                     <ng-container matColumnDef="Active">
                         <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                         <mat-cell *matCellDef="let element">
@@ -126,12 +124,10 @@
                             <table *ngIf="detail.element.RoleUsers.length>0">
                                 <tr style="background-color: lightgray;">
                                     <td>Sl no.</td>
-                                    <td>Application</td>
                                     <td>Role</td>
                                 </tr>
                                 <tr *ngFor="let item of detail.element.RoleUsers;let i=index">
-                                    <td>{{i+1}}</td>
-                                    <td>{{item.Application}}</td>
+                                    <td>{{i+1}}</td>                                 
                                     <td>{{item.Role}}</td>
                                 </tr>
                             </table>
@@ -145,8 +141,8 @@
                         style="overflow: hidden">
                     </mat-row>
                 </mat-table>
-            </div>
-            <app-user *ngIf="UserId>0" [UserId]="UserId" (UserIdOutput)="SetUser($event)"></app-user>
+            </div>           
         </div>
+        <app-user *ngIf="UserId>0" [UserId]="UserId" (UserIdOutput)="SetUser($event)"></app-user>
     </mat-card-content>
 </mat-card>

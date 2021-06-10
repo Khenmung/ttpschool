@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { NaomitsuService } from './databaseService';
+import { List } from './interface';
 
 @Injectable({
   providedIn: 'any'
@@ -85,7 +87,9 @@ export class SharedataService {
   CurrentClasses = this.ClassesSource.asObservable();
   CurrentStudentName = this.StudentNameSource.asObservable();
 
-  constructor() {
+  constructor(
+    private dataservice:NaomitsuService
+  ) {
   }
   ngOnInit() {
 
@@ -207,7 +211,15 @@ export class SharedataService {
   ChangeClasses(item) {
     this.ClassesSource.next(item);
   }
-
+  GetApplication() {
+    let list: List = new List();
+    list.fields = ["ApplicationId", "ApplicationName", "Active"];
+    list.PageName = "Applications";
+    list.filter = ["Active eq 1"];
+    
+    return this.dataservice.get(list);//.toPromise();
+      
+    }
   clearData() {
     this.items = [];
     return this.items;

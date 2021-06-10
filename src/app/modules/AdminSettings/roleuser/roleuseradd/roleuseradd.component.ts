@@ -22,7 +22,7 @@ export class roleuseraddComponent implements OnInit {
   };
   optionAutoClose = {
     autoClose: true,
-    keepAfterRouteChange: true
+    keepAfterRouteChange: false
   };
   allMasterData = [];
   AppUsers = [];
@@ -41,7 +41,7 @@ export class roleuseraddComponent implements OnInit {
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
+    private alertservice: AlertService,
     private fb: FormBuilder,
     private tokenstorage: TokenStorageService
   ) {
@@ -60,7 +60,7 @@ export class roleuseraddComponent implements OnInit {
   }
   PageLoad(){
     this.UserDetail = this.tokenstorage.getUserDetail();
-    if (this.UserDetail == null) {
+    if (this.UserDetail == null || this.UserDetail.length==0) {
       this.route.navigate(['auth/login']);
       return;
     }
@@ -117,12 +117,24 @@ export class roleuseraddComponent implements OnInit {
 
   UpdateOrSave() {
 
+    if(this.AppRoleUserForm.get("UserId").value==0)
+    {
+      this.alertservice.error("Please select user!",this.optionAutoClose);
+      return;
+    }
+    if(this.AppRoleUserForm.get("RoleId").value==0)
+    {
+      this.alertservice.error("Please select role!",this.optionAutoClose);
+      return;
+    }   
+
     let checkFilterString = "Active eq 1 " +
       " and RoleId eq " + this.AppRoleUserForm.get("RoleId").value +
       " and UserId eq " + this.AppRoleUserForm.get("UserId").value;
-
+      " and OrgId eq " + this.UserDetail[0]["orgId"];
+      
     if (this.RoleUserData.RoleUserId > 0)
-      checkFilterString += " and RoleUserId ne " + this.RoleUserData.RoleUserId;
+      checkFilterString += " and RoleUserId ne " + this.RoleUserData.RoleUserId + " and OrgId eq " + this.UserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = ["RoleUserId"];
@@ -133,7 +145,7 @@ export class roleuseraddComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.alertservice.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
           this.RoleUserData.Active = this.AppRoleUserForm.get("Active").value==true?1:0;
@@ -159,7 +171,7 @@ export class roleuseraddComponent implements OnInit {
     this.dataservice.postPatch('RoleUsers', this.RoleUserData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.alertservice.success("Data saved successfully.", this.optionAutoClose);
         });
   }
   update() {
@@ -167,7 +179,7 @@ export class roleuseraddComponent implements OnInit {
     this.dataservice.postPatch('RoleUsers', this.RoleUserData, this.RoleUserData.RoleUserId, 'patch')
       .subscribe(
         (data: any) => {
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.alertservice.success("Data updated successfully.", this.optionAutoClose);
         });
   }
 }

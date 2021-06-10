@@ -11,6 +11,7 @@ import { globalconstants } from '../../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';
 import { SharedataService } from '../../../../shared/sharedata.service';
 import * as XLSX from 'xlsx';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-dashboardstudent',
@@ -46,36 +47,41 @@ export class DashboardstudentComponent implements OnInit {
   Sections = [];
   UploadTypes=[];
   ReasonForLeaving=[];
+  StandardFilter ='';
   BatchId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
-  searchForm: FormGroup;
-
+  studentSearchForm: FormGroup;
+  LoginUserDetail=[];
   constructor(private dataservice: NaomitsuService,
     private route: Router,
     private alert: AlertService,
     private fb: FormBuilder,
-    private shareddata: SharedataService) { }
+    private shareddata: SharedataService,
+    private token:TokenStorageService) { }
 
   ngOnInit(): void {
-    this.GetMasterData();
-    // this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
-    // this.dataSource.paginator = this.paginator;
-    // this.dataSource.sort = this.sort;
-    this.searchForm = this.fb.group({
+    this.LoginUserDetail = this.token.getUserDetail();
+    this.StandardFilter =globalconstants.getStandardFilter(this.LoginUserDetail);
+    this.studentSearchForm = this.fb.group({
       BatchId: [0, Validators.required],
       StudentId: [0],
       Name: [''],
       FatherName: [''],
       MotherName: ['']
     })
+    this.GetMasterData();
+    // this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
+    
   }
   GetMasterData() {
     debugger;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 " + this.StandardFilter];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -84,59 +90,59 @@ export class DashboardstudentComponent implements OnInit {
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
-        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].REASONFORLEAVING);
+        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].REASONFORLEAVING);
         this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.shareddata.ChangeClasses(this.Classes);
 
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.shareddata.ChangeBatch(this.Batches);
 
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CATEGORY);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
 
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].RELIGION);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].RELIGION);
         this.shareddata.ChangeReligion(this.Religion);
 
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].STATE);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].STATE);
         this.shareddata.ChangeStates(this.States);
 
-        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].PRIMARYCONTACT);
+        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].PRIMARYCONTACT);
         this.shareddata.ChangePrimaryContact(this.PrimaryContact);
 
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.shareddata.ChangeLocation(this.Location);
 
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].GENDER);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].GENDER);
         this.shareddata.ChangeGenders(this.Genders);
 
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BLOODGROUP);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BLOODGROUP);
         this.shareddata.ChangeBloodgroup(this.Bloodgroup);
 
-        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEETYPE);
+        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
         this.shareddata.ChangeFeeType(this.FeeType);
 
-        this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTUPPERCLS);
+        this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].LANGUAGESUBJECTUPPERCLS);
         this.shareddata.ChangeLanguageSubjectUpper(this.LanguageSubjUpper);
 
-        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTLOWERCLS);
+        this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
         this.shareddata.ChangeFeeNames(this.FeeNames);
 
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         this.shareddata.ChangeSection(this.Sections);
 
-        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].UPLOADTYPE);
+        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CURRENTBATCH);
+        let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CURRENTBATCH);
         let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch[0].MasterDataName.toLowerCase());
         if (currentBatchObj.length > 0) {
           this.BatchId = currentBatchObj[0].MasterDataId
-          this.searchForm.patchValue({ BatchId: this.BatchId });
+          this.studentSearchForm.patchValue({ BatchId: this.BatchId });
           this.shareddata.ChangeBatchId(this.BatchId);
           //console.log('batchid from service',this.BatchId)
         }
@@ -220,15 +226,17 @@ export class DashboardstudentComponent implements OnInit {
     debugger;
     //let StudentClassIds = '';
     let checkFilterString = "1 eq 1"
-    if (this.searchForm.get("Name").value.trim().length > 0)
-      checkFilterString += " and substringof('" + this.searchForm.get("Name").value + "',Name)";
-    if (this.searchForm.get("FatherName").value.trim().length > 0)
-      checkFilterString += " and substringof('" + this.searchForm.get("FatherName").value + "',FatherName)"
-    if (this.searchForm.get("MotherName").value.trim().length > 0)
-      checkFilterString += " and substringof('" + this.searchForm.get("MotherName").value + "',MotherName)"
-    if (this.searchForm.get("StudentId").value > 0) {
-      checkFilterString += " and StudentId eq " + this.searchForm.get("StudentId").value
+    if (this.studentSearchForm.get("Name").value.trim().length > 0)
+      checkFilterString += " and substringof('" + this.studentSearchForm.get("Name").value + "',Name)";
+    if (this.studentSearchForm.get("FatherName").value.trim().length > 0)
+      checkFilterString += " and substringof('" + this.studentSearchForm.get("FatherName").value + "',FatherName)"
+    if (this.studentSearchForm.get("MotherName").value.trim().length > 0)
+      checkFilterString += " and substringof('" + this.studentSearchForm.get("MotherName").value + "',MotherName)"
+    if (this.studentSearchForm.get("StudentId").value > 0) {
+      checkFilterString += " and StudentId eq " + this.studentSearchForm.get("StudentId").value
     }
+    
+    checkFilterString += this.StandardFilter;
 
     let list: List = new List();
     list.fields = ["StudentId", "StudentClasses/StudentClassId", "StudentClasses/Batch", "StudentClasses/ClassId", "StudentClasses/RollNo",
@@ -244,7 +252,7 @@ export class DashboardstudentComponent implements OnInit {
         if (data.value.length > 0) {
           this.ELEMENT_DATA = data.value.filter(sc => {
            let reason= this.ReasonForLeaving.filter(r=>r.MasterDataId == sc.ReasonForLeavingId)
-            sc.StudentClasses = sc.StudentClasses.filter(c => c.Batch == this.searchForm.get('BatchId').value)
+            sc.StudentClasses = sc.StudentClasses.filter(c => c.Batch == this.studentSearchForm.get('BatchId').value)
             sc.ReasonForLeaving = reason.length>0?reason[0].MasterDataName:'';
             return sc;
           })
@@ -264,7 +272,7 @@ export class DashboardstudentComponent implements OnInit {
         }
         else {
           this.ELEMENT_DATA = [];
-          this.alert.warn("No student found!", this.options);
+          this.alert.info("No student found!", this.options);
         }
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;

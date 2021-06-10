@@ -1,5 +1,5 @@
 <div style="padding:15px 15px 0px 15px;">
-    <div><strong>Application Role Permission Mapping</strong></div>
+    <div>Application Role Permission Mapping</div>
 </div>
 <mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="padding: 15px;" fxLayout="row wrap">
@@ -45,6 +45,6 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
     </div>
-    <app-roleappAdd *ngIf="ApplicationRoleId!=0" [AppRoleId]="ApplicationRoleId" (CallParentPageFunction)="GetApplicationRoles()" (OutAppRoleId)="GetApplicationRoleId($event)">
+    <app-roleappAdd *ngIf="ApplicationRoleId!=0" [AppRoleId]="ApplicationRoleId" (OutAppRoleId)="GetApplicationRoleId($event)">
     </app-roleappAdd>
 </div>

@@ -17,6 +17,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
   },
   {
+    path: 'student',
+    loadChildren: () => import('./modules//StudentExam/student-exam.module').then(m => m.StudentExamModule)
+  },
+  {
     path: 'control',
     loadChildren: () => import('./modules/AdminSettings/adminsettings.module').then(m => m.AdminsettingsModule)
   },

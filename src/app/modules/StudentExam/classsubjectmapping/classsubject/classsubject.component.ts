@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -26,11 +26,15 @@ export class ClasssubjectComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Action ='Add';
+  StandardFilter ='';
+  SaveEnable =true;
   allMasterData = [];
   Classes = [];
   Subjects = [];
   SubjectTypes = [];
   Batches=[];
+  CurrentBatchId =0;
   ClassSubjectData = {
     ClassSubjectId: 0,
     ClassId: 0,
@@ -45,6 +49,7 @@ export class ClasssubjectComponent implements OnInit {
     Active: 1
   };
   UserDetail = [];
+  ClassSubjectForm:FormGroup;
   constructor(
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
@@ -56,35 +61,50 @@ export class ClasssubjectComponent implements OnInit {
 
   }
 
-  ClassSubjectForm = this.fb.group({
-    ClassSubjectId: [0],
-    ClassId: [0, Validators.required],
-    SubjectId: [0, Validators.required],
-    SubjectTypeId: [0, Validators.required],
-    TheoryFullMark: [0, Validators.required],
-    TheoryPassMark: [0, Validators.required],
-    PracticalFullMark: [0, Validators.required],
-    PracticalPassMark: [0, Validators.required],
-    Active: [1, Validators.required]
-  })
-
   ngOnInit(): void {
-
-  }
-  PageLoad() {
+    debugger;
     this.UserDetail = this.tokenstorage.getUserDetail();
+    if(this.ClassSubjectId > 0)
+        this.Action ="Edit";
+
     if (this.UserDetail == null) {
       this.route.navigate(['auth/login']);
       //return;
     }
+    this.ClassSubjectForm = this.fb.group({
+      ClassSubjectId: [0],
+      ClassId: [0, Validators.required],
+      SubjectId: [0, Validators.required],
+      SubjectTypeId: [0, Validators.required],
+      TheoryFullMark: [0, Validators.required],
+      TheoryPassMark: [0, Validators.required],
+      PracticalFullMark: [0, Validators.required],
+      PracticalPassMark: [0, Validators.required],
+      Active: [1, Validators.required],
+      BatchId:[0]
+    })
+    
+    
+    this.StandardFilter =globalconstants.getStandardFilter(this.UserDetail);
+
     this.shareddata.CurrentClasses.subscribe(c=>this.Classes=c);
     this.shareddata.CurrentSubjects.subscribe(s=>this.Subjects=s);
     this.shareddata.CurrentSubjectTypes.subscribe(t=>this.SubjectTypes=t);
     this.shareddata.CurrentBatch.subscribe(b=>this.Batches=b);
-
+    this.GetCurrentBatchID();
     this.GetClassSubject();
   }
+  PageLoad() {
 
+    
+  }
+  GetCurrentBatchID(){
+    this.CurrentBatchId = this.Batches.filter(b=>b.MasterDataName ==globalconstants.getCurrentBatch())[0].MasterDataId; 
+    // this.ClassSubjectForm.patchValue({
+    //   "BatchId": this.CurrentBatchId
+    // })
+        
+  }
   back() {
     this.OutClassSubjectId.emit(0);
   }
@@ -97,7 +117,7 @@ export class ClasssubjectComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];
     list.PageName = "ClassSubjects";
-    list.filter = ["Active eq 1 and ClassSubjectId eq " + this.ClassSubjectId];
+    list.filter = ["Active eq 1 and ClassSubjectId eq " + this.ClassSubjectId + this.StandardFilter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -112,9 +132,14 @@ export class ClasssubjectComponent implements OnInit {
             TheoryPassMark: element.TheoryPassMark,
             PracticalFullMark: element.PracticalFullMark,
             PracticalPassMark: element.PracticalPassMark,
-            Active: element.Active
+            Active: element.Active,
+            BatchId:element.BatchId
           })
         });
+      if(this.CurrentBatchId !=this.ClassSubjectForm.get("BatchId").value)
+      {
+        this.SaveEnable =false;
+      }
       });
   }
 
@@ -123,8 +148,9 @@ export class ClasssubjectComponent implements OnInit {
     let checkFilterString = "Active eq 1 " +
       " and ClassId eq " + this.ClassSubjectForm.get("ClassId").value +
       " and SubjectId eq " + this.ClassSubjectForm.get("SubjectId").value +
-      " and SubjectTypeId eq " + this.ClassSubjectForm.get("SubjectTypeId").value;
-
+      " and SubjectTypeId eq " + this.ClassSubjectForm.get("SubjectTypeId").value +
+      this.StandardFilter;
+      
     if (this.ClassSubjectData.ClassSubjectId > 0)
       checkFilterString += " and ClassSubjectId ne " + this.ClassSubjectData.ClassSubjectId;
 
@@ -143,6 +169,7 @@ export class ClasssubjectComponent implements OnInit {
           //console.log(this.UserDetail);
           this.ClassSubjectData.Active = this.ClassSubjectForm.get("Active").value == true ? 1 : 0;
           this.ClassSubjectData.ClassSubjectId = this.ClassSubjectForm.get("ClassSubjectId").value;
+          this.ClassSubjectData.ClassId = this.ClassSubjectForm.get("ClassId").value;
           this.ClassSubjectData.SubjectId = this.ClassSubjectForm.get("SubjectId").value;
           this.ClassSubjectData.SubjectTypeId = this.ClassSubjectForm.get("SubjectTypeId").value;
           this.ClassSubjectData.TheoryFullMark = this.ClassSubjectForm.get("TheoryFullMark").value;
@@ -150,8 +177,9 @@ export class ClasssubjectComponent implements OnInit {
           this.ClassSubjectData.TheoryPassMark = this.ClassSubjectForm.get("TheoryPassMark").value;
           this.ClassSubjectData.PracticalFullMark = this.ClassSubjectForm.get("PracticalFullMark").value;
           this.ClassSubjectData.PracticalPassMark = this.ClassSubjectForm.get("PracticalPassMark").value;
-          this.ClassSubjectData.Active =1;  
-          //console.log('data', this.AppRoleData);
+          this.ClassSubjectData.Active =1; 
+          this.ClassSubjectData.BatchId = this.CurrentBatchId; 
+          console.log('data', this.ClassSubjectData);
           if (this.ClassSubjectData.ClassSubjectId == 0) {
             this.insert();
           }

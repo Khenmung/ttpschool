@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { List } from '../../../../shared/interface';
@@ -16,8 +17,11 @@ export class FeeHeaderComponent implements OnInit {
   toggle:boolean=false;
   userName:string='';
   loggedIn: boolean;
+  userapplications:FormGroup;
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
-  constructor(private route: Router, 
+  constructor(
+    private fb:FormBuilder,
+    private route: Router, 
               private tokenStorage: TokenStorageService,
               private naomitsuService:NaomitsuService,
               private screensize:SharedataService) {
@@ -29,6 +33,9 @@ export class FeeHeaderComponent implements OnInit {
    debugger;
     //this.IsXS = this.screensize.isXS();
     //console.log('isxs',this.IsXS);
+    this.userapplications = this.fb.group({
+      ApplicationId:[0]
+    }) 
     this.userName = this.tokenStorage.getUser();
     this.Applications = this.tokenStorage.getUserDetail().ApplicationRoleUsers;
     if (this.userName === undefined || this.userName === null || this.userName=='')

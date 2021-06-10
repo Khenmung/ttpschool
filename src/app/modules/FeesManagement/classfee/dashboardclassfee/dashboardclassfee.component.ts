@@ -3,6 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { globalconstants } from 'src/app/shared/globalconstant';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 //import { isNumeric } from 'jquery';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
@@ -21,7 +23,8 @@ export class DashboardclassfeeComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-
+  LoginUserDetail=[];
+StandardFilter ='';
   CurrentBatch = '';
   CurrentBatchId = 0;
   SelectedBatchId = 0;
@@ -44,13 +47,21 @@ export class DashboardclassfeeComponent implements OnInit {
     PaymentOrder: 0,
     LocationId: 0
   };
-  constructor(private dataservice: NaomitsuService,
+  constructor(
+    private token:TokenStorageService,
+    private dataservice: NaomitsuService,
     private alert: AlertService,
     private route: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {
+    this.LoginUserDetail = this.token.getUserDetail();
+    if(this.LoginUserDetail ==null || this.LoginUserDetail.length==0)
+    this.route.navigate(['auth/login']);
+
+    this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+
     this.searchForm = this.fb.group({
       ClassId: [0],
       FeeNameId: [0],
@@ -158,8 +169,8 @@ export class DashboardclassfeeComponent implements OnInit {
     list.fields = ["ClassId"];
     list.PageName = "ClassFees";
     //list.groupby = "ClassId";
-    list.filter = ["Active eq 1 and Batch eq " + this.CurrentBatchId];
-    //list.orderBy = "ParentId";
+    list.filter = ["Active eq 1 and Batch eq " + this.CurrentBatchId + this.StandardFilter];
+    
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -206,7 +217,7 @@ export class DashboardclassfeeComponent implements OnInit {
     list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId", "PaymentOrder"];
     list.PageName = "ClassFees";
     //list.orderBy ="PaymentOrder";
-    list.filter = [filterstr];
+    list.filter = [filterstr + this.StandardFilter];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

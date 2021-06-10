@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-card-title>{{title}}</mat-card-title>
+    <mat-card-title style="font-size: 16px;">{{title}}</mat-card-title>
     <mat-card-content>
         <alert></alert>
         <div fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayout.xs="column" fxLayoutGap="50px">
@@ -30,7 +30,7 @@
                     <span class="text-danger" *ngIf="f.Address.touched && f.Address.hasError('required')">
                         Address is required.</span>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+                <!-- <mat-form-field appearance="outline">
                     <mat-label>Valid From</mat-label>
                     <input formControlName="ValidFrom" matInput [matDatepicker]="ValidFrom" autocomplete="off">
                     <mat-datepicker-toggle matSuffix [for]="ValidFrom"></mat-datepicker-toggle>
@@ -41,7 +41,7 @@
                     <input formControlName="ValidTo" matInput [matDatepicker]="ValidTo" autocomplete="off">
                     <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
                     <mat-datepicker #ValidTo></mat-datepicker>
-                </mat-form-field>
+                </mat-form-field> -->
                 <mat-form-field appearance="outline">
                     <mat-label>Department</mat-label>
                     <mat-select formControlName="DepartmentId">
@@ -63,7 +63,7 @@
                         <mat-option *ngFor="let item of AppUsers" [value]="item.ApplicationUserId">{{item.UserName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.pc]="32">
+                <mat-form-field appearance="outline">
                     <mat-label>Remarks</mat-label>
                     <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
                 </mat-form-field>
@@ -72,7 +72,7 @@
             </form>
         </div>
     </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
+    <mat-card-actions style="padding: 50px;" fxLayout="row" fxLayoutAlign="space-around center">
         <button class="mat-raised-button" (click)="UpdateOrSave()">
             <mat-icon>save</mat-icon>
         </button>

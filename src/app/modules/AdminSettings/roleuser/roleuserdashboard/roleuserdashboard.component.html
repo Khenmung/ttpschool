@@ -1,9 +1,11 @@
+<div #container>
 <div style="padding:15px 15px 0px 15px;">
     <div><strong>Application Roles Users</strong></div>
 </div>
 <mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
-<div style="padding: 15px;" fxLayout="row wrap">
-    <div style="width: 100%;">
+<alert></alert>
+<div style="padding: 20px;height:450px" fxLayout="row wrap">
+    <div [ngClass]="{'disableDiv': RoleUserId!=0}">
         <mat-table #table [dataSource]="dataSource">
             <ng-container matColumnDef="User">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Name
@@ -41,4 +43,5 @@
     </div>
     <app-roleuseradd *ngIf="RoleUserId!=0" [RoleUserId]="RoleUserId" (OutRoleUserId)="GetRoleUserId($event)">
     </app-roleuseradd>
+</div>
 </div>

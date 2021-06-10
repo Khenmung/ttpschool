@@ -24,6 +24,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   ],
 })
 export class AppuserdashboardComponent implements OnInit {
+  @ViewChild("container") container: ElementRef;
   @ViewChild("table") mattable;
   optionsNoAutoClose = {
     autoClose: false,
@@ -33,7 +34,7 @@ export class AppuserdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  allMasterData =[];
+  allMasterData = [];
   Organizations = [];
   Applications = [];
   Departments = [];
@@ -48,11 +49,11 @@ export class AppuserdashboardComponent implements OnInit {
     'UserName',
     'Email',
     'ContactNo',
-    'ValidFrom',
-    'ValidTo',
-    'OrgName',
-    'Department',
-    'Location',
+    // 'ValidFrom',
+    // 'ValidTo',
+    // 'OrgName',
+    // 'Department',
+    // 'Location',
     'Active',
     'Action'
   ]
@@ -60,6 +61,7 @@ export class AppuserdashboardComponent implements OnInit {
   AppUsers = [];
   searchForm: FormGroup;
   constructor(
+    private shareddata: SharedataService,
     private fb: FormBuilder,
     private sharedData: SharedataService,
     private route: Router,
@@ -78,19 +80,22 @@ export class AppuserdashboardComponent implements OnInit {
     //this.GetAppUsers();
   }
   PageLoad() {
+    debugger;
     this.LoginDetail = this.tokenStorage.getUserDetail();
-    if (this.LoginDetail == null)
+    if (this.LoginDetail == null || this.LoginDetail.length == 0)
       this.route.navigate(['/auth/login']);
     this.sharedData.CurrentOrganization.subscribe(o => this.Organizations = o);
     this.sharedData.CurrentDepartment.subscribe(d => this.Departments = d);
     this.sharedData.CurrentLocation.subscribe(l => this.Locations = l);
     this.sharedData.CurrentApplication.subscribe(a => this.Applications = a);
-    if(this.Applications.length==0)
-    {
-        this.GetMasterData();
+    if (this.Applications.length == 0) {
+      this.shareddata.GetApplication().subscribe((data: any) => {
+        this.Applications = data.value.map(item => item);
+      });
+      this.GetMasterData();
     }
   }
-  
+
   GetMasterData() {
 
     var orgIdSearchstr = ' or OrgId eq ' + this.LoginDetail[0]["orgId"];
@@ -106,9 +111,9 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
-        this.Departments =this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
-        this.Locations =this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.sharedData.ChangeRoles(this.Roles);
         this.sharedData.ChangeApplication(this.Applications);
         this.sharedData.ChangeDepartment(this.Departments);
@@ -117,7 +122,7 @@ export class AppuserdashboardComponent implements OnInit {
         this.sharedData.CurrentDepartment.subscribe(d => this.Departments = d);
         this.sharedData.CurrentLocation.subscribe(l => this.Locations = l);
         this.sharedData.CurrentApplication.subscribe(a => this.Applications = a);
-       
+
         //this.GetRoleUser();
       });
   }
@@ -142,32 +147,33 @@ export class AppuserdashboardComponent implements OnInit {
   }
   SetUser(value) {
     this.UserId = value;
+    this.container.nativeElement.style.backgroundColor = "";
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
   }
   view(element) {
     //console.log('this.mattable', this.mattable);
     this.UserId = element.UserId;
+    this.container.nativeElement.style.backgroundColor = "grey";
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    //this.mattable._elementRef.nativeElement.style.disabled=true;
     //this.route.navigate(['/auth/appuser']);
   }
   GetAppUsers() {
     debugger;
-    let filterStr = "";
+    let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
     if (this.searchForm.get("Name").value.length > 0) {
-      filterStr = " and substringof('" + this.searchForm.get("Name").value + "',UserName)";
+      filterStr += " and substringof('" + this.searchForm.get("Name").value + "',UserName)";
     }
     if (this.searchForm.get("Email").value.length > 0) {
-      filterStr = " and substringof('" + this.searchForm.get("Email").value + "',EmailAddress)";
+      filterStr += " and substringof('" + this.searchForm.get("Email").value + "',EmailAddress)";
     }
     if (this.searchForm.get("Organization").value.length > 0) {
-      filterStr = " and OrgId eq " + this.searchForm.get("Organization").value;
+      filterStr += " and OrgId eq " + this.searchForm.get("Organization").value;
     }
     if (this.searchForm.get("Department").value.length > 0) {
-      filterStr = " and DepartmentId eq " + this.searchForm.get("Department").value;
+      filterStr += " and DepartmentId eq " + this.searchForm.get("Department").value;
     }
     if (this.searchForm.get("Location").value.length > 0) {
-      filterStr = " and LocationId eq " + this.searchForm.get("Location").value;
+      filterStr += " and LocationId eq " + this.searchForm.get("Location").value;
     }
 
     let list: List = new List();
@@ -176,6 +182,7 @@ export class AppuserdashboardComponent implements OnInit {
       "EmailAddress",
       "ContactNo",
       "OrgId",
+      "Organization/OrganizationName",
       "DepartmentId",
       "LocationId",
       "ValidFrom",
@@ -184,24 +191,33 @@ export class AppuserdashboardComponent implements OnInit {
       "RoleUsers/RoleId"
     ];
     list.PageName = "AppUsers";
-    list.lookupFields = ["RoleUsers"];
+    list.lookupFields = ["RoleUsers", "Organization"];
     list.filter = ["Active eq 1" + filterStr];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
+          var _department = '';
+          var _location = '';
           this.AppUsers = data.value.map(u => {
+            _department ='';
+            _location ='';
+            if (this.Departments.length > 0 && u.DepartmentId != null)
+              _department = this.Departments.filter(o => o.MasterDataId == u.DepartmentId)[0].MasterDataName;
+            if (this.Locations.length > 0 && u.LocationId != null)
+              _location = this.Locations.filter(o => o.MasterDataId == u.LocationId)[0].MasterDataName;
+
             return {
               "UserId": u.ApplicationUserId,
               "UserName": u.UserName,
               "Email": u.EmailAddress,
               "ContactNo": u.ContactNo,
               "OrgId": u.OrgId,
-              "OrgName": this.Organizations.length == 0 ? '' : this.Organizations.filter(o => o.MasterDataId == u.OrgId)[0].MasterDataName,
+              "OrgName": u.Organization.OrganizationName,
               "DepartmentId": u.DepartmentId,
-              "Department": this.Departments.length == 0 ? '' : this.Departments.filter(o => o.MasterDataId == u.DepartmentId)[0].MasterDataName,
+              "Department": _department,
               "LocationId": u.LocationId,
-              "Location": this.Locations.length == 0 ? '' : this.Locations.filter(o => o.MasterDataId == u.LocationId)[0].MasterDataName,
+              "Location": _location,
               "ValidFrom": u.ValidFrom,
               "ValidTo": u.ValidTo,
               "Active": u.Active,
@@ -216,7 +232,7 @@ export class AppuserdashboardComponent implements OnInit {
           });
         }
         else
-          this.alert.error("Problem fetching app users", this.optionsNoAutoClose);
+          this.alert.error("No user found matching search criteria!", this.optionsAutoClose);
         const rows = [];
         this.AppUsers.forEach(element => rows.push(element, { detailRow: true, element }));
         this.datasource = new MatTableDataSource<IAppUser>(rows);

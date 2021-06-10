@@ -121,6 +121,8 @@ input[type="radio"] {
 .mat-form-field-infix {
     padding-bottom: 1em !important;
 }
-
+.disableDiv{
+    pointer-events:none;
+}
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';

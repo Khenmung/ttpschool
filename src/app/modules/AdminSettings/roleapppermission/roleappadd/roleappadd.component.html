@@ -2,14 +2,16 @@
     <mat-card-title>Edit Application Role Permission</mat-card-title>
     <mat-card-content>
         <alert></alert>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <br>
         <form [formGroup]="AppRoleForm">
-            <div fxLayout="column" fxLayoutAlign="start center" fxLayout.xs="column">
+            <div fxLayout="column" fxLayoutAlign="center center" fxLayout.xs="column">
                 <mat-form-field appearance="outline">
                     <mat-label>Application</mat-label>
-                    <mat-select formControlName="ApplicationId" >
+                    <mat-select formControlName="ApplicationId">
                         <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Applications" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
+                        <mat-option *ngFor="let p of Applications" [value]="p.ApplicationId">
+                            {{p.ApplicationName}}
                         </mat-option>
                     </mat-select>
                     <span class="text-danger" *ngIf="f.ApplicationId.touched && f.ApplicationId.hasError('required')">Application is

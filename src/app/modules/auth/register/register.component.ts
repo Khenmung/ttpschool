@@ -58,7 +58,7 @@ export class RegisterComponent implements OnInit {
     this.RegistrationForm = this.fb.group({
       UserName: ['', Validators.required],
       ContactNo: ['', Validators.required],
-      OrganisationName: ['', Validators.required],
+      OrganizationName: ['', Validators.required],
       Email: ['', [Validators.required, Validators.email]],
       Password: ['', [Validators.required, Validators.minLength(6)]],
       ConfirmPassword: ['', [Validators.required, Validators.minLength(6)]]
@@ -66,7 +66,7 @@ export class RegisterComponent implements OnInit {
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       //console.log("authlogin",this.deviceXs);
-    }); 
+    });
   }
   gotohome() {
     this.route.navigate(['/home']);
@@ -74,96 +74,59 @@ export class RegisterComponent implements OnInit {
   gotologin() {
     this.route.navigate(['/auth/login']);
   }
-  PageLoad(){
-   
+  PageLoad() {
+
   }
 
   AddAppUsers() {
-    var today = new Date();
-
-    let list: List = new List();
-    list.fields = ["EmailAddress"];
-    list.PageName = "AppUsers";
-    list.filter = ["EmailAddress eq '" + this.RegistrationForm.get("Email").value + "' and Active eq 1"];
-    let AppUsersData = {
-      EmailAddress: this.RegistrationForm.get("Email").value,
-      ContactNo: this.RegistrationForm.get("ContactNo").value,
-      UserName: this.RegistrationForm.get("UserName").value,
-      CreatedDate: today,
-      ValidFrom: today,
-      ValidTo: today,// new Date(today.setDate(today.getMonth() + 1)),
+    let orgToUpdate = {
+      OrganizationName: this.RegistrationForm.get("OrganizationName").value,
       Active: 1
     }
-    debugger;
-    this.dataservice.postPatch('AppUsers', AppUsersData, 0, 'post')
+    this.dataservice.postPatch('Organizations', orgToUpdate, 0, 'post')
       .subscribe(
-        (appuser: any) => {
-          let UserId = appuser.ApplicationUserId;
+        (organization: any) => {
+          var today = new Date();
           let list: List = new List();
-          list.fields = ["MasterDataId"];
-          list.PageName = "MasterDatas";
-          list.filter = ["MasterDataName eq '" + globalconstants.MasterDefinitions[0].application[0].ORGANIZATION + "' and ParentId eq 0"];
-          //fetching id of top organisation id
-          this.dataservice.get(list).subscribe((orgid: any) => {
-            //console.log('organisation fetch value', data);
-            if (orgid.value.length > 0) {
-              let mastertoUpdate = {
-                MasterDataName: this.RegistrationForm.get("OrganisationName").value,
-                ParentId: orgid.value[0].MasterDataId,
-                CreatedDate: new Date(),
-                Active: 1
-              }
-              //insert Organisation name to master data.
-              this.dataservice.postPatch('MasterDatas', mastertoUpdate, 0, 'post').subscribe((org: any) => {
-                //  console.log('return from org insert', org)
-                if (org != null) {
+          list.fields = ["EmailAddress"];
+          list.PageName = "AppUsers";
+          list.filter = ["EmailAddress eq '" + this.RegistrationForm.get("Email").value + "' and Active eq 1"];
+          let AppUsersData = {
+            EmailAddress: this.RegistrationForm.get("Email").value,
+            ContactNo: this.RegistrationForm.get("ContactNo").value,
+            UserName: this.RegistrationForm.get("UserName").value,
+            OrgId: organization.OrganizationId,
+            CreatedDate: today,
+            ValidFrom: today,
+            ValidTo: today,// new Date(today.setDate(today.getMonth() + 1)),
+            Active: 1
+          }
+          debugger;
+          this.dataservice.postPatch('AppUsers', AppUsersData, 0, 'post')
+            .subscribe(
+              (appuser: any) => {
+                this.alert.success("Congratulations! Your registration is successful.", this.optionsNoAutoClose);
+                this.isSuccessful = true;
+                this.isSignUpFailed = false;
+              }, (error) => {
+                console.log('creating user error', error);
+      
+              });
+        }, (error) => {
+          console.log('creating organization error', error);
 
-                  //updating OrgId to user table.
-                  AppUsersData["OrgId"] = org.MasterDataId;
-
-                  this.dataservice.postPatch('AppUsers', AppUsersData, UserId, 'patch').subscribe((data: any) => {
-                    console.log('permi', globalconstants.PERMISSIONTYPES);
-                    this.ApplicationRoleUserData.Active = 1;
-                    this.ApplicationRoleUserData.ApplicationId = +org.MasterDataId;
-                    this.ApplicationRoleUserData.RoleId = +globalconstants.PERMISSIONTYPES.filter(p=>p.type=="full")[0].val;
-                    this.ApplicationRoleUserData.UserId = +appuser.ApplicationUserId;
-                    this.ApplicationRoleUserData.CreatedDate = new Date();
-                    this.ApplicationRoleUserData.UpdatedDate = new Date();
-                    this.ApplicationRoleUserData.CreatedBy = +appuser.ApplicationUserId;
-                    this.ApplicationRoleUserData.UpdatedBy = +appuser.ApplicationUserId;
-
-                    this.dataservice.postPatch('ApplicationRoleUsers', this.ApplicationRoleUserData, 0, 'post')
-                      .subscribe(
-                        (data: any) => {
-                          this.alert.success("Congratulations! Your registration is successful.", this.optionsNoAutoClose);
-                          this.isSuccessful = true;
-                          this.isSignUpFailed = false;
-                        });
-                  }, (error) => {
-                    console.log('updating appusers error', error);
-
-                  })
-                }
-              })
-            }
-            else
-              this.alert.error("Registration issue. Please try again.", this.optionsNoAutoClose);
-            //this.alert.success("Data saved successfully", this.optionsAutoClose);
-            //this.router.navigate(['/home/pages']);
-
-          });
         })
 
   }
   get f() { return this.RegistrationForm.controls; }
-
+  
   onSave(): void {
     this.errorMessage = '';
     const { ConfirmPassword, Email, Password, OrganisationName } = this.RegistrationForm.value;
     debugger;
     this.authService.register(ConfirmPassword, Email, Password).subscribe(
       data => {
-        console.log('register data', data);
+        //console.log('register data', data);
         this.AddAppUsers()
         // this.isSuccessful = true;
         // this.isSignUpFailed = false;

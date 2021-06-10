@@ -1,15 +1,14 @@
 :host{
-    width: 100%;
     display: flex;
-    justify-content: center;   
+    align-items: center; 
 }
 mat-card{
-    margin: auto;
-    align-self: center;
-    margin-top: -150px;
-    //background-color: lightgray;
+    position: absolute;
+    margin-top: 400px;
+    padding-left: 50px;
+    padding-top: 50px;
     width:80%;
 }
-alert{
-    z-index: 999;
+mat-form-field{
+    margin-right: 15px;
 }

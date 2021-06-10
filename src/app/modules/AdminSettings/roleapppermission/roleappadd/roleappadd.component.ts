@@ -25,6 +25,7 @@ export class roleappAddComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  loading =false;
   allMasterData = [];
   AppRoles = [];
   Roles = [];
@@ -66,16 +67,24 @@ export class roleappAddComponent implements OnInit {
   })
 
   ngOnInit(): void {
-  
+      
   }
   PageLoad(){
+    debugger;
+    this.loading =true;
     this.UserDetail = this.tokenstorage.getUserDetail();
     if (this.UserDetail == null) {
       this.route.navigate(['auth/login']);
       //return;
     }
+    // this.shareddata.GetApplication().subscribe((data:any)=>{
+    //   this.Applications = data.value.map(item=>{
+    //     return item;
+    //   });
+    // });
+    this.shareddata.CurrentApplication.subscribe(a => this.Applications = a);
     this.shareddata.CurrentRoles.subscribe(r => this.Roles = r);
-    this.shareddata.CurrentApplication.subscribe(a=>this.Applications = a);
+    //this.shareddata.CurrentApplication.subscribe(a=>this.Applications = a);
     this.Permissions = globalconstants.PERMISSIONTYPES;
     this.GetAppRole();
   }
@@ -107,14 +116,31 @@ export class roleappAddComponent implements OnInit {
           })
         });          
         });
+        this.loading =false;
   }
 
   UpdateOrSave() {
 
+    if(this.AppRoleForm.get("ApplicationId").value ==0)
+    {
+      this.alert.error("Please select application.", this.optionsNoAutoClose);
+      return;
+    }
+    if(this.AppRoleForm.get("RoleId").value ==0)
+    {
+      this.alert.error("Please select role", this.optionsNoAutoClose);
+      return;
+    }
+    if(this.AppRoleForm.get("PermissionId").value ==0)
+    {
+      this.alert.error("Please select permission", this.optionsNoAutoClose);
+      return;
+    }
+    
     let checkFilterString = "Active eq 1 " +
       " and RoleId eq " + this.AppRoleForm.get("RoleId").value +
       " and ApplicationId eq " + this.AppRoleForm.get("ApplicationId").value+
-      " and PermissionId eq " + this.AppRoleForm.get("PermissionId").value;
+      " and OrgId eq " + this.UserDetail[0]["orgId"];
 
     if (this.AppRoleData.ApplicationRoleId > 0)
       checkFilterString += " and ApplicationRoleId ne " + this.AppRoleData.ApplicationRoleId;

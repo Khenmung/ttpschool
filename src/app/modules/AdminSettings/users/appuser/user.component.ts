@@ -29,7 +29,7 @@ title ='';
     keepAfterRouteChange: true
   };
   SaveDisable = false;
-  ApplicationUserId = 0;
+  //ApplicationUserId = 0;
   allMasterData = [];
   AppUsers = [];
   Departments=[];
@@ -60,7 +60,7 @@ title ='';
     private alert: AlertService,
     private nav: Router,
     private fb: FormBuilder,
-    private shareddata: SharedataService) { }
+    private sharedData: SharedataService) { }
 
   ngOnInit(): void {
     
@@ -84,6 +84,9 @@ title ='';
       Remarks: [''],
       Active: [1],
     });
+    this.sharedData.CurrentLocation.subscribe(d => this.Locations = d);
+    this.sharedData.CurrentDepartment.subscribe(d => this.Departments = d);
+
     this.GetAppUsers();
   }
   PageLoad() {
@@ -197,14 +200,14 @@ title ='';
       this.AppUsersData.Remarks = this.AppUsersForm.get("Remarks").value;
       this.AppUsersData.CreatedBy = 0;
       this.AppUsersData.UpdatedBy = 0;
-      this.AppUsersData.ApplicationUserId = this.ApplicationUserId;
+      this.AppUsersData.ApplicationUserId = this.UserId;
       debugger;
-      if (this.ApplicationUserId == 0)
+      if (this.UserId == 0)
         this.insert();
       else {
         this.update();
       }
-      this.UserIdOutput.emit(0);
+      
     }
   }
   tabChanged($event) {
@@ -216,17 +219,19 @@ title ='';
     this.dataservice.postPatch('AppUsers', this.AppUsersData, 0, 'post')
       .subscribe(
         (data: any) => {
-
+          this.UserIdOutput.emit(0);
           this.alert.success("Data saved successfully", this.optionsAutoClose);
           //this.router.navigate(['/home/pages']);
+      
         });
 
   }
   update() {
 
-    this.dataservice.postPatch('AppUsers', this.AppUsersData, this.ApplicationUserId, 'patch')
+    this.dataservice.postPatch('AppUsers', this.AppUsersData, this.UserId, 'patch')
       .subscribe(
         (data: any) => {
+          this.UserIdOutput.emit(0);
           this.alert.success("Data updated successfully", this.optionsAutoClose);
           //this.router.navigate(['/home/pages']);
         });

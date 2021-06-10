@@ -9,6 +9,7 @@ import { AutofocusDirective } from './autofocus.directive';
 import { FormsModule } from '@angular/forms';
 //import { NotfoundComponent } from './components/notfound/notfound.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { EditdropdownComponent } from './editdropdown/editdropdown.component';
 //import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 //import { HttpClientModule } from '@angular/common/http';
 @NgModule({
@@ -16,6 +17,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     AreaComponent,
     
     AutofocusDirective,
+    
+    EditdropdownComponent,
     //HttpClientModule
     //CdkCopyToClipboard
     //NotfoundComponent,

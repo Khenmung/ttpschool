@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,6 +19,7 @@ import { roleuseraddComponent } from '../roleuseradd/roleuseradd.component';
 })
 export class roleuserdashboardComponent implements OnInit {
   @ViewChild("table") mattable;
+  @ViewChild("container") container:ElementRef;
   @ViewChild(roleuseraddComponent, { static: false }) roleuseradd: roleuseraddComponent;
   loading = false;
   LoginUserDetail: any[] = [];
@@ -84,7 +85,12 @@ export class roleuserdashboardComponent implements OnInit {
     else {
       this.shareddata.CurrentApplication.subscribe(c => this.Applications = c);
       if (this.Applications.length == 0)
+      {
+        this.shareddata.GetApplication().subscribe((data:any)=>{
+          this.Applications = data.value.map(item=>item);
+        });
         this.GetMasterData();
+      } 
       else {
         this.shareddata.CurrentDepartment.subscribe(c => this.Departments = c);
         this.shareddata.CurrentLocation.subscribe(c => this.Locations = c);
@@ -98,21 +104,27 @@ export class roleuserdashboardComponent implements OnInit {
   GetRoleUserId(event) {
     this.RoleUserId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
+    this.container.nativeElement.style.backgroundColor = "";
     this.GetRoleUser();
   }
 
   View(element) {
     this.RoleUserId = element.RoleUserId;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
+    this.container.nativeElement.style.backgroundColor = "grey";
     setTimeout(() => {
       this.roleuseradd.PageLoad();
-    }, 100);
+    }, 50);
 
   }
 
   addnew() {
     this.RoleUserId = -1;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
+    this.container.nativeElement.style.backgroundColor = "grey";
+    setTimeout(() => {
+      this.roleuseradd.PageLoad();
+    }, 50);
   }
 
   GetMasterData() {
@@ -130,7 +142,7 @@ export class roleuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
 
@@ -172,10 +184,14 @@ export class roleuserdashboardComponent implements OnInit {
     list.PageName = "RoleUsers";
     list.lookupFields = ["AppUser"];
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    this.RoleUserList =[];
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //  console.log('data.value', data.value);
+        if(data.value.length>0)
+        {
         this.RoleUserList = data.value.map(item => {
 
           return {
@@ -187,7 +203,11 @@ export class roleuserdashboardComponent implements OnInit {
             Active: item.Active
           }
         });
-
+      }
+      else
+      {
+        this.alert.info("No user role has been defined!",this.optionsNoAutoClose);
+      }
         //this.Applications = 
         this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
         this.loading = false;

@@ -1,3 +1,7 @@
+import { TokenStorageService } from "../_services/token-storage.service";
+import { NaomitsuService } from "./databaseService";
+import { List } from "./interface";
+
 export class globalconstants {
     public static apiUrl: string = "http://localhost:8090";//"https://ettest.ttpsolutions.in";//
     public static fileUrl: string = '';
@@ -14,7 +18,7 @@ export class globalconstants {
             }]
         },
         {
-            "school":[{
+            "school": [{
                 "GENDER": "gender",
                 "RELIGION": "religion",
                 "CITY": "city",
@@ -35,10 +39,10 @@ export class globalconstants {
                 "DOCUMENTTYPE": "document type",
                 "CURRENTBATCH": "current batch",
                 "REASONFORLEAVING": "reason for leaving",
-                "EXAMNAME":"exam name",
-                "EXAMSLOTNAME":"exam slot name",
-                "SUBJECT":"subject",
-                "SUBJECTTYPE":"subject type",
+                "EXAMNAME": "exam name",
+                "EXAMSLOTNAME": "exam slot name",
+                "SUBJECT": "subject",
+                "SUBJECTTYPE": "subject type",
                 "RANDOMIMAGE": "random image"
             }]
         }
@@ -52,4 +56,21 @@ export class globalconstants {
         let currentyear = new Date().getFullYear();
         return currentyear.toString() + "-" + (currentyear + 1).toString();
     }
+    constructor(
+        private dataservice: NaomitsuService
+    ) {
+
+    }
+    // ngOnInit(): void {
+    //     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //     //Add 'implements OnInit' to the class.
+
+    // }
+    public static getStandardFilter(token) {
+
+        var filterstr = ' and OrgId eq ' + token[0]["orgId"];
+        return filterstr;
+
+    }
+    
 }

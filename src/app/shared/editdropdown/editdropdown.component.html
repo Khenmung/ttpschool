@@ -1,0 +1,12 @@
+<div *ngIf='!editMode' (click)='editMode=true' class='cell'> {{ valtext }}</div>
+<!-- <mat-label></mat-label> -->
+<mat-select *ngIf='editMode' 
+    (focusout)="onFocusOut()" 
+    (keydown.enter)='$event.target.blur()'     
+    class='cellInput'
+    appAutofocus 
+    (focusout)="editMode=false">
+    <mat-option *ngFor="let item of data" [value]="item.Id">
+        {{item.Text}}
+    </mat-option>
+</mat-select>
