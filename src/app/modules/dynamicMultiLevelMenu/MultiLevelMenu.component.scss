@@ -55,7 +55,8 @@ div[dir=ltr] .icon-container {
 }
 
 ::ng-deep .ng-trigger-SlideInOut {
-  background-color: var(--mainTitleColor);
+  //background-color: var(--mainTitleColor);
+  border:1px solid rgba($color: lightgrey, $alpha: .2);//var(--maincolor2);
   margin-right    : 18px;
   //padding-bottom: 1px;
 }
