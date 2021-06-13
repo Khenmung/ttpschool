@@ -1,28 +1,20 @@
 :host {
     width       : 100%;
 }
-::ng-deep table,tr,td{
-    border-collapse: collapse;
-    border:0px;
-}
-::ng-deep td{
-    vertical-align: top;
-    border-bottom:1px solid lightslategray;
-}
+
 mat-card-title {
-    padding: 20px 0px 0px 20px;
+    padding: 30px 0px 0px 30px;
     //color: rgb(201, 200, 200,.9);
 }
 .clickable{
-    margin-left: 20px;
-    padding: 3px;
+    margin-left: 30px;
+    //padding: 20px;
     text-decoration: none;
     color:lightgrey;
     
 }
 .clickable:hover{
     background-color:var(--maincolor1);
-    //padding: 3px;
 }
 .contentbody {
     //border-top-left-radius: 1em;
@@ -56,7 +48,11 @@ mat-card-title {
     height    : 50%;
     margin-top: -50px;
     padding   : 30px;
-    line-height: 25px;
+
+    p{
+        //padding-top: 90px;
+        padding:30px;
+    }
     //margin-top: -100px;
 }
 
@@ -75,9 +71,6 @@ mat-card-title {
 //         margin-top: -50px;
 //     }
 // }
-::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
-    stroke: white;
-    }
 mat-card-title:not(:first-child), .mat-card-subtitle:not(:first-child){
     margin-top: -8px;
 }
@@ -86,3 +79,25 @@ mat-card-title:not(:first-child), .mat-card-subtitle:not(:first-child){
 .mat-card-content>:first-child {
     margin-top: 15px;
 }
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
+    stroke: #bada55;
+}
+
+.proto-container{
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+    border: none;
+    height: 95%;
+    overflow: auto;
+    .proto{
+      width:29%;
+      height:calc(100% - 90px);
+      float: left;
+      margin-right: 30px;
+      margin-top:60px;  
+      //padding: 30px;
+      border: 2px solid rgba($color:grey, $alpha: .1);
+    }
+  }
+  
