@@ -35,7 +35,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+                <!-- <mat-form-field appearance="outline">
                     <mat-label>Subject Type</mat-label>
                     <mat-select formControlName="searchSubjectTypeId">
                         <mat-option value="0">--select--</mat-option>
@@ -43,9 +43,12 @@
                             {{item.MasterDataName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <button class="mat-raised-button" (click)="GetClassSubject()">
                     <mat-icon>search</mat-icon>
+                </button>
+                <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+                    <mat-icon>clear_all</mat-icon>
                 </button>
             </form>
 
@@ -68,7 +71,7 @@
                 <ng-container matColumnDef="SubjectId">
                     <mat-header-cell *matHeaderCellDef> Subject </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="100">
+                        <mat-form-field [style.width.px]="150">
                             <mat-select [(value)]="element.SubjectId" [(ngModel)]="element.SubjectId">
                                 <mat-option value="0">--subject--</mat-option>
                                 <mat-option *ngFor="let item of Subjects" [value]="item.MasterDataId">
@@ -82,22 +85,21 @@
                 <ng-container matColumnDef="SubjectTypeId">
                     <mat-header-cell *matHeaderCellDef> Subject Type </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="100">
+                        <mat-form-field [style.width.px]="150">
                             <mat-select [(value)]="element.SubjectTypeId" [(ngModel)]="element.SubjectTypeId">
                                 <mat-option value="0">--subject type--</mat-option>
-                                <mat-option *ngFor="let item of SubjectTypes" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}
+                                <mat-option *ngFor="let item of SubjectTypes" [value]="item.SubjectTypeId">
+                                    {{item.SubjectTypeName}}
                                 </mat-option>
                             </mat-select>
-
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="TheoryFullMark">
+                <!-- <ng-container matColumnDef="TheoryFullMark">
                     <mat-header-cell *matHeaderCellDef> Theory Full Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
-                            <input matInput [(value)]="element.TheoryFullMark" [(ngModel)]="element.TheoryFullMark" />
+                            <input matInput max="100" type="number" [(value)]="element.TheoryFullMark" [(ngModel)]="element.TheoryFullMark" />
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -105,7 +107,7 @@
                     <mat-header-cell *matHeaderCellDef> Theory Pass Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
-                            <input matInput [(value)]="element.TheoryPassMark" [(ngModel)]="element.TheoryPassMark" />
+                            <input matInput type="number" maxlength="3" [(value)]="element.TheoryPassMark" [(ngModel)]="element.TheoryPassMark" />
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -113,7 +115,7 @@
                     <mat-header-cell *matHeaderCellDef> Practical Full Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
-                            <input matInput [(value)]="element.PracticalFullMark" [(ngModel)]="element.PracticalFullMark" />
+                            <input matInput type="number" maxlength="3" [(value)]="element.PracticalFullMark" [(ngModel)]="element.PracticalFullMark" />
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -121,21 +123,19 @@
                     <mat-header-cell *matHeaderCellDef> Practical Pass Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
-                            <input matInput [(value)]="element.PracticalPassMark" [(ngModel)]="element.PracticalPassMark" />
+                            <input matInput type="number" maxlength="3" [(value)]="element.PracticalPassMark" [(ngModel)]="element.PracticalPassMark" />
                         </mat-form-field>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="updateActive(element)" [checked]="element.Active==1?true:false">
+                        <mat-checkbox [checked]="element.Active==1?true:false">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef><button matTooltip="add new" mat-mini-fab (click)="addnew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
+                    <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
@@ -148,8 +148,6 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
         </div>
-        <app-classsubject *ngIf="ClassSubjectId!=0" [ClassSubjectId]="ClassSubjectId"
-            (CallParentPageFunction)="GetClassSubject()" (OutClassSubjectId)="GetClassSubjectId($event)">
-        </app-classsubject>
+      
     </div>
 </div>

@@ -6,7 +6,6 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-//import { ExamComponent } from './exam/exam.component';
 
 
 @NgModule({

@@ -1,3 +1,4 @@
+
 <mat-card class="contentbody">
     <mat-card-title style="padding-bottom: 0px;">{{Title}}</mat-card-title>
     <mat-card-subtitle style="padding-bottom: 5px;" *ngIf="ParentPage.length>0">
@@ -9,8 +10,12 @@
     </span>
     </mat-card-subtitle>
     <mat-card-content>
-        <!-- <mat-progress-spinner *ngIf="loading" class="example-margin" [color]="color" [mode]="mode" [value]="value">
-        </mat-progress-spinner> -->
+        <div class="proto-container">
+            <div class="proto"></div>
+            <div class="proto"></div>
+            <div class="proto"></div>
+         
+        </div>
         <mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
 
         <div class="container">

@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.userName = this.tokenStorage.getUser();
     //console.log('screensize1',this.deviceXs)
     if (this.userName === undefined || this.userName === null || this.userName == '')
