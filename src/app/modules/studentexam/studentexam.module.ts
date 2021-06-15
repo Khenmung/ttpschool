@@ -2,16 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { studentexamComponents, StudentexamRoutingModule } from './studentexam-routing.module';
-import { ExamsComponent } from './exams/exams.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { StudentSubjectModule } from '../StudentSubject/student-subject.module';
+import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
 
 
 @NgModule({
-  declarations: [studentexamComponents],
+  declarations: [studentexamComponents, SlotnclasssubjectComponent],
   imports: [
     CommonModule,
     StudentexamRoutingModule,
