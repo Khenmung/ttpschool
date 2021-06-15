@@ -18,7 +18,11 @@ const routes: Routes = [
   },
   {
     path: 'student',
-    loadChildren: () => import('./modules//StudentExam/student-exam.module').then(m => m.StudentExamModule)
+    loadChildren: () => import('./modules/StudentSubject/student-subject.module').then(m => m.StudentSubjectModule)
+  },
+  {
+    path: 'exam',
+    loadChildren: () => import('./modules/studentexam/studentexam.module').then(m => m.StudentexamModule)
   },
   {
     path: 'control',

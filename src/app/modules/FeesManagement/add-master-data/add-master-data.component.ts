@@ -77,6 +77,7 @@ export class AddMasterDataComponent implements OnInit {
 
     })
   PageLoad() {
+    debugger;
   this.loading=true;
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails == null) {

@@ -31,6 +31,8 @@ export class globalconstants {
                 "BATCH": "batch",
                 "FEETYPE": "fee type",
                 "SECTION": "section",
+                "CLASSGROUP":"class group",
+                "SUBJECTMARKCOMPONENT":"subject mark component",
                 "LANGUAGESUBJECTLOWERCLS": "language subject lower",
                 "LANGUAGESUBJECTUPPERCLS": "language subject upper",
                 "FEENAME": "fee name",
