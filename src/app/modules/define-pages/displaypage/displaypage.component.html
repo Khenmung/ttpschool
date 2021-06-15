@@ -17,13 +17,16 @@
             <img [src]="ImgUrl" style="width:100%;height: auto;object-fit: contain;">
             <!-- <img src="assets/images/schoolbuilding2018.jfif" alt="Notebook" style="width:100%;"> -->
             
-            <div class="content">
+            <div class="center">
                 <div class="proto-container">
                     <div class="proto"></div>
                     <div class="proto"></div>
                     <div class="proto"></div>               
+                    <div class="proto"></div>               
                 </div>
-                <p [innerHTML]="PageBody|encodeHTML"></p>
+                <!-- <div class="displaycontent"> -->
+                    <p [innerHTML]="PageBody|encodeHTML"></p>
+                <!-- </div> -->
             </div>
         </div>
 

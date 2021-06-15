@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <title>St. Paul's Institute</title>
@@ -12,7 +13,24 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
+
 <body class="mat-typography">
   <app-root></app-root>
+  <script>
+    let left = document.querySelector('center');
+    let Content = document.querySelector('displaycontent');
+    let protos = document.querySelectorAll('proto');
+    if (left != null) {
+      left.addEventListener('mousemove', (event) => {
+        let move = (event.clientX * 0.05) + 4;
+        let move2 = (event.clientX * 0.003);
+        content.style.transform = `translateX(-${move2}%)`;
+        protos.forEach(proto => {
+          proto.style.transform = `translateX(${move})`;
+        })
+      })
+    }
+  </script>
 </body>
+
 </html>
