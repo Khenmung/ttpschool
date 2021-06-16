@@ -1,6 +1,6 @@
 <div class="container">
     <div style="padding:15px 15px 0px 15px;">
-        <div><strong>Exam Slots</strong></div>
+        <div><strong>Subject Results</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -8,10 +8,10 @@
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline">
-                    <mat-label>Exam Slot</mat-label>
-                    <mat-select formControlName="searchSlotId">
-                        <mat-option *ngFor="let item of ExamSlots" [value]="item.SlotId">
-                            {{item.SlotName}}
+                    <mat-label>Exam</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                            {{item.ExamName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -32,33 +32,56 @@
                             {{item.MasterDataName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>                  
-                <button class="mat-raised-button" (click)="GetSlotNClassSubjects()">
+                </mat-form-field>
+                <button class="mat-raised-button" (click)="GetExamStudentSubjectResults()">
                     <mat-icon>search</mat-icon>
                 </button>
                 <!-- <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
             </form>
-            <p>Record will be displayed if it is defined in class subject module.</p>
-            <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="Slot">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Slot
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                        {{element.Slot}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ClassSubject">
+            <mat-table #table [dataSource]="dataSource">                
+                <ng-container matColumnDef="StudentClassSubject">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class Subject
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
-                           {{element.ClassSubject}}
+                        {{element.StudentClassSubject}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="SubjectMarkComponent">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Mark Component
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        {{element.SubjectMarkComponent}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Marks">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Mark Obtained
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;justify-content: right;" *matCellDef="let element">
+                        <mat-form-field>
+                            <input type="number" matInput [(value)]="element.Marks" [(ngModel)]="element.Marks" />
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ExamStatus">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Status
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field [style.width.px]="80">
+                            <mat-select [(value)]="element.ExamStatus" [(ngModel)]="element.ExamStatus">
+                                <mat-option value="0">--status--</mat-option>
+                                <mat-option *ngFor="let item of ExamStatuses" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>
-                        <mat-checkbox *ngIf="SlotNClassSubjects.length>0" (click)="$event.stopPropagation()" (change)="checkall($event)">
+                        <mat-checkbox *ngIf="ExamStudentSubjectResult.length>0" (click)="$event.stopPropagation()"
+                            (change)="checkall($event)">
                         </mat-checkbox>&nbsp;Active
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -69,12 +92,14 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button *ngIf="SlotNClassSubjects.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                        <button *ngIf="ExamStudentSubjectResult.length>0" matTooltip="save all" mat-mini-fab
+                            (click)="saveall()">
                             <mat-icon>all_out</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab
+                            (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

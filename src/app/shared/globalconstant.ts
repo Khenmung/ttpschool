@@ -43,6 +43,7 @@ export class globalconstants {
                 "REASONFORLEAVING": "reason for leaving",
                 "EXAMNAME": "exam name",
                 "EXAMSLOTNAME": "exam slot name",
+                "EXAMSTATUS": "exam status",
                 "SUBJECT": "subject",
                 "SUBJECTTYPE": "subject type",
                 "RANDOMIMAGE": "random image"

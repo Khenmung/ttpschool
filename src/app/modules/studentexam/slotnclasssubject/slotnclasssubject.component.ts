@@ -95,7 +95,8 @@ export class SlotnclasssubjectComponent implements OnInit {
     }
   }
   updateActive(row, value) {
-    row.Action = true;
+    //if(!row.Action)
+    row.Action = !row.Action;
     row.Active = row.Active == 1 ? 0 : 1;
   }
   delete(element) {
@@ -155,7 +156,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             this.SlotNClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.SlotNClassSubjectData["UpdatedDate"] = new Date();
             delete this.SlotNClassSubjectData["UpdatedBy"];
-            console.log('exam slot', this.SlotNClassSubjectData)
+            //console.log('exam slot', this.SlotNClassSubjectData)
             this.insert(row);
           }
           else {
@@ -163,7 +164,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             delete this.SlotNClassSubjectData["CreatedBy"];
             this.SlotNClassSubjectData["UpdatedDate"] = new Date();
             this.SlotNClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+            this.update(row);
           }
         }
       });
@@ -176,14 +177,16 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.SlotClassSubjectId = data.SlotClassSubjectId;
+          row.Action = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
-  update() {
+  update(row) {
 
     this.dataservice.postPatch('SlotAndClassSubjects', this.SlotNClassSubjectData, this.SlotNClassSubjectData.SlotClassSubjectId, 'patch')
       .subscribe(
         (data: any) => {
+          row.Action = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -304,6 +307,7 @@ export class SlotnclasssubjectComponent implements OnInit {
                 ClassSubjectId: existing[0].ClassSubjectId,
                 ClassSubject: clssub.ClassSubject,
                 Active: existing[0].Active,
+                Action: false
               });
             else {
               this.SlotNClassSubjects.push({
@@ -312,24 +316,30 @@ export class SlotnclasssubjectComponent implements OnInit {
                 Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                 ClassSubjectId: clssub.ClassSubjectId,
                 ClassSubject: clssub.ClassSubject,
-                Active: 0
+                Active: 0,
+                Action: false
               });
             }
           })
         }
         else {
           if (this.searchForm.get("searchClassId").value > 0 && this.searchForm.get("searchSubjectId").value == 0) {
+
             filteredData = data.value.filter(d => d.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
-            this.ClassSubjectList.forEach(cs => {
+
+            let fitleredClassSubject = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
+
+            fitleredClassSubject.forEach(cs => {
               let existing = filteredData.filter(ex => ex.ClassSubjectId == cs.ClassSubjectId)
               if (existing.length > 0) {
                 this.SlotNClassSubjects.push({
-                  SlotClassSubjectId: 0,
+                  SlotClassSubjectId: existing[0].SlotClassSubjectId,
                   SlotId: this.searchForm.get("searchSlotId").value,
                   Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                   ClassSubjectId: cs.ClassSubjectId,
                   ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == cs.ClassSubjectId)[0].ClassSubject,
-                  Active: existing[0].Active
+                  Active: existing[0].Active,
+                  Action: false
                 });
               }
               else {
@@ -339,7 +349,8 @@ export class SlotnclasssubjectComponent implements OnInit {
                   Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                   ClassSubjectId: cs.ClassSubjectId,
                   ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == cs.ClassSubjectId)[0].ClassSubject,
-                  Active: 0
+                  Active: 0,
+                  Action: false
                 });
               }
             })
@@ -361,16 +372,35 @@ export class SlotnclasssubjectComponent implements OnInit {
                 Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                 ClassSubjectId: _classSubjectId,
                 ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == _classSubjectId)[0].ClassSubject,
-                Active: 0
+                Active: 0,
+                Action: false
               });
             }
           }
         }
-
-        console.log('this', this.SlotNClassSubjects)
+        if (this.SlotNClassSubjects.length == 0) {
+          this.alert.info("No record found! Subject not defined in class subject module.", this.optionsNoAutoClose);
+        }
+        //console.log('this', this.SlotNClassSubjects)
         this.dataSource = new MatTableDataSource<ISlotNClassSubject>(this.SlotNClassSubjects);
         this.loading = false;
       })
+  }
+  checkall(value) {
+    this.SlotNClassSubjects.forEach(record => {
+      if (value.checked)
+        record.Active = 1;
+      else
+        record.Active = 0;
+      record.Action = !record.Action;
+    })
+  }
+  saveall() {
+    this.SlotNClassSubjects.forEach(record => {
+      if (record.Action == true) {
+        this.UpdateOrSave(record);
+      }
+    })
   }
   GetMasterData() {
 
@@ -422,6 +452,7 @@ export interface ISlotNClassSubject {
   ClassSubjectId: number;
   ClassSubject: string;
   Active: number;
+  Action: boolean;
 }
 
 
