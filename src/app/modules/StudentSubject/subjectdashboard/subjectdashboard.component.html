@@ -1,0 +1,35 @@
+<div class="container" fxLayout="row" fxLayoutAlign="space-around center">
+    <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
+    class="demo-tab-group">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>info</mat-icon>Subject Types
+        </ng-template>
+        <app-subject-types></app-subject-types>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>info</mat-icon>Class Subject
+        </ng-template>
+        <app-classsubjectdashboard></app-classsubjectdashboard>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>info</mat-icon>Subject Mark Components
+        </ng-template>
+        <app-student-subject-mark-comp></app-student-subject-mark-comp>
+    </mat-tab>  
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>info</mat-icon>Student Class
+        </ng-template>
+        <app-studentclassdashboard></app-studentclassdashboard> 
+    </mat-tab>        
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>info</mat-icon>Student Subject
+        </ng-template>
+        <app-studentsubjectdashboard></app-studentsubjectdashboard>
+    </mat-tab>
+</mat-tab-group>
+</div>

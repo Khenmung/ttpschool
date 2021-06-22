@@ -1,27 +1,14 @@
-<!-- <div style="margin: 15px;" fxLayout="column" fxLayoutAlign="center center">
-    <strong>Class Fee definition statuses for the current batch.</strong>
-    <mat-divider></mat-divider>
-    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-between">
-        <div *ngFor="let item of ClassStatuses">{{item.class}}
-            <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-            <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
-        </div>
-    </div>
-    <mat-divider></mat-divider>
-</div> -->
-
 <mat-card>
     <mat-card-title>Subject Mark Components</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <alert></alert>
         <form [formGroup]="searchForm">
-           
             <mat-form-field appearance="outline">
-                <mat-label>For Classes</mat-label>
-                <mat-select formControlName="ApplyToClassId">
+                <mat-label>Class/Stream</mat-label>
+                <mat-select formControlName="ClassId">
                     <mat-option value="0">All</mat-option>
-                    <mat-option *ngFor="let p of ApplyToClasses" [value]="p.MasterDataId">
+                    <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
                         {{p.MasterDataName}}
                     </mat-option>
                 </mat-select>
@@ -35,16 +22,6 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-<!--            
-            <mat-form-field appearance="outline">
-                <mat-label>Batch</mat-label>
-                <mat-select formControlName="ApplyToClassId" (selectionChange)="UpdateSelectedBatchId($event.value)">
-                    <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
-                        {{p.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field> -->
-
             <button class="mat-raised-button" (click)="GetClassSubjectComponent()">
                 <mat-icon>search</mat-icon>
             </button><br>
@@ -52,55 +29,32 @@
         <div class="example-container mat-elevation-z8">
             <mat-table #table [dataSource]="dataSource" matSort>
 
-               <ng-container matColumnDef="SubjectId" hidden>
-                    <mat-header-cell *matHeaderCellDef> Subject </mat-header-cell>
+               <ng-container matColumnDef="ClassSubject">
+                    <mat-header-cell *matHeaderCellDef  mat-sort-header> Class Subject </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="150">
-                            <mat-select [(value)]="element.SubjectId" [(ngModel)]="element.SubjectId">
-                                <mat-option value="0">--subject type--</mat-option>
-                                <mat-option *ngFor="let item of Subjects" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                        {{element.ClassSubject}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="SubjectComponentId">
+                <ng-container matColumnDef="SubjectComponent">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Component </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="150">
-                            <mat-select [(value)]="element.SubjectComponentId" [(ngModel)]="element.SubjectComponentId">
-                                <mat-option value="0">--component--</mat-option>
-                                <mat-option *ngFor="let item of MarkComponents" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                       {{element.SubjectComponent}}
                     </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ApplyToClass">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> For Classes </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="150">
-                            <mat-select [(value)]="element.ApplyToClass" [(ngModel)]="element.ApplyToClass">
-                                <mat-option value="0">--apply to--</mat-option>
-                                <mat-option *ngFor="let item of ApplyToClasses" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
+                </ng-container>                
                 <ng-container matColumnDef="FullMark">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
+                        <mat-form-field>
                         <input matInput type="number" maxlength="3" [(value)]="element.FullMark" [(ngModel)]="element.FullMark" />
+                    </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PassMark">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
+                    <mat-form-field>
                         <input matInput type="number" maxlength="3" [(value)]="element.PassMark" [(ngModel)]="element.PassMark" />
+                    </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
@@ -109,14 +63,12 @@
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                         [checked]="element.Active">
                     </mat-checkbox>
-                        <!-- <mat-checkbox [checked]="element.Active==1?true:false" [(value)]="element.Active" (click)="updateActive(element,$event)">
-                        </mat-checkbox> -->
                     </mat-cell>
                 </ng-container>     
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

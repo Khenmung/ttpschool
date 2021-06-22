@@ -2,10 +2,10 @@ import { R3TargetBinder } from '@angular/compiler';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  MultilevelNodes, Configuration, ExpandedRTL,
+  MultilevelNodes, ExpandedRTL,
   ExpandedLTR, MultilevelMenuService, ExpandCollapseStatusEnum, SlideInOut
 } from 'ng-material-multilevel-menu';
-import { List, PagesForMenu } from '../../shared/interface';
+import { List} from '../../shared/interface';
 import { SharedataService } from '../../shared/sharedata.service';
 //import { SharedataService } from '../../../shared/sharedata.service';
 import { TokenStorageService } from '../../_services/token-storage.service';

@@ -1,50 +1,93 @@
-<div style="padding:15px 15px 0px 15px;">
-    <div>Application Role Permission Mapping</div>
-</div>
-<mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
-<div style="padding: 15px;" fxLayout="row wrap">
-    <div style="width: 100%;">
-        <mat-table #table [dataSource]="dataSource">
-            <ng-container matColumnDef="Application">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Application
-                </mat-header-cell>
-                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    {{element.Application}}
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Role">
-                <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.Role}}
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Permission">
-                <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.Permission}}
-                </mat-cell>
-            </ng-container>          
-            <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                   <mat-checkbox (click)="update(element)" [checked]="element.Active==1?true:false">
-                   </mat-checkbox>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef><button matTooltip="add new" mat-mini-fab (click)="addnew()"><mat-icon>add</mat-icon></button>
-                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button matTooltip="view/edit" mat-mini-fab (click)="View(element)">
-                        <mat-icon>edit</mat-icon>
-                    </button>
-                    
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-        </mat-table>
-    </div>
-    <app-roleappAdd *ngIf="ApplicationRoleId!=0" [AppRoleId]="ApplicationRoleId" (OutAppRoleId)="GetApplicationRoleId($event)">
-    </app-roleappAdd>
-</div>
+<mat-card class="boxes">
+    <mat-card-title>Application Role Permission Mapping</mat-card-title>
+    <mat-card-content>
+        <mat-spinner *ngIf="loading"></mat-spinner>
+        <alert></alert>
+        <form [formGroup]="searchForm">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
+                <mat-form-field fxFlex appearance="outline">
+                    <mat-label> Name</mat-label>
+                    <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
+                        <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
+                            {{master.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field fxFlex appearance="outline">
+                    <mat-label>Role</mat-label>
+                    <mat-select formControlName="RoleId" fxFlex (selectionChange)="enable($event)">
+                        <mat-option *ngFor="let role of Roles" [value]="role.MasterDataId">
+                            {{role.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button matTooltip="search" class="mat-raised-button" (click)="GetApplicationRole()" fxFlex="10">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <div fxFlex>&nbsp;</div>
+            </div>
+        </form>
+        <div>
+            <mat-divider></mat-divider>
+            <mat-table [dataSource]="datasource" matSort>
+                <ng-container matColumnDef="Id">
+                    <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ApplicationName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ApplicationName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Role">
+                    <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.Role}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PermissionId">
+                    <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field>
+                            <mat-label>permission</mat-label>
+                            <mat-select (selectionChange)="UpdateSaveButton(element)" [(value)]="element.PermissionId"  [(ngModel)]="element.PermissionId">
+                                <mat-option *ngFor="let item of Permissions" [value]="item.val">{{item.type}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (click)="$event.stopPropagation()" 
+                        (change)="checkall($event)">                        
+                        </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                            [checked]="element.Active">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button *ngIf="ApplicationRoleList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                            <mat-icon>all_out</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab
+                            (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center"
+                    fxLayout="row">
+                </mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

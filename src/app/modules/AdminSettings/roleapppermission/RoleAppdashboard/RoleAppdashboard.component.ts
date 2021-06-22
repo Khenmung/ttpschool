@@ -1,16 +1,15 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { DialogService } from 'src/app/shared/dialog.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { roleappAddComponent } from '../roleappadd/roleappadd.component';
 
 @Component({
   selector: 'app-RoleAppdashboard',
@@ -18,249 +17,358 @@ import { roleappAddComponent } from '../roleappadd/roleappadd.component';
   styleUrls: ['./RoleAppdashboard.component.scss']
 })
 export class RoleAppdashboardComponent implements OnInit {
-  @ViewChild("table") mattable;
-  @ViewChild(roleappAddComponent) roleappadd: roleappAddComponent;
-  LoginUserDetail: any[] = [];
-  exceptionColumns: boolean;
-  CurrentRow: any = {};
-  //filteredOptions: Observable<string[]>;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  topMaster = 0;
+  MasterData = [];
+  Roles = [];
+  Permissions = [];
+  // FeeNames = [];
+  // Classes = [];
+  // Batches = [];
+  // Locations = [];
+  ApplicationRoleList = [];
+  TopMasters = [];
+  DefinedMaster = [];
+  SelectedMaster = [];
+  oldvalue = '';
+  selectedData = '';
+  datasource: MatTableDataSource<IApplicationRolePermission>;
+  AppRoleData = {
+    ApplicationRoleId: 0,
+    ApplicationId: 0,
+    RoleId: 0,
+    PermissionId: 0,
+    OrgId: 0,
+    Active: 0
   };
+
+  ApplicationDataStatus = [];
+  SchoolDataStatus = [];
+  DisplayColumns = [
+    "Id",
+    "ApplicationName",
+    "Role",
+    "PermissionId",
+    "Active",
+    "Action"
+  ];
+  UserDetails = [];
+
+  constructor(
+    private fb: FormBuilder,
+    private route: Router,
+    private tokenStorage: TokenStorageService,
+    private dataservice: NaomitsuService,
+    private alert: AlertService,
+    private dialog: DialogService) { }
+
+  ngOnInit(): void {
+    // this.UserDetails = this.tokenStorage.getUserDetail();
+    // if(this.UserDetails==null)
+    // {
+    //   this.alert.error('Please login to be able to add masters!',this.optionAutoClose);
+    //   this.route.navigate(['auth/login']);
+    // }
+    // this.GetTopMasters();
+  }
+
+  enableAddNew = false;
+  enableTopEdit = false;
+  loading: boolean = false;
+  error: string = '';
   optionAutoClose = {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  common: globalconstants;
-  loading = false;
-  Departments = [];
-  Locations = [];
-  Applications = [];
-  Roles = [];
-  Users = [];
-  AppRoleList: IAppRoles[];
-  dataSource: MatTableDataSource<IAppRoles>;
-  allMasterData = [];
-  searchForm = new FormGroup({
-    StudentId: new FormControl(0),
-  });
-  ApplicationRoleId = 0;
-  AppRoleData = {
-    PermissionId: 0,
-    ApplicaitonRoleId: 0,
-    RoleId: 0,
-    Active: 1
+  optionNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
   };
 
-  displayedColumns = [
-    'Application',
-    'Role',
-    'Permission',
-    'Active',
-    'Action'
-  ];
-
-  constructor(private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
-    private alert: AlertService,
-    private route: ActivatedRoute,
-    private nav: Router,
-    private datepipe: DatePipe,
-    private shareddata: SharedataService,
-    private changeDetectorRefs: ChangeDetectorRef) { }
-
-  ngOnInit(): void {
-
-  }
+  searchForm = this.fb.group(
+    {
+      ParentId: [0],
+      RoleId: [0],
+      //PermissionId: [0]
+    })
   PageLoad() {
+    debugger;
     this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    if (this.LoginUserDetail == null)
-      this.nav.navigate(['/auth/login']);
-    else {
+    this.UserDetails = this.tokenStorage.getUserDetail();
+    if (this.UserDetails == null) {
+      this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
+      this.route.navigate(['auth/login']);
+    }
+    this.Permissions = globalconstants.PERMISSIONTYPES;
+    this.GetTopMasters();
+  }
 
-      this.shareddata.CurrentApplication.subscribe(a => this.Applications = a);
-      if (this.Applications.length == 0) {
-        this.shareddata.GetApplication().subscribe((data: any) => {
-          this.Applications = data.value.map(item => item);
-          this.shareddata.ChangeApplication(this.Applications);
-        });
-        this.GetMasterData();
+  GetTopMasters() {
+    let list: List = new List();
+    list.fields = ["MasterDataId", "ParentId", "MasterDataName", "Description", "Active", "OrgId"];
+    list.PageName = "MasterDatas";
+    list.filter = ["(ParentId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] + ") and Active eq 1"];//this.searchForm.get("ParentId").value];
+    debugger;
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.MasterData = [...data.value];
+          this.TopMasters = data.value.filter(m => {
+            return m.ParentId == 0
+          });
+          console.log("top", this.TopMasters);
+          this.DefinedMaster = data.value.filter(m => m.OrgId == this.UserDetails[0]["orgId"]);
+          let applicationData = globalconstants.MasterDefinitions[0].application;
+          this.ApplicationDataStatus = this.getSettingStatus(applicationData);
+          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
+          let schoolData = globalconstants.MasterDefinitions[1].school;
+          this.SchoolDataStatus = this.getSettingStatus(schoolData);
+          this.loading = false;
+
+        }
+      });
+  }
+  getSettingStatus(data) {
+    let defined;
+
+    return Object.keys(data[0]).map(globalcons => {
+
+      defined = this.DefinedMaster.filter(fromdb => {
+        return data[0][globalcons].toLowerCase().trim() == fromdb.MasterDataName.toLowerCase().trim();
+      });
+
+      if (defined.length > 0) {
+        return {
+          MasterDataName: data[0][globalcons],
+          Done: true
+        }
       }
       else {
-        this.shareddata.CurrentRoles.subscribe(r => this.Roles = r);
-        this.shareddata.CurrentDepartment.subscribe(a => this.Departments = a);
-        this.shareddata.CurrentLocation.subscribe(r => this.Locations = r);
-        this.GetApplicationRoles();
+        return {
+          MasterDataName: data[0][globalcons],
+          Done: false
+        }
       }
+    });
+
+  }
+  enable(elment) {
+    debugger;
+    if (elment.value > 0)
+      this.enableTopEdit = true;
+    else
+      this.enableTopEdit = false;
+  }
+
+  GetApplicationRole() {
+    debugger;
+    let list: List = new List();
+    list.fields = ["MasterDataId", "MasterDataName"];
+    list.PageName = "MasterDatas";
+    list.filter = ["ParentId eq " + this.searchForm.get("ParentId").value + " and OrgId eq " + this.UserDetails[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.SelectedMaster = data.value.map(item => {
+          return {
+            "ApplicationId": item.MasterDataId,
+            "ApplicationName": item.MasterDataName
+          }
+        })
+
+        var rolefilter = '';
+        if (this.searchForm.get("RoleId").value > 0)
+          rolefilter = " and RoleId eq " + this.searchForm.get("RoleId").value;
+
+        let list: List = new List();
+        list.fields = [
+          "ApplicationRoleId",
+          "ApplicationId",
+          "RoleId",
+          "PermissionId",
+          "Active"
+        ];
+        list.PageName = "ApplicationRoles";
+        list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + rolefilter];
+        this.ApplicationRoleList = [];
+        this.dataservice.get(list)
+          .subscribe((data: any) => {
+            let slno = 0;
+            let filteredRole = [];
+            if (this.searchForm.get("RoleId").value > 0)
+              filteredRole = this.Roles.filter(r => r.MasterDataId == this.searchForm.get("RoleId").value)
+            else
+              filteredRole = this.Roles;
+
+            this.SelectedMaster.forEach(application => {
+              filteredRole.forEach(role => {
+                slno += 1
+                let existing = data.value.filter(db => db.ApplicationId == application.ApplicationId && db.RoleId == role.MasterDataId)
+                if (existing.length > 0) {
+                  this.ApplicationRoleList.push({
+                    Id: slno,
+                    ApplicationRoleId: existing[0].ApplicationRoleId,
+                    ApplicationId: application.ApplicationId,
+                    ApplicationName: application.ApplicationName,
+                    RoleId: existing[0].RoleId,
+                    Role: this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)[0].MasterDataName,
+                    PermissionId: existing[0].PermissionId,
+                    Active: existing[0].Active,
+                    Action: false
+                  })
+                }
+                else {
+                  this.ApplicationRoleList.push(
+                    {
+                      Id: slno,
+                      ApplicationRoleId: 0,
+                      ApplicationId: application.ApplicationId,
+                      ApplicationName: application.ApplicationName,
+                      RoleId: role.MasterDataId,
+                      Role: this.Roles.filter(r => r.MasterDataId == role.MasterDataId)[0].MasterDataName,
+                      PermissionId: 0,
+                      Active: 0,
+                      Action: true
+                    }
+                  )
+                }
+              })
+            })
+            this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
+            this.datasource.sort = this.sort;
+            this.datasource.paginator = this.paginator;
+          });
+      })
+  }
+  checkall(value) {
+    this.ApplicationRoleList.forEach(record => {
+      if (value.checked) {
+        record.Active = 1;
+      }
+      else
+        record.Active = 0;
+      record.Action = true;
+    })
+  }
+  saveall() {
+    this.ApplicationRoleList.forEach((record, indx) => {
+      if (record.Action == true) {
+        this.UpdateOrSave(record);
+      }
+      if (indx == this.ApplicationRoleList.length - 1) {
+        this.alert.success("All attendance saved sucessfully.", this.optionAutoClose);
+        //this.SaveAll = false;
+      }
+    })
+  }
+  UpdateSaveButton(element){
+    debugger;
+    element.Action = true;
+  }
+  UpdateActive(element, event) {
+    element.Action = true;
+    element.Active = event.checked == true ? 1 : 0;
+  }
+  UpdateOrSave(row) {
+
+    if (row.PermissionId == 0) {
+      this.alert.error("Please select permission", this.optionAutoClose);
+      return;
     }
 
-  }
-  GetApplicationRoleId(event) {
-    this.ApplicationRoleId = event;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "";
-    setTimeout(() => {
-      this.GetApplicationRoles();  
-    }, 10);    
-  }
+    let checkFilterString = "Active eq 1 " +
+      " and RoleId eq " + row.RoleId +
+      " and PermissionId eq " + row.PermissionId +
+      " and ApplicationId eq " + row.ApplicationId +
+      " and OrgId eq " + this.UserDetails[0]["orgId"];
 
-  View(element) {
-    this.ApplicationRoleId = element.ApplicationRoleId;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    setTimeout(() => {
-      this.roleappadd.PageLoad();
-    }, 10);
-  }
-
-  addnew() {
-    this.ApplicationRoleId = -1;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    setTimeout(() => {
-      this.roleappadd.PageLoad();
-    }, 10);
-  }
-
-  GetApplicationRoles() {
-
-    //console.log(this.LoginUserDetail);
+    if (this.AppRoleData.ApplicationRoleId > 0)
+      checkFilterString += " and ApplicationRoleId ne " + this.AppRoleData.ApplicationRoleId;
 
     let list: List = new List();
-    list.fields = [
-      'ApplicationRoleId',
-      'PermissionId',
-      'RoleId',
-      'ApplicationId',
-      'Active'];
-
+    list.fields = ["ApplicationRoleId"];
     list.PageName = "ApplicationRoles";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = [checkFilterString];
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        //  console.log('data.value', data.value);
-        var permission = ''
-        var role = '';
-        var application = '';
-        this.AppRoleList = data.value.map(item => {
-          permission = '';
-          role = '';
-          application = '';
+        if (data.value.length > 0) {
+          this.alert.error("Record already exists!", this.optionAutoClose);
+        }
+        else {
+          //console.log(this.UserDetail);
+          this.AppRoleData.Active = row.Active;
+          this.AppRoleData.ApplicationRoleId = row.ApplicationRoleId;
+          this.AppRoleData.ApplicationId = row.ApplicationId;
+          this.AppRoleData.RoleId = row.RoleId;
+          this.AppRoleData.PermissionId = row.PermissionId;
+          this.AppRoleData.OrgId = this.UserDetails[0]["orgId"];
+          this.AppRoleData["DepartmentId"] = 0;
+          this.AppRoleData["LocationId"] = 0;
 
-          let _permissionIds = item.PermissionId == null ? '' : globalconstants.PERMISSIONTYPES.filter(p => p.val == item.PermissionId);
-          if (_permissionIds.length > 0)
-            permission = _permissionIds[0]["type"];
-
-          let _roleId = item.RoleId != null && this.Roles.length == 0 ? '' : this.Roles.filter(a => a.MasterDataId == item.RoleId);
-          if (_roleId.length > 0)
-            role = _roleId[0].MasterDataName;
-
-          let applicationId = this.Applications.filter(a => a.ApplicationId == item.ApplicationId);
-          if (applicationId.length > 0)
-            application = applicationId[0].ApplicationName;
-
-          return {
-            ApplicationRoleId: item.ApplicationRoleId,
-            PermissionId: item.PermissionId,
-            Permission: permission,
-            RoleId: item.RoleId,
-            Role: role,
-            ApplicationId: item.ApplicationId,
-            Application: application,
-            Active: item.Active
+          //console.log('data',this.AppRoleData);
+          if (this.AppRoleData.ApplicationRoleId == 0) {
+            this.AppRoleData["CreatedDate"] = new Date();
+            this.AppRoleData["CreatedBy"] = this.UserDetails[0].userId;
+            this.AppRoleData["UpdatedDate"] = new Date();
+            this.AppRoleData["UpdatedBy"] = this.UserDetails[0].userId;
+            this.insert(row);
           }
-        });
-
-        //this.shareddata.ChangeApplicationRoles(this.AppRoleList); 
-        this.dataSource = new MatTableDataSource<IAppRoles>(this.AppRoleList);
-        this.loading = false;
-        //this.changeDetectorRefs.detectChanges();
+          else {
+            delete this.AppRoleData["CreatedDate"];
+            delete this.AppRoleData["CreatedBy"];
+            this.AppRoleData["UpdatedDate"] = new Date();
+            this.AppRoleData["UpdatedBy"] = this.UserDetails[0].userId;
+            this.update();
+          }
+          row.Action =false;
+        }
       });
   }
 
-  update(element) {
-    let toupdate = {
-      //ApplicationId:element.ApplicationId,      
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ApplicationRoles', toupdate, element.ApplicationRoleId, 'patch')
+  insert(row) {
+
+    debugger;
+    this.dataservice.postPatch('ApplicationRoles', this.AppRoleData, 0, 'post')
       .subscribe(
         (data: any) => {
-          // this.GetApplicationRoles();
+          row.ApplicationRoleId = data.ApplicationRoleId;
+          this.alert.success("Data saved successfully.", this.optionAutoClose);
+        });
+  }
+  update() {
+
+    this.dataservice.postPatch('ApplicationRoles', this.AppRoleData, this.AppRoleData.ApplicationRoleId, 'patch')
+      .subscribe(
+        (data: any) => {
           this.alert.success("Data updated successfully.", this.optionAutoClose);
-
         });
   }
-  delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ApplicationRoles', toupdate, element.ApplicationRoleId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
-
-        });
+  selected(event) {
+    this.selectedData = event.target.value;
   }
-  isNumeric(str: number) {
-    if (typeof str != "string") return false // we only process strings!  
-    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-      !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+  getoldvalue(value: string, row) {
+    this.oldvalue = row.MasterDataName;
+    //  console.log('old value', this.oldvalue);
   }
-  GetMasterData() {
-
-    var orgIdSearchstr = ' or OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1 and (ParentId eq 0 " + orgIdSearchstr + ')'];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
-        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
-
-        this.shareddata.ChangeRoles(this.Roles);
-        this.shareddata.ChangeApplication(this.Applications);
-        this.shareddata.ChangeDepartment(this.Departments);
-        this.shareddata.ChangeLocation(this.Locations);
-        this.GetApplicationRoles();
-      });
-  }
+  
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
-
+    let Id = this.MasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    })[0].MasterDataId;
+    return this.MasterData.filter((item, index) => {
+      return item.ParentId == Id
+    });
   }
-
 }
-export interface IAppRoles {
-
+export interface IApplicationRolePermission {
   ApplicationRoleId: number;
-  PermissionId: number;
-  Permission: string;
+  ApplicationId: number;
+  ApplicationName: string;
   RoleId: number;
   Role: string;
-  ApplicationId: number;
-  Applicaiton: string;
-  Active;
+  PermissionId: number;
+  Active: number;
 }
-
-

@@ -1,6 +1,4 @@
-import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
-import { List } from "./interface";
 
 export class globalconstants {
     public static apiUrl: string = "http://localhost:8090";//"https://ettest.ttpsolutions.in";//
@@ -45,15 +43,16 @@ export class globalconstants {
                 "EXAMSLOTNAME": "exam slot name",
                 "EXAMSTATUS": "exam status",
                 "SUBJECT": "subject",
-                "SUBJECTTYPE": "subject type",
-                "RANDOMIMAGE": "random image"
+                "SUBJECTTYPE": "subject type",                
+                "ATTENDANCESTATUS": "attendance status"
             }]
         }
     ];
     public static PERMISSIONTYPES = [
-        { 'type': 'full', 'val': 1 },
+        { 'type': 'rwd', 'val': 1 },
         { 'type': 'rw', 'val': 2 },
-        { 'type': 'read', 'val': 3 }
+        { 'type': 'read', 'val': 3 },
+        { 'type': 'denied', 'val': 4 }
     ];
     public static getCurrentBatch() {
         let currentyear = new Date().getFullYear();
@@ -64,11 +63,6 @@ export class globalconstants {
     ) {
 
     }
-    // ngOnInit(): void {
-    //     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //     //Add 'implements OnInit' to the class.
-
-    // }
     public static getStandardFilter(token) {
 
         var filterstr = ' and OrgId eq ' + token[0]["orgId"];

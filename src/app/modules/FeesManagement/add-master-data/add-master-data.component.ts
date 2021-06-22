@@ -101,8 +101,9 @@ export class AddMasterDataComponent implements OnInit {
           this.TopMasters = data.value.filter(m=> {
             return m.ParentId==0
           });
-          console.log("top",this.TopMasters);
-          this.DefinedMaster = data.value.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
+          
+          this.DefinedMaster = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
+          console.log("DefinedMaster",this.DefinedMaster);
           let applicationData = globalconstants.MasterDefinitions[0].application;
           this.ApplicationDataStatus=this.getSettingStatus(applicationData);
           
@@ -114,15 +115,16 @@ export class AddMasterDataComponent implements OnInit {
       });
   }
   getSettingStatus(data){
-    let defined;
+    let defined;      
       
     return Object.keys(data[0]).map(globalcons => {
-      
+      var _parentId =this.TopMasters.filter(t=>t.MasterDataName.toLowerCase().trim()==data[0][globalcons].toLowerCase().trim())[0].MasterDataId
       defined = this.DefinedMaster.filter(fromdb => {
-        return data[0][globalcons].toLowerCase().trim() == fromdb.MasterDataName.toLowerCase().trim();
+        return _parentId == fromdb.ParentId;
       });
 
       if (defined.length > 0) {
+        
         return {
           MasterDataName: data[0][globalcons],
           Done: true

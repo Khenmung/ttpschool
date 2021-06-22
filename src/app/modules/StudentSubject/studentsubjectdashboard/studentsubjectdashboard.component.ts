@@ -2,7 +2,6 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -32,7 +31,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StudentDetailToDisplay ='';
+  StudentDetailToDisplay = '';
   StudentClassId = 0;
   StandardFilter = '';
   loading = false;
@@ -46,8 +45,8 @@ export class studentsubjectdashboardComponent implements OnInit {
   allMasterData = [];
   searchForm = this.fb.group({
     searchBatchId: [0],
-    searchStudentClassId: [0],
     searchClassId: [0],
+    searchSubjectId: [0],
     searchSection: [''],
   });
   StudentClassSubjectId = 0;
@@ -60,6 +59,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
+    'Student',
     'Subject',
     'SubjectType',
     'Active',
@@ -77,6 +77,10 @@ export class studentsubjectdashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+
+  }
+  PageLoad() {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
@@ -97,10 +101,6 @@ export class studentsubjectdashboardComponent implements OnInit {
         this.loading = false;
       }
     }
-
-  }
-  PageLoad() {
-
   }
   GetCurrentBatchIDnAssign() {
     let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
@@ -117,21 +117,10 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.GetStudentClassSubject();
   }
 
-  // View(element) {
-  //   debugger;
-  //   this.ClassSubjectId = element.ClassSubjectId;
-  //   this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-  //   setTimeout(() => {
-  //     this.StudentSubjectAdd.PageLoad();
-  //   }, 50);
-  // }
-
-
-
   GetStudentClassSubject() {
 
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and StudentClassId eq ' + this.StudentClassId;
+      ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
 
     let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
     let batchId = 0;
@@ -164,17 +153,20 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe((studentclass: any) => {
         debugger;
         //  console.log('data.value', data.value);
-        let firstData = studentclass.value[0].StudentClassSubjects.map(item => {
-          return {
-            StudentClassSubjectId: item.StudentClassSubjectId,
-            StudentClassId: item.StudentClassId,
-            ClassSubjectId: item.ClassSubjectId,
-            Active: item.Active,
-            ClassId: studentclass.value[0].ClassId,
-            RollNo: studentclass.value[0].RollNo,
-            Student: studentclass.value[0].Student.Name
-          }
-        })
+        var _studentClassSubject = [];
+        if (studentclass.value.length > 0) {
+          _studentClassSubject = studentclass.value[0].StudentClassSubjects.map(item => {
+            return {
+              StudentClassSubjectId: item.StudentClassSubjectId,
+              StudentClassId: item.StudentClassId,
+              ClassSubjectId: item.ClassSubjectId,
+              Active: item.Active,
+              ClassId: studentclass.value[0].ClassId,
+              RollNo: studentclass.value[0].RollNo,
+              Student: studentclass.value[0].Student.Name
+            }
+          })
+        }
         let list: List = new List();
         list.fields = ["ClassSubjectId",
           "ClassId",
@@ -185,11 +177,11 @@ export class studentsubjectdashboardComponent implements OnInit {
         ];
         list.PageName = "ClassSubjects";
         list.lookupFields = ["SubjectType"];
-        list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and ClassId eq ' + studentclass.value[0].ClassId];
+        list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and ClassId eq ' + this.searchForm.get("searchClassId").value];
         this.dataservice.get(list)
           .subscribe((ClassSubjects: any) => {
             this.StudentSubjectList = ClassSubjects.value.map(cs => {
-              let existing = firstData.filter(e => e.ClassSubjectId == cs.ClassSubjectId)
+              let existing = _studentClassSubject.filter(e => e.ClassSubjectId == cs.ClassSubjectId)
               if (existing.length > 0) {
                 return {
                   StudentClassSubjectId: existing[0].StudentClassSubjectId,
@@ -223,7 +215,7 @@ export class studentsubjectdashboardComponent implements OnInit {
                 }
               }
             })
-            this.StudentDetailToDisplay =`${this.StudentSubjectList[0].Student} Class - ${this.StudentSubjectList[0].ClassName}, RollNo - ${this.StudentSubjectList[0].RollNo}`;
+            this.StudentDetailToDisplay = `${this.StudentSubjectList[0].Student} Class - ${this.StudentSubjectList[0].ClassName}, RollNo - ${this.StudentSubjectList[0].RollNo}`;
             this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
             this.loading = false;
           });
@@ -244,17 +236,6 @@ export class studentsubjectdashboardComponent implements OnInit {
     element.Action = true;
     debugger;
     element.Active = event.checked == true ? 1 : 0;
-    // let toupdate = {
-    //   //ApplicationId:element.ApplicationId,      
-    //   Active: element.Active == 1 ? 0 : 1
-    // }
-    // this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'patch')
-    //   .subscribe(
-    //     (data: any) => {
-    //       // this.GetApplicationRoles();
-    //       this.alert.success("Data updated successfully.", this.optionAutoClose);
-
-    //     });
   }
   delete(element) {
     let toupdate = {
@@ -269,11 +250,6 @@ export class studentsubjectdashboardComponent implements OnInit {
         });
   }
   UpdateOrSave(row) {
-
-    // if (row.TheoryFullMark > 1000 || row.TheoryPassMark > 1000 || row.PracticalFullMark > 1000 || row.PracticalPassMark > 1000) {
-    //   this.alert.error("Marks cannot be greater than 1000!", this.optionAutoClose);
-    //   return;
-    // }
 
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
       " and StudentClassId eq " + row.StudentClassId +
@@ -292,12 +268,13 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.alert.error("Record already exists!", this.optionAutoClose);
+          return;
         }
         else {
-          let subjectSelectedCount = this.StudentSubjectList.filter(s => s.SubjectTypeId == row.SubjectTypeId && s.Active==1);
+          let subjectSelectedCount = this.StudentSubjectList.filter(s => s.SubjectTypeId == row.SubjectTypeId && s.Active == 1);
           if (row.SelectHowMany > 0 && row.SelectHowMany < subjectSelectedCount.length) {
-            var str =`Only ${row.SelectHowMany} Subjects can be selected for ${row.SubjectType}`;
+            var str = `Only ${row.SelectHowMany} Subjects can be selected for ${row.SubjectType}`;
             this.alert.warn(str, this.optionsNoAutoClose);
             return;
           }
@@ -402,8 +379,8 @@ export class studentsubjectdashboardComponent implements OnInit {
 export interface IStudentSubject {
   StudentClassSubjectId: number;
   StudentClassId: number;
-  ClassName:string;
-  RollNo:string;
+  ClassName: string;
+  RollNo: string;
   Student: string;
   ClassSubjectId: number;
   SubjectTypeId: number;

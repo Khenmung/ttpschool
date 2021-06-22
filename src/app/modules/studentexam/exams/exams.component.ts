@@ -66,19 +66,18 @@ export class ExamsComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
-    this.loading = true;
+    
+  }
+
+PageLoad() {
+  this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      
-      this.GetMasterData();      
     }
-  }
-
-PageLoad() {
-
+    this.GetMasterData();  
 }
 GetCurrentBatchIDnAssign() {
   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());

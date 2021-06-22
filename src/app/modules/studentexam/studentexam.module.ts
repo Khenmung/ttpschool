@@ -7,13 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { StudentSubjectModule } from '../StudentSubject/student-subject.module';
-import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
-import { ExamstudentresultComponent } from './examstudentresult/examstudentresult.component';
-import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult/examstudentsubjectresult.component';
 
 
 @NgModule({
-  declarations: [studentexamComponents, SlotnclasssubjectComponent, ExamstudentresultComponent, ExamstudentsubjectresultComponent],
+  declarations: [studentexamComponents, 
+   ],
   imports: [
     CommonModule,
     StudentexamRoutingModule,

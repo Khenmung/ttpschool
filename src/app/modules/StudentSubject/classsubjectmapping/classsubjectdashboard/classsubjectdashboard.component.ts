@@ -1,15 +1,14 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { ClasssubjectComponent } from '../classsubject/classsubject.component';
+//import { ClasssubjectComponent } from '../classsubject/classsubject.component';
 
 @Component({
   selector: 'app-classsubjectdashboard',
@@ -19,7 +18,7 @@ import { ClasssubjectComponent } from '../classsubject/classsubject.component';
 export class ClasssubjectdashboardComponent implements OnInit {
 
   @ViewChild("table") mattable;
-  @ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
+  //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
@@ -38,7 +37,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   SubjectTypes = [];
   CurrentBatchId = 0;
   Batches = [];
-  ClassSubjectList: IClassSubject[];
+  ClassSubjectList: IClassSubject[] = [];
   dataSource: MatTableDataSource<IClassSubject>;
   allMasterData = [];
   searchForm = this.fb.group({
@@ -58,9 +57,9 @@ export class ClasssubjectdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    'ClassId',
-    'SubjectId',
-    'SubjectTypeId',
+    'ClassName',
+    'SubjectName',
+    'SubjectType',
     'Active',
     'Action'
   ];
@@ -76,19 +75,21 @@ export class ClasssubjectdashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+
+
+  }
+  PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      if (this.Classes.length == 0)
-      {
+      if (this.Classes.length == 0) {
         this.GetMasterData();
-        this.GetSubjectTypes();
-      } 
+      }
       else {
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
         this.shareddata.CurrentSubjectTypes.subscribe(a => this.SubjectTypes = a);
@@ -98,11 +99,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
         this.GetCurrentBatchIDnAssign();
         this.loading = false;
       }
+      this.GetSubjectTypes();
     }
-
-  }
-  PageLoad() {
-
   }
   GetCurrentBatchIDnAssign() {
     let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
@@ -120,20 +118,20 @@ export class ClasssubjectdashboardComponent implements OnInit {
   }
 
   View(element) {
-    debugger;
-    this.ClassSubjectId = element.ClassSubjectId;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    setTimeout(() => {
-      this.classSubjectAdd.PageLoad();
-    }, 50);
+    // debugger;
+    // this.ClassSubjectId = element.ClassSubjectId;
+    // this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
+    // setTimeout(() => {
+    //   this.classSubjectAdd.PageLoad();
+    // }, 50);
   }
 
   addnew() {
-    this.ClassSubjectId = -1;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    setTimeout(() => {
-      this.classSubjectAdd.PageLoad();
-    }, 50);
+    // this.ClassSubjectId = -1;
+    // this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
+    // setTimeout(() => {
+    //   this.classSubjectAdd.PageLoad();
+    // }, 50);
   }
 
   GetClassSubject() {
@@ -169,6 +167,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
     list.PageName = "ClassSubjects";
     list.filter = [filterStr];
+    this.ClassSubjectList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
@@ -183,32 +182,43 @@ export class ClasssubjectdashboardComponent implements OnInit {
             Active: item.Active
           }
         })
-        if (this.searchForm.get("searchSubjectId").value == 0 && this.searchForm.get("searchSubjectTypeId").value == 0) {
-          this.ClassSubjectList = this.Subjects.map(s => {
-            let existing = firstData.filter(e => e.SubjectId == s.MasterDataId);
+        var filteredSubjects = [...this.Subjects];
+        if (this.searchForm.get("searchSubjectId").value > 0) {
+          filteredSubjects = this.Subjects.filter(sf => sf.MasterDataId == this.searchForm.get("searchSubjectId").value)
+        }
+        filteredSubjects.forEach(s => {
+          this.SubjectTypes.forEach(st => {
+
+            let existing = firstData.filter(e => e.SubjectId == s.MasterDataId && e.SubjectTypeId == st.SubjectTypeId);
             if (existing.length > 0) {
-              return {
+              this.ClassSubjectList.push({
                 ClassSubjectId: existing[0].ClassSubjectId,
                 SubjectId: existing[0].SubjectId,
+                SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
                 SubjectTypeId: existing[0].SubjectTypeId,
+                SubjectType: this.SubjectTypes.filter(t => t.SubjectTypeId == existing[0].SubjectTypeId)[0].SubjectTypeName,
+                ClassName: this.Classes.filter(c => c.MasterDataId == existing[0].ClassId)[0].MasterDataName,
                 ClassId: existing[0].ClassId,
                 Active: existing[0].Active
-              }
+              });
             }
             else
-              return {
+              this.ClassSubjectList.push({
                 ClassSubjectId: 0,
                 SubjectId: s.MasterDataId,
-                SubjectTypeId: this.SubjectTypes.filter(st => st.SubjectTypeName == 'Compulsory')[0].SubjectTypeId,
+                SubjectTypeId: st.SubjectTypeId,
+                SubjectType: st.SubjectTypeName,
                 ClassId: this.searchForm.get("searchClassId").value,
+                ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
+                SubjectName: s.MasterDataName,
                 Active: 0
-              }
-
+              });
           })
-        }
-        else {
-          this.ClassSubjectList = [...firstData];
-        }
+        })
+        // }
+        // else {
+        //   this.ClassSubjectList = [...firstData];
+        // }
         //this.shareddata.ChangeApplicationRoles(this.AppRoleList); 
         this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
         this.loading = false;
@@ -223,18 +233,21 @@ export class ClasssubjectdashboardComponent implements OnInit {
       searchBatchId: this.CurrentBatchId
     });
   }
-  updateActive(element) {
-    let toupdate = {
-      //ApplicationId:element.ApplicationId,      
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'patch')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+  updateActive(row, value) {
 
-        });
+    row.Active = value.checked ? 1 : 0;
+    row.Action = true;
+    // let toupdate = {
+    //   //ApplicationId:element.ApplicationId,      
+    //   Active: element.Active == 1 ? 0 : 1
+    // }
+    // this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'patch')
+    //   .subscribe(
+    //     (data: any) => {
+    //       // this.GetApplicationRoles();
+    //       this.alert.success("Data updated successfully.", this.optionAutoClose);
+
+    //     });
   }
   delete(element) {
     let toupdate = {
@@ -253,7 +266,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     debugger;
 
     let checkFilterString = "ClassId eq " + row.ClassId +
-      " and SubjectId eq " + row.SubjectId +
+      " and SubjectId eq " + row.SubjectId + ' and Active eq 1'
       // " and Active eq " + row.Active +
       this.StandardFilter;
 
@@ -270,6 +283,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          row.Ative = 0;
+          return;
         }
         else {
 
@@ -279,12 +294,10 @@ export class ClasssubjectdashboardComponent implements OnInit {
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ClassSubjectData.Active = 1;
           this.ClassSubjectData.BatchId = this.CurrentBatchId;
-          //console.log('data', this.ClassSubjectData);
           if (this.ClassSubjectData.ClassSubjectId == 0) {
-            this.ClassSubjectData["CreatedDate"] =new Date();
-            this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];            
+            this.ClassSubjectData["CreatedDate"] = new Date();
+            this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.ClassSubjectData["UpdatedDate"];
             delete this.ClassSubjectData["UpdatedBy"];
             this.insert(row);
@@ -292,13 +305,10 @@ export class ClasssubjectdashboardComponent implements OnInit {
           else {
             delete this.ClassSubjectData["CreatedDate"];
             delete this.ClassSubjectData["CreatedBy"];
-            this.ClassSubjectData["UpdatedDate"] =new Date();
+            this.ClassSubjectData["UpdatedDate"] = new Date();
             this.ClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update();
           }
-          //this.GetClassSubject();
-          // this.OutClassSubjectId.emit(0);
-          // this.CallParentPageFunction.emit();
         }
       });
   }
@@ -340,7 +350,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SubjectTypes = [...data.value];
-       })
+      })
   }
   GetMasterData() {
 
@@ -364,7 +374,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
-        this.shareddata.ChangeSubjectTypes(this.SubjectTypes);
+        //this.shareddata.ChangeSubjectTypes(this.SubjectTypes);
         this.shareddata.ChangeBatch(this.Batches);
         this.GetCurrentBatchIDnAssign();
         this.loading = false;
@@ -390,8 +400,11 @@ export class ClasssubjectdashboardComponent implements OnInit {
 export interface IClassSubject {
   ClassSubjectId: number;
   ClassId: number;
+  ClassName: string;
   SubjectId: number;
+  SubjectName: string;
   SubjectTypeId: string;
+  SubjectType: string;
   Active;
 }
 

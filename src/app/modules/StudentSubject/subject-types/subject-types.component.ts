@@ -60,20 +60,21 @@ export class SubjectTypesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
-    this.loading = true;
-    this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    if (this.LoginUserDetail == null)
-      this.nav.navigate(['/auth/login']);
-    else {
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.GetSubjectTypes();
-      this.GetMasterData();      
-    }
+    
   }
 
 PageLoad() {
-
+  
+  debugger;   
+  this.loading = true;
+  this.LoginUserDetail = this.tokenstorage.getUserDetail();
+  if (this.LoginUserDetail == null)
+    this.nav.navigate(['/auth/login']);
+  else {
+    this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+    this.GetSubjectTypes();
+    this.GetMasterData();      
+  }
 }
 GetCurrentBatchIDnAssign() {
   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
@@ -95,18 +96,10 @@ addnew(){
     this.dataSource = new MatTableDataSource<ISubjectType>(this.SubjectTypes);
   
 }
-updateActive(element) {
-  let toupdate = {
-    //ApplicationId:element.ApplicationId,      
-    Active: element.Active == 1 ? 0 : 1
-  }
-  this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'patch')
-    .subscribe(
-      (data: any) => {
-        // this.GetApplicationRoles();
-        this.alert.success("Data updated successfully.", this.optionAutoClose);
-
-      });
+updateActive(row,value) {
+  
+  row.Active = value.checked?1:0;
+  row.Action =true;
 }
 delete (element) {
   let toupdate = {
@@ -127,8 +120,8 @@ UpdateOrSave(row) {
   let checkFilterString = "SubjectTypeName eq '" + row.SubjectTypeName + "'" +
        this.StandardFilter;
 
-  if (row.ClassSubjectId > 0)
-    checkFilterString += " and SubjectTypeId ne " + row.ClassSubjectId;
+  if (row.SubjectTypeId > 0)
+    checkFilterString += " and SubjectTypeId ne " + row.SubjectTypeId;
 
   let list: List = new List();
   list.fields = ["SubjectTypeId"];
@@ -161,6 +154,7 @@ UpdateOrSave(row) {
           delete this.SubjectTypeData["CreatedBy"];
           this.SubjectTypeData["UpdatedDate"] = new Date();
           this.SubjectTypeData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+          console.log('this',this.SubjectTypeData)
           this.update();
         }        
       }
@@ -179,7 +173,7 @@ insert(row) {
 }
 update() {
 
-  this.dataservice.postPatch('ClassSubjects', this.SubjectTypeData, this.SubjectTypeData.SubjectTypeId, 'patch')
+  this.dataservice.postPatch('SubjectTypes', this.SubjectTypeData, this.SubjectTypeData.SubjectTypeId, 'patch')
     .subscribe(
       (data: any) => {
         this.alert.success("Data updated successfully.", this.optionAutoClose);
@@ -187,13 +181,13 @@ update() {
 }
 GetSubjectTypes() {
 
-  var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+  var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
   let list: List = new List();
 
   list.fields = ["SubjectTypeId", "SubjectTypeName","SelectHowMany","Active"];
   list.PageName = "SubjectTypes";
-  list.filter = ["Active eq 1 " + orgIdSearchstr];
+  list.filter = [orgIdSearchstr];
   //list.orderBy = "ParentId";
 
   this.dataservice.get(list)

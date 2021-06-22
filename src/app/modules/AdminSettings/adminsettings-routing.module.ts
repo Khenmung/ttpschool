@@ -13,10 +13,11 @@ const routes: Routes = [
   {
     path: '', component: ControlhomeComponent,
     children: [
+      { path: '', component: settingboardComponent },
       { path: 'addapproleuser', component: roleuseraddComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
-      { path: 'settings', component: settingboardComponent },
+      
     ]
   }
 ];

@@ -67,5 +67,22 @@ export class HeaderComponent implements OnInit {
   newsNEvents() {
     this.route.navigate(['/home/about/' + this.NewsNEventPageId]);
   }
-
+  goto(page) {
+    switch (page) {
+      case 'subject':
+        this.route.navigate(['/subject']);
+        break;
+      case 'exam':
+        this.route.navigate(['/exam']);
+        break;
+      case 'control':
+        this.route.navigate(['/control']);
+        break;
+      case 'admin':
+        this.route.navigate(['/admin']);
+        break;
+      default:
+        this.route.navigate(['/admin']);
+    }
+  }
 }

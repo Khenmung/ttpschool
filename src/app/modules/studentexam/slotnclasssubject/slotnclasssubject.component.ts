@@ -73,7 +73,10 @@ export class SlotnclasssubjectComponent implements OnInit {
       searchSlotId: [0],
       searchClassId: [0],
       searchSubjectId: [0],
-    });
+    });    
+  }
+
+  PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
@@ -83,10 +86,6 @@ export class SlotnclasssubjectComponent implements OnInit {
 
       this.GetMasterData();
     }
-  }
-
-  PageLoad() {
-
   }
   GetCurrentBatchIDnAssign() {
     let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());

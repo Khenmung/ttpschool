@@ -19,8 +19,9 @@
     position           : fixed;
     z-index            : 10;
     color              : white;
-    background         : url('../../../../assets/images/headerimg.svg');
-    background-size    : cover;
+    //background         : url('../../../../assets/images/headerimg.svg');
+    background:  linear-gradient(150deg, var(--maincolor2) 10%, #198CFF 70%, #006EDB 15%);
+    //background-size    : cover;
     //background-repeat: no-repeat;
     //background-size: cover;
     background-color   : var(--maincolor1); //#0F5298; //#4f8ec2;//
@@ -29,7 +30,9 @@
     //height:300px;
     max-width          : 100%;
 }
-
+button{
+    margin-right: 15px;
+}
 // @media only screen and (max-width: 600px) {
 //     mat-card{
 //         margin-left:0px;

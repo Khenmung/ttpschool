@@ -1,47 +1,53 @@
-<div #container>
+<!-- <div #container>
 <div style="padding:15px 15px 0px 15px;">
     <div><strong>Application Roles Users</strong></div>
 </div>
 <mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
 <alert></alert>
-<div style="padding: 20px;height:450px" fxLayout="row wrap">
-    <div [ngClass]="{'disableDiv': RoleUserId!=0}">
-        <mat-table #table [dataSource]="dataSource">
-            <ng-container matColumnDef="User">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Name
-                </mat-header-cell>
-                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    {{element.User}}
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Role">
-                <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.Role}}
-                </mat-cell>
-            </ng-container>           
-            <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox [checked]="element.Active==1?true:false" (click)="update(element)">
+<div style="padding: 20px;height:450px" fxLayout="row wrap"> -->
+<mat-card>
+    <mat-card-title>Application Roles Users</mat-card-title>
+    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+    <mat-card-content>
+        <div [ngClass]="{'disableDiv': RoleUserId!=0}">
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="User">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Name
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                        {{element.User}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Role">
+                    <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.Role}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox [checked]="element.Active==1?true:false" (click)="update(element)">
 
-                    </mat-checkbox>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef><button mat-mini-fab (click)="addnew()"><mat-icon>add</mat-icon></button>
-                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button mat-mini-fab (click)="View(element)">
-                        <mat-icon matTooltip="save">save</mat-icon>
-                    </button>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-        </mat-table>
-    </div>
-    <app-roleuseradd *ngIf="RoleUserId!=0" [RoleUserId]="RoleUserId" (OutRoleUserId)="GetRoleUserId($event)">
-    </app-roleuseradd>
-</div>
-</div>
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef><button mat-mini-fab (click)="addnew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button mat-mini-fab (click)="View(element)">
+                            <mat-icon matTooltip="save">save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+        <app-roleuseradd *ngIf="RoleUserId!=0" [RoleUserId]="RoleUserId" (OutRoleUserId)="GetRoleUserId($event)">
+        </app-roleuseradd>
+    </mat-card-content>
+</mat-card>

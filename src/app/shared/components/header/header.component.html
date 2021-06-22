@@ -5,20 +5,10 @@
             <button mat-button (click)="toggleSideBar()">
                 <mat-icon>menu</mat-icon>
             </button>
-            <a [routerLink]="['/home/display/0/0/']"><img src="assets/images/ttplogo1.png" alt="St Paul's Institute"
-                    width="50px" /></a>
-            <!-- <div fxLayout="row" fxLayoutAlign="space-between center">
-                <span><strong>ST. PAUL'S INSTITUTE</strong></span>
-            </div> -->
+            <a [routerLink]="['/home/display/0/0/']"><img style="border-radius: 3px;" src="assets/images/ttplogo1.png"
+                    alt="St Paul's Institute" width="50px" /></a>
         </div>
 
-        <!-- <div>
-            <div fxLayout="row" fxLayoutAlign="space-around end"><span style="height: 40px;">&nbsp;</span></div>
-            <div fxLayout="row" fxLayoutAlign="space-around end" *ngIf="!deviceXs">
-                   <span class="transparent">TRAIN UP A CHILD IN THE WAY HE SHOULD GO.</span> 
-                        <sub style="font-size:14px;color:lightgray">-Proverbs 22:16</sub>
-            </div>
-        </div> -->
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <span class="rightside" *ngIf="!deviceXs">
                 <button mat-button (click)="contactus()">
@@ -48,8 +38,25 @@
             </mat-menu>
         </div>
     </mat-toolbar-row>
-    <mat-toolbar-row fxShow.gt-xs fxHide.gt-xs style="height: 70px !important;box-shadow: 3px 3px 3px var(--maincolor2);"
-        fxLayout="row wrap" fxLayoutAlign="space-between center">
+    <mat-toolbar-row>
+        <span>
+            <button (click)="goto('control')">
+                <mat-icon>info</mat-icon> Control
+            </button>
+            <button (click)="goto('subject')">
+                <mat-icon>info</mat-icon> subject
+            </button>
+            <button (click)="goto('exam')">
+                <mat-icon>info</mat-icon> Exam
+            </button>
+            <button (click)="goto('admin')">
+                <mat-icon>info</mat-icon> Admin
+            </button>
+        </span>
+    </mat-toolbar-row>
+    <mat-toolbar-row fxShow.gt-xs fxHide.gt-xs
+        style="height: 70px !important;box-shadow: 3px 3px 3px var(--maincolor2);" fxLayout="row wrap"
+        fxLayoutAlign="space-between center">
         <!-- <div style="padding-left: 70px;padding-bottom: 10px;" fxLayout="row" fxLayoutAlign="center center">             
            
             <span><strong>ST. PAUL'S INSTITUTE</strong></span>            

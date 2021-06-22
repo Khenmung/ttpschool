@@ -75,6 +75,10 @@ export class ExamslotComponent implements OnInit {
       searchExamId: [0],
 
     });
+    
+  }
+
+  PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
@@ -84,10 +88,6 @@ export class ExamslotComponent implements OnInit {
 
       this.GetMasterData();
     }
-  }
-
-  PageLoad() {
-
   }
   GetCurrentBatchIDnAssign() {
     let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());

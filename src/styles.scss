@@ -36,21 +36,21 @@ body {
     //background-color: #0F5298;
 }
 
-div::-webkit-scrollbar {
-    width               : 8px;
-    //-webkit-appearance: none;
-    //width: 7px;
-}
+// div::-webkit-scrollbar {
+//     width               : 8px;
+//     //-webkit-appearance: none;
+//     //width: 7px;
+// }
 
-div::-webkit-scrollbar-thumb {
-    background   : #4678a0;
-    border-radius: 1rem;
+// div::-webkit-scrollbar-thumb {
+//     background   : #4678a0;
+//     border-radius: 1rem;
 
-}
+// }
 
-div::-webkit-scrollbar-track {
-    background: #20639B;
-}
+// div::-webkit-scrollbar-track {
+//     background: #20639B;
+// }
 
 a .ng-star-inserted:hover {
     cursor          : pointer;

@@ -2,7 +2,6 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AddMasterDataComponent } from '../../FeesManagement/add-master-data/add-master-data.component';
 import { roleuserdashboardComponent } from '../roleuser/roleuserdashboard/roleuserdashboard.component';
 import { AppuserdashboardComponent } from '../users/appuserdashboard/appuserdashboard.component';
-//import { RegisterComponent } from '../auth/register/register.component';
 import { RoleAppdashboardComponent } from '../roleapppermission/RoleAppdashboard/RoleAppdashboard.component';
 
 @Component({

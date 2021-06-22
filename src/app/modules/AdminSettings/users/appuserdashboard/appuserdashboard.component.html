@@ -1,53 +1,41 @@
-<alert></alert>
 <mat-card>
-    <mat-card-title>Application Users</mat-card-title>   
-    <mat-card-content>        
-        <div #container  [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;" fxLayout="row wrap">
+    <mat-card-title>Application Users</mat-card-title>
+    <mat-card-content>
+        <alert></alert>
+        <div #container [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;" fxLayout="row wrap">
             <div style="height:350px;width: 100%;">
-                <div>
-                    <form [formGroup]="searchForm">
-                        <!-- <mat-form-field appearance="outline">
-                            <mat-label>Organization</mat-label>
-                            <mat-select formControlName="Organization">
-                                <mat-option value="0">--select--</mat-option>
-                                <mat-option *ngFor="let item of Organizations" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}
+                <form [formGroup]="searchForm">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Department</mat-label>
+                        <mat-select formControlName="Department">
+                            <mat-option value="0">--select--</mat-option>
+                            <mat-option *ngFor="let item of Departments" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}
 
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field> -->
-                        <mat-form-field appearance="outline">
-                            <mat-label>Department</mat-label>
-                            <mat-select formControlName="Department">
-                                <mat-option value="0">--select--</mat-option>
-                                <mat-option *ngFor="let item of Departments" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}
-
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>Location</mat-label>
-                            <mat-select formControlName="Location">
-                                <mat-option value="0">--select--</mat-option>
-                                <mat-option *ngFor="let item of Locations" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>Name</mat-label>
-                            <input matInput formControlName="Name" autocomplete="off">
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>Email</mat-label>
-                            <input matInput formControlName="Email" autocomplete="off">
-                        </mat-form-field>
-                        <button class="mat-raised-button" (click)="GetAppUsers()">
-                            <mat-icon>search</mat-icon>
-                        </button>
-                    </form>
-                </div>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Location</mat-label>
+                        <mat-select formControlName="Location">
+                            <mat-option value="0">--select--</mat-option>
+                            <mat-option *ngFor="let item of Locations" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Name</mat-label>
+                        <input matInput formControlName="Name" autocomplete="off">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="Email" autocomplete="off">
+                    </mat-form-field>
+                    <button class="mat-raised-button" (click)="GetAppUsers()">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </form>
                 <mat-table #table [dataSource]="datasource">
                     <ng-container matColumnDef="UserId">
                         <mat-header-cell *matHeaderCellDef> User Id</mat-header-cell>
@@ -75,36 +63,6 @@
                             {{element.ContactNo}}
                         </mat-cell>
                     </ng-container>
-                    <!-- <ng-container matColumnDef="OrgName">
-                        <mat-header-cell *matHeaderCellDef> Organization </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            {{element.OrgName}}
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="Department">
-                        <mat-header-cell *matHeaderCellDef> Department </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            {{element.Department}}
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="Location">
-                        <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            {{element.Location}}
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="ValidFrom">
-                        <mat-header-cell *matHeaderCellDef> Valid From </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            {{element.ValidFrom|date:'dd/MM/yyyy'}}
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="ValidTo">
-                        <mat-header-cell *matHeaderCellDef> Valid To </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            {{element.ValidTo|date:'dd/MM/yyyy'}}
-                        </mat-cell>
-                    </ng-container> -->
                     <ng-container matColumnDef="Active">
                         <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                         <mat-cell *matCellDef="let element">
@@ -127,7 +85,7 @@
                                     <td>Role</td>
                                 </tr>
                                 <tr *ngFor="let item of detail.element.RoleUsers;let i=index">
-                                    <td>{{i+1}}</td>                                 
+                                    <td>{{i+1}}</td>
                                     <td>{{item.Role}}</td>
                                 </tr>
                             </table>
@@ -141,7 +99,7 @@
                         style="overflow: hidden">
                     </mat-row>
                 </mat-table>
-            </div>           
+            </div>
         </div>
         <app-user *ngIf="UserId>0" [UserId]="UserId" (UserIdOutput)="SetUser($event)"></app-user>
     </mat-card-content>

@@ -42,7 +42,7 @@
             </form>
             <mat-table #table [dataSource]="dataSource">                
                 <ng-container matColumnDef="StudentClassSubject">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class Subject
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class Rollno Subject
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         {{element.StudentClassSubject}}
@@ -67,7 +67,7 @@
                 <ng-container matColumnDef="ExamStatus">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Status
                     </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-cell style="display: flex;justify-content: right;" *matCellDef="let element">
                         <mat-form-field [style.width.px]="80">
                             <mat-select [(value)]="element.ExamStatus" [(ngModel)]="element.ExamStatus">
                                 <mat-option value="0">--status--</mat-option>
