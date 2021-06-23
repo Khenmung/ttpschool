@@ -24,7 +24,7 @@ export class NewsdashboardComponent implements OnInit {
   AllData = [];
   //columns: Array<any>;
   title: string;
-  Id: number = 0;
+  Id: number = -1;
   query: string;//displayedColumns: Array<any>;
   list: List;
 
@@ -43,7 +43,7 @@ export class NewsdashboardComponent implements OnInit {
     // if (this.Id == 0)
     //   this.getNewsNEventID()
     // else
-    
+    debugger;
     this.shareddata.CurrentNewsNEventId.subscribe(e => {
       this.Id = e
       //this.getDetails(this.Id);

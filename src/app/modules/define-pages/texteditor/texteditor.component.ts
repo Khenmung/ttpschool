@@ -106,6 +106,11 @@ export class TextEditorComponent implements OnInit {
         if (this.Id != undefined) {
           this.GetLatestPage(this.Id);
         }
+        else
+        {
+          this.loading =false;
+        }
+        
         this.ckeConfig = {
           allowedContent: false,
           extraPlugins: 'divarea',
@@ -116,6 +121,7 @@ export class TextEditorComponent implements OnInit {
           autoGrow_minHeight: 500,
           autoGrow_maxHeight: 600
         };
+        
       });
   }
   ngAfterViewInit() {
