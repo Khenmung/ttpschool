@@ -18,7 +18,9 @@ mat-card-title {
 .clickable:hover {
     background-color: var(--maincolor1);
 }
-
+.pcontent{
+    z-index: 999;
+}
 .contentbody {
     //border-top-left-radius: 1em;
     margin-top      : 16px;
@@ -104,7 +106,7 @@ mat-card-title:not(:first-child),
     flex-wrap   : nowrap;
     //overflow-x: hidden;
     clip-path   : inset(0 12% 0 0);
-
+    z-index: -1;
     .proto {
         width       : 22%;
         height      : calc(100% - 110px);

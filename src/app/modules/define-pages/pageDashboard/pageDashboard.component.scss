@@ -1,10 +1,11 @@
 :host{
-  max-width: 78%;
+  max-width: 100%;
 }
 mat-card{
   //border-top-left-radius: 1rem;
   background-color: lightgray;
   margin-top: 15px;
+  width:100%;
 }
 mat-table{
   background-color: rgb(255, 255, 255,.9);

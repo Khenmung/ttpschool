@@ -3,20 +3,23 @@
   }
 .dynamicimgborder{
     //border:1px solid white;
-    margin: 3px;
+    margin: 5px;
     margin-bottom: 5px;
+
 }
 .dynamicimgborderM{
     //border:1px solid white;
-    margin: 3px;
+    margin: 5px;
     margin-bottom: 5px;
 }
 span:hover{   
     border-radius: 3px;
     transition: all .3s linear;
     cursor:pointer;
-    transform: scale(1.1);
- 
+    transform: scale(1.1); 
+}
+img:hover{
+    cursor: pointer;
 }
 mat-card{
     background-color:var(--maincolor1);

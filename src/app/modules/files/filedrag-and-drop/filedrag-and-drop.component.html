@@ -18,20 +18,21 @@
             <div *ngIf="files.length>0">
                 <form [formGroup]="dragdropForm">
                     <div fxLayout="row" fxLayoutAlign="space-between center">
-                    <mat-form-field hintLabel="Max 100 characters" appearance="outline" fxFlex="60">
-                        <mat-label>Enter folder</mat-label>
-                        <input formControlName="folderName" #album matInput maxlength="100" autocomplete="off">
-                        <mat-hint align="end">{{album.value?.length || 0}}/100</mat-hint>
-                    </mat-form-field>
-                    <span style="margin:5px">or</span>
-                    <mat-form-field appearance="outline" fxFlex="30">
-                        <mat-label>Existing albums</mat-label>
-                        <mat-select formControlName="parentId">
-                            <mat-option *ngFor="let album of Albums" [value]="album.FileId">{{album.UpdatedFileFolderName}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
+                        <mat-form-field hintLabel="Max 100 characters" appearance="outline" fxFlex="60">
+                            <mat-label>Enter folder</mat-label>
+                            <input formControlName="folderName" #album matInput maxlength="100" autocomplete="off">
+                            <mat-hint align="end">{{album.value?.length || 0}}/100</mat-hint>
+                        </mat-form-field>
+                        <span style="margin:5px">or</span>
+                        <mat-form-field appearance="outline" fxFlex="30">
+                            <mat-label>Existing albums</mat-label>
+                            <mat-select formControlName="parentId">
+                                <mat-option *ngFor="let album of Albums" [value]="album.FileId">
+                                    {{album.UpdatedFileFolderName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                     <div class="upload-table">
                         <table class="table">
                             <thead>
@@ -48,8 +49,8 @@
                         </table>
                     </div>
                     <div>
-                        <button [disabled]="Processing" class="mat-raised-button" matTooltip="upload" type="button" (click)="Upload()"
-                            fxFlex="5">
+                        <button [disabled]="Processing" class="mat-raised-button" matTooltip="upload" type="button"
+                            (click)="Upload()" fxFlex="5">
                             <mat-icon>file_upload</mat-icon>
                         </button>
                     </div>

@@ -5,7 +5,7 @@
     <mat-form-field appearance="outline">
       <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Search album" autocomplete="off">
     </mat-form-field>
-    <mat-divider style="border-top-color:lightslategrey;"></mat-divider>  
+    <mat-divider style="margin-left:30px;width:90%;border-top-color:lightslategrey;"></mat-divider>  
     <div fxLayout="row wrap" fxLayoutGap="50px" style="padding-top: 20px;">     
       
       <div class="whole" fxLayout="column" *ngFor="let album of Albums" (click)="view(album.FileId)">
