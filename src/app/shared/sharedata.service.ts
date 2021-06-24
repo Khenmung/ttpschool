@@ -34,7 +34,7 @@ export class SharedataService {
   private StudentNameSource = new BehaviorSubject('');
   private UploadTypeSource = new BehaviorSubject(this.items);
   private PagesDataSource = new BehaviorSubject(this.items);
-  private NewsNEventIdSource = new BehaviorSubject(0);
+  private NewsNEventIdSource = new BehaviorSubject(-1);
   private ReasonForLeavingSource = new BehaviorSubject(this.items);
   private SelectedBatchIdSource = new BehaviorSubject(0);
   private RandomImagesSource = new BehaviorSubject(this.items);
@@ -47,7 +47,7 @@ export class SharedataService {
   private ApplicationRolesSource = new BehaviorSubject(this.items);
   private SubjectsSource = new BehaviorSubject(this.items);
   private SubjectTypesSource = new BehaviorSubject(this.items);
-
+  
   CurrentSubjectTypes = this.SubjectTypesSource.asObservable(); 
   CurrentSubjects = this.SubjectsSource.asObservable(); 
   CurrentApplicationRoles = this.ApplicationRolesSource.asObservable(); 

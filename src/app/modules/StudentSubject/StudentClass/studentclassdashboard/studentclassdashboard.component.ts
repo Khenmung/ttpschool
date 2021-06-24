@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
@@ -15,7 +17,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./studentclassdashboard.component.scss']
 })
 export class StudentclassdashboardComponent implements OnInit {
-
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   LoginUserDetail: any[] = [];
@@ -92,6 +95,7 @@ export class StudentclassdashboardComponent implements OnInit {
         this.GetMasterData();
       }
       else {
+        this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
         this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
         this.CurrentBatchId = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch())[0].MasterDataId;
 
@@ -194,6 +198,8 @@ export class StudentclassdashboardComponent implements OnInit {
         })
 
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
         this.loading = false;
 
       })
@@ -318,7 +324,8 @@ export class StudentclassdashboardComponent implements OnInit {
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
-
+        
+        this.shareddata.ChangeFeeType(this.FeeTypes);
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeBatch(this.Batches);
         this.GetCurrentBatchIDnAssign();

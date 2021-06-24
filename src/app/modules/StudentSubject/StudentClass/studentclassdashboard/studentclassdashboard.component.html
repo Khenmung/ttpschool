@@ -1,11 +1,11 @@
 <mat-card>
-    <mat-card-title>Class Subject</mat-card-title>
+    <mat-card-title>Student Class</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Batch</mat-label>
                 <mat-select formControlName="searchBatchId">
                     <mat-option value="0">--select--</mat-option>
@@ -13,7 +13,7 @@
                         {{item.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="searchClassId">
@@ -31,9 +31,9 @@
                 <mat-icon>clear_all</mat-icon>
             </button>
         </form>
-        <mat-table #table [dataSource]="dataSource">
+        <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="Student">
-                <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Student </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.Student}}
                 </mat-cell>
@@ -46,21 +46,21 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="RollNo">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>RollNo
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>RollNo
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     {{element.RollNo}}                    
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Section">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Section
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Section
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     {{element.Section}}                    
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="FeeType">
-                <mat-header-cell *matHeaderCellDef> Fee Type </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Fee Type </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                    {{element.FeeType}}
                 </mat-cell>
@@ -101,5 +101,6 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
+        <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
     </mat-card-content>
 </mat-card>

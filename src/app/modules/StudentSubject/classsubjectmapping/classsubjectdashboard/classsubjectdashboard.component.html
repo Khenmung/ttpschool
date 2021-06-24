@@ -54,10 +54,15 @@
                     {{element.SubjectName}}
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="SubjectType">
+            <ng-container matColumnDef="SubjectTypeId">
                 <mat-header-cell *matHeaderCellDef> Subject Type </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                   {{element.SubjectType}}
+                   <mat-form-field>
+                       <mat-label>subject type</mat-label>
+                       <mat-select [(value)]="element.SubjectTypeId" [(ngModel)]="element.SubjectTypeId">
+                        <mat-option *ngFor="let item of SubjectTypes" [value]="item.SubjectTypeId">{{item.SubjectTypeName}}</mat-option>
+                       </mat-select>
+                   </mat-form-field>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Active">

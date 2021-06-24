@@ -43,7 +43,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   searchForm = this.fb.group({
     searchBatchId: [0],
     searchSubjectId: [0],
-    searchSubjectTypeId: [0],
+    //searchSubjectTypeId: [0],
     searchClassId: [0],
   });
   ClassSubjectId = 0;
@@ -59,7 +59,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   displayedColumns = [
     'ClassName',
     'SubjectName',
-    'SubjectType',
+    'SubjectTypeId',
     'Active',
     'Action'
   ];
@@ -87,12 +87,14 @@ export class ClasssubjectdashboardComponent implements OnInit {
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      if (this.Classes.length == 0) {
+      this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+      //this.shareddata.CurrentFeeType.subscribe(r => this.FeeTypes = r);
+
+      if (this.Classes.length == 0 || this.Subjects.length==0) {
         this.GetMasterData();
       }
       else {
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-        this.shareddata.CurrentSubjectTypes.subscribe(a => this.SubjectTypes = a);
         this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
         this.CurrentBatchId = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch())[0].MasterDataId;
 
@@ -141,8 +143,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
     if (this.searchForm.get("searchSubjectId").value != 0)
       filterStr += " and SubjectId eq " + this.searchForm.get("searchSubjectId").value;
-    if (this.searchForm.get("searchSubjectTypeId").value != 0)
-      filterStr += " and SubjectTypeId eq " + this.searchForm.get("searchSubjectTypeId").value;
+    // if (this.searchForm.get("searchSubjectTypeId").value != 0)
+    //   filterStr += " and SubjectTypeId eq " + this.searchForm.get("searchSubjectTypeId").value;
 
     let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
     let batchId = 0;
@@ -187,16 +189,16 @@ export class ClasssubjectdashboardComponent implements OnInit {
           filteredSubjects = this.Subjects.filter(sf => sf.MasterDataId == this.searchForm.get("searchSubjectId").value)
         }
         filteredSubjects.forEach(s => {
-          this.SubjectTypes.forEach(st => {
+          //this.SubjectTypes.forEach(st => {
 
-            let existing = firstData.filter(e => e.SubjectId == s.MasterDataId && e.SubjectTypeId == st.SubjectTypeId);
+            let existing = firstData.filter(e => e.SubjectId == s.MasterDataId);
             if (existing.length > 0) {
               this.ClassSubjectList.push({
                 ClassSubjectId: existing[0].ClassSubjectId,
                 SubjectId: existing[0].SubjectId,
                 SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
                 SubjectTypeId: existing[0].SubjectTypeId,
-                SubjectType: this.SubjectTypes.filter(t => t.SubjectTypeId == existing[0].SubjectTypeId)[0].SubjectTypeName,
+                //SubjectType: this.SubjectTypes.filter(t => t.SubjectTypeId == existing[0].SubjectTypeId)[0].SubjectTypeName,
                 ClassName: this.Classes.filter(c => c.MasterDataId == existing[0].ClassId)[0].MasterDataName,
                 ClassId: existing[0].ClassId,
                 Active: existing[0].Active
@@ -206,14 +208,14 @@ export class ClasssubjectdashboardComponent implements OnInit {
               this.ClassSubjectList.push({
                 ClassSubjectId: 0,
                 SubjectId: s.MasterDataId,
-                SubjectTypeId: st.SubjectTypeId,
-                SubjectType: st.SubjectTypeName,
+                SubjectTypeId: 0,
+                //SubjectType: st.SubjectTypeName,
                 ClassId: this.searchForm.get("searchClassId").value,
                 ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
                 SubjectName: s.MasterDataName,
                 Active: 0
               });
-          })
+          //})
         })
         // }
         // else {
@@ -264,9 +266,9 @@ export class ClasssubjectdashboardComponent implements OnInit {
   UpdateOrSave(row) {
 
     debugger;
-
+    var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail); 
     let checkFilterString = "ClassId eq " + row.ClassId +
-      " and SubjectId eq " + row.SubjectId + ' and Active eq 1'
+      " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ' + StandardFilter;
       // " and Active eq " + row.Active +
       this.StandardFilter;
 
@@ -350,6 +352,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SubjectTypes = [...data.value];
+        this.shareddata.ChangeSubjectTypes(this.SubjectTypes);
+        
       })
   }
   GetMasterData() {
@@ -369,14 +373,13 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
-        //this.SubjectTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECTTYPE);
         this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
 
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
-        //this.shareddata.ChangeSubjectTypes(this.SubjectTypes);
         this.shareddata.ChangeBatch(this.Batches);
         this.GetCurrentBatchIDnAssign();
+        this.GetSubjectTypes();
         this.loading = false;
       });
   }
@@ -403,8 +406,8 @@ export interface IClassSubject {
   ClassName: string;
   SubjectId: number;
   SubjectName: string;
-  SubjectTypeId: string;
-  SubjectType: string;
+  SubjectTypeId: number;
+  //SubjectType: string;
   Active;
 }
 
