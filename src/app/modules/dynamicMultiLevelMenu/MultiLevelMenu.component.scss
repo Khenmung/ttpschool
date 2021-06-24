@@ -61,14 +61,15 @@ div[dir=ltr] .icon-container {
   //padding-bottom: 1px;
 }
 
-// ::ng-deep .ng-trigger-SlideInOut:hover {
-//   a .ng-star-inserted:hover {
-//     //margin-top: 3px;
-//     //margin-bottom: 3px;
-//     //line-height: 35px;
-//     background-color: var(--maincolor1);
-//   }
-// }
+::ng-deep .ng-trigger-SlideInOut:hover {
+  a .ng-star-inserted:hover {
+    border-top: 1px solid var(--maincolor1);
+    border-bottom: 1px solid var(--maincolor1);
+    //margin-bottom: 1px;
+    //line-height: 35px;
+    background-color: var(--mainTitleColor);
+  }
+}
 ::ng-deep .label{
   margin: auto;
   margin-left: 0px;

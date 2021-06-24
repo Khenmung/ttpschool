@@ -4,8 +4,8 @@
         <span *ngIf="ParentLink!=null" style="color:lightgray">
             <a class="clickable" [routerLink]="[ParentLink]">{{ParentPage}}</a> > {{Title}}
         </span>
-        <span *ngIf="ParentLink==null" style="padding: 20px;color:lightgrey">
-            <span *ngIf="ParentLink==null">{{ParentPage }}>{{ Title}}</span>
+        <span *ngIf="ParentLink==null" style="padding: 30px;color:lightgrey">
+            <span *ngIf="ParentLink==null">{{ParentPage }} > {{ Title}}</span>
         </span>
     </mat-card-subtitle>
     <mat-card-content>

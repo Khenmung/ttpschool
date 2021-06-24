@@ -1,5 +1,5 @@
 export class globalconstants {
-    public static apiUrl: string = "http://localhost:8070";//"https://ettest.ttpsolutions.in";//
+    public static apiUrl: string = "https://api.stpaulsinstitute.in";//"http://localhost:8070";//"https://ettest.ttpsolutions.in";//
     public static fileUrl: string = '';
     public static RequestLimit =20971520; //536870912;
                                 

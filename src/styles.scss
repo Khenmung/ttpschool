@@ -57,8 +57,6 @@ a .ng-star-inserted:hover {
     background-color: var(--mainTitleColor);
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    border-bottom:1px solid var(--maincolor1);
-    border-top:1px solid var(--maincolor1);
     color: white;
     //clip-path       : polygon(0 0, 90% 0, 100% 50%, 90% 100%,0% 100%);
 }
@@ -123,6 +121,8 @@ input[type="radio"] {
 .mat-form-field-infix {
     padding-bottom: 1em !important;
 }
-
+.disableDiv{
+    pointer-events:none;
+}
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';

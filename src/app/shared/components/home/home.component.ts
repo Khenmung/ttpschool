@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MediaChange, MediaObserver } from '@angular/flex-layout'
-import { ChangeDetectorRef } from '@angular/core';
-import { NaomitsuService } from '../../databaseService';
-import { SharedataService } from '../../sharedata.service';
-import { List } from '../../interface';
+import { MediaObserver } from '@angular/flex-layout'
 
 @Component({
   selector: 'app-home',
