@@ -1,4 +1,6 @@
+import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
 import { NaomitsuService } from "./databaseService";
+import { List } from "./interface";
 
 export class globalconstants {
     public static apiUrl: string = "http://localhost:8090";//"https://ettest.ttpsolutions.in";//
@@ -54,10 +56,7 @@ export class globalconstants {
         { 'type': 'read', 'val': 3 },
         { 'type': 'denied', 'val': 4 }
     ];
-    public static getCurrentBatch() {
-        let currentyear = new Date().getFullYear();
-        return currentyear.toString() + "-" + (currentyear + 1).toString();
-    }
+    
     constructor(
         private dataservice: NaomitsuService
     ) {

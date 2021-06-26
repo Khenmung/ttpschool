@@ -97,7 +97,7 @@ export class AddstudentclassComponent implements OnInit {
     this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
     this.shareddata.CurrentStudentId.subscribe(id => (this.StudentId = id));
     this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
-    this.shareddata.CurrentBatchId.subscribe(bid => (this.BatchId = bid));
+    this.shareddata.CurrentSelectedBatchId.subscribe(bid => (this.BatchId = bid));
     this.shareddata.CurrentStudentName.subscribe(name=>(this.StudentName=name));
     this.shareddata.CurrentSelectedBatchId.subscribe(Id=>(this.SelectedBatchId=Id));
 
@@ -118,7 +118,9 @@ export class AddstudentclassComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
         //debugger;
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
         this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEETYPE);
         this.LanguageSubjectLower = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTLOWERCLS);
         this.LanguageSubjectUpper = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].LANGUAGESUBJECTUPPERCLS);
@@ -126,7 +128,7 @@ export class AddstudentclassComponent implements OnInit {
         // let currentBatch = globalconstants.getCurrentBatch();
         // let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
         // if (currentBatchObj.length > 0) {
-        //   this.currentbatchId = currentBatchObj[0].MasterDataId
+        //   this.SelectedBatchId = currentBatchObj[0].MasterDataId
         // }
 
         this.aRoute.paramMap.subscribe(param => {

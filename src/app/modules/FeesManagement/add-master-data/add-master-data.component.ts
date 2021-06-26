@@ -103,7 +103,7 @@ export class AddMasterDataComponent implements OnInit {
           });
           
           this.DefinedMaster = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
-          console.log("DefinedMaster",this.DefinedMaster);
+          //console.log("DefinedMaster",this.DefinedMaster);
           let applicationData = globalconstants.MasterDefinitions[0].application;
           this.ApplicationDataStatus=this.getSettingStatus(applicationData);
           

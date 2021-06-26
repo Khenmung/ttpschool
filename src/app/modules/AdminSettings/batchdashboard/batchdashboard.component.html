@@ -1,23 +1,31 @@
 <mat-card>
-    <mat-card-title>Subject Types</mat-card-title>
+    <mat-card-title>Class Subject</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <mat-table #table [dataSource]="dataSource">
-            <ng-container matColumnDef="SubjectTypeName">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Subject Type Name
+            <ng-container matColumnDef="BatchId">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Batch Id
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    {{element.SubjectTypeName}}
+                    {{element.BatchId}}                    
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="SelectHowMany">
-                <mat-header-cell *matHeaderCellDef> No. Of Subject to Select </mat-header-cell>
+            <ng-container matColumnDef="BatchName">
+                <mat-header-cell *matHeaderCellDef> Batch </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field [style.width.px]="150">
-                        <input matInput [(value)]="element.SelectHowMany" [(ngModel)]="element.SelectHowMany">
+                    <mat-form-field>
+                        <mat-label>batch</mat-label>
+                        <input matInput [(value)]="element.BatchName" [(ngModel)]="element.BatchName" [maxlength]="50">
                     </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="CurrentBatch">
+                <mat-header-cell *matHeaderCellDef> Current Batch </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateCurrentBatch(element,$event)" [checked]="element.CurrentBatch==1?true:false">
+                    </mat-checkbox>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Active">
@@ -29,14 +37,15 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button matTooltip="add new" mat-mini-fab (click)="addnew()">
+                    <button matTooltip="add" mat-mini-fab (click)="addnew()">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="CheckBatchIdForEdit==1" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
+
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

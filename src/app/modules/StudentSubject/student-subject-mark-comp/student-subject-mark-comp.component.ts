@@ -72,6 +72,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
   }
   PageLoad() {
+    this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
     this.GetMasterData();
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
@@ -111,7 +112,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           this.classSubjectComponentData.SubjectComponentId = row.SubjectComponentId;
           this.classSubjectComponentData.FullMark = row.FullMark;
           this.classSubjectComponentData.PassMark = row.PassMark;
-          this.classSubjectComponentData.BatchId = this.CurrentBatchId;
+          this.classSubjectComponentData.BatchId = this.SelectedBatchId;
           this.classSubjectComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (this.classSubjectComponentData.ClassSubjectMarkComponentId == 0) {
@@ -176,10 +177,11 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECTMARKCOMPONENT);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
-
+        
         this.GetClassSubject();
         this.loading = false;
       });
@@ -206,15 +208,15 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       return s;
     })
   }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-    }
-  }
+  // GetCurrentBatchIDnAssign() {
+  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
+  //   if (CurrentBatches.length > 0) {
+  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
+  //   }
+  // }
   GetClassSubject() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.CurrentBatchId;
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
     list.fields = [

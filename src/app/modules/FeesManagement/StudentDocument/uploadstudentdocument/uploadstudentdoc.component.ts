@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
@@ -45,7 +46,7 @@ export class StudentDocumentComponent implements OnInit {
   constructor(private fileUploadService: FileUploadService,
     private alertMessage: AlertService,
     private routeUrl: ActivatedRoute,
-    private route: Router,
+    private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder
     ) { }
@@ -159,7 +160,8 @@ export class StudentDocumentComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].DOCUMENTTYPE);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         this.GetDocuments();
       });
 

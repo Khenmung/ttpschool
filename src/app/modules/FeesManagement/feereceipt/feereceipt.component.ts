@@ -1,8 +1,8 @@
-import { DatePipe } from '@angular/common';
+//import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+//import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
@@ -24,6 +24,7 @@ export class FeereceiptComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  CurrentBatchId=0;
   studentInfoTodisplay = {
     Currentbatch: '',
     currentbatchId: 0,
@@ -61,6 +62,7 @@ export class FeereceiptComponent implements OnInit {
   dataSource: MatTableDataSource<IStudentFeePaymentReceipt>;
   dataReceiptSource: MatTableDataSource<IReceipt>;
   allMasterData = [];
+  SelectedBatchId =0;
   searchForm = new FormGroup({
     StudentId: new FormControl(0),
   });
@@ -79,9 +81,6 @@ export class FeereceiptComponent implements OnInit {
   };
   constructor(private dataservice: NaomitsuService,
     private alert: AlertService,
-    private route: ActivatedRoute,
-    private nav: Router,
-    private datepipe: DatePipe,
     private shareddata:SharedataService) { }
 
   ngOnInit(): void {
@@ -110,9 +109,10 @@ export class FeereceiptComponent implements OnInit {
     this.shareddata.CurrentSection.subscribe(pr=>(this.Sections=pr));
     this.shareddata.CurrentStudentId.subscribe(id=>(this.studentInfoTodisplay.StudentId=id));
     this.shareddata.CurrentStudentClassId.subscribe(scid=>(this.studentInfoTodisplay.StudentClassId=scid));
-    this.shareddata.CurrentBatchId.subscribe(b=>(this.studentInfoTodisplay.currentbatchId=b));
+    this.shareddata.CurrentSelectedBatchId.subscribe(b=>(this.SelectedBatchId=b));
+    this.studentInfoTodisplay.currentbatchId =this.SelectedBatchId;
     this.shareddata.CurrentFeeNames.subscribe(b=>(this.FeeNames=b));
-    
+        
     this.GetStudentClass();
     // this.route.paramMap.subscribe(param => {
     //   this.studentInfoTodisplay.StudentId = +param.get("id");
@@ -324,16 +324,11 @@ export class FeereceiptComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
         
-        let currentBatch = globalconstants.getCurrentBatch();
-        let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
-        if (currentBatchObj.length > 0) {
-          this.studentInfoTodisplay.currentbatchId = currentBatchObj[0].MasterDataId
-        }
-        else
-          this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
+          this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
+        
         this.GetStudentClass();
       });
 

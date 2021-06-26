@@ -29,7 +29,7 @@ export class ExamslotComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   ExamSlots: IExamSlots[] = [];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   Exams = [];
   ExamNames = [];
   SlotNames = [];
@@ -84,17 +84,18 @@ export class ExamslotComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
 
       this.GetMasterData();
     }
   }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-    }
-  }
+  // GetCurrentBatchIDnAssign() {
+  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
+  //   if (CurrentBatches.length > 0) {
+  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
+  //   }
+  // }
   updateActive(row, value) {
     row.Action = true;
     row.Active = row.Active == 1 ? 0 : 1;
@@ -152,7 +153,7 @@ export class ExamslotComponent implements OnInit {
           this.ExamSlotsData.StartTime = row.StartTime;
           this.ExamSlotsData.EndTime = row.EndTime;
           this.ExamSlotsData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ExamSlotsData.BatchId = this.CurrentBatchId;
+          this.ExamSlotsData.BatchId = this.SelectedBatchId;
           //console.log('data', this.ClassSubjectData);
           if (this.ExamSlotsData.ExamSlotId == 0) {
             this.ExamSlotsData["CreatedDate"] = new Date();
@@ -215,7 +216,7 @@ export class ExamslotComponent implements OnInit {
   }
   GetExamSlots() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.CurrentBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
     if (this.searchForm.get("searchExamId").value == 0) {
       this.alert.error("Please select exam", this.optionAutoClose);
@@ -276,8 +277,6 @@ export class ExamslotComponent implements OnInit {
         this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
-        //this.GetExamSlots();
         this.GetExams();
       });
   }

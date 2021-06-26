@@ -117,7 +117,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     
     this.shareddata.CurrentStudentId.subscribe(fy=>(this.studentInfoTodisplay.StudentId=fy)); 
     this.shareddata.CurrentStudentClassId.subscribe(fy=>(this.studentInfoTodisplay.StudentClassId=fy));
-    this.shareddata.CurrentBatchId.subscribe(fy=>(this.studentInfoTodisplay.BatchId =fy));
+    this.shareddata.CurrentSelectedBatchId.subscribe(fy=>(this.studentInfoTodisplay.BatchId =fy));
 
     this.shareddata.CurrentFeeNames.subscribe(fy=>(this.FeeNames=fy)); 
     this.shareddata.CurrentClasses.subscribe(fy=>(this.Classes=fy));
@@ -139,7 +139,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.cur=c));
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);

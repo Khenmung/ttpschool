@@ -38,13 +38,13 @@ export class studentsubjectdashboardComponent implements OnInit {
   Sections = [];
   Classes = [];
   Subjects = [];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   Batches = [];
   StudentSubjectList: IStudentSubject[];
   dataSource: MatTableDataSource<IStudentSubject>;
   allMasterData = [];
   searchForm = this.fb.group({
-    searchBatchId: [0],
+    //searchBatchId: [0],
     searchClassId: [0],
     searchSubjectId: [0],
     searchSection: [''],
@@ -90,25 +90,19 @@ export class studentsubjectdashboardComponent implements OnInit {
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
+      this.shareddata.CurrentSelectedBatchId.subscribe(b=>{
+        this.SelectedBatchId == b
+        // this.searchForm.patchValue({
+        //   "searchBatchId": this.SelectedBatchId
+        // })
+      });
       if (this.Classes.length == 0)
         this.GetMasterData();
       else {
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-        this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-        this.CurrentBatchId = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch())[0].MasterDataId;
-
-        this.GetCurrentBatchIDnAssign();
+        
         this.loading = false;
       }
-    }
-  }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-      this.searchForm.patchValue({
-        "searchBatchId": this.CurrentBatchId
-      })
     }
   }
   GetClassSubjectId(event) {
@@ -122,12 +116,9 @@ export class studentsubjectdashboardComponent implements OnInit {
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
       ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
 
-    let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    let batchId = 0;
-    if (batchIds.length > 0) {
-      batchId = batchIds[0].MasterDataId;
-      filterStr += ' and Batch eq ' + batchId;
-    }
+    
+      filterStr += ' and Batch eq ' + this.SelectedBatchId;
+    
 
     if (filterStr.length == 0) {
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
@@ -229,7 +220,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       searchClassId: 0,
       searchSubjectId: 0,
       searchSubjectTypeId: 0,
-      searchBatchId: this.CurrentBatchId
+      //searchBatchId: this.SelectedBatchId
     });
   }
   UpdateActive(element, event) {
@@ -281,7 +272,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.StudentSubjectData.Active = row.Active;
           this.StudentSubjectData.StudentClassSubjectId = row.StudentClassSubjectId;
           this.StudentSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentSubjectData.BatchId = this.CurrentBatchId;
+          this.StudentSubjectData.BatchId = this.SelectedBatchId;
           this.StudentSubjectData.StudentClassId = row.StudentClassId;
           this.StudentSubjectData.ClassSubjectId = row.ClassSubjectId;
           //console.log('data', this.StudentSubjectData);
@@ -349,12 +340,12 @@ export class studentsubjectdashboardComponent implements OnInit {
 
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
+        var _currentBatchId = this.Batches.filter(b=>b.CurrentBatch==1)[0].BatchId;
         this.GetStudentClassSubject();
         this.loading = false;
       });

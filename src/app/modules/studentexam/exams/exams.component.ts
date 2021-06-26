@@ -8,7 +8,6 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { ISubjectType } from '../../StudentSubject/subject-types/subject-types.component';
 
 @Component({
   selector: 'app-exams',
@@ -30,7 +29,7 @@ export class ExamsComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   Exams : IExams[]=[];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   ExamNames =[];
   Batches = [];
   dataSource: MatTableDataSource<IExams>;
@@ -75,16 +74,17 @@ PageLoad() {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
     }
     this.GetMasterData();  
 }
-GetCurrentBatchIDnAssign() {
-  let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-  if (CurrentBatches.length > 0) {
-    this.CurrentBatchId = CurrentBatches[0].MasterDataId;   
-  }
-}
+// GetCurrentBatchIDnAssign() {
+//   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
+//   if (CurrentBatches.length > 0) {
+//     this.SelectedBatchId = CurrentBatches[0].MasterDataId;   
+//   }
+// }
 addnew(){
  
   let toadd={   
@@ -147,7 +147,7 @@ UpdateOrSave(row) {
         this.ExamsData.StartDate = row.StartDate;
         this.ExamsData.EndDate = row.EndDate;
         this.ExamsData.OrgId = this.LoginUserDetail[0]["orgId"];
-        this.ExamsData.BatchId = this.CurrentBatchId;
+        this.ExamsData.BatchId = this.SelectedBatchId;
         //console.log('data', this.ClassSubjectData);
         if (this.ExamsData.ExamId == 0) {
           this.ExamsData["CreatedDate"] = new Date();
@@ -239,9 +239,6 @@ GetMasterData() {
     .subscribe((data: any) => {
       this.allMasterData = [...data.value];
       this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
-      this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-      this.shareddata.ChangeBatch(this.Batches);
-      this.GetCurrentBatchIDnAssign();
       this.GetExams();
       
     });

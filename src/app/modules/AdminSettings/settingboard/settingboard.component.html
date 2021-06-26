@@ -9,13 +9,19 @@
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
+                <mat-icon>layers</mat-icon> Batches
+            </ng-template>
+            <app-batchdashboard></app-batchdashboard>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
                 <mat-icon>people</mat-icon> Users
             </ng-template>
             <app-appuserdashboard></app-appuserdashboard>
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
-                <mat-icon>group_work</mat-icon> Role User mapping
+                <mat-icon>group_work</mat-icon> Role User
             </ng-template>
             <app-roleuserdashboard></app-roleuserdashboard>
         </mat-tab>

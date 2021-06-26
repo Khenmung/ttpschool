@@ -6,29 +6,43 @@
 <alert></alert>
 <div style="padding: 20px;height:450px" fxLayout="row wrap"> -->
 <mat-card>
-    <mat-card-title>Application Roles Users</mat-card-title>
+    <mat-card-title>Role User Mapping</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
+        <mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <alert></alert>
+        
         <div [ngClass]="{'disableDiv': RoleUserId!=0}">
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="User">
+                <ng-container matColumnDef="UserId">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Name
                     </mat-header-cell>
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                        {{element.User}}
+                        <mat-form-field>
+                            <mat-label>user</mat-label>
+                            <mat-select [(value)]="element.UserId" [(ngModel)]="element.UserId">
+                                <mat-option *ngFor="let item of Users" [value]="item.ApplicationUserId">
+                                    {{item.UserName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Role">
+                <ng-container matColumnDef="RoleId">
                     <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.Role}}
+                        <mat-form-field>
+                            <mat-label>role</mat-label>
+                            <mat-select [(value)]="element.RoleId" [(ngModel)]="element.RoleId">
+                                <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-checkbox [checked]="element.Active==1?true:false" (click)="update(element)">
-
+                        <mat-checkbox [checked]="element.Active==1?true:false" (change)="updateActive(element)">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>
@@ -38,7 +52,7 @@
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button mat-mini-fab (click)="View(element)">
+                        <button mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon matTooltip="save">save</mat-icon>
                         </button>
                     </mat-cell>

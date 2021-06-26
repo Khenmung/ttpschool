@@ -30,7 +30,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   SubjectMarkComponents = [];
   MarkComponents = [];
   Classes = [];
@@ -89,20 +89,23 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
 
       this.GetMasterData();
     }
   }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-    }
-  }
+  // GetCurrentBatchIDnAssign() {
+  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
+  //   if (CurrentBatches.length > 0) {
+  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
+  //   }
+  // }
   updateActive(row, value) {
     //if(!row.Action)
     row.Action = !row.Action;
@@ -166,7 +169,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           this.ExamStudentSubjectResultData.StudentClassSubjectId = row.StudentClassSubjectId;
           this.ExamStudentSubjectResultData.ClassSubjectMarkComponentId = row.ClassSubjectMarkComponentId;
           this.ExamStudentSubjectResultData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ExamStudentSubjectResultData.BatchId = this.CurrentBatchId;
+          this.ExamStudentSubjectResultData.BatchId = this.SelectedBatchId;
           this.ExamStudentSubjectResultData.ExamStatus = _examstatus;
           this.ExamStudentSubjectResultData.Marks = row.Marks;
           //console.log('data', this.ClassSubjectData);
@@ -212,12 +215,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   GetStudentSubjects() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    let batchId = 0;
-    if (batchIds.length > 0) {
-      batchId = batchIds[0].MasterDataId;
-      filterStr += ' and BatchId eq ' + batchId;
-    }
+    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
     list.fields = [
@@ -267,7 +265,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetSubjectMarkComponents() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.CurrentBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
 
     //filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
@@ -309,7 +307,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetExamStudentSubjectResults() {
     this.ExamStudentSubjectResult = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.CurrentBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
       this.alert.error("Please select exam", this.optionAutoClose);
@@ -400,7 +398,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.CurrentBatchId;
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
 
@@ -434,7 +432,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMSTATUS);
@@ -442,7 +440,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASSGROUP);
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
+        //this.GetCurrentBatchIDnAssign();
         this.GetExams();
 
       });

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';
@@ -32,7 +33,10 @@ export class TodayCollectionComponent implements OnInit {
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: FormGroup;
   ErrorMessage: string = '';
-  constructor(private dataservice: NaomitsuService,
+  SelectedBatchId =0;
+  constructor(
+    private shareddata:SharedataService,
+    private dataservice: NaomitsuService,
     private formatdate: DatePipe,
     private fb: FormBuilder) { }
 
@@ -125,16 +129,10 @@ export class TodayCollectionComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
-        //let currentBatch = globalconstants.getCurrentBatch();
-        //let currentBatchObj = this.Batches.filter(item => item.MasterDataName == currentBatch);
-        // if (currentBatchObj.length > 0) {
-        //   this.studentInfoTodisplay.currentbatchId = currentBatchObj[0].MasterDataId
-        // }
-        // else
-        //   this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
-        //this.GetStudentFeePaymentDetails();
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
       });
 
   }

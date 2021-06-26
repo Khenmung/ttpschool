@@ -21,7 +21,7 @@ export class ExcelDataManagementComponent implements OnInit {
     private shareddata:SharedataService) {
 
   }
-  
+  SelectedBatchId =0;
   ngOnInit() {
     //this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     //this.GetMasterData();
@@ -34,11 +34,11 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentLocation.subscribe(c=>(this.Location=c));
     this.shareddata.CurrentClasses.subscribe(c=>(this.Classes=c));
     this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
-    this.shareddata.CurrentBatchId.subscribe(c=>(this.BatchId=c));
     this.shareddata.CurrentUploadType.subscribe(c=>(this.UploadTypes=c));
-    
+    this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+            
     this.uploadForm = this.fb.group({
-      BatchId:[this.BatchId],
+      BatchId:[this.SelectedBatchId],
       UploadTypeId: [0, [Validators.required]]
     })
   }
@@ -81,7 +81,6 @@ export class ExcelDataManagementComponent implements OnInit {
   Location = [];
   PrimaryContactFatherOrMother = [];
   studentData: any[];
-  BatchId=0;
   onselectchange(event) {
     //debugger;
 //    console.log('event', event);
@@ -281,8 +280,10 @@ export class ExcelDataManagementComponent implements OnInit {
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         //this.PrimaryContactFatherOrMother= this.getDropDownData(globalconstants.PRIMARYCONTACT);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
       });
 
   }

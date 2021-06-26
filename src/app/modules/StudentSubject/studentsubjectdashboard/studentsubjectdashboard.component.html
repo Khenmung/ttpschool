@@ -5,7 +5,7 @@
         <alert></alert>
         <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Batch</mat-label>
                 <mat-select formControlName="searchBatchId">
                     <mat-option value="0">--select--</mat-option>
@@ -13,7 +13,7 @@
                         {{item.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="searchClassId">

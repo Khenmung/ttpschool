@@ -24,7 +24,7 @@ export class SubjectdashboardComponent implements OnInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.subjecttypes.PageLoad();
-    }, 20);
+    }, 50);
 
   }
   tabChanged(tabChangeEvent: number) {

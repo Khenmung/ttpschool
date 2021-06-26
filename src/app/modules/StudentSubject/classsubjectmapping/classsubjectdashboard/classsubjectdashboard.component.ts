@@ -36,12 +36,14 @@ export class ClasssubjectdashboardComponent implements OnInit {
   Subjects = [];
   SubjectTypes = [];
   CurrentBatchId = 0;
+  SelectedBatchId = 0;
+  CheckBatchIDForEdit =1;
   Batches = [];
   ClassSubjectList: IClassSubject[] = [];
   dataSource: MatTableDataSource<IClassSubject>;
   allMasterData = [];
   searchForm = this.fb.group({
-    searchBatchId: [0],
+    //searchBatchId: [0],
     searchSubjectId: [0],
     //searchSubjectTypeId: [0],
     searchClassId: [0],
@@ -85,6 +87,12 @@ export class ClasssubjectdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+      // this.searchForm.patchValue({
+      //   "searchBatchId": this.SelectedBatchId
+      // })
+      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+      this.shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(e=>this.CheckBatchIDForEdit =e);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
@@ -96,23 +104,12 @@ export class ClasssubjectdashboardComponent implements OnInit {
       else {
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
         this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-        this.CurrentBatchId = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch())[0].MasterDataId;
-
-        this.GetCurrentBatchIDnAssign();
         this.loading = false;
       }
       this.GetSubjectTypes();
     }
   }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-      this.searchForm.patchValue({
-        "searchBatchId": this.CurrentBatchId
-      })
-    }
-  }
+  
   GetClassSubjectId(event) {
     this.ClassSubjectId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
@@ -145,13 +142,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
       filterStr += " and SubjectId eq " + this.searchForm.get("searchSubjectId").value;
     // if (this.searchForm.get("searchSubjectTypeId").value != 0)
     //   filterStr += " and SubjectTypeId eq " + this.searchForm.get("searchSubjectTypeId").value;
-
-    let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    let batchId = 0;
-    if (batchIds.length > 0) {
-      batchId = batchIds[0].MasterDataId;
-      filterStr += ' and BatchId eq ' + batchId;
-    }
+      filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
@@ -232,7 +223,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
       searchClassId: 0,
       searchSubjectId: 0,
 
-      searchBatchId: this.CurrentBatchId
+      //searchBatchId: this.SelectedBatchId
     });
   }
   updateActive(row, value) {
@@ -296,7 +287,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ClassSubjectData.BatchId = this.CurrentBatchId;
+          this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {
             this.ClassSubjectData["CreatedDate"] = new Date();
             this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -373,12 +364,12 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
         this.GetSubjectTypes();
         this.loading = false;
       });

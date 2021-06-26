@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
@@ -28,7 +30,7 @@ export class AddclassfeeComponent implements OnInit {
     FeeNameId: new FormControl(0, [Validators.required]),
     ClassId: new FormControl(0, [Validators.required]),
     Amount: new FormControl(0, [Validators.required]),
-    Batch: new FormControl(0, [Validators.required]),
+    //Batch: new FormControl(0, [Validators.required]),
     Active: new FormControl(true, [Validators.required]),
     LocationId: new FormControl(0)
   });
@@ -37,15 +39,23 @@ export class AddclassfeeComponent implements OnInit {
     FeeNameId: 0,
     ClassId: 0,
     Amount: 0,
-    Batch: 0,
+    BatchId: 0,
+    OrgId:0,
     Active: 0,
     LocationId: 0
   };
+  SelectedBatchId=0;
+  loginUserDetail=[];
   constructor(private dataservice: NaomitsuService,
     private alert: AlertService,
-    private router: Router) { }
+    private tokenService:TokenStorageService,
+    private shareddata:SharedataService
+    ) { }
 
   ngOnInit(): void {
+    this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+    this.shareddata.CurrentBatch.subscribe(b=>this.Batches=b);
+    this.loginUserDetail = this.tokenService.getUserDetail();
     this.GetMasterData();
   }
   get f() { return this.classfeeForm.controls }
@@ -62,7 +72,6 @@ export class AddclassfeeComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.classfeeForm.patchValue({ "LocationId": this.Locations[0].MasterDataId });
       });
@@ -77,17 +86,18 @@ export class AddclassfeeComponent implements OnInit {
     });
   }
   save() {
+    var orgIDFilter = ' and OrgId eq ' +  this.loginUserDetail[0]["orgId"];
     this.duplicate = false;
     let checkFilterString = "Active eq 1 " +
       " and FeeNameId eq " + this.classfeeForm.get("FeeNameId").value +
       " and ClassId eq " + this.classfeeForm.get("ClassId").value +
-      " and Batch eq " + this.classfeeForm.get("Batch").value
+      " and Batch eq " + this.SelectedBatchId +
     " and LocationId eq " + this.classfeeForm.get("LocationId").value
 
     let list: List = new List();
     list.fields = ["ClassFeeId"];
     list.PageName = "ClassFees";
-    list.filter = [checkFilterString];
+    list.filter = [checkFilterString + orgIDFilter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -107,7 +117,8 @@ export class AddclassfeeComponent implements OnInit {
     //this.checkDuplicate();
     this.classFeeData.Active = 1;
     this.classFeeData.Amount = this.classfeeForm.get("Amount").value;
-    this.classFeeData.Batch = this.classfeeForm.get("Batch").value;
+    this.classFeeData.BatchId = this.SelectedBatchId;
+    this.classFeeData.OrgId = this.loginUserDetail[0]["orgId"];
     this.classFeeData.ClassFeeId = this.classfeeForm.get("FeeNameId").value;
     this.classFeeData.ClassId = this.classfeeForm.get("ClassId").value;
     this.classFeeData.FeeNameId = this.classfeeForm.get("FeeNameId").value;
@@ -125,7 +136,8 @@ export class AddclassfeeComponent implements OnInit {
   update() {
     this.classFeeData.Active = 1;
     this.classFeeData.Amount = this.classfeeForm.get("Amount").value;
-    this.classFeeData.Batch = this.classfeeForm.get("Batch").value;
+    this.classFeeData.BatchId = this.SelectedBatchId;
+    this.classFeeData.OrgId = this.loginUserDetail[0]["orgId"];
     this.classFeeData.ClassFeeId = this.classfeeForm.get("ClassFeeId").value;
     this.classFeeData.ClassId = this.classfeeForm.get("ClassId").value;
     this.classFeeData.FeeNameId = this.classfeeForm.get("FeeNameId").value;

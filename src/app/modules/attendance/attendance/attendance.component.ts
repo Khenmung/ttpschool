@@ -40,7 +40,7 @@ export class AttendanceComponent implements OnInit {
   Sections = [];
   Classes = [];
   Subjects = [];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   Batches = [];
   AttendanceStatus = [];
   StudentAttendanceList: IStudentAttendance[] = [];
@@ -89,6 +89,7 @@ export class AttendanceComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
 
@@ -121,15 +122,15 @@ export class AttendanceComponent implements OnInit {
       }
     })
   }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-      this.searchForm.patchValue({
-        "searchBatchId": this.CurrentBatchId
-      })
-    }
-  }
+  // GetCurrentBatchIDnAssign() {
+  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
+  //   if (CurrentBatches.length > 0) {
+  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
+  //     this.searchForm.patchValue({
+  //       "searchBatchId": this.SelectedBatchId
+  //     })
+  //   }
+  // }
 
   GetStudentAttendance() {
 
@@ -150,12 +151,8 @@ export class AttendanceComponent implements OnInit {
       filterStr += " and Section eq " + this.searchForm.get("searchSectionId").value;
     }
 
-    let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    let batchId = 0;
-    if (batchIds.length > 0) {
-      batchId = batchIds[0].MasterDataId;
-      filterStr += ' and Batch eq ' + batchId;
-    }
+      filterStr += ' and Batch eq ' + this.SelectedBatchId;
+    
 
     if (filterStr.length == 0) {
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
@@ -310,7 +307,7 @@ export class AttendanceComponent implements OnInit {
           this.StudentAttendanceData.AttendanceDate = row.AttendanceDate;
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentAttendanceData.BatchId = this.CurrentBatchId;
+          this.StudentAttendanceData.BatchId = this.SelectedBatchId;
           this.StudentAttendanceData.AttendanceStatus = row.AttendanceStatus;
           this.StudentAttendanceData.Remarks = row.Remarks;
           //console.log('data', this.StudentSubjectData);
@@ -379,14 +376,10 @@ export class AttendanceComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].ATTENDANCESTATUS);
 
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
-        this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
-        //this.GetStudentAttendance();
         this.loading = false;
       });
   }

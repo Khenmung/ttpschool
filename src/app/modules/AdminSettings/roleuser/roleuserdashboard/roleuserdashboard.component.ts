@@ -19,7 +19,7 @@ import { roleuseraddComponent } from '../roleuseradd/roleuseradd.component';
 })
 export class roleuserdashboardComponent implements OnInit {
   @ViewChild("table") mattable;
-  @ViewChild("container") container:ElementRef;
+  @ViewChild("container") container: ElementRef;
   @ViewChild(roleuseraddComponent, { static: false }) roleuseradd: roleuseraddComponent;
   loading = false;
   LoginUserDetail: any[] = [];
@@ -53,11 +53,12 @@ export class roleuserdashboardComponent implements OnInit {
     UserId: 0,
     RoleUserId: 0,
     RoleId: 0,
+    OrgId: 0,
     Active: 1
   };
   displayedColumns = [
-    'User',
-    'Role',
+    'UserId',
+    'RoleId',
     'Active',
     'Action'
   ];
@@ -83,21 +84,7 @@ export class roleuserdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     }
     else {
-      this.shareddata.CurrentApplication.subscribe(c => this.Applications = c);
-      if (this.Applications.length == 0)
-      {
-        this.shareddata.GetApplication().subscribe((data:any)=>{
-          this.Applications = data.value.map(item=>item);
-        });
-        this.GetMasterData();
-      } 
-      else {
-        this.shareddata.CurrentDepartment.subscribe(c => this.Departments = c);
-        this.shareddata.CurrentLocation.subscribe(c => this.Locations = c);
-        this.shareddata.CurrentRoles.subscribe(c => this.Roles = c);
-        this.GetRoleUser();
-
-      }
+      this.GetMasterData();
     }
 
   }
@@ -119,12 +106,16 @@ export class roleuserdashboardComponent implements OnInit {
   }
 
   addnew() {
-    this.RoleUserId = -1;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    this.container.nativeElement.style.backgroundColor = "grey";
-    setTimeout(() => {
-      this.roleuseradd.PageLoad();
-    }, 50);
+    var newdata = {
+      RoleUserId: 0,
+      UserId: 0,
+      User: '',
+      RoleId: 0,
+      Role: '',
+      Active: 0
+    }
+    this.RoleUserList.push(newdata);
+    this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
   }
 
   GetMasterData() {
@@ -151,6 +142,7 @@ export class roleuserdashboardComponent implements OnInit {
         this.shareddata.ChangeDepartment(this.Departments);
         this.shareddata.ChangeLocation(this.Locations);
         this.GetRoleUser();
+        this.GetUsers();
       });
   }
   getDropDownData(dropdowntype) {
@@ -168,7 +160,29 @@ export class roleuserdashboardComponent implements OnInit {
       return [];
 
   }
+  GetUsers() {
 
+    //console.log(this.LoginUserDetail);
+
+    let list: List = new List();
+    list.fields = [
+      'ApplicationUserId',
+      'UserName'
+    ];
+
+    list.PageName = "AppUsers";
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    this.RoleUserList = [];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        //  console.log('data.value', data.value);
+        if (data.value.length > 0) {
+          this.Users = [...data.value];
+        }
+      })
+  }
   GetRoleUser() {
 
     //console.log(this.LoginUserDetail);
@@ -184,48 +198,119 @@ export class roleuserdashboardComponent implements OnInit {
     list.PageName = "RoleUsers";
     list.lookupFields = ["AppUser"];
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-    this.RoleUserList =[];
+    this.RoleUserList = [];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //  console.log('data.value', data.value);
-        if(data.value.length>0)
-        {
-        this.RoleUserList = data.value.map(item => {
+        if (data.value.length > 0) {
+          this.RoleUserList = data.value.map(item => {
 
-          return {
-            RoleUserId: item.RoleUserId,
-            UserId: item.UserId,
-            User: item.AppUser.UserName,
-            RoleId: item.RoleId,
-            Role: this.Roles.length == 0 ? '' : this.Roles.filter(a => a.MasterDataId == item.RoleId)[0].MasterDataName,
-            Active: item.Active
-          }
-        });
-      }
-      else
-      {
-        this.alert.info("No user role has been defined!",this.optionsNoAutoClose);
-      }
+            return {
+              RoleUserId: item.RoleUserId,
+              UserId: item.UserId,
+              User: item.AppUser.UserName,
+              RoleId: item.RoleId,
+              Role: this.Roles.length == 0 ? '' : this.Roles.filter(a => a.MasterDataId == item.RoleId)[0].MasterDataName,
+              Active: item.Active
+            }
+          });
+        }
+        else {
+          this.alert.info("No user role has been defined!", this.optionsNoAutoClose);
+        }
         //this.Applications = 
         this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
         this.loading = false;
       });
   }
 
-  update(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
+  updateActive(row, value) {
+
+    row.Active = value.checked ? 1 : 0;
+
+    // let toupdate = {
+    //   Active: element.Active == 1 ? 0 : 1
+    // }
+
+    // this.dataservice.postPatch('RoleUsers', toupdate, element.RoleUserId, 'patch')
+    //   .subscribe(
+    //     (data: any) => {
+    //       this.alert.success("Data updated successfully.", this.optionAutoClose);
+    //     });
+  }
+
+
+  UpdateOrSave(row) {
+
+    debugger;
+    if (row.CurrentBatch == 1 && row.Active == 0) {
+      this.alert.error("Current batch should be active!", this.optionAutoClose);
+      return;
     }
 
-    this.dataservice.postPatch('RoleUsers', toupdate, element.RoleUserId, 'patch')
+    var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+    let checkFilterString = "UserId eq " + row.UserId + " and RoleId eq " + row.RoleId + StandardFilter;
+
+    if (row.RoleUserId > 0)
+      checkFilterString += " and RoleUserId ne " + row.RoleUserId;
+
+    let list: List = new List();
+    list.fields = ["RoleUserId"];
+    list.PageName = "RoleUsers";
+    list.filter = [checkFilterString];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          row.Ative = 0;
+          return;
+        }
+        else {
+
+          this.RoleUserData.Active = row.Active;
+          this.RoleUserData.RoleUserId = row.RoleUserId;
+          this.RoleUserData.RoleId = row.RoleId;
+          this.RoleUserData.UserId = row.UserId;
+          this.RoleUserData.OrgId = this.LoginUserDetail[0]["orgId"];
+          if (this.RoleUserData.RoleUserId == 0) {
+            this.RoleUserData["CreatedDate"] = new Date();
+            this.RoleUserData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.RoleUserData["UpdatedDate"];
+            delete this.RoleUserData["UpdatedBy"];
+            this.insert(row);
+          }
+          else {
+            delete this.RoleUserData["CreatedDate"];
+            delete this.RoleUserData["CreatedBy"];
+            this.RoleUserData["UpdatedDate"] = new Date();
+            this.RoleUserData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.update();
+          }
+        }
+      });
+  }
+
+  insert(row) {
+
+    debugger;
+    this.dataservice.postPatch('RoleUsers', this.RoleUserData, 0, 'post')
+      .subscribe(
+        (data: any) => {
+          row.RoleUserId = data.RoleUserId;
+          this.alert.success("Data saved successfully.", this.optionAutoClose);
+        });
+  }
+  update() {
+
+    this.dataservice.postPatch('RoleUsers', this.RoleUserData, this.RoleUserData.RoleUserId, 'patch')
       .subscribe(
         (data: any) => {
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
-
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -233,6 +318,14 @@ export class roleuserdashboardComponent implements OnInit {
   }
 
 }
+export interface IBatches {
+  BatchId: number;
+  BatchName: string;
+  CurrentBatch: number;
+  OrgId: number;
+  Active;
+}
+
 export interface IRoleUsers {
 
   RoleUserId: number;
@@ -241,8 +334,5 @@ export interface IRoleUsers {
   RoleId: number;
   Role: string;
   Active;
-}
-function viewchild(arg0: string) {
-  throw new Error('Function not implemented.');
 }
 

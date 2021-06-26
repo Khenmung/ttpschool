@@ -3,25 +3,27 @@ import { AddMasterDataComponent } from '../../FeesManagement/add-master-data/add
 import { roleuserdashboardComponent } from '../roleuser/roleuserdashboard/roleuserdashboard.component';
 import { AppuserdashboardComponent } from '../users/appuserdashboard/appuserdashboard.component';
 import { RoleAppdashboardComponent } from '../roleapppermission/RoleAppdashboard/RoleAppdashboard.component';
+import { BatchdashboardComponent } from '../batchdashboard/batchdashboard.component';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './settingboard.component.html',
   styleUrls: ['./settingboard.component.scss']
 })
-export class settingboardComponent implements OnInit,AfterViewInit {
+export class settingboardComponent implements OnInit, AfterViewInit {
   @ViewChild(AddMasterDataComponent) masterSettingData: AddMasterDataComponent;
   @ViewChild(AppuserdashboardComponent) userdashboard: AppuserdashboardComponent;
   @ViewChild(roleuserdashboardComponent) roleuserdashboard: roleuserdashboardComponent;
   @ViewChild(RoleAppdashboardComponent) roleappdashboard: RoleAppdashboardComponent;
+  @ViewChild(BatchdashboardComponent) batchdashboard: BatchdashboardComponent;
   selectedIndex = 0;
   constructor() { }
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.masterSettingData.PageLoad();  
+      this.masterSettingData.PageLoad();
     }, 100);
-    
+
   }
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
@@ -35,12 +37,15 @@ export class settingboardComponent implements OnInit,AfterViewInit {
         this.masterSettingData.PageLoad();
         break;
       case 1:
-        this.userdashboard.PageLoad();
+        this.batchdashboard.PageLoad();
         break;
       case 2:
-        this.roleuserdashboard.PageLoad();
+        this.userdashboard.PageLoad();
         break;
       case 3:
+        this.roleuserdashboard.PageLoad();
+        break;
+      case 4:
         this.roleappdashboard.PageLoad();
         break;
       default:

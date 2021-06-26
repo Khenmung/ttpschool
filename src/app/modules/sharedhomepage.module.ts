@@ -12,6 +12,7 @@ import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.mod
 import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NestedmenuComponent } from './shared/components/nestedmenu/nestedmenu.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const sharedComponent=[
   HomeComponent,
@@ -35,7 +36,8 @@ const sharedComponent=[
     MaterialModule,
     RouterModule,
     MultiLevelMenuModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    ReactiveFormsModule
   ],
   exports:[
     sharedComponent

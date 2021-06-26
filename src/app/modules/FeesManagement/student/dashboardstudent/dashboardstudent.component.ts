@@ -64,7 +64,7 @@ export class DashboardstudentComponent implements OnInit {
     this.LoginUserDetail = this.token.getUserDetail();
     this.StandardFilter =globalconstants.getStandardFilter(this.LoginUserDetail);
     this.studentSearchForm = this.fb.group({
-      BatchId: [0, Validators.required],
+      //BatchId: [0, Validators.required],
       StudentId: [0],
       Name: [''],
       FatherName: [''],
@@ -96,9 +96,11 @@ export class DashboardstudentComponent implements OnInit {
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.shareddata.ChangeClasses(this.Classes);
 
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.shareddata.ChangeBatch(this.Batches);
-
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        //this.shareddata.ChangeBatch(this.Batches);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
+        
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
 
@@ -138,14 +140,13 @@ export class DashboardstudentComponent implements OnInit {
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CURRENTBATCH);
-        let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch[0].MasterDataName.toLowerCase());
-        if (currentBatchObj.length > 0) {
-          this.BatchId = currentBatchObj[0].MasterDataId
-          this.studentSearchForm.patchValue({ BatchId: this.BatchId });
-          this.shareddata.ChangeBatchId(this.BatchId);
-          //console.log('batchid from service',this.BatchId)
-        }
+        //let currentBatch = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CURRENTBATCH);
+        //let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch[0].MasterDataName.toLowerCase());
+        // if (currentBatchObj.length > 0) {
+        //   this.BatchId = currentBatchObj[0].MasterDataId
+        //   this.studentSearchForm.patchValue({ BatchId: this.BatchId });
+          
+        // }
 
         this.getSelectedBatchStudentIDRollNo();
 

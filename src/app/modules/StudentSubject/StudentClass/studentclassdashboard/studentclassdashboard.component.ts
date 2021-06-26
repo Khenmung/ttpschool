@@ -36,7 +36,7 @@ export class StudentclassdashboardComponent implements OnInit {
   loading = false;
   Classes = [];
   FeeTypes = [];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   Batches = [];
   StudentClassList: IStudentClass[] = [];
   dataSource: MatTableDataSource<IStudentClass>;
@@ -91,26 +91,21 @@ export class StudentclassdashboardComponent implements OnInit {
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
+      this.shareddata.CurrentSelectedBatchId.subscribe(a => this.SelectedBatchId = a);
+      this.shareddata.ChangeCurrentBatchId(this.SelectedBatchId);
+        this.searchForm.patchValue({
+          "searchBatchId": this.SelectedBatchId
+        })
       if (this.Classes.length == 0) {
         this.GetMasterData();
       }
       else {
         this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
         this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-        this.CurrentBatchId = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch())[0].MasterDataId;
-
-        this.GetCurrentBatchIDnAssign();
+        this.SelectedBatchId = this.Batches.filter(b => b.CurrentBatch==1)[0].BatchId;
+        
         this.loading = false;
       }
-    }
-  }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-      this.searchForm.patchValue({
-        "searchBatchId": this.CurrentBatchId
-      })
     }
   }
   PromoteAll() {
@@ -139,12 +134,9 @@ export class StudentclassdashboardComponent implements OnInit {
 
     filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
 
-    let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    let batchId = 0;
-    if (batchIds.length > 0) {
-      batchId = batchIds[0].MasterDataId;
-      filterStr += ' and Batch eq ' + batchId;
-    }
+    
+    filterStr += ' and Batch eq ' + this.SelectedBatchId;
+    
 
     if (filterStr.length == 0) {
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
@@ -210,7 +202,7 @@ export class StudentclassdashboardComponent implements OnInit {
       searchClassId: 0,
       searchSubjectId: 0,
 
-      searchBatchId: this.CurrentBatchId
+      searchBatchId: this.SelectedBatchId
     });
   }
   updateActive(row, value) {
@@ -235,7 +227,7 @@ export class StudentclassdashboardComponent implements OnInit {
     debugger;
 
     let checkFilterString = "ClassId eq " + row.ClassId +
-      " and StudentId eq " + row.StudentId + ' and Active eq 1 and Batch eq ' + this.CurrentBatchId
+      " and StudentId eq " + row.StudentId + ' and Active eq 1 and Batch eq ' + this.SelectedBatchId
     // " and Active eq " + row.Active +
     this.StandardFilter;
 
@@ -264,7 +256,7 @@ export class StudentclassdashboardComponent implements OnInit {
           this.StudentClassData.RollNo = row.RollNo;
           this.StudentClassData.Section = row.Section;
           this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentClassData.Batch = this.CurrentBatchId;
+          this.StudentClassData.Batch = this.SelectedBatchId;
           if (this.StudentClassData.StudentClassId == 0) {
             this.StudentClassData["CreatedDate"] = new Date();
             this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -328,7 +320,7 @@ export class StudentclassdashboardComponent implements OnInit {
         this.shareddata.ChangeFeeType(this.FeeTypes);
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
+      
         this.loading = false;
       });
   }

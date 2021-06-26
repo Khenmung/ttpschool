@@ -29,7 +29,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   SlotNClassSubjects: ISlotNClassSubject[] = [];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   ExamSlots = [];
   Classes = [];
   Subjects = [];
@@ -73,7 +73,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       searchSlotId: [0],
       searchClassId: [0],
       searchSubjectId: [0],
-    });    
+    });
   }
 
   PageLoad() {
@@ -87,12 +87,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.GetMasterData();
     }
   }
-  GetCurrentBatchIDnAssign() {
-    let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    if (CurrentBatches.length > 0) {
-      this.CurrentBatchId = CurrentBatches[0].MasterDataId;
-    }
-  }
+ 
   updateActive(row, value) {
     //if(!row.Action)
     row.Action = !row.Action;
@@ -148,7 +143,7 @@ export class SlotnclasssubjectComponent implements OnInit {
           this.SlotNClassSubjectData.Active = row.Active;
           this.SlotNClassSubjectData.ClassSubjectId = row.ClassSubjectId;
           this.SlotNClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.SlotNClassSubjectData.BatchId = this.CurrentBatchId;
+          this.SlotNClassSubjectData.BatchId = this.SelectedBatchId;
           //console.log('data', this.ClassSubjectData);
           if (this.SlotNClassSubjectData.SlotClassSubjectId == 0) {
             this.SlotNClassSubjectData["CreatedDate"] = new Date();
@@ -192,13 +187,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   GetClassSubject() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    let batchIds = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-    let batchId = 0;
-    if (batchIds.length > 0) {
-      batchId = batchIds[0].MasterDataId;
-      filterStr += ' and BatchId eq ' + batchId;
-    }
-
+    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
       'ClassSubjectId',
@@ -228,7 +217,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetExamSlots() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.CurrentBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
     filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
 
@@ -262,7 +251,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetSlotNClassSubjects() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.CurrentBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchSlotId").value == 0) {
       this.alert.error("Please select exam slot", this.optionAutoClose);
@@ -416,14 +405,14 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMSLOTNAME);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
 
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetCurrentBatchIDnAssign();
-        //this.GetExamSlots();
         this.GetExamSlots();
       });
   }

@@ -64,7 +64,7 @@ export class FeecollectionreportComponent implements OnInit {
 
   ngOnInit(): void {
     //this.GetMasterData();
-    this.shareddata.CurrentBatchId.subscribe(c=>(this.BatchId=c));
+    this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
     this.shareddata.CurrentFeeNames.subscribe(c=>(this.FeeNames=c));
     this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
     this.shareddata.CurrentClasses.subscribe(c=>(this.Classes=c));
@@ -194,10 +194,13 @@ export class FeecollectionreportComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
+       
         //since only one current batch is accepted
-        this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH)[0].MasterDataId;
+        //this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH)[0].MasterDataId;
+        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
         this.SearchForm.patchValue({ 'BatchId': this.BatchId });
       });
 

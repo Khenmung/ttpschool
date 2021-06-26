@@ -13,7 +13,7 @@ export class SharedataService {
   StudentClassId = 0;
   
   private MasterDataSource = new BehaviorSubject(this.items);
-  private BatchIdSource = new BehaviorSubject(this.BatchId);
+  private CurrentBatchIdSource = new BehaviorSubject(0);
   private BatchSource = new BehaviorSubject(this.items);
   private StudentIdSource = new BehaviorSubject(this.StudentId);
   private StudentClassIdSource = new BehaviorSubject(this.StudentClassId);
@@ -47,8 +47,10 @@ export class SharedataService {
   private ApplicationRolesSource = new BehaviorSubject(this.items);
   private SubjectsSource = new BehaviorSubject(this.items);
   private SubjectTypesSource = new BehaviorSubject(this.items);
-  
-  CurrentSubjectTypes = this.SubjectTypesSource.asObservable(); 
+  private SelectedNCurrentBatchIdEqualSource = new BehaviorSubject(0);
+ 
+  CurrentSelectedNCurrentBatchIdEqual = this.SelectedNCurrentBatchIdEqualSource.asObservable(); 
+  CurrentSubjectTypes = this.SubjectTypesSource.asObservable();   
   CurrentSubjects = this.SubjectsSource.asObservable(); 
   CurrentApplicationRoles = this.ApplicationRolesSource.asObservable(); 
   CurrentOrganizationMasters = this.OrganizationMastersSource.asObservable(); 
@@ -73,7 +75,7 @@ export class SharedataService {
   CurrentSection = this.SectionSource.asObservable();
   CurrentPrimaryContact = this.PrimaryContactSource.asObservable();
   CurrentMasterData = this.MasterDataSource.asObservable();
-  CurrentBatchId = this.BatchIdSource.asObservable();
+  CurrentBatchId = this.SelectedBatchIdSource.asObservable();
   CurrentBatch = this.BatchSource.asObservable();
   CurrentStudentId = this.StudentIdSource.asObservable();
   CurrentStudentClassId = this.StudentClassIdSource.asObservable();
@@ -93,6 +95,10 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  
+  ChangeSelectedNCurrentBatchIdEqual(item){
+    this.SelectedNCurrentBatchIdEqualSource.next(item);
   }
   ChangeSubjects(item){
     this.SubjectsSource.next(item);
@@ -174,9 +180,9 @@ export class SharedataService {
 
     this.MasterDataSource.next(item);
   }
-  ChangeBatchId(item) {
+  ChangeCurrentBatchId(item) {
 
-    this.BatchIdSource.next(item);
+    this.SelectedBatchIdSource.next(item);
   }
   ChangeBatch(item) {
     this.BatchSource.next(item);

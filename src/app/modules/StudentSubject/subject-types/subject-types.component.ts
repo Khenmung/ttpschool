@@ -24,12 +24,13 @@ export class SubjectTypesComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  CheckBatchIdForEdit=1;
   StandardFilter = '';
   loading = false;
   Classes = [];
   Subjects = [];
   SubjectTypes : ISubjectType[];
-  CurrentBatchId = 0;
+  SelectedBatchId = 0;
   Batches = [];
   dataSource: MatTableDataSource<ISubjectType>;
   allMasterData = [];
@@ -65,7 +66,14 @@ export class SubjectTypesComponent implements OnInit {
 
 PageLoad() {
   
-  debugger;   
+  //debugger;
+  
+  this.shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(s=>this.CheckBatchIdForEdit =s);
+
+  this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);   
+  //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
+  console.log('currentbatchid',this.SelectedBatchId)
+  
   this.loading = true;
   this.LoginUserDetail = this.tokenstorage.getUserDetail();
   if (this.LoginUserDetail == null)
@@ -74,12 +82,6 @@ PageLoad() {
     this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
     this.GetSubjectTypes();
     this.GetMasterData();      
-  }
-}
-GetCurrentBatchIDnAssign() {
-  let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-  if (CurrentBatches.length > 0) {
-    this.CurrentBatchId = CurrentBatches[0].MasterDataId;   
   }
 }
 addnew(){
@@ -140,7 +142,7 @@ UpdateOrSave(row) {
         this.SubjectTypeData.SubjectTypeName = row.SubjectTypeName;
         this.SubjectTypeData.SubjectTypeId = row.SubjectTypeId;
         this.SubjectTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
-        this.SubjectTypeData.BatchId = this.CurrentBatchId;
+        this.SubjectTypeData.BatchId = this.SelectedBatchId;
         //console.log('data', this.ClassSubjectData);
         if (this.SubjectTypeData.SubjectTypeId == 0) {
           this.SubjectTypeData["CreatedDate"] = new Date();
@@ -181,7 +183,7 @@ update() {
 }
 GetSubjectTypes() {
 
-  var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+  var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
   let list: List = new List();
 
@@ -212,9 +214,10 @@ GetMasterData() {
     .subscribe((data: any) => {
       this.allMasterData = [...data.value];
 
-      this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-      this.shareddata.ChangeBatch(this.Batches);
-      this.GetCurrentBatchIDnAssign();
+      //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+      this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        
+      //this.shareddata.ChangeBatch(this.Batches);
       this.loading = false;
     });
 }

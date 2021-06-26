@@ -1,18 +1,28 @@
 <mat-card class="boxes">
-    <mat-card-title>Application Role Permission Mapping</mat-card-title>
+    <mat-card-title> Role Application Feature Permission</mat-card-title>
     <mat-card-content>
         <mat-spinner *ngIf="loading"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
                 <mat-form-field fxFlex appearance="outline">
-                    <mat-label> Name</mat-label>
-                    <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
+                    <mat-label> Application</mat-label>
+                    <mat-select formControlName="ApplicationId" (selectionChange)="FilterFeatures()">
                         <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
                             {{master.MasterDataName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <mat-form-field fxFlex appearance="outline">
+                    <mat-label>Feature</mat-label>
+                    <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
+                        <mat-option [value]="0">select</mat-option>
+                        <mat-option *ngFor="let feature of FilteredFeatures" [value]="feature.ApplicationFeatureId">
+                            {{feature.FeatureName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
                 <mat-form-field fxFlex appearance="outline">
                     <mat-label>Role</mat-label>
                     <mat-select formControlName="RoleId" fxFlex (selectionChange)="enable($event)">
@@ -21,7 +31,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button matTooltip="search" class="mat-raised-button" (click)="GetApplicationRole()" fxFlex="10">
+                <button matTooltip="search" class="mat-raised-button" (click)="GetApplicationFeatureRole()" fxFlex="10">
                     <mat-icon>search</mat-icon>
                 </button>
                 <div fxFlex>&nbsp;</div>
@@ -30,22 +40,24 @@
         <div>
             <mat-divider></mat-divider>
             <mat-table [dataSource]="datasource" matSort>
-                <ng-container matColumnDef="Id">
-                    <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ApplicationName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ApplicationName}}
-                    </mat-cell>
-                </ng-container>
                 <ng-container matColumnDef="Role">
                     <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.Role}}
+                   {{element.Role}}
+                        <!-- <mat-form-field>
+                            <mat-label>role</mat-label>
+                            <mat-select (selectionChange)="UpdateSaveButton(element)" [(value)]="element.RoleId"  [(ngModel)]="element.RoleId">
+                                <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field> -->
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="FeatureName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Feature </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.FeatureName}}
+                    </mat-cell>
+                </ng-container>                
                 <ng-container matColumnDef="PermissionId">
                     <mat-header-cell *matHeaderCellDef> Permission </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -59,21 +71,16 @@
                 </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>
-                        <mat-checkbox (click)="$event.stopPropagation()" 
-                        (change)="checkall($event)">                        
-                        </mat-checkbox>
-                    </mat-header-cell>
+                                  </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                             [checked]="element.Active">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button *ngIf="ApplicationRoleList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
-                            <mat-icon>all_out</mat-icon>
-                        </button>
+              
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab

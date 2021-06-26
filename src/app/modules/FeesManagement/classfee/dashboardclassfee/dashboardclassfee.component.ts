@@ -169,7 +169,7 @@ StandardFilter ='';
     list.fields = ["ClassId"];
     list.PageName = "ClassFees";
     //list.groupby = "ClassId";
-    list.filter = ["Active eq 1 and Batch eq " + this.CurrentBatchId + this.StandardFilter];
+    list.filter = ["Active eq 1 and Batch eq " + this.SelectedBatchId + this.StandardFilter];
     
 
     this.dataservice.get(list)
@@ -202,16 +202,16 @@ StandardFilter ='';
   GetClassFee() {
     if (this.searchForm.get("ClassId").value == 0)
       return;
-    if (this.searchForm.get("Batch").value == 0)
-      return;
+    // if (this.searchForm.get("Batch").value == 0)
+    //   return;
 
     let filterstr = "1 eq 1 ";
     if (this.searchForm.get("ClassId").value > 0)
       filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
     if (this.searchForm.get("FeeNameId").value > 0)
       filterstr += " and FeeNameId eq " + this.searchForm.get("FeeNameId").value;
-    if (this.searchForm.get("Batch").value > 0)
-      filterstr += " and Batch eq " + this.searchForm.get("Batch").value;
+    //if (this.searchForm.get("Batch").value > 0)
+      filterstr += " and Batch eq " + this.SelectedBatchId;
 
     let list: List = new List();
     list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId", "PaymentOrder"];
@@ -326,14 +326,14 @@ StandardFilter ='';
     this.shareddata.CurrentClasses.subscribe(f => (this.Classes = f));
     this.shareddata.CurrentBatch.subscribe(f => (this.Batches = f));
     this.shareddata.CurrentLocation.subscribe(f => (this.Locations = f));
-    this.shareddata.CurrentBatchId.subscribe(b => this.CurrentBatchId = b);
+    this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
 
-    if (this.CurrentBatchId == 0) {
+    if (this.SelectedBatchId == 0) {
       //this.alert.error("Current batch not defined in master!", this.options);
       this.route.navigate(['/admin']);
     }
     else {
-      this.searchForm.patchValue({ Batch: this.CurrentBatchId });
+      this.searchForm.patchValue({ Batch: this.SelectedBatchId });
       this.GetDistinctClassFee();
     }
 

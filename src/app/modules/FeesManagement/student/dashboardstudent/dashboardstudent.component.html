@@ -4,7 +4,7 @@
     <mat-card-content>
         <alert></alert>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
-            <mat-form-field fxFlex appearance="outline">
+            <!-- <mat-form-field fxFlex appearance="outline">
                 <mat-label>Batch</mat-label>
                 <mat-select formControlName="BatchId" #BatchId (selectionChange)="UpdateSelectedBatchId($event.value)">
                     <mat-option value="0">--select--</mat-option>
@@ -12,7 +12,7 @@
                         {{master.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
             <mat-form-field appearance="outline">
                 <mat-label>Admission Id</mat-label>
                 <input formControlName="StudentId" autocomplete="Off" matInput maxlength="5">

@@ -32,15 +32,14 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Batch</mat-label>
                 <mat-select formControlName="Batch" (selectionChange)="UpdateSelectedBatchId($event.value)">
-                    <!-- <mat-option value="0">--select--</mat-option> -->
-                    <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
+                                      <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
                         {{p.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
 
             <button class="mat-raised-button" (click)="GetClassFee()">
                 <mat-icon>search</mat-icon>

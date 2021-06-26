@@ -44,7 +44,7 @@
                 <mat-icon>info</mat-icon> Control
             </button>
             <button (click)="goto('subject')">
-                <mat-icon>info</mat-icon> subject
+                <mat-icon>info</mat-icon> Subject
             </button>
             <button (click)="goto('exam')">
                 <mat-icon>info</mat-icon> Exam
@@ -52,6 +52,15 @@
             <button (click)="goto('admin')">
                 <mat-icon>info</mat-icon> Admin
             </button>
+        </span>
+        <span>
+            <form [formGroup]="searchForm">
+                <mat-form-field>
+                    <mat-select formControlName="searchBatchId" (selectionChange)="ChangeCurrentBatchId($event)">
+                        <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </form>
         </span>
     </mat-toolbar-row>
     <mat-toolbar-row fxShow.gt-xs fxHide.gt-xs
