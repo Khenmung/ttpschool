@@ -38,6 +38,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SelectedBatchId =0;
   studentInfoTodisplay = {
     BatchId: 0,
     StudentFeeType: '',
@@ -75,7 +76,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     PaidAmt: "0.00",
     BalanceAmt: "0.00",
     PaymentDate: new Date(),
-    Batch: 0,
+    BatchId: 0,
     Remarks: '',
     Active: 1
   };
@@ -173,7 +174,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "Section", "StudentId", "Batch", "Student/Name", "ClassId", "FeeTypeId"];
+    list.fields = ["StudentClassId", "Section", "StudentId", "BatchId", "Student/Name", "ClassId", "FeeTypeId"];
     list.lookupFields = ["Student"];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
@@ -222,7 +223,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       'FeeAmount',
       'PaidAmt',
       'BalanceAmt',
-      'Batch',
+      'BatchId',
       'PaymentDate',
       'PaymentDetails/PaymentId',
       'PaymentDetails/PaymentAmt',
@@ -253,10 +254,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
         return;
     }
       
-    let filterstr = "Active eq 1 and Batch eq " + this.studentInfoTodisplay.BatchId + " and ClassId eq " + pclassId;
+    let filterstr = "Active eq 1 and BatchId eq " + this.SelectedBatchId + " and ClassId eq " + pclassId;
 
     let list: List = new List();
-    list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId", "PaymentOrder"];
+    list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "BatchId", "Active", "LocationId", "PaymentOrder"];
     list.PageName = "ClassFees";
     list.orderBy = "PaymentOrder";
     list.filter = [filterstr];
@@ -306,7 +307,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   Pay: payableAmount,
                   BalanceAmt: exitem.BalanceAmt,
                   PaymentDate: exitem.PaymentDate,
-                  Batch: exitem.Batch,
+                  BatchId: exitem.BatchId,
                   PaymentOrder: StudentClassFee.PaymentOrder,
                   Paid: exitem.BalanceAmt == 0 ? true : false,
                   Action: this.FeePayable,
@@ -330,7 +331,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 Pay: payableAmount,
                 BalanceAmt: payableAmount,
                 PaymentDate: new Date(),
-                Batch: this.studentInfoTodisplay.BatchId,
+                BatchId: this.SelectedBatchId,
                 PaymentOrder: StudentClassFee.PaymentOrder,
                 Paid: false,
                 ExceptionColumns: this.exceptionColumns,
@@ -361,7 +362,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 Pay: parseFloat(MiscItem[0].FeeAmount),
                 BalanceAmt: parseFloat(MiscItem[0].FeeAmount),
                 PaymentDate: new Date(),
-                Batch: this.studentInfoTodisplay.BatchId,
+                BatchId: this.SelectedBatchId,
                 PaymentOrder: MiscItem[0].PaymentOrder,
                 Paid: false,
                 ExceptionColumns: true,
@@ -430,7 +431,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     let checkFilterString = "Active eq 1 " +
       " and StudentClassId eq " + row.StudentClassId +
       " and ClassFeeId eq " + row.ClassFeeId +
-      " and Batch eq " + row.Batch
+      " and BatchId eq " + row.BatchId
 
     if (row.StudentFeeId > 0)
       checkFilterString += " and StudentFeeId ne " + row.StudentFeeId;
@@ -451,7 +452,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.StudentFeePaymentData.StudentId = this.studentInfoTodisplay.StudentId;
           this.StudentFeePaymentData.Active = 1;
           this.StudentFeePaymentData.FeeAmount = row.FeeAmount.toFixed(2);
-          this.StudentFeePaymentData.Batch = this.studentInfoTodisplay.BatchId;
+          this.StudentFeePaymentData.BatchId = this.SelectedBatchId;
           this.StudentFeePaymentData.StudentFeeId = row.StudentFeeId;
           this.StudentFeePaymentData.ClassFeeId = row.ClassFeeId;
           this.StudentFeePaymentData.FeeNameId = row.FeeNameId;
@@ -597,7 +598,7 @@ export interface IStudentFeePayment {
   BalanceAmt: any;
   PaymentDate: Date;
   PaymentOrder: number;
-  Batch: number;
+  BatchId: number;
   Paid: boolean;
   ExceptionColumns: boolean;
   Action: boolean;

@@ -349,7 +349,7 @@ export class FeereceiptComponent implements OnInit {
     let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "Section", "StudentId", "Batch","RollNo", "Student/Name", "ClassId", "FeeTypeId"];
+    list.fields = ["StudentClassId", "Section", "StudentId", "BatchId","RollNo", "Student/Name", "ClassId", "FeeTypeId"];
     list.lookupFields = ["Student"];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
@@ -364,8 +364,8 @@ export class FeereceiptComponent implements OnInit {
           //this.studentInfoTodisplay.BillNo = data.value[0].FeeTypeId;
           this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
           this.studentInfoTodisplay.Currentbatch = this.Batches.filter(b => {
-            return b.MasterDataId == this.studentInfoTodisplay.currentbatchId
-          })[0].MasterDataName
+            return b.BatchId == this.SelectedBatchId
+          })[0].BatchName
 
           this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
             return cls.MasterDataId == data.value[0].Section

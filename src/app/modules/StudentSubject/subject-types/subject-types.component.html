@@ -34,7 +34,7 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="CheckBatchIdForEdit==1" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="CurrentPagePermission=='Read'" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>

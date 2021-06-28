@@ -45,7 +45,7 @@ export class AddstudentclassComponent implements OnInit {
     ClassId: 0,
     Section: 0,
     RollNo: '',
-    Batch: 0,
+    BatchId: 0,
     FeeTypeId: 0,
     LanguageSubject: 0,
     AdmissionDate: new Date(),
@@ -194,7 +194,7 @@ export class AddstudentclassComponent implements OnInit {
     //   studentId = this.Id;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "Section", "Batch", "FeeTypeId", "LanguageSubject", "AdmissionDate", "Remarks", "Active"];
+    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "Section", "BatchId", "FeeTypeId", "LanguageSubject", "AdmissionDate", "Remarks", "Active"];
     list.PageName = "StudentClasses";
     list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId];
 
@@ -207,7 +207,7 @@ export class AddstudentclassComponent implements OnInit {
             ClassId: data.value[0].ClassId,
             Section: data.value[0].Section,
             RollNo: data.value[0].RollNo,
-            Batch: data.value[0].Batch,
+            BatchId: data.value[0].BatchId,
             FeeTypeId: data.value[0].FeeTypeId,
             LanguageSubject: data.value[0].LanguageSubject,
             AdmissionDate: data.value[0].AdmissionDate,
@@ -222,7 +222,7 @@ export class AddstudentclassComponent implements OnInit {
             ClassId: 0,
             Section: 0,
             RollNo: '',
-            Batch: this.BatchId,
+            BatchId: this.SelectedBatchId,
             FeeTypeId: 0,
             LanguageSubject: 0,
             AdmissionDate: new Date(),
@@ -268,7 +268,7 @@ export class AddstudentclassComponent implements OnInit {
     }
     else {
       this.studentclassData.Active = 1;
-      this.studentclassData.Batch = this.SelectedBatchId==0?this.BatchId:this.SelectedBatchId;
+      this.studentclassData.BatchId = this.SelectedBatchId==0?this.BatchId:this.SelectedBatchId;
 
       this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
       this.studentclassData.RollNo = this.studentclassForm.value.RollNo;

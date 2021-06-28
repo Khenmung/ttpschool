@@ -9,14 +9,15 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { DialogService } from 'src/app/shared/dialog.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-RoleAppdashboard',
-  templateUrl: './RoleAppdashboard.component.html',
-  styleUrls: ['./RoleAppdashboard.component.scss']
+  selector: 'app-RoleAppPermissiondashboard',
+  templateUrl: './RoleAppPermissiondashboard.component.html',
+  styleUrls: ['./RoleAppPermissiondashboard.component.scss']
 })
-export class RoleAppdashboardComponent implements OnInit {
+export class RoleAppPermissiondashboardComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   topMaster = 0;
@@ -58,6 +59,7 @@ export class RoleAppdashboardComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
+    private sharedata: SharedataService,
     private dialog: DialogService) { }
 
   ngOnInit(): void {
@@ -69,7 +71,7 @@ export class RoleAppdashboardComponent implements OnInit {
     // }
     // this.GetTopMasters();
   }
-
+  currentPermission = '';
   enableAddNew = false;
   enableTopEdit = false;
   loading: boolean = false;
@@ -99,6 +101,15 @@ export class RoleAppdashboardComponent implements OnInit {
       this.route.navigate(['auth/login']);
     }
     //this.share
+    //var gbl= new globalconstants(this.dataservice,this.sharedata);
+    this.currentPermission = globalconstants.getPermission(this.UserDetails, this.sharedata, globalconstants.Pages[0].CONTROL.APPLICATIONFEATUREPERMISSION);
+    console.log('this.currentPermission', this.currentPermission)
+    if (this.currentPermission == 'deny') {
+      this.alert.info('Access denied!', this.optionNoAutoClose);
+      //  this.route.navigate(['/auth/login']);
+      this.loading =false;
+      return;
+    }
     this.Permissions = globalconstants.PERMISSIONTYPES;
     this.GetTopMasters();
     this.GetFeatures();
@@ -121,12 +132,13 @@ export class RoleAppdashboardComponent implements OnInit {
           this.TopMasters = data.value.filter(t => t.ParentId == applicationId);
           //this.TopMasters =this.TopMasters.filter()
           //console.log("top", this.TopMasters);
-          this.DefinedMaster = data.value.filter(m => m.OrgId == this.UserDetails[0]["orgId"]);
-          let applicationData = globalconstants.MasterDefinitions[0].application;
-          this.ApplicationDataStatus = this.getSettingStatus(applicationData);
+          //this.DefinedMaster = data.value.filter(m => m.OrgId == this.UserDetails[0]["orgId"]);
+          // let applicationData = globalconstants.MasterDefinitions[0].application;
+          // this.ApplicationDataStatus = this.getSettingStatus(applicationData);
+          // //delete this.ApplicationDataStatus[0]["APPLICATION"];
           this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
-          let schoolData = globalconstants.MasterDefinitions[1].school;
-          this.SchoolDataStatus = this.getSettingStatus(schoolData);
+          // let schoolData = globalconstants.MasterDefinitions[1].school;
+          // this.SchoolDataStatus = this.getSettingStatus(schoolData);
           this.loading = false;
 
         }

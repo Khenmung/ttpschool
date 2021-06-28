@@ -23,8 +23,8 @@ export class DashboardclassfeeComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  LoginUserDetail=[];
-StandardFilter ='';
+  LoginUserDetail = [];
+  StandardFilterWithBatchId = '';
   CurrentBatch = '';
   CurrentBatchId = 0;
   SelectedBatchId = 0;
@@ -42,13 +42,13 @@ StandardFilter ='';
     FeeNameId: 0,
     ClassId: 0,
     Amount: 0,
-    Batch: 0,
+    BatchId: 0,
     Active: 0,
     PaymentOrder: 0,
     LocationId: 0
   };
   constructor(
-    private token:TokenStorageService,
+    private token: TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
     private route: Router,
@@ -57,10 +57,10 @@ StandardFilter ='';
 
   ngOnInit(): void {
     this.LoginUserDetail = this.token.getUserDetail();
-    if(this.LoginUserDetail ==null || this.LoginUserDetail.length==0)
-    this.route.navigate(['auth/login']);
+    if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
+      this.route.navigate(['auth/login']);
 
-    this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+    this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
 
     this.searchForm = this.fb.group({
       ClassId: [0],
@@ -89,7 +89,7 @@ StandardFilter ='';
       this.alert.error("Amount should be greater than zero.", this.options);
       return;
     }
-    if (+row.Amount>99999) {
+    if (+row.Amount > 99999) {
       this.alert.error("Amount cannot be greater than 99999.");
       return;
     }
@@ -97,7 +97,7 @@ StandardFilter ='';
       this.alert.error("Payment order must start from 1.");
       return;
     }
-    
+
     // if(isNumeric(row.Amount))
     // {
     //   this.alert.error("Please enter valid amount.");
@@ -107,7 +107,7 @@ StandardFilter ='';
     let checkFilterString = "1 eq 1 " +
       " and FeeNameId eq " + row.FeeNameId +
       " and ClassId eq " + row.ClassId +
-      " and Batch eq " + row.Batch +
+      " and BatchId eq " + row.BatchId +
       " and LocationId eq " + row.LocationId
     if (row.ClassFeeId > 0)
       checkFilterString += " and ClassFeeId ne " + row.ClassFeeId;
@@ -125,7 +125,7 @@ StandardFilter ='';
         else {
           this.classFeeData.Active = row.Status == true ? 1 : 0;
           this.classFeeData.Amount = row.Amount;
-          this.classFeeData.Batch = row.Batch;
+          this.classFeeData.BatchId = row.BatchId;
           this.classFeeData.ClassFeeId = row.ClassFeeId;
           this.classFeeData.ClassId = row.ClassId;
           this.classFeeData.FeeNameId = row.FeeNameId;
@@ -169,8 +169,8 @@ StandardFilter ='';
     list.fields = ["ClassId"];
     list.PageName = "ClassFees";
     //list.groupby = "ClassId";
-    list.filter = ["Active eq 1 and Batch eq " + this.SelectedBatchId + this.StandardFilter];
-    
+    list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId];
+
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -202,22 +202,20 @@ StandardFilter ='';
   GetClassFee() {
     if (this.searchForm.get("ClassId").value == 0)
       return;
-    // if (this.searchForm.get("Batch").value == 0)
-    //   return;
-
-    let filterstr = "1 eq 1 ";
+   
+    let filterstr = "";
     if (this.searchForm.get("ClassId").value > 0)
       filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
     if (this.searchForm.get("FeeNameId").value > 0)
       filterstr += " and FeeNameId eq " + this.searchForm.get("FeeNameId").value;
     //if (this.searchForm.get("Batch").value > 0)
-      filterstr += " and Batch eq " + this.SelectedBatchId;
+    //filterstr += " and Batch eq " + this.SelectedBatchId;
 
     let list: List = new List();
-    list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "Batch", "Active", "LocationId", "PaymentOrder"];
+    list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "BatchId", "Active", "LocationId", "PaymentOrder"];
     list.PageName = "ClassFees";
     //list.orderBy ="PaymentOrder";
-    list.filter = [filterstr + this.StandardFilter];
+    list.filter = [this.StandardFilterWithBatchId + filterstr ];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -245,7 +243,7 @@ StandardFilter ='';
                   "ClassId": this.searchForm.get("ClassId").value,
                   "FeeName": mainFeeName.MasterDataName,
                   "Amount": 0,
-                  "Batch": this.searchForm.get("Batch").value,// this.Batches[0].MasterDataId,
+                  "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
                   "Status": false,
                   "PaymentOrder": 0,
                   "LocationId": this.Locations[0].MasterDataId,
@@ -262,7 +260,7 @@ StandardFilter ='';
                 "ClassId": item.ClassId,
                 "FeeName": this.FeeNames.filter(cls => cls.MasterDataId == item.FeeNameId)[0].MasterDataName,
                 "Amount": item.Amount,
-                "Batch": item.Batch,
+                "BatchId": item.BatchId,
                 "Status": item.Active == 1 ? true : false,
                 "PaymentOrder": 0,
                 "LocationId": item.LocationId,
@@ -281,7 +279,7 @@ StandardFilter ='';
                 "ClassId": this.searchForm.get("ClassId").value,
                 "FeeName": fee.MasterDataName,
                 "Amount": 0,
-                "Batch": this.searchForm.get("Batch").value,
+                "BatchId": this.SelectedBatchId,
                 "Status": false,
                 "PaymentOrder": 0,
                 "LocationId": this.Locations[0].MasterDataId,
@@ -345,7 +343,7 @@ export interface Element {
   FeeNameId: number;
   ClassId: number;
   Amount: any;
-  Batch: number;
+  BatchId: number;
   Status: boolean;
   PaymentOrder: number;
   LocationId: number;

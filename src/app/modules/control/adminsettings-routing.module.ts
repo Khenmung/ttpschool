@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { roleappAddComponent } from './roleapppermission/roleappadd/roleappadd.component';
-import { RoleAppdashboardComponent } from './roleapppermission/RoleAppdashboard/RoleAppdashboard.component';
+import { RoleAppPermissiondashboardComponent } from './roleapppermission/RoleAppPermissiondashboard/RoleAppPermissiondashboard.component';
 import { roleuseraddComponent } from './roleuser/roleuseradd/roleuseradd.component';
 import { roleuserdashboardComponent } from './roleuser/roleuserdashboard/roleuserdashboard.component';
 import { settingboardComponent } from './settingboard/settingboard.component';
@@ -35,7 +35,7 @@ export const settingsComponent = [
   roleuserdashboardComponent,
   settingboardComponent,
   roleappAddComponent,
-  RoleAppdashboardComponent,
+  RoleAppPermissiondashboardComponent,
   ControlhomeComponent,
   BatchdashboardComponent
 ]

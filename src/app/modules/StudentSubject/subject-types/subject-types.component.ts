@@ -50,7 +50,7 @@ export class SubjectTypesComponent implements OnInit {
     'Active',
     'Action'
   ];
-
+  CurrentPagePermission ='';
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -68,8 +68,8 @@ PageLoad() {
   
   //debugger;
   
-  this.shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(s=>this.CheckBatchIdForEdit =s);
-
+  //this.shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(s=>this.CheckBatchIdForEdit =s);
+ 
   this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);   
   //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
   console.log('currentbatchid',this.SelectedBatchId)
@@ -79,9 +79,10 @@ PageLoad() {
   if (this.LoginUserDetail == null)
     this.nav.navigate(['/auth/login']);
   else {
+    this.CurrentPagePermission = globalconstants.getPermission(this.LoginUserDetail,this.shareddata,globalconstants.Pages[0].SUBJECT.SUBJECTTYPES);
     this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
     this.GetSubjectTypes();
-    this.GetMasterData();      
+//    this.GetMasterData();      
   }
 }
 addnew(){

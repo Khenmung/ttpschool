@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
@@ -24,15 +25,18 @@ export class StudentDocumentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  FilterOrgnBatchId='';
+  FilterOrgIdOnly ='';
   formdata: FormData;
   selectedFile: any;
   Id: number = 0;
   StudentClassId: number = 0;
   Edit: boolean;
-  BatchId=0;
+  SelectedBatchId=0;
   allMasterData = [];
   DocumentTypes = [];
   Batches =[];
+  LoginUserDetail=[];
   uploadForm: FormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
@@ -48,7 +52,8 @@ export class StudentDocumentComponent implements OnInit {
     private routeUrl: ActivatedRoute,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private tokenService:TokenStorageService
     ) { }
 
   ngOnInit(): void {
@@ -61,8 +66,12 @@ export class StudentDocumentComponent implements OnInit {
     })
     this.routeUrl.queryParamMap.subscribe(param => {
       this.StudentClassId = +param.get('scid');
-      this.BatchId = +param.get('bid');
+      
     })
+    this.LoginUserDetail = this.tokenService.getUserDetail();
+    this.shareddata.CurrentSelectedBatchId.subscribe(s=>this.SelectedBatchId=s);
+    this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail,this.shareddata);
+    this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
     //this.GetMasterData();
   }
   PageLoad() {
@@ -93,7 +102,7 @@ export class StudentDocumentComponent implements OnInit {
 
       let error: boolean = false;
     this.formdata = new FormData();
-    this.formdata.append("batch", this.BatchId.toString());
+    this.formdata.append("BatchId", this.SelectedBatchId.toString());
     this.formdata.append("fileOrPhoto", "0");
     this.formdata.append("folderName", "StudentDocument");
     this.formdata.append("parentId", "-1");
@@ -128,7 +137,7 @@ export class StudentDocumentComponent implements OnInit {
       "UploadDate",
       "DocTypeId"];
     list.PageName = "FilesNPhotoes";
-    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId + ' and Batch eq ' + this.BatchId];
+    list.filter = [this.FilterOrgnBatchId + " and Active eq 1 and StudentClassId eq " + this.StudentClassId];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
@@ -154,12 +163,12 @@ export class StudentDocumentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1"];
+    list.filter = ["(" + this.FilterOrgIdOnly + " or ParentId eq 0) and Active eq 1"];
  
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].DOCUMENTTYPE);
+        this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].DOCUMENTTYPE);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         this.GetDocuments();

@@ -79,11 +79,10 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-              
+                    <mat-header-cell *matHeaderCellDef>              
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab
+                        <button [disabled]="currentPermission=='read'" matTooltip="view/edit" mat-mini-fab
                             (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>

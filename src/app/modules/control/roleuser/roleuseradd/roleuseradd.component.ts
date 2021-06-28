@@ -103,7 +103,7 @@ export class roleuseraddComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        console.log('roleuser', data);
+        //console.log('roleuser', data);
         data.value.forEach(element => {
           this.AppRoleUserForm.patchValue({
             RoleUserId: element.RoleUserId,

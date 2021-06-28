@@ -65,7 +65,7 @@ export class NewsdashboardComponent implements OnInit {
               UpdateDate: item.UpdateDate
             }
           })
-          console.log("dd",this.AllData);
+          //console.log("dd",this.AllData);
           this.displayedColumns = ["Title","UpdateDate"];//this.columns.map(c => c.columnDef);
           this.dataSource = new MatTableDataSource(this.AllData);
           this.dataSource.paginator = this.paginator;

@@ -26,10 +26,12 @@ export class DashboardstudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  filterOrgIdNBatchId = '';
+  filterOrgIdOnly = '';
   ELEMENT_DATA: IStudent[];
   dataSource: MatTableDataSource<IStudent>;
   displayedColumns = ['StudentId', 'Name', 'ClassName', 'FatherName', 'MotherName',
-    'Active','ReasonForLeaving', 'Action'];
+    'Active', 'ReasonForLeaving', 'Action'];
   allMasterData = [];
   Genders = [];
   Classes = [];
@@ -45,24 +47,27 @@ export class DashboardstudentComponent implements OnInit {
   FeeType = [];
   FeeNames = [];
   Sections = [];
-  UploadTypes=[];
-  ReasonForLeaving=[];
-  StandardFilter ='';
-  BatchId = 0;
+  UploadTypes = [];
+  ReasonForLeaving = [];
+  //StandardFilter ='';
+  SelectedBatchId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
   studentSearchForm: FormGroup;
-  LoginUserDetail=[];
+  LoginUserDetail = [];
   constructor(private dataservice: NaomitsuService,
     private route: Router,
     private alert: AlertService,
     private fb: FormBuilder,
     private shareddata: SharedataService,
-    private token:TokenStorageService) { }
+    private token: TokenStorageService) { }
 
   ngOnInit(): void {
     this.LoginUserDetail = this.token.getUserDetail();
-    this.StandardFilter =globalconstants.getStandardFilter(this.LoginUserDetail);
+    
+    this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+    //this.shareddata.ChangeSelectedBatchId
+    //this.StandardFilter =globalconstants.getStandardFilter(this.LoginUserDetail);
     this.studentSearchForm = this.fb.group({
       //BatchId: [0, Validators.required],
       StudentId: [0],
@@ -74,19 +79,23 @@ export class DashboardstudentComponent implements OnInit {
     // this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
     // this.dataSource.paginator = this.paginator;
     // this.dataSource.sort = this.sort;
-    
+
   }
   GetMasterData() {
     debugger;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1 " + this.StandardFilter];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or " + this.filterOrgIdOnly +')'];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //console.log(data.value);
+        this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
+        console.log('this.SelectedBatchId',this.SelectedBatchId);
+        this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
+
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
@@ -98,9 +107,9 @@ export class DashboardstudentComponent implements OnInit {
 
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         //this.shareddata.ChangeBatch(this.Batches);
-        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
-        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
-        
+        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
+
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
 
@@ -145,7 +154,7 @@ export class DashboardstudentComponent implements OnInit {
         // if (currentBatchObj.length > 0) {
         //   this.BatchId = currentBatchObj[0].MasterDataId
         //   this.studentSearchForm.patchValue({ BatchId: this.BatchId });
-          
+
         // }
 
         this.getSelectedBatchStudentIDRollNo();
@@ -155,12 +164,17 @@ export class DashboardstudentComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
+    let Ids = this.allMasterData.filter((item, indx) => {
       return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
     });
+    if (Ids.length > 0) {
+      var Id =Ids[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      });
+    }
+    else
+      return [];
   }
   fee(id) {
     this.route.navigate(['/admin/addstudentfeepayment/' + id]);
@@ -168,13 +182,13 @@ export class DashboardstudentComponent implements OnInit {
   class(id) {
     this.route.navigate(['/admin/addstudentcls/' + id]);
   }
-  UpdateSelectedBatchId(event){
+  UpdateSelectedBatchId(event) {
     this.shareddata.ChangeSelectedBatchId(event);
     //this.shareddata.CurrentSelectedBatchId.subscribe(s=>console.log("selected batchid",s));
   }
   view(element) {
     debugger;
-    let StudentName = element.StudentId + ' ' + element.Name  + ' ' + element.FatherName  + ' ' + element.MotherName;  
+    let StudentName = element.StudentId + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName;
     this.shareddata.ChangeStudentName(StudentName);
 
     let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
@@ -212,7 +226,7 @@ export class DashboardstudentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentId", "RollNo", "StudentClassId", "ClassId"];
     list.PageName = "StudentClasses";
-    list.filter = ["Batch eq " + this.BatchId];
+    list.filter = [this.filterOrgIdNBatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -226,7 +240,8 @@ export class DashboardstudentComponent implements OnInit {
   GetStudent() {
     debugger;
     //let StudentClassIds = '';
-    let checkFilterString = "1 eq 1"
+
+    let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     if (this.studentSearchForm.get("Name").value.trim().length > 0)
       checkFilterString += " and substringof('" + this.studentSearchForm.get("Name").value + "',Name)";
     if (this.studentSearchForm.get("FatherName").value.trim().length > 0)
@@ -236,40 +251,46 @@ export class DashboardstudentComponent implements OnInit {
     if (this.studentSearchForm.get("StudentId").value > 0) {
       checkFilterString += " and StudentId eq " + this.studentSearchForm.get("StudentId").value
     }
-    
-    checkFilterString += this.StandardFilter;
+
+    this.filterOrgIdOnly += checkFilterString;
 
     let list: List = new List();
-    list.fields = ["StudentId", "StudentClasses/StudentClassId", "StudentClasses/Batch", "StudentClasses/ClassId", "StudentClasses/RollNo",
-      "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active","ReasonForLeavingId"];
+    list.fields = ["StudentId", "StudentClasses/StudentClassId",
+      "StudentClasses/BatchId",
+      "StudentClasses/ClassId",
+      "StudentClasses/RollNo",
+      "Name", "FatherName",
+      "MotherName", "FatherContactNo",
+      "MotherContactNo", "Active",
+      "ReasonForLeavingId"];
     list.lookupFields = ["StudentClasses"];
     list.PageName = "Students";
-    list.filter = [checkFilterString];
+    list.filter = [this.filterOrgIdOnly];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //console.log(data.value);
         if (data.value.length > 0) {
-          this.ELEMENT_DATA = data.value.filter(sc => {
-           let reason= this.ReasonForLeaving.filter(r=>r.MasterDataId == sc.ReasonForLeavingId)
-            sc.StudentClasses = sc.StudentClasses.filter(c => c.Batch == this.studentSearchForm.get('BatchId').value)
-            sc.ReasonForLeaving = reason.length>0?reason[0].MasterDataName:'';
+          var formattedData = data.value.filter(sc => {
+            let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
+            sc.StudentClasses = sc.StudentClasses.filter(c => c.BatchId == this.SelectedBatchId)
+            sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
             return sc;
-          })
-            .map(item => {
-              if (item.StudentClasses.length == 0)
-                item.ClassName = '';
-              else {
-                item.ClassName = this.Classes.filter(cls => {
-                  return cls.MasterDataId == item.StudentClasses[0].ClassId
-                }
-                )[0].MasterDataName;
+          });
+          this.ELEMENT_DATA = formattedData.map(item => {
+            if (item.StudentClasses.length == 0)
+              item.ClassName = '';
+            else {
+              item.ClassName = this.Classes.filter(cls => {
+                return cls.MasterDataId == item.StudentClasses[0].ClassId
               }
-              item.Action = "";
+              )[0].MasterDataName;
+            }
+            item.Action = "";
 
-              return item;
-            })
+            return item;
+          })
         }
         else {
           this.ELEMENT_DATA = [];

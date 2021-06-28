@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
   Applications = [];
   Locations = [];
   Roles = [];
+  ApplicationFeatures = [];
   form: any = {
     username: null,
     password: null
@@ -42,15 +43,15 @@ export class LoginComponent implements OnInit {
   username: string = '';
   mediaSub: Subscription;
   deviceXs: boolean;
-  common:globalconstants;
+  common: globalconstants;
   constructor(private authService: AuthService,
-    private alert:AlertService,
+    private alert: AlertService,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
     private route: Router,
     private shareddata: SharedataService,
     private mediaObserver: MediaObserver,
-) { }
+  ) { }
 
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
@@ -61,9 +62,9 @@ export class LoginComponent implements OnInit {
       this.isLoggedIn = true;
       this.route.navigate(['/']);
     }
-    this.shareddata.GetApplication().subscribe((data:any)=>{
-      this.Applications =[...data.value];
-   });
+    this.shareddata.GetApplication().subscribe((data: any) => {
+      this.Applications = [...data.value];
+    });
   }
 
   onSubmit(): void {
@@ -86,7 +87,7 @@ export class LoginComponent implements OnInit {
       }
     );
   }
-  
+
   GetApplicationRoleUser() {
 
     let list: List = new List();
@@ -104,10 +105,11 @@ export class LoginComponent implements OnInit {
       'RoleUsers/Active',
       'Organization/OrganizationName',
       'Organization/LogoPath',
-      'Active'];
+      'Active',
+    ];
 
     list.PageName = "AppUsers";
-    list.lookupFields = ["RoleUsers","Organization"];
+    list.lookupFields = ["RoleUsers", "Organization"];
 
     list.filter = ["Active eq 1 and EmailAddress eq '" + this.tokenStorage.getUser() + "'"];
     //list.orderBy = "ParentId";
@@ -121,7 +123,7 @@ export class LoginComponent implements OnInit {
         }
       })
   }
-  
+
   GetMasterData(UserApp) {
     debugger;
     let list: List = new List();
@@ -142,8 +144,8 @@ export class LoginComponent implements OnInit {
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
         this.shareddata.ChangeDepartment(this.Departments);
 
-        // this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
-        // this.shareddata.ChangeApplication(this.Applications);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
+        this.shareddata.ChangeApplication(this.Applications);
 
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
         this.shareddata.ChangeLocation(this.Locations);
@@ -195,8 +197,8 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.saveUserdetail(this.UserDetail);
         if (this.RoleFilter.length > 0)
           this.RoleFilter += ')';
-
-        this.GetApplicationRoles();
+        this.GetApplicationFeatures();
+        
       });
   }
   getDropDownData(dropdowntype) {
@@ -212,17 +214,37 @@ export class LoginComponent implements OnInit {
     else
       return [];
   }
-
-  GetApplicationRoles() {
+  GetApplicationFeatures() {
 
     let list: List = new List();
     list.fields = [
-      'ApplicationId',
+      'ApplicationFeatureId',
+      'FeatureName',
+      'ApplicationId'
+    ];
+
+    list.PageName = "ApplicationFeatures";
+    list.filter = ["Active eq 1"];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        if (data.value.length > 0) {
+          this.ApplicationFeatures = [...data.value];
+          this.GetApplicationRolesPermission();
+        }
+      })
+  }
+  GetApplicationRolesPermission() {
+
+    let list: List = new List();
+    list.fields = [
+      'ApplicationFeatureId',
       'RoleId',
       'PermissionId'
     ];
 
-    list.PageName = "ApplicationRoles";
+    list.PageName = "ApplicationFeatureRolesPerms";
     list.filter = ["Active eq 1 " + this.RoleFilter];
 
     this.dataservice.get(list)
@@ -231,16 +253,16 @@ export class LoginComponent implements OnInit {
         if (data.value.length > 0) {
 
           this.UserDetail[0]["applicationRolePermission"] = data.value.map(item => {
-            var _application = '';
-            if (this.Applications.length > 0 && item.ApplicationId != null)
-              _application = this.Applications.filter(a => a.MasterDataId == item.ApplicationId)[0].MasterDataName
+            var _applicationFeature = '';
+            if (this.ApplicationFeatures.length > 0 && item.ApplicationFeatureId != null)
+            _applicationFeature = this.ApplicationFeatures.filter(a => a.ApplicationFeatureId == item.ApplicationFeatureId)[0].FeatureName
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
 
             return {
-              'applicationId': item.ApplicationId,
-              'application': _application,
+              'applicationFeatureId': item.ApplicationFeatureId,
+              'applicationFeature': _applicationFeature,
               'roleId': item.RoleId,
               'permissionId': item.PermissionId,
               'permission': _permission,
@@ -253,9 +275,8 @@ export class LoginComponent implements OnInit {
           this.username = this.tokenStorage.getUser();
           this.route.navigate([this.tokenStorage.getRedirectUrl()]);
         }
-        else
-        {
-          this.alert.info("Initial minimal settings must be done.",this.optionsNoAutoClose);
+        else {
+          this.alert.info("Initial minimal settings must be done.", this.optionsNoAutoClose);
           this.route.navigate(['control/settings']);
         }
       })

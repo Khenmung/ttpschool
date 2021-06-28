@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RoleAppdashboardComponent } from './RoleAppdashboard.component';
+import { RoleAppPermissiondashboardComponent } from './RoleAppPermissiondashboard.component';
 
 describe('ApproledashboardComponent', () => {
-  let component: RoleAppdashboardComponent;
-  let fixture: ComponentFixture<RoleAppdashboardComponent>;
+  let component: RoleAppPermissiondashboardComponent;
+  let fixture: ComponentFixture<RoleAppPermissiondashboardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RoleAppdashboardComponent ]
+      declarations: [ RoleAppPermissiondashboardComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RoleAppdashboardComponent);
+    fixture = TestBed.createComponent(RoleAppPermissiondashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

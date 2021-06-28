@@ -26,7 +26,7 @@ export class AddMasterDataComponent implements OnInit {
   Batches = [];
   Locations = [];
   TopMasters = [];
-  DefinedMaster =[];
+  DefinedMaster = [];
   oldvalue = '';
   selectedData = '';
   datasource: MatTableDataSource<IMaster>;
@@ -57,7 +57,7 @@ export class AddMasterDataComponent implements OnInit {
     // }
     // this.GetTopMasters();
   }
-  
+
   enableAddNew = false;
   enableTopEdit = false;
   loading: boolean = false;
@@ -78,7 +78,7 @@ export class AddMasterDataComponent implements OnInit {
     })
   PageLoad() {
     debugger;
-  this.loading=true;
+    this.loading = true;
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails == null) {
       this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
@@ -89,53 +89,56 @@ export class AddMasterDataComponent implements OnInit {
 
   GetTopMasters() {
     let list: List = new List();
-    list.fields = ["MasterDataId","ParentId", "MasterDataName", "Description", "Active","OrgId"];
+    list.fields = ["MasterDataId", "ParentId", "MasterDataName", "Description", "Active", "OrgId"];
     list.PageName = "MasterDatas";
-    list.filter = ["(ParentId eq 0 or OrgId eq "+ this.UserDetails[0]["orgId"] +") and Active eq 1"];//this.searchForm.get("ParentId").value];
+    list.filter = ["(ParentId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] + ") and Active eq 1"];//this.searchForm.get("ParentId").value];
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          
-          
-          this.TopMasters = data.value.filter(m=> {
-            return m.ParentId==0
+          var _applicationId = data.value.filter(d => d.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
+
+          this.TopMasters = data.value.filter(m => {
+            return m.ParentId == 0 && m.MasterDataId != _applicationId && m.ParentId != _applicationId
           });
-          
+
           this.DefinedMaster = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
           //console.log("DefinedMaster",this.DefinedMaster);
           let applicationData = globalconstants.MasterDefinitions[0].application;
-          this.ApplicationDataStatus=this.getSettingStatus(applicationData);
-          
+          delete applicationData[0]['APPLICATION'];
+          this.ApplicationDataStatus = this.getSettingStatus(applicationData);
+
           let schoolData = globalconstants.MasterDefinitions[1].school;
-          this.SchoolDataStatus=this.getSettingStatus(schoolData);
-          this.loading =false;
-         
+          this.SchoolDataStatus = this.getSettingStatus(schoolData);
+          this.loading = false;
+
         }
       });
   }
-  getSettingStatus(data){
-    let defined;      
-      
+  getSettingStatus(data) {
+    let defined;
     return Object.keys(data[0]).map(globalcons => {
-      var _parentId =this.TopMasters.filter(t=>t.MasterDataName.toLowerCase().trim()==data[0][globalcons].toLowerCase().trim())[0].MasterDataId
-      defined = this.DefinedMaster.filter(fromdb => {
-        return _parentId == fromdb.ParentId;
-      });
+      var _parentIds = this.TopMasters.filter(t => t.MasterDataName.toLowerCase().trim() == data[0][globalcons].toLowerCase().trim())
+      if (_parentIds.length > 0) {
+        defined = this.DefinedMaster.filter(fromdb => {
+          return _parentIds[0].MasterDataId == fromdb.ParentId;
+        });
 
-      if (defined.length > 0) {
-        
-        return {
-          MasterDataName: data[0][globalcons],
-          Done: true
+        if (defined.length > 0) {
+          return {
+            MasterDataName: data[0][globalcons],
+            Done: true
+          }
+        }
+        else {
+          return {
+            MasterDataName: data[0][globalcons],
+            Done: false
+          }
         }
       }
-      else {
-        return {
-          MasterDataName: data[0][globalcons],
-          Done: false
-        }
-      }
+      else
+        return false;
     });
 
   }

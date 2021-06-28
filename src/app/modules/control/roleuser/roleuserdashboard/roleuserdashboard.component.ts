@@ -133,7 +133,7 @@ export class roleuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
-        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
 

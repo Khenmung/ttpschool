@@ -51,7 +51,7 @@ export class StudentclassdashboardComponent implements OnInit {
     StudentClassId: 0,
     ClassId: 0,
     OrgId: 0,
-    Batch: 0,
+    BatchId: 0,
     StudentId: 0,
     RollNo: 0,
     Section: 0,
@@ -256,7 +256,7 @@ export class StudentclassdashboardComponent implements OnInit {
           this.StudentClassData.RollNo = row.RollNo;
           this.StudentClassData.Section = row.Section;
           this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentClassData.Batch = this.SelectedBatchId;
+          this.StudentClassData.BatchId = this.SelectedBatchId;
           if (this.StudentClassData.StudentClassId == 0) {
             this.StudentClassData["CreatedDate"] = new Date();
             this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

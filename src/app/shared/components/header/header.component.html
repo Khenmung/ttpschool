@@ -1,6 +1,6 @@
 <!-- <mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}"> -->
-<mat-toolbar class="width100">
-    <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center">
+<mat-toolbar>
+    <mat-toolbar-row class="width100" fxLayout="row" fxLayoutAlign="space-between center">
         <div fxLayout="row wrap" fxLayoutAlign="start center">
             <button mat-button (click)="toggleSideBar()">
                 <mat-icon>menu</mat-icon>
@@ -38,18 +38,19 @@
             </mat-menu>
         </div>
     </mat-toolbar-row>
-    <mat-toolbar-row>
+    <mat-toolbar-row>hi</mat-toolbar-row>
+    <mat-toolbar-row style="background-color:var(--maincolor1)">
         <span>
-            <button (click)="goto('control')">
-                <mat-icon>info</mat-icon> Control
+            <button (click)="goto('control')" class="mat-raised-button">
+                <mat-icon>info</mat-icon> Permissions
             </button>
-            <button (click)="goto('subject')">
+            <button (click)="goto('subject')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Subject
             </button>
-            <button (click)="goto('exam')">
+            <button (click)="goto('exam')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Exam
             </button>
-            <button (click)="goto('admin')">
+            <button (click)="goto('admin')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Admin
             </button>
         </span>

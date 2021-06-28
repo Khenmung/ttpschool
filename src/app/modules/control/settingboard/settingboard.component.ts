@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { AddMasterDataComponent } from '../../FeesManagement/add-master-data/add-master-data.component';
 import { roleuserdashboardComponent } from '../roleuser/roleuserdashboard/roleuserdashboard.component';
 import { AppuserdashboardComponent } from '../users/appuserdashboard/appuserdashboard.component';
-import { RoleAppdashboardComponent } from '../roleapppermission/RoleAppdashboard/RoleAppdashboard.component';
+import { RoleAppPermissiondashboardComponent } from '../roleapppermission/RoleAppPermissiondashboard/RoleAppPermissiondashboard.component';
 import { BatchdashboardComponent } from '../batchdashboard/batchdashboard.component';
 
 @Component({
@@ -14,7 +14,7 @@ export class settingboardComponent implements OnInit, AfterViewInit {
   @ViewChild(AddMasterDataComponent) masterSettingData: AddMasterDataComponent;
   @ViewChild(AppuserdashboardComponent) userdashboard: AppuserdashboardComponent;
   @ViewChild(roleuserdashboardComponent) roleuserdashboard: roleuserdashboardComponent;
-  @ViewChild(RoleAppdashboardComponent) roleappdashboard: RoleAppdashboardComponent;
+  @ViewChild(RoleAppPermissiondashboardComponent) roleapppermissiondashboard: RoleAppPermissiondashboardComponent;
   @ViewChild(BatchdashboardComponent) batchdashboard: BatchdashboardComponent;
   selectedIndex = 0;
   constructor() { }
@@ -46,7 +46,7 @@ export class settingboardComponent implements OnInit, AfterViewInit {
         this.roleuserdashboard.PageLoad();
         break;
       case 4:
-        this.roleappdashboard.PageLoad();
+        this.roleapppermissiondashboard.PageLoad();
         break;
       default:
         this.masterSettingData.PageLoad();
