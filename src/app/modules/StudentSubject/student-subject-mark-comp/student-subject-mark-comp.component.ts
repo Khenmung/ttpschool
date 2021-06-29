@@ -108,6 +108,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         }
         else {
           this.classSubjectComponentData.Active = row.Active;// == true ? 1 : 0;
+          this.classSubjectComponentData.ClassSubjectMarkComponentId =row.ClassSubjectMarkComponentId;
           this.classSubjectComponentData.ClassSubjectId = row.ClassSubjectId;
           this.classSubjectComponentData.SubjectComponentId = row.SubjectComponentId;
           this.classSubjectComponentData.FullMark = row.FullMark;
@@ -267,7 +268,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     ];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject"];
-    list.filter = ["Active eq 1 " + this.StandardFilter];
+    list.filter = ["Active eq 1 and " + this.StandardFilter];
     //list.orderBy = "ParentId";
     this.ELEMENT_DATA = [];
     this.dataservice.get(list)

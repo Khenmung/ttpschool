@@ -143,7 +143,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.cur=c));
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
         this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
         // let currentBatch = globalconstants.getCurrentBatch();

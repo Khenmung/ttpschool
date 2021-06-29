@@ -23,7 +23,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Subject</mat-label>
                 <mat-select formControlName="searchSubjectId">
                     <mat-option value="0">--select--</mat-option>
@@ -32,17 +32,24 @@
 
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
             <button class="mat-raised-button" (click)="GetClassSubject()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+            <!-- <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                 <mat-icon>clear_all</mat-icon>
-            </button>
+            </button> -->
         </form>
-        <mat-table #table [dataSource]="dataSource">
+        <mat-table #table [dataSource]="dataSource">            
+            <ng-container matColumnDef="ClassSubjectId">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    {{element.ClassSubjectId}}                    
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="ClassName">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class/stream
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     {{element.ClassName}}                    
@@ -59,7 +66,7 @@
                 <mat-cell *matCellDef="let element">
                    <mat-form-field>
                        <mat-label>subject type</mat-label>
-                       <mat-select [(value)]="element.SubjectTypeId" [(ngModel)]="element.SubjectTypeId">
+                       <mat-select (selectionChange)="updateSelectHowMany(element)" [(value)]="element.SubjectTypeId" [(ngModel)]="element.SubjectTypeId">
                         <mat-option *ngFor="let item of SubjectTypes" [value]="item.SubjectTypeId">{{item.SubjectTypeName}}</mat-option>
                        </mat-select>
                    </mat-form-field>
@@ -76,7 +83,7 @@
                 <mat-header-cell *matHeaderCellDef>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="CheckBatchIDForEdit==1" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="CheckPermission=='read'" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
 

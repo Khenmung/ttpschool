@@ -25,7 +25,7 @@ export class SubjectTypesComponent implements OnInit {
     keepAfterRouteChange: true
   };
   CheckBatchIdForEdit=1;
-  StandardFilter = '';
+  StandardFilterWithBatchId = '';
   loading = false;
   Classes = [];
   Subjects = [];
@@ -80,7 +80,7 @@ PageLoad() {
     this.nav.navigate(['/auth/login']);
   else {
     this.CurrentPagePermission = globalconstants.getPermission(this.LoginUserDetail,this.shareddata,globalconstants.Pages[0].SUBJECT.SUBJECTTYPES);
-    this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+    this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail,this.shareddata);
     this.GetSubjectTypes();
 //    this.GetMasterData();      
   }
@@ -120,16 +120,17 @@ UpdateOrSave(row) {
 
   debugger;
 
-  let checkFilterString = "SubjectTypeName eq '" + row.SubjectTypeName + "'" +
-       this.StandardFilter;
+  let checkFilterString = " and SubjectTypeName eq '" + row.SubjectTypeName + "' "
+       
 
   if (row.SubjectTypeId > 0)
     checkFilterString += " and SubjectTypeId ne " + row.SubjectTypeId;
 
+    this.StandardFilterWithBatchId += checkFilterString;  
   let list: List = new List();
   list.fields = ["SubjectTypeId"];
   list.PageName = "SubjectTypes";
-  list.filter = [checkFilterString];
+  list.filter = [this.StandardFilterWithBatchId];
 
   this.dataservice.get(list)
     .subscribe((data: any) => {
@@ -142,6 +143,7 @@ UpdateOrSave(row) {
         this.SubjectTypeData.Active = row.Active;
         this.SubjectTypeData.SubjectTypeName = row.SubjectTypeName;
         this.SubjectTypeData.SubjectTypeId = row.SubjectTypeId;
+        this.SubjectTypeData.SelectHowMany = row.SelectHowMany;
         this.SubjectTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
         this.SubjectTypeData.BatchId = this.SelectedBatchId;
         //console.log('data', this.ClassSubjectData);

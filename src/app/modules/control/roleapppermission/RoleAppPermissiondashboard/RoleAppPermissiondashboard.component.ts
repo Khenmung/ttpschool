@@ -104,12 +104,12 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     //var gbl= new globalconstants(this.dataservice,this.sharedata);
     this.currentPermission = globalconstants.getPermission(this.UserDetails, this.sharedata, globalconstants.Pages[0].CONTROL.APPLICATIONFEATUREPERMISSION);
     console.log('this.currentPermission', this.currentPermission)
-    if (this.currentPermission == 'deny') {
-      this.alert.info('Access denied!', this.optionNoAutoClose);
-      //  this.route.navigate(['/auth/login']);
-      this.loading =false;
-      return;
-    }
+    // if (this.currentPermission == 'deny') {
+    //   this.alert.info('Access denied!', this.optionNoAutoClose);
+    //   //  this.route.navigate(['/auth/login']);
+    //   this.loading =false;
+    //   return;
+    // }
     this.Permissions = globalconstants.PERMISSIONTYPES;
     this.GetTopMasters();
     this.GetFeatures();
@@ -136,7 +136,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           // let applicationData = globalconstants.MasterDefinitions[0].application;
           // this.ApplicationDataStatus = this.getSettingStatus(applicationData);
           // //delete this.ApplicationDataStatus[0]["APPLICATION"];
-          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
+          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].ROLE);
           // let schoolData = globalconstants.MasterDefinitions[1].school;
           // this.SchoolDataStatus = this.getSettingStatus(schoolData);
           this.loading = false;

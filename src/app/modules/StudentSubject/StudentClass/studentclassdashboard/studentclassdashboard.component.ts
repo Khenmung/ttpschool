@@ -21,6 +21,7 @@ export class StudentclassdashboardComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
+  CheckPermission='';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
@@ -37,6 +38,8 @@ export class StudentclassdashboardComponent implements OnInit {
   Classes = [];
   FeeTypes = [];
   SelectedBatchId = 0;
+  PreviousBatchId =0;
+  NextBatchId =0;
   Batches = [];
   StudentClassList: IStudentClass[] = [];
   dataSource: MatTableDataSource<IStudentClass>;
@@ -63,8 +66,8 @@ export class StudentclassdashboardComponent implements OnInit {
     'ClassName',
     'RollNo',
     'Section',
-    'FeeType',
-    'Active',
+    'FeeTypeId',    
+    'Promote',
     'Action'
   ];
 
@@ -83,40 +86,57 @@ export class StudentclassdashboardComponent implements OnInit {
 
   }
   PageLoad() {
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail,this.shareddata,globalconstants.Pages[0].SUBJECT.STUDENTCLASS);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSelectedBatchId.subscribe(a => this.SelectedBatchId = a);
-      this.shareddata.ChangeCurrentBatchId(this.SelectedBatchId);
-        this.searchForm.patchValue({
-          "searchBatchId": this.SelectedBatchId
-        })
+      this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p=>this.PreviousBatchId =p);
+      console.log("pre",this.PreviousBatchId)
+      console.log("seelected",this.SelectedBatchId)
+      console.log("next",this.NextBatchId)
+      this.shareddata.CurrentNextBatchIdOfSelecteBatchId.subscribe(n=>this.NextBatchId=n);
+      this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
       if (this.Classes.length == 0) {
         this.GetMasterData();
       }
       else {
         this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
         this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-        this.SelectedBatchId = this.Batches.filter(b => b.CurrentBatch==1)[0].BatchId;
-        
+        //this.SelectedBatchId = this.Batches.filter(b => b.CurrentBatch==1)[0].BatchId;
+
         this.loading = false;
       }
     }
   }
-  PromoteAll() {
-    this.StudentClassList.forEach(s=>{
-      if(s.Promote ==1)
-      {
-        s.StudentClassId =0;
-        s.ClassId = this.Classes[this.Classes.findIndex(i=>i.ClassId) -1];
+  PromoteAll()
+  {
+     this.StudentClassList.forEach(s => {
+      if (s.Promote == 1) {
+        s.StudentClassId = 0;
+        this.SelectedBatchId = this.NextBatchId;
+        s.ClassId = this.Classes[this.Classes.findIndex(i => i.ClassId) + 1];
         this.UpdateOrSave(s);
       }
     })
+  }
+  CheckPromoteAll(event) {
+    debugger;
+    var _promote=0;
+    if (event.checked) {
+      _promote=1;        
+    }    
+
+    this.StudentClassList.forEach(s => {      
+        s.Promote=_promote;              
+    })
+   
   }
   Promote(row, control) {
     if (control.checked)
@@ -124,7 +144,19 @@ export class StudentclassdashboardComponent implements OnInit {
     else
       row.Promote = 0;
   }
+  promotePreviousBatch() {
+    debugger;
+
+    var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(4) - 1;
+    var previousBatchId = this.Batches[previousBatchIndex];
+    if (previousBatchIndex > -1) {
+      this.SelectedBatchId = previousBatchId;
+      this.GetStudentClasses();
+
+    }
+  }
   GetStudentClasses() {
+
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     if (this.searchForm.get("searchClassId").value == 0) {
@@ -134,9 +166,7 @@ export class StudentclassdashboardComponent implements OnInit {
 
     filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
 
-    
-    filterStr += ' and Batch eq ' + this.SelectedBatchId;
-    
+    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
@@ -161,18 +191,6 @@ export class StudentclassdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((StudentClassesdb: any) => {
 
-        // let _StudentClassesdb = StudentClassesdb.value.map(item => {
-        //   return {
-        //     StudentClassId: item.StudentClassId,
-        //     RollNo: item.RollNo,
-        //     Section: item.Section,
-        //     FeeTypeId: item.FeeTypeId,
-        //     ClassId: item.ClassId,
-        //     StudentId:item
-        //     Active: item.Active
-        //   }
-        // })
-
         StudentClassesdb.value.forEach(s => {
           this.StudentClassList.push({
             StudentClassId: s.StudentClassId,
@@ -185,24 +203,25 @@ export class StudentclassdashboardComponent implements OnInit {
             RollNo: s.RollNo,
             Section: s.Section,
             Active: s.Active,
-            Promote:0
+            Promote: 0
           });
         })
 
+        if(this.StudentClassList.length==0)
+        this.alert.info("No record found!",this.optionAutoClose);
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.loading = false;
-
+        
       })
-
+      //set current batch id back to the actual one.
+      this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
   }
   clear() {
     this.searchForm.patchValue({
       searchClassId: 0,
-      searchSubjectId: 0,
 
-      searchBatchId: this.SelectedBatchId
     });
   }
   updateActive(row, value) {
@@ -227,7 +246,7 @@ export class StudentclassdashboardComponent implements OnInit {
     debugger;
 
     let checkFilterString = "ClassId eq " + row.ClassId +
-      " and StudentId eq " + row.StudentId + ' and Active eq 1 and Batch eq ' + this.SelectedBatchId
+      " and StudentId eq " + row.StudentId + ' and Active eq 1 and BatchId eq ' + this.SelectedBatchId
     // " and Active eq " + row.Active +
     this.StandardFilter;
 
@@ -298,6 +317,11 @@ export class StudentclassdashboardComponent implements OnInit {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
+  import() {
+
+
+
+  }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -314,13 +338,12 @@ export class StudentclassdashboardComponent implements OnInit {
         this.allMasterData = [...data.value];
 
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
-        
+
         this.shareddata.ChangeFeeType(this.FeeTypes);
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeBatch(this.Batches);
-      
+
         this.loading = false;
       });
   }
@@ -351,6 +374,6 @@ export interface IStudentClass {
   Section: string;
   FeeTypeId: number;
   FeeType: string;
-  Promote:number;
+  Promote: number;
   Active;
 }

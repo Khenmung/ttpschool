@@ -107,6 +107,12 @@ export class HeaderComponent implements OnInit {
     else
       this.shareddata.ChangeSelectedNCurrentBatchIdEqual(1);
 
+    var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(selected.value) - 1;
+    var _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];
+    this.shareddata.ChangePreviousBatchIdOfSelecteBatchId(_previousBatchId);
+    var nextBatchIndex = this.Batches.map(d => d.BatchId).indexOf(selected.value) + 1;
+    var _nextBatchId = this.Batches[nextBatchIndex]["BatchId"];
+    this.shareddata.ChangeNextBatchIdOfSelecteBatchId(_nextBatchId);
     //let currentUrl = this.route.url;
     //this.route.navigate(['/control']);
     // this.route.navigateByUrl('/', { skipLocationChange: true }).then(() => {
@@ -126,6 +132,7 @@ export class HeaderComponent implements OnInit {
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.shareddata.ChangeCurrentBatchId(this.SelectedBatchId);
       this.shareddata.ChangeSelectedBatchId(this.SelectedBatchId);
+
     });
   }
 }

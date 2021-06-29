@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -11,6 +11,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { roleuseraddComponent } from '../roleuseradd/roleuseradd.component';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-roleuserdashboard',
@@ -26,7 +27,7 @@ export class roleuserdashboardComponent implements OnInit {
   exceptionColumns: boolean;
   CurrentRow: any = {};
   FeePayable = true;
-  filteredOptions: Observable<string[]>;
+  //filteredOptions: Observable<string[]>;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -40,24 +41,27 @@ export class roleuserdashboardComponent implements OnInit {
   Locations = [];
   Applications = [];
   Roles = [];
-  Users = [];
-  //ELEMENT_DATA: IRoleUsers[] = [];
+  Users : IUser[]=[];
+  filteredOptions: Observable<IUser[]>;
   RoleUserList: IRoleUsers[];
   dataSource: MatTableDataSource<IRoleUsers>;
   allMasterData = [];
-  searchForm = new FormGroup({
-    StudentId: new FormControl(0),
+  searchForm = this.fb.group({
+    searchUserName: [''],
   });
+  SelectedBatchId =0;
+  filterOrgIdNBatchId = '';
   RoleUserId = 0;
   RoleUserData = {
     UserId: 0,
     RoleUserId: 0,
     RoleId: 0,
+    BatchId:0,
     OrgId: 0,
     Active: 1
   };
   displayedColumns = [
-    'UserId',
+    'User',
     'RoleId',
     'Active',
     'Action'
@@ -69,13 +73,30 @@ export class roleuserdashboardComponent implements OnInit {
     private route: ActivatedRoute,
     private nav: Router,
     private datepipe: DatePipe,
-    private shareddata: SharedataService) {
+    private shareddata: SharedataService,
+    private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
+    this.filteredOptions = this.searchForm.get("searchUserName").valueChanges
+    .pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : value.UserName),
+      map(UserName => UserName ? this._filter(UserName) : this.Users.slice())
+    );
+    this.shareddata.CurrentSelectedBatchId.subscribe(s=>this.SelectedBatchId = s);
+  }
+  private _filter(name: string): IUser[] {
 
+    const filterValue = name.toLowerCase();
+    return this.Users.filter(option => option.UserName.toLowerCase().includes(filterValue));
+  
+  }
+  displayFn(user: IUser): string {
+    return user && user.UserName ? user.UserName : '';
   }
   PageLoad() {
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0) {
@@ -108,8 +129,8 @@ export class roleuserdashboardComponent implements OnInit {
   addnew() {
     var newdata = {
       RoleUserId: 0,
-      UserId: 0,
-      User: '',
+      UserId: this.searchForm.get("searchUserName").value.ApplicationUserId,
+      User: this.searchForm.get("searchUserName").value.UserName,
       RoleId: 0,
       Role: '',
       Active: 0
@@ -132,17 +153,18 @@ export class roleuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].ROLE);
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].APPLICATION);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].DEPARTMENT);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].ROLE);
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].APPLICATION);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].DEPARTMENT);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
 
         this.shareddata.ChangeRoles(this.Roles);
         this.shareddata.ChangeApplication(this.Applications);
         this.shareddata.ChangeDepartment(this.Departments);
         this.shareddata.ChangeLocation(this.Locations);
-        this.GetRoleUser();
+        //this.GetRoleUser();
         this.GetUsers();
+        this.loading = false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -197,16 +219,17 @@ export class roleuserdashboardComponent implements OnInit {
 
     list.PageName = "RoleUsers";
     list.lookupFields = ["AppUser"];
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and UserId eq ' + this.searchForm.get("searchUserName").value.ApplicationUserId];
     this.RoleUserList = [];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //  console.log('data.value', data.value);
+        //var filteredUsers = data.value.filter(d => d.UserId == this.searchForm.get("searchUserName").value.ApplicationUserId)
         if (data.value.length > 0) {
-          this.RoleUserList = data.value.map(item => {
 
+          this.RoleUserList = data.value.map(item => {
             return {
               RoleUserId: item.RoleUserId,
               UserId: item.UserId,
@@ -218,7 +241,15 @@ export class roleuserdashboardComponent implements OnInit {
           });
         }
         else {
-          this.alert.info("No user role has been defined!", this.optionsNoAutoClose);
+          this.RoleUserList.push({
+            RoleUserId: 0,
+              UserId: this.searchForm.get("searchUserName").value.ApplicationUserId,
+              User: this.searchForm.get("searchUserName").value.UserName,
+              RoleId: 0,
+              Role: '',
+              Active: 0
+          })
+          //this.alert.info("No user role has been defined!", this.optionsNoAutoClose);
         }
         //this.Applications = 
         this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
@@ -251,7 +282,7 @@ export class roleuserdashboardComponent implements OnInit {
     }
 
     var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-    let checkFilterString = "UserId eq " + row.UserId + " and RoleId eq " + row.RoleId + StandardFilter;
+    let checkFilterString = "UserId eq " + row.UserId + " and RoleId eq " + row.RoleId + " and " +StandardFilter;
 
     if (row.RoleUserId > 0)
       checkFilterString += " and RoleUserId ne " + row.RoleUserId;
@@ -275,6 +306,7 @@ export class roleuserdashboardComponent implements OnInit {
           this.RoleUserData.RoleId = row.RoleId;
           this.RoleUserData.UserId = row.UserId;
           this.RoleUserData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.RoleUserData.BatchId = this.SelectedBatchId;
           if (this.RoleUserData.RoleUserId == 0) {
             this.RoleUserData["CreatedDate"] = new Date();
             this.RoleUserData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -334,5 +366,9 @@ export interface IRoleUsers {
   RoleId: number;
   Role: string;
   Active;
+}
+export interface IUser{
+  ApplicationUserId:number;
+  UserName:string;
 }
 

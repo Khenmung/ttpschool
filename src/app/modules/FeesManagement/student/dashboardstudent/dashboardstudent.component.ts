@@ -122,7 +122,7 @@ export class DashboardstudentComponent implements OnInit {
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].PRIMARYCONTACT);
         this.shareddata.ChangePrimaryContact(this.PrimaryContact);
 
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
         this.shareddata.ChangeLocation(this.Location);
 
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].GENDER);

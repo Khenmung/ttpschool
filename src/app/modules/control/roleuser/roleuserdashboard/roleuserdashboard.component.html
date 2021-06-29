@@ -9,22 +9,31 @@
     <mat-card-title>Role User Mapping</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
-        
+        <div fxLayout="row" fxLayoutAlign="center center">
+            <form [formGroup]="searchForm">
+                <mat-form-field class="example-full-width" appearance="fill">
+                    <mat-label>Name</mat-label>
+                    <input type="text" matInput formControlName="searchUserName" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option.UserName}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <button class="mat-raised-button" (click)="GetRoleUser()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </form>
+        </div>
         <div [ngClass]="{'disableDiv': RoleUserId!=0}">
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="UserId">
+                <ng-container matColumnDef="User">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Name
                     </mat-header-cell>
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                        <mat-form-field>
-                            <mat-label>user</mat-label>
-                            <mat-select [(value)]="element.UserId" [(ngModel)]="element.UserId">
-                                <mat-option *ngFor="let item of Users" [value]="item.ApplicationUserId">
-                                    {{item.UserName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                        {{element.User}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="RoleId">
@@ -42,7 +51,7 @@
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-checkbox [checked]="element.Active==1?true:false" (change)="updateActive(element)">
+                        <mat-checkbox [checked]="element.Active==1?true:false" (change)="updateActive(element,$event)">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>

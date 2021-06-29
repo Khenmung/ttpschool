@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-card-title>Student Class</mat-card-title>
+    <mat-card-title>Class Student</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
@@ -23,13 +23,13 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            
+            <mat-form-field appearance="outline">
+                <mat-label>Section</mat-label>
+                <input matInput formControlName="searchSection" autocomplete="Off" maxlength="1">
+            </mat-form-field>
             <button class="mat-raised-button" (click)="GetStudentClasses()">
                 <mat-icon>search</mat-icon>
-            </button>
-            <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
-                <mat-icon>clear_all</mat-icon>
-            </button>
+            </button>            
         </form>
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="Student">
@@ -49,53 +49,63 @@
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>RollNo
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    {{element.RollNo}}                    
+                    <mat-form-field [style.width.px]="50">                        
+                        <input matInput [(value)]="element.RollNo" [(ngModel)]="element.RollNo" autocomplete="Off" maxlength="10">
+                    </mat-form-field>                                        
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Section">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Section
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    {{element.Section}}                    
+                    <mat-form-field [style.width.px]="50">                        
+                        <input matInput [(value)]="element.Section" [(ngModel)]="element.Section" autocomplete="Off" maxlength="10">
+                    </mat-form-field>                  
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="FeeType">
+            <ng-container matColumnDef="FeeTypeId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Fee Type </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                   {{element.FeeType}}
+                    <mat-form-field [style.width.px]="250">
+                        <mat-select [(value)]="element.FeeTypeId" [(ngModel)]="element.FeeTypeId">
+                            <mat-option *ngFor="let item of FeeTypes" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>    
+                        </mat-select>
+                    </mat-form-field>                  
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="Active">
+            <!-- <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)" [checked]="element.Active==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
-            </ng-container>
+            </ng-container> -->
             <ng-container matColumnDef="Promote">
-                <mat-header-cell *matHeaderCellDef> Promote 
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="PromoteAll()" [checked]="element.Promote==1?true:false">
+                <mat-header-cell *matHeaderCellDef> Promote&nbsp; 
+                    <mat-checkbox *ngIf="CheckPermission=='read'" (click)="$event.stopPropagation()" (change)="CheckPromoteAll($event)">
                     </mat-checkbox>
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="Promote(element,$event)" [checked]="element.Promote==1?true:false">
+                <mat-cell style="text-align: center;" *matCellDef="let element">
+                    <mat-checkbox *ngIf="CheckPermission=='read'" (click)="$event.stopPropagation()" (change)="Promote(element,$event)" [checked]="element.Promote==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
-                        <mat-icon>save</mat-icon>
+                    <button matTooltip="promote" mat-mini-fab (click)="PromoteAll()">
+                        <mat-icon>loupe</mat-icon>
                     </button>                    
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="PromoteToNextClass(element,$event)" [checked]="element.Active==1?true:false">
-                    </mat-checkbox>
+                    <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="PromoteToNextClass(element,$event)" [checked]="element.Active==1?true:false">
+                    </mat-checkbox> -->
 
-                    <button matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
+                    </button>&nbsp;
+                    <button matTooltip="promote" mat-mini-fab (click)="Promote(element)">
+                        <mat-icon>loupe</mat-icon>
                     </button>
-
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

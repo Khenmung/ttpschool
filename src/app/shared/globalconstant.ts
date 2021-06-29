@@ -53,7 +53,7 @@ export class globalconstants {
     ]
     public static MasterDefinitions = [
         {
-            "application": [{
+            "applications": [{
                 "ORGANIZATION": "organization",
                 "LOCATION": "location",
                 "DEPARTMENT": "department",

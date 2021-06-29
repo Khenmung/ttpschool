@@ -183,6 +183,7 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   GetStudentClass() {
+    debugger;
     if (this.StudentId == 0 && this.StudentClassId == 0) {
       this.alert.error("Invalid Student Id", this.optionsAutoClose);
       return;

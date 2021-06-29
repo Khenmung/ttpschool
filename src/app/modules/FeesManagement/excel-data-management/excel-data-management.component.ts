@@ -278,7 +278,7 @@ export class ExcelDataManagementComponent implements OnInit {
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].RELIGION);
         this.States = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].PRIMARYCONTACT);
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].application[0].LOCATION);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
         //this.PrimaryContactFatherOrMother= this.getDropDownData(globalconstants.PRIMARYCONTACT);

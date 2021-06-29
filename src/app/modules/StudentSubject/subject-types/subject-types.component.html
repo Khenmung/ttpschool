@@ -9,7 +9,9 @@
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Subject Type Name
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    {{element.SubjectTypeName}}
+                    <mat-form-field [style.width.px]="150">
+                        <input matInput [(value)]="element.SubjectTypeName" [(ngModel)]="element.SubjectTypeName">
+                    </mat-form-field>                    
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="SelectHowMany">
