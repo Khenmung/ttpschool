@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { AddMasterDataComponent } from '../../FeesManagement/add-master-data/add-master-data.component';
+import { AddMasterDataComponent } from '../add-master-data/add-master-data.component';
 import { roleuserdashboardComponent } from '../roleuser/roleuserdashboard/roleuserdashboard.component';
 import { AppuserdashboardComponent } from '../users/appuserdashboard/appuserdashboard.component';
 import { RoleAppPermissiondashboardComponent } from '../roleapppermission/RoleAppPermissiondashboard/RoleAppPermissiondashboard.component';

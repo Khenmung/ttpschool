@@ -1,6 +1,5 @@
-<div class="container" fxLayout="row" fxLayoutAlign="space-around center">
-    <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
-    class="demo-tab-group">
+<div fxLayout="row" fxLayoutAlign="space-around center">
+    <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>info</mat-icon>Subject Types

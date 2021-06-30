@@ -5,10 +5,10 @@
     </div>
     <div class="grid">        
             <!-- <div class="column"> -->
-                <button class="mat-flat-button" [mat-dialog-close]="false" id="no-button">No</button>
+                <button [disabled]="loading" class="mat-flat-button" [mat-dialog-close]="false" id="no-button">No</button>
             <!-- </div>
             <div class="column"> -->
-                <button class="mat-flat-button" [mat-dialog-close]="true" id="yes-button">Yes</button>
+                <button [disabled]="loading" class="mat-flat-button" [mat-dialog-close]="true" id="yes-button">Yes</button>
             <!-- </div> -->
         
     </div>

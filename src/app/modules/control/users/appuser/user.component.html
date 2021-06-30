@@ -73,10 +73,10 @@
         </div>
     </mat-card-content>
     <mat-card-actions style="padding: 50px;" fxLayout="row" fxLayoutAlign="space-around center">
-        <button class="mat-raised-button" (click)="UpdateOrSave()">
+        <button [disabled]="loading" class="mat-raised-button" (click)="UpdateOrSave()">
             <mat-icon>save</mat-icon>
         </button>
-        <button class="mat-raised-button" (click)="back()">
+        <button [disabled]="loading" class="mat-raised-button" (click)="back()">
             <mat-icon>cancel</mat-icon>
         </button>
     </mat-card-actions>

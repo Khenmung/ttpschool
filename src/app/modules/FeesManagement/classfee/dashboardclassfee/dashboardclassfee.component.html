@@ -41,7 +41,7 @@
                 </mat-select>
             </mat-form-field> -->
 
-            <button class="mat-raised-button" (click)="GetClassFee()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassFee()">
                 <mat-icon>search</mat-icon>
             </button><br>
         </form>
@@ -110,7 +110,7 @@
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading" [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

@@ -58,7 +58,7 @@
                 <ng-container matColumnDef="Action" *ngIf="editReceipt">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button matTooltip="cancel" (click)="UpdateActive(element)" class="mat-raised-button">
+                        <button [disabled]="loading" matTooltip="cancel" (click)="UpdateActive(element)" class="mat-raised-button">
                             <mat-icon>
                                 cancel
                             </mat-icon>
@@ -77,22 +77,22 @@
 
     </div>
     <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
-        <button matTooltip="generate receipt" *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">
+        <button [disabled]="loading" matTooltip="generate receipt" *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">
             <mat-icon>create_new_folder</mat-icon>
         </button>
         <div *ngIf="Saved || studentInfoTodisplay.BillNo>0">
-            <button matTooltip="edit receipt" *ngIf="!editReceipt" (click)="edit()" class="mat-raised-button">
+            <button [disabled]="loading" matTooltip="edit receipt" *ngIf="!editReceipt" (click)="edit()" class="mat-raised-button">
                 <mat-icon>edit</mat-icon>
             </button>
-            <button matTooltip="done" *ngIf="editReceipt" (click)="done()" class="mat-raised-button">
+            <button [disabled]="loading" matTooltip="done" *ngIf="editReceipt" (click)="done()" class="mat-raised-button">
                 <mat-icon>checked</mat-icon>
             </button>
-            <button matTooltip="print" *ngIf="!editReceipt" printSectionId="printSection" [useExistingCss]="true"
+            <button [disabled]="loading" matTooltip="print" *ngIf="!editReceipt" printSectionId="printSection" [useExistingCss]="true"
                 ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
             </button>            
         </div>
-        <button matTooltip="back" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
+        <button [disabled]="loading" matTooltip="back" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
             <mat-icon>arrow_back</mat-icon>
         </button>
     </div>
@@ -103,7 +103,7 @@
             <mat-label>Receipt no.</mat-label>
             <input matInput #receiptno [(ngModel)]="studentInfoTodisplay.ReceiptNo" autocomplete="off">
         </mat-form-field>
-        <button class="mat-raised-button" (click)="GetStudentFeePaymentDetails(receiptno.value)">
+        <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentFeePaymentDetails(receiptno.value)">
             <mat-icon>search</mat-icon>
         </button>
     </div>

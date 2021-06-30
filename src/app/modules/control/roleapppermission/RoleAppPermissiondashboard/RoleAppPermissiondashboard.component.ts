@@ -316,31 +316,34 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   }
 
   UpdateOrSave(row) {
-
+    
+     
+    
     if (row.PermissionId == 0) {
       this.alert.error("Please select permission", this.optionAutoClose);
       return;
     }
-
+    this.loading=true;
     let checkFilterString = "Active eq 1 " +
       " and RoleId eq " + row.RoleId +
-      " and PermissionId eq " + row.PermissionId +
+     // " and PermissionId eq " + row.PermissionId +
       " and ApplicationFeatureId eq " + row.ApplicationFeatureId +
       " and OrgId eq " + this.UserDetails[0]["orgId"];
 
-    if (this.AppRoleData.ApplicationFeatureRoleId > 0)
-      checkFilterString += " and ApplicationFeatureRoleId ne " + this.AppRoleData.ApplicationFeatureRoleId;
+    if (row.ApplicationFeatureRoleId > 0)
+      checkFilterString += " and ApplicationFeatureRoleId ne " + row.ApplicationFeatureRoleId;
 
     let list: List = new List();
     list.fields = ["ApplicationFeatureRoleId"];
     list.PageName = "ApplicationFeatureRolesPerms";
     list.filter = [checkFilterString];
-
+    this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionAutoClose);
+          this.loading=false;
         }
         else {
           //console.log(this.UserDetail);
@@ -371,6 +374,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           row.Action = false;
         }
       });
+    
   }
 
   insert(row) {
@@ -379,6 +383,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading=false;
           row.ApplicationFeatureRoleId = data.ApplicationFeatureRoleId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
@@ -388,6 +393,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, this.AppRoleData.ApplicationFeatureRoleId, 'patch')
       .subscribe(
         (data: any) => {
+          this.loading=false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }

@@ -2,7 +2,7 @@
 <mat-toolbar>
     <mat-toolbar-row class="width100" fxLayout="row" fxLayoutAlign="space-between center">
         <div fxLayout="row wrap" fxLayoutAlign="start center">
-            <button mat-button (click)="toggleSideBar()">
+            <button [disabled]="loading" mat-button (click)="toggleSideBar()">
                 <mat-icon>menu</mat-icon>
             </button>
             <a [routerLink]="['/home/display/0/0/']"><img style="border-radius: 3px;" src="assets/images/ttplogo1.png"
@@ -11,47 +11,47 @@
 
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <span class="rightside" *ngIf="!deviceXs">
-                <button mat-button (click)="contactus()">
+                <button [disabled]="loading" mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
                 </button>
             </span>
-            <button class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
+            <button [disabled]="loading" class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
                 <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
+                <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
                     <mat-icon>login</mat-icon>login
                 </button>
-                <button mat-menu-item *ngIf="loggedIn" (click)="createlogin()">
+                <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="createlogin()">
                     <mat-icon>create</mat-icon>Create login
                 </button>
-                <button mat-menu-item *ngIf="loggedIn" (click)="addUser()">
+                <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="addUser()">
                     <mat-icon>user</mat-icon>Add User
                 </button>
-                <button mat-menu-item *ngIf="loggedIn" (click)="changepassword()">
+                <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="changepassword()">
                     <mat-icon>change_circle</mat-icon>Change password
                 </button>
-                <button mat-menu-item *ngIf="loggedIn" (click)="logout()">
+                <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="logout()">
                     <mat-icon>logout</mat-icon>logout
                 </button>
             </mat-menu>
         </div>
     </mat-toolbar-row>
     <mat-toolbar-row>hi</mat-toolbar-row>
-    <mat-toolbar-row style="background-color:var(--maincolor1)">
+    <mat-toolbar-row fxLayout="row" fxLayoutAlign="end center" style="background-color:var(--maincolor1)">
         <span>
-            <button (click)="goto('control')" class="mat-raised-button">
+            <button [disabled]="loading" (click)="goto('control')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Permissions
             </button>
-            <button (click)="goto('subject')" class="mat-raised-button">
+            <button [disabled]="loading" (click)="goto('subject')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Subject
             </button>
-            <button (click)="goto('exam')" class="mat-raised-button">
+            <button [disabled]="loading" (click)="goto('exam')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Exam
             </button>
-            <button (click)="goto('admin')" class="mat-raised-button">
-                <mat-icon>info</mat-icon> Admin
+            <button [disabled]="loading" (click)="goto('admin')" class="mat-raised-button">
+                <mat-icon>info</mat-icon> Fee Management
             </button>
         </span>
         <span>
@@ -71,10 +71,10 @@
            
             <span><strong>ST. PAUL'S INSTITUTE</strong></span>            
         </div> -->
-        <button mat-button (click)="newsNEvents()">
+        <button [disabled]="loading" mat-button (click)="newsNEvents()">
             <mat-icon>announcement</mat-icon><span style="color: white;">News & Events</span>
         </button>
-        <button mat-button (click)="contactus()">
+        <button [disabled]="loading" mat-button (click)="contactus()">
             <mat-icon>contact_support</mat-icon><span>Contact Us</span>
         </button>
     </mat-toolbar-row>

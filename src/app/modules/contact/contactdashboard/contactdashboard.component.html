@@ -57,15 +57,15 @@
             <th mat-header-cell *matHeaderCellDef> </th>
             <td mat-cell *matCellDef="let element">
               <div class="row">
-                <button class="mat-raised-button"
+                <button [disabled]="loading" class="mat-raised-button"
                   (click)="view(element.MessageId)"><mat-icon>pageview</mat-icon></button>
               </div>
             </td>
           </ng-container>
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;">
-            <!-- <button (click)="edit()">Edit</button>
-          <button (click)="cancelOrDelete()">Cancel</button> -->
+            <!-- <button [disabled]="loading" (click)="edit()">Edit</button>
+          <button [disabled]="loading" (click)="cancelOrDelete()">Cancel</button> -->
           </mat-row>
         </mat-table>
   

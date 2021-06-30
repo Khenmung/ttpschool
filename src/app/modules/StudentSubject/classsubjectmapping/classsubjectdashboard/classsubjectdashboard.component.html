@@ -2,7 +2,7 @@
     <mat-card-title>Class Subject</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
             <!-- <mat-form-field appearance="outline">
@@ -33,10 +33,10 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field> -->
-            <button class="mat-raised-button" (click)="GetClassSubject()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubject()">
                 <mat-icon>search</mat-icon>
             </button>
-            <!-- <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+            <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                 <mat-icon>clear_all</mat-icon>
             </button> -->
         </form>
@@ -83,7 +83,7 @@
                 <mat-header-cell *matHeaderCellDef>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="CheckPermission=='read'" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading || CheckPermission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
 

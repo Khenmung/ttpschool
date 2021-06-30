@@ -2,7 +2,7 @@
     <mat-card-title>Class Student</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
             <!-- <mat-form-field appearance="outline">
@@ -27,7 +27,7 @@
                 <mat-label>Section</mat-label>
                 <input matInput formControlName="searchSection" autocomplete="Off" maxlength="1">
             </mat-form-field>
-            <button class="mat-raised-button" (click)="GetStudentClasses()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentClasses()">
                 <mat-icon>search</mat-icon>
             </button>            
         </form>
@@ -92,7 +92,7 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button matTooltip="promote" mat-mini-fab (click)="PromoteAll()">
+                    <button [disabled]="loading" matTooltip="promote" mat-mini-fab (click)="PromoteAll()">
                         <mat-icon>loupe</mat-icon>
                     </button>                    
                 </mat-header-cell>
@@ -100,10 +100,10 @@
                     <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="PromoteToNextClass(element,$event)" [checked]="element.Active==1?true:false">
                     </mat-checkbox> -->
 
-                    <button matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>&nbsp;
-                    <button matTooltip="promote" mat-mini-fab (click)="Promote(element)">
+                    <button [disabled]="loading" matTooltip="promote" mat-mini-fab (click)="Promote(element)">
                         <mat-icon>loupe</mat-icon>
                     </button>
                 </mat-cell>

@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 0px 15px;">
         <div><strong>Subject Results</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
@@ -33,10 +33,10 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button class="mat-raised-button" (click)="GetExamStudentSubjectResults()">
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetExamStudentSubjectResults()">
                     <mat-icon>search</mat-icon>
                 </button>
-                <!-- <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+                <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
             </form>
@@ -92,13 +92,13 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button *ngIf="ExamStudentSubjectResult.length>0" matTooltip="save all" mat-mini-fab
+                        <button [disabled]="loading" *ngIf="ExamStudentSubjectResult.length>0" matTooltip="save all" mat-mini-fab
                             (click)="saveall()">
                             <mat-icon>all_out</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab
+                        <button [disabled]="loading" [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab
                             (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>

@@ -30,7 +30,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  CheckPermission='';
+  CheckPermission = '';
   StandardFilterWithBatchId = '';
   loading = false;
   Classes = [];
@@ -90,8 +90,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-     
-      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail,this.shareddata,globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+
+      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.shareddata, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
       console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
@@ -136,9 +136,11 @@ export class ClasssubjectdashboardComponent implements OnInit {
   GetClassSubject() {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
+    this.loading=true;
     if (this.searchForm.get("searchClassId").value != 0)
       filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
+      this.loading=false;
       this.alert.error("Please select class/stream", this.optionAutoClose);
       return;
     }
@@ -150,6 +152,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     filterStr += ' and ' + this.StandardFilterWithBatchId;
 
     if (filterStr.length == 0) {
+      this.loading=false;
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
       return;
     }
@@ -166,7 +169,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.lookupFields =["SubjectType"];
+    list.lookupFields = ["SubjectType"];
     list.filter = [filterStr];
     this.ClassSubjectList = [];
     this.dataservice.get(list)
@@ -180,7 +183,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
             SubjectId: item.SubjectId,
             SubjectTypeId: item.SubjectTypeId,
             ClassId: item.ClassId,
-            SelectHowMany:item.SubjectType.SelectHowMany,
+            SelectHowMany: item.SubjectType.SelectHowMany,
             Active: item.Active
           }
         })
@@ -198,7 +201,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
               SubjectId: existing[0].SubjectId,
               SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
               SubjectTypeId: existing[0].SubjectTypeId,
-              SelectHowMany:existing[0].SelectHowMany,
+              SelectHowMany: existing[0].SelectHowMany,
               //SubjectType: this.SubjectTypes.filter(t => t.SubjectTypeId == existing[0].SubjectTypeId)[0].SubjectTypeName,
               ClassName: this.Classes.filter(c => c.MasterDataId == existing[0].ClassId)[0].MasterDataName,
               ClassId: existing[0].ClassId,
@@ -210,7 +213,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
               ClassSubjectId: 0,
               SubjectId: s.MasterDataId,
               SubjectTypeId: 0,
-              SelectHowMany:0,
+              SelectHowMany: 0,
               //SubjectType: st.SubjectTypeName,
               ClassId: this.searchForm.get("searchClassId").value,
               ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
@@ -224,7 +227,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
         //   this.ClassSubjectList = [...firstData];
         // }
         //this.shareddata.ChangeApplicationRoles(this.AppRoleList); 
-        console.log('this.ClassSubjectList',this.ClassSubjectList)
+        //console.log('this.ClassSubjectList', this.ClassSubjectList)
         this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
         this.loading = false;
         //this.changeDetectorRefs.detectChanges();
@@ -266,68 +269,72 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
         });
   }
-  updateSelectHowMany(row){
+  updateSelectHowMany(row) {
     debugger;
-      row.SelectHowMany = this.SubjectTypes.filter(f=>f.SubjectTypeId ==row.SubjectTypeId)[0].SelectHowMany;
+    row.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == row.SubjectTypeId)[0].SelectHowMany;
   }
   UpdateOrSave(row) {
 
     debugger;
-    var selectedSubjectType = this.ClassSubjectList.filter(c=>c.SubjectTypeId ==row.SubjectTypeId);
-    if(selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany>0)
-    {
-      this.alert.error("Allowed no. subjects selected is exceeded for this subject type.",this.optionsNoAutoClose);
-      return;
-    }
+    this.loading = true;
+    
+      var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
+      if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
+        this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
+        this.loading = false;
+        return;
+      }
 
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
-    // " and Active eq " + row.Active +
+      let checkFilterString = "ClassId eq " + row.ClassId +
+        " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
+      // " and Active eq " + row.Active +
 
 
-    if (row.ClassSubjectId > 0)
-      checkFilterString += " and ClassSubjectId ne " + row.ClassSubjectId;
+      if (row.ClassSubjectId > 0)
+        checkFilterString += " and ClassSubjectId ne " + row.ClassSubjectId;
 
-     checkFilterString += ' and ' + this.StandardFilterWithBatchId;
+      checkFilterString += ' and ' + this.StandardFilterWithBatchId;
 
-    let list: List = new List();
-    list.fields = ["ClassSubjectId"];
-    list.PageName = "ClassSubjects";
-    list.filter = [checkFilterString];
+      let list: List = new List();
+      list.fields = ["ClassSubjectId"];
+      list.PageName = "ClassSubjects";
+      list.filter = [checkFilterString];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
-          row.Ative = 0;
-          return;
-        }
-        else {
-
-          this.ClassSubjectData.Active = row.Active;
-          this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
-          this.ClassSubjectData.ClassId = row.ClassId;
-          this.ClassSubjectData.SubjectId = row.SubjectId;
-          this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
-          this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ClassSubjectData.BatchId = this.SelectedBatchId;
-          if (this.ClassSubjectData.ClassSubjectId == 0) {
-            this.ClassSubjectData["CreatedDate"] = new Date();
-            this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.ClassSubjectData["UpdatedDate"];
-            delete this.ClassSubjectData["UpdatedBy"];
-            this.insert(row);
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          debugger;
+          if (data.value.length > 0) {
+            this.loading = false;
+            this.alert.error("Record already exists!", this.optionsNoAutoClose);
+            row.Ative = 0;
+            return;
           }
           else {
-            delete this.ClassSubjectData["CreatedDate"];
-            delete this.ClassSubjectData["CreatedBy"];
-            this.ClassSubjectData["UpdatedDate"] = new Date();
-            this.ClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+
+            this.ClassSubjectData.Active = row.Active;
+            this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
+            this.ClassSubjectData.ClassId = row.ClassId;
+            this.ClassSubjectData.SubjectId = row.SubjectId;
+            this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
+            this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+            this.ClassSubjectData.BatchId = this.SelectedBatchId;
+            if (this.ClassSubjectData.ClassSubjectId == 0) {
+              this.ClassSubjectData["CreatedDate"] = new Date();
+              this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+              delete this.ClassSubjectData["UpdatedDate"];
+              delete this.ClassSubjectData["UpdatedBy"];
+              this.insert(row);
+            }
+            else {
+              delete this.ClassSubjectData["CreatedDate"];
+              delete this.ClassSubjectData["CreatedBy"];
+              this.ClassSubjectData["UpdatedDate"] = new Date();
+              this.ClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+              this.update();
+            }
           }
-        }
-      });
+        });
+    
   }
 
   insert(row) {
@@ -336,6 +343,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading = false;
           row.ClassSubjectId = data.ClassSubjectId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
@@ -345,6 +353,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, this.ClassSubjectData.ClassSubjectId, 'patch')
       .subscribe(
         (data: any) => {
+          this.loading = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -359,7 +368,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["SubjectTypeId", "SubjectTypeName","SelectHowMany"];
+    list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
     list.filter = [this.StandardFilterWithBatchId + " and Active eq 1 "];
     //list.orderBy = "ParentId";
@@ -422,7 +431,7 @@ export interface IClassSubject {
   SubjectId: number;
   SubjectName: string;
   SubjectTypeId: number;
-  SelectHowMany:number;
+  SelectHowMany: number;
   Active;
 }
 

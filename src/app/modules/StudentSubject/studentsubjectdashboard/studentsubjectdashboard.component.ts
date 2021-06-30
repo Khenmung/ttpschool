@@ -91,10 +91,11 @@ export class studentsubjectdashboardComponent implements OnInit {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-      if (this.Classes.length == 0)
+      this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+      if (this.Classes.length == 0 || this.Subjects.length == 0)
         this.GetMasterData();
       else {
-        this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+
 
         this.loading = false;
       }
@@ -239,13 +240,13 @@ export class studentsubjectdashboardComponent implements OnInit {
   UpdateOrSave(row) {
 
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
-      " and StudentClassId eq " + row.StudentClassId +
-      // " and Active eq " + row.Active +
-      this.StandardFilter;
+      " and StudentClassId eq " + row.StudentClassId
+    // " and Active eq " + row.Active +
+    //this.StandardFilter;
 
     if (row.StudentClassSubjectId > 0)
       checkFilterString += " and StudentClassSubjectId ne " + row.StudentClassSubjectId;
-
+    checkFilterString += " and " + this.StandardFilter
     let list: List = new List();
     list.fields = ["ClassSubjectId"];
     list.PageName = "StudentClassSubjects";

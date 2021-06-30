@@ -20,36 +20,36 @@
           <input formControlName="description" #Description matInput maxlength="50" autocomplete="off">
         </mat-form-field>
         <input hidden="true" #inputfile type="file" (change)="fileChangeEvent($event)" />
-        <button class="mat-raised-button" matTooltip="select file" color="primary" (click)="inputfile.click()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="select file" color="primary" (click)="inputfile.click()">
           <mat-icon aria-label="photo">photo</mat-icon>
         </button>&nbsp;&nbsp;
-        <button type="submit" (click)="uploadFile()" matTooltip="upload file" class="mat-raised-button">
+        <button [disabled]="loading" type="submit" (click)="uploadFile()" matTooltip="upload file" class="mat-raised-button">
           <mat-icon aria-label="file_upload">file_upload</mat-icon>
         </button>&nbsp;&nbsp;
       </div>
       <div fxLayout="row">
-        <button class="mat-raised-button" matTooltip="rotate anti clock wise" (click)="rotateLeft()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="rotate anti clock wise" (click)="rotateLeft()">
           <mat-icon aria-label="rotate_left">rotate_left</mat-icon>
         </button>
-        <button class="mat-raised-button" matTooltip="rotate clock wise" (click)="rotateRight()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="rotate clock wise" (click)="rotateRight()">
           <mat-icon aria-label="rotate_right">rotate_right</mat-icon>
         </button>
-        <button class="mat-raised-button" matTooltip="flip horizontally" (click)="flipHorizontal()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="flip horizontally" (click)="flipHorizontal()">
           <mat-icon aria-label="flip">flip</mat-icon>
         </button>
-        <button class="mat-raised-button" matTooltip="flip vertically" (click)="flipVertical()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="flip vertically" (click)="flipVertical()">
           <mat-icon aria-label="swap_vert">swap_vert</mat-icon>
         </button>
-        <button class="mat-raised-button" (click)="toggleContainWithinAspectRatio()">
+        <button [disabled]="loading" class="mat-raised-button" (click)="toggleContainWithinAspectRatio()">
           {{containWithinAspectRatio?'Fill Aspect Ratio':'Contain Within Aspect Ratio'}}</button>
-        <button class="mat-raised-button" matTooltip="reset image" (click)="resetImage()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="reset image" (click)="resetImage()">
           <mat-icon aria-label="restart_alt">restart_alt</mat-icon>
         </button>
         <!-- <input hidden="true" [(ngModel)]="rotation" placeholder="Rotation" type="number" (keyup)="updateRotation()" /> -->
-        <button class="mat-raised-button" matTooltip="zoom out" (click)="zoomOut()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="zoom out" (click)="zoomOut()">
           <mat-icon aria-label="zoom_out">zoom_out</mat-icon>
         </button>
-        <button class="mat-raised-button" matTooltip="zoom in" (click)="zoomIn()">
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="zoom in" (click)="zoomIn()">
           <mat-icon aria-label="zoom_in">zoom_in</mat-icon>
         </button>
       </div>

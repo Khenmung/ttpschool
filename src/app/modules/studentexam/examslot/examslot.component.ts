@@ -26,7 +26,7 @@ export class ExamslotComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StandardFilter = '';
+  StandardFilterWithBatchId = '';
   loading = false;
   ExamSlots: IExamSlots[] = [];
   SelectedBatchId = 0;
@@ -50,7 +50,7 @@ export class ExamslotComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    'SlotNameId',
+    'SlotName',
     'ExamDate',
     'StartTime',
     'EndTime',
@@ -75,7 +75,7 @@ export class ExamslotComponent implements OnInit {
       searchExamId: [0],
 
     });
-    
+
   }
 
   PageLoad() {
@@ -84,8 +84,8 @@ export class ExamslotComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
 
       this.GetMasterData();
     }
@@ -115,23 +115,25 @@ export class ExamslotComponent implements OnInit {
   UpdateOrSave(row) {
 
     debugger;
-    if(row.ExamDate ==null)
-    {
-      this.alert.error("Exam date is mandatory!",this.optionAutoClose);
+    this.loading = true;
+
+    if (row.ExamDate == null) {
+      this.loading = false;
+      this.alert.error("Exam date is mandatory!", this.optionAutoClose);
       return;
     }
-    if(row.StartTime.length==0 || row.EndTime.length ==0)
-    {
-      this.alert.error("Start time and end time are mandatory!",this.optionAutoClose);
+    if (row.StartTime.length == 0 || row.EndTime.length == 0) {
+      this.loading = false;
+      this.alert.error("Start time and end time are mandatory!", this.optionAutoClose);
       return;
     }
-    
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
-      " and SlotNameId eq " + row.SlotNameId +
-      this.StandardFilter;
+      " and SlotNameId eq " + row.SlotNameId
+
 
     if (row.ExamSlotId > 0)
       checkFilterString += " and ExamSlotId ne " + row.ExamSlotId;
+    checkFilterString += " and " + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["ExamSlotId"];
@@ -145,7 +147,7 @@ export class ExamslotComponent implements OnInit {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
-          this.ExamSlotsData.ExamSlotId =row.ExamSlotId;
+          this.ExamSlotsData.ExamSlotId = row.ExamSlotId;
           this.ExamSlotsData.ExamId = this.searchForm.get("searchExamId").value;
           this.ExamSlotsData.Active = row.Active;
           this.ExamSlotsData.SlotNameId = row.SlotNameId;
@@ -158,9 +160,9 @@ export class ExamslotComponent implements OnInit {
           if (this.ExamSlotsData.ExamSlotId == 0) {
             this.ExamSlotsData["CreatedDate"] = new Date();
             this.ExamSlotsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.ExamSlotsData["UpdatedDate"] =new Date();
+            this.ExamSlotsData["UpdatedDate"] = new Date();
             delete this.ExamSlotsData["UpdatedBy"];
-            console.log('exam slot',this.ExamSlotsData)
+            console.log('exam slot', this.ExamSlotsData)
             this.insert(row);
           }
           else {
@@ -172,6 +174,7 @@ export class ExamslotComponent implements OnInit {
           }
         }
       });
+
   }
 
   insert(row) {
@@ -180,6 +183,7 @@ export class ExamslotComponent implements OnInit {
     this.dataservice.postPatch('ExamSlots', this.ExamSlotsData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading = false;
           row.ExamSlotId = data.ExamSlotId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
@@ -189,18 +193,19 @@ export class ExamslotComponent implements OnInit {
     this.dataservice.postPatch('ExamSlots', this.ExamSlotsData, this.ExamSlotsData.ExamSlotId, 'patch')
       .subscribe(
         (data: any) => {
+          this.loading = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
   GetExams() {
 
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //var orgIdSearchstr = this.StandardFilterWithBatchId;// ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId"];
+    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -208,53 +213,69 @@ export class ExamslotComponent implements OnInit {
         this.Exams = data.value.map(e => {
           return {
             ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
+            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName,
+            StartDate: e.StartDate,
+            EndDate: e.EndDate
           }
         })
         this.loading = false;
       })
   }
   GetExamSlots() {
-
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    debugger;
+    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
     if (this.searchForm.get("searchExamId").value == 0) {
+
       this.alert.error("Please select exam", this.optionAutoClose);
       return;
     }
     else
       filterstr = ' and ExamId eq ' + this.searchForm.get("searchExamId").value;
 
+    this.loading = true;
     let list: List = new List();
-    list.fields = ["ExamSlotId", "ExamId", "SlotNameId", "ExamDate", "StartTime", "EndTime", "OrgId", "BatchId", "Active"];
+    list.fields = ["ExamSlotId", "ExamId",
+      "SlotNameId",
+      "ExamDate",
+      "StartTime",
+      "EndTime",
+      "OrgId",
+      "BatchId",
+      "Active"];
     list.PageName = "ExamSlots";
-    list.filter = ["Active eq 1 " + orgIdSearchstr + filterstr];
+    list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId + filterstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //this.Exams = [...data.value];
-        this.ExamSlots = this.SlotNames.map(e => {
-          let existing = data.value.filter(db => db.SlotNameId = e.MasterDataId);
-          if (existing.length > 0) {
-            return existing[0];
-          }
-          else {
-            return {
-              ExamSlotId: 0,
-              ExamId: 0,
-              SlotNameId: e.MasterDataId,
-              ExamDate: new Date(),
-              StartTime: '',
-              EndTime: '',
-              OrgId: 0,
-              BatchId: 0,
-              Active: 0
-
+        var _startDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].StartDate);
+        var _endDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].EndDate);
+        for (var _examDate = _startDate; _examDate < _endDate; _examDate.setDate(_examDate.getDate() + 1)) {
+          this.ExamSlots = this.SlotNames.map(e => {
+            let existing = data.value.filter(db => db.SlotNameId == e.MasterDataId && db.ExamDate == _examDate);
+            if (existing.length > 0) {
+              existing[0].SlotName = e.MasterDataName;
+              return existing[0];
             }
-          }
-        })
-        console.log('this', this.ExamSlots)
+            else {
+              return {
+                ExamSlotId: 0,
+                ExamId: 0,
+                SlotNameId: e.MasterDataId,
+                SlotName: e.MasterDataName,
+                ExamDate: _examDate,
+                StartTime: '',
+                EndTime: '',
+                OrgId: 0,
+                BatchId: 0,
+                Active: 0
+
+              }
+            }
+          })
+        }
+        //console.log('this', this.ExamSlots)
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
         this.loading = false;
       })
@@ -301,6 +322,7 @@ export interface IExamSlots {
   ExamSlotId: number;
   ExamId: number;
   SlotNameId: number;
+  SlotName: string;
   ExamDate: Date;
   StartTime: string;
   EndTime: string;

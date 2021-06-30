@@ -20,7 +20,7 @@
             <ng-container matColumnDef="ClassFeeName">
                 <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button mat-button (click)="expandedElement = expandedElement === element ? null : element">
+                    <button [disabled]="loading" mat-button (click)="expandedElement = expandedElement === element ? null : element">
                         {{element.ClassFeeName}}
                     </button>                    
                 </mat-cell>
@@ -68,7 +68,7 @@
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading" [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon matTooltip="save">save</mat-icon>
                     </button>
                 </mat-cell>

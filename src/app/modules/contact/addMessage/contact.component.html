@@ -37,10 +37,10 @@
                         *ngIf="f.MessageBody.touched && f.MessageBody.hasError('required')">Message
                         is required.</span>
                 </mat-form-field>
-                <button style="margin-bottom: 20px;" type="button" (click)="onSubmit()" *ngIf="Id==0" [disabled]="ContactForm.invalid"
+                <button [disabled]="loading" style="margin-bottom: 20px;" type="button" (click)="onSubmit()" *ngIf="Id==0" [disabled]="ContactForm.invalid"
                     [style.width.px]="300" class="btn btn-info">Submit</button>
             
-            <!-- <button style="width:300px" class="mat-raised-button" (click)="back()">
+            <!-- <button [disabled]="loading" style="width:300px" class="mat-raised-button" (click)="back()">
                 <mat-icon>arrow_back</mat-icon>
             </button> -->
         </div>
@@ -50,6 +50,6 @@
         </div>
     </mat-card-content>
     <mat-card-actions>
-    <button class="mat-raised-button" (click)="back()"><mat-icon>arrow_back</mat-icon></button>
+    <button [disabled]="loading" class="mat-raised-button" (click)="back()"><mat-icon>arrow_back</mat-icon></button>
     </mat-card-actions>
 </mat-card>

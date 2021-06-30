@@ -1,6 +1,6 @@
 
-<div class="container" fxLayout="row wrap" fxLayoutAlign="start center" fxLayout.xs="column" fxLayoutGap="30px">
-    <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)" class="demo-tab-group">
+<div fxLayout="row wrap" fxLayoutAlign="start center" fxLayout.xs="column" fxLayoutGap="30px">
+    <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)" >
         <mat-tab>
             <ng-template mat-tab-label>
                 <mat-icon>first_page</mat-icon> Essential Data

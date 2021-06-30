@@ -29,10 +29,10 @@
                 <mat-label>Mother</mat-label>
                 <input formControlName="MotherName" autocomplete="Off" matInput maxlength="50">
             </mat-form-field>
-            <button class="mat-raised-button" (click)="GetStudent()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetStudent()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button class="mat-raised-button" (click)="new()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="new()">
                 <mat-icon>fiber_new</mat-icon>
             </button>
         </form>
@@ -84,7 +84,7 @@
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">                        
-                        <button matTooltip="Details" mat-mini-fab (click)="view(element)">
+                        <button [disabled]="loading" matTooltip="Details" mat-mini-fab (click)="view(element)">
                             <mat-icon>pageview</mat-icon>
                         </button>                     
                     </mat-cell>
@@ -96,7 +96,7 @@
         </div>
     </mat-card-content>
     <mat-card-actions fxLayoutAlign="center center">
-        <button (click)="exportArray()" matTooltip="export to excel" class="mat-raised-button">
+        <button [disabled]="loading" (click)="exportArray()" matTooltip="export to excel" class="mat-raised-button">
             <mat-icon>download</mat-icon>
         </button>
     </mat-card-actions>

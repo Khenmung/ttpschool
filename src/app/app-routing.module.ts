@@ -26,7 +26,7 @@ const routes: Routes = [
   },
   {
     path: 'control',
-    loadChildren: () => import('./modules/control/adminsettings.module').then(m => m.AdminsettingsModule)
+    loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
     path: 'admin',

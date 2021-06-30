@@ -21,7 +21,7 @@
       </div>      
     </div>
     <div fxLayout="row" fxLayoutAlign="space-around center">
-      <button mat-button (click)="back()">
+      <button [disabled]="loading" mat-button (click)="back()">
         <mat-icon style="color:white">arrow_back</mat-icon>
       </button>
     </div>

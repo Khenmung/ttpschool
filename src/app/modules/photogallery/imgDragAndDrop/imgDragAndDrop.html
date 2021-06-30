@@ -4,7 +4,7 @@
         <!-- <div class="text-right" style="margin-bottom: 5px;">
             <a class="mat-raised-button" [routerLink]="[ '/uploadphoto']">Image Crop</a></div> -->
             <alert></alert>
-            <mat-spinner diameter="50" style="position:relative;margin-left: 50%;" *ngIf="Processing"></mat-spinner>
+            <mat-spinner diameter="25" style="position:relative;margin-left: 50%;" *ngIf="Processing"></mat-spinner>
             <form [formGroup]="dragdropForm">
             <div>
                 <ngx-dropzone (change)="onSelect($event)">
@@ -28,7 +28,7 @@
                       <mat-option *ngFor="let album of Albums" [value]="album.FileId">{{album.UpdatedFileFolderName}}</mat-option>
                     </mat-select>
                   </mat-form-field>                
-                <button *ngIf="!Processing" class="mat-raised-button" matTooltip="upload" type="button" (click)="Upload()" fxFlex="5"><mat-icon>file_upload</mat-icon></button>
+                <button [disabled]="loading" *ngIf="!Processing" class="mat-raised-button" matTooltip="upload" type="button" (click)="Upload()" fxFlex="5"><mat-icon>file_upload</mat-icon></button>
                   <div flex>&nbsp;</div>
             </div>
         </form>

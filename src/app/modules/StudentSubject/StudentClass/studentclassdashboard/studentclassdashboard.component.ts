@@ -21,7 +21,7 @@ export class StudentclassdashboardComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
-  CheckPermission='';
+  CheckPermission = '';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
@@ -38,8 +38,8 @@ export class StudentclassdashboardComponent implements OnInit {
   Classes = [];
   FeeTypes = [];
   SelectedBatchId = 0;
-  PreviousBatchId =0;
-  NextBatchId =0;
+  PreviousBatchId = 0;
+  NextBatchId = 0;
   Batches = [];
   StudentClassList: IStudentClass[] = [];
   dataSource: MatTableDataSource<IStudentClass>;
@@ -66,7 +66,7 @@ export class StudentclassdashboardComponent implements OnInit {
     'ClassName',
     'RollNo',
     'Section',
-    'FeeTypeId',    
+    'FeeTypeId',
     'Promote',
     'Action'
   ];
@@ -93,15 +93,15 @@ export class StudentclassdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail,this.shareddata,globalconstants.Pages[0].SUBJECT.STUDENTCLASS);
+      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.shareddata, globalconstants.Pages[0].SUBJECT.STUDENTCLASS);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSelectedBatchId.subscribe(a => this.SelectedBatchId = a);
-      this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p=>this.PreviousBatchId =p);
-      console.log("pre",this.PreviousBatchId)
-      console.log("seelected",this.SelectedBatchId)
-      console.log("next",this.NextBatchId)
-      this.shareddata.CurrentNextBatchIdOfSelecteBatchId.subscribe(n=>this.NextBatchId=n);
+      this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
+      console.log("pre", this.PreviousBatchId)
+      console.log("seelected", this.SelectedBatchId)
+      console.log("next", this.NextBatchId)
+      this.shareddata.CurrentNextBatchIdOfSelecteBatchId.subscribe(n => this.NextBatchId = n);
       this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
       if (this.Classes.length == 0) {
         this.GetMasterData();
@@ -115,9 +115,8 @@ export class StudentclassdashboardComponent implements OnInit {
       }
     }
   }
-  PromoteAll()
-  {
-     this.StudentClassList.forEach(s => {
+  PromoteAll() {
+    this.StudentClassList.forEach(s => {
       if (s.Promote == 1) {
         s.StudentClassId = 0;
         this.SelectedBatchId = this.NextBatchId;
@@ -128,15 +127,15 @@ export class StudentclassdashboardComponent implements OnInit {
   }
   CheckPromoteAll(event) {
     debugger;
-    var _promote=0;
+    var _promote = 0;
     if (event.checked) {
-      _promote=1;        
-    }    
+      _promote = 1;
+    }
 
-    this.StudentClassList.forEach(s => {      
-        s.Promote=_promote;              
+    this.StudentClassList.forEach(s => {
+      s.Promote = _promote;
     })
-   
+
   }
   Promote(row, control) {
     if (control.checked)
@@ -164,11 +163,14 @@ export class StudentclassdashboardComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
+
     filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
+      this.loading = false;
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
       return;
     }
@@ -176,6 +178,7 @@ export class StudentclassdashboardComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'StudentClassId',
+      'StudentId',
       'FeeTypeId',
       'ClassId',
       'RollNo',
@@ -207,16 +210,17 @@ export class StudentclassdashboardComponent implements OnInit {
           });
         })
 
-        if(this.StudentClassList.length==0)
-        this.alert.info("No record found!",this.optionAutoClose);
+        if (this.StudentClassList.length == 0)
+          this.alert.info("No record found!", this.optionAutoClose);
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.loading = false;
-        
+
       })
-      //set current batch id back to the actual one.
-      this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
+
+    //set current batch id back to the actual one.
+    this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
   }
   clear() {
     this.searchForm.patchValue({
@@ -244,54 +248,60 @@ export class StudentclassdashboardComponent implements OnInit {
   UpdateOrSave(row) {
 
     debugger;
+    this.loading = true;
+    setTimeout(() => {
 
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and StudentId eq " + row.StudentId + ' and Active eq 1 and BatchId eq ' + this.SelectedBatchId
-    // " and Active eq " + row.Active +
-    this.StandardFilter;
 
-    if (row.StudentClassId > 0)
-      checkFilterString += " and StudentClassId ne " + row.StudentClassId;
+      let checkFilterString = "ClassId eq " + row.ClassId +
+        " and StudentId eq " + row.StudentId + ' and Active eq 1 and BatchId eq ' + this.SelectedBatchId
+      // " and Active eq " + row.Active +
+      this.StandardFilter;
 
-    let list: List = new List();
-    list.fields = ["StudentClassId"];
-    list.PageName = "StudentClasses";
-    list.filter = [checkFilterString];
+      if (row.StudentClassId > 0)
+        checkFilterString += " and StudentClassId ne " + row.StudentClassId;
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
-          row.Ative = 0;
-          return;
-        }
-        else {
+      let list: List = new List();
+      list.fields = ["StudentClassId"];
+      list.PageName = "StudentClasses";
+      list.filter = [checkFilterString];
 
-          this.StudentClassData.Active = row.Active;
-          this.StudentClassData.StudentClassId = row.StudentClassId;
-          this.StudentClassData.ClassId = row.ClassId;
-          this.StudentClassData.FeeTypeId = row.FeeTypeId;
-          this.StudentClassData.RollNo = row.RollNo;
-          this.StudentClassData.Section = row.Section;
-          this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentClassData.BatchId = this.SelectedBatchId;
-          if (this.StudentClassData.StudentClassId == 0) {
-            this.StudentClassData["CreatedDate"] = new Date();
-            this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.StudentClassData["UpdatedDate"];
-            delete this.StudentClassData["UpdatedBy"];
-            this.insert(row);
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          debugger;
+          if (data.value.length > 0) {
+            this.loading = false;
+            this.alert.error("Record already exists!", this.optionsNoAutoClose);
+            row.Ative = 0;
+            return;
           }
           else {
-            delete this.StudentClassData["CreatedDate"];
-            delete this.StudentClassData["CreatedBy"];
-            this.StudentClassData["UpdatedDate"] = new Date();
-            this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+
+            this.StudentClassData.Active = row.Active;
+            this.StudentClassData.StudentClassId = row.StudentClassId;
+            this.StudentClassData.StudentId = row.StudentId;
+            this.StudentClassData.ClassId = row.ClassId;
+            this.StudentClassData.FeeTypeId = row.FeeTypeId;
+            this.StudentClassData.RollNo = row.RollNo;
+            this.StudentClassData.Section = row.Section;
+            this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
+            this.StudentClassData.BatchId = this.SelectedBatchId;
+            if (this.StudentClassData.StudentClassId == 0) {
+              this.StudentClassData["CreatedDate"] = new Date();
+              this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+              delete this.StudentClassData["UpdatedDate"];
+              delete this.StudentClassData["UpdatedBy"];
+              this.insert(row);
+            }
+            else {
+              delete this.StudentClassData["CreatedDate"];
+              delete this.StudentClassData["CreatedBy"];
+              this.StudentClassData["UpdatedDate"] = new Date();
+              this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+              this.update();
+            }
           }
-        }
-      });
+        });
+    }, 5000);
   }
 
   insert(row) {
@@ -300,6 +310,7 @@ export class StudentclassdashboardComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading = false;
           row.StudentClassId = data.StudentClassId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
@@ -309,6 +320,7 @@ export class StudentclassdashboardComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, this.StudentClassData.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
+          this.loading = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }

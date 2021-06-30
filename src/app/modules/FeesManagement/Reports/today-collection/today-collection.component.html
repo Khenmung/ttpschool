@@ -16,7 +16,7 @@
                     <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
                     <mat-datepicker #ToDate></mat-datepicker>
                 </mat-form-field>
-                <button mat-raised-button (click)="GetStudentFeePaymentDetails()">
+                <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentDetails()">
                     <mat-icon>search</mat-icon>
                 </button>
             </div>

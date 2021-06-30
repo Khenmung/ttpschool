@@ -88,7 +88,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   UpdateOrSave(row) {
     debugger;
-
+    this.loading =true;
     let checkFilterString = "1 eq 1 " +
       " and ClassSubjectId eq " + row.ClassSubjectId +
       " and SubjectComponentId eq " + row.SubjectComponentId
@@ -104,6 +104,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
+          this.loading =false;
           this.alert.error("Record already exists!", this.options);
         }
         else {
@@ -121,7 +122,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
             this.classSubjectComponentData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.classSubjectComponentData["UpdatedDate"];
             delete this.classSubjectComponentData["UpdatedBy"];
-            console.log('this', this.classSubjectComponentData);
+            //console.log('this', this.classSubjectComponentData);
             this.insert(row);
           }
           else {
@@ -142,6 +143,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading=false;
           row.Action = false;
           row.ClassSubjectMarkComponentId = data.ClassSubjectMarkComponentId;
           this.alert.success("Data saved successfully", this.options);
@@ -154,6 +156,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, this.classSubjectComponentData.ClassSubjectMarkComponentId, 'patch')
       .subscribe(
         (data: any) => {
+          this.loading=false;
           row.Action = false;
           this.alert.success("Data updated successfully", this.options);
           //this.router.navigate(['/home/pages']);
@@ -217,6 +220,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   // }
   GetClassSubject() {
 
+    
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
@@ -252,7 +256,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       this.alert.error("Please select class.",this.options.autoClose);
       return;
     }
-      
+    this.loading=true;
     let list: List = new List();
     list.fields = [
       "ClassSubjectMarkComponentId",
@@ -319,6 +323,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         //this.ELEMENT_DATA=this.ELEMENT_DATA.sort((a,b)=>(a.PaymentOrder>b.PaymentOrder?1:-1))
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
+        this.loading=false;
         //console.log("element data", this.ELEMENT_DATA)
       });
   }

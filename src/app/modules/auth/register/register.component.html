@@ -58,10 +58,10 @@
                         </span>
                     </mat-form-field>
                     <div fxLayoutAlign="start">
-                        <button class="mat-raised-button" (click)="onSave()" matTooltip="create">
+                        <button [disabled]="loading" class="mat-raised-button" (click)="onSave()" matTooltip="create">
                             <mat-icon>create</mat-icon>
                         </button>
-                        <button (click)="gotohome()" class="mat-raised-button" matTooltip="cancel">
+                        <button [disabled]="loading" (click)="gotohome()" class="mat-raised-button" matTooltip="cancel">
                             <mat-icon>cancel</mat-icon>
                         </button>
                     </div>
@@ -71,7 +71,7 @@
                 </form>
                 <div class="alert alert-success" *ngIf="isSuccessful">
                     Please check and click on the link provided in your email for verification.
-                    <button class="mat-raised-button" (click)="gotologin()">click to login</button>    
+                    <button [disabled]="loading" class="mat-raised-button" (click)="gotologin()">click to login</button>    
                 </div>
             </div>
         <!-- </div> -->

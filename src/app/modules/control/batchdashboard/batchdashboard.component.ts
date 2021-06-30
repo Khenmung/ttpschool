@@ -169,8 +169,9 @@ export class BatchdashboardComponent implements OnInit {
         return;
       }
     }
+    this.loading=true;
     var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-    let checkFilterString = "BatchName eq '" + row.BatchName + "'" + StandardFilter;
+    let checkFilterString = "BatchName eq '" + row.BatchName + "' and " + StandardFilter;
 
     if (row.BatchId > 0)
       checkFilterString += " and BatchId ne " + row.BatchId;
@@ -185,6 +186,7 @@ export class BatchdashboardComponent implements OnInit {
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
           row.Ative = 0;
+          this.loading=false;
           return;
         }
         else {
@@ -218,6 +220,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.postPatch('Batches', this.BatchData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading=false;
           row.BatchId = data.BatchId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
@@ -227,6 +230,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.postPatch('Batches', this.BatchData, this.BatchData.BatchId, 'patch')
       .subscribe(
         (data: any) => {
+          this.loading=false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }

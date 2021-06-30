@@ -12,11 +12,11 @@
       </div>
       <div class="row container">
         <div class="column3">
-          <button mat-mini-fab [id]="image.PhotoId" [name]="image.Description" matTooltip="delete" class="iconbutton"
+          <button [disabled]="loading" mat-mini-fab [id]="image.PhotoId" [name]="image.Description" matTooltip="delete" class="iconbutton"
             color="primary" #button (click)="Update($event,button,image.ImagePath)">
             <mat-icon aria-label="delete">delete</mat-icon>
           </button>&nbsp;
-          <button mat-mini-fab [id]="back" [name]="image.Description" matTooltip="back" class="iconbutton"
+          <button [disabled]="loading" mat-mini-fab [id]="back" [name]="image.Description" matTooltip="back" class="iconbutton"
             color="primary" #view (click)="back()">
             <mat-icon aria-label="arrow_back">arrow_back</mat-icon>
           </button>

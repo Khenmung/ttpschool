@@ -5,7 +5,7 @@ import { DashboardclassfeeComponent } from './classfee/dashboardclassfee/dashboa
 import { ExcelDataManagementComponent } from './excel-data-management/excel-data-management.component';
 import { FeereceiptComponent } from './feereceipt/feereceipt.component';
 import { FeesmanagementhomeComponent } from './feesmanagementhome/feesmanagementhome.component';
-import { AddMasterDataComponent } from './add-master-data/add-master-data.component';
+import { AddMasterDataComponent } from '../control/add-master-data/add-master-data.component';
 import { AddstudentComponent } from './student/addstudent/addstudent.component';
 import { DashboardstudentComponent } from './student/dashboardstudent/dashboardstudent.component';
 import { AddstudentclassComponent } from './studentclass/addstudentclass/addstudentclass.component';
@@ -49,7 +49,6 @@ export const FeeManagementComponent = [
   AddstudentclassComponent, AddclassfeeComponent, AddstudentfeepaymentComponent,
   DashboardclassfeeComponent, DashboardstudentComponent, FeeHeaderComponent,
   FeeSidebarComponent, FeeFooterComponent, 
-  AddMasterDataComponent,
   FeereceiptComponent, ExcelDataManagementComponent, StudentDocumentComponent,
   DashboardstudentdocumentComponent,
   TodayCollectionComponent,

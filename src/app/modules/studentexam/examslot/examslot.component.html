@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 0px 15px;">
         <div><strong>Exam Slots</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
@@ -15,10 +15,10 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>                
-                <button class="mat-raised-button" (click)="GetExamSlots()">
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetExamSlots()">
                     <mat-icon>search</mat-icon>
                 </button>
-                <!-- <button matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+                <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
             </form>
@@ -30,17 +30,18 @@
                         {{element.ExamName}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="SlotNameId">
+                <ng-container matColumnDef="SlotName">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Slot Name
                     </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                        <mat-form-field [style.width.px]="150">
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        {{element.SlotName}}
+                        <!-- <mat-form-field [style.width.px]="150">
                             <mat-select [(value)]="element.SlotNameId" [(ngModel)]="element.SlotNameId">
                                 <mat-option *ngFor="let item of SlotNames" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}
                                 </mat-option>
                             </mat-select>
-                        </mat-form-field>
+                        </mat-form-field> -->
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="ExamDate">
@@ -87,12 +88,12 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <!-- <button matTooltip="add new" mat-mini-fab (click)="addnew()">
+                        <!-- <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
                             <mat-icon>add</mat-icon>
                         </button> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

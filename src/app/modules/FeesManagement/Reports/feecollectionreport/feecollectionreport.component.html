@@ -32,7 +32,7 @@
                     &nbsp;
                     <mat-radio-button value="1"> Paid</mat-radio-button>
                 </mat-radio-group>
-                <button mat-raised-button (click)="GetStudentFeePaymentReport()">
+                <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentReport()">
                     <mat-icon>search</mat-icon>
                 </button>
             </div>

@@ -83,7 +83,7 @@
                     </album-edit-input>
                 </div>
                 <!-- <div class="child">
-                    <button mat-mini-fab [id]="item.AlbumId" [name]="item.UpdatableName" matTooltip="DELETE"
+                    <button [disabled]="loading" mat-mini-fab [id]="item.AlbumId" [name]="item.UpdatableName" matTooltip="DELETE"
                         class="iconbutton" color="gray" #button (click)="updateActive(button)">
                  
                         <mat-icon aria-label="delete">delete</mat-icon>

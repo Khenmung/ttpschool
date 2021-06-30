@@ -56,10 +56,10 @@
             </mat-checkbox>&nbsp; Active
 
             <mat-card-actions flexLayoutAlign="space-between center">
-                <button (click)="save()" class="mat-raised-button">
+                <button [disabled]="loading" (click)="save()" class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
-                <button class="mat-raised-button">
+                <button [disabled]="loading" class="mat-raised-button">
                     <mat-icon>cancel</mat-icon>
                 </button>
             </mat-card-actions>

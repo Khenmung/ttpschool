@@ -24,7 +24,7 @@
 <mat-card class="boxes">
     <mat-card-title>Essential data setting</mat-card-title>
     <mat-card-content>
-        <mat-spinner *ngIf="loading"></mat-spinner>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <br>
         <form [formGroup]="searchForm">
@@ -37,16 +37,16 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button matTooltip="search" class="mat-raised-button" (click)="GetMasterData()" fxFlex="10">
+                <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetMasterData()" fxFlex="10">
                     <mat-icon>search</mat-icon>
                 </button>
-                <button matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button"
+                <!-- <button [disabled]="loading" matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button"
                     (click)="EditTopMaster()" fxFlex="10">
                     <mat-icon>work outline</mat-icon>
-                </button>
-                <button matTooltip="new master" class="mat-raised-button" (click)="NewTopMaster()" fxFlex="10">
+                </button> -->
+                <!-- <button [disabled]="loading" matTooltip="new master" class="mat-raised-button" (click)="NewTopMaster()" fxFlex="10">
                     <mat-icon>new_label</mat-icon>
-                </button>
+                </button> -->
                 <div fxFlex>&nbsp;</div>
             </div>
         </form>
@@ -73,7 +73,7 @@
                 </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>
-                        <button matTooltip="new item" *ngIf="enableAddNew" class="mat-raised-button" (click)="AddData()"
+                        <button [disabled]="loading" matTooltip="new item" *ngIf="enableAddNew" class="mat-raised-button" (click)="AddData()"
                             fxFlex="10">
                             <mat-icon>add</mat-icon>
                         </button>

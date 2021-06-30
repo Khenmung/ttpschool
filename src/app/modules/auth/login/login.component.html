@@ -28,10 +28,10 @@
                     </div>
                     <br>
                     <div fxLayoutAlign="space-around center">
-                        <button class="mat-raised-button" matTooltip="login">
+                        <button [disabled]="loading" class="mat-raised-button" matTooltip="login">
                             <mat-icon>login</mat-icon>
                         </button>
-                        <button (click)="gotohome()" matTooltip="cancel" class="mat-raised-button">
+                        <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" class="mat-raised-button">
                             <mat-icon>cancel</mat-icon>
                         </button>
                     </div>

@@ -7,16 +7,24 @@ mat-form-field{
 button{
     padding:5px;
 }  
- .mat-column-UserId{
-   flex:0 0 5%;
+ .mat-column-ApplicationUserId{
+   flex:0 0 8%;
 }
-.mat-column-Email{
-    flex:0 0 15%;
-}
-.mat-column-User{
-    flex:0 0 15%;
-}
-.mat-column-User,.mat-column-Email,.mat-column-ContactNo,.mat-column-Organization,.mat-column-Department,.mat-column-Location{
+// .mat-column-EmailAddress{
+//     flex:0 0 20%;
+// }
+
+// .mat-column-UserName{
+//     flex:0 0 20%;
+// }
+// .mat-column-ValidFrom{
+//     flex:0 0 15%;
+// }
+// .mat-column-ValidTo{
+//     flex:0 0 15%;
+// }
+.mat-column-Active,.mat-column-UserName,.mat-column-EmailAddress,.mat-column-ContactNo,.mat-column-ValidFrom,.mat-column-ValidTo{
     display: grid;
     place-items: center start;
+    margin-right: 15px;
 }

@@ -82,6 +82,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId = c);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
 
       this.GetMasterData();

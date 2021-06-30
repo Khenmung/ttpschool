@@ -5,13 +5,13 @@
     <mat-card-content>
         <br>
         <alert></alert>
-        <mat-spinner *ngIf="Processing" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="Processing" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <div class="center">
             <ngx-file-drop dropZoneLabel="Drop files here" (onFileDrop)="dropped($event)"
                 (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
                 <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                     drag and drop files here
-                    <!-- <button type="button" (click)="openFileSelector()">Browse Files</button> -->
+                    <!-- <button [disabled]="loading" type="button" (click)="openFileSelector()">Browse Files</button> -->
                 </ng-template>
             </ngx-file-drop>
             <br>
@@ -48,7 +48,7 @@
                         </table>
                     </div>
                     <div>
-                        <button [disabled]="Processing" class="mat-raised-button" matTooltip="upload" type="button" (click)="Upload()"
+                        <button [disabled]="loading" [disabled]="Processing" class="mat-raised-button" matTooltip="upload" type="button" (click)="Upload()"
                             fxFlex="5">
                             <mat-icon>file_upload</mat-icon>
                         </button>

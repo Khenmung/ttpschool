@@ -99,6 +99,7 @@ export class HeaderComponent implements OnInit {
         this.route.navigate(['/admin']);
     }
   }
+
   ChangeCurrentBatchId(selected) {
     debugger;
     this.shareddata.ChangeSelectedBatchId(selected.value);
@@ -106,18 +107,27 @@ export class HeaderComponent implements OnInit {
       this.shareddata.ChangeSelectedNCurrentBatchIdEqual(0)
     else
       this.shareddata.ChangeSelectedNCurrentBatchIdEqual(1);
-
-    var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(selected.value) - 1;
-    var _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];
-    this.shareddata.ChangePreviousBatchIdOfSelecteBatchId(_previousBatchId);
-    var nextBatchIndex = this.Batches.map(d => d.BatchId).indexOf(selected.value) + 1;
-    var _nextBatchId = this.Batches[nextBatchIndex]["BatchId"];
-    this.shareddata.ChangeNextBatchIdOfSelecteBatchId(_nextBatchId);
+    this.generateBatchIds(selected.value);
     //let currentUrl = this.route.url;
     //this.route.navigate(['/control']);
     // this.route.navigateByUrl('/', { skipLocationChange: true }).then(() => {
     //   this.route.navigate([currentUrl]);
     // });
+  }
+  generateBatchIds(batchId) {
+    var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(batchId) - 1;
+    var _previousBatchId = -1;
+    if (previousBatchIndex > -1) {
+      _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];
+      this.shareddata.ChangePreviousBatchIdOfSelecteBatchId(_previousBatchId);
+    }
+    var nextBatchIndex = this.Batches.map(d => d.BatchId).indexOf(batchId) + 1;
+    var _nextBatchId = -1;
+    if (nextBatchIndex > -1) {
+      _nextBatchId = this.Batches[nextBatchIndex]["BatchId"];
+      this.shareddata.ChangeNextBatchIdOfSelecteBatchId(_nextBatchId);
+    }
+    console.log("selected",batchId);
   }
   getBatches() {
     var list = new List();
@@ -132,7 +142,7 @@ export class HeaderComponent implements OnInit {
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.shareddata.ChangeCurrentBatchId(this.SelectedBatchId);
       this.shareddata.ChangeSelectedBatchId(this.SelectedBatchId);
-
+      this.generateBatchIds(this.CurrentBatchId);
     });
   }
 }

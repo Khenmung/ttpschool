@@ -16,7 +16,7 @@
             <div class="proto"></div>
          
         </div>
-        <mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner  *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 
         <div class="container">
             <div style="background-color:  var(--maincolor1);height: 5px;">&nbsp;</div>
@@ -33,7 +33,7 @@
             </div>
         </div> -->
         <!-- <mat-card-actions>
-            <button mat-button (click)="back()">
+            <button [disabled]="loading" mat-button (click)="back()">
                 <mat-icon>arrow_back</mat-icon>
             </button>
         </mat-card-actions> -->

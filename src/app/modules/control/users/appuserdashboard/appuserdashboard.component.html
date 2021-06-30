@@ -5,7 +5,7 @@
         <div #container [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;" fxLayout="row wrap">
             <div style="height:350px;width: 100%;">
                 <form [formGroup]="searchForm">
-                    <mat-form-field appearance="outline">
+                    <!-- <mat-form-field appearance="outline">
                         <mat-label>Department</mat-label>
                         <mat-select formControlName="Department">
                             <mat-option value="0">--select--</mat-option>
@@ -23,46 +23,78 @@
                                 {{item.MasterDataName}}
                             </mat-option>
                         </mat-select>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline">
+                    </mat-form-field> -->
+
+                    <mat-form-field class="example-full-width" [style.width.px]="250">
                         <mat-label>Name</mat-label>
-                        <input matInput formControlName="Name" autocomplete="off">
+                        <input type="text" matInput formControlName="searchUserName" [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                {{option.UserName}}
+                            </mat-option>
+                        </mat-autocomplete>
                     </mat-form-field>
-                    <mat-form-field appearance="outline">
+                    <!-- <mat-form-field appearance="outline">
                         <mat-label>Email</mat-label>
                         <input matInput formControlName="Email" autocomplete="off">
-                    </mat-form-field>
-                    <button class="mat-raised-button" (click)="GetAppUsers()">
+                    </mat-form-field> -->
+                    <button [disabled]="loading" class="mat-raised-button" (click)="GetAppUsers()">
                         <mat-icon>search</mat-icon>
                     </button>
                 </form>
                 <mat-table #table [dataSource]="datasource">
-                    <ng-container matColumnDef="UserId">
+                    <ng-container matColumnDef="ApplicationUserId">
                         <mat-header-cell *matHeaderCellDef> User Id</mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.UserId}}
+                            <button [disabled]="loading" mat-button
+                                (click)="expandedElement = expandedElement === element ? null : element">
+                                {{element.ApplicationUserId}}
+                            </button>
                         </mat-cell>
                     </ng-container>
                     <ng-container matColumnDef="UserName">
                         <mat-header-cell *matHeaderCellDef> User </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <button mat-button (click)="expandedElement = expandedElement === element ? null : element">
-                                {{element.UserName}}
-                            </button>
+                            <mat-form-field>
+                                <input matInput [(value)]="element.UserName" [(ngModel)]="element.UserName" autocomplete="Off" maxlength="30">
+                            </mat-form-field>                            
                         </mat-cell>
                     </ng-container>
-                    <ng-container matColumnDef="Email">
+                    <ng-container matColumnDef="EmailAddress">
                         <mat-header-cell *matHeaderCellDef> Email </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            {{element.Email}}
+                            {{element.EmailAddress}}
                         </mat-cell>
                     </ng-container>
                     <ng-container matColumnDef="ContactNo">
                         <mat-header-cell *matHeaderCellDef> Contact No. </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            {{element.ContactNo}}
+                        <mat-cell *matCellDef="let element">                            
+                            <mat-form-field>
+                                <input matInput [(value)]="element.ContactNo" [(ngModel)]="element.ContactNo" autocomplete="Off" maxlength="20">
+                            </mat-form-field>
                         </mat-cell>
                     </ng-container>
+                    <ng-container matColumnDef="ValidFrom">
+                        <mat-header-cell *matHeaderCellDef> Valid From </mat-header-cell>
+                        <mat-cell *matCellDef="let element">                            
+                            <mat-form-field [style.width.px]="110">
+                                <input matInput [(value)]="element.ValidFrom" [matDatepicker]="ValidFrom" [(ngModel)]="element.ValidFrom" autocomplete="Off">
+                                <mat-datepicker-toggle matSuffix [for]="ValidFrom"></mat-datepicker-toggle>
+                                <mat-datepicker #ValidFrom></mat-datepicker>
+                            </mat-form-field>
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="ValidTo">
+                        <mat-header-cell *matHeaderCellDef> Valid To </mat-header-cell>
+                        <mat-cell *matCellDef="let element">                            
+                            <mat-form-field [style.width.px]="110">
+                                <input matInput [(value)]="element.ValidTo" [matDatepicker]="ValidTo" [(ngModel)]="element.ValidTo" autocomplete="Off">
+                                <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
+                                <mat-datepicker #ValidTo></mat-datepicker>
+                            </mat-form-field>
+                        </mat-cell>
+                    </ng-container>
+
                     <ng-container matColumnDef="Active">
                         <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                         <mat-cell *matCellDef="let element">
@@ -72,8 +104,8 @@
                     <ng-container matColumnDef="Action">
                         <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                            <button mat-mini-fab (click)="view(element)">
-                                <mat-icon matTooltip="save">save</mat-icon>
+                            <button [disabled]="loading" mat-mini-fab (click)="UpdateOrSave(element)">
+                                <mat-icon matTooltip="view">save</mat-icon>
                             </button>
                         </mat-cell>
                     </ng-container>
@@ -100,7 +132,6 @@
                     </mat-row>
                 </mat-table>
             </div>
-        </div>
-        <app-user *ngIf="UserId>0" [UserId]="UserId" (UserIdOutput)="SetUser($event)"></app-user>
+        </div> 
     </mat-card-content>
 </mat-card>

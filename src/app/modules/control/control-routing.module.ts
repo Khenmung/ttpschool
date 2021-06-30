@@ -9,6 +9,7 @@ import { userComponent } from './users/appuser/user.component';
 import { AppuserdashboardComponent } from './users/appuserdashboard/appuserdashboard.component';
 import { ControlhomeComponent } from './controlhome/controlhome.component';
 import { BatchdashboardComponent } from './batchdashboard/batchdashboard.component';
+import { AddMasterDataComponent } from './add-master-data/add-master-data.component';
 
 const routes: Routes = [
   {
@@ -37,5 +38,6 @@ export const settingsComponent = [
   roleappAddComponent,
   RoleAppPermissiondashboardComponent,
   ControlhomeComponent,
-  BatchdashboardComponent
+  BatchdashboardComponent,
+  AddMasterDataComponent
 ]

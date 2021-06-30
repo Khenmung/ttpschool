@@ -10,7 +10,7 @@
                 </div>
                 <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px">
                     <span>{{selectedFile}}</span>
-                    <button class="mat-raised-button" matTooltip="select file" color="primary"
+                    <button [disabled]="loading" class="mat-raised-button" matTooltip="select file" color="primary"
                         (click)="inputfile.click()">
                         <mat-icon aria-label="photo">attach_file</mat-icon>
                     </button>
@@ -33,7 +33,7 @@
                         </mat-select>
                     </mat-form-field>
                     
-                    <button type="submit" (click)="readAsJson()" matTooltip="upload file" class="mat-raised-button">
+                    <button [disabled]="loading" type="submit" (click)="readAsJson()" matTooltip="upload file" class="mat-raised-button">
                         <mat-icon aria-label="file_upload">file_upload</mat-icon>
                     </button>&nbsp;&nbsp;
                 </span>
@@ -54,16 +54,16 @@
                 </div>
                 <!-- <div class="row">
                 <div class="col-md-2 form-group">
-                    <button type="button" class="btn btn-info" (click)="readAsCSV()">Read as CSV</button>
+                    <button [disabled]="loading" type="button" class="btn btn-info" (click)="readAsCSV()">Read as CSV</button>
                 </div>
                 <div class="col-md-2 form-group">
-                    <button type="button" class="btn btn-info" (click)="readAsJson()">Read as JSON</button>
+                    <button [disabled]="loading" type="button" class="btn btn-info" (click)="readAsJson()">Read as JSON</button>
                 </div>
                 <div class="col-md-2 form-group">
-                    <button type="button" class="btn btn-info" (click)="readAsHTML()">Read as HTML</button>
+                    <button [disabled]="loading" type="button" class="btn btn-info" (click)="readAsHTML()">Read as HTML</button>
                 </div>
                 <div class="col-md-2 form-group">
-                    <button type="button" class="btn btn-info" (click)="readAsText()">Read as Text</button>
+                    <button [disabled]="loading" type="button" class="btn btn-info" (click)="readAsText()">Read as Text</button>
                 </div>
             </div> -->
             </form>

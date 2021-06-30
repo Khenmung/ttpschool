@@ -120,6 +120,7 @@ UpdateOrSave(row) {
 
   debugger;
 
+  this.loading =true;
   let checkFilterString = " and SubjectTypeName eq '" + row.SubjectTypeName + "' "
        
 
@@ -136,6 +137,7 @@ UpdateOrSave(row) {
     .subscribe((data: any) => {
       debugger;
       if (data.value.length > 0) {
+        this.loading=false;
         this.alert.error("Record already exists!", this.optionsNoAutoClose);
       }
       else {
@@ -173,6 +175,7 @@ insert(row) {
     .subscribe(
       (data: any) => {
         row.SubjectTypeId = data.SubjectTypeId;
+        this.loading=false;
         this.alert.success("Data saved successfully.", this.optionAutoClose);
       });
 }
@@ -181,6 +184,7 @@ update() {
   this.dataservice.postPatch('SubjectTypes', this.SubjectTypeData, this.SubjectTypeData.SubjectTypeId, 'patch')
     .subscribe(
       (data: any) => {
+        this.loading=false;
         this.alert.success("Data updated successfully.", this.optionAutoClose);
       });
 }

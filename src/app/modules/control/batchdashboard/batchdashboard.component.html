@@ -2,7 +2,7 @@
     <mat-card-title>Class Subject</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <mat-table #table [dataSource]="dataSource">
             <ng-container matColumnDef="BatchId">
@@ -37,12 +37,12 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button matTooltip="add" mat-mini-fab (click)="addnew()">
+                    <button [disabled]="loading" matTooltip="add" mat-mini-fab (click)="addnew()">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
 

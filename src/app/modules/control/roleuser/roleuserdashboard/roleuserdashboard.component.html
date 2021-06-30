@@ -2,18 +2,18 @@
 <div style="padding:15px 15px 0px 15px;">
     <div><strong>Application Roles Users</strong></div>
 </div>
-<mat-spinner  *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner  *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <alert></alert>
 <div style="padding: 20px;height:450px" fxLayout="row wrap"> -->
 <mat-card>
     <mat-card-title>Role User Mapping</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="50" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <div fxLayout="row" fxLayoutAlign="center center">
             <form [formGroup]="searchForm">
-                <mat-form-field class="example-full-width" appearance="fill">
+                <mat-form-field [style.width.px]="250">
                     <mat-label>Name</mat-label>
                     <input type="text" matInput formControlName="searchUserName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -22,7 +22,7 @@
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
-                <button class="mat-raised-button" (click)="GetRoleUser()">
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetRoleUser()">
                     <mat-icon>search</mat-icon>
                 </button>
             </form>
@@ -56,12 +56,13 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef><button mat-mini-fab (click)="addnew()">
+                    <mat-header-cell *matHeaderCellDef>
+                        <!-- <button [disabled]="loading" mat-mini-fab (click)="addnew()">
                             <mat-icon>add</mat-icon>
-                        </button>
+                        </button> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon matTooltip="save">save</mat-icon>
                         </button>
                     </mat-cell>
@@ -69,8 +70,6 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
-        </div>
-        <app-roleuseradd *ngIf="RoleUserId!=0" [RoleUserId]="RoleUserId" (OutRoleUserId)="GetRoleUserId($event)">
-        </app-roleuseradd>
+        </div> 
     </mat-card-content>
 </mat-card>
