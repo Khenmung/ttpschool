@@ -72,7 +72,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
   }
   PageLoad() {
-    this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
+    //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
+    this.SelectedBatchId = +this.token.getSelectedBatchId();
     this.GetMasterData();
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];

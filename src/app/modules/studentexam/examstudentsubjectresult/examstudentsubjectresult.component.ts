@@ -27,7 +27,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StandardFilter = '';
+  StandardFilterWithBatchId = '';
   loading = false;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   SelectedBatchId = 0;
@@ -81,6 +81,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchExamId: [0],
       searchClassId: [0],
+      searchSection: [''],
       searchSubjectId: [0],
     });
 
@@ -89,13 +90,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
 
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
       this.GetMasterData();
     }
@@ -136,14 +137,17 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     //   this.alert.error("Start time and end time are mandatory!",this.optionAutoClose);
     //   return;
     // }
-
+    //if(row.)
+    this.loading = true;
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
       " and StudentClassSubjectId eq " + row.StudentClassSubjectId +
-      " and ClassSubjectMarkComponentId eq " + row.ClassSubjectMarkComponentId +
-      this.StandardFilter;
+      " and ClassSubjectMarkComponentId eq " + row.ClassSubjectMarkComponentId;
+
 
     if (row.ExamStudentSubjectResultId > 0)
       checkFilterString += " and ExamStudentSubjectResultId ne " + row.ExamStudentSubjectResultId;
+    checkFilterString += " and " + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["ExamStudentSubjectResultId"];
@@ -154,6 +158,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
+          this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
@@ -178,7 +183,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             this.ExamStudentSubjectResultData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.ExamStudentSubjectResultData["UpdatedDate"] = new Date();
             delete this.ExamStudentSubjectResultData["UpdatedBy"];
-            console.log('exam slot', this.ExamStudentSubjectResultData)
+            //console.log('exam slot', this.ExamStudentSubjectResultData)
             this.insert(row);
           }
           else {
@@ -199,7 +204,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.ExamStudentSubjectResultId = data.ExamStudentSubjectResultId;
-          row.Action = false;
+          this.loading = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
@@ -208,11 +213,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.dataservice.postPatch('ExamStudentSubjectResults', this.ExamStudentSubjectResultData, this.ExamStudentSubjectResultData.ExamStudentSubjectResultId, 'patch')
       .subscribe(
         (data: any) => {
-          row.Action = false;
+          this.loading = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
   GetStudentSubjects() {
+
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
@@ -252,10 +259,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           return {
             StudentClassSubjectId: s.StudentClassSubjectId,
             ClassSubjectId: s.ClassSubjectId,
-            StudentClassSubject: _class + ' - ' + s.StudentClass.RollNo + ' - ' + _subject,
+            StudentClassSubject: _class + ' - ' + s.StudentClass.RollNo + ' - ' + s.StudentClass.Section + ' - ' + _subject,
             SubjectId: s.ClassSubject.SubjectId,
             ClassId: s.ClassSubject.ClassId,
-            StudentId: s.StudentClass.StudentId
+            StudentId: s.StudentClass.StudentId,
+            Section: s.StudentClass.Section
           }
 
         })
@@ -264,7 +272,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       });
   }
   GetSubjectMarkComponents() {
-
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
 
@@ -306,18 +314,29 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       })
   }
   GetExamStudentSubjectResults() {
+
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.alert.error("Please select exam", this.optionAutoClose);
+      this.alert.info("Please select exam", this.optionAutoClose);
       return;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.alert.error("Please select class", this.optionAutoClose);
+      this.alert.info("Please select class", this.optionAutoClose);
       return;
     }
-
+    if (this.searchForm.get("searchSection").value == 0) {
+      this.alert.info("Please enter student section", this.optionAutoClose);
+      return;
+    }
+    if (this.searchForm.get("searchSubjectId").value == 0) {
+      this.alert.info("Please select subject", this.optionAutoClose);
+      return;
+    }
+    this.loading = true;
     filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
 
     let list: List = new List();
@@ -330,7 +349,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       "ExamStatus",
       "Active",
       //"Exam/ExamNameId",
-      "ClassSubjectMarkComponent/SubjectComponentId"
+      "ClassSubjectMarkComponent/SubjectComponentId",
     ];
     list.PageName = "ExamStudentSubjectResults";
     list.lookupFields = ["ClassSubjectMarkComponent"];
@@ -340,15 +359,18 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => studentsubject.ClassId == this.searchForm.get("searchClassId").value
-          && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value);
+        var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
+          return studentsubject.ClassId == this.searchForm.get("searchClassId").value
+          && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value 
+          && studentsubject.Section.toString().trim().toUpperCase() == this.searchForm.get("searchSection").value.trim().toUpperCase()
+        });
         filteredStudentSubjects.forEach(ss => {
           ss.Components.forEach(component => {
             let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
             if (existing.length > 0)
               this.ExamStudentSubjectResult.push({
                 ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
-                ExamId: existing[0].ExamId,
+                ExamId: existing[0].ExamStudentResultId,
                 StudentClassSubjectId: existing[0].StudentClassSubjectId,
                 StudentClassSubject: ss.StudentClassSubject,
                 ClassSubjectMarkComponentId: existing[0].ClassSubjectMarkComponentId,
@@ -358,7 +380,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 Marks: existing[0].Marks,
                 ExamStatus: existing[0].ExamStatus,
                 Active: existing[0].Active,
-                Action: false
+                Action: true
               })
             else
               this.ExamStudentSubjectResult.push({
@@ -373,11 +395,12 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 Marks: 0,
                 ExamStatus: 0,
                 Active: 0,
-                Action: false
+                Action: true
               })
           })
         })
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
+        this.loading = false;
       })
   }
   checkall(value) {

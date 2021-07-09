@@ -6,6 +6,7 @@ import { ExamsComponent } from './exams/exams.component';
 import { ExamslotComponent } from './examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult/examstudentsubjectresult.component';
 import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
+import { StudentactivityComponent } from './studentactivity/studentactivity.component';
 const routes: Routes = [
   {
     path: '', component: StudenthomeComponent,
@@ -14,7 +15,7 @@ const routes: Routes = [
       { path: 'slot', component: ExamslotComponent },
       { path: 'slotsubject', component: SlotnclasssubjectComponent },
       { path: 'subjectresult', component: ExamstudentsubjectresultComponent },
-        
+      { path: 'activity', component: StudentactivityComponent },        
 
     ]
   }
@@ -30,5 +31,6 @@ export const studentexamComponents = [
   ExamslotComponent,
   ExamdashboardComponent,
   ExamstudentsubjectresultComponent,
-  SlotnclasssubjectComponent
+  SlotnclasssubjectComponent,
+  StudentactivityComponent
 ]

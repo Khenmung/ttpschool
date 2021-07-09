@@ -84,7 +84,9 @@ export class roleuserdashboardComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.UserName),
         map(UserName => UserName ? this._filter(UserName) : this.Users.slice())
       );
-    this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
+    //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      
   }
   private _filter(name: string): IUser[] {
 

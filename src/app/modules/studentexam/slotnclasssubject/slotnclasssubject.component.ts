@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { throwError } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -16,6 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./slotnclasssubject.component.scss']
 })
 export class SlotnclasssubjectComponent implements OnInit {
+  weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -26,7 +28,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StandardFilter = '';
+  StandardFilterWithBatchId = '';
   loading = false;
   SlotNClassSubjects: ISlotNClassSubject[] = [];
   SelectedBatchId = 0;
@@ -82,16 +84,15 @@ export class SlotnclasssubjectComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId = c);
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
       this.GetMasterData();
     }
   }
- 
+
   updateActive(row, value) {
-    //if(!row.Action)
-    row.Action = !row.Action;
     row.Active = row.Active == 1 ? 0 : 1;
   }
   delete(element) {
@@ -106,6 +107,9 @@ export class SlotnclasssubjectComponent implements OnInit {
 
         });
   }
+  loadingFalse() {
+    this.loading = false;
+  }
   UpdateOrSave(row) {
 
     debugger;
@@ -119,13 +123,21 @@ export class SlotnclasssubjectComponent implements OnInit {
     //   this.alert.error("Start time and end time are mandatory!",this.optionAutoClose);
     //   return;
     // }
+    this.loading = true;
 
+    var duplicate = this.SlotNClassSubjects.filter(s => s.SlotId == row.SlotId && s.ClassId == row.ClassId && s.Active == 1)
+    if (duplicate.length > 0) {
+      this.loadingFalse();
+      this.alert.error("Two subjects of one class cannot be assigned in the same slot.", this.optionsNoAutoClose);
+      return;
+    }
     let checkFilterString = "SlotId eq " + this.searchForm.get("searchSlotId").value +
-      " and ClassSubjectId eq " + row.ClassSubjectId +
-      this.StandardFilter;
+      " and ClassSubjectId eq " + row.ClassSubjectId;
+
 
     if (row.SlotClassSubjectId > 0)
       checkFilterString += " and SlotClassSubjectId ne " + row.SlotClassSubjectId;
+    checkFilterString += " and " + this.StandardFilterWithBatchId;
 
     let list: List = new List();
     list.fields = ["SlotClassSubjectId"];
@@ -172,7 +184,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.SlotClassSubjectId = data.SlotClassSubjectId;
-          row.Action = false;
+          this.loadingFalse();
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
@@ -181,7 +193,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     this.dataservice.postPatch('SlotAndClassSubjects', this.SlotNClassSubjectData, this.SlotNClassSubjectData.SlotClassSubjectId, 'patch')
       .subscribe(
         (data: any) => {
-          row.Action = false;
+          this.loadingFalse();
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -227,6 +239,8 @@ export class SlotnclasssubjectComponent implements OnInit {
       "ExamId",
       "SlotNameId",
       "ExamDate",
+      "StartTime",
+      "EndTime",
       "Exam/ExamNameId"];
     list.PageName = "ExamSlots";
     list.lookupFields = ["Exam"];
@@ -237,13 +251,15 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         //this.Exams = [...data.value];
         this.ExamSlots = data.value.map(s => {
+
           let exams = this.ExamNames.filter(e => e.MasterDataId == s.Exam.ExamNameId);
+          var day = this.weekday[new Date(s.ExamDate).getDay()]
           var _examname = '';
           if (exams.length > 0)
             _examname = exams[0].MasterDataName;
           return {
             SlotId: s.ExamSlotId,
-            SlotName: _examname + " - " + this.SlotNames.filter(n => n.MasterDataId == s.SlotNameId)[0].MasterDataName
+            SlotName: _examname + " - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - " + s.StartTime + " - " + s.EndTime + " - " + this.SlotNames.filter(n => n.MasterDataId == s.SlotNameId)[0].MasterDataName
           }
         })
         this.GetClassSubject();
@@ -295,6 +311,8 @@ export class SlotnclasssubjectComponent implements OnInit {
                 Slot: this.ExamSlots.filter(s => s.SlotId == existing[0].SlotId)[0].SlotName,
                 ClassSubjectId: existing[0].ClassSubjectId,
                 ClassSubject: clssub.ClassSubject,
+                SubjectId: existing[0].ClassSubject.SubjectId,
+                ClassId: existing[0].ClassSubject.ClassId,
                 Active: existing[0].Active,
                 Action: false
               });
@@ -305,6 +323,8 @@ export class SlotnclasssubjectComponent implements OnInit {
                 Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                 ClassSubjectId: clssub.ClassSubjectId,
                 ClassSubject: clssub.ClassSubject,
+                SubjectId: clssub.ClassSubject.SubjectId,
+                ClassId: clssub.ClassSubject.ClassId,
                 Active: 0,
                 Action: false
               });
@@ -327,6 +347,8 @@ export class SlotnclasssubjectComponent implements OnInit {
                   Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                   ClassSubjectId: cs.ClassSubjectId,
                   ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == cs.ClassSubjectId)[0].ClassSubject,
+                  SubjectId: cs.ClassSubject.SubjectId,
+                  ClassId: cs.ClassSubject.ClassId,
                   Active: existing[0].Active,
                   Action: false
                 });
@@ -338,6 +360,8 @@ export class SlotnclasssubjectComponent implements OnInit {
                   Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                   ClassSubjectId: cs.ClassSubjectId,
                   ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == cs.ClassSubjectId)[0].ClassSubject,
+                  SubjectId: cs.ClassSubject.SubjectId,
+                  ClassId: cs.ClassSubject.ClassId,
                   Active: 0,
                   Action: false
                 });
@@ -345,22 +369,37 @@ export class SlotnclasssubjectComponent implements OnInit {
             })
           }
           else {
+            debugger;
             if (this.searchForm.get("searchSubjectId").value > 0 && this.searchForm.get("searchClassId").value > 0) {
               filteredData = data.value.filter(d => d.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value
                 && d.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
             }
             if (filteredData.length > 0) {
-              this.SlotNClassSubjects.push(filteredData[0]);
+              this.SlotNClassSubjects.push({
+                SlotClassSubjectId: filteredData[0].SlotClassSubjectId,
+                SlotId: this.searchForm.get("searchSlotId").value,
+                Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
+                ClassSubjectId: filteredData[0].ClassSubjectId,
+                ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == filteredData[0].ClassSubjectId)[0].ClassSubject,
+                SubjectId: filteredData[0].ClassSubject.SubjectId,
+                ClassId: filteredData[0].ClassSubject.ClassId,
+                Active: filteredData[0].Active,
+                Action: false
+              });
             }
             else {
-              let _classSubjectId = this.ClassSubjectList.filter(cs => cs.SubjectId == this.searchForm.get("searchSubjectId").value &&
-                cs.ClassId == this.searchForm.get("searchClassId").value)[0].ClassSubjectId;
+              var clssubject = this.ClassSubjectList.filter(cs => cs.SubjectId == this.searchForm.get("searchSubjectId").value &&
+                cs.ClassId == this.searchForm.get("searchClassId").value)
+              var _classSubjectId = clssubject[0].ClassSubjectId;
+
               this.SlotNClassSubjects.push({
                 SlotClassSubjectId: 0,
                 SlotId: this.searchForm.get("searchSlotId").value,
                 Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
-                ClassSubjectId: _classSubjectId,
+                ClassSubjectId: clssubject[0].ClassSubjectId,
                 ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == _classSubjectId)[0].ClassSubject,
+                SubjectId: clssubject[0].SubjectId,
+                ClassId: clssubject[0].ClassId,
                 Active: 0,
                 Action: false
               });
@@ -407,7 +446,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMSLOTNAME);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
@@ -440,6 +479,8 @@ export interface ISlotNClassSubject {
   Slot: string;
   ClassSubjectId: number;
   ClassSubject: string;
+  SubjectId: number;
+  ClassId: number;
   Active: number;
   Action: boolean;
 }

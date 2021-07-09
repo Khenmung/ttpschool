@@ -36,7 +36,7 @@ export class SharedataService {
   private PagesDataSource = new BehaviorSubject(this.items);
   private NewsNEventIdSource = new BehaviorSubject(-1);
   private ReasonForLeavingSource = new BehaviorSubject(this.items);
-  private SelectedBatchIdSource = new BehaviorSubject(0);
+  //private SelectedBatchIdSource = new BehaviorSubject(0);
   private RandomImagesSource = new BehaviorSubject(this.items);
   private OrganizationSource = new BehaviorSubject(this.items);
   private DepartmentSource = new BehaviorSubject(this.items);
@@ -66,7 +66,7 @@ export class SharedataService {
   CurrentDepartment = this.DepartmentSource.asObservable();
   CurrentOrganization = this.OrganizationSource.asObservable();
   CurrentRandomImages = this.RandomImagesSource.asObservable();
-  CurrentSelectedBatchId = this.SelectedBatchIdSource.asObservable();
+  //CurrentSelectedBatchId = this.SelectedBatchIdSource.asObservable();
   CurrentReasonForLeaving = this.ReasonForLeavingSource.asObservable();
 
   CurrentNewsNEventId = this.NewsNEventIdSource.asObservable();
@@ -79,7 +79,7 @@ export class SharedataService {
   CurrentSection = this.SectionSource.asObservable();
   CurrentPrimaryContact = this.PrimaryContactSource.asObservable();
   CurrentMasterData = this.MasterDataSource.asObservable();
-  CurrentBatchId = this.SelectedBatchIdSource.asObservable();
+  CurrentBatchId = this.CurrentBatchIdSource.asObservable();
   CurrentBatch = this.BatchSource.asObservable();
   CurrentStudentId = this.StudentIdSource.asObservable();
   CurrentStudentClassId = this.StudentClassIdSource.asObservable();
@@ -140,9 +140,9 @@ export class SharedataService {
   ChangeRandomImages(item){
     this.RandomImagesSource.next(item);
   }
-  ChangeSelectedBatchId(item){
-    this.SelectedBatchIdSource.next(item);
-  }
+  // ChangeSelectedBatchId(item){
+  //   this.SelectedBatchIdSource.next(item);
+  // }
   ChangeReasonForLeaving(item){
     this.ReasonForLeavingSource.next(item);
   }
@@ -191,7 +191,7 @@ export class SharedataService {
   }
   ChangeCurrentBatchId(item) {
 
-    this.SelectedBatchIdSource.next(item);
+    this.CurrentBatchIdSource.next(item);
   }
   ChangeBatch(item) {
     this.BatchSource.next(item);

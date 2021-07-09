@@ -89,7 +89,9 @@ export class AttendanceComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+      //this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+      
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
 

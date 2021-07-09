@@ -1,10 +1,11 @@
 import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
+import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
 import { List } from "./interface";
 import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
-    public static apiUrl: string = "http://localhost:8090";//"https://ettest.ttpsolutions.in";//
+    public static apiUrl: string = "http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -33,9 +34,10 @@ export class globalconstants {
             'SUBJECT':{
                     'CLASSSUBJECTMAPPING':'class subject mapping',
                     'SUBJECTMARKCOMPONENT':'subject mark component',
-                    'STUDENTCLASS':'student class',
+                    'ASSIGNSTUDENTCLASS':'assign student class',
                     'STUDENTSUBJECT':'student subject',
                     'SUBJECTTYPES':'subject types',
+                    'STUDENTPROMOTE':'promote student'
 
             },
             'FEES':{
@@ -107,11 +109,12 @@ export class globalconstants {
     ) {
 
     }
-    public static getStandardFilterWithBatchId(token,shareddata) {
+    public static getStandardFilterWithBatchId(tokenService) {
 
         var _selectedBathId =0;
-        shareddata.CurrentSelectedBatchId.subscribe(c=>_selectedBathId =c);
-        var filterstr = 'BatchId eq ' + _selectedBathId + ' and OrgId eq ' + token[0]["orgId"];
+        var loginUserdetail = tokenService.getUserDetail();
+        _selectedBathId = +tokenService.getSelectedBatchId();
+        var filterstr = 'BatchId eq ' + _selectedBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"];
         return filterstr;
 
     }
@@ -121,12 +124,12 @@ export class globalconstants {
         return filterstr;
 
     }
-    public static getPermission(token,shareddata, feature) {
+    public static getPermission(token,tokenservice:TokenStorageService, feature:any) {
         var checkBatchIdNSelectedId = 0;
-        
-        shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(t => checkBatchIdNSelectedId = t);
+        checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();       
+        //shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(t => checkBatchIdNSelectedId = t);
         //user is viewing old data
-        if (checkBatchIdNSelectedId == 1)
+        if (checkBatchIdNSelectedId == 1 && feature.toLowerCase().indexOf('promote')==-1)
             return 'read';
         else {
             var _permission = token[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());

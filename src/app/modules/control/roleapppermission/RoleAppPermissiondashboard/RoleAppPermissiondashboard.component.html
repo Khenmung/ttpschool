@@ -83,7 +83,7 @@
                     <mat-header-cell *matHeaderCellDef>              
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading" [disabled]="currentPermission=='read' || loading" matTooltip="view/edit" mat-mini-fab
+                        <button [disabled]="currentPermission=='read' || loading" matTooltip="view/edit" mat-mini-fab
                             (click)="UpdateOrSave(element)">
                             <mat-icon *ngIf="!loading">save</mat-icon>
                         </button>

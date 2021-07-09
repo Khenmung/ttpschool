@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 //import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -80,6 +81,7 @@ export class FeereceiptComponent implements OnInit {
     Active: 1
   };
   constructor(private dataservice: NaomitsuService,
+    private tokenservice:TokenStorageService,
     private alert: AlertService,
     private shareddata:SharedataService) { }
 
@@ -109,7 +111,9 @@ export class FeereceiptComponent implements OnInit {
     this.shareddata.CurrentSection.subscribe(pr=>(this.Sections=pr));
     this.shareddata.CurrentStudentId.subscribe(id=>(this.studentInfoTodisplay.StudentId=id));
     this.shareddata.CurrentStudentClassId.subscribe(scid=>(this.studentInfoTodisplay.StudentClassId=scid));
-    this.shareddata.CurrentSelectedBatchId.subscribe(b=>(this.SelectedBatchId=b));
+    this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b=>(this.SelectedBatchId=b));
+    //this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
     this.studentInfoTodisplay.currentbatchId =this.SelectedBatchId;
     this.shareddata.CurrentFeeNames.subscribe(b=>(this.FeeNames=b));
         
@@ -322,10 +326,10 @@ export class FeereceiptComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         
           this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
         

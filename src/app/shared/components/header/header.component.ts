@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { NaomitsuService } from '../../databaseService';
 import { List } from '../../interface';
@@ -19,11 +19,14 @@ export class HeaderComponent implements OnInit {
   userName: string = '';
   loggedIn: boolean;
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
-  constructor(private route: Router,
+  constructor(
+    private aroute: ActivatedRoute,
+    private route: Router,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private shareddata: SharedataService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+
   ) {
 
     //console.log("token", tokenStorage.getToken())
@@ -34,6 +37,7 @@ export class HeaderComponent implements OnInit {
   Batches = [];
   ngOnInit(): void {
     //debugger;
+
     this.searchForm = this.fb.group({
       searchBatchId: [0]
     })
@@ -46,10 +50,14 @@ export class HeaderComponent implements OnInit {
     //    console.log("loggedin", this.loggedIn)
     this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
     this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     if (this.Batches.length == 0)
       this.getBatches();
-    else
+    else {
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
+
+    }
+
   }
   toggleSideBar() {
     this.toggleSideBarForme.emit();
@@ -102,32 +110,37 @@ export class HeaderComponent implements OnInit {
 
   ChangeCurrentBatchId(selected) {
     debugger;
-    this.shareddata.ChangeSelectedBatchId(selected.value);
     if (selected.value == this.CurrentBatchId)
-      this.shareddata.ChangeSelectedNCurrentBatchIdEqual(0)
+      this.tokenStorage.saveCheckEqualBatchId("0");
     else
-      this.shareddata.ChangeSelectedNCurrentBatchIdEqual(1);
+      this.tokenStorage.saveCheckEqualBatchId("1");
+
+    this.tokenStorage.saveSelectedBatchId(selected.value);
+    //this.shareddata.ChangeSelectedBatchId(selected.value);
+
     this.generateBatchIds(selected.value);
-    //let currentUrl = this.route.url;
-    //this.route.navigate(['/control']);
-    // this.route.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-    //   this.route.navigate([currentUrl]);
-    // });
+    //this.route.navigated = false;
+    var currenturl = this.route.url;
+    window.location.href = currenturl;
+    //this.route.navigate([currenturl]);
   }
   generateBatchIds(batchId) {
     var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(batchId) - 1;
     var _previousBatchId = -1;
     if (previousBatchIndex > -1) {
       _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];
-      this.shareddata.ChangePreviousBatchIdOfSelecteBatchId(_previousBatchId);
+      this.tokenStorage.savePreviousBatchId(_previousBatchId.toString())
+      //this.shareddata.ChangePreviousBatchIdOfSelecteBatchId(_previousBatchId);
     }
     var nextBatchIndex = this.Batches.map(d => d.BatchId).indexOf(batchId) + 1;
     var _nextBatchId = -1;
     if (nextBatchIndex > -1) {
       _nextBatchId = this.Batches[nextBatchIndex]["BatchId"];
-      this.shareddata.ChangeNextBatchIdOfSelecteBatchId(_nextBatchId);
+      this.tokenStorage.saveNextBatchId(_nextBatchId.toString());
+      //this.shareddata.ChangeNextBatchIdOfSelecteBatchId(_nextBatchId);
     }
-    console.log("selected",batchId);
+    //this.tokenStorage.saveSelectedBatchId(batchId)
+    //console.log("selected",batchId);
   }
   getBatches() {
     var list = new List();
@@ -138,10 +151,15 @@ export class HeaderComponent implements OnInit {
       this.Batches = [...data.value];
       this.shareddata.ChangeBatch(this.Batches);
       this.CurrentBatchId = this.Batches.filter(b => b.CurrentBatch == 1)[0].BatchId;
-      this.SelectedBatchId = this.CurrentBatchId;
+      if (this.SelectedBatchId == 0) {
+        this.tokenStorage.saveSelectedBatchId(this.CurrentBatchId.toString())
+        //this.shareddata.ChangeSelectedBatchId(this.CurrentBatchId);
+        this.SelectedBatchId = this.CurrentBatchId;
+      }
+
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
-      this.shareddata.ChangeCurrentBatchId(this.SelectedBatchId);
-      this.shareddata.ChangeSelectedBatchId(this.SelectedBatchId);
+      this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
+
       this.generateBatchIds(this.CurrentBatchId);
     });
   }

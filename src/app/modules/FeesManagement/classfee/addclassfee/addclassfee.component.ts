@@ -53,7 +53,9 @@ export class AddclassfeeComponent implements OnInit {
     ) { }
 
   ngOnInit(): void {
-    this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
+    this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+      
     this.shareddata.CurrentBatch.subscribe(b=>this.Batches=b);
     this.loginUserDetail = this.tokenService.getUserDetail();
     this.GetMasterData();
@@ -70,8 +72,8 @@ export class AddclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
         this.classfeeForm.patchValue({ "LocationId": this.Locations[0].MasterDataId });
       });

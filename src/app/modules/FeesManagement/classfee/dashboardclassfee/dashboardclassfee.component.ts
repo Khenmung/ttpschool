@@ -60,7 +60,7 @@ export class DashboardclassfeeComponent implements OnInit {
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
 
-    this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
+    this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
 
     this.searchForm = this.fb.group({
       ClassId: [0],
@@ -324,8 +324,8 @@ export class DashboardclassfeeComponent implements OnInit {
     this.shareddata.CurrentClasses.subscribe(f => (this.Classes = f));
     this.shareddata.CurrentBatch.subscribe(f => (this.Batches = f));
     this.shareddata.CurrentLocation.subscribe(f => (this.Locations = f));
-    this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+    this.SelectedBatchId = +this.token.getSelectedBatchId();
     if (this.SelectedBatchId == 0) {
       //this.alert.error("Current batch not defined in master!", this.options);
       this.route.navigate(['/admin']);

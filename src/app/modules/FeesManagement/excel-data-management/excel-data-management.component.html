@@ -5,7 +5,7 @@
         <div class="container">
             <form [formGroup]="uploadForm">
                 <div class="row">
-                    <input [hidden]="true" #inputfile type="file" class="form-control" (change)="uploadedFile($event)"
+                    <input [hidden]="true" #inputfile type="file" class="form-control" (change)="browseOnChange($event)"
                         placeholder="Upload file" accept=".xlsx">
                 </div>
                 <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px">
@@ -14,7 +14,7 @@
                         (click)="inputfile.click()">
                         <mat-icon aria-label="photo">attach_file</mat-icon>
                     </button>
-                    <mat-form-field appearance="outline">
+                    <!-- <mat-form-field appearance="outline">
                         <mat-label>Batch</mat-label>
                         <mat-select formControlName="BatchId" #Class>
                             <mat-option value="0">---</mat-option>
@@ -22,7 +22,7 @@
                                 {{p.MasterDataName}}
                             </mat-option>
                         </mat-select>
-                    </mat-form-field>
+                    </mat-form-field> -->
                     <mat-form-field appearance="outline">
                         <mat-label>Upload For</mat-label>
                         <mat-select formControlName="UploadTypeId" (selectionChange)="onselectchange($event)">

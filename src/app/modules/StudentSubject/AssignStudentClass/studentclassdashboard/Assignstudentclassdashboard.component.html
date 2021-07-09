@@ -1,19 +1,19 @@
 <mat-card>
-    <mat-card-title>Class Student</mat-card-title>
+    <mat-card-title>Assign Student Class</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
-            <!-- <mat-form-field appearance="outline">
-                <mat-label>Batch</mat-label>
-                <mat-select formControlName="searchBatchId">
-                    <mat-option value="0">--select--</mat-option>
-                    <mat-option *ngFor="let item of Batches" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}
+            <!-- <mat-form-field [style.width.pc]="25">
+                <mat-label>Name-class-section-roll no</mat-label>
+                <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option.Name}}
                     </mat-option>
-                </mat-select>
-            </mat-form-field> -->
+                </mat-autocomplete>
+            </mat-form-field>         -->
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="searchClassId">
@@ -25,11 +25,19 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>Section</mat-label>
-                <input matInput formControlName="searchSection" autocomplete="Off" maxlength="1">
+                <mat-select formControlName="searchSectionId">
+                   <mat-option value="0">--section--</mat-option>
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
             <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentClasses()">
                 <mat-icon>search</mat-icon>
-            </button>            
+            </button> 
+            Or    
+            <a [routerLink]="[ '/path', routeParam ]">Upload excel</a>       
+            <a [routerLink]="[ '/path', routeParam ]">Download student class template</a>       
         </form>
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="Student">
@@ -54,12 +62,15 @@
                     </mat-form-field>                                        
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="Section">
+            <ng-container matColumnDef="SectionId">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Section
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    <mat-form-field [style.width.px]="50">                        
-                        <input matInput [(value)]="element.Section" [(ngModel)]="element.Section" autocomplete="Off" maxlength="10">
+                    <mat-form-field [style.width.px]="50">
+                        <mat-select [(value)]="element.SectionId" [(ngModel)]="element.SectionId">
+                            <!-- <mat-option value="0">--section--</mat-option> -->
+                            <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                        </mat-select>
                     </mat-form-field>                  
                 </mat-cell>
             </ng-container>
@@ -82,28 +93,28 @@
             </ng-container> -->
             <ng-container matColumnDef="Promote">
                 <mat-header-cell *matHeaderCellDef> Promote&nbsp; 
-                    <mat-checkbox *ngIf="CheckPermission=='read'" (click)="$event.stopPropagation()" (change)="CheckPromoteAll($event)">
+                    <mat-checkbox *ngIf="PromotePermission!='read' && StudentClassList.length>0" 
+                        (click)="$event.stopPropagation()" (change)="CheckPromoteAll($event)">
                     </mat-checkbox>
                 </mat-header-cell>
                 <mat-cell style="text-align: center;" *matCellDef="let element">
-                    <mat-checkbox *ngIf="CheckPermission=='read'" (click)="$event.stopPropagation()" (change)="Promote(element,$event)" [checked]="element.Promote==1?true:false">
+                    <mat-checkbox *ngIf="PromotePermission!='read'" (click)="$event.stopPropagation()" (change)="Promote(element,$event)" [checked]="element.Promote==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading" matTooltip="promote" mat-mini-fab (click)="PromoteAll()">
+                    <button [disabled]="loading || StudentClassList.length==0 || PromotePermission=='read' || checkBatchIdNSelectedIdEqual==0" matTooltip="promote" mat-mini-fab (click)="PromoteAll()">
                         <mat-icon>loupe</mat-icon>
                     </button>                    
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                     <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="PromoteToNextClass(element,$event)" [checked]="element.Active==1?true:false">
                     </mat-checkbox> -->
-
-                    <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading || PagePermission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>&nbsp;
-                    <button [disabled]="loading" matTooltip="promote" mat-mini-fab (click)="Promote(element)">
+                    <button [disabled]="loading|| PromotePermission=='read'|| PromotePermission=='deny' || checkBatchIdNSelectedIdEqual==0" matTooltip="promote" mat-mini-fab (click)="Promote(element,$event)">
                         <mat-icon>loupe</mat-icon>
                     </button>
                 </mat-cell>

@@ -16,6 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./examslot.component.scss']
 })
 export class ExamslotComponent implements OnInit {
+  weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -50,8 +52,8 @@ export class ExamslotComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    'SlotName',
     'ExamDate',
+    'SlotName',
     'StartTime',
     'EndTime',
     'Active',
@@ -84,9 +86,10 @@ export class ExamslotComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
-
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+      this.shareddata.CurrentBatch.subscribe(b=>this.Batches=b);
       this.GetMasterData();
     }
   }
@@ -127,8 +130,11 @@ export class ExamslotComponent implements OnInit {
       this.alert.error("Start time and end time are mandatory!", this.optionAutoClose);
       return;
     }
+    var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate()+1)
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
-      " and SlotNameId eq " + row.SlotNameId
+      " and SlotNameId eq " + row.SlotNameId +
+      " and ExamDate gt datetime'" + this.datepipe.transform(row.ExamDate,'yyyy-MM-dd') + "'" +
+      " and ExamDate lt datetime'" + this.datepipe.transform(dateplusone,'yyyy-MM-dd') + "'"
 
 
     if (row.ExamSlotId > 0)
@@ -144,9 +150,11 @@ export class ExamslotComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
+          this.loading=false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
+          //var _examdate =new Date(row.ExamDate).setDate(row.ExamDate.getDate()+1);
           this.ExamSlotsData.ExamSlotId = row.ExamSlotId;
           this.ExamSlotsData.ExamId = this.searchForm.get("searchExamId").value;
           this.ExamSlotsData.Active = row.Active;
@@ -246,34 +254,44 @@ export class ExamslotComponent implements OnInit {
     list.PageName = "ExamSlots";
     list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId + filterstr];
     //list.orderBy = "ParentId";
-
+    this.ExamSlots =[];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _startDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].StartDate);
         var _endDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].EndDate);
-        for (var _examDate = _startDate; _examDate < _endDate; _examDate.setDate(_examDate.getDate() + 1)) {
-          this.ExamSlots = this.SlotNames.map(e => {
-            let existing = data.value.filter(db => db.SlotNameId == e.MasterDataId && db.ExamDate == _examDate);
+        var _examDate = _startDate;
+        var day ='';
+        //var dtstring;
+        while ( _examDate < _endDate) {
+          day = this.weekday[_examDate.getDay()];
+          //dtstring =new Date(_examDate);
+           this.SlotNames.forEach(e => {
+            let existing = data.value.filter(db =>{
+              var same = this.datepipe.transform(db.ExamDate,'dd/MM/yyyy') === this.datepipe.transform(_examDate,'dd/MM/yyyy')
+              return db.SlotNameId == e.MasterDataId && same 
+            } );
             if (existing.length > 0) {
               existing[0].SlotName = e.MasterDataName;
-              return existing[0];
+              existing[0].WeekDay = day;
+              this.ExamSlots.push(existing[0]);
             }
             else {
-              return {
+              this.ExamSlots.push({
                 ExamSlotId: 0,
                 ExamId: 0,
                 SlotNameId: e.MasterDataId,
                 SlotName: e.MasterDataName,
-                ExamDate: _examDate,
+                ExamDate: new Date(_examDate.getTime()),
+                WeekDay:day,
                 StartTime: '',
                 EndTime: '',
                 OrgId: 0,
                 BatchId: 0,
                 Active: 0
-
+              });
               }
-            }
-          })
+            })
+          _examDate.setDate(_examDate.getDate() + 1);
         }
         //console.log('this', this.ExamSlots)
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
@@ -295,9 +313,8 @@ export class ExamslotComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMSLOTNAME);
-        this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
-        this.shareddata.ChangeBatch(this.Batches);
         this.GetExams();
       });
   }
@@ -324,6 +341,7 @@ export interface IExamSlots {
   SlotNameId: number;
   SlotName: string;
   ExamDate: Date;
+  WeekDay:string;
   StartTime: string;
   EndTime: string;
   OrgId: number;

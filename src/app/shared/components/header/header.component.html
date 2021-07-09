@@ -56,7 +56,7 @@
         </span>
         <span>
             <form [formGroup]="searchForm">
-                <mat-form-field>
+                <mat-form-field [style.width.px]="130" style="color: white;">
                     <mat-select formControlName="searchBatchId" (selectionChange)="ChangeCurrentBatchId($event)">
                         <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
                     </mat-select>

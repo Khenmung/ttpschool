@@ -280,24 +280,24 @@ export class AddMasterDataComponent implements OnInit {
     this.oldvalue = row.MasterDataName;
     //  console.log('old value', this.oldvalue);
   }
-  updateName(value, row) {
+  UpdateOrSave(row) {
     //console.log('d', row)
     debugger;
-    if (row.Name.toLowerCase() == value.toLowerCase())
-      return;
-    if (value.length == 0 || value.length > 50) {
+    // if (row.Name.toLowerCase() == value.toLowerCase())
+    //   return;
+    if (row.Name.length == 0 || row.Name.length > 50) {
       this.alert.error("Character should not be empty or less than 50!", this.optionAutoClose);
       return;
     }
     if (this.searchForm.get("ParentId").value == 0 || this.enableTopEdit) {
-      let duplicate = this.TopMasters.filter(item => item.MasterDataName.toLowerCase() == value.toLowerCase())
+      let duplicate = this.TopMasters.filter(item => item.MasterDataName.toLowerCase() == row.Name.toLowerCase())
       if (duplicate.length > 0) {
         this.alert.error("Data already exists in this master", this.optionNoAutoClose);
         return;
       }
     }
     else {
-      let duplicate = this.MasterData.filter(item => item.Name.toLowerCase() == value.toLowerCase())
+      let duplicate = this.MasterData.filter(item => item.Name.toLowerCase() == row.Name.toLowerCase() && item.Id != row.Id)
       if (duplicate.length > 0) {
         this.alert.error("Data already exists in this master", this.optionNoAutoClose);
         return;
@@ -305,7 +305,8 @@ export class AddMasterDataComponent implements OnInit {
     }
 
     let mastertoUpdate = {
-      MasterDataName: value,
+      MasterDataName: row.Name,
+      Description:row.Description,
       ParentId: this.enableTopEdit ? 0 : this.searchForm.get("ParentId").value,
       Active: 1
     }
@@ -318,10 +319,11 @@ export class AddMasterDataComponent implements OnInit {
     if (newlyAddedRow[0].Id == 0) {
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
-      mastertoUpdate["ApplicationId"] = this.UserDetails[0]["applicationId"];
+      mastertoUpdate["ApplicationId"] = 0;//this.UserDetails[0]["applicationId"];
       this.dataservice.postPatch('MasterDatas', mastertoUpdate, 0, 'post')
-        .subscribe(res => {
+        .subscribe((res:any) => {
           if (res != undefined) {
+            row.MasterDataId =res.MasterDataId;
             //newlyAddedRow[0].MasterDataId =res["MasterDataId"];
             this.GetTopMasters();
             if (this.searchForm.get("ParentId").value == 0)
@@ -330,7 +332,7 @@ export class AddMasterDataComponent implements OnInit {
 
             this.alert.success("Master data added!", this.optionAutoClose);
           }
-        });
+        },error=>console.log('insert error',error));
     }
     else {
       selectedMasterDataId = newlyAddedRow[0].Id;

@@ -12,6 +12,7 @@ import { FeeManagementComponent, FeeManagementRoutingModule } from './fee-manage
 import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { EditInputModule } from 'src/app/shared/edit-input/edit-input.module';
+import { ControlModule } from '../control/control.module';
 
 
 @NgModule({

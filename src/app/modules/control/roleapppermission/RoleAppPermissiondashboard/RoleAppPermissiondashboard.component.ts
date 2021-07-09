@@ -102,7 +102,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     }
     //this.share
     //var gbl= new globalconstants(this.dataservice,this.sharedata);
-    this.currentPermission = globalconstants.getPermission(this.UserDetails, this.sharedata, globalconstants.Pages[0].CONTROL.APPLICATIONFEATUREPERMISSION);
+    this.currentPermission = globalconstants.getPermission(this.UserDetails,this.tokenStorage,globalconstants.Pages[0].CONTROL.APPLICATIONFEATUREPERMISSION);
     console.log('this.currentPermission', this.currentPermission)
     // if (this.currentPermission == 'deny') {
     //   this.alert.info('Access denied!', this.optionNoAutoClose);

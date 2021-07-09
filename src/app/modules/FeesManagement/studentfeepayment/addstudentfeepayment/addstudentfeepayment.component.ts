@@ -5,6 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
@@ -93,6 +94,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   ];
 
   constructor(private dataservice: NaomitsuService,
+    private tokenstorage:TokenStorageService,
     private alert: AlertService,
     private route: ActivatedRoute,
     private nav: Router,
@@ -103,22 +105,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   PageLoad() {
 
-    // this.route.paramMap.subscribe(param => {
-    //   this.studentInfoTodisplay.StudentId = +param.get("id");
-    // })
-    // if (this.studentInfoTodisplay.StudentId == 0) {
-    //   this.alert.error("Id is missing", this.optionAutoClose);
-    //   return;
-    // }
-    // this.route.queryParamMap.subscribe(p => {
-    //   this.studentInfoTodisplay.StudentClassId = +p.get('scid');
-    //   this.studentInfoTodisplay.BatchId = +p.get('bid');
-    //   this.GetMasterData();
-    // })
-    
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+
     this.shareddata.CurrentStudentId.subscribe(fy=>(this.studentInfoTodisplay.StudentId=fy)); 
     this.shareddata.CurrentStudentClassId.subscribe(fy=>(this.studentInfoTodisplay.StudentClassId=fy));
-    this.shareddata.CurrentSelectedBatchId.subscribe(fy=>(this.studentInfoTodisplay.BatchId =fy));
+    //this.shareddata.CurrentSelectedBatchId.subscribe(fy=>(this.studentInfoTodisplay.BatchId =fy));
 
     this.shareddata.CurrentFeeNames.subscribe(fy=>(this.FeeNames=fy)); 
     this.shareddata.CurrentClasses.subscribe(fy=>(this.Classes=fy));
@@ -138,14 +129,14 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.cur=c));
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
-        this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEETYPE);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
+        this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         // let currentBatch = globalconstants.getCurrentBatch();
         // let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch.toLowerCase());
         // if (currentBatchObj.length > 0) {

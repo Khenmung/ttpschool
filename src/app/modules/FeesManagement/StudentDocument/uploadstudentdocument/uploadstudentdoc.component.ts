@@ -69,8 +69,9 @@ export class StudentDocumentComponent implements OnInit {
       
     })
     this.LoginUserDetail = this.tokenService.getUserDetail();
-    this.shareddata.CurrentSelectedBatchId.subscribe(s=>this.SelectedBatchId=s);
-    this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail,this.shareddata);
+    //this.shareddata.CurrentSelectedBatchId.subscribe(s=>this.SelectedBatchId=s);
+    this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+    this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
     this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
     //this.GetMasterData();
   }
@@ -169,7 +170,7 @@ export class StudentDocumentComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].DOCUMENTTYPE);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         this.GetDocuments();
       });

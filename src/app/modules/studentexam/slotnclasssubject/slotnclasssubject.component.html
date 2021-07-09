@@ -1,13 +1,13 @@
-<div class="container">
+<div>
     <div style="padding:15px 15px 0px 15px;">
-        <div><strong>Exam Slots</strong></div>
+        <div><strong>Exam Slot Subject Mapping</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field appearance="outline">
+                <mat-form-field [style.width.pc]="40">
                     <mat-label>Exam Slot</mat-label>
                     <mat-select formControlName="searchSlotId">
                         <mat-option *ngFor="let item of ExamSlots" [value]="item.SlotId">
@@ -69,12 +69,12 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" *ngIf="SlotNClassSubjects.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                        <!-- <button [disabled]="loading" *ngIf="SlotNClassSubjects.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
                             <mat-icon>all_out</mat-icon>
-                        </button>
+                        </button> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>
@@ -83,6 +83,5 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
         </div>
-
     </div>
 </div>

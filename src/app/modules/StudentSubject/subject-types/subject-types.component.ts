@@ -69,8 +69,8 @@ PageLoad() {
   //debugger;
   
   //this.shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(s=>this.CheckBatchIdForEdit =s);
- 
-  this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);   
+  this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+  //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);   
   //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
   console.log('currentbatchid',this.SelectedBatchId)
   
@@ -79,8 +79,8 @@ PageLoad() {
   if (this.LoginUserDetail == null)
     this.nav.navigate(['/auth/login']);
   else {
-    this.CurrentPagePermission = globalconstants.getPermission(this.LoginUserDetail,this.shareddata,globalconstants.Pages[0].SUBJECT.SUBJECTTYPES);
-    this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail,this.shareddata);
+    this.CurrentPagePermission = globalconstants.getPermission(this.LoginUserDetail,this.tokenstorage, globalconstants.Pages[0].SUBJECT.SUBJECTTYPES);
+    this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
     this.GetSubjectTypes();
 //    this.GetMasterData();      
   }

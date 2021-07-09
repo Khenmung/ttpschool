@@ -54,17 +54,7 @@
                         required.</span>
                 </mat-form-field>
             </mat-grid-tile>
-            <mat-grid-tile [colspan]="1" [rowspan]="1">
-                <mat-form-field appearance="outline">
-                    <mat-label>Language subject</mat-label>
-                    <mat-select formControlName="LanguageSubject" #LanguageSubject>
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of LanguageSubjectLower" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </mat-grid-tile>
+           
             <mat-grid-tile [colspan]="1" [rowspan]="1">
                 <mat-form-field appearance="outline">
                     <mat-label>Admission Date</mat-label>

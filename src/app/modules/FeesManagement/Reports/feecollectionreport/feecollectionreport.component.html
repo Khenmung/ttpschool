@@ -4,7 +4,7 @@
         <br>
         <form [formGroup]="SearchForm">
             <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px">
-                <mat-form-field appearance="outline" [style.width.px]="270">
+                <!-- <mat-form-field appearance="outline" [style.width.px]="270">
                     <mat-label>Batch</mat-label>
                     <mat-select formControlName="BatchId">
                         <mat-option value="0">---</mat-option>
@@ -14,7 +14,7 @@
                     </mat-select>
                     <span class="text-danger" *ngIf="f.BatchId.touched && f.BatchId.hasError('required')">Please
                         select seesion.</span>
-                </mat-form-field>
+                </mat-form-field> -->
                 <mat-form-field appearance="outline" [style.width.px]="270">
                     <mat-label>Fee</mat-label>
                     <mat-select formControlName="FeeNameId">

@@ -17,7 +17,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'subject',
+    path: 'subject',//runGuardsAndResolvers:'always',
     loadChildren: () => import('./modules/StudentSubject/student-subject.module').then(m => m.StudentSubjectModule)
   },
   {
@@ -36,7 +36,8 @@ const routes: Routes = [
     path: 'attendance',
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
-  { path: '**', component: NotfoundComponent }
+  { path: '**', component: NotfoundComponent },
+  
 
 ];
 

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AssignStudentclassdashboardComponent } from './AssignStudentClass/studentclassdashboard/Assignstudentclassdashboard.component';
 import { ClasssubjectdashboardComponent } from './classsubjectmapping/classsubjectdashboard/classsubjectdashboard.component';
 import { StudentSubjectMarkCompComponent } from './student-subject-mark-comp/student-subject-mark-comp.component';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
@@ -11,7 +12,8 @@ const routes: Routes = [
   {
     path: '', component: StudenthomeComponent,
     children: [
-      { path: '', component: SubjectdashboardComponent },
+      { path: '', component: SubjectdashboardComponent,//runGuardsAndResolvers:'always'
+     },
       { path: 'studentsubject', component: studentsubjectdashboardComponent },
       { path: 'subjecttypes', component: SubjectTypesComponent },
       { path: 'components', component: StudentSubjectMarkCompComponent },
@@ -32,5 +34,6 @@ export const StudentSubjectComponents=[
   studentsubjectdashboardComponent,
   SubjectTypesComponent,
   StudentSubjectMarkCompComponent, 
-  SubjectdashboardComponent
+  SubjectdashboardComponent,
+  AssignStudentclassdashboardComponent
 ]

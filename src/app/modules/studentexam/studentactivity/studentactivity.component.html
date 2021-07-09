@@ -1,0 +1,81 @@
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Stduent Activity</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm">
+               <mat-form-field [style.width.pc]="50">
+                    <mat-label>Name-class-section-roll no</mat-label>
+                    <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option.Name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>        
+                                 
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentActivity()">
+                    <mat-icon>search</mat-icon>
+                </button>
+                
+            </form>
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="Student">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Student
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        {{element.Student}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Activity">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Activity
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                           <mat-form-field>
+                               <textarea matInput [(value)]="element.Activity"  [(ngModel)]="element.Activity"></textarea>
+                           </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ActivityDate">
+                    <mat-header-cell style="display: flex;" *matHeaderCellDef>Date
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                           <mat-form-field [style.width.px]="120">
+                            <input [(value)]="element.ActivityDate" [(ngModel)]="element.ActivityDate" matInput [matDatepicker]="ActivityDate" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="ActivityDate"></mat-datepicker-toggle>
+                            <mat-datepicker #ActivityDate></mat-datepicker>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef>Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <!-- <button [disabled]="loading" *ngIf="SlotNClassSubjects.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                            <mat-icon>all_out</mat-icon>
+                        </button> -->
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

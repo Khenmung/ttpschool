@@ -1,29 +1,34 @@
 <div fxLayout="row" fxLayoutAlign="space-around center">
-    <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
-    >
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>info</mat-icon>Exams
-        </ng-template>
-        <app-exams></app-exams>
-    </mat-tab>
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>info</mat-icon>Exam Slots
-        </ng-template>
-        <app-examslot></app-examslot>
-    </mat-tab>
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>info</mat-icon>Subject in Slots
-        </ng-template>
-        <app-slotnclasssubject></app-slotnclasssubject>
-    </mat-tab>
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>info</mat-icon>Student Subject Exam Result
-        </ng-template>
-        <app-examstudentsubjectresult></app-examstudentsubjectresult>
-    </mat-tab>
-</mat-tab-group>
+    <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>info</mat-icon>Exams
+            </ng-template>
+            <app-exams></app-exams>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>info</mat-icon>Exam Slots
+            </ng-template>
+            <app-examslot></app-examslot>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>info</mat-icon>Subject in Slots
+            </ng-template>
+            <app-slotnclasssubject></app-slotnclasssubject>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>info</mat-icon>Student Exam Subject Marks
+            </ng-template>
+            <app-examstudentsubjectresult></app-examstudentsubjectresult>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>info</mat-icon>Student Activity
+            </ng-template>
+            <app-studentactivity></app-studentactivity>
+        </mat-tab>
+    </mat-tab-group>
 </div>

@@ -1,4 +1,3 @@
-
 <div fxLayout="column" fxLayoutAlign="center center" class="boxes">
     <strong>Essential data for Application setting Statuses</strong>
     <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid lightgrey;">
@@ -37,7 +36,8 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetMasterData()" fxFlex="10">
+                <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetMasterData()"
+                    fxFlex="10">
                     <mat-icon>search</mat-icon>
                 </button>
                 <!-- <button [disabled]="loading" matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button"
@@ -60,28 +60,35 @@
                 <ng-container matColumnDef="Name">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <edit-input [data]="element.Name" (tried)="getoldvalue($event,element)"
-                            (focusOut)='updateName($event,element)'></edit-input>
+                        <mat-form-field>
+                            <input matInput [(value)]="element.Name" 
+                                [(ngModel)]="element.Name" autocomplete="Off">
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Description">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <edit-input [data]="element.Description" (focusOut)='updateDescription($event,element)'>
-                        </edit-input>
+                        <mat-form-field>
+                            <input matInput [(value)]="element.Description" [(ngModel)]="element.Description"
+                                autocomplete="Off">
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="new item" *ngIf="enableAddNew" class="mat-raised-button" (click)="AddData()"
-                            fxFlex="10">
+                        <button [disabled]="loading" matTooltip="new item" *ngIf="enableAddNew"
+                            class="mat-raised-button" (click)="AddData()" fxFlex="10">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                             [checked]="element.Active">
-                        </mat-checkbox>
+                        </mat-checkbox>&nbsp;
+                        <button [disabled]="loading" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
                     </mat-cell>
                 </ng-container>
 

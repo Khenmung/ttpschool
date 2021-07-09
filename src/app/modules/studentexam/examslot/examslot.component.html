@@ -1,6 +1,6 @@
-<div class="container">
+<div>
     <div style="padding:15px 15px 0px 15px;">
-        <div><strong>Exam Slots</strong></div>
+        <div><strong>Define Exam Slots</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -23,11 +23,23 @@
                 </button> -->
             </form>
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="ExamId">
+                <ng-container matColumnDef="ExamName">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Exam
                     </mat-header-cell>
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                         {{element.ExamName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ExamDate">
+                    <mat-header-cell *matHeaderCellDef> Exam Date </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ExamDate|date:'dd-MM-yyyy'}} - {{element.WeekDay}} 
+                        <!-- <mat-form-field appearance="legacy" [style.width.px]="200">
+                            <input [(ngModel)]="element.ExamDate" [(value)]="element.ExamDate" matInput
+                                [matDatepicker]="ExamDate" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="ExamDate"></mat-datepicker-toggle>
+                            <mat-datepicker #ExamDate></mat-datepicker>
+                        </mat-form-field> -->
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="SlotName">
@@ -44,18 +56,7 @@
                         </mat-form-field> -->
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ExamDate">
-                    <mat-header-cell *matHeaderCellDef> Exam Date </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="legacy" [style.width.px]="200">
-                            <mat-label>Start Date</mat-label>
-                            <input [(ngModel)]="element.ExamDate" [(value)]="element.ExamDate" matInput
-                                [matDatepicker]="ExamDate" autocomplete="off">
-                            <mat-datepicker-toggle matSuffix [for]="ExamDate"></mat-datepicker-toggle>
-                            <mat-datepicker #ExamDate></mat-datepicker>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
+                
                 <ng-container matColumnDef="StartTime">
                     <mat-header-cell *matHeaderCellDef> Start Time </mat-header-cell>
                     <mat-cell *matCellDef="let element">

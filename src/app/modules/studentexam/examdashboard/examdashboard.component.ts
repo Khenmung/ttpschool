@@ -3,6 +3,7 @@ import { ExamsComponent } from '../exams/exams.component';
 import { ExamslotComponent } from '../examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from '../examstudentsubjectresult/examstudentsubjectresult.component';
 import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubject.component';
+import { StudentactivityComponent } from '../studentactivity/studentactivity.component';
 
 @Component({
   selector: 'app-examdashboard',
@@ -10,20 +11,21 @@ import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubje
   styleUrls: ['./examdashboard.component.scss']
 })
 export class ExamdashboardComponent implements OnInit {
-@ViewChild(ExamsComponent) Exams:ExamsComponent;
-@ViewChild(ExamslotComponent) ExamSlots:ExamslotComponent;
-@ViewChild(SlotnclasssubjectComponent) subjectInSlots:SlotnclasssubjectComponent;
-@ViewChild(ExamstudentsubjectresultComponent) subjectresult:ExamstudentsubjectresultComponent;
+  @ViewChild(ExamsComponent) Exams: ExamsComponent;
+  @ViewChild(ExamslotComponent) ExamSlots: ExamslotComponent;
+  @ViewChild(SlotnclasssubjectComponent) subjectInSlots: SlotnclasssubjectComponent;
+  @ViewChild(ExamstudentsubjectresultComponent) subjectresult: ExamstudentsubjectresultComponent;
+  @ViewChild(StudentactivityComponent) activity: StudentactivityComponent;
 
 
-  selectedIndex=0;
+  selectedIndex = 0;
   constructor() { }
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.Exams.PageLoad();  
+      this.Exams.PageLoad();
     }, 20);
-    
+
   }
   tabChanged(tabChangeEvent: number) {
     this.selectedIndex = tabChangeEvent;
@@ -52,6 +54,12 @@ export class ExamdashboardComponent implements OnInit {
         break;
       case 3:
         this.subjectresult.PageLoad();
+        break;
+      case 4:
+        this.activity.PageLoad();
+        break;
+      default:
+        this.Exams.PageLoad();
         break;
     }
   }

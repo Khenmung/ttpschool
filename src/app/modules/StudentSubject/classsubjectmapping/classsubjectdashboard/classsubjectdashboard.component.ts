@@ -89,11 +89,11 @@ export class ClasssubjectdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-
-      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.shareddata, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail,this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
       console.log(this.CheckPermission);
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
+      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
       //this.shareddata.CurrentFeeType.subscribe(r => this.FeeTypes = r);

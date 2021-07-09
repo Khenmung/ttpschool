@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClasssubjectdashboardComponent } from '../classsubjectmapping/classsubjectdashboard/classsubjectdashboard.component';
 import { StudentSubjectMarkCompComponent } from '../student-subject-mark-comp/student-subject-mark-comp.component';
-import { StudentclassdashboardComponent } from '../StudentClass/studentclassdashboard/studentclassdashboard.component';
+import { AssignStudentclassdashboardComponent } from '../AssignStudentClass/studentclassdashboard/Assignstudentclassdashboard.component';
 import { studentsubjectdashboardComponent } from '../studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from '../subject-types/subject-types.component';
 
@@ -15,7 +15,7 @@ export class SubjectdashboardComponent implements OnInit {
   @ViewChild(StudentSubjectMarkCompComponent) subjectmarkComponent: StudentSubjectMarkCompComponent;
   @ViewChild(ClasssubjectdashboardComponent) classsubject: ClasssubjectdashboardComponent;
   @ViewChild(studentsubjectdashboardComponent) studentsubject: studentsubjectdashboardComponent;
-  @ViewChild(StudentclassdashboardComponent) studentclass: StudentclassdashboardComponent;
+  @ViewChild(AssignStudentclassdashboardComponent) studentclass: AssignStudentclassdashboardComponent;
 
 
   selectedIndex = 0;

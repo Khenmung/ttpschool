@@ -74,7 +74,8 @@ export class ExamsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
     }
     this.GetMasterData();
@@ -193,7 +194,7 @@ export class ExamsComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.LoginUserDetail, this.shareddata);
+    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
     let list: List = new List();
 

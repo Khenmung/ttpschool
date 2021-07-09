@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
@@ -34,7 +35,7 @@ export class FeecollectionreportComponent implements OnInit {
   StudentDetail = [];
   TotalAmount = 0;
   CurrentBatch: string = '';
-  BatchId = 0;
+  //BatchId = 0;
   DisplayColumns = [
     "SlNo",
     "Name",
@@ -50,7 +51,7 @@ export class FeecollectionreportComponent implements OnInit {
     "RollNo"
 
   ]
-
+  SelectedBatchId=0;
   dataSource: MatTableDataSource<ITodayReceipt>;
   UnpaidDataSource: MatTableDataSource<INotPaidStudent>;
   SearchForm: FormGroup;
@@ -60,11 +61,13 @@ export class FeecollectionreportComponent implements OnInit {
     private formatdate: DatePipe,
     private fb: FormBuilder,
     private alert: AlertService,
-    private shareddata:SharedataService) { }
+    private shareddata:SharedataService,
+    private tokenservice:TokenStorageService) { }
 
   ngOnInit(): void {
     //this.GetMasterData();
-    this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
+    //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
+    this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.shareddata.CurrentFeeNames.subscribe(c=>(this.FeeNames=c));
     this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
     this.shareddata.CurrentClasses.subscribe(c=>(this.Classes=c));
@@ -72,7 +75,7 @@ export class FeecollectionreportComponent implements OnInit {
 
     
     this.SearchForm = this.fb.group({
-      BatchId: [this.BatchId, Validators.required],
+      //BatchId: [this.BatchId, Validators.required],
       FeeNameId: [0, Validators.required],
       PaidOrNotPaid: [0, Validators.required],
     })
@@ -192,16 +195,19 @@ export class FeecollectionreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
        
         //since only one current batch is accepted
-        //this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH)[0].MasterDataId;
+        //this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH)[0].MasterDataId;
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
-        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
-        this.SearchForm.patchValue({ 'BatchId': this.BatchId });
+        this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
+        //this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+
+        //this.SearchForm.patchValue({ 'BatchId': this.SelectedBatchId });
       });
 
   }

@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';
@@ -35,6 +36,7 @@ export class TodayCollectionComponent implements OnInit {
   ErrorMessage: string = '';
   SelectedBatchId =0;
   constructor(
+    private tokenStorage:TokenStorageService,
     private shareddata:SharedataService,
     private dataservice: NaomitsuService,
     private formatdate: DatePipe,
@@ -127,12 +129,14 @@ export class TodayCollectionComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[0].school[0].SECTION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
-        this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
+        //this.SelectedBatchId = +this.token.getSelectedBatchId();
       });
 
   }

@@ -7,11 +7,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { StudentSubjectModule } from '../StudentSubject/student-subject.module';
+import { StudentactivityComponent } from './studentactivity/studentactivity.component';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 
 @NgModule({
-  declarations: [studentexamComponents, 
-   ],
+  declarations: [studentexamComponents],
   imports: [
     CommonModule,
     StudentexamRoutingModule,
@@ -24,7 +25,9 @@ import { StudentSubjectModule } from '../StudentSubject/student-subject.module';
   ],
   exports:[
     studentexamComponents
-  ]
-
+  ],
+  providers: [
+    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
+  ],
 })
 export class StudentexamModule { }
