@@ -79,6 +79,12 @@
             "production": {
               "browserTarget": "schoolapp:build:production",
               "proxyConfig": "src/proxy.prod.Conf.json"
+            },
+            "demo": {
+              "browserTarget": "schoolapp:build:demo",
+              "optimization": false,
+              "aot": false,
+              "sourceMap": true
             }
           }
         },
