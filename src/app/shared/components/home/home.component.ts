@@ -5,6 +5,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { NaomitsuService } from '../../databaseService';
 import { SharedataService } from '../../sharedata.service';
 import { List } from '../../interface';
+import { MatDrawer } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-home',
@@ -32,7 +33,7 @@ export class HomeComponent implements OnInit {
       this.deviceXs = result[0].mqAlias === "xs" ? true : false;
       if (this.deviceXs) {
         this.openSideBar = false;
-        this.mode = "over";
+        this.mode =  "over";
         this.contentcls = 'DeviceXs';
         //this.sidebarcls = 'sidebartop110width100'
       }
