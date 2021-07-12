@@ -61,13 +61,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     Active: 1
   };
   PagePermission='';
-  displayedColumns = [
-    'Student',
-    // 'Subject',
-    // 'SubjectType',
-    //'Active',
-    //'Action'
-  ];
+  displayedColumns = [];
 
   constructor(
     private fb: FormBuilder,
@@ -93,14 +87,11 @@ export class studentsubjectdashboardComponent implements OnInit {
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
       if (this.Classes.length == 0 || this.Subjects.length == 0)
         this.GetMasterData();
       else {
-
-
         this.loading = false;
       }
     }
@@ -192,8 +183,10 @@ export class studentsubjectdashboardComponent implements OnInit {
               //SectionId: cs.SectionId,
               RollNo: cs.RollNo,
             }
+            this.displayedColumns=["Student"];
+            var _subjectName='';
             _filteredclasssubjectlist.forEach(clssubject => {
-              var _subjectName = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)[0].MasterDataName;
+              _subjectName = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)[0].MasterDataName;
               alreadyenteredsubject = cs.ClassSubjectId == clssubject.ClassSubjectId;
               this.displayedColumns.push(_subjectName);
               if (!alreadyenteredsubject)
@@ -202,7 +195,7 @@ export class studentsubjectdashboardComponent implements OnInit {
               _studentDetail.SubjectType = clssubject.SubjectType.SubjectTypeName;
               _studentDetail.SelectHowMany = clssubject.SubjectType.SelectHowMany;
               _studentDetail[_subjectName] = alreadyenteredsubject;
-              _studentDetail["Subject"] = _subjectName as string;
+              _studentDetail["Subject"] = _subjectName;
               _studentDetail.ClassSubjectId = clssubject.ClassSubjectId;
               _studentDetail.ClassId = clssubject.ClassId;
               _studentDetail.ClassName = this.Classes.filter(c => c.MasterDataId == clssubject.ClassId)[0].MasterDataName;
@@ -210,7 +203,7 @@ export class studentsubjectdashboardComponent implements OnInit {
               _studentDetail.Active = alreadyenteredsubject ? cs.Active : 0;
               this.StoreForUpdate.push(_studentDetail);
             })
-            console.log('this.StoreForUpdate',this.StoreForUpdate);
+            //console.log('this.StoreForUpdate',this.StoreForUpdate);
             this.StudentSubjectList.push(_studentDetail);
           })
 
@@ -287,7 +280,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       
 
       if (columnexist.length > 0 && prop != 'Student' && prop != 'Action') {
-        var row:any = this.StoreForUpdate.filter(s=>s.Subject == prop);
+        var row:any = this.StoreForUpdate.filter(s=>s.Subject == element[prop]);
         var data = {
           Active: row.Active,
           StudentClassSubjectId: row.StudentClassSubjectId,

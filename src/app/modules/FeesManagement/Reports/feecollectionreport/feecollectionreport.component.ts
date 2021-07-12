@@ -18,7 +18,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
 export class FeecollectionreportComponent implements OnInit {
 @ViewChild('PaidPaginator') PaidPaginator:MatPaginator;
 @ViewChild('UnPaidPaginator') UnPaidPaginator:MatPaginator;
-
+loading=false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true

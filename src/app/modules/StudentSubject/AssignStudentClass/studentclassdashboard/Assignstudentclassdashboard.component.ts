@@ -432,7 +432,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeBatch(this.Batches);
         //this.GetStudents();
-        //this.loading = false;
+        this.loading = false;
       });
   }
   getDropDownData(dropdowntype) {

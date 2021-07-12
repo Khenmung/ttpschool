@@ -34,6 +34,7 @@ export class StudentactivityComponent implements OnInit {
   SelectedBatchId = 0;
   Classes = [];
   Batches = [];
+  Sections=[];
   Students: IStudent[] = [];
   filteredOptions: Observable<IStudent[]>;
   dataSource: MatTableDataSource<IStudentActivity>;
@@ -273,6 +274,7 @@ export class StudentactivityComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetStudents();
       });
@@ -320,10 +322,10 @@ export class StudentactivityComponent implements OnInit {
             var _className = '';
             if (_classNameobj.length > 0)
               _className = _classNameobj[0].MasterDataName;
-            var _Section = student.Section;
+            var _Section = this.Sections.filter(f=>f.MasterDataId == student.SectionId)[0].MasterDataName;
             var _RollNo = student.RollNo;
             var _name = student.Student.Name;
-            var _fullDescription = _name + "-" + _className + "-" + _Section + "-" + _RollNo;
+            var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
               StudentClassId: student.StudentClassId,
               StudentId: student.StudentId,

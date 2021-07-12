@@ -25,8 +25,12 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
-                    <mat-label>Section</mat-label>                    
-                    <input matInput [value]="" formControlName="searchSection" autocomplete="Off">
+                    <mat-label>Section</mat-label>
+                    <mat-select formControlName="searchSectionId">
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>  
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Subject</mat-label>

@@ -7,7 +7,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Ng2ImgMaxModule } from 'ng2-img-max';
+//import { Ng2ImgMaxModule } from 'ng2-img-max';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import {NgxPhotoEditorModule} from "ngx-photo-editor";
@@ -43,7 +43,7 @@ import { SharedModule } from '../shared/shared.module';
     SharedModule,
     SharedhomepageModule,
     ReactiveFormsModule, 
-    Ng2ImgMaxModule,
+    //Ng2ImgMaxModule,
     NgxPhotoEditorModule,
     MatCardModule,
     MatProgressBarModule,

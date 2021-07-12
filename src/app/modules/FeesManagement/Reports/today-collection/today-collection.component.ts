@@ -19,6 +19,7 @@ import { List } from '../../../../shared/interface';
 export class TodayCollectionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  loading=false;
   allMasterData = [];
   FeeNames = [];
   Classes = [];

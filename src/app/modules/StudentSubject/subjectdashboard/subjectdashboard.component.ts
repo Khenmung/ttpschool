@@ -42,6 +42,7 @@ export class SubjectdashboardComponent implements OnInit {
     this.navigateTab(this.selectedIndex);
   }
   navigateTab(indx) {
+debugger;
     switch (indx) {
       case 0:
         this.subjecttypes.PageLoad();

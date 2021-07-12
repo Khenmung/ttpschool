@@ -36,6 +36,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   Classes = [];
   ClassGroups = [];
   Subjects = [];
+  Sections = [];
   ExamStatuses = [];
   ExamNames = [];
   Exams = [];
@@ -81,7 +82,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchExamId: [0],
       searchClassId: [0],
-      searchSection: [''],
+      searchSectionId: [''],
       searchSubjectId: [0],
     });
 
@@ -97,8 +98,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     else {
 
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-
       this.GetMasterData();
+
     }
   }
   // GetCurrentBatchIDnAssign() {
@@ -234,7 +235,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       'ClassSubject/ClassId',
       'StudentClass/StudentId',
       'StudentClass/RollNo',
-      'StudentClass/Section'
+      'StudentClass/SectionId'
     ];
 
     list.PageName = "StudentClassSubjects";
@@ -259,11 +260,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           return {
             StudentClassSubjectId: s.StudentClassSubjectId,
             ClassSubjectId: s.ClassSubjectId,
-            StudentClassSubject: _class + ' - ' + s.StudentClass.RollNo + ' - ' + s.StudentClass.Section + ' - ' + _subject,
+            StudentClassSubject: _class + ' - ' + s.StudentClass.RollNo + ' - ' + s.StudentClass.SectionId + ' - ' + _subject,
             SubjectId: s.ClassSubject.SubjectId,
             ClassId: s.ClassSubject.ClassId,
             StudentId: s.StudentClass.StudentId,
-            Section: s.StudentClass.Section
+            SectionId: s.StudentClass.SectionId
           }
 
         })
@@ -328,8 +329,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       this.alert.info("Please select class", this.optionAutoClose);
       return;
     }
-    if (this.searchForm.get("searchSection").value == 0) {
-      this.alert.info("Please enter student section", this.optionAutoClose);
+    if (this.searchForm.get("searchSectionId").value == 0) {
+      this.alert.info("Please select student section", this.optionAutoClose);
       return;
     }
     if (this.searchForm.get("searchSubjectId").value == 0) {
@@ -362,7 +363,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == this.searchForm.get("searchClassId").value
           && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value 
-          && studentsubject.Section.toString().trim().toUpperCase() == this.searchForm.get("searchSection").value.trim().toUpperCase()
+          && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
         });
         filteredStudentSubjects.forEach(ss => {
           ss.Components.forEach(component => {
@@ -419,6 +420,34 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       }
     })
   }
+  GetMasterData() {
+
+    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
+
+    let list: List = new List();
+
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+    list.PageName = "MasterDatas";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.allMasterData = [...data.value];
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
+        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
+        this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMSTATUS);
+        this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECTMARKCOMPONENT);
+        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
+        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASSGROUP);
+        this.shareddata.ChangeBatch(this.Batches);
+        //this.GetCurrentBatchIDnAssign();
+        this.GetExams();
+
+      });
+  }
   GetExams() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -441,33 +470,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.GetStudentSubjects();
       })
   }
-  GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
-        this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMSTATUS);
-        this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECTMARKCOMPONENT);
-        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].EXAMNAME);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASSGROUP);
-        this.shareddata.ChangeBatch(this.Batches);
-        //this.GetCurrentBatchIDnAssign();
-        this.GetExams();
-
-      });
-  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {

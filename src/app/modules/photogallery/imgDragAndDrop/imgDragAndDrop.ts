@@ -7,7 +7,7 @@ import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { DialogService } from '../../../shared/dialog.service';
 import { Router } from '@angular/router';
-import { Ng2ImgMaxService } from 'ng2-img-max';
+//import { Ng2ImgMaxService,Ng2ImgMaxModule } from 'ng2-img-max';
 import { base64ToFile } from 'ngx-image-cropper';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { async } from '@angular/core/testing';
@@ -38,7 +38,7 @@ export class ImgDragAndDropComponent implements OnInit {
     private uploadService: FileUploadService,
     private dialog: DialogService,
     private route: Router,
-    private ng2ImgMax: Ng2ImgMaxService,
+    //private ng2ImgMax: Ng2ImgMaxService,
     private tokenStorage: TokenStorageService
   ) { }
   dragdropForm = new FormGroup({
@@ -77,40 +77,40 @@ export class ImgDragAndDropComponent implements OnInit {
         this.alert.info('File size is : ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb' )
         break;
       }
-      this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
-        .subscribe(result => {
-          resultCount +=1;
-          this.uploadedImage = result;
-          this.formData.append(result.name, this.uploadedImage, result.name);
-          if(resultCount+1 >= this.files.length)
-          {
-            this.Processing =false;
-          }
-        },
-          error => {
-            this.Processing =false;
-            this.alert.error(error.reason,this.options);
-            //this.files.splice(i,1);
-            this.errorMessage += error.reason;
-            //console.log('error:', error);
-          })
+    //   this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
+    //     .subscribe(result => {
+    //       resultCount +=1;
+    //       this.uploadedImage = result;
+    //       this.formData.append(result.name, this.uploadedImage, result.name);
+    //       if(resultCount+1 >= this.files.length)
+    //       {
+    //         this.Processing =false;
+    //       }
+    //     },
+    //       error => {
+    //         this.Processing =false;
+    //         this.alert.error(error.reason,this.options);
+    //         //this.files.splice(i,1);
+    //         this.errorMessage += error.reason;
+    //         //console.log('error:', error);
+    //      })
     }
     
     console.log('request', this.Requestsize)
   }
-  onImageChange(event) {
-    let image = event.target.files[0];
+  // onImageChange(event) {
+  //   let image = event.target.files[0];
 
-    this.ng2ImgMax.compressImage(image, 0.075).subscribe(
-      result => {
-        this.uploadedImage = new File([result], result.name);
-        //this.getImagePreview(this.uploadedImage);
-      },
-      error => {
-        console.log('😢 Oh no!', error);
-      }
-    );
-  }
+  //   this.ng2ImgMax.compressImage(image, 0.075).subscribe(
+  //     result => {
+  //       this.uploadedImage = new File([result], result.name);
+  //       //this.getImagePreview(this.uploadedImage);
+  //     },
+  //     error => {
+  //       console.log('😢 Oh no!', error);
+  //     }
+  //   );
+  // }
   Upload() {
     debugger;
     if (this.Requestsize > globalconstants.RequestLimit) {
