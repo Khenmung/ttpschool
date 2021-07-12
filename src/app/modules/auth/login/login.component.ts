@@ -16,6 +16,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  loading=false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true

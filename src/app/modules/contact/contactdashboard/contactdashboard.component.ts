@@ -8,7 +8,7 @@ import { IMessage, IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { globalconstants } from '../../../shared/globalconstant';
+import { MatTable } from '@angular/material/table';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 
@@ -18,6 +18,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./contactdashboard.component.scss']
 })
 export class ContactdashboardComponent implements OnInit {
+  loading=false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true

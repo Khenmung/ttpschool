@@ -24,6 +24,7 @@ export class roleuseraddComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: false
   };
+  loading=false;
   allMasterData = [];
   AppUsers = [];
   Roles = [];

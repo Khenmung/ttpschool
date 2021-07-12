@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./notfound.component.scss']
 })
 export class NotfoundComponent implements OnInit {
-
+loading=false;
   constructor(
     private route: Router
   ) { }

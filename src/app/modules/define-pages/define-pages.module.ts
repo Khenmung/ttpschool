@@ -45,6 +45,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatProgressSpinnerModule,
     RouterModule,
     FlexLayoutModule,
+    
     AlbumsModule
   ],
   exports: [
@@ -54,6 +55,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     //MaterialModule,
     //MatFormFieldModule,
     //MatCardModule,
+
   ]
 })
 export class DefinePagesModule { }

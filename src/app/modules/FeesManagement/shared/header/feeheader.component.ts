@@ -13,6 +13,7 @@ import { TokenStorageService } from '../../../../_services/token-storage.service
 })
 export class FeeHeaderComponent implements OnInit {
   //IsXS:boolean;
+  loading=false;
   Applications=[];  
   toggle:boolean=false;
   userName:string='';

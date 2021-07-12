@@ -12,6 +12,7 @@ import { SharedataService } from '../../sharedata.service'
 })
 export class HeaderComponent implements OnInit {
   @Input() deviceXs: boolean;
+  loading:false;
   searchForm: FormGroup
   NewsNEventPageId = 0;
   MenuData = [];

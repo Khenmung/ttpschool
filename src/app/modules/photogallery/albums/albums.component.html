@@ -31,8 +31,10 @@
                 <ng-container matColumnDef="UpdatedFileFolderName">
                     <mat-header-cell *matHeaderCellDef> Folder/File </mat-header-cell>
                     <mat-cell mat-cell *matCellDef="let element">
-                        <edit-input [data]="element.UpdatedFileFolderName" (tried)="getoldvalue($event)"
-                            (focusOut)='updateAlbum($event)'></edit-input>
+                        <mat-form-field>
+                            <input matInput (focusOut)='updateAlbum($event)' [(ngModel)]="element.UpdatedFileFolderName" [(value)]="element.UpdatedFileFolderName" autocomplete="Off">
+                        </mat-form-field>
+                        
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="UploadDate">

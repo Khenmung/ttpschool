@@ -14,6 +14,7 @@ import { List } from '../../../../shared/interface';
   styleUrls: ['./addclassfee.component.scss']
 })
 export class AddclassfeeComponent implements OnInit {
+ loading=false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true

@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./mat-confirm-dialog.component.scss']
 })
 export class MatConfirmDialogComponent implements OnInit {
-
+loading=false;
   constructor(@Inject(MAT_DIALOG_DATA) public data,
               public dialogRef:MatDialogRef<MatConfirmDialogComponent>
   ) { }

@@ -15,7 +15,8 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
   styleUrls: ['./user.component.scss']
 })
 export class userComponent implements OnInit {
-@Input("UserId") UserId:number;
+loading=false;
+  @Input("UserId") UserId:number;
 @Output() UserIdOutput=new EventEmitter();
 
 title ='';

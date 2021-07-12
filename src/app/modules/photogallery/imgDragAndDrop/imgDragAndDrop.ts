@@ -19,6 +19,7 @@ import { globalconstants } from '../../../shared/globalconstant';
   //providers:[Ng2ImgMaxModule,Ng2ImgMaxService]
 })
 export class ImgDragAndDropComponent implements OnInit {
+  loading=false;
   options = {
     autoClose: false,
     keepAfterRouteChange: true

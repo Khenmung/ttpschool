@@ -22,6 +22,7 @@ export class DashboardstudentComponent implements OnInit {
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  loading=false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true

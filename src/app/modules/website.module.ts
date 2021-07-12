@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from 'primeng/api';
+//import { SharedModule } from 'primeng/api';
 import { WebsiteComponents, WebsiteRoutingModule } from './website-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxFileDropModule } from 'ngx-file-drop';
@@ -27,6 +27,7 @@ import { SharedhomepageModule } from './sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AlbumsModule } from './photogallery/albums/albums.module';
 import { DefinePagesModule } from './define-pages/define-pages.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [WebsiteComponents],
@@ -61,10 +62,12 @@ import { DefinePagesModule } from './define-pages/define-pages.module';
     FlexLayoutModule,
     AlbumsModule,
     //SharedhomepageModule
-    DefinePagesModule
+    DefinePagesModule,
+    MatPaginatorModule,
+    
     
   
   ],
-  exports:[WebsiteComponents,FlexLayoutModule]
+  exports:[WebsiteComponents,FlexLayoutModule,MatTableModule]
 })
 export class WebsiteModule { }

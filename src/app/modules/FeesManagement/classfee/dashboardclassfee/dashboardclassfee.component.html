@@ -68,8 +68,14 @@
                 <ng-container matColumnDef="Amount">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
+                        <mat-form-field>
+                            <input matInput (focusOut)='updateAmount(element,$event)'
+                            [(ngModel)]="element.Amount" 
+                            [(value)]="element.Amount" autocomplete="Off">
+                        </mat-form-field>
+<!-- 
                         <edit-input [data]="element.Amount|number:'1.2-2'" 
-                            (focusOut)='updateAmount(element,$event)'></edit-input>
+                            (focusOut)='updateAmount(element,$event)'></edit-input> -->
                     </mat-cell>
                 </ng-container>
                 <!-- 
@@ -93,8 +99,13 @@
                 <ng-container matColumnDef="PaymentOrder">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Order </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <edit-input [data]="element.PaymentOrder"
-                            (focusOut)='updatePaymentOrder(element,$event)'></edit-input>
+                        <mat-form-field>
+                            <input matInput (focusOut)='updatePaymentOrder(element,$event)' 
+                            [(ngModel)]="element.PaymentOrder" 
+                            [(value)]="element.PaymentOrder" autocomplete="Off">
+                        </mat-form-field>
+                        <!-- <edit-input [data]="element.PaymentOrder"
+                            (focusOut)='updatePaymentOrder(element,$event)'></edit-input> -->
                     </mat-cell>
                 </ng-container>
 
@@ -110,7 +121,7 @@
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading" [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

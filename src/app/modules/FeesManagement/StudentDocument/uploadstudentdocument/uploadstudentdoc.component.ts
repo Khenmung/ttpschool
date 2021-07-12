@@ -17,6 +17,7 @@ import { FileUploadService } from '../../../../shared/upload.service';
   styleUrls: ['./uploadstudentdoc.component.scss']
 })
 export class StudentDocumentComponent implements OnInit {
+  loading=false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true

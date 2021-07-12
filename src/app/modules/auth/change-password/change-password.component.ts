@@ -10,6 +10,7 @@ import { AuthService } from '../../../_services/auth.service';
   styleUrls: ['./change-password.component.scss']
 })
 export class ChangePasswordComponent implements OnInit {
+  loading=false;
   form: any = {
     ConfirmPassword: null,
     OldPassword: null,

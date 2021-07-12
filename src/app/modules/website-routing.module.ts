@@ -12,7 +12,7 @@ import { TextEditorComponent } from './define-pages/texteditor/texteditor.compon
 import { FiledragAndDropComponent } from './files/filedrag-and-drop/filedrag-and-drop.component';
 import { AlbumsComponent } from './photogallery/albums/albums.component';
 import { CarouselComponent } from './photogallery/carousel/carousel.component';
-import { cropNUploadphotoComponent } from './photogallery/cropNuploadphoto/cropNuploadphoto.component';
+//import { cropNUploadphotoComponent } from './photogallery/cropNuploadphoto/cropNuploadphoto.component';
 import { ImgDragAndDropComponent } from './photogallery/imgDragAndDrop/imgDragAndDrop';
 import { PhotobrowserComponent } from './photogallery/photobrowser/photobrowser.component';
 import { PhotosComponent } from './photogallery/photos/photos.component';
@@ -25,7 +25,7 @@ const routes: Routes = [
       { path: '',redirectTo:'display/0/0',pathMatch:'full'},  
       { path: 'display/:phid/:pid', component: DisplaypageComponent },
       { path: 'photocarousel', component: CarouselComponent },
-      { path: 'uploadphoto', component: cropNUploadphotoComponent },
+      //{ path: 'uploadphoto', component: cropNUploadphotoComponent },
       { path: 'browsephoto', component: PhotobrowserComponent },
       { path: 'editor', component: TextEditorComponent },
       { path: 'page/:id', component: TextEditorComponent },
@@ -53,7 +53,7 @@ const routes: Routes = [
 export class WebsiteRoutingModule { }
 export const WebsiteComponents=[
   CarouselComponent,
-  cropNUploadphotoComponent ,
+  //cropNUploadphotoComponent ,
   PhotobrowserComponent ,
   ImgDragAndDropComponent,
   FiledragAndDropComponent,

@@ -16,6 +16,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
   styleUrls: ['./feereceipt.component.scss']
 })
 export class FeereceiptComponent implements OnInit {
+  loading=false;
   editReceipt = false;
   optionsNoAutoClose = {
     autoClose: false,

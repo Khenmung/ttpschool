@@ -25,6 +25,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
   ],
 })
 export class AddstudentfeepaymentComponent implements OnInit {
+  loading=false;
   exceptionColumns: boolean;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;

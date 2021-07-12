@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayoutAlign="start">
     <app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
     <mat-drawer-container class="main" [hasBackdrop]="false">
-        <mat-drawer [mode]="mode" [opened]="openSideBar" [ngClass]="contentcls">
+        <mat-drawer [opened]="openSideBar" [ngClass]="contentcls">
             <!-- <app-sidebar></app-sidebar> -->
             <app-MultiLevelMenu (openLeftMenu)="DownFromMenu($event)"></app-MultiLevelMenu>
         </mat-drawer>

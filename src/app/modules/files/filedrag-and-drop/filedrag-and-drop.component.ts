@@ -15,6 +15,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./filedrag-and-drop.component.scss']
 })
 export class FiledragAndDropComponent implements OnInit {
+  loading=false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true

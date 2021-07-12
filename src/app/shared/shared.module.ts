@@ -9,14 +9,14 @@ import { AutofocusDirective } from './autofocus.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //import { NotfoundComponent } from './components/notfound/notfound.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { EditdropdownComponent } from './editdropdown/editdropdown.component';
+//import { EditdropdownComponent } from './editdropdown/editdropdown.component';
 //import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 //import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AreaComponent,
     AutofocusDirective,
-    EditdropdownComponent,
+    //EditdropdownComponent,
     ],
   imports: [
     CommonModule,

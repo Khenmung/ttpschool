@@ -14,6 +14,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
   styleUrls: ['./addstudentclass.component.scss']
 })
 export class AddstudentclassComponent implements OnInit {
+  loading=false;
   breakpoint = 0;
   optionsNoAutoClose = {
     autoClose: false,

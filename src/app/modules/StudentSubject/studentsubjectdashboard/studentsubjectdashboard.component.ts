@@ -60,6 +60,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     OrgId: 0,
     Active: 1
   };
+  PagePermission='';
   displayedColumns = [
     'Student',
     // 'Subject',
@@ -109,7 +110,9 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
     this.GetStudentClassSubject();
   }
-
+  SelectAll(){
+    
+  }
   GetStudentClassSubject() {
     debugger;
 
@@ -234,6 +237,9 @@ export class studentsubjectdashboardComponent implements OnInit {
 
     //this.changeDetectorRefs.detectChanges();
     //});
+  }
+  UpdateAll(){
+
   }
   clear() {
     this.searchForm.patchValue({

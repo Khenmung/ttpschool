@@ -11,8 +11,9 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 import { FeeManagementComponent, FeeManagementRoutingModule } from './fee-management-routing.module';
 import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { EditInputModule } from 'src/app/shared/edit-input/edit-input.module';
+//import { EditInputModule } from 'src/app/shared/edit-input/edit-input.module';
 import { ControlModule } from '../control/control.module';
+import { MatTableModule } from '@angular/material/table';
 
 
 @NgModule({
@@ -32,7 +33,7 @@ import { ControlModule } from '../control/control.module';
     NgxFileDropModule,
     FeeManagementRoutingModule,
     SharedhomepageModule,
-    EditInputModule
+    MatTableModule
   ],
   providers:[
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }

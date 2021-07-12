@@ -45,10 +45,10 @@
                 <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
                     <div *ngIf="StudentSubjectList.length>0" fxLayoutAlign="center center">
                     <mat-checkbox fxLayoutAlign="center center" matTooltip="select all" *ngIf="disCol=='Action'" (click)="$event.stopPropagation()"
-                        (change)="SelectAll(element,$event)">
+                        (change)="SelectAll()">
                     </mat-checkbox>&nbsp;
                     <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
-                        matTooltip="save all" mat-mini-fab (click)="UpdateAll(element)">
+                        matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
                         <mat-icon>save</mat-icon>
                     </button>
                 </div>

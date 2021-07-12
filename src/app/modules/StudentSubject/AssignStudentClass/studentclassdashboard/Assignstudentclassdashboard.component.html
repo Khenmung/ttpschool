@@ -35,9 +35,9 @@
             <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentClasses()">
                 <mat-icon>search</mat-icon>
             </button> 
-            Or    
+            <!-- Or    
             <a [routerLink]="[ '/path', routeParam ]">Upload excel</a>       
-            <a [routerLink]="[ '/path', routeParam ]">Download student class template</a>       
+            <a [routerLink]="[ '/path', routeParam ]">Download student class template</a>        -->
         </form>
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="Student">

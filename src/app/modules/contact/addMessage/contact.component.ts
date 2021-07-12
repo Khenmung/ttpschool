@@ -4,13 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
-
+import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss']
 })
 export class ContactComponent implements OnInit {
+  loading=false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true

@@ -34,16 +34,19 @@
             <ng-container matColumnDef="PaidAmt">
                 <mat-header-cell *matHeaderCellDef> Paid Amount </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.PaidAmt|number:'1.2-2'}}
+                    {{element.PaidAmt}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Pay">
                 <mat-header-cell *matHeaderCellDef> Payable Amount </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <FeeEditInput *ngIf="element.Action && exceptionColumns" [data]="element.Pay|number:'1.2-2'"
+                   <mat-form-field>
+                       <input matInput *ngIf="element.Action && exceptionColumns" [(value)]="element.Pay" [(ngModel)]="element.Pay" autocomplete="Off" >
+                   </mat-form-field>
+                    <!-- <FeeEditInput [data]="element.Pay|number:'1.2-2'"
                         (focusOut)='enableAction(element,$event)'
                         (keyup)="validate($event)">
-                    </FeeEditInput>
+                    </FeeEditInput> -->
                     <span *ngIf="element.Action && !exceptionColumns">{{element.Pay}}</span>
                 </mat-cell>
             </ng-container>
@@ -68,7 +71,7 @@
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading" [(disabled)]="!element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon matTooltip="save">save</mat-icon>
                     </button>
                 </mat-cell>

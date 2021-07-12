@@ -19,6 +19,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
 })
 export class DashboardclassfeeComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
+  loading=false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true

@@ -10,14 +10,14 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
+//import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from '../../../shared/dialog.service';
 
 @Component({
   selector: 'app-pagecontent',
   templateUrl: './pageDashboard.component.html',
   styleUrls: ['./pageDashboard.component.scss'],
-  providers: [ConfirmationService, MessageService]
+  //providers: [ConfirmationService, MessageService]
 })
 export class pageDashboardComponent implements OnInit {
   options = {
@@ -115,7 +115,8 @@ export class pageDashboardComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private alert: AlertService,
     private dialog: DialogService,
-    private messageService: MessageService) {
+    //private messageService: MessageService
+    ) {
     this.list = new List();
   }
   getmax(pageHistory): number {
