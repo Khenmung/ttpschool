@@ -41,6 +41,8 @@ export class studentsubjectdashboardComponent implements OnInit {
   Subjects = [];
   SelectedBatchId = 0;
   Batches = [];
+  StudentClassSubjects = [];
+
   StudentSubjectList: IStudentSubject[] = [];
   dataSource: MatTableDataSource<IStudentSubject>;
   allMasterData = [];
@@ -60,7 +62,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     OrgId: 0,
     Active: 1
   };
-  PagePermission='';
+  PagePermission = '';
   displayedColumns = [];
 
   constructor(
@@ -96,14 +98,8 @@ export class studentsubjectdashboardComponent implements OnInit {
       }
     }
   }
-  GetClassSubjectId(event) {
-    //this.ClassSubjectId = event;
-    this.mattable._elementRef.nativeElement.style.backgroundColor = "";
-    this.GetStudentClassSubject();
-  }
-  SelectAll(){
-    
-  }
+
+  
   GetStudentClassSubject() {
     debugger;
 
@@ -134,10 +130,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
     list.fields = [
-      'StudentClassSubjects/StudentClassSubjectId',
-      'StudentClassSubjects/StudentClassId',
-      'StudentClassSubjects/ClassSubjectId',
-      'StudentClassSubjects/Active',
+
       'Student/Name',
       'StudentClassId',
       'RollNo',
@@ -147,67 +140,111 @@ export class studentsubjectdashboardComponent implements OnInit {
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student", "StudentClassSubjects"];
+    list.lookupFields = ["Student"];
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((studentclassdb: any) => {
         debugger;
         //  console.log('data.value', data.value);
         this.StudentSubjectList = [];
-        var _studentClassSubjectExisting = [];
-        if (studentclassdb.value.length > 0) {
+        var _studentClassExisting = [];
+        //if (studentclassdb.value.length > 0) {
 
-          studentclassdb.value.forEach(item => {
-            item.StudentClassSubjects.forEach(clssubject => {
-              _studentClassSubjectExisting.push({
-                StudentClassSubjectId: clssubject.StudentClassSubjectId,
-                StudentClassId: item.StudentClassId,
-                ClassSubjectId: clssubject.ClassSubjectId,
-                Active: item.Active,
-                ClassId: item.ClassId,
-                RollNo: item.RollNo,
-                Student: item.Student.Name
-              })
-            })
+        studentclassdb.value.forEach(item => {
+          //item.StudentClassSubjects.forEach(clssubject => {
+          _studentClassExisting.push({
+            StudentClassId: item.StudentClassId,
+            Active: item.Active,
+            ClassId: item.ClassId,
+            RollNo: item.RollNo,
+            Student: item.RollNo + " - " + item.Student.Name,
+            SectionId: item.SectionId
           })
-          var _filteredclasssubjectlist = this.ClassSubjectList.filter(c => c.ClassId == this.searchForm.get("searchClassId").value);
-          var _studentDetail: any = {};
-          var alreadyenteredsubject = false;
-          //var _subjectName = '';
-          //var alreadyenteredsubjects=[];
-          _studentClassSubjectExisting.forEach(cs => {
+        })
+        this.GetExistingStudentClassSubjects(_studentClassExisting);
+      });
+  }
+  GetExistingStudentClassSubjects(ParamstudentClassExisting) {
+
+    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+
+    orgIdSearchstr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
+    //orgIdSearchstr += ' and SectionId eq ' + this.searchForm.get("searchSectionId").value;
+
+    let list: List = new List();
+
+    list.fields = [
+      'StudentClassSubjects/StudentClassSubjectId',
+      'StudentClassSubjects/StudentClassId',
+      'StudentClassSubjects/ClassSubjectId',
+      'StudentClassSubjects/Active',
+      "ClassId",
+      "SubjectId",
+      "ClassSubjectId"
+    ];
+    list.PageName = "ClassSubjects";
+    list.lookupFields = ["StudentClassSubjects"];
+
+    list.filter = ["Active eq 1 and " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(m => {
+          m.StudentClassSubjects.forEach(n => {
+
+            this.StudentClassSubjects.push({
+              'StudentClassSubjectId': n.StudentClassSubjectId,
+              'StudentClassId': n.StudentClassId,
+              'ClassSubjectId': n.ClassSubjectId,
+              'Active': n.Active,
+              'ClassId': m.ClassId,
+              'SubjectId': m.SubjectId
+            })
+
+          })
+        })
+        console.log("this.StudentClassSubjects",this.StudentClassSubjects);
+        
+        //////////////
+        var _studentDetail: any = {};
+        this.StoreForUpdate = [];
+        if (ParamstudentClassExisting.length > 0) {
+          //for all student in student class table for the selected class.
+          ParamstudentClassExisting.forEach(cs => {
+            var _filteredStudentClassSubjectlist = this.StudentClassSubjects.filter(c => c.StudentClassId == cs.StudentClassId);
             _studentDetail = {
-              StudentClassSubjectId: cs.StudentClassSubjectId,
+              // StudentClassSubjectId: cs.StudentClassSubjectId,
               StudentClassId: cs.StudentClassId,
               Student: cs.Student,
-              //SectionId: cs.SectionId,
               RollNo: cs.RollNo,
             }
-            this.displayedColumns=["Student"];
-            var _subjectName='';
-            _filteredclasssubjectlist.forEach(clssubject => {
-              _subjectName = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)[0].MasterDataName;
-              alreadyenteredsubject = cs.ClassSubjectId == clssubject.ClassSubjectId;
-              this.displayedColumns.push(_subjectName);
-              if (!alreadyenteredsubject)
-                _studentDetail.StudentClassSubjectId = 0;
-              _studentDetail.SubjectTypeId = clssubject.SubjectTypeId;
-              _studentDetail.SubjectType = clssubject.SubjectType.SubjectTypeName;
-              _studentDetail.SelectHowMany = clssubject.SubjectType.SelectHowMany;
-              _studentDetail[_subjectName] = alreadyenteredsubject;
-              _studentDetail["Subject"] = _subjectName;
-              _studentDetail.ClassSubjectId = clssubject.ClassSubjectId;
-              _studentDetail.ClassId = clssubject.ClassId;
-              _studentDetail.ClassName = this.Classes.filter(c => c.MasterDataId == clssubject.ClassId)[0].MasterDataName;
-              _studentDetail.Action = false;
-              _studentDetail.Active = alreadyenteredsubject ? cs.Active : 0;
-              this.StoreForUpdate.push(_studentDetail);
-            })
+            this.displayedColumns = ["Student"];
+            if (_filteredStudentClassSubjectlist.length > 0) {
+              //loop through student assigned subjects.
+              _filteredStudentClassSubjectlist.forEach(clssubject => {
+                var subjectTypes = this.ClassSubjectList.filter(c => c.ClassSubjectId == clssubject.ClassSubjectId);
+
+                clssubject.SubjectTypeId = subjectTypes[0].SubjectTypeId;
+                clssubject.SubjectType = subjectTypes[0].SubjectTypeName;
+                clssubject.SelectHowMany = subjectTypes[0].SelectHowMany;
+
+                this.formatData(clssubject, _studentDetail);
+
+              })
+            }
+            else {
+              var filterClassSubject =this.ClassSubjectList.filter(f=>f.ClassId == this.searchForm.get("searchClassId").value)
+              filterClassSubject.forEach(clssubjlist => {
+                clssubjlist.StudentClassSubjectId=0;
+                this.formatData(clssubjlist, _studentDetail);
+              })
+            }
             //console.log('this.StoreForUpdate',this.StoreForUpdate);
             this.StudentSubjectList.push(_studentDetail);
           })
 
-
+          this.displayedColumns.push("Action");
         }
         else {
           var cls = this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)
@@ -215,24 +252,110 @@ export class studentsubjectdashboardComponent implements OnInit {
           if (cls.length > 0)
             _clsName = cls[0].MasterDataName;
 
-          this.alert.info("No student found for the selected class " + _clsName);
+          this.alert.info("No student found for the selected class " + _clsName, this.optionAutoClose);
           this.loading = false;
-          return;
         }
-        this.displayedColumns.push("Action");
-        //console.log("columns",this.StudentSubjectList)
-        if (this.StudentSubjectList.length > 0)
-          this.StudentDetailToDisplay = `${this.StudentSubjectList[0].Student} Class - ${this.StudentSubjectList[0].ClassName}, RollNo - ${this.StudentSubjectList[0].RollNo}`;
-        this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
+
+        if (this.StudentSubjectList.length > 0) {
+
+          this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
+        }
+        else {
+          this.dataSource = new MatTableDataSource<IStudentSubject>([]);
+        }
+        this.StudentDetailToDisplay = `${this.StudentSubjectList[0].Student} Class - ${this.StudentSubjectList[0].ClassName}, RollNo - ${this.StudentSubjectList[0].RollNo}`;
         this.loading = false;
+
+
+        /////////////
+      })
+  }
+  formatData(clssubject, pstudentDetail) {
+    var _subjectName = '';
+    var topush = {};
+    var subjectTypes = [];
+
+    topush = pstudentDetail;
+
+    _subjectName = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)[0].MasterDataName;
+    if (this.displayedColumns.indexOf(_subjectName) == -1)
+      this.displayedColumns.push(_subjectName);
+
+    topush = {
+      "StudentClassSubjectId": clssubject.StudentClassSubjectId,
+      "StudentClassId": pstudentDetail.StudentClassId,
+      "Student": pstudentDetail.Student,
+      "RollNo": pstudentDetail.RollNo,
+      "SubjectTypeId": clssubject.SubjectTypeId,
+      "SubjectType": clssubject.SubjectTypeName,
+      "SelectHowMany": clssubject.SelectHowMany,
+      //_subjectName: alreadyenteredsubject,
+      "Subject": _subjectName,
+      "ClassSubjectId": clssubject.ClassSubjectId,
+      "ClassId": clssubject.ClassId,
+      "ClassName": this.Classes.filter(c => c.MasterDataId == clssubject.ClassId)[0].MasterDataName,
+      "Action": false,
+      "Active": clssubject.Active,
+    }
+    pstudentDetail[_subjectName] = clssubject.Active;
+    topush[_subjectName] = clssubject.Active;
+    this.StoreForUpdate.push(topush)
+
+  }
+  GetClassSubjects() {
+
+    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+
+    //orgIdSearchstr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
+
+    let list: List = new List();
+
+    list.fields = [
+      //'StudentClassSubjects/StudentClassSubjectId',
+      //'StudentClassSubjects/StudentClassId',
+      //'StudentClassSubjects/ClassSubjectId',
+      //'StudentClassSubjects/Active',
+      "ClassSubjectId",
+      "ClassId",
+      "SubjectId",
+      "SubjectTypeId",
+      "SubjectType/SubjectTypeName",
+      "SubjectType/SelectHowMany"
+    ];
+    list.PageName = "ClassSubjects";
+    list.lookupFields = ["SubjectType"];
+
+    list.filter = ["Active eq 1 and " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+    this.ClassSubjectList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+
+        data.value.forEach(fromdb => {
+          this.ClassSubjectList.push({
+            'ClassSubjectId': fromdb.ClassSubjectId,
+            'ClassId': fromdb.ClassId,
+            'SubjectId': fromdb.SubjectId,
+            'SubjectTypeId': fromdb.SubjectTypeId,
+            'SubjectTypeName': fromdb.SubjectType.SubjectTypeName,
+            'SelectHowMany': fromdb.SubjectType.SelectHowMany
+          })
+        })
+
       });
 
-
-    //this.changeDetectorRefs.detectChanges();
-    //});
   }
-  UpdateAll(){
+  SelectAll(event){
+    //var event ={checked:true}
+    this.StudentSubjectList.forEach(element=>{
+      this.SelectAllInRow(element, event, "Action");    
 
+    })
+  }
+  UpdateAll() {
+    this.StudentSubjectList.forEach(element=>{
+      this.SaveRow(element);    
+    })
   }
   clear() {
     this.searchForm.patchValue({
@@ -271,24 +394,25 @@ export class studentsubjectdashboardComponent implements OnInit {
     }
   }
   SaveRow(element) {
-    console.log("element", element)
+    //console.log("element", element)
     debugger;
     this.rowCount = 0;
     var columnexist;
     for (var prop in element) {
-      columnexist = this.displayedColumns.filter(f => f == prop)
-      
+      //columnexist = this.displayedColumns.filter(f => f == prop)
 
-      if (columnexist.length > 0 && prop != 'Student' && prop != 'Action') {
-        var row:any = this.StoreForUpdate.filter(s=>s.Subject == element[prop]);
+      var row: any = this.StoreForUpdate.filter(s => s.Subject == prop && s.StudentClassId == element.StudentClassId);
+
+      if (row.length > 0 && prop != 'Student' && prop != 'Action') {
         var data = {
-          Active: row.Active,
-          StudentClassSubjectId: row.StudentClassSubjectId,
-          StudentClassId: row.StudentClassId,
-          ClassSubjectId: row.ClassSubjectId
+          Active: element[prop],
+          StudentClassSubjectId: row[0].StudentClassSubjectId,
+          StudentClassId: row[0].StudentClassId,
+          ClassSubjectId: row[0].ClassSubjectId
         }
-
-        this.UpdateOrSave(data);
+        //console.log('data to update',data)
+        if (row.length > 0)
+          this.UpdateOrSave(data);
       }
 
     }
@@ -307,7 +431,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         });
   }
   UpdateOrSave(row) {
-    
+
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
       " and StudentClassId eq " + row.StudentClassId
     // " and Active eq " + row.Active +
@@ -398,29 +522,8 @@ export class studentsubjectdashboardComponent implements OnInit {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
-  GetClassSubjects() {
 
-    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-    let list: List = new List();
 
-    list.fields = ["ClassSubjectId",
-      "ClassId",
-      "SubjectId",
-      "SubjectTypeId",
-      "SubjectType/SubjectTypeName",
-      "SubjectType/SelectHowMany"
-    ];
-    list.PageName = "ClassSubjects";
-    list.lookupFields = ["SubjectType"];
-
-    list.filter = ["Active eq 1 and " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.ClassSubjectList = [...data.value];
-      })
-  }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
