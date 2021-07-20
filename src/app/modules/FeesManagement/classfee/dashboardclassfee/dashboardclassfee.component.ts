@@ -5,10 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-//import { isNumeric } from 'jquery';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
-//import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';
 import { SharedataService } from '../../../../shared/sharedata.service';
 
@@ -19,7 +17,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
 })
 export class DashboardclassfeeComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
-  loading=false;
+  loading = false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -68,8 +66,19 @@ export class DashboardclassfeeComponent implements OnInit {
       FeeNameId: [0],
       Batch: [0],
     });
-    this.GetMasterData();
-    this.GetClassFee();
+    this.SelectedBatchId = +this.token.getSelectedBatchId();
+    if (this.SelectedBatchId == 0) {
+      //this.alert.error("Current batch not defined in master!", this.options);
+      this.route.navigate(['/admin']);
+    }
+    else {
+      this.searchForm.patchValue({ Batch: this.SelectedBatchId });
+      this.GetMasterData();
+
+    }
+
+
+    //this.GetClassFee();
 
   }
 
@@ -90,18 +99,8 @@ export class DashboardclassfeeComponent implements OnInit {
       this.alert.error("Amount should be greater than zero.", this.options);
       return;
     }
-    if (+row.Amount > 99999) {
-      this.alert.error("Amount cannot be greater than 99999.");
-      return;
-    }
-    if (row.PaymentOrder < 1) {
-      this.alert.error("Payment order must start from 1.");
-      return;
-    }
-
-    // if(isNumeric(row.Amount))
-    // {
-    //   this.alert.error("Please enter valid amount.");
+    // if (+row.Amount > 99999) {
+    //   this.alert.error("Amount cannot be greater than 99999.");
     //   return;
     // }
 
@@ -125,7 +124,7 @@ export class DashboardclassfeeComponent implements OnInit {
         }
         else {
           this.classFeeData.Active = row.Status == true ? 1 : 0;
-          this.classFeeData.Amount = row.Amount;
+          this.classFeeData.Amount = row.Amount.toString();
           this.classFeeData.BatchId = row.BatchId;
           this.classFeeData.ClassFeeId = row.ClassFeeId;
           this.classFeeData.ClassId = row.ClassId;
@@ -196,14 +195,14 @@ export class DashboardclassfeeComponent implements OnInit {
               }
           })
           //console.log('classes', this.ClassStatuses);
-
+          this.loading = false;
         }
       })
   }
   GetClassFee() {
     if (this.searchForm.get("ClassId").value == 0)
       return;
-   
+
     let filterstr = "";
     if (this.searchForm.get("ClassId").value > 0)
       filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
@@ -216,7 +215,7 @@ export class DashboardclassfeeComponent implements OnInit {
     list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "BatchId", "Active", "LocationId", "PaymentOrder"];
     list.PageName = "ClassFees";
     //list.orderBy ="PaymentOrder";
-    list.filter = [this.StandardFilterWithBatchId + filterstr ];
+    list.filter = [this.StandardFilterWithBatchId + filterstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -299,17 +298,29 @@ export class DashboardclassfeeComponent implements OnInit {
         //console.log("element data", this.ELEMENT_DATA)
       });
   }
-  updateActive(row, value) {
+  updateEnable(row, value) {
     row.Action = true;
     row.Status = value.checked;
   }
   updateAmount(row, value) {
+    debugger;
+    if (row.Amount > 999999) {
+      row.Action = false;
+      this.alert.error("Please enter a valid amount!", this.options.autoClose);
+      return;
+    }
     row.Action = true;
-    row.Amount = value;
+    // row.Amount = value;
   }
   updatePaymentOrder(row, value) {
+    if (row.PaymentOrder > 99) {
+      row.Action = false;
+      this.alert.error("only two digits are allowed for payment order!", this.options.autoClose);
+      return;
+    }
     row.Action = true;
-    row.PaymentOrder = value;
+
+    //row.PaymentOrder = value;
   }
   enableAction(row, value) {
     row.Action = true;
@@ -321,23 +332,47 @@ export class DashboardclassfeeComponent implements OnInit {
     //console.log('from change', row);
   }
   GetMasterData() {
-    this.shareddata.CurrentFeeNames.subscribe(f => (this.FeeNames = f));
-    this.shareddata.CurrentClasses.subscribe(f => (this.Classes = f));
-    this.shareddata.CurrentBatch.subscribe(f => (this.Batches = f));
-    this.shareddata.CurrentLocation.subscribe(f => (this.Locations = f));
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.token.getSelectedBatchId();
-    if (this.SelectedBatchId == 0) {
-      //this.alert.error("Current batch not defined in master!", this.options);
-      this.route.navigate(['/admin']);
-    }
-    else {
-      this.searchForm.patchValue({ Batch: this.SelectedBatchId });
-      this.GetDistinctClassFee();
-    }
 
+    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
+
+    let list: List = new List();
+
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+    list.PageName = "MasterDatas";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.allMasterData = [...data.value];
+
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.shareddata.ChangeClasses(this.Classes);
+        //this.shareddata.ChangeSubjects(this.Subjects);
+        //this.shareddata.ChangeBatch(this.Batches);
+        this.GetDistinctClassFee();
+
+      });
+  }
+  getDropDownData(dropdowntype) {
+    let Id = 0;
+    let Ids = this.allMasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    })
+    if (Ids.length > 0) {
+      Id = Ids[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      })
+    }
+    else
+      return [];
 
   }
+
 }
 export interface Element {
   ClassFeeId: number;

@@ -13,6 +13,8 @@
     <mat-card-title>Class Fees</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
+        <alert></alert>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
@@ -68,8 +70,10 @@
                 <ng-container matColumnDef="Amount">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field>
-                            <input matInput (focusOut)='updateAmount(element,$event)'
+                        <mat-form-field [style.width.px]="100">
+                            <input matInput 
+                            type="number"
+                            (blur)='updateAmount(element,$event)'
                             [(ngModel)]="element.Amount" 
                             [(value)]="element.Amount" autocomplete="Off">
                         </mat-form-field>
@@ -99,8 +103,10 @@
                 <ng-container matColumnDef="PaymentOrder">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Order </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field>
-                            <input matInput (focusOut)='updatePaymentOrder(element,$event)' 
+                        <mat-form-field [style.width.px]="100">
+                            <input matInput 
+                            type="number"
+                            (blur)='updatePaymentOrder(element,$event)' 
                             [(ngModel)]="element.PaymentOrder" 
                             [(value)]="element.PaymentOrder" autocomplete="Off">
                         </mat-form-field>

@@ -27,7 +27,7 @@ export class AddstudentclassComponent implements OnInit {
   SaveDisable = false;
   StudentId = 0;
   StudentClassId = 0;
-  BatchId = 0;
+  //BatchId = 0;
   SelectedBatchId = 0;
   invalidId = false;
   //BatchId = 0;
@@ -39,17 +39,19 @@ export class AddstudentclassComponent implements OnInit {
   FeeType = [];
   studentclassForm: FormGroup;
   StudentName = '';
+  loginUserDetail =[];
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
     ClassId: 0,
-    Section: 0,
+    SectionId: 0,
     RollNo: '',
     BatchId: 0,
     FeeTypeId: 0,
     AdmissionDate: new Date(),
     Remarks: '',
     Active: 1,
+    OrgId:0
   }
   constructor(private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -64,7 +66,7 @@ export class AddstudentclassComponent implements OnInit {
     this.studentclassForm = this.fb.group({
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
-      Section: [0, [Validators.required]],
+      SectionId: [0, [Validators.required]],
       RollNo: ['', [Validators.required]],
       FeeTypeId: [0, [Validators.required]],
       Remarks: [''],
@@ -74,15 +76,14 @@ export class AddstudentclassComponent implements OnInit {
   }
   PageLoad() {
     debugger;
+    this.loginUserDetail = this.tokenstorage.getUserDetail();
     this.shareddata.CurrentBatch.subscribe(t => (this.Batches = t));
     this.shareddata.CurrentFeeType.subscribe(t => (this.FeeType = t));
     this.shareddata.CurrentSection.subscribe(t => (this.Sections = t));
     this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
     this.shareddata.CurrentStudentId.subscribe(id => (this.StudentId = id));
     this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
-    //this.shareddata.CurrentSelectedBatchId.subscribe(bid => (this.BatchId = bid));
     this.shareddata.CurrentStudentName.subscribe(name => (this.StudentName = name));
-    //this.shareddata.CurrentSelectedBatchId.subscribe(Id=>(this.SelectedBatchId=Id));
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.GetStudentClass();
   }
@@ -123,6 +124,7 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   GetStudent() {
+    var filterOrgId = globalconstants.getStandardFilter(this.tokenstorage);
     if (this.StudentId == 0) {
       this.alert.error("Invalid StudentId", this.optionsAutoClose);
       this.invalidId = true;
@@ -131,7 +133,7 @@ export class AddstudentclassComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentId", "Name", "FatherName", "MotherName"];
     list.PageName = "Students";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and " + filterOrgId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -157,6 +159,7 @@ export class AddstudentclassComponent implements OnInit {
   }
   GetStudentClass() {
     debugger;
+    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
     if (this.StudentId == 0 && this.StudentClassId == 0) {
       this.alert.error("Invalid Student Id", this.optionsAutoClose);
       return;
@@ -168,9 +171,9 @@ export class AddstudentclassComponent implements OnInit {
     //   studentId = this.Id;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "Section", "BatchId", "FeeTypeId", "AdmissionDate", "Remarks", "Active"];
+    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "BatchId", "FeeTypeId", "AdmissionDate", "Remarks", "Active"];
     list.PageName = "StudentClasses";
-    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId];
+    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -179,7 +182,7 @@ export class AddstudentclassComponent implements OnInit {
           this.studentclassForm.patchValue({
             StudentId: data.value[0].StudentId,
             ClassId: data.value[0].ClassId,
-            Section: data.value[0].Section,
+            SectionId: data.value[0].SectionId,
             RollNo: data.value[0].RollNo,
             BatchId: data.value[0].BatchId,
             FeeTypeId: data.value[0].FeeTypeId,
@@ -193,7 +196,7 @@ export class AddstudentclassComponent implements OnInit {
             StudentClassId: 0,
             StudentName: this.StudentName,
             ClassId: 0,
-            Section: 0,
+            SectionId: 0,
             RollNo: '',
             BatchId: this.SelectedBatchId,
             FeeTypeId: 0,
@@ -222,7 +225,7 @@ export class AddstudentclassComponent implements OnInit {
     if (this.studentclassForm.get("RollNo").value == 0) {
       ErrorMessage += "Roll no. is required.<br>";
     }
-    if (this.studentclassForm.get("Section").value == 0) {
+    if (this.studentclassForm.get("SectionId").value == 0) {
       ErrorMessage += "Please select Section.<br>";
     }
     if (this.studentclassForm.get("FeeTypeId").value == 0) {
@@ -237,15 +240,15 @@ export class AddstudentclassComponent implements OnInit {
     }
     else {
       this.studentclassData.Active = 1;
-      this.studentclassData.BatchId = this.SelectedBatchId == 0 ? this.BatchId : this.SelectedBatchId;
+      this.studentclassData.BatchId = this.SelectedBatchId;
 
       this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
       this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
-      this.studentclassData.Section = this.studentclassForm.value.Section;
+      this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
       this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
       this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
       this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
-
+      this.studentclassData.OrgId = this.loginUserDetail[0]["orgId"];
       this.studentclassData.StudentId = this.StudentId;
       if (this.StudentClassId == 0)
         this.insert();

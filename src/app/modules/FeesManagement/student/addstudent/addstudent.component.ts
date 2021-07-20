@@ -286,7 +286,7 @@ export class AddstudentComponent implements OnInit {
 
   }
   SaveOrUpdate() {
-
+    this.loading =true;
     this.studentData = {
       Name: this.studentForm.get("Name").value,
       FatherName: this.studentForm.get("FatherName").value,
@@ -345,7 +345,7 @@ export class AddstudentComponent implements OnInit {
           this.studentForm.patchValue({
             StudentId: result.StudentId
           })
-
+          this.loading=false;
           this.alert.success("Student's data saved successfully.", this.options);
 
         }
@@ -358,6 +358,7 @@ export class AddstudentComponent implements OnInit {
     this.dataservice.postPatch('Students', this.studentData, +this.studentForm.get("StudentId").value, 'patch')
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
+        this.loading=false;
         this.alert.success("Student's data updated successfully.", this.options);
       })
   }

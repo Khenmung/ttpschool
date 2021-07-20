@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field [style.width.pc]="40">
+                <mat-form-field [style.width.pc]="30">
                     <mat-label>Exam Slot</mat-label>
                     <mat-select formControlName="searchSlotId">
                         <mat-option *ngFor="let item of ExamSlots" [value]="item.SlotId">
@@ -15,9 +15,9 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" [style.width.pc]="20">
                     <mat-label>Class</mat-label>
-                    <mat-select formControlName="searchClassId">
+                    <mat-select formControlName="searchClassId" multiple>
                         <mat-option [value]="0">--class--</mat-option>
                         <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
                             {{item.MasterDataName}}
@@ -42,13 +42,13 @@
             </form>
             <p>Record will be displayed if it is defined in class subject module.</p>
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="Slot">
+                <!-- <ng-container matColumnDef="Slot">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Slot
                     </mat-header-cell>
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                         {{element.Slot}}
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="ClassSubject">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class Subject
                     </mat-header-cell>

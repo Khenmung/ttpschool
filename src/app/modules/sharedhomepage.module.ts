@@ -14,16 +14,16 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { NestedmenuComponent } from './shared/components/nestedmenu/nestedmenu.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
-const sharedComponent=[
+const sharedComponent = [
   HomeComponent,
-    HeaderComponent,
-    SidebarComponent,
-    FooterComponent,
-    AlertComponent,
-    RightComponent,
-    NewsdashboardComponent,
-    //LandingpageComponent
-    //MultiLevelMenuComponent
+  HeaderComponent,
+  SidebarComponent,
+  FooterComponent,
+  AlertComponent,
+  RightComponent,
+  NewsdashboardComponent,
+  //LandingpageComponent
+  //MultiLevelMenuComponent
 ]
 
 @NgModule({
@@ -39,7 +39,7 @@ const sharedComponent=[
     FlexLayoutModule,
     ReactiveFormsModule
   ],
-  exports:[
+  exports: [
     sharedComponent
   ]
 

@@ -1,0 +1,98 @@
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Employee Salary Components</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm">
+                <mat-form-field [style.width.pc]="50">
+                    <mat-label>Employee</mat-label>
+                    <input type="text" matInput formControlName="searchEmployee" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option.Name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetEmployeeSalaryComponents()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </form>
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="Grade">
+                    <mat-header-cell *matHeaderCellDef>Grade
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        {{element.Grade}}        
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="SalaryComponent">
+                    <mat-header-cell *matHeaderCellDef>Salary Components
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        {{element.SalaryComponent}}        
+                    </mat-cell>
+                </ng-container>
+                
+                <ng-container matColumnDef="PercentOfBasicOrAmount">
+                    <mat-header-cell *matHeaderCellDef>PerCent/Amount
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        <mat-form-field>
+                            <input matInput 
+                            [(value)]="element.PercentOfBasicOrAmount"
+                                [(ngModel)]="element.PercentOfBasicOrAmount">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ActualEmpployeeCompPCorAmount">
+                    <mat-header-cell *matHeaderCellDef> Actual percent or Amount
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        <mat-form-field>
+                            <input matInput 
+                            [(value)]="element.ActualEmpployeeCompPCorAmount"
+                                [(ngModel)]="element.ActualEmpployeeCompPCorAmount">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Amount">
+                    <mat-header-cell *matHeaderCellDef> Amount
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        <mat-form-field>
+                            <input matInput 
+                            [(value)]="element.Amount"
+                                [(ngModel)]="element.Amount">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <!-- <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                            <mat-icon>add</mat-icon>
+                        </button> -->
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

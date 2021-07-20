@@ -396,8 +396,9 @@ export class studentsubjectdashboardComponent implements OnInit {
   SaveRow(element) {
     //console.log("element", element)
     debugger;
+    this.loading=true;
     this.rowCount = 0;
-    var columnexist;
+    //var columnexist;
     for (var prop in element) {
       //columnexist = this.displayedColumns.filter(f => f == prop)
 
@@ -414,9 +415,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         if (row.length > 0)
           this.UpdateOrSave(data);
       }
-
     }
-
   }
   delete(element) {
     let toupdate = {
@@ -471,7 +470,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             this.StudentSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentSubjectData["UpdatedDate"];
             delete this.StudentSubjectData["UpdatedBy"];
-            console.log('insert', this.StudentSubjectData);
+            //console.log('insert', this.StudentSubjectData);
             this.insert(row);
           }
           else {
@@ -482,6 +481,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             this.update(row);
           }
           row.Action = false;
+          
         }
       });
   }

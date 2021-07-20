@@ -29,8 +29,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   loading = false;
+  rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   SelectedBatchId = 0;
+  StoredForUpdate = [];
   SubjectMarkComponents = [];
   MarkComponents = [];
   Classes = [];
@@ -59,11 +61,6 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   };
   displayedColumns = [
     'StudentClassSubject',
-    'SubjectMarkComponent',
-    'Marks',
-    'ExamStatus',
-    'Active',
-    'Action'
   ];
   searchForm: FormGroup;
   constructor(
@@ -128,17 +125,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   UpdateOrSave(row) {
 
     debugger;
-    // if(row.ExamDate ==null)
-    // {
-    //   this.alert.error("Exam date is mandatory!",this.optionAutoClose);
-    //   return;
-    // }
-    // if(row.StartTime.length==0 || row.EndTime.length ==0)
-    // {
-    //   this.alert.error("Start time and end time are mandatory!",this.optionAutoClose);
-    //   return;
-    // }
-    //if(row.)
+
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
@@ -206,7 +193,12 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         (data: any) => {
           row.ExamStudentSubjectResultId = data.ExamStudentSubjectResultId;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.rowCount++;
+          if (this.rowCount == this.displayedColumns.length - 2) {
+            this.loading = false;
+            this.alert.success("Data saved successfully", this.optionAutoClose);
+          }
+          //this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
   update(row) {
@@ -214,8 +206,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.dataservice.postPatch('ExamStudentSubjectResults', this.ExamStudentSubjectResultData, this.ExamStudentSubjectResultData.ExamStudentSubjectResultId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          //this.loading = false;
+          this.rowCount++;
+          if (this.rowCount == this.displayedColumns.length - 2) {
+            this.loading = false;
+            this.alert.success("Data saved successfully", this.optionAutoClose);
+          }
+          //this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
   GetStudentSubjects() {
@@ -245,6 +242,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe((data: any) => {
         var _class = '';
         var _subject = '';
+        var _section = '';
         this.StudentSubjects = data.value.map(s => {
           _class = '';
           _subject = '';
@@ -257,10 +255,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           if (_stdSubject.length > 0)
             _subject = _stdSubject[0].MasterDataName;
 
+          let _stdSection = this.Sections.filter(c => c.MasterDataId == s.StudentClass.SectionId);
+          if (_stdSection.length > 0)
+            _section = _stdSection[0].MasterDataName;
           return {
             StudentClassSubjectId: s.StudentClassSubjectId,
             ClassSubjectId: s.ClassSubjectId,
-            StudentClassSubject: _class + ' - ' + s.StudentClass.RollNo + ' - ' + s.StudentClass.SectionId + ' - ' + _subject,
+            StudentClassSubject: s.StudentClass.RollNo + ' - ' + _class + ' - ' + _section + ' - ' + _subject,
             SubjectId: s.ClassSubject.SubjectId,
             ClassId: s.ClassSubject.ClassId,
             StudentId: s.StudentClass.StudentId,
@@ -349,57 +350,97 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       "Marks",
       "ExamStatus",
       "Active",
-      //"Exam/ExamNameId",
+      "ClassSubjectMarkComponent/ClassSubjectId",
       "ClassSubjectMarkComponent/SubjectComponentId",
     ];
     list.PageName = "ExamStudentSubjectResults";
     list.lookupFields = ["ClassSubjectMarkComponent"];
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
-
+    this.displayedColumns = [
+      'StudentClassSubject',
+    ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == this.searchForm.get("searchClassId").value
-          && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value 
-          && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
+            && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value
+            && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
         });
+        var forDisplay;
+        if (filteredStudentSubjects.length==0 || filteredStudentSubjects[0].Components.length == 0) {
+          this.loading = false;
+          this.alert.info("Student Subject/Subject components not defined for this class subject!", this.optionAutoClose);
+          this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>([]);
+          return;
+        }
         filteredStudentSubjects.forEach(ss => {
+          forDisplay = {
+            StudentClassSubject: ss.StudentClassSubject,
+            StudentClassSubjectId: ss.StudentClassSubjectId
+          }
+
           ss.Components.forEach(component => {
+
             let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
-            if (existing.length > 0)
-              this.ExamStudentSubjectResult.push({
+            if (existing.length > 0) {
+              var _ComponentName = this.MarkComponents.filter(c => c.MasterDataId == existing[0].ClassSubjectMarkComponent.SubjectComponentId)[0].MasterDataName;
+              var _toPush;
+              if (this.displayedColumns.indexOf(_ComponentName) == -1)
+                this.displayedColumns.push(_ComponentName)
+              _toPush = {
                 ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
                 ExamId: existing[0].ExamStudentResultId,
+                ClassSubjectId: ss.ClassSubjectId,
                 StudentClassSubjectId: existing[0].StudentClassSubjectId,
                 StudentClassSubject: ss.StudentClassSubject,
                 ClassSubjectMarkComponentId: existing[0].ClassSubjectMarkComponentId,
-                SubjectMarkComponent: this.MarkComponents.filter(c => c.MasterDataId == existing[0].ClassSubjectMarkComponent.SubjectComponentId)[0].MasterDataName,
+                SubjectMarkComponent: _ComponentName,
                 FullMark: component.FullMark,
                 PassMark: component.PassMark,
                 Marks: existing[0].Marks,
                 ExamStatus: existing[0].ExamStatus,
                 Active: existing[0].Active,
                 Action: true
-              })
-            else
-              this.ExamStudentSubjectResult.push({
+              }
+              _toPush[_ComponentName] = existing[0].Marks;
+              forDisplay[_ComponentName] = existing[0].Marks;
+
+              this.StoredForUpdate.push(_toPush);
+            }
+            else {
+              var _componentName = this.MarkComponents.filter(c => c.MasterDataId == component.SubjectComponentId)[0].MasterDataName;
+              if (this.displayedColumns.indexOf(_componentName) == -1)
+                this.displayedColumns.push(_componentName)
+              _toPush = {
                 ExamStudentSubjectResultId: 0,
                 ExamId: this.searchForm.get("searchExamId").value,
                 StudentClassSubjectId: ss.StudentClassSubjectId,
+                ClassSubjectId: ss.ClassSubjectId,
                 StudentClassSubject: ss.StudentClassSubject,
                 ClassSubjectMarkComponentId: component.ClassSubjectMarkComponentId,
-                SubjectMarkComponent: this.MarkComponents.filter(c => c.MasterDataId == component.SubjectComponentId)[0].MasterDataName,
+                SubjectMarkComponent: _componentName,
                 FullMark: component.FullMark,
                 PassMark: component.PassMark,
                 Marks: 0,
                 ExamStatus: 0,
                 Active: 0,
                 Action: true
-              })
+              }
+              _toPush[_componentName] = 0;
+              forDisplay[_componentName] = 0;
+              this.StoredForUpdate.push(_toPush);
+            }
           })
+          forDisplay["Action"] = '';
+          this.ExamStudentSubjectResult.push(forDisplay);
+
         })
+
+        this.displayedColumns.push("Action");
+        //console.log('this.displayedColumns', this.displayedColumns);
+        //console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult);
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
         this.loading = false;
       })
@@ -419,6 +460,37 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.UpdateOrSave(record);
       }
     })
+  }
+  onBlur(element, event) {
+    debugger;
+    var _colName = event.srcElement.name;
+    console.log("event", event);
+    var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
+    row[0][_colName] = element[_colName];
+  }
+
+  UpdateAll() {
+    this.ExamStudentSubjectResult.forEach(element => {
+      this.SaveRow(element);
+    })
+  }
+  SaveRow(element) {
+    debugger;
+    this.loading = true;
+    this.rowCount = 0;
+    //var columnexist;
+    for (var prop in element) {
+
+      var row: any = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == prop && s.StudentClassSubjectId == element.StudentClassSubjectId);
+
+      if (row.length > 0 && prop != 'StudentClassSubject' && prop != 'Action') {
+        row[0].Active = 1;
+        row[0].Marks = row[0][prop];
+        this.UpdateOrSave(row[0]);
+      }
+
+    }
+
   }
   GetMasterData() {
 

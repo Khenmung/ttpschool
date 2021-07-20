@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { throwError } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -52,7 +51,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
-    'Slot',
+//    'Slot',
     'ClassSubject',
     'Active',
     'Action'
@@ -125,7 +124,10 @@ export class SlotnclasssubjectComponent implements OnInit {
     // }
     this.loading = true;
 
-    var duplicate = this.SlotNClassSubjects.filter(s => s.SlotId == row.SlotId && s.ClassId == row.ClassId && s.Active == 1)
+    var duplicate = this.SlotNClassSubjects.filter(s => s.SlotId == row.SlotId 
+                                    && s.ClassId == row.ClassId 
+                                    && s.Active == 1
+                                    && s.SlotClassSubjectId!=row.SlotClassSubjectId)
     if (duplicate.length > 0) {
       this.loadingFalse();
       this.alert.error("Two subjects of one class cannot be assigned in the same slot.", this.optionsNoAutoClose);
@@ -148,6 +150,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
+          this.loading=false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
@@ -267,7 +270,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       })
   }
   GetSlotNClassSubjects() {
-
+    //console.log("this.searchForm.get(searchClassId).value",this.searchForm.get("searchClassId").value)
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchSlotId").value == 0) {
@@ -299,7 +302,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         var filteredData = [];
         this.SlotNClassSubjects = [];
-        if (this.searchForm.get("searchSubjectId").value == 0 && this.searchForm.get("searchClassId").value == 0) {
+        if (this.searchForm.get("searchSubjectId").value == 0 && this.searchForm.get("searchClassId").value.length == 0) {
           this.ClassSubjectList.forEach(clssub => {
 
             let existing = data.value.filter(db => db.ClassSubjectId == clssub.ClassSubjectId);
@@ -332,11 +335,12 @@ export class SlotnclasssubjectComponent implements OnInit {
           })
         }
         else {
-          if (this.searchForm.get("searchClassId").value > 0 && this.searchForm.get("searchSubjectId").value == 0) {
+          if (this.searchForm.get("searchClassId").value.length > 0 && this.searchForm.get("searchSubjectId").value == 0) {
 
-            filteredData = data.value.filter(d => d.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
+            filteredData = data.value.filter(item=>this.searchForm.get("searchClassId").value.indexOf(item.ClassSubject.ClassId)>-1)
+            //.filter(d => d.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
 
-            let fitleredClassSubject = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
+            let fitleredClassSubject = this.ClassSubjectList.filter(f =>this.searchForm.get("searchClassId").value.indexOf(f.ClassId)>-1);
 
             fitleredClassSubject.forEach(cs => {
               let existing = filteredData.filter(ex => ex.ClassSubjectId == cs.ClassSubjectId)
@@ -347,8 +351,8 @@ export class SlotnclasssubjectComponent implements OnInit {
                   Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
                   ClassSubjectId: cs.ClassSubjectId,
                   ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == cs.ClassSubjectId)[0].ClassSubject,
-                  SubjectId: cs.ClassSubject.SubjectId,
-                  ClassId: cs.ClassSubject.ClassId,
+                  SubjectId: cs.SubjectId,
+                  ClassId: cs.ClassId,
                   Active: existing[0].Active,
                   Action: false
                 });
@@ -370,9 +374,9 @@ export class SlotnclasssubjectComponent implements OnInit {
           }
           else {
             debugger;
-            if (this.searchForm.get("searchSubjectId").value > 0 && this.searchForm.get("searchClassId").value > 0) {
+            if (this.searchForm.get("searchSubjectId").value > 0 && this.searchForm.get("searchClassId").value.length > 0) {
               filteredData = data.value.filter(d => d.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value
-                && d.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
+                && this.searchForm.get("searchClassId").value.indexOf(d.ClassSubject.ClassId)>-1);
             }
             if (filteredData.length > 0) {
               this.SlotNClassSubjects.push({
@@ -389,7 +393,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             }
             else {
               var clssubject = this.ClassSubjectList.filter(cs => cs.SubjectId == this.searchForm.get("searchSubjectId").value &&
-                cs.ClassId == this.searchForm.get("searchClassId").value)
+                this.searchForm.get("searchClassId").value.indexOf(cs.ClassId)>-1)
               var _classSubjectId = clssubject[0].ClassSubjectId;
 
               this.SlotNClassSubjects.push({

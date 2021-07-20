@@ -47,8 +47,38 @@
                 <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
-            </form>
+            </form>            
+
             <mat-table #table [dataSource]="dataSource">                
+            
+                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
+                        <div *ngIf="ExamStudentSubjectResult.length>0" fxLayoutAlign="center center">
+                        <!-- <mat-checkbox fxLayoutAlign="center center" matTooltip="select all" *ngIf="disCol=='Action'" (click)="$event.stopPropagation()"
+                            (change)="SelectAll($event)">
+                        </mat-checkbox> -->
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                            matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        <mat-form-field *ngIf="disCol !='StudentClassSubject' && disCol !='Action'">
+                            <input matInput (blur)="onBlur(element,$event)" [attr.name]="disCol" [(value)]="element[disCol]" [(ngModel)]="element[disCol]">
+                        </mat-form-field>
+                        <!-- <mat-checkbox matTooltip="select all in row" *ngIf="disCol !='Student'" (click)="$event.stopPropagation()"
+                            (change)="SelectAllInRow(element,$event,disCol)" [checked]="element[disCol]==1?true:false">
+                        </mat-checkbox> -->
+                        
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                        {{disCol=='StudentClassSubject'?element[disCol]:''}}
+                    </mat-cell>
+                </ng-container>
+<!--             
                 <ng-container matColumnDef="StudentClassSubject">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class Rollno Subject
                     </mat-header-cell>
@@ -111,7 +141,7 @@
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>

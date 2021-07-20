@@ -36,6 +36,10 @@ const routes: Routes = [
     path: 'attendance',
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
+  {
+    path: 'employee',
+    loadChildren: () => import('./modules/EmployeeManagement/employee-management.module').then(m => m.EmployeeManagementModule)
+  },
   { path: '**', component: NotfoundComponent },
   
 

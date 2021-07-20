@@ -1,9 +1,7 @@
-<!-- <mat-card>
-    <mat-card-title>Student class</mat-card-title>
-    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content> -->
 <div style="padding:15px 15px 0px 15px;"><strong>Class</strong></div>
-<!-- <div style="padding: 15px;" fxLayout="row wrap" fxLayoutGap="30px"> -->
+    <alert></alert>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+
     <form [formGroup]="studentclassForm">
         <mat-grid-list fxLayoutAlign="space-between center"  [cols]="3" rowHeight="80px" (window:resize)="onResize($event)">
             <mat-grid-tile [colspan]="1" [rowspan]="1">
@@ -31,13 +29,13 @@
             <mat-grid-tile [colspan]="1" [rowspan]="1">
                 <mat-form-field appearance="outline">
                     <mat-label>Section</mat-label>
-                    <mat-select formControlName="Section" #SectionId>
+                    <mat-select formControlName="SectionId" #SectionId>
                         <mat-option value="0">---</mat-option>
                         <mat-option *ngFor="let p of Sections" [value]="p.MasterDataId">
                             {{p.MasterDataName}}
                         </mat-option>
                     </mat-select>
-                    <span class="text-danger" *ngIf="f.Section.touched && f.Section.hasError('required')">Class is
+                    <span class="text-danger" *ngIf="f.SectionId.touched && f.SectionId.hasError('required')">Class is
                         required.</span>
                 </mat-form-field>
             </mat-grid-tile>

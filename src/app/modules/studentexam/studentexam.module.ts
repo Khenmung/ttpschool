@@ -9,6 +9,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { StudentSubjectModule } from '../StudentSubject/student-subject.module';
 import { StudentactivityComponent } from './studentactivity/studentactivity.component';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+//import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @NgModule({
@@ -21,10 +22,12 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     FormsModule,
     MaterialModule,
     StudentSubjectModule,
-    SharedhomepageModule
+    SharedhomepageModule,
+    //MatFormFieldModule
   ],
   exports:[
-    studentexamComponents
+    studentexamComponents,
+    //MatFormFieldModule
   ],
   providers: [
     {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},

@@ -63,8 +63,10 @@ export class globalconstants {
                 "ROLE": "role"
             }]
         },
+        
         {
             "school": [{
+         
                 "GENDER": "gender",
                 "RELIGION": "religion",
                 "CITY": "city",
@@ -94,7 +96,17 @@ export class globalconstants {
                 "SUBJECTTYPE": "subject type",
                 "ATTENDANCESTATUS": "attendance status"
             }]
-        }
+        },
+        {
+            "employee":[{
+                "WORKACCOUNT":"work account",
+                "JOBTITLE":"job title",
+                "DESIGNATION":"designation",
+                "SALARYCOMPONENT":"salary component",
+                "GRADE":"grade",
+                "COMPONENTTYPE":"salary component type"
+            }]
+        },
     ];
     public static PERMISSIONTYPES = [
         { 'type': 'rwd', 'val': 1 },
@@ -118,9 +130,9 @@ export class globalconstants {
         return filterstr;
 
     }
-    public static getStandardFilter(token) {
+    public static getStandardFilter(userDetail) {
 
-        var filterstr = 'OrgId eq ' + token[0]["orgId"];
+        var filterstr = 'OrgId eq ' + userDetail[0]["orgId"];
         return filterstr;
 
     }
