@@ -315,7 +315,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
     list.fields = ["EmpGradeSalaryComponentId",
       "EmpGradeId",
       "SalaryComponentId",
-      "PercentOfBasicOrAmount",
+      "FormulaOrAmount",
       "ComponentTypeId"];
     list.PageName = "EmpGradeComponents";
     list.filter = ["Active eq 1 " + orgIdSearchstr];

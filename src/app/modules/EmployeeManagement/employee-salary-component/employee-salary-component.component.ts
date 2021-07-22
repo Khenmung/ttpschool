@@ -11,6 +11,9 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import {
+  atan2, chain, derivative, e, evaluate, log, pi, pow, round, sqrt
+} from 'mathjs';
 
 @Component({
   selector: 'app-employee-salary-component',
@@ -36,6 +39,8 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   StoredForUpdate = [];
   //SubjectMarkComponents = [];
   //MarkComponents = [];
+  VariableConfigs = [];
+  BasicSalary = 0;
   Employees = [];
   Grades = [];
   SalaryComponents = [];
@@ -49,7 +54,8 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     EmployeeSalaryComponentId: 0,
     EmployeeId: 0,
     EmpGradeComponentId: 0,
-    ActualEmpployeeCompPCorAmount: '',
+    EmployeeGradeSalHistoryId: 0,
+    ActualFormulaOrAmount: '',
     OrgId: 0,
     Amount: 0,
     Active: 1
@@ -57,8 +63,8 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   displayedColumns = [
     "Grade",
     "SalaryComponent",
-    "PercentOfBasicOrAmount",
-    "ActualEmpployeeCompPCorAmount",
+    "DisplayFormulaOrAmount",
+    "ActualFormulaOrAmount",
     "Amount",
     "Active",
     "Action"
@@ -80,7 +86,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchEmployee: [''],
     });
-    this.PageLoad(); 
+    this.PageLoad();
     this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
       .pipe(
         startWith(''),
@@ -158,11 +164,12 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         else {
 
           this.EmployeeSalaryComponentData.EmployeeSalaryComponentId = row.EmployeeSalaryComponentId;
-          this.EmployeeSalaryComponentData.ActualEmpployeeCompPCorAmount = row.ActualEmpployeeCompPCorAmount;
+          this.EmployeeSalaryComponentData.ActualFormulaOrAmount = row.ActualFormulaOrAmount.toString();
           this.EmployeeSalaryComponentData.EmployeeId = row.EmployeeId;
           this.EmployeeSalaryComponentData.Active = row.Active;
-          this.EmployeeSalaryComponentData.Amount = row.Amount;
+          this.EmployeeSalaryComponentData.Amount = row.Amount.toString();
           this.EmployeeSalaryComponentData.EmpGradeComponentId = row.EmpGradeComponentId;
+          this.EmployeeSalaryComponentData.EmployeeGradeSalHistoryId = row.EmployeeGradeSalHistoryId;
           this.EmployeeSalaryComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
           //console.log('data', this.ClassSubjectData);
           if (this.EmployeeSalaryComponentData.EmployeeSalaryComponentId == 0) {
@@ -170,7 +177,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
             this.EmployeeSalaryComponentData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.EmployeeSalaryComponentData["UpdatedDate"] = new Date();
             delete this.EmployeeSalaryComponentData["UpdatedBy"];
-            //console.log('exam slot', this.ExamStudentSubjectResultData)
+            console.log('EmployeeSalaryComponentData', this.EmployeeSalaryComponentData)
             this.insert(row);
           }
           else {
@@ -233,10 +240,18 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   // }
   onBlur(element, event) {
     debugger;
-    var _colName = event.srcElement.name;
-    console.log("event", event);
-    var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
-    row[0][_colName] = element[_colName];
+    //var _colName = event.srcElement.name;
+    var percentage = element["DisplayFormulaOrAmount"].includes("%");
+    var formula = element["ActualFormulaOrAmount"];
+    //console.log("event", _colName);
+    //var _amount = percentage ? + this.BasicSalary * (element["ActualFormulaOrAmount"] / 100) : element["ActualFormulaOrAmount"];
+    this.VariableConfigs.forEach(f => {
+      if (formula.includes(f.VariableName))
+      formula = formula.replace(f.VariableName, f.VariableAmount);
+    })
+    console.log('evaluate',formula);
+    element["Amount"] = evaluate(formula);//_amount;
+    
   }
 
   // UpdateAll() {
@@ -281,8 +296,31 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].SALARYCOMPONENT);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].COMPONENTTYPE);
         //this.loading = false;
+        this.GetVariables();
         this.GetEmployees();
       });
+  }
+  GetVariables() {
+
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let list: List = new List();
+
+    list.fields = [
+      "VariableConfigurationId",
+      "VariableName",
+      "VariableAmount",
+      "Active"
+    ];
+
+    list.PageName = "VariableConfigurations";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+    this.VariableConfigs = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.VariableConfigs = [...data.value];
+      })
   }
   GetGradeComponents() {
 
@@ -294,7 +332,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       "EmpGradeSalaryComponentId",
       "EmpGradeId",
       "SalaryComponentId",
-      "PercentOfBasicOrAmount",
+      "FormulaOrAmount",
       "ComponentTypeId",
       "Active"
     ];
@@ -305,13 +343,20 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     this.GradeComponents = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-
+        debugger;
+        var _percentorAmount = '';
         this.GradeComponents = data.value.map(d => {
+          var _percentorAmountArray = this.ComponentTypes.filter(p => p.MasterDataId == d.ComponentTypeId)[0].MasterDataName;
+          _percentorAmount = '';
+          if (_percentorAmountArray.toLowerCase().includes("percent"))
+            _percentorAmount = "%";
+
           return {
             EmpGradeSalaryComponentId: d.EmpGradeSalaryComponentId,
             EmpGradeId: d.EmpGradeId,
             SalaryComponentId: d.SalaryComponentId,
-            PercentOfBasicOrAmount: d.PercentOfBasicOrAmount,
+            DisplayFormulaOrAmount: d.FormulaOrAmount + _percentorAmount,
+            FormulaOrAmount: d.FormulaOrAmount,
             Grade: this.Grades.filter(g => g.MasterDataId == d.EmpGradeId)[0].MasterDataName,
             SalaryComponent: this.SalaryComponents.filter(g => g.MasterDataId == d.SalaryComponentId)[0].MasterDataName
           }
@@ -327,50 +372,73 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     let list: List = new List();
 
     list.fields = [
-      "EmployeeSalaryComponentId",
+      "EmpEmployeeSalaryComponents/EmployeeSalaryComponentId",
+      "EmpEmployeeSalaryComponents/EmployeeId",
+      "EmpEmployeeSalaryComponents/EmpGradeComponentId",
+      "EmpEmployeeSalaryComponents/EmployeeGradeSalHistoryId",
+      "EmpEmployeeSalaryComponents/ActualFormulaOrAmount",
+      "EmpEmployeeSalaryComponents/Amount",
+      "EmpEmployeeSalaryComponents/Active",
+      "EmpGradeId",
       "EmployeeId",
-      "EmpGradeComponentId",
-      "ActualEmpployeeCompPCorAmount",
-      "PercentOfBasicOrAmount",
-      "Amount",
-      "Active",
-      "EmpEmployeeGradeSalHistory/EmpGradeId"
+      "EmployeeGradeHistoryId"
     ];
 
-    list.PageName = "EmpEmployeeSalaryComponents";
-    list.lookupFields=["EmpEmployeeGradeSalHistory"]
-    list.filter = ["Active eq 1 and EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr];
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    list.lookupFields = ["EmpEmployeeSalaryComponents"]
+    list.orderBy = "EmployeeGradeHistoryId desc";
+    list.limitTo = 1;
+    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr];
     //list.orderBy = "ParentId";
-    this.GradeComponents = [];
+    this.EmployeeSalaryComponentList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.GradeComponents.forEach(gc => {
-          var existing = data.value.filter(e => e.EmpGradeComponentId == gc.SalaryComponentId);
-          if (existing.length > 0)
-            this.EmployeeSalaryComponentList.push({
-              EmployeeSalaryComponentId: existing[0].EmployeeSalaryComponentId,
-              EmployeeId: existing[0].EmployeeId,
-              EmpGradeComponentId: gc.SalaryComponentId,
-              SalaryComponent: gc.SalaryComponent,
-              Grade: gc.Grade,
-              ActualEmpployeeCompPCorAmount: existing[0].ActualEmpployeeCompPCorAmount,
-              PercentOfBasicOrAmount: gc.PercentOfBasicOrAmount,
-              Amount: existing[0].Amount,
-              Active: existing[0].Active
-            });
-          else
-            this.EmployeeSalaryComponentList.push({
-              EmployeeSalaryComponentId: 0,
-              EmployeeId: this.searchForm.get("searchEmployee").value.EmployeeId,
-              EmpGradeComponentId: gc.SalaryComponentId,
-              SalaryComponent: gc.SalaryComponent,
-              Grade: gc.Grade,
-              ActualEmpployeeCompPCorAmount: gc.PercentOfBasicOrAmount,
-              PercentOfBasicOrAmount: gc.PercentOfBasicOrAmount,
-              Amount: 0,
-              Active: 0
-            });
-        })
+        debugger;
+        if (data.value.length > 0) {
+          //var filterthis.GradeComponents.filter(gc => gc.EmpGradeId == data.value[0].EmpGradeId);
+          var fitleredGradeComponentForSelectedEmp = this.GradeComponents.filter(gc => gc.EmpGradeId == data.value[0].EmpGradeId);
+          //var _basicsalary=0;
+          this.BasicSalary = fitleredGradeComponentForSelectedEmp.filter(b => b.SalaryComponent.toLowerCase().includes("basic"))[0].FormulaOrAmount;
+
+          fitleredGradeComponentForSelectedEmp.forEach(gc => {
+            var percentage = gc.DisplayFormulaOrAmount.includes("%")
+
+            var existing = data.value[0].EmpEmployeeSalaryComponents.filter(e => e.EmpGradeComponentId == gc.EmpGradeSalaryComponentId);
+            if (existing.length > 0)
+              this.EmployeeSalaryComponentList.push({
+                EmployeeSalaryComponentId: existing[0].EmployeeSalaryComponentId,
+                EmployeeId: existing[0].EmployeeId,
+                EmpGradeComponentId: existing[0].EmpGradeComponentId,
+                EmployeeGradeSalHistoryId: existing[0].EmployeeGradeSalHistoryId,
+                SalaryComponent: gc.SalaryComponent,
+                Grade: gc.Grade,
+                ActualFormulaOrAmount: existing[0].ActualFormulaOrAmount,
+                DisplayFormulaOrAmount: gc.DisplayFormulaOrAmount,
+                FormulaOrAmount: gc.FormulaOrAmount,
+                Amount: existing[0].Amount,
+                Active: existing[0].Active
+              });
+            else {
+              this.EmployeeSalaryComponentList.push({
+                EmployeeSalaryComponentId: 0,
+                EmployeeId: this.searchForm.get("searchEmployee").value.EmployeeId,
+                EmpGradeComponentId: gc.EmpGradeSalaryComponentId,
+                EmployeeGradeSalHistoryId: data.value[0].EmployeeGradeHistoryId,
+                SalaryComponent: gc.SalaryComponent,
+                Grade: gc.Grade,
+                ActualFormulaOrAmount: gc.FormulaOrAmount,
+                DisplayFormulaOrAmount: gc.DisplayFormulaOrAmount,
+                FormulaOrAmount: gc.FormulaOrAmount,
+                Amount: percentage ? + this.BasicSalary * (gc.FormulaOrAmount / 100) : gc.FormulaOrAmount,
+                Active: 0
+              });
+            }
+          })
+        }
+        else {
+          this.alert.info("Employee grade has to be defined", this.optionAutoClose);
+        }
+        this.loading = false;
         this.dataSource = new MatTableDataSource<IEmployeeSalaryComponent>(this.EmployeeSalaryComponentList);
       })
   }
@@ -382,6 +450,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
 
     list.fields = [
       "EmpEmployeeId",
+      "EmployeeCode",
       "FirstName",
       "LastName"];
     list.PageName = "EmpEmployees";
@@ -392,7 +461,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         this.Employees = data.value.map(m => {
           return {
             EmployeeId: m.EmpEmployeeId,
-            Name: m.FirstName + " " + m.LastName
+            Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
           }
         })
         this.GetGradeComponents();
@@ -419,8 +488,10 @@ export interface IEmployeeSalaryComponent {
   EmployeeSalaryComponentId: number;
   EmployeeId: number;
   EmpGradeComponentId: number;
-  ActualEmpployeeCompPCorAmount: string;
-  PercentOfBasicOrAmount: number;
+  EmployeeGradeSalHistoryId: number;
+  ActualFormulaOrAmount: string;
+  DisplayFormulaOrAmount: string;
+  FormulaOrAmount: number;
   Amount: number;
   Active: number;
   Action: boolean;
@@ -429,11 +500,56 @@ export interface IGradeComponent {
   EmpGradeSalaryComponentId: number;
   EmpGradeId: number;
   SalaryComponentId: number;
-  PercentOfBasicOrAmount: number;
+  DisplayFormulaOrAmount: string;
+  FormulaOrAmount: number;
   Grade: string;
   SalaryComponent: string;
 }
 export interface IEmployee {
   EmployeeId: number;
   Name: string;
+}
+export class StringCalculator {
+  constructor() { }
+  parse(formula) {
+    var errormsg = '';
+    var bracketsOK = this.checkbrackets(formula);
+    if (bracketsOK)
+      errormsg = 'Invalid brackets';
+    else {
+      var innermostBracket = formula.lastIndexOf("(")
+    }
+  }
+
+  checkbrackets(expression) {
+    let stack = [];
+    let current;
+    const matchLookup = {
+      "(": ")",
+      "[": "]",
+      "{": "}",
+    };
+    //9-(5*(7+2))/4
+    let dataqueue = [];
+    //datastack
+
+    for (let i = 0; i < expression.length; i++) {
+      current = expression[i]; //easier than writing it over and over
+
+      if (current === '(' || current === '[' || current === "{") {
+        stack.push(current);
+
+      } else if (current === ')' || current === ']' || current === "}") {
+        const lastBracket = stack.pop();
+
+        if (matchLookup[lastBracket] !== current) { //if the stack is empty, .pop() returns undefined, so this expression is still correct
+
+          return false; //terminate immediately - no need to continue scanning the string
+        }
+      }
+    }
+
+    return stack.length === 0; //any elements mean brackets left open
+  }
+
 }

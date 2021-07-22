@@ -41,14 +41,14 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="PercentOfBasicOrAmount">
+                <ng-container matColumnDef="FormulaOrAmount">
                     <mat-header-cell *matHeaderCellDef>PerCent/Amount
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-                        <mat-form-field>
-                            <input matInput 
-                            [(value)]="element.PercentOfBasicOrAmount"
-                                [(ngModel)]="element.PercentOfBasicOrAmount">
+                        <mat-form-field [style.width.px]="350">
+                            <textarea matInput 
+                            [(value)]="element.FormulaOrAmount"
+                                [(ngModel)]="element.FormulaOrAmount"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>

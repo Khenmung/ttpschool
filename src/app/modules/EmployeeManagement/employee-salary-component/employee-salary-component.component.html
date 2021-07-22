@@ -34,27 +34,22 @@
                     <mat-cell *matCellDef="let element ">
                         {{element.SalaryComponent}}        
                     </mat-cell>
-                </ng-container>
-                
-                <ng-container matColumnDef="PercentOfBasicOrAmount">
-                    <mat-header-cell *matHeaderCellDef>PerCent/Amount
+                </ng-container>                
+                <ng-container matColumnDef="DisplayFormulaOrAmount">
+                    <mat-header-cell *matHeaderCellDef>Grade Formula/Amount
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-                        <mat-form-field>
-                            <input matInput 
-                            [(value)]="element.PercentOfBasicOrAmount"
-                                [(ngModel)]="element.PercentOfBasicOrAmount">
-                        </mat-form-field>
+                       {{element.DisplayFormulaOrAmount}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ActualEmpployeeCompPCorAmount">
-                    <mat-header-cell *matHeaderCellDef> Actual percent or Amount
+                <ng-container matColumnDef="ActualFormulaOrAmount">
+                    <mat-header-cell *matHeaderCellDef> Formula/Amount for Employee
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-                        <mat-form-field>
-                            <input matInput 
-                            [(value)]="element.ActualEmpployeeCompPCorAmount"
-                                [(ngModel)]="element.ActualEmpployeeCompPCorAmount">
+                        <mat-form-field [style.width.pc]="20">
+                            <textarea matInput [attr.name]='element.ActualFormulaOrAmount' (blur)="onBlur(element,$event)"
+                            [(value)]="element.ActualFormulaOrAmount"
+                                [(ngModel)]="element.ActualFormulaOrAmount"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -62,11 +57,7 @@
                     <mat-header-cell *matHeaderCellDef> Amount
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-                        <mat-form-field>
-                            <input matInput 
-                            [(value)]="element.Amount"
-                                [(ngModel)]="element.Amount">
-                        </mat-form-field>
+                        {{element.Amount}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">

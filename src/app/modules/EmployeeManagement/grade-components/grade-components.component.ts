@@ -46,14 +46,14 @@ export class GradeComponentsComponent implements OnInit {
     EmpGradeSalaryComponentId: 0,
     EmpGradeId: 0,
     SalaryComponentId: 0,
-    PercentOfBasicOrAmount: 0,
+    FormulaOrAmount: 0,
     ComponentTypeId: 0,
     OrgId: 0,
     Active: 0
   };
   displayedColumns = [
     "SalaryComponent",
-    "PercentOfBasicOrAmount",
+    "FormulaOrAmount",
     "ComponentTypeId",
     "Active",
     "Action"
@@ -143,7 +143,7 @@ export class GradeComponentsComponent implements OnInit {
           this.GradeComponentData.SalaryComponentId = row.SalaryComponentId;
           this.GradeComponentData.ComponentTypeId = row.ComponentTypeId;
           this.GradeComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.GradeComponentData.PercentOfBasicOrAmount = row.PercentOfBasicOrAmount;
+          this.GradeComponentData.FormulaOrAmount = row.FormulaOrAmount;
           //console.log('data', this.ClassSubjectData);
           if (this.GradeComponentData.EmpGradeSalaryComponentId == 0) {
             this.GradeComponentData["CreatedDate"] = new Date();
@@ -172,26 +172,26 @@ export class GradeComponentsComponent implements OnInit {
         (data: any) => {
           row.EmpGradeSalaryComponentId = data.EmpGradeSalaryComponentId;
           this.loading = false;
-          this.rowCount++;
-          if (this.rowCount == this.displayedColumns.length - 2) {
-            this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
-          }
-          //this.alert.success("Data saved successfully.", this.optionAutoClose);
+          // this.rowCount++;
+          // if (this.rowCount == this.displayedColumns.length - 2) {
+          //   this.loading = false;
+          //   this.alert.success("Data saved successfully", this.optionAutoClose);
+          // }
+          this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
   update(row) {
-
+    console.log("this.GradeComponentData",this.GradeComponentData);
     this.dataservice.postPatch('EmpGradeComponents', this.GradeComponentData, this.GradeComponentData.EmpGradeSalaryComponentId, 'patch')
       .subscribe(
         (data: any) => {
-          //this.loading = false;
-          this.rowCount++;
-          if (this.rowCount == this.displayedColumns.length - 2) {
-            this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
-          }
-          //this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.loading = false;
+          // this.rowCount++;
+          // if (this.rowCount == this.displayedColumns.length - 2) {
+          //   this.loading = false;
+          //   this.alert.success("Data saved successfully", this.optionAutoClose);
+          // }
+          this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
 
@@ -273,7 +273,7 @@ export class GradeComponentsComponent implements OnInit {
       "EmpGradeSalaryComponentId",
       "EmpGradeId",
       "SalaryComponentId",
-      "PercentOfBasicOrAmount",
+      "FormulaOrAmount",
       "ComponentTypeId",
       "Active"
     ];
@@ -302,7 +302,7 @@ export class GradeComponentsComponent implements OnInit {
               EmpGradeId: this.searchForm.get("searchGradeId").value,
               SalaryComponentId: s.MasterDataId,
               SalaryComponent:s.MasterDataName,
-              PercentOfBasicOrAmount: 0,
+              FormulaOrAmount: 0,
               ComponentTypeId: 0,
               Active: 0,
               Action: true
@@ -337,7 +337,7 @@ export interface IGradeComponent {
   EmpGradeId: number;
   SalaryComponentId: number;
   SalaryComponent:string;
-  PercentOfBasicOrAmount: number;
+  FormulaOrAmount: number;
   ComponentTypeId: number;
   Active: number;
   Action: boolean;
