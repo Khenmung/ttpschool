@@ -4,15 +4,17 @@ import { RouterModule, Routes } from '@angular/router';
 import { StudenthomeComponent } from '../StudentSubject/studenthome/studenthome.component';
 import { EmployeeGradehistoryComponent } from './employee-gradehistory/employee-gradehistory.component';
 import { EmployeeSalaryComponentComponent } from './employee-salary-component/employee-salary-component.component';
-import { GradeComponentsComponent } from './grade-components/grade-components.component';
+import { EmpComponentsComponent } from './emp-components/emp-components.component';
+import { VariableConfigComponent } from './variable-config/variable-config.component';
 
 const routes: Routes = [
   {
     path:"",component:StudenthomeComponent,
     children:[
-      {path:"",component:GradeComponentsComponent},
+      {path:"",component:EmpComponentsComponent},
       {path:"emphistory",component:EmployeeGradehistoryComponent},
-      {path:"empsalcomp",component:EmployeeSalaryComponentComponent}
+      {path:"empsalcomp",component:EmployeeSalaryComponentComponent},
+      {path:"var",component:VariableConfigComponent}
     ]
 
   }
@@ -24,7 +26,8 @@ const routes: Routes = [
 })
 export class EmployeeManagementRoutingModule { }
 export const EmployeeManageComponents=[
-  GradeComponentsComponent,
+  EmpComponentsComponent,
   EmployeeGradehistoryComponent,
-  EmployeeSalaryComponentComponent
+  EmployeeSalaryComponentComponent,
+  VariableConfigComponent
 ]

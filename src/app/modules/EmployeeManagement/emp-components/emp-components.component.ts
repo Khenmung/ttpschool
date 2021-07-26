@@ -11,11 +11,11 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-grade-components',
-  templateUrl: './grade-components.component.html',
-  styleUrls: ['./grade-components.component.scss']
+  selector: 'app-emp-components',
+  templateUrl: './emp-components.component.html',
+  styleUrls: ['./emp-components.component.scss']
 })
-export class GradeComponentsComponent implements OnInit {
+export class EmpComponentsComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -26,35 +26,34 @@ export class GradeComponentsComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  EmpComponentListName = 'EmpComponents';
   StandardFilter = '';
   loading = false;
   rowCount = 0;
-  GradeComponentList: IGradeComponent[] = [];
+  EmpComponentList: IEmpComponent[] = [];
   SelectedBatchId = 0;
-  StoredForUpdate = [];
-  //SubjectMarkComponents = [];
-  //MarkComponents = [];
   Grades = [];
   SalaryComponents = [];
   ComponentTypes = [];
   Batches = [];
-  dataSource: MatTableDataSource<IGradeComponent>;
+  dataSource: MatTableDataSource<IEmpComponent>;
   allMasterData = [];
 
-  ExamId = 0;
-  GradeComponentData = {
-    EmpGradeSalaryComponentId: 0,
-    EmpGradeId: 0,
+
+  EmpComponentData = {
+    EmpSalaryComponentId: 0,
     SalaryComponentId: 0,
     FormulaOrAmount: 0,
-    ComponentTypeId: 0,
+    Deduction: 0,
+    LimitAmount: 0,
     OrgId: 0,
     Active: 0
   };
   displayedColumns = [
     "SalaryComponent",
     "FormulaOrAmount",
-    "ComponentTypeId",
+    "LimitAmount",
+    "Deduction",
     "Active",
     "Action"
   ];
@@ -73,7 +72,7 @@ export class GradeComponentsComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
-      searchGradeId: [0],
+      searchComponentId: [0],
     });
     this.PageLoad();
   }
@@ -81,21 +80,24 @@ export class GradeComponentsComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    //this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
 
     }
   }
+  updateDeduction(row, value) {
+    debugger;
+    row.Action = true;
+    row.Deduction = value.checked == 1 ? 1 : 0;
+  }
+
   updateActive(row, value) {
     //if(!row.Action)
-    row.Action = !row.Action;
-    row.Active = row.Active == 1 ? 0 : 1;
+    row.Action = true;
+    row.Active = value.checked == 1 ? 1 : 0;
   }
   delete(element) {
     let toupdate = {
@@ -112,20 +114,19 @@ export class GradeComponentsComponent implements OnInit {
   UpdateOrSave(row) {
 
     debugger;
-
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let checkFilterString = "EmpGradeId eq " + this.searchForm.get("searchGradeId").value +
-      " and SalaryComponentId eq " + row.SalaryComponentId
+    let checkFilterString = "SalaryComponentId eq " + this.searchForm.get("searchComponentId").value;
+    //" and SalaryComponentId eq " + row.SalaryComponentId
 
 
-    if (row.EmpGradeSalaryComponentId > 0)
-      checkFilterString += " and EmpGradeSalaryComponentId ne " + row.EmpGradeSalaryComponentId;
+    if (row.EmpSalaryComponentId > 0)
+      checkFilterString += " and EmpSalaryComponentId ne " + row.EmpSalaryComponentId;
     checkFilterString += " and " + this.StandardFilter;
 
     let list: List = new List();
-    list.fields = ["EmpGradeSalaryComponentId"];
-    list.PageName = "EmpGradeComponents";
+    list.fields = ["EmpSalaryComponentId"];
+    list.PageName = this.EmpComponentListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -137,27 +138,27 @@ export class GradeComponentsComponent implements OnInit {
         }
         else {
 
-          this.GradeComponentData.EmpGradeSalaryComponentId = row.EmpGradeSalaryComponentId;
-          this.GradeComponentData.EmpGradeId = this.searchForm.get("searchGradeId").value;
-          this.GradeComponentData.Active = row.Active;
-          this.GradeComponentData.SalaryComponentId = row.SalaryComponentId;
-          this.GradeComponentData.ComponentTypeId = row.ComponentTypeId;
-          this.GradeComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.GradeComponentData.FormulaOrAmount = row.FormulaOrAmount;
-          //console.log('data', this.ClassSubjectData);
-          if (this.GradeComponentData.EmpGradeSalaryComponentId == 0) {
-            this.GradeComponentData["CreatedDate"] = new Date();
-            this.GradeComponentData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.GradeComponentData["UpdatedDate"] = new Date();
-            delete this.GradeComponentData["UpdatedBy"];
+          this.EmpComponentData.EmpSalaryComponentId = row.EmpSalaryComponentId;
+          this.EmpComponentData.Active = row.Active;
+          this.EmpComponentData.SalaryComponentId = row.SalaryComponentId;
+          this.EmpComponentData.Deduction = row.Deduction;
+          this.EmpComponentData.LimitAmount = row.LimitAmount.toString();
+          this.EmpComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.EmpComponentData.FormulaOrAmount = row.FormulaOrAmount;
+          console.log('data', this.EmpComponentData);
+          if (this.EmpComponentData.EmpSalaryComponentId == 0) {
+            this.EmpComponentData["CreatedDate"] = new Date();
+            this.EmpComponentData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EmpComponentData["UpdatedDate"] = new Date();
+            delete this.EmpComponentData["UpdatedBy"];
             //console.log('exam slot', this.ExamStudentSubjectResultData)
             this.insert(row);
           }
           else {
-            delete this.GradeComponentData["CreatedDate"];
-            delete this.GradeComponentData["CreatedBy"];
-            this.GradeComponentData["UpdatedDate"] = new Date();
-            this.GradeComponentData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.EmpComponentData["CreatedDate"];
+            delete this.EmpComponentData["CreatedBy"];
+            this.EmpComponentData["UpdatedDate"] = new Date();
+            this.EmpComponentData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
         }
@@ -167,10 +168,10 @@ export class GradeComponentsComponent implements OnInit {
   insert(row) {
 
     debugger;
-    this.dataservice.postPatch('EmpGradeComponents', this.GradeComponentData, 0, 'post')
+    this.dataservice.postPatch(this.EmpComponentListName, this.EmpComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.EmpGradeSalaryComponentId = data.EmpGradeSalaryComponentId;
+          row.EmpSalaryComponentId = data.EmpSalaryComponentId;
           this.loading = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
@@ -181,8 +182,8 @@ export class GradeComponentsComponent implements OnInit {
         });
   }
   update(row) {
-    console.log("this.GradeComponentData",this.GradeComponentData);
-    this.dataservice.postPatch('EmpGradeComponents', this.GradeComponentData, this.GradeComponentData.EmpGradeSalaryComponentId, 'patch')
+    console.log("this.EmpComponentData", this.EmpComponentData);
+    this.dataservice.postPatch(this.EmpComponentListName, this.EmpComponentData, this.EmpComponentData.EmpSalaryComponentId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
@@ -196,7 +197,7 @@ export class GradeComponentsComponent implements OnInit {
   }
 
   checkall(value) {
-    this.GradeComponentList.forEach(record => {
+    this.EmpComponentList.forEach(record => {
       if (value.checked)
         record.Active = 1;
       else
@@ -205,7 +206,7 @@ export class GradeComponentsComponent implements OnInit {
     })
   }
   saveall() {
-    this.GradeComponentList.forEach(record => {
+    this.EmpComponentList.forEach(record => {
       if (record.Action == true) {
         this.UpdateOrSave(record);
       }
@@ -215,12 +216,12 @@ export class GradeComponentsComponent implements OnInit {
     debugger;
     var _colName = event.srcElement.name;
     console.log("event", event);
-    var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
-    row[0][_colName] = element[_colName];
+    //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
+    //row[0][_colName] = element[_colName];
   }
 
   UpdateAll() {
-    this.GradeComponentList.forEach(element => {
+    this.EmpComponentList.forEach(element => {
       this.SaveRow(element);
     })
   }
@@ -229,17 +230,17 @@ export class GradeComponentsComponent implements OnInit {
     this.loading = true;
     this.rowCount = 0;
     //var columnexist;
-    for (var prop in element) {
+    // for (var prop in element) {
 
-      var row: any = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == prop && s.StudentClassSubjectId == element.StudentClassSubjectId);
+    //   //var row: any = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == prop && s.StudentClassSubjectId == element.StudentClassSubjectId);
 
-      if (row.length > 0 && prop != 'StudentClassSubject' && prop != 'Action') {
-        row[0].Active = 1;
-        row[0].Marks = row[0][prop];
-        this.UpdateOrSave(row[0]);
-      }
+    //   if (row.length > 0 && prop != 'StudentClassSubject' && prop != 'Action') {
+    //     row[0].Active = 1;
+    //     row[0].Marks = row[0][prop];
+    //     this.UpdateOrSave(row[0]);
+    //   }
 
-    }
+    // }
 
   }
   GetMasterData() {
@@ -257,64 +258,48 @@ export class GradeComponentsComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].GRADE);
+        //this.Grades = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].GRADE);
         this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].SALARYCOMPONENT);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].COMPONENTTYPE);
         this.loading = false;
       });
   }
-  GetGradeComponents() {
+  GetEmpComponents() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
     list.fields = [
-      "EmpGradeSalaryComponentId",
-      "EmpGradeId",
+      "EmpSalaryComponentId",
       "SalaryComponentId",
       "FormulaOrAmount",
-      "ComponentTypeId",
+      "Deduction",
+      "LimitAmount",
       "Active"
     ];
 
-    list.PageName = "EmpGradeComponents";
-    list.filter = ["Active eq 1 and EmpGradeId eq " + this.searchForm.get("searchGradeId").value + orgIdSearchstr];
+    list.PageName = this.EmpComponentListName;
+    list.filter = ["SalaryComponentId eq " + this.searchForm.get("searchComponentId").value + orgIdSearchstr];
     //list.orderBy = "ParentId";
-    this.GradeComponentList =[];
+    this.EmpComponentList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        var existingdata;
-        this.SalaryComponents.forEach(s => {
-
-          existingdata = data.value.filter(d => d.SalaryComponentId == s.MasterDataId);
-          if (existingdata.length > 0) {
-            existingdata[0].Grade = this.Grades.filter(g => g.MasterDataId == existingdata[0].EmpGradeId)[0].MasterDataName;
-            existingdata[0].SalaryComponent = s.MasterDataName;
-            this.GradeComponentList.push(existingdata[0]);
-          }
-          else {
-            var _grade = this.Grades.filter(g => g.MasterDataId == this.searchForm.get("searchGradeId").value)[0].MasterDataName;
-            
-            this.GradeComponentList.push({
-              EmpGradeSalaryComponentId: 0,
-              EmpGradeId: this.searchForm.get("searchGradeId").value,
-              SalaryComponentId: s.MasterDataId,
-              SalaryComponent:s.MasterDataName,
-              FormulaOrAmount: 0,
-              ComponentTypeId: 0,
-              Active: 0,
-              Action: true
-            })
-
-          }
-        })
-
-        this.dataSource = new MatTableDataSource<IGradeComponent>(this.GradeComponentList);
+        this.EmpComponentList = [...data.value];
+        this.dataSource = new MatTableDataSource<IEmpComponent>(this.EmpComponentList);
       })
   }
-
+  addnew(){
+    // var newdata ={
+    //   "EmpSalaryComponentId":0,
+    //   "SalaryComponentId":,
+    //   "FormulaOrAmount",
+    //   "Deduction",
+    //   "LimitAmount",
+    //   "Active"
+    // }
+  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {
@@ -332,13 +317,13 @@ export class GradeComponentsComponent implements OnInit {
   }
 
 }
-export interface IGradeComponent {
-  EmpGradeSalaryComponentId: number;
-  EmpGradeId: number;
+export interface IEmpComponent {
+  EmpSalaryComponentId: number;
   SalaryComponentId: number;
-  SalaryComponent:string;
+  SalaryComponent: string;
   FormulaOrAmount: number;
-  ComponentTypeId: number;
+  Deduction: number;
+  LimitAmount: number;
   Active: number;
   Action: boolean;
 }

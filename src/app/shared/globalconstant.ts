@@ -104,6 +104,9 @@ export class globalconstants {
                 "DESIGNATION":"designation",
                 "SALARYCOMPONENT":"salary component",
                 "GRADE":"grade",
+                "LEAVE":"leave",
+                "LEAVESTATUS":"leave status",
+                "CONFIGTYPE":"Variable config type",
                 "COMPONENTTYPE":"salary component type"
             }]
         },

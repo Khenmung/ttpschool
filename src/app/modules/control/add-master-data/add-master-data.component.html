@@ -1,103 +1,111 @@
-<div fxLayout="column" fxLayoutAlign="center center" class="boxes">
-    <strong>Essential data for Application setting Statuses</strong>
-    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid lightgrey;">
-        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
-            <div style="width:200px" *ngFor="let item of ApplicationDataStatus">{{item.MasterDataName}}
-                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
-            </div>
-        </div>
-    </div>
-</div>
-<div fxLayout="column" fxLayoutAlign="center center" class="boxes">
-    <strong>Essential data for <b>School Application</b> setting Statuses</strong>
-    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid grey;">
-        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
-            <div style="width:200px" *ngFor="let item of SchoolDataStatus">{{item.MasterDataName}}
-                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
-            </div>
-        </div>
-    </div>
-</div>
-<mat-card class="boxes">
-    <mat-card-title>Essential data setting</mat-card-title>
-    <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <alert></alert>
-        <br>
-        <form [formGroup]="searchForm">
-            <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
-                <mat-form-field fxFlex appearance="outline">
-                    <mat-label>Master Name</mat-label>
-                    <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
-                        <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
-                            {{master.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetMasterData()"
-                    fxFlex="10">
-                    <mat-icon>search</mat-icon>
-                </button>
-                <!-- <button [disabled]="loading" matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button"
+<div fxLayout="column" fxLayoutAlign="space-between center">
+    <div>
+        <mat-card class="boxes">
+            <mat-card-title>Essential data setting</mat-card-title>
+            <mat-card-content>
+                <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+                <alert></alert>
+                <br>
+                <form [formGroup]="searchForm">
+                    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
+                        <mat-form-field fxFlex appearance="outline">
+                            <mat-label>Master Name</mat-label>
+                            <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
+                                <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
+                                    {{master.MasterDataName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                            (click)="GetMasterData()" fxFlex="10">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                        <!-- <button [disabled]="loading" matTooltip="update this" *ngIf="enableTopEdit" class="mat-raised-button"
                     (click)="EditTopMaster()" fxFlex="10">
                     <mat-icon>work outline</mat-icon>
                 </button> -->
-                <!-- <button [disabled]="loading" matTooltip="new master" class="mat-raised-button" (click)="NewTopMaster()" fxFlex="10">
+                        <!-- <button [disabled]="loading" matTooltip="new master" class="mat-raised-button" (click)="NewTopMaster()" fxFlex="10">
                     <mat-icon>new_label</mat-icon>
                 </button> -->
-                <div fxFlex>&nbsp;</div>
-            </div>
-        </form>
-        <div>
-            <mat-divider></mat-divider>
-            <mat-table [dataSource]="datasource" matSort>
-                <ng-container matColumnDef="Id">
-                    <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field>
-                            <input matInput [(value)]="element.Name" 
-                                [(ngModel)]="element.Name" autocomplete="Off">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Description">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field>
-                            <input matInput [(value)]="element.Description" [(ngModel)]="element.Description"
-                                autocomplete="Off">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="new item" *ngIf="enableAddNew"
-                            class="mat-raised-button" (click)="AddData()" fxFlex="10">
-                            <mat-icon>add</mat-icon>
-                        </button>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                            [checked]="element.Active">
-                        </mat-checkbox>&nbsp;
-                        <button [disabled]="loading" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
+                        <div fxFlex>&nbsp;</div>
+                    </div>
+                </form>
+                <div>
+                    <mat-divider></mat-divider>
+                    <mat-table [dataSource]="datasource" matSort>
+                        <ng-container matColumnDef="Id">
+                            <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+                            <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="Name">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(value)]="element.Name" [(ngModel)]="element.Name"
+                                        autocomplete="Off">
+                                </mat-form-field>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="Description">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input matInput [(value)]="element.Description" [(ngModel)]="element.Description"
+                                        autocomplete="Off">
+                                </mat-form-field>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="Active">
+                            <mat-header-cell *matHeaderCellDef>
+                                <button [disabled]="loading" matTooltip="new item" *ngIf="enableAddNew"
+                                    class="mat-raised-button" (click)="AddData()" fxFlex="10">
+                                    <mat-icon>add</mat-icon>
+                                </button>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                                    [checked]="element.Active">
+                                </mat-checkbox>&nbsp;
+                                <button [disabled]="loading" matTooltip="view/edit" mat-mini-fab
+                                    (click)="UpdateOrSave(element)">
+                                    <mat-icon>save</mat-icon>
+                                </button>
+                            </mat-cell>
+                        </ng-container>
 
-                <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center"
-                    fxLayout="row">
-                </mat-row>
-            </mat-table>
-            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+                        <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center"
+                            fxLayout="row">
+                        </mat-row>
+                    </mat-table>
+                    <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div>
+        <div fxLayout="column" fxLayoutAlign="center center" class="boxes">
+            <strong>Essential data for Application setting Statuses</strong>
+            <div
+                style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid lightgrey;">
+                <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
+                    <div style="width:200px" *ngFor="let item of ApplicationDataStatus">{{item.MasterDataName}}
+                        <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+                        <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+                    </div>
+                </div>
+            </div>
         </div>
-    </mat-card-content>
-</mat-card>
+        <div fxLayout="column" fxLayoutAlign="center center" class="boxes">
+            <strong>Essential data for <b>School Application</b> setting Statuses</strong>
+            <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid grey;">
+                <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
+                    <div style="width:200px" *ngFor="let item of SchoolDataStatus">{{item.MasterDataName}}
+                        <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+                        <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -40,6 +40,10 @@ const routes: Routes = [
     path: 'employee',
     loadChildren: () => import('./modules/EmployeeManagement/employee-management.module').then(m => m.EmployeeManagementModule)
   },
+  {
+    path: 'leave',
+    loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)
+  },
   { path: '**', component: NotfoundComponent },
   
 

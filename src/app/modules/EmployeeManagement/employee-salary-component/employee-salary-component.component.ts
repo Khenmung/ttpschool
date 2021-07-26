@@ -12,7 +12,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import {
-  atan2, chain, derivative, e, evaluate, log, pi, pow, round, sqrt
+   chain, evaluate, round, sqrt,min,max
 } from 'mathjs';
 
 @Component({
@@ -56,6 +56,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     EmpGradeComponentId: 0,
     EmployeeGradeSalHistoryId: 0,
     ActualFormulaOrAmount: '',
+    SalMonthYear:0,
     OrgId: 0,
     Amount: 0,
     Active: 1
@@ -144,7 +145,6 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     let checkFilterString = "EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId +
       " and EmpGradeComponentId eq " + row.EmpGradeComponentId
 
-
     if (row.EmployeeSalaryComponentId > 0)
       checkFilterString += " and EmployeeSalaryComponentId ne " + row.EmployeeSalaryComponentId;
     checkFilterString += " and " + this.StandardFilter;
@@ -164,6 +164,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         else {
 
           this.EmployeeSalaryComponentData.EmployeeSalaryComponentId = row.EmployeeSalaryComponentId;
+          this.EmployeeSalaryComponentData.SalMonthYear =0;
           this.EmployeeSalaryComponentData.ActualFormulaOrAmount = row.ActualFormulaOrAmount.toString();
           this.EmployeeSalaryComponentData.EmployeeId = row.EmployeeId;
           this.EmployeeSalaryComponentData.Active = row.Active;
@@ -249,7 +250,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       if (formula.includes(f.VariableName))
       formula = formula.replace(f.VariableName, f.VariableAmount);
     })
-    console.log('evaluate',formula);
+    console.log('evaluate',min(100,20,10));
     element["Amount"] = evaluate(formula);//_amount;
     
   }
@@ -333,7 +334,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       "EmpGradeId",
       "SalaryComponentId",
       "FormulaOrAmount",
-      "ComponentTypeId",
+      "CommonComponent",
       "Active"
     ];
 
@@ -344,18 +345,18 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        var _percentorAmount = '';
+        //var _percentorAmount = '';
         this.GradeComponents = data.value.map(d => {
-          var _percentorAmountArray = this.ComponentTypes.filter(p => p.MasterDataId == d.ComponentTypeId)[0].MasterDataName;
-          _percentorAmount = '';
-          if (_percentorAmountArray.toLowerCase().includes("percent"))
-            _percentorAmount = "%";
+          // var _percentorAmountArray = this.ComponentTypes.filter(p => p.MasterDataId == d.CommonComponent)[0].MasterDataName;
+          // _percentorAmount = '';
+          // if (_percentorAmountArray.toLowerCase().includes("percent"))
+          //   _percentorAmount = "%";
 
           return {
             EmpGradeSalaryComponentId: d.EmpGradeSalaryComponentId,
             EmpGradeId: d.EmpGradeId,
             SalaryComponentId: d.SalaryComponentId,
-            DisplayFormulaOrAmount: d.FormulaOrAmount + _percentorAmount,
+            DisplayFormulaOrAmount: d.FormulaOrAmount,
             FormulaOrAmount: d.FormulaOrAmount,
             Grade: this.Grades.filter(g => g.MasterDataId == d.EmpGradeId)[0].MasterDataName,
             SalaryComponent: this.SalaryComponents.filter(g => g.MasterDataId == d.SalaryComponentId)[0].MasterDataName
@@ -396,14 +397,17 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           //var filterthis.GradeComponents.filter(gc => gc.EmpGradeId == data.value[0].EmpGradeId);
-          var fitleredGradeComponentForSelectedEmp = this.GradeComponents.filter(gc => gc.EmpGradeId == data.value[0].EmpGradeId);
+          var commonId = this.Grades.filter(g=>g.MasterDataName == 'Common')[0].MasterDataId;
+          var fitleredGradeComponentForSelectedEmp = this.GradeComponents.filter(gc => gc.EmpGradeId == data.value[0].EmpGradeId 
+                                                || gc.EmpGradeId == commonId);
           //var _basicsalary=0;
           this.BasicSalary = fitleredGradeComponentForSelectedEmp.filter(b => b.SalaryComponent.toLowerCase().includes("basic"))[0].FormulaOrAmount;
 
           fitleredGradeComponentForSelectedEmp.forEach(gc => {
             var percentage = gc.DisplayFormulaOrAmount.includes("%")
 
-            var existing = data.value[0].EmpEmployeeSalaryComponents.filter(e => e.EmpGradeComponentId == gc.EmpGradeSalaryComponentId);
+            var existing = data.value[0].EmpEmployeeSalaryComponents.filter(e => e.EmpGradeComponentId == gc.EmpGradeSalaryComponentId
+                                                      && e.SalMonthYear == 0);
             if (existing.length > 0)
               this.EmployeeSalaryComponentList.push({
                 EmployeeSalaryComponentId: existing[0].EmployeeSalaryComponentId,

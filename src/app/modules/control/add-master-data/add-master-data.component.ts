@@ -305,6 +305,7 @@ export class AddMasterDataComponent implements OnInit {
     }
 
     let mastertoUpdate = {
+      MasterDataId:0,
       MasterDataName: row.Name,
       Description:row.Description,
       ParentId: this.enableTopEdit ? 0 : this.searchForm.get("ParentId").value,
@@ -316,10 +317,13 @@ export class AddMasterDataComponent implements OnInit {
     });
 
     let selectedMasterDataId = 0;
+    mastertoUpdate.MasterDataId = newlyAddedRow[0].Id;
     if (newlyAddedRow[0].Id == 0) {
+      
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
       mastertoUpdate["ApplicationId"] = 0;//this.UserDetails[0]["applicationId"];
+      console.log('data to update',mastertoUpdate);
       this.dataservice.postPatch('MasterDatas', mastertoUpdate, 0, 'post')
         .subscribe((res:any) => {
           if (res != undefined) {

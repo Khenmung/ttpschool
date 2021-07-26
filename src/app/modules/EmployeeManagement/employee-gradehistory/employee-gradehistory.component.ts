@@ -316,7 +316,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
       "EmpGradeId",
       "SalaryComponentId",
       "FormulaOrAmount",
-      "ComponentTypeId"];
+      "CommonComponent"];
     list.PageName = "EmpGradeComponents";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     this.dataservice.get(list)
