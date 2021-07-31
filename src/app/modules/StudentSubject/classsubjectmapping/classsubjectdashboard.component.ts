@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { startWith, map } from 'rxjs/operators';
+import { IStudent } from 'src/app/modules/studentexam/studentactivity/studentactivity.component';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -40,6 +42,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   SelectedBatchId = 0;
   CheckBatchIDForEdit = 1;
   Batches = [];
+  //WorkAccounts = [];
   ClassSubjectList: IClassSubject[] = [];
   dataSource: MatTableDataSource<IClassSubject>;
   allMasterData = [];
@@ -60,13 +63,15 @@ export class ClasssubjectdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    'ClassSubjectId',
+    // 'ClassSubjectId',
     'ClassName',
     'SubjectName',
     'SubjectTypeId',
     'Active',
     'Action'
   ];
+  filteredOptions: any;
+  Students: any;
 
   constructor(
     private fb: FormBuilder,
@@ -79,9 +84,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-
   }
+
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
@@ -91,21 +95,22 @@ export class ClasssubjectdashboardComponent implements OnInit {
     else {
       //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail,this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
-      console.log(this.CheckPermission);
+      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+      //console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
       //this.shareddata.CurrentFeeType.subscribe(r => this.FeeTypes = r);
 
-      if (this.Classes.length == 0 || this.Subjects.length == 0) {
-        this.GetMasterData();
-      }
-      else {
-        this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-        this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-        this.loading = false;
-      }
+      // if (this.Classes.length == 0 || this.Subjects.length == 0) {
+      //   this.GetMasterData();
+      // }
+      // else {
+      //   this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+      //   this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
+      //   this.loading = false;
+      // }
+      this.GetMasterData();
       this.GetSubjectTypes();
     }
   }
@@ -136,11 +141,11 @@ export class ClasssubjectdashboardComponent implements OnInit {
   GetClassSubject() {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
-    this.loading=true;
+    this.loading = true;
     if (this.searchForm.get("searchClassId").value != 0)
       filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
-      this.loading=false;
+      this.loading = false;
       this.alert.error("Please select class/stream", this.optionAutoClose);
       return;
     }
@@ -152,7 +157,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     filterStr += ' and ' + this.StandardFilterWithBatchId;
 
     if (filterStr.length == 0) {
-      this.loading=false;
+      this.loading = false;
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
       return;
     }
@@ -165,7 +170,6 @@ export class ClasssubjectdashboardComponent implements OnInit {
       'SubjectTypeId',
       'Active',
       'SubjectType/SelectHowMany'
-
     ];
 
     list.PageName = "ClassSubjects";
@@ -208,18 +212,19 @@ export class ClasssubjectdashboardComponent implements OnInit {
               Active: existing[0].Active
             });
           }
-          else
+          else {
+          
             this.ClassSubjectList.push({
               ClassSubjectId: 0,
               SubjectId: s.MasterDataId,
               SubjectTypeId: 0,
               SelectHowMany: 0,
-              //SubjectType: st.SubjectTypeName,
               ClassId: this.searchForm.get("searchClassId").value,
               ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
               SubjectName: s.MasterDataName,
               Active: 0
             });
+          }
           //})
         })
         // }
@@ -277,64 +282,64 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    
-      var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
-      if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
-        this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
-        this.loading = false;
-        return;
-      }
 
-      let checkFilterString = "ClassId eq " + row.ClassId +
-        " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
-      // " and Active eq " + row.Active +
+    var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
+    if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
+      this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
+
+    let checkFilterString = "ClassId eq " + row.ClassId +
+      " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
+    // " and Active eq " + row.Active +
 
 
-      if (row.ClassSubjectId > 0)
-        checkFilterString += " and ClassSubjectId ne " + row.ClassSubjectId;
+    if (row.ClassSubjectId > 0)
+      checkFilterString += " and ClassSubjectId ne " + row.ClassSubjectId;
 
-      checkFilterString += ' and ' + this.StandardFilterWithBatchId;
+    checkFilterString += ' and ' + this.StandardFilterWithBatchId;
 
-      let list: List = new List();
-      list.fields = ["ClassSubjectId"];
-      list.PageName = "ClassSubjects";
-      list.filter = [checkFilterString];
+    let list: List = new List();
+    list.fields = ["ClassSubjectId"];
+    list.PageName = "ClassSubjects";
+    list.filter = [checkFilterString];
 
-      this.dataservice.get(list)
-        .subscribe((data: any) => {
-          debugger;
-          if (data.value.length > 0) {
-            this.loading = false;
-            this.alert.error("Record already exists!", this.optionsNoAutoClose);
-            row.Ative = 0;
-            return;
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        if (data.value.length > 0) {
+          this.loading = false;
+          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          row.Ative = 0;
+          return;
+        }
+        else {
+
+          this.ClassSubjectData.Active = row.Active;
+          this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
+          this.ClassSubjectData.ClassId = row.ClassId;
+          this.ClassSubjectData.SubjectId = row.SubjectId;
+          this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
+          this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ClassSubjectData.BatchId = this.SelectedBatchId;
+          if (this.ClassSubjectData.ClassSubjectId == 0) {
+            this.ClassSubjectData["CreatedDate"] = new Date();
+            this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.ClassSubjectData["UpdatedDate"];
+            delete this.ClassSubjectData["UpdatedBy"];
+            this.insert(row);
           }
           else {
-
-            this.ClassSubjectData.Active = row.Active;
-            this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
-            this.ClassSubjectData.ClassId = row.ClassId;
-            this.ClassSubjectData.SubjectId = row.SubjectId;
-            this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
-            this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-            this.ClassSubjectData.BatchId = this.SelectedBatchId;
-            if (this.ClassSubjectData.ClassSubjectId == 0) {
-              this.ClassSubjectData["CreatedDate"] = new Date();
-              this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-              delete this.ClassSubjectData["UpdatedDate"];
-              delete this.ClassSubjectData["UpdatedBy"];
-              this.insert(row);
-            }
-            else {
-              delete this.ClassSubjectData["CreatedDate"];
-              delete this.ClassSubjectData["CreatedBy"];
-              this.ClassSubjectData["UpdatedDate"] = new Date();
-              this.ClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-              this.update();
-            }
+            delete this.ClassSubjectData["CreatedDate"];
+            delete this.ClassSubjectData["CreatedBy"];
+            this.ClassSubjectData["UpdatedDate"] = new Date();
+            this.ClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.update();
           }
-        });
-    
+        }
+      });
+
   }
 
   insert(row) {
@@ -380,6 +385,33 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
       })
   }
+  // GetTeachers() {
+
+  //   var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+  //   var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
+  //   var _workAccountId = 0;
+  //   if (_WorkAccount.length > 0)
+  //     _workAccountId = _WorkAccount[0].MasterDataId;
+
+  //   let list: List = new List();
+
+  //   list.fields = ["EmpEmployee/EmpEmployeeId", "EmpEmployee/FirstName", "EmpEmployee/LastName", "WorkAccountId"];
+  //   list.PageName = "EmpEmployeeGradeSalHistories";
+  //   list.lookupFields = ["EmpEmployee"]
+  //   list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+  //   //list.orderBy = "ParentId";
+
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       data.value.filter(f => {
+  //         this.Teachers.push({
+  //           TeacherId: f.EmpEmployee.EmpEmployeeId,
+  //           TeacherName: f.EmpEmployee.FirstName + " " + f.EmpEmployee.LastName
+  //         })
+  //       })
+
+  //     })
+  // }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -394,7 +426,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-
+        //this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].WORKACCOUNT);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
@@ -434,4 +466,7 @@ export interface IClassSubject {
   SelectHowMany: number;
   Active;
 }
-
+export interface ITeachers {
+  TeacherId: number;
+  TeacherName: string;
+}

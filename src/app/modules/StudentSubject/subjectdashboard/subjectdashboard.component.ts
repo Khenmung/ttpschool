@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ClasssubjectdashboardComponent } from '../classsubjectmapping/classsubjectdashboard/classsubjectdashboard.component';
+import { ClasssubjectdashboardComponent } from '../classsubjectmapping/classsubjectdashboard.component';
 import { StudentSubjectMarkCompComponent } from '../student-subject-mark-comp/student-subject-mark-comp.component';
-import { AssignStudentclassdashboardComponent } from '../AssignStudentClass/studentclassdashboard/Assignstudentclassdashboard.component';
+import { AssignStudentclassdashboardComponent } from '../AssignStudentClass/Assignstudentclassdashboard.component';
 import { studentsubjectdashboardComponent } from '../studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from '../subject-types/subject-types.component';
+import { ClasssubjectteacherdashboardComponent } from '../classsubjectteachermapping/classsubjectteacherdashboard.component';
 
 @Component({
   selector: 'app-subjectdashboard',
@@ -16,7 +17,7 @@ export class SubjectdashboardComponent implements OnInit {
   @ViewChild(ClasssubjectdashboardComponent) classsubject: ClasssubjectdashboardComponent;
   @ViewChild(studentsubjectdashboardComponent) studentsubject: studentsubjectdashboardComponent;
   @ViewChild(AssignStudentclassdashboardComponent) studentclass: AssignStudentclassdashboardComponent;
-
+  @ViewChild(ClasssubjectteacherdashboardComponent) teacherMapping: ClasssubjectteacherdashboardComponent;
 
   selectedIndex = 0;
   constructor() { }
@@ -42,7 +43,7 @@ export class SubjectdashboardComponent implements OnInit {
     this.navigateTab(this.selectedIndex);
   }
   navigateTab(indx) {
-debugger;
+    debugger;
     switch (indx) {
       case 0:
         this.subjecttypes.PageLoad();
@@ -51,12 +52,15 @@ debugger;
         this.classsubject.PageLoad();
         break;
       case 2:
-        this.subjectmarkComponent.PageLoad();
+        this.teacherMapping.PageLoad();
         break;
       case 3:
-        this.studentclass.PageLoad();
+        this.subjectmarkComponent.PageLoad();
         break;
       case 4:
+        this.studentclass.PageLoad();
+        break;
+      case 5:
         this.studentsubject.PageLoad();
         break;
     }

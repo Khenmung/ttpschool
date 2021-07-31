@@ -1,3 +1,13 @@
+mat-form-field{
+    margin-right: 15px;
+}
 .mat-column-ActualFormulaOrAmount{
     flex:0 0 20%;
 }
+.example-month-picker .mat-calendar-period-button {
+    pointer-events: none;
+  }
+  
+  .example-month-picker .mat-calendar-arrow {
+    display: none;
+  }

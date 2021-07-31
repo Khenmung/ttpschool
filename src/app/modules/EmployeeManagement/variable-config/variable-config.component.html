@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field [style.width.pc]="50">
+                <mat-form-field [style.width.pc]="20">
                     <mat-label>Variable</mat-label>
                     <input type="text" matInput formControlName="searchVariableName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -15,6 +15,13 @@
                             {{option.VariableName}}
                         </mat-option>
                     </mat-autocomplete>
+                </mat-form-field>
+                <mat-form-field [style.width.px]="120">
+                    <mat-label>Type</mat-label>
+                    <mat-select formControlName="searchTypeId">
+                        <mat-option *ngFor="let item of ConfigTypes" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetVariableConfigs()">
                     <mat-icon>search</mat-icon>
@@ -36,7 +43,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="350" appearance="outline">
-                            <input matInput maxlength="100" [(value)]="element.VariableDescription" autocomplete="Off"
+                            <input matInput maxlength="100" (blur)="onBlur(element,$event)" [(value)]="element.VariableDescription" autocomplete="Off"
                                 [(ngModel)]="element.VariableDescription">
                         </mat-form-field>
                     </mat-cell>
@@ -95,7 +102,8 @@
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                            (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

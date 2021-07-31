@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -12,13 +12,13 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import {
-   chain, evaluate, round, sqrt,min,max
+  chain, evaluate, round, sqrt, min, max
 } from 'mathjs';
 
 @Component({
   selector: 'app-employee-salary-component',
   templateUrl: './employee-salary-component.component.html',
-  styleUrls: ['./employee-salary-component.component.scss']
+  styleUrls: ['./employee-salary-component.component.scss'],
 })
 export class EmployeeSalaryComponentComponent implements OnInit {
   LoginUserDetail: any[] = [];
@@ -31,21 +31,53 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+
   StandardFilter = '';
   loading = false;
   rowCount = 0;
-  GradeComponents: IGradeComponent[] = [];
+  SalMonthYear = '';
+  CurrentEmployee = [];
+  EmpComponents: IEmpComponent[] = [];
   SelectedBatchId = 0;
-  StoredForUpdate = [];
-  //SubjectMarkComponents = [];
-  //MarkComponents = [];
+  //StoredForUpdate = [];
+  Months = [
+    { month: 'Jan', val: 1 },
+    { month: 'Feb', val: 2 },
+    { month: 'Mar', val: 3 },
+    { month: 'Apr', val: 4 },
+    { month: 'May', val: 5 },
+    { month: 'Jun', val: 6 },
+    { month: 'Jul', val: 7 },
+    { month: 'Aug', val: 8 },
+    { month: 'Sep', val: 9 },
+    { month: 'Oct', val: 10 },
+    { month: 'Nov', val: 11 },
+    { month: 'Dec', val: 12 },
+  ];
+  EmployeeVariables = [];
   VariableConfigs = [];
   BasicSalary = 0;
   Employees = [];
   Grades = [];
+  Departments = [];
+  WorkAccounts = [];
+  Designations = [];
+  JobTitles = [];
+  Genders = [];
+  City = [];
+  Countries = [];
+  States = [];
+  BloodGroups = [];
+  Religions = [];
+  Categories = [];
+  Locations = [];
+  EmploymentStatus = [];
+  EmploymentTypes = [];
+  Natures = [];
+  MaritalStatus = [];
   SalaryComponents = [];
   ComponentTypes = [];
-  Batches = [];
+  VariableTypes = [];
   dataSource: MatTableDataSource<IEmployeeSalaryComponent>;
   allMasterData = [];
   filteredOptions: Observable<IEmployee[]>;
@@ -53,18 +85,16 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   EmployeeSalaryComponentData = {
     EmployeeSalaryComponentId: 0,
     EmployeeId: 0,
-    EmpGradeComponentId: 0,
-    EmployeeGradeSalHistoryId: 0,
+    EmpComponentId: 0,
     ActualFormulaOrAmount: '',
-    SalMonthYear:0,
+    SalMonthYear: 0,
     OrgId: 0,
     Amount: 0,
     Active: 1
   };
   displayedColumns = [
-    "Grade",
     "SalaryComponent",
-    "DisplayFormulaOrAmount",
+    "FormulaOrAmount",
     "ActualFormulaOrAmount",
     "Amount",
     "Active",
@@ -84,9 +114,14 @@ export class EmployeeSalaryComponentComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
+    var thisyear = new Date().getFullYear();
+    console.log('year', thisyear);
     this.searchForm = this.fb.group({
       searchEmployee: [''],
+      searchMonth: [0],
+      searchYear: [thisyear, [Validators.min(2020), Validators.max(2050)]]
     });
+
     this.PageLoad();
     this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
       .pipe(
@@ -113,16 +148,17 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.getVariables();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
 
     }
   }
+
   updateActive(row, value) {
     //if(!row.Action)
-    row.Action = !row.Action;
-    row.Active = row.Active == 1 ? 0 : 1;
+    row.Action = true;
+    row.Active = value.checked ? 1 : 0;
   }
   delete(element) {
     let toupdate = {
@@ -143,7 +179,8 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = "EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId +
-      " and EmpGradeComponentId eq " + row.EmpGradeComponentId
+      " and EmpComponentId eq " + row.EmpComponentId +
+      " and SalMonthYear eq " + row.SalMonthYear
 
     if (row.EmployeeSalaryComponentId > 0)
       checkFilterString += " and EmployeeSalaryComponentId ne " + row.EmployeeSalaryComponentId;
@@ -164,13 +201,12 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         else {
 
           this.EmployeeSalaryComponentData.EmployeeSalaryComponentId = row.EmployeeSalaryComponentId;
-          this.EmployeeSalaryComponentData.SalMonthYear =0;
+          this.EmployeeSalaryComponentData.SalMonthYear = row.SalMonthYear;
           this.EmployeeSalaryComponentData.ActualFormulaOrAmount = row.ActualFormulaOrAmount.toString();
           this.EmployeeSalaryComponentData.EmployeeId = row.EmployeeId;
           this.EmployeeSalaryComponentData.Active = row.Active;
           this.EmployeeSalaryComponentData.Amount = row.Amount.toString();
-          this.EmployeeSalaryComponentData.EmpGradeComponentId = row.EmpGradeComponentId;
-          this.EmployeeSalaryComponentData.EmployeeGradeSalHistoryId = row.EmployeeGradeSalHistoryId;
+          this.EmployeeSalaryComponentData.EmpComponentId = row.EmpComponentId;
           this.EmployeeSalaryComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
           //console.log('data', this.ClassSubjectData);
           if (this.EmployeeSalaryComponentData.EmployeeSalaryComponentId == 0) {
@@ -200,6 +236,8 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         (data: any) => {
           row.EmployeeSalaryComponentId = data.EmployeeSalaryComponentId;
           this.loading = false;
+          row.Action = false;
+          this.VariableConfigs.push({ "VariableName": row.SalaryComponent, "VariableAmount": row.Amount });
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false;
@@ -214,6 +252,10 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action = false;
+          var vartoUpdate = this.VariableConfigs.filter(f => f.VariableName == row.VariableName);
+          if (vartoUpdate.length > 0)
+            vartoUpdate[0].VariableAmount = row.Amount;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false;
@@ -242,42 +284,41 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   onBlur(element, event) {
     debugger;
     //var _colName = event.srcElement.name;
-    var percentage = element["DisplayFormulaOrAmount"].includes("%");
     var formula = element["ActualFormulaOrAmount"];
-    //console.log("event", _colName);
-    //var _amount = percentage ? + this.BasicSalary * (element["ActualFormulaOrAmount"] / 100) : element["ActualFormulaOrAmount"];
+    element["Amount"] = this.resolveFormula(formula);//_amount;
+    element.Action = true;
+  }
+  resolveFormula(formula) {
     this.VariableConfigs.forEach(f => {
       if (formula.includes(f.VariableName))
-      formula = formula.replace(f.VariableName, f.VariableAmount);
+        formula = formula.replace(f.VariableName, f.VariableAmount);
     })
-    console.log('evaluate',min(100,20,10));
-    element["Amount"] = evaluate(formula);//_amount;
-    
-  }
 
+    return evaluate(formula);
+  }
   // UpdateAll() {
   //   this.GradeComponentList.forEach(element => {
   //     this.SaveRow(element);
   //   })
   // }
-  SaveRow(element) {
-    debugger;
-    this.loading = true;
-    this.rowCount = 0;
-    //var columnexist;
-    for (var prop in element) {
+  // SaveRow(element) {
+  //   debugger;
+  //   this.loading = true;
+  //   this.rowCount = 0;
+  //   //var columnexist;
+  //   for (var prop in element) {
 
-      var row: any = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == prop && s.StudentClassSubjectId == element.StudentClassSubjectId);
+  //     var row: any = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == prop && s.StudentClassSubjectId == element.StudentClassSubjectId);
 
-      if (row.length > 0 && prop != 'StudentClassSubject' && prop != 'Action') {
-        row[0].Active = 1;
-        row[0].Marks = row[0][prop];
-        this.UpdateOrSave(row[0]);
-      }
+  //     if (row.length > 0 && prop != 'StudentClassSubject' && prop != 'Action') {
+  //       row[0].Active = 1;
+  //       row[0].Marks = row[0][prop];
+  //       this.UpdateOrSave(row[0]);
+  //     }
 
-    }
+  //   }
 
-  }
+  // }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -294,8 +335,24 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].GRADE);
-        this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].SALARYCOMPONENT);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].DEPARTMENT);
+        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].WORKACCOUNT);
+        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].DESIGNATION);
+        this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].JOBTITLE);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].EMPLOYEEGENDER);
+        this.City = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CITY);
+        this.Countries = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].COUNTRY);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].STATE);
+        this.BloodGroups = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BLOODGROUP);
+        this.Religions = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].RELIGION);
+        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CATEGORY);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
+        this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].EMPLOYMENTSTATUS);
+        this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].EMPLOYMENTTYPE);;
+        this.Natures = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].NATURE);
+        this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].MARITALSTATUS);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].COMPONENTTYPE);
+        this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].CONFIGTYPE);
         //this.loading = false;
         this.GetVariables();
         this.GetEmployees();
@@ -303,141 +360,137 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   }
   GetVariables() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var variabletypeId = this.VariableTypes.filter(f => f.MasterDataName.toLowerCase() == 'payroll')[0].MasterDataId;
     let list: List = new List();
 
     list.fields = [
-      "VariableConfigurationId",
       "VariableName",
-      "VariableAmount",
-      "Active"
+      "VariableAmount"
     ];
 
     list.PageName = "VariableConfigurations";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and VariableTypeId eq " + variabletypeId + orgIdSearchstr];
     //list.orderBy = "ParentId";
     this.VariableConfigs = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.VariableConfigs = [...data.value];
+        data.value.forEach(f => {
+          this.VariableConfigs.push({
+            "VariableName": f.VariableName, "VariableAmount": f.VariableAmount
+          });
+        })
       })
+    console.log('this.VariableConfigs', this.VariableConfigs);
   }
-  GetGradeComponents() {
+  GetEmpComponents() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
     list.fields = [
-      "EmpGradeSalaryComponentId",
-      "EmpGradeId",
-      "SalaryComponentId",
+      "EmpSalaryComponentId",
+      "SalaryComponent",
       "FormulaOrAmount",
-      "CommonComponent",
       "Active"
     ];
 
-    list.PageName = "EmpGradeComponents";
+    list.PageName = "EmpComponents";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
-    this.GradeComponents = [];
+    this.EmpComponents = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //var _percentorAmount = '';
-        this.GradeComponents = data.value.map(d => {
+        this.EmpComponents = data.value.map(d => {
           // var _percentorAmountArray = this.ComponentTypes.filter(p => p.MasterDataId == d.CommonComponent)[0].MasterDataName;
           // _percentorAmount = '';
           // if (_percentorAmountArray.toLowerCase().includes("percent"))
           //   _percentorAmount = "%";
 
           return {
-            EmpGradeSalaryComponentId: d.EmpGradeSalaryComponentId,
-            EmpGradeId: d.EmpGradeId,
-            SalaryComponentId: d.SalaryComponentId,
-            DisplayFormulaOrAmount: d.FormulaOrAmount,
-            FormulaOrAmount: d.FormulaOrAmount,
-            Grade: this.Grades.filter(g => g.MasterDataId == d.EmpGradeId)[0].MasterDataName,
-            SalaryComponent: this.SalaryComponents.filter(g => g.MasterDataId == d.SalaryComponentId)[0].MasterDataName
+            EmpSalaryComponentId: d.EmpSalaryComponentId,
+            SalaryComponent: d.SalaryComponent,
+            FormulaOrAmount: d.FormulaOrAmount
           }
         })
         this.loading = false;
-        //this.dataSource = new MatTableDataSource<IEmployeeSalaryComponent>(this.GradeComponentList);
+        //this.dataSource = new MatemTableDataSource<IEmployeeSalaryComponent>(this.GradeComponentList);
       })
   }
   GetEmployeeSalaryComponents() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.SalMonthYear = this.searchForm.get("searchYear").value + '' + this.searchForm.get("searchMonth").value;
+    var SalMonthYearFilter = ' and SalMonthYear eq ' + this.SalMonthYear
+    console.log("salmonthyear", this.SalMonthYear);
     let list: List = new List();
 
     list.fields = [
-      "EmpEmployeeSalaryComponents/EmployeeSalaryComponentId",
-      "EmpEmployeeSalaryComponents/EmployeeId",
-      "EmpEmployeeSalaryComponents/EmpGradeComponentId",
-      "EmpEmployeeSalaryComponents/EmployeeGradeSalHistoryId",
-      "EmpEmployeeSalaryComponents/ActualFormulaOrAmount",
-      "EmpEmployeeSalaryComponents/Amount",
-      "EmpEmployeeSalaryComponents/Active",
-      "EmpGradeId",
+      "EmployeeSalaryComponentId",
       "EmployeeId",
-      "EmployeeGradeHistoryId"
+      "EmpComponentId",
+      "ActualFormulaOrAmount",
+      "SalMonthYear",
+      "Amount",
+      "Active"
     ];
 
-    list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["EmpEmployeeSalaryComponents"]
-    list.orderBy = "EmployeeGradeHistoryId desc";
-    list.limitTo = 1;
-    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr];
+    list.PageName = "EmpEmployeeSalaryComponents";
+    //list.lookupFields = ["EmpEmployeeSalaryComponents"]
+    //list.orderBy = "EmployeeGradeHistoryId desc";
+    //list.limitTo = 1;
+    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr + SalMonthYearFilter];
     //list.orderBy = "ParentId";
     this.EmployeeSalaryComponentList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          //var filterthis.GradeComponents.filter(gc => gc.EmpGradeId == data.value[0].EmpGradeId);
-          var commonId = this.Grades.filter(g=>g.MasterDataName == 'Common')[0].MasterDataId;
-          var fitleredGradeComponentForSelectedEmp = this.GradeComponents.filter(gc => gc.EmpGradeId == data.value[0].EmpGradeId 
-                                                || gc.EmpGradeId == commonId);
-          //var _basicsalary=0;
-          this.BasicSalary = fitleredGradeComponentForSelectedEmp.filter(b => b.SalaryComponent.toLowerCase().includes("basic"))[0].FormulaOrAmount;
+          var objBasic = this.EmpComponents.filter(b => b.SalaryComponent.toLowerCase().includes("basic"));
+          if (objBasic.length > 0)
+            this.BasicSalary = objBasic[0].FormulaOrAmount;
 
-          fitleredGradeComponentForSelectedEmp.forEach(gc => {
-            var percentage = gc.DisplayFormulaOrAmount.includes("%")
+          this.EmpComponents.forEach(ec => {
 
-            var existing = data.value[0].EmpEmployeeSalaryComponents.filter(e => e.EmpGradeComponentId == gc.EmpGradeSalaryComponentId
-                                                      && e.SalMonthYear == 0);
-            if (existing.length > 0)
+            var existing = data.value.filter(e => e.EmpComponentId == ec.EmpSalaryComponentId
+              && e.SalMonthYear == this.SalMonthYear);
+            if (existing.length > 0) {
               this.EmployeeSalaryComponentList.push({
                 EmployeeSalaryComponentId: existing[0].EmployeeSalaryComponentId,
                 EmployeeId: existing[0].EmployeeId,
-                EmpGradeComponentId: existing[0].EmpGradeComponentId,
-                EmployeeGradeSalHistoryId: existing[0].EmployeeGradeSalHistoryId,
-                SalaryComponent: gc.SalaryComponent,
-                Grade: gc.Grade,
+                EmpComponentId: existing[0].EmpComponentId,
+                SalaryComponent: ec.SalaryComponent,
                 ActualFormulaOrAmount: existing[0].ActualFormulaOrAmount,
-                DisplayFormulaOrAmount: gc.DisplayFormulaOrAmount,
-                FormulaOrAmount: gc.FormulaOrAmount,
+                FormulaOrAmount: ec.FormulaOrAmount,
+                SalMonthYear: this.SalMonthYear,
                 Amount: existing[0].Amount,
-                Active: existing[0].Active
+                Active: existing[0].Active,
+                Action: false
               });
+              this.VariableConfigs.push({
+                "VariableName": ec.SalaryComponent,
+                "VariableAmount": existing[0].Amount
+              })
+            }
             else {
               this.EmployeeSalaryComponentList.push({
                 EmployeeSalaryComponentId: 0,
                 EmployeeId: this.searchForm.get("searchEmployee").value.EmployeeId,
-                EmpGradeComponentId: gc.EmpGradeSalaryComponentId,
-                EmployeeGradeSalHistoryId: data.value[0].EmployeeGradeHistoryId,
-                SalaryComponent: gc.SalaryComponent,
-                Grade: gc.Grade,
-                ActualFormulaOrAmount: gc.FormulaOrAmount,
-                DisplayFormulaOrAmount: gc.DisplayFormulaOrAmount,
-                FormulaOrAmount: gc.FormulaOrAmount,
-                Amount: percentage ? + this.BasicSalary * (gc.FormulaOrAmount / 100) : gc.FormulaOrAmount,
-                Active: 0
+                EmpComponentId: ec.EmpSalaryComponentId,
+                SalaryComponent: ec.SalaryComponent,
+                ActualFormulaOrAmount: ec.FormulaOrAmount,
+                FormulaOrAmount: ec.FormulaOrAmount,
+                SalMonthYear: this.SalMonthYear,
+                Amount: 0,
+                Active: 0,
+                Action: false
               });
             }
           })
+
         }
         else {
           this.alert.info("Employee grade has to be defined", this.optionAutoClose);
@@ -445,6 +498,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         this.loading = false;
         this.dataSource = new MatTableDataSource<IEmployeeSalaryComponent>(this.EmployeeSalaryComponentList);
       })
+    this.GetCurrentEmployee();
   }
   GetEmployees() {
 
@@ -456,7 +510,8 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       "EmpEmployeeId",
       "EmployeeCode",
       "FirstName",
-      "LastName"];
+      "LastName"
+    ];
     list.PageName = "EmpEmployees";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     this.dataservice.get(list)
@@ -468,8 +523,86 @@ export class EmployeeSalaryComponentComponent implements OnInit {
             Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
           }
         })
-        this.GetGradeComponents();
+        this.GetEmpComponents();
       })
+  }
+  GetCurrentEmployee() {
+
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    if (this.searchForm.get("searchEmployee").value.EmployeeId == 0)
+      return;
+
+    let list: List = new List();
+
+    list.fields = ["*,EmpEmployee/*"];
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    list.lookupFields = ["EmpEmployee"];
+    list.filter = ["Active eq 1 and EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //this.CurrentEmployee = 
+        data.value.forEach(item => {
+          this.VariableConfigs.push(
+            { "VariableName": "Grade", "VariableAmount": this.getMasterText(this.Grades, item.EmpGradeId) },
+            { "VariableName": "Department", "VariableAmount": this.getMasterText(this.Departments, item.DepartmentId) },
+            { "VariableName": "CTC", "VariableAmount": item.CTC },
+            { "VariableName": "GradeFromDate", "VariableAmount": item.FromDate },
+            { "VariableName": "GradeToDate", "VariableAmount": item.ToDate },
+            { "VariableName": "ApprovedBy", "VariableAmount": item.ApprovedBy },
+            { "VariableName": "WorkAccount", "VariableAmount": this.getMasterText(this.WorkAccounts, item.WorkAccountId) },
+            { "VariableName": "JobTitle", "VariableAmount": this.getMasterText(this.JobTitles, item.JobTitleId) },
+            { "VariableName": "Designation", "VariableAmount": this.getMasterText(this.Designations, item.DesignationId) },
+            { "VariableName": "EmployeeId", "VariableAmount": item.EmpEmployeeId },
+            { "VariableName": "FirstName", "VariableAmount": item.EmpEmployee.FirstName },
+            { "VariableName": "LastName", "VariableAmount": item.EmpEmployee.LastName },
+            { "VariableName": "FatherName", "VariableAmount": item.EmpEmployee.FatherName },
+            { "VariableName": "MotherName", "VariableAmount": item.EmpEmployee.MotherName },
+            { "VariableName": "Gender", "VariableAmount": this.getMasterText(this.Genders, item.EmpEmployee.Gender) },
+            { "VariableName": "Address", "VariableAmount": item.EmpEmployee.Address },
+            { "VariableName": "DOB", "VariableAmount": item.EmpEmployee.DOB },
+            { "VariableName": "DOJ", "VariableAmount": item.EmpEmployee.DOJ },
+            { "VariableName": "City", "VariableAmount": this.getMasterText(this.City, item.EmpEmployee.CityId) },
+            { "VariableName": "Pincode", "VariableAmount": item.EmpEmployee.pincode },
+            { "VariableName": "State", "VariableAmount": this.getMasterText(this.States, item.EmpEmployee.StateId) },
+            { "VariableName": "Country", "VariableAmount": this.getMasterText(this.Countries, item.EmpEmployee.CountryId) },
+            { "VariableName": "Bloodgroup", "VariableAmount": this.getMasterText(this.BloodGroups, item.EmpEmployee.Bloodgroup) },
+            { "VariableName": "Category", "VariableAmount": this.getMasterText(this.Categories, item.EmpEmployee.CategoryId) },
+            { "VariableName": "BankAccountNo", "VariableAmount": item.EmpEmployee.BankAccountNo },
+            { "VariableName": "IFSCcode", "VariableAmount": item.EmpEmployee.IFSCcode },
+            { "VariableName": "MICRNo", "VariableAmount": item.EmpEmployee.MICRNo },
+            { "VariableName": "AdhaarNo", "VariableAmount": item.EmpEmployee.AdhaarNo },
+            { "VariableName": "Religion", "VariableAmount": this.getMasterText(this.Religions, item.EmpEmployee.ReligionId) },
+            { "VariableName": "ContactNo", "VariableAmount": item.EmpEmployee.ContactNo },
+            { "VariableName": "AlternateContactNo", "VariableAmount": item.EmpEmployee.AlternateContactNo },
+            { "VariableName": "EmailAddress", "VariableAmount": item.EmpEmployee.EmailAddress },
+            { "VariableName": "Location", "VariableAmount": this.getMasterText(this.Locations, item.EmpEmployee.LocationId) },
+            { "VariableName": "EmploymentStatus", "VariableAmount": this.getMasterText(this.EmploymentStatus, item.EmpEmployee.EmploymentStatusId) },
+            { "VariableName": "EmploymentType", "VariableAmount": this.getMasterText(this.EmploymentTypes, item.EmpEmployee.EmploymentTypeId) },
+            { "VariableName": "EmploymentTerm", "VariableAmount": this.getMasterText(this.Natures, item.EmpEmployee.EmploymentTermId) },
+            { "VariableName": "ConfirmationDate", "VariableAmount": item.EmpEmployee.ConfirmationDate },
+            { "VariableName": "NoticePeriodDays", "VariableAmount": item.EmpEmployee.NoticePeriodDays },
+            { "VariableName": "ProbationPeriodDays", "VariableAmount": item.EmpEmployee.ProbationPeriodDays },
+            { "VariableName": "PAN", "VariableAmount": item.EmpEmployee.PAN },
+            { "VariableName": "PassportNo", "VariableAmount": item.EmpEmployee.PassportNo },
+            { "VariableName": "MaritalStatus", "VariableAmount": this.getMasterText(this.MaritalStatus, item.EmpEmployee.MaritalStatusId) },
+            { "VariableName": "MarriedDate", "VariableAmount": item.EmpEmployee.MarriedDate },
+            { "VariableName": "PFAccountNo", "VariableAmount": item.EmpEmployee.PFAccountNo },
+            { "VariableName": "Active", "VariableAmount": item.EmpEmployee.Active },
+            { "VariableName": "EmployeeCode", "VariableAmount": item.EmpEmployee.EmployeeCode }
+          )
+        });
+        console.log("v inside", this.VariableConfigs)
+      })
+  }
+  getMasterText(arr, itemId) {
+    var filtered = arr.filter(f => f.MasterDataId == itemId);
+    if (filtered.length > 0)
+      return filtered[0].MasterDataName;
+    else
+      return '';
+  }
+  getVariables() {
+    this.EmployeeVariables = [...globalconstants.MasterDefinitions[3].VariableName];
   }
   getDropDownData(dropdowntype) {
     let Id = 0;
@@ -491,69 +624,20 @@ export class EmployeeSalaryComponentComponent implements OnInit {
 export interface IEmployeeSalaryComponent {
   EmployeeSalaryComponentId: number;
   EmployeeId: number;
-  EmpGradeComponentId: number;
-  EmployeeGradeSalHistoryId: number;
+  EmpComponentId: number;
   ActualFormulaOrAmount: string;
-  DisplayFormulaOrAmount: string;
   FormulaOrAmount: number;
+  SalMonthYear: string;
   Amount: number;
   Active: number;
   Action: boolean;
 }
-export interface IGradeComponent {
-  EmpGradeSalaryComponentId: number;
-  EmpGradeId: number;
-  SalaryComponentId: number;
-  DisplayFormulaOrAmount: string;
-  FormulaOrAmount: number;
-  Grade: string;
+export interface IEmpComponent {
+  EmpSalaryComponentId: number;
   SalaryComponent: string;
+  FormulaOrAmount: number;
 }
 export interface IEmployee {
   EmployeeId: number;
   Name: string;
-}
-export class StringCalculator {
-  constructor() { }
-  parse(formula) {
-    var errormsg = '';
-    var bracketsOK = this.checkbrackets(formula);
-    if (bracketsOK)
-      errormsg = 'Invalid brackets';
-    else {
-      var innermostBracket = formula.lastIndexOf("(")
-    }
-  }
-
-  checkbrackets(expression) {
-    let stack = [];
-    let current;
-    const matchLookup = {
-      "(": ")",
-      "[": "]",
-      "{": "}",
-    };
-    //9-(5*(7+2))/4
-    let dataqueue = [];
-    //datastack
-
-    for (let i = 0; i < expression.length; i++) {
-      current = expression[i]; //easier than writing it over and over
-
-      if (current === '(' || current === '[' || current === "{") {
-        stack.push(current);
-
-      } else if (current === ')' || current === ']' || current === "}") {
-        const lastBracket = stack.pop();
-
-        if (matchLookup[lastBracket] !== current) { //if the stack is empty, .pop() returns undefined, so this expression is still correct
-
-          return false; //terminate immediately - no need to continue scanning the string
-        }
-      }
-    }
-
-    return stack.length === 0; //any elements mean brackets left open
-  }
-
 }

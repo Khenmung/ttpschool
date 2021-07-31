@@ -22,7 +22,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class VariableConfigComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild('varPaginator') paginator:MatPaginator;
+  @ViewChild('varPaginator') paginator: MatPaginator;
 
   ListName = 'VariableConfigurations';
   LoginUserDetail: any[] = [];
@@ -35,19 +35,19 @@ export class VariableConfigComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  allMasterData =[];
+  allMasterData = [];
   StandardFilter = '';
   loading = false;
   rowCount = 0;
   filteredOptions: Observable<IVariableConfig[]>;
   VariableConfig = [];
-  ConfigTypes =[];
+  ConfigTypes = [];
   VariableConfigList: IVariableConfig[] = [];
   dataSource: MatTableDataSource<IVariableConfig>;
   VariableConfigData = {
     VariableConfigurationId: 0,
     VariableName: '',
-    VariableTypeId:0,
+    VariableTypeId: 0,
     VariableDescription: '',
     VariableAmount: '',
     VariableFormula: '',
@@ -81,6 +81,7 @@ export class VariableConfigComponent implements OnInit {
     debugger;
     this.searchForm = this.fb.group({
       searchVariableName: [''],
+      searchTypeId: [0]
     });
     this.PageLoad();
     this.filteredOptions = this.searchForm.get("searchVariableName").valueChanges
@@ -108,7 +109,7 @@ export class VariableConfigComponent implements OnInit {
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
-//      this.GetVariables();
+      //      this.GetVariables();
     }
   }
   addnew() {
@@ -122,6 +123,7 @@ export class VariableConfigComponent implements OnInit {
       DisplayOrder: 0,
       Action: true,
     }
+    this.VariableConfigList = [];
     this.VariableConfigList.push(newdata);
     this.dataSource = new MatTableDataSource<IVariableConfig>(this.VariableConfigList);
   }
@@ -170,7 +172,7 @@ export class VariableConfigComponent implements OnInit {
 
           this.VariableConfigData.VariableConfigurationId = row.VariableConfigurationId;
           this.VariableConfigData.VariableName = row.VariableName;
-          this.VariableConfigData.VariableAmount =row.VariableAmount.toString();
+          this.VariableConfigData.VariableAmount = row.VariableAmount.toString();
           this.VariableConfigData.Active = row.Active;
           this.VariableConfigData.VariableDescription = row.VariableDescription;
           this.VariableConfigData.VariableTypeId = row.VariableTypeId;
@@ -205,6 +207,7 @@ export class VariableConfigComponent implements OnInit {
         (data: any) => {
           row.VariableConfigurationId = data.VariableConfigurationId;
           this.loading = false;
+          row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false;
@@ -212,10 +215,10 @@ export class VariableConfigComponent implements OnInit {
           // }
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         }),
-        this.loading = false;
-        console.error();
-        ;
-        ;
+      this.loading = false;
+    console.error();
+    ;
+    ;
   }
   update(row) {
     console.log("this.GradeComponentData", this.VariableConfigData);
@@ -223,6 +226,7 @@ export class VariableConfigComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false;
@@ -248,7 +252,7 @@ export class VariableConfigComponent implements OnInit {
   //     }
   //   })
   // }
-  
+
   onBlur(element, event) {
     debugger;
     var _colName = event.srcElement.name;
@@ -257,12 +261,12 @@ export class VariableConfigComponent implements OnInit {
     //var _amount = percentage ? + this.BasicSalary * (element["ActualFormulaOrAmount"] / 100) : element["ActualFormulaOrAmount"];
     this.VariableConfig.forEach(f => {
       if (formula.includes(f.VariableName))
-      formula = formula.replace(f.VariableName, f.VariableAmount);
+        formula = formula.replace(f.VariableName, f.VariableAmount);
     })
     //console.log('evaluate',min(100,20,10));
     element["VariableAmount"] = evaluate(formula);//_amount;
     //console.log("event", event);
-      
+    element.Action = true;
     //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     //row[0][_colName] = element[_colName];
   }
@@ -315,8 +319,19 @@ export class VariableConfigComponent implements OnInit {
   GetVariableConfigs() {
 
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    var filter = this.searchForm.get("searchVariableName").value.VariableConfigurationId > 0 ? " and VariableName eq '" +
-      this.searchForm.get("searchVariableName").value.VariableName + "'" : '';
+
+    var filter = '';
+    if (this.searchForm.get("searchTypeId").value > 0)
+      filter += ' and VariableTypeId eq ' + this.searchForm.get("searchTypeId").value;
+    else {
+      this.alert.info("Please select type", this.optionAutoClose);
+      return;
+    }
+    
+    if (this.searchForm.get("searchVariableName").value.VariableConfigurationId > 0)
+      " and VariableName eq '" + this.searchForm.get("searchVariableName").value.VariableName + "'";
+
+
     let list: List = new List();
 
     list.fields = [
@@ -338,6 +353,9 @@ export class VariableConfigComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        data.value.forEach(f => {
+          f.Action = false;
+        })
         this.VariableConfigList = [...data.value];
         this.dataSource = new MatTableDataSource<IVariableConfig>(this.VariableConfigList);
         this.dataSource.sort = this.sort;

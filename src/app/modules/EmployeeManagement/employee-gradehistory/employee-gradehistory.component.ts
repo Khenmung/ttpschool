@@ -60,7 +60,6 @@ export class EmployeeGradehistoryComponent implements OnInit {
     "JobTitleId": 0,
     "DesignationId": 0,
     "CTC": 0,
-    "Gratuity": 0,
     "FromDate": new Date(),
     "ToDate": new Date(),
     "Active": 0,
@@ -73,7 +72,6 @@ export class EmployeeGradehistoryComponent implements OnInit {
     "JobTitleId",
     "DesignationId",
     "CTC",
-    "Gratuity",
     "FromDate",
     "ToDate",
     "Active",
@@ -187,7 +185,6 @@ export class EmployeeGradehistoryComponent implements OnInit {
           this.EmployeeGradeHistoryData.EmpGradeId = row.EmpGradeId;
           this.EmployeeGradeHistoryData.FromDate = row.FromDate;
           this.EmployeeGradeHistoryData.ToDate = row.ToDate;
-          this.EmployeeGradeHistoryData.Gratuity = row.Gratuity.toString();
           this.EmployeeGradeHistoryData.CTC = row.CTC.toString();
           this.EmployeeGradeHistoryData.JobTitleId = row.JobTitleId;
           if (this.EmployeeGradeHistoryData.EmployeeGradeHistoryId == 0) {
@@ -298,7 +295,6 @@ export class EmployeeGradehistoryComponent implements OnInit {
       "JobTitleId": 0,
       "DesignationId": 0,
       "CTC": 0,
-      "Gratuity": 0,
       "FromDate": new Date(),
       "ToDate": new Date(),
       "Active": 0,
@@ -389,7 +385,6 @@ export class EmployeeGradehistoryComponent implements OnInit {
       "JobTitleId",
       "DesignationId",
       "CTC",
-      "Gratuity",
       "FromDate",
       "ToDate",
       "Active",
@@ -410,7 +405,6 @@ export class EmployeeGradehistoryComponent implements OnInit {
         "JobTitleId": 0,
         "DesignationId": 0,
         "CTC": 0,
-        "Gratuity": 0,
         "FromDate": new Date(),
         "ToDate": new Date(),
         "Active": 0,
@@ -484,8 +478,6 @@ export interface IEmployeeGradeHistory {
   JobTitleId: number;
   DesignationId: number;
   CTC: number;
-  Gratuity: number;
-  //Gross: number;
   FromDate: Date;
   ToDate: Date;
   Active: number;

@@ -10,8 +10,9 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Salary Component</mat-label>
                     <mat-select formControlName="searchComponentId">
-                        <mat-option *ngFor="let item of SalaryComponents" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
+                        <mat-option [value]="0">select</mat-option>
+                        <mat-option *ngFor="let item of SalaryComponents" [value]="item.EmpSalaryComponentId">
+                            {{item.SalaryComponent}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -24,7 +25,10 @@
                     <mat-header-cell *matHeaderCellDef>Components
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-                        {{element.SalaryComponent}}        
+                        <mat-form-field [style.width.px]="350" appearance="outline">
+                            <input (blur)="onBlur(element,$event)" matInput autocomplete="Off" [(value)]="element.SalaryComponent"
+                                [(ngModel)]="element.SalaryComponent">
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FormulaOrAmount">
@@ -32,32 +36,23 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="350" appearance="outline">
-                            <textarea matInput 
-                            [(value)]="element.FormulaOrAmount"
+                            <textarea matInput [(value)]="element.FormulaOrAmount" (blur)="onBlur(element,$event)"
                                 [(ngModel)]="element.FormulaOrAmount"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="LimitAmount">
-                    <mat-header-cell *matHeaderCellDef>Exemption Limit
+                <ng-container matColumnDef="ComponentTypeId">
+                    <mat-header-cell *matHeaderCellDef>Component Type
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-                      <mat-form-field appearance="outline" [style.width.px]="100">
-                        <input matInput autocomplete="Off"
-                        [(value)]="element.LimitAmount"
-                            [(ngModel)]="element.LimitAmount">
-                    </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Deduction">
-                    <mat-header-cell *matHeaderCellDef>Deduction Component
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element ">
-                        <mat-checkbox 
-                        (click)="$event.stopPropagation()" 
-                        (change)="updateDeduction(element,$event)"
-                        [checked]="element.Deduction==1?true:false" >
-                        </mat-checkbox>                        
+                        <mat-form-field appearance="outline">
+                            <mat-label>Component type</mat-label>
+                            <mat-select (selectionChange)="onBlur(element,$event)" [(value)]="element.ComponentTypeId" [(ngModel)]="element.ComponentTypeId">
+                                <mat-option *ngFor="let item of ComponentTypes" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
@@ -75,7 +70,7 @@
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>
@@ -84,6 +79,20 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
         </div>
-
+        <div style="background-color: lightgray;line-height: 30px;padding: 10px;">Below employee detail can be used for
+            calculation</div>
+        <div style="column-count: 4;">
+            <div *ngFor="let item of EmployeeVariables;let i =index">
+                <div>{{ item}}</div>
+            </div>
+        </div>
+        <div style="background-color: lightgray;line-height: 30px;padding: 10px;">Below variable can be used for
+            calculation</div>
+        <div style="column-count: 4;">
+            <div *ngFor="let item of VariableConfigs;">
+                <div>{{item.VariableName}} = {{item.VariableAmount}}</div>
+            </div>
+        </div>
+        
     </div>
 </div>

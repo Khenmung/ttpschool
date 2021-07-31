@@ -9,46 +9,46 @@ export class globalconstants {
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
-    public static Pages =[
+    public static Pages = [
         {
-            'AUTH':{
-                'CHANGEPASSWORD':'change password',
-                'LOGIN':'login',
-                'REGISTER':'register'
+            'AUTH': {
+                'CHANGEPASSWORD': 'change password',
+                'LOGIN': 'login',
+                'REGISTER': 'register'
 
             },
-            "CONTROL":{
-                "BATCHDASHBOARD":'batch dashboard',
-                'APPLICATIONFEATUREPERMISSION':'application feature permission',
-                'ROLEUSER':'role user',
-                'USERS':'users',
-                'MASTERS':'masters'
+            "CONTROL": {
+                "BATCHDASHBOARD": 'batch dashboard',
+                'APPLICATIONFEATUREPERMISSION': 'application feature permission',
+                'ROLEUSER': 'role user',
+                'USERS': 'users',
+                'MASTERS': 'masters'
             },
-            'EXAMS':{
-                'EXAMS':'exams',
+            'EXAMS': {
+                'EXAMS': 'exams',
                 'EXAMSLOT': 'exam slot',
-                'EXAMSTUDENTSUBJECTRESULT':'exam student subject result',
-                'SLOTNCLASSSUBJECT':'slot n class subject',
-                
-            },
-            'SUBJECT':{
-                    'CLASSSUBJECTMAPPING':'class subject mapping',
-                    'SUBJECTMARKCOMPONENT':'subject mark component',
-                    'ASSIGNSTUDENTCLASS':'assign student class',
-                    'STUDENTSUBJECT':'student subject',
-                    'SUBJECTTYPES':'subject types',
-                    'STUDENTPROMOTE':'promote student'
+                'EXAMSTUDENTSUBJECTRESULT': 'exam student subject result',
+                'SLOTNCLASSSUBJECT': 'slot n class subject',
 
             },
-            'FEES':{
-                'CLASSFEE':'class fee',
-                'EXCELDATAUPLOAD':'excel data upload',
-                'SINGLEFEERECEIPT':'single fee receipt',
-                'FEECOLLECTIONREPORT':'fee collection report',
-                'TODAYCOLLECTIONREPORT':'today collection report',
-                'SINGLESTUDENT':'single student',
-                'SINGLESTUDENTCLASS':'single student class',
-                'SINGLESTUDENTDOCUMENT':'single student document',
+            'SUBJECT': {
+                'CLASSSUBJECTMAPPING': 'class subject mapping',
+                'SUBJECTMARKCOMPONENT': 'subject mark component',
+                'ASSIGNSTUDENTCLASS': 'assign student class',
+                'STUDENTSUBJECT': 'student subject',
+                'SUBJECTTYPES': 'subject types',
+                'STUDENTPROMOTE': 'promote student'
+
+            },
+            'FEES': {
+                'CLASSFEE': 'class fee',
+                'EXCELDATAUPLOAD': 'excel data upload',
+                'SINGLEFEERECEIPT': 'single fee receipt',
+                'FEECOLLECTIONREPORT': 'fee collection report',
+                'TODAYCOLLECTIONREPORT': 'today collection report',
+                'SINGLESTUDENT': 'single student',
+                'SINGLESTUDENTCLASS': 'single student class',
+                'SINGLESTUDENTDOCUMENT': 'single student document',
                 'SINGLEFEEPAYMENT': 'single student fee payment'
             }
         }
@@ -63,10 +63,10 @@ export class globalconstants {
                 "ROLE": "role"
             }]
         },
-        
+
         {
             "school": [{
-         
+
                 "GENDER": "gender",
                 "RELIGION": "religion",
                 "CITY": "city",
@@ -98,18 +98,73 @@ export class globalconstants {
             }]
         },
         {
-            "employee":[{
-                "WORKACCOUNT":"work account",
-                "JOBTITLE":"job title",
-                "DESIGNATION":"designation",
-                "SALARYCOMPONENT":"salary component",
-                "GRADE":"grade",
-                "LEAVE":"leave",
-                "LEAVESTATUS":"leave status",
-                "CONFIGTYPE":"Variable config type",
-                "COMPONENTTYPE":"salary component type"
+            "employee": [{
+                "EMPLOYEEGENDER": "employee gender",
+                "EMPLOYMENTTYPE": "employment type",
+                "NATURE": "nature",
+                "MARITALSTATUS": "marital status",
+                "EMPLOYMENTSTATUS": "employment status",
+                "WORKACCOUNT": "work account",
+                "JOBTITLE": "job title",
+                "DESIGNATION": "designation",
+                "SALARYCOMPONENT": "salary component",
+                "GRADE": "grade",
+                "LEAVE": "leave",
+                "LEAVESTATUS": "leave status",
+                "CONFIGTYPE": "Variable config type",
+                "COMPONENTTYPE": "salary component type",
             }]
         },
+        {
+            "VariableName": [
+                "Grade",
+                "Department",
+                "CTC",
+                "GradeFromDate",
+                "GradeToDate",
+                "ApprovedBy",
+                "WorkAccount",
+                "JobTitle",
+                "Designation",
+                "EmployeeId",
+                "FirstName",
+                "LastName",
+                "FatherName",
+                "MotherName",
+                "Gender",
+                "Address",
+                "DOB",
+                "DOJ",
+                "City",
+                "Pincode",
+                "State",
+                "Country",
+                "Bloodgroup",
+                "Category",
+                "BankAccountNo",
+                "IFSCcode",
+                "MICRNo",
+                "AdhaarNo",
+                "Religion",
+                "ContactNo",
+                "AlternateContactNo",
+                "EmailAddress",
+                "Location",
+                "EmploymentStatus",
+                "EmploymentType",
+                "Nature",
+                "ConfirmationDate",
+                "NoticePeriodDays",
+                "ProbationPeriodDays",
+                "PAN",
+                "PassportNo",
+                "MaritalStatus",
+                "MarriedDate",
+                "PFAccountNo",
+                "Active",
+                "EmployeeCode"
+            ]
+        }
     ];
     public static PERMISSIONTYPES = [
         { 'type': 'rwd', 'val': 1 },
@@ -126,7 +181,7 @@ export class globalconstants {
     }
     public static getStandardFilterWithBatchId(tokenService) {
 
-        var _selectedBathId =0;
+        var _selectedBathId = 0;
         var loginUserdetail = tokenService.getUserDetail();
         _selectedBathId = +tokenService.getSelectedBatchId();
         var filterstr = 'BatchId eq ' + _selectedBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"];
@@ -139,12 +194,12 @@ export class globalconstants {
         return filterstr;
 
     }
-    public static getPermission(token,tokenservice:TokenStorageService, feature:any) {
+    public static getPermission(token, tokenservice: TokenStorageService, feature: any) {
         var checkBatchIdNSelectedId = 0;
-        checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();       
+        checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();
         //shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(t => checkBatchIdNSelectedId = t);
         //user is viewing old data
-        if (checkBatchIdNSelectedId == 1 && feature.toLowerCase().indexOf('promote')==-1)
+        if (checkBatchIdNSelectedId == 1 && feature.toLowerCase().indexOf('promote') == -1)
             return 'read';
         else {
             var _permission = token[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
