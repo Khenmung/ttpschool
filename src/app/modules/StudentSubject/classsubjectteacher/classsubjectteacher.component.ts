@@ -1,28 +1,26 @@
-//import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+import { startWith,map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-//import { ClasssubjectComponent } from '../classsubject/classsubject.component';
 
 @Component({
-  selector: 'app-classsubjectteacherdashboard',
-  templateUrl: './classsubjectteacherdashboard.component.html',
-  styleUrls: ['./classsubjectteacherdashboard.component.scss']
+  selector: 'app-classsubjectteacher',
+  templateUrl: './classsubjectteacher.component.html',
+  styleUrls: ['./classsubjectteacher.component.scss']
 })
-export class ClasssubjectteacherdashboardComponent implements OnInit {
+export class ClasssubjectteacherComponent implements OnInit {
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
-  TeacherClassSubjectListName = 'StudTeacherClassMappings';
+  ClassSubjectTeacherListName = 'ClassSubjectTeachers';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
@@ -38,33 +36,30 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   Classes = [];
-  Subjects = [];
-  Sections = [];
+  Subjects =[];
   ClassSubjects = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
-  //CheckBatchIDForEdit = 1;
   Batches = [];
   WorkAccounts = [];
   Teachers = [];
-  ClassSubjectTeacherList: IClassTeacher[] = [];
-  dataSource: MatTableDataSource<IClassTeacher>;
+  ClassSubjectTeacherList: IClassSubjectTeacher[] = [];
+  dataSource: MatTableDataSource<IClassSubjectTeacher>;
   allMasterData = [];
   searchForm: FormGroup;
   //ClassSubjectId = 0;
   ClassSubjectTeacherData = {
-    TeacherClassMappingId: 0,
+    ClassSubjectTeacherId: 0,
     TeacherId: 0,
-    ClassId: 0,
-    SectionId: 0,
+    ClassSubjectId: 0,
     BatchId: 0,
     OrgId: 0,
     Active: 1
   };
+  
   displayedColumns = [
+    "ClassSubject",
     "Teacher",
-    "ClassId",
-    "SectionId",
     "Active",
     "Action",
   ];
@@ -83,7 +78,7 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      searchTeacherId: [0],
+      searchSubjectTeacherId: [0],
       searchClassId: [0]
     });
     //        this.GetTeachers();
@@ -103,7 +98,7 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
 
-    this.filteredOptions = this.searchForm.get("searchTeacherId").valueChanges
+    this.filteredOptions = this.searchForm.get("searchSubjectTeacherId").valueChanges
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.TeacherName),
@@ -113,24 +108,12 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
-      //console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-      //this.shareddata.CurrentFeeType.subscribe(r => this.FeeTypes = r);
-
-      //if (this.Classes.length == 0 || this.Subjects.length == 0) {
       this.GetMasterData();
-      //}
-      //else {
-      // this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-      // this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-      // this.loading = false;
-      //}
-
+     
     }
   }
 
@@ -144,88 +127,83 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
     // }, 50);
   }
 
-  addnew() {
-    var newdata = {
-      TeacherClassMappingId: 0,
-      TeacherId: this.searchForm.get("searchTeacherId").value.TeacherId,
-      Teacher: this.searchForm.get("searchTeacherId").value.TeacherName,
-      ClassId: 0,
-      SectionId: 0,
-      Active: 0,
-      Action: true
-    }
-    this.ClassSubjectTeacherList.push(newdata);
-    this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
-  }
+  // addnew() {
+  //   var newdata = {
+  //     ClassSubjectTeacherId: 0,
+  //     TeacherId: this.searchForm.get("searchTeacherId").value.TeacherId,
+  //     Teacher: this.searchForm.get("searchTeacherId").value.TeacherName,
+  //     ClassSubjectId: 0,
+  //     SectionId: 0,
+  //     Active: 0,
+  //     Action: true
+  //   }
+  //   this.ClassSubjectTeacherList.push(newdata);
+  //   this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
+  // }
 
-  GetClassTeacher() {
+  GetClassSubjectTeacher() {
     let filterStr = this.StandardFilterWithBatchId;//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
-    var _teacherId = this.searchForm.get("searchTeacherId").value.TeacherId;
-    var _classId = this.searchForm.get("searchClassId").value;
+    var _teacherId = this.searchForm.get("searchSubjectTeacherId").value.TeacherId;
+    var _ClassId = this.searchForm.get("searchClassId").value;
     if (_teacherId != undefined)
       filterStr += " and TeacherId eq " + _teacherId;
-    if (_classId != 0)
-      filterStr += " and ClassId eq " + _classId;
-    // else {
-    //   this.loading = false;
-    //   this.alert.error("Please select teacher", this.optionAutoClose);
-    //   return;
-    // }
-    //filterStr += ' and ' + ;
-
+    // if (_ClassId != 0)
+    //   filterStr += " and ClassId eq " + _ClassId;
+   
     let list: List = new List();
     list.fields = [
-      "TeacherClassMappingId",
+      "ClassSubjectTeacherId",
       "TeacherId",
-      "ClassId",
-      "SectionId",
-      "BatchId",
+      "ClassSubjectId",
+      "ClassSubject/ClassId",
       "Active"
     ];
 
-    list.PageName = this.TeacherClassSubjectListName;
+    list.PageName = this.ClassSubjectTeacherListName;
+    list.lookupFields=["ClassSubject"];
     list.filter = [filterStr];
     this.ClassSubjectTeacherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         //  console.log('data.value', data.value);
-        if (_classId != 0 || _teacherId != undefined) {
+        if (_teacherId != undefined) {
           data.value.forEach(element => {
             this.ClassSubjectTeacherList.push({
-              "TeacherClassMappingId": element.TeacherClassMappingId,
+              "ClassSubjectTeacherId": element.ClassSubjectTeacherId,
               "TeacherId": element.TeacherId,
               "Teacher": this.Teachers.filter(f => f.TeacherId == element.TeacherId)[0].TeacherName,
-              "ClassId": element.ClassId,
-              "SectionId": element.SectionId,
+              "ClassSubjectId": element.ClassSubjectId,
+              "ClassSubject": element.SectionId,
               "Active": element.Active,
               "Action": false
             })
           });
         }
         else {
-          this.Teachers.forEach(t => {
-            var existing = data.value.filter(f => f.TeacherId == t.TeacherId);
+          var filterClassSubjects =this.ClassSubjects.filter(f=>f.ClassSubject.ClassId==this.searchForm.get("searchClassId").value);
+          filterClassSubjects.forEach(t => {
+            var existing = data.value.filter(f => f.ClassSubjectId == t.ClassSubjectId);
             if (existing.length > 0) {
               this.ClassSubjectTeacherList.push({
-                "TeacherClassMappingId": existing[0].TeacherClassMappingId,
+                "ClassSubjectTeacherId": existing[0].ClassSubjectTeacherId,
                 "TeacherId": existing[0].TeacherId,
                 "Teacher": t.TeacherName,
-                "ClassId": existing[0].ClassId,
-                "SectionId": existing[0].SectionId,
+                "ClassSubjectId": existing[0].ClassSubjectId,
+                "ClassSubject": this.ClassSubjects.filter(f=>f.ClassSubjectId==existing[0].ClassSubjectId)[0].ClassSubject,
                 "Active": existing[0].Active,
                 "Action": false
               })
             }
             else {
               this.ClassSubjectTeacherList.push({
-                "TeacherClassMappingId": 0,
-                "TeacherId": t.TeacherId,
-                "Teacher": t.TeacherName,
-                "ClassId": 0,
-                "SectionId": 0,
+                "ClassSubjectTeacherId": 0,
+                "TeacherId": 0,
+                "Teacher": '',
+                "ClassSubjectId": t.ClassSubjectId,
+                "ClassSubject": t.ClassSubject,
                 "Active": 0,
                 "Action": false
               })
@@ -233,7 +211,7 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
 
           })
         }
-        this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
+        this.dataSource = new MatTableDataSource<IClassSubjectTeacher>(this.ClassSubjectTeacherList);
         this.loading = false;
         //this.changeDetectorRefs.detectChanges();
       });
@@ -272,18 +250,16 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
     // }
 
     let checkFilterString = "TeacherId eq " + row.TeacherId +
-      " and ClassId eq " + row.ClassId +
-      " and SectionId eq " + row.SectionId +
-      " and Active eq 1 ";
+      " and ClassSubjectId eq " + row.ClassSubjectId;
 
-    if (row.TeacherClassMappingId > 0)
-      checkFilterString += " and TeacherClassMappingId ne " + row.TeacherClassMappingId;
+    if (row.ClassSubjectTeacherId > 0)
+      checkFilterString += " and ClassSubjectTeacherId ne " + row.ClassSubjectTeacherId;
 
     checkFilterString += ' and ' + this.StandardFilterWithBatchId;
 
     let list: List = new List();
-    list.fields = ["TeacherClassMappingId"];
-    list.PageName = this.TeacherClassSubjectListName;
+    list.fields = ["ClassSubjectTeacherId"];
+    list.PageName = this.ClassSubjectTeacherListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -298,13 +274,12 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
         else {
 
           this.ClassSubjectTeacherData.Active = row.Active;
-          this.ClassSubjectTeacherData.TeacherClassMappingId = row.TeacherClassMappingId;
-          this.ClassSubjectTeacherData.ClassId = row.ClassId;
+          this.ClassSubjectTeacherData.ClassSubjectTeacherId = row.ClassSubjectTeacherId;
+          this.ClassSubjectTeacherData.ClassSubjectId = row.ClassSubjectId;
           this.ClassSubjectTeacherData.TeacherId = row.TeacherId;
-          this.ClassSubjectTeacherData.SectionId = row.SectionId;
           this.ClassSubjectTeacherData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ClassSubjectTeacherData.BatchId = this.SelectedBatchId;
-          if (row.TeacherClassMappingId == 0) {
+          if (row.ClassSubjectTeacherId == 0) {
             this.ClassSubjectTeacherData["CreatedDate"] = new Date();
             this.ClassSubjectTeacherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.ClassSubjectTeacherData["UpdatedDate"];
@@ -329,17 +304,17 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
   insert(row) {
 
     debugger;
-    this.dataservice.postPatch(this.TeacherClassSubjectListName, this.ClassSubjectTeacherData, 0, 'post')
+    this.dataservice.postPatch(this.ClassSubjectTeacherListName, this.ClassSubjectTeacherData, 0, 'post')
       .subscribe(
         (data: any) => {
           this.loading = false;
-          row.TeacherClassMappingId = data.TeacherClassMappingId;
+          row.ClassSubjectTeacherId = data.ClassSubjectTeacherId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
   update(row) {
 
-    this.dataservice.postPatch(this.TeacherClassSubjectListName, this.ClassSubjectTeacherData, this.ClassSubjectTeacherData.TeacherClassMappingId, 'patch')
+    this.dataservice.postPatch(this.ClassSubjectTeacherListName, this.ClassSubjectTeacherData, this.ClassSubjectTeacherData.ClassSubjectTeacherId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
@@ -420,17 +395,15 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].WORKACCOUNT);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
 
         this.shareddata.ChangeClasses(this.Classes);
-        this.shareddata.ChangeSubjects(this.Subjects);
         this.shareddata.ChangeBatch(this.Batches);
         this.GetTeachers();
-        //this.GetClassSubject();
+        this.GetClassSubject();
         this.loading = false;
       });
   }
@@ -451,12 +424,12 @@ export class ClasssubjectteacherdashboardComponent implements OnInit {
   }
 
 }
-export interface IClassTeacher {
-  TeacherClassMappingId: number;
+export interface IClassSubjectTeacher {
+  ClassSubjectTeacherId: number;
   TeacherId: number;
-  Teacher: string;
-  ClassId: number;
-  SectionId: number;
+  Teacher:string;
+  ClassSubjectId: number;
+  ClassSubject:string; 
   Active: number;
   Action: boolean
 }

@@ -4,7 +4,8 @@ import { StudentSubjectMarkCompComponent } from '../student-subject-mark-comp/st
 import { AssignStudentclassdashboardComponent } from '../AssignStudentClass/Assignstudentclassdashboard.component';
 import { studentsubjectdashboardComponent } from '../studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from '../subject-types/subject-types.component';
-import { ClasssubjectteacherdashboardComponent } from '../classsubjectteachermapping/classsubjectteacherdashboard.component';
+import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
+import { ClasssubjectteacherComponent } from '../classsubjectteacher/classsubjectteacher.component';
 
 @Component({
   selector: 'app-subjectdashboard',
@@ -17,8 +18,8 @@ export class SubjectdashboardComponent implements OnInit {
   @ViewChild(ClasssubjectdashboardComponent) classsubject: ClasssubjectdashboardComponent;
   @ViewChild(studentsubjectdashboardComponent) studentsubject: studentsubjectdashboardComponent;
   @ViewChild(AssignStudentclassdashboardComponent) studentclass: AssignStudentclassdashboardComponent;
-  @ViewChild(ClasssubjectteacherdashboardComponent) teacherMapping: ClasssubjectteacherdashboardComponent;
-
+  @ViewChild(ClassmasterdashboardComponent) teacherMapping: ClassmasterdashboardComponent;
+  @ViewChild(ClasssubjectteacherComponent) subjectteacherMapping: ClasssubjectteacherComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -55,12 +56,15 @@ export class SubjectdashboardComponent implements OnInit {
         this.teacherMapping.PageLoad();
         break;
       case 3:
-        this.subjectmarkComponent.PageLoad();
+        this.subjectteacherMapping.PageLoad();
         break;
       case 4:
-        this.studentclass.PageLoad();
+        this.subjectmarkComponent.PageLoad();
         break;
       case 5:
+        this.studentclass.PageLoad();
+        break;
+      case 6:
         this.studentsubject.PageLoad();
         break;
     }
