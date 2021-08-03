@@ -44,6 +44,10 @@ const routes: Routes = [
     path: 'leave',
     loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)
   },
+  {
+    path: 'accounting',
+    loadChildren: () => import('./modules/Accounting/accounting.module').then(m => m.AccountingModule)
+  },
   { path: '**', component: NotfoundComponent },
   
 

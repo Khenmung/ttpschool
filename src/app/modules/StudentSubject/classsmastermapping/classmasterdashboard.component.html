@@ -5,6 +5,14 @@
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
+            <mat-form-field>
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="searchClassId">
+                    <mat-option [value]="0">select class</mat-option>
+                    <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field [style.width.pc]="25">
                 <mat-label>Teacher</mat-label>
                 <input type="text" matInput formControlName="searchTeacherId" [matAutocomplete]="auto">
@@ -14,14 +22,6 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <mat-form-field>
-                <mat-label>Class</mat-label>
-                <mat-select formControlName="searchClassId">
-                    <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-
             <button [disabled]="loading" class="mat-raised-button" (click)="GetClassTeacher()">
                 <mat-icon>search</mat-icon>
             </button>
@@ -37,34 +37,50 @@
                     {{element.ClassSubjectId}}                    
                 </mat-cell>
             </ng-container> -->
-            <ng-container matColumnDef="Teacher">
+            <!-- <ng-container matColumnDef="Teacher">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Teacher
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     {{element.Teacher}}
                 </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ClassId">
+            </ng-container> -->
+            <ng-container matColumnDef="ClassName">
                 <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field>
+                    {{element.ClassName}}
+                    <!-- <mat-form-field>
                         <mat-label>Class</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(value)]="element.ClassId" [(ngModel)]="element.ClassId">
                             <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>
                         </mat-select>
-                    </mat-form-field>
+                    </mat-form-field> -->
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="SectionId">
+            <ng-container matColumnDef="Section">
                 <mat-header-cell *matHeaderCellDef> Section </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field>
+                    {{element.Section}}
+                    <!-- <mat-form-field>
                         <mat-label>Section</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(value)]="element.SectionId" [(ngModel)]="element.SectionId">
                             <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>
                         </mat-select>
+                    </mat-form-field> -->
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="TeacherId">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Teacher
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-form-field [style.width.pc]="25">
+                        <mat-label>Teacher</mat-label>
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId">
+                            <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
+                                {{option.TeacherName}}
+                            </mat-option>
+                            </mat-select>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>

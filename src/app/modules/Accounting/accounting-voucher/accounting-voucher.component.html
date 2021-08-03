@@ -1,0 +1,139 @@
+<mat-card>
+    <mat-card-title>Vouchers</mat-card-title>
+    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+    <mat-card-content>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <alert></alert>
+        <!-- <form [formGroup]="searchForm">
+            <mat-form-field>
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="searchClassId">
+                    <mat-option [value]="0">select</mat-option>
+                    <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field [style.width.pc]="25">
+                <mat-label>Teacher</mat-label>
+                <input type="text" matInput formControlName="searchSubjectTeacherId" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option.TeacherName}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubjectTeacher()">
+                <mat-icon>search</mat-icon>
+            </button>            
+        </form> -->
+        <!-- "DocDate",
+        "PostingDate",
+        "Reference",
+        "GLAccountId",
+        "DebitCreditId",
+        "Amount",
+        "ShortText",
+        "Active", -->
+        <mat-table #table [dataSource]="dataSource">
+
+            <ng-container matColumnDef="DocDate">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Doc Date
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-form-field appearance="outline" [style.width.px]="130">
+                        <mat-label>Doc Date</mat-label>
+                        <input [(ngModel)]="element.DocDate" [(value)]="element.DocDate" matInput
+                            [matDatepicker]="DocDate" autocomplete="off">
+                        <mat-datepicker-toggle matSuffix [for]="DocDate"></mat-datepicker-toggle>
+                        <mat-datepicker #DocDate></mat-datepicker>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PostingDate">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Posting Date
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-form-field appearance="outline" [style.width.px]="130">
+                        <mat-label>Posting Date</mat-label>
+                        <input [(ngModel)]="element.PostingDate" [(value)]="element.PostingDate" matInput
+                            [matDatepicker]="PostingDate" autocomplete="off">
+                        <mat-datepicker-toggle matSuffix [for]="PostingDate"></mat-datepicker-toggle>
+                        <mat-datepicker #PostingDate></mat-datepicker>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Reference">
+                <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field  [style.width.px]="130">
+                        <mat-label>Reference</mat-label>
+                        <input matInput autocomplete="Off" [(ngModel)]="element.Reference"
+                            [(value)]="element.Reference">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="GLAccountId">
+                <mat-header-cell *matHeaderCellDef> GL Accounts </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field [style.width.px]="130">
+                        <mat-select [(ngModel)]="element.GLAccountId" [(value)]="element.GLAccountId">
+                            <mat-option [value]="0">GL Accounts</mat-option>
+                            <mat-option *ngFor="let item of GLAccounts" [value]="item.GLAccountId">{{item.GLAccount}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="DebitCreditId">
+                <mat-header-cell *matHeaderCellDef> Debit</mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateDebitCredit(element,$event)"
+                        [checked]="element.DebitCreditId==0?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Amount">
+                <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field [style.width.px]="130">
+                        <input matInput autocomplete="Off" [(ngModel)]="element.Amount" [(value)]="element.Amount">                            
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ShortText">
+                <mat-header-cell *matHeaderCellDef> Short Text </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field [style.width.px]="130">
+                        <input matInput autocomplete="Off" [(ngModel)]="element.ShortText" [(value)]="element.ShortText">                            
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                        [checked]="element.Active==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading" matTooltip="new item" class="mat-raised-button" (click)="addnew()"
+                        fxFlex="10">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [disabled]="loading || CheckPermission=='read' || !element.Action" matTooltip="save"
+                        mat-mini-fab (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                    </button>
+
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+
+    </mat-card-content>
+</mat-card>

@@ -2,15 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { startWith, map } from 'rxjs/operators';
-import { IStudent } from 'src/app/modules/studentexam/studentactivity/studentactivity.component';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-//import { ClasssubjectComponent } from '../classsubject/classsubject.component';
 
 @Component({
   selector: 'app-classsubjectdashboard',
@@ -35,6 +32,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
   CheckPermission = '';
   StandardFilterWithBatchId = '';
   loading = false;
+  WorkAccounts =[];
+  Teachers =[];
   Classes = [];
   Subjects = [];
   SubjectTypes = [];
@@ -67,6 +66,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     'ClassName',
     'SubjectName',
     'SubjectTypeId',
+    'TeacherId',
     'Active',
     'Action'
   ];
@@ -100,16 +100,6 @@ export class ClasssubjectdashboardComponent implements OnInit {
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-      //this.shareddata.CurrentFeeType.subscribe(r => this.FeeTypes = r);
-
-      // if (this.Classes.length == 0 || this.Subjects.length == 0) {
-      //   this.GetMasterData();
-      // }
-      // else {
-      //   this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-      //   this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-      //   this.loading = false;
-      // }
       this.GetMasterData();
       this.GetSubjectTypes();
     }
@@ -168,6 +158,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
       'SubjectId',
       'ClassId',
       'SubjectTypeId',
+      'TeacherId',
       'Active',
       'SubjectType/SelectHowMany'
     ];
@@ -187,6 +178,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
             SubjectId: item.SubjectId,
             SubjectTypeId: item.SubjectTypeId,
             ClassId: item.ClassId,
+            TeacherId:item.TeacherId,
             SelectHowMany: item.SubjectType.SelectHowMany,
             Active: item.Active
           }
@@ -206,10 +198,12 @@ export class ClasssubjectdashboardComponent implements OnInit {
               SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
               SubjectTypeId: existing[0].SubjectTypeId,
               SelectHowMany: existing[0].SelectHowMany,
+              TeacherId:existing[0].TeacherId,
               //SubjectType: this.SubjectTypes.filter(t => t.SubjectTypeId == existing[0].SubjectTypeId)[0].SubjectTypeName,
               ClassName: this.Classes.filter(c => c.MasterDataId == existing[0].ClassId)[0].MasterDataName,
               ClassId: existing[0].ClassId,
-              Active: existing[0].Active
+              Active: existing[0].Active,
+              Action:false
             });
           }
           else {
@@ -222,7 +216,9 @@ export class ClasssubjectdashboardComponent implements OnInit {
               ClassId: this.searchForm.get("searchClassId").value,
               ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
               SubjectName: s.MasterDataName,
-              Active: 0
+              TeacherId:0,
+              Active: 0,
+              Action:false
             });
           }
           //})
@@ -245,6 +241,10 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
       //searchBatchId: this.SelectedBatchId
     });
+  }
+  onBlur(element)
+  {
+    element.Action=true;
   }
   updateActive(row, value) {
 
@@ -277,6 +277,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   updateSelectHowMany(row) {
     debugger;
     row.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == row.SubjectTypeId)[0].SelectHowMany;
+    row.Action =true;
   }
   UpdateOrSave(row) {
 
@@ -385,34 +386,34 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
       })
   }
-  // GetTeachers() {
+  GetTeachers() {
 
-  //   var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-  //   var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
-  //   var _workAccountId = 0;
-  //   if (_WorkAccount.length > 0)
-  //     _workAccountId = _WorkAccount[0].MasterDataId;
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
+    var _workAccountId = 0;
+    if (_WorkAccount.length > 0)
+      _workAccountId = _WorkAccount[0].MasterDataId;
 
-  //   let list: List = new List();
+    let list: List = new List();
 
-  //   list.fields = ["EmpEmployee/EmpEmployeeId", "EmpEmployee/FirstName", "EmpEmployee/LastName", "WorkAccountId"];
-  //   list.PageName = "EmpEmployeeGradeSalHistories";
-  //   list.lookupFields = ["EmpEmployee"]
-  //   list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
-  //   //list.orderBy = "ParentId";
+    list.fields = ["EmpEmployee/EmpEmployeeId", "EmpEmployee/FirstName", "EmpEmployee/LastName", "WorkAccountId"];
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    list.lookupFields = ["EmpEmployee"]
+    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    //list.orderBy = "ParentId";
+    this.Teachers = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.filter(f => {
+          this.Teachers.push({
+            TeacherId: f.EmpEmployee.EmpEmployeeId,
+            TeacherName: f.EmpEmployee.FirstName + " " + f.EmpEmployee.LastName
+          })
+        })
 
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       data.value.filter(f => {
-  //         this.Teachers.push({
-  //           TeacherId: f.EmpEmployee.EmpEmployeeId,
-  //           TeacherName: f.EmpEmployee.FirstName + " " + f.EmpEmployee.LastName
-  //         })
-  //       })
-
-  //     })
-  // }
-  GetMasterData() {
+      })
+  }
+    GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
 
@@ -426,7 +427,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].WORKACCOUNT);
+        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].WORKACCOUNT);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
@@ -436,6 +437,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
         this.shareddata.ChangeSubjects(this.Subjects);
         this.shareddata.ChangeBatch(this.Batches);
         this.GetSubjectTypes();
+        this.GetTeachers();
+
         this.loading = false;
       });
   }
@@ -464,7 +467,9 @@ export interface IClassSubject {
   SubjectName: string;
   SubjectTypeId: number;
   SelectHowMany: number;
+  TeacherId:number,
   Active;
+  Action:false;
 }
 export interface ITeachers {
   TeacherId: number;

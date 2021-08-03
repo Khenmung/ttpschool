@@ -19,7 +19,7 @@ export class SubjectdashboardComponent implements OnInit {
   @ViewChild(studentsubjectdashboardComponent) studentsubject: studentsubjectdashboardComponent;
   @ViewChild(AssignStudentclassdashboardComponent) studentclass: AssignStudentclassdashboardComponent;
   @ViewChild(ClassmasterdashboardComponent) teacherMapping: ClassmasterdashboardComponent;
-  @ViewChild(ClasssubjectteacherComponent) subjectteacherMapping: ClasssubjectteacherComponent;
+ // @ViewChild(ClasssubjectteacherComponent) subjectteacherMapping: ClasssubjectteacherComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -55,16 +55,16 @@ export class SubjectdashboardComponent implements OnInit {
       case 2:
         this.teacherMapping.PageLoad();
         break;
+      // case 3:
+      //   this.subjectteacherMapping.PageLoad();
+      //   break;
       case 3:
-        this.subjectteacherMapping.PageLoad();
-        break;
-      case 4:
         this.subjectmarkComponent.PageLoad();
         break;
-      case 5:
+      case 4:
         this.studentclass.PageLoad();
         break;
-      case 6:
+      case 5:
         this.studentsubject.PageLoad();
         break;
     }

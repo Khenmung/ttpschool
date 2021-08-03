@@ -62,9 +62,9 @@ export class ClassmasterdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    "Teacher",
-    "ClassId",
-    "SectionId",
+    "ClassName",
+    "Section",
+    "TeacherId",
     "Active",
     "Action",
   ];
@@ -144,19 +144,20 @@ export class ClassmasterdashboardComponent implements OnInit {
     // }, 50);
   }
 
-  addnew() {
-    var newdata = {
-      TeacherClassMappingId: 0,
-      TeacherId: this.searchForm.get("searchTeacherId").value.TeacherId,
-      Teacher: this.searchForm.get("searchTeacherId").value.TeacherName,
-      ClassId: 0,
-      SectionId: 0,
-      Active: 0,
-      Action: true
-    }
-    this.ClassSubjectTeacherList.push(newdata);
-    this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
-  }
+  // addnew() {
+  //   var newdata = {
+  //     TeacherClassMappingId: 0,
+  //     TeacherId: 0,
+  //     ClassName: this.Classes.filter(f => f.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
+  //     ClassId: this.searchForm.get("searchClassId").value,
+  //     SectionId: 0,
+  //     Section:''
+  //     Active: 0,
+  //     Action: true
+  //   }
+  //   this.ClassSubjectTeacherList.push(newdata);
+  //   this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
+  // }
 
   GetClassTeacher() {
     let filterStr = this.StandardFilterWithBatchId;//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -164,11 +165,19 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.loading = true;
     var _teacherId = this.searchForm.get("searchTeacherId").value.TeacherId;
     var _classId = this.searchForm.get("searchClassId").value;
+    if(_teacherId==undefined && _classId ==0)
+    {
+      this.loading=false;
+      this.alert.info("Please select atleast one of the options",this.optionAutoClose);
+      return;
+    }
+    
     if (_teacherId != undefined)
       filterStr += " and TeacherId eq " + _teacherId;
     if (_classId != 0)
       filterStr += " and ClassId eq " + _classId;
-    // else {
+    
+      // else {
     //   this.loading = false;
     //   this.alert.error("Please select teacher", this.optionAutoClose);
     //   return;
@@ -192,29 +201,47 @@ export class ClassmasterdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         //  console.log('data.value', data.value);
-        if (_classId != 0 || _teacherId != undefined) {
-          data.value.forEach(element => {
-            this.ClassSubjectTeacherList.push({
-              "TeacherClassMappingId": element.TeacherClassMappingId,
-              "TeacherId": element.TeacherId,
-              "Teacher": this.Teachers.filter(f => f.TeacherId == element.TeacherId)[0].TeacherName,
-              "ClassId": element.ClassId,
-              "SectionId": element.SectionId,
-              "Active": element.Active,
-              "Action": false
-            })
-          });
+        if (_classId != 0 && _teacherId != undefined) {
+          if (data.value.length > 0)
+            data.value.forEach(element => {
+              this.ClassSubjectTeacherList.push({
+                "TeacherClassMappingId": element.TeacherClassMappingId,
+                "TeacherId": element.TeacherId,
+                "ClassId": element.ClassId,
+                "ClassName": this.Classes.filter(f => f.MasterDataId == element.ClassId)[0].MasterDataName,
+                "SectionId": element.SectionId,
+                "Section":this.Sections.filter(f => f.MasterDataId == element.SectionId)[0].MasterDataName,
+                "Active": element.Active,
+                "Action": false
+              })
+            });
+          else
+            this.Sections.forEach(s => {
+              this.ClassSubjectTeacherList.push({
+                "TeacherClassMappingId": 0,
+                "TeacherId": 0,
+                "ClassId": this.searchForm.get("searchClassId").value,
+                "ClassName": this.Classes.filter(f => f.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
+                "SectionId": s.MasterDataId,
+                "Section":s.MasterDataName,
+                "Active": 0,
+                "Action": false
+              })
+            });
+
         }
         else {
-          this.Teachers.forEach(t => {
-            var existing = data.value.filter(f => f.TeacherId == t.TeacherId);
+          //var filteredClasses = ;
+          this.Sections.forEach(s => {
+            var existing = data.value.filter(f => f.SectionId == s.MasterDataId);
             if (existing.length > 0) {
               this.ClassSubjectTeacherList.push({
                 "TeacherClassMappingId": existing[0].TeacherClassMappingId,
                 "TeacherId": existing[0].TeacherId,
-                "Teacher": t.TeacherName,
                 "ClassId": existing[0].ClassId,
+                "ClassName": this.Classes.filter(f => f.MasterDataId == existing[0].ClassId)[0].MasterDataName,
                 "SectionId": existing[0].SectionId,
+                "Section": this.Sections.filter(s=>s.MasterDataId == existing[0].SectionId)[0].MasterDataName ,
                 "Active": existing[0].Active,
                 "Action": false
               })
@@ -222,10 +249,11 @@ export class ClassmasterdashboardComponent implements OnInit {
             else {
               this.ClassSubjectTeacherList.push({
                 "TeacherClassMappingId": 0,
-                "TeacherId": t.TeacherId,
-                "Teacher": t.TeacherName,
-                "ClassId": 0,
-                "SectionId": 0,
+                "TeacherId": 0,
+                "ClassId": this.searchForm.get("searchClassId").value,
+                "ClassName": this.Classes.filter(f => f.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
+                "SectionId": s.MasterDataId,
+                "Section": s.MasterDataName,
                 "Active": 0,
                 "Action": false
               })
@@ -454,9 +482,10 @@ export class ClassmasterdashboardComponent implements OnInit {
 export interface IClassTeacher {
   TeacherClassMappingId: number;
   TeacherId: number;
-  Teacher: string;
+  ClassName: string;
   ClassId: number;
   SectionId: number;
+  Section: string;
   Active: number;
   Action: boolean
 }

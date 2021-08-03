@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { startWith,map } from 'rxjs/operators';
+import { startWith, map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -36,7 +36,7 @@ export class ClasssubjectteacherComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   Classes = [];
-  Subjects =[];
+  Subjects = [];
   ClassSubjects = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
@@ -56,10 +56,10 @@ export class ClasssubjectteacherComponent implements OnInit {
     OrgId: 0,
     Active: 1
   };
-  
+
   displayedColumns = [
     "ClassSubject",
-    "Teacher",
+    "TeacherId",
     "Active",
     "Action",
   ];
@@ -113,7 +113,7 @@ export class ClasssubjectteacherComponent implements OnInit {
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.GetMasterData();
-     
+
     }
   }
 
@@ -151,7 +151,7 @@ export class ClasssubjectteacherComponent implements OnInit {
       filterStr += " and TeacherId eq " + _teacherId;
     // if (_ClassId != 0)
     //   filterStr += " and ClassId eq " + _ClassId;
-   
+
     let list: List = new List();
     list.fields = [
       "ClassSubjectTeacherId",
@@ -162,15 +162,21 @@ export class ClasssubjectteacherComponent implements OnInit {
     ];
 
     list.PageName = this.ClassSubjectTeacherListName;
-    list.lookupFields=["ClassSubject"];
+    list.lookupFields = ["ClassSubject"];
     list.filter = [filterStr];
     this.ClassSubjectTeacherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        var filteredResult;
+        if (_ClassId > 0)
+          filteredResult = data.value.filter(f => f.ClassSubject.ClassId == _ClassId)
+        else
+          filteredResult = [...data.value];
+
         //  console.log('data.value', data.value);
         if (_teacherId != undefined) {
-          data.value.forEach(element => {
+          filteredResult.forEach(element => {
             this.ClassSubjectTeacherList.push({
               "ClassSubjectTeacherId": element.ClassSubjectTeacherId,
               "TeacherId": element.TeacherId,
@@ -183,34 +189,43 @@ export class ClasssubjectteacherComponent implements OnInit {
           });
         }
         else {
-          var filterClassSubjects =this.ClassSubjects.filter(f=>f.ClassSubject.ClassId==this.searchForm.get("searchClassId").value);
-          filterClassSubjects.forEach(t => {
-            var existing = data.value.filter(f => f.ClassSubjectId == t.ClassSubjectId);
-            if (existing.length > 0) {
-              this.ClassSubjectTeacherList.push({
-                "ClassSubjectTeacherId": existing[0].ClassSubjectTeacherId,
-                "TeacherId": existing[0].TeacherId,
-                "Teacher": t.TeacherName,
-                "ClassSubjectId": existing[0].ClassSubjectId,
-                "ClassSubject": this.ClassSubjects.filter(f=>f.ClassSubjectId==existing[0].ClassSubjectId)[0].ClassSubject,
-                "Active": existing[0].Active,
-                "Action": false
-              })
-            }
-            else {
-              this.ClassSubjectTeacherList.push({
-                "ClassSubjectTeacherId": 0,
-                "TeacherId": 0,
-                "Teacher": '',
-                "ClassSubjectId": t.ClassSubjectId,
-                "ClassSubject": t.ClassSubject,
-                "Active": 0,
-                "Action": false
-              })
-            }
+          var filterClassSubjects = this.ClassSubjects.filter(f => f.ClassId == _ClassId);
+          if (filterClassSubjects.length == 0) {
+            this.alert.info("No Subjects defined for this class!", this.optionsNoAutoClose);
 
-          })
+          }
+          else {
+            filterClassSubjects.forEach(t => {
+              var existing = filteredResult.filter(f => f.ClassSubjectId == t.ClassSubjectId);
+              if (existing.length > 0) {
+                this.ClassSubjectTeacherList.push({
+                  "ClassSubjectTeacherId": existing[0].ClassSubjectTeacherId,
+                  "TeacherId": existing[0].TeacherId,
+                  "Teacher": t.TeacherName,
+                  "ClassSubjectId": existing[0].ClassSubjectId,
+                  "ClassSubject": this.ClassSubjects.filter(f => f.ClassSubjectId == existing[0].ClassSubjectId)[0].ClassSubject,
+                  "Active": existing[0].Active,
+                  "Action": false
+                })
+              }
+              else {
+                this.ClassSubjectTeacherList.push({
+                  "ClassSubjectTeacherId": 0,
+                  "TeacherId": 0,
+                  "Teacher": '',
+                  "ClassSubjectId": t.ClassSubjectId,
+                  "ClassSubject": t.ClassSubject,
+                  "Active": 0,
+                  "Action": false
+                })
+              }
+
+            })
+          }
         }
+        if (this.ClassSubjectTeacherList.length == 0)
+          this.alert.info("No record found!", this.optionAutoClose);
+
         this.dataSource = new MatTableDataSource<IClassSubjectTeacher>(this.ClassSubjectTeacherList);
         this.loading = false;
         //this.changeDetectorRefs.detectChanges();
@@ -364,7 +379,7 @@ export class ClasssubjectteacherComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -376,7 +391,8 @@ export class ClasssubjectteacherComponent implements OnInit {
 
           return {
             ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _classname + "-" + _subjectName
+            ClassSubject: _classname + "-" + _subjectName,
+            ClassId: item.ClassId
           }
         })
       })
@@ -427,9 +443,9 @@ export class ClasssubjectteacherComponent implements OnInit {
 export interface IClassSubjectTeacher {
   ClassSubjectTeacherId: number;
   TeacherId: number;
-  Teacher:string;
+  Teacher: string;
   ClassSubjectId: number;
-  ClassSubject:string; 
+  ClassSubject: string;
   Active: number;
   Action: boolean
 }
