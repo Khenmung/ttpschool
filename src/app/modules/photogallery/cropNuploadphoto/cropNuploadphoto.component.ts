@@ -5,7 +5,7 @@ import { DatePipe } from '@angular/common';
 import { FileUploadService } from '../../../shared/upload.service'
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
+//import { ConfirmationService, MessageService } from 'primeng/api';
 import { List } from 'src/app/shared/interface';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { Router } from '@angular/router';
@@ -18,7 +18,7 @@ const MAX_SIZE: number = 1048576;
     selector: 'app-uploadphoto',
     templateUrl: './cropNuploadphoto.component.html',
     styleUrls: ['./cropNuploadphoto.component.scss'],
-    providers: [FileUploadService, ConfirmationService, MessageService]
+  //  providers: [FileUploadService, ConfirmationService, MessageService]
 })
 export class cropNUploadphotoComponent implements OnInit {
     options = {
@@ -32,8 +32,8 @@ export class cropNUploadphotoComponent implements OnInit {
     constructor(private datePipe: DatePipe,
         private uploadService: FileUploadService,
         private alertMessage: AlertService,
-        private confirmationService: ConfirmationService,
-        private messageService: MessageService,
+        // private confirmationService: ConfirmationService,
+        // private messageService: MessageService,
         private naomitsuService: NaomitsuService,
         private route: Router,
         private dialog: DialogService,
@@ -144,19 +144,19 @@ export class cropNUploadphotoComponent implements OnInit {
         });
     }
    
-    confirm(event: Event) {
-        this.confirmationService.confirm({
-            target: event.target,
-            message: 'Album already exists! Do you want to add to existing album?',
-            icon: 'pi pi-exclamation-triangle',
-            accept: () => {
-                this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Added to existing album.' });
-            },
-            reject: () => {
-                this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Image not added' });
-            }
-        });
-    }
+    // confirm(event: Event) {
+    //     this.confirmationService.confirm({
+    //         target: event.target,
+    //         message: 'Album already exists! Do you want to add to existing album?',
+    //         icon: 'pi pi-exclamation-triangle',
+    //         accept: () => {
+    //             this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'Added to existing album.' });
+    //         },
+    //         reject: () => {
+    //             this.messageService.add({ severity: 'error', summary: 'Rejected', detail: 'Image not added' });
+    //         }
+    //     });
+    // }
     getAlbums() {
         let list: List = new List();
         list.fields = ["FileId", "UpdatedFileFolderName"];

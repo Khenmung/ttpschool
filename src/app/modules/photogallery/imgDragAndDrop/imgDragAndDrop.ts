@@ -7,7 +7,7 @@ import { List } from 'src/app/shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { DialogService } from '../../../shared/dialog.service';
 import { Router } from '@angular/router';
-import { Ng2ImgMaxService } from 'ng2-img-max';
+//import { Ng2ImgMaxService } from 'ng2-img-max';
 import { base64ToFile } from 'ngx-image-cropper';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { async } from '@angular/core/testing';
@@ -23,7 +23,7 @@ export class ImgDragAndDropComponent implements OnInit {
     autoClose: false,
     keepAfterRouteChange: true
   };
-  Processing=false;
+  Processing = false;
   Albums: any[];
   title = 'Dropzone';
   files: File[] = [];
@@ -37,7 +37,6 @@ export class ImgDragAndDropComponent implements OnInit {
     private uploadService: FileUploadService,
     private dialog: DialogService,
     private route: Router,
-    private ng2ImgMax: Ng2ImgMaxService,
     private tokenStorage: TokenStorageService
   ) { }
   dragdropForm = new FormGroup({
@@ -67,48 +66,47 @@ export class ImgDragAndDropComponent implements OnInit {
 
     this.formData = new FormData();
     this.errorMessage = '';
-    this.Processing =true;
-    let resultCount=0;
+    this.Processing = true;
+    let resultCount = 0;
     for (var i = 0; i < this.files.length; i++) {
       this.Requestsize += this.files[i].size;
       if (this.Requestsize + this.files[i].size > globalconstants.RequestLimit) {
         this.alert.error('File upload limit is 20mb!', this.options);
-        this.alert.info('File size is : ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb' )
+        this.alert.info('File size is : ' + (this.Requestsize / (1024 * 1024)).toFixed(2) + 'mb')
         break;
       }
-      this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
-        .subscribe(result => {
-          resultCount +=1;
-          this.uploadedImage = result;
-          this.formData.append(result.name, this.uploadedImage, result.name);
-          if(resultCount+1 >= this.files.length)
-          {
-            this.Processing =false;
-          }
-        },
-          error => {
-            this.Processing =false;
-            this.alert.error(error.reason,this.options);
-            //this.files.splice(i,1);
-            this.errorMessage += error.reason;
-            //console.log('error:', error);
-          })
+      // this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
+      //   .subscribe(result => {
+      resultCount += 1;
+      //this.uploadedImage = result;
+      this.formData.append(this.files[i].name, this.files[i], this.files[i].name);
+      if (resultCount + 1 >= this.files.length) {
+        this.Processing = false;
+      }
+      // },
+      //   error => {
+      //     this.Processing =false;
+      //     this.alert.error(error.reason,this.options);
+      //     //this.files.splice(i,1);
+      //     this.errorMessage += error.reason;
+      //     //console.log('error:', error);
+      //   })
     }
-    
+
     console.log('request', this.Requestsize)
   }
   onImageChange(event) {
-    let image = event.target.files[0];
+    //let image = event.target.files[0];
 
-    this.ng2ImgMax.compressImage(image, 0.075).subscribe(
-      result => {
-        this.uploadedImage = new File([result], result.name);
-        //this.getImagePreview(this.uploadedImage);
-      },
-      error => {
-        console.log('😢 Oh no!', error);
-      }
-    );
+    // this.ng2ImgMax.compressImage(image, 0.075).subscribe(
+    //   result => {
+    //     this.uploadedImage = new File([result], result.name);
+    //     //this.getImagePreview(this.uploadedImage);
+    //   },
+    //   error => {
+    //     console.log('😢 Oh no!', error);
+    //   }
+    // );
   }
   Upload() {
     debugger;
@@ -176,7 +174,7 @@ export class ImgDragAndDropComponent implements OnInit {
 
     this.files.splice(this.files.indexOf(event), 1);
     this.Requestsize -= event.size;
-    this.alert.info('File size: ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb', this.options);
+    this.alert.info('File size: ' + (this.Requestsize / (1024 * 1024)).toFixed(2) + 'mb', this.options);
 
   }
 

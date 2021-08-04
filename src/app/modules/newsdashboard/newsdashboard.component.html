@@ -8,7 +8,7 @@
         
        
         <div class="contentbox">            
-            <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let element of AllData">
+            <div class="newsitemblock" [tabindex]="i" fxLayout="row" fxLayoutAlign="start start" *ngFor="let element of AllData;let i=index">
                 <img src="../../../assets/images/icons8-vote.svg" style="margin-top:8px;" />
                 <a class="subtitle" style="text-decoration:none;color:rgb(201, 200, 200)" (click)="view(element)">
                     <div>{{element.Title}}

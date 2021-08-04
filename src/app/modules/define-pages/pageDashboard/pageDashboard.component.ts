@@ -10,14 +10,14 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
-import { ConfirmationService, MessageService } from 'primeng/api';
+//import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'src/app/shared/dialog.service';
 
 @Component({
   selector: 'app-pagecontent',
   templateUrl: './pageDashboard.component.html',
   styleUrls: ['./pageDashboard.component.scss'],
-  providers: [ConfirmationService, MessageService]
+  //providers: [ConfirmationService, MessageService]
 })
 export class pageDashboardComponent implements OnInit {
   options = {
@@ -71,9 +71,9 @@ export class pageDashboardComponent implements OnInit {
             arr.push({ [key]: arrPage[key] })
             return arr;
           });
-
-          arr[1].value.forEach((ele, key) => {
-
+          
+          var filteredNewsnEvent = arr[1].value.filter(f=>f.PageTitle !='News n Events');
+          filteredNewsnEvent.forEach((ele, key) => {
             let pPage = this.ParentPages.filter(page => { return page.PageId === ele.ParentId });
             this.DATA.push({
               PageId: ele.PageId,
@@ -115,7 +115,8 @@ export class pageDashboardComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private alert: AlertService,
     private dialog: DialogService,
-    private messageService: MessageService) {
+    //private messageService: MessageService
+    ) {
     this.list = new List();
   }
   getmax(pageHistory): number {
@@ -157,8 +158,8 @@ export class pageDashboardComponent implements OnInit {
     this.navigate.navigate(['/home/editor']);
   }
   view(pageId, pageTitle, parentId) {
-
-    this.navigate.navigate(['/home/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId, ptitle: pageTitle } });
+    //this.navigate.navigate(['/home/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId, ptitle: pageTitle } });
+    this.navigate.navigate(['/home/page/' + pageId], { queryParams: { pgid: parentId, pid: pageId} });
   }
 
   createNew() {

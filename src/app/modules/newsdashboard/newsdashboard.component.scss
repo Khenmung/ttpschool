@@ -55,9 +55,9 @@ button {
   margin-bottom: 2px;
 }
 
-div.ng-star-inserted {
-  height: 60px;
-}
+// div.ng-star-inserted {
+//   height: 60px;
+// }
 
 .title {
   //  border-top-left-radius   : 5px;
@@ -85,17 +85,28 @@ td.mat-footer-cell {
   border-bottom-width: 0px;
 }
 
-.news img {
-  display: inline-block;
+// .news img {
+//   display: inline-block;
+// }
+.newsitemblock{
+  padding         : 10px;  
+  :hover{
+    cursor          : pointer;
+    background-color: var(--mainTitleColor);
+    color           : white;
+  }
+  :focus{
+    background-color: var(--mainTitleColor);
+  }
 }
-
-div .ng-star-inserted:hover {
-  padding         : 5px;
-  cursor          : pointer;
-  background-color: var(--mainTitleColor);
-  color           : white;
-  //clip-path: polygon(-5% 50%,5% 0%, 100% 0%, 100% 100%, 5% 100%);
-}
+// .newsitemblock
+// div .ng-star-inserted:hover {
+//   padding         : 5px;
+//   cursor          : pointer;
+//   background-color: var(--mainTitleColor);
+//   color           : white;
+//   //clip-path: polygon(-5% 50%,5% 0%, 100% 0%, 100% 100%, 5% 100%);
+// }
 button:hover{
   cursor: pointer;
 }
