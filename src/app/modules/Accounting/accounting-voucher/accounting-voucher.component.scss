@@ -1,4 +1,12 @@
-.mat-column-DocDate,.mat-column-PostingDate,.mat-column-Reference,.mat-column-GLAccountId,.mat-column-ShortText,.mat-column-DebitCreditId,.mat-column-Amount{
+.mat-column-DebitCreditId
+{
+    flex:0 0 50px;
+}
+.mat-column-DocDate,.mat-column-PostingDate,.mat-column-Reference,.mat-column-GLAccountId,
+.mat-column-Amount{
     align-items: center;
     flex:0 0 150px;
+}
+.mat-column-ShortText{
+    flex:0 0 160px;
 }

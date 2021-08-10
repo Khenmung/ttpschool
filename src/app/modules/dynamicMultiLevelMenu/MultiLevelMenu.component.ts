@@ -73,6 +73,7 @@ export class MultiLevelMenuComponent implements OnInit {
     console.log('selectedLabel', event);
   }
   ngOnInit(): void {
+    //console.log('get',``)
     this.loading == true;
     this.config = {
       //customTemplate: true,
@@ -109,9 +110,9 @@ export class MultiLevelMenuComponent implements OnInit {
     let strFilter = '';
 
     if (containAdmin > -1)
-      strFilter = "Active eq 1 and Module eq 2";
+      strFilter = "Active eq 1 and ApplicationId eq 2";
     else
-      strFilter = "Active eq 1 and Module eq 1"
+      strFilter = "Active eq 1 and ApplicationId eq 1"
 
     let list: List = new List();
     list.fields = [

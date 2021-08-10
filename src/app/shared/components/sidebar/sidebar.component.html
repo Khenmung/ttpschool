@@ -1,6 +1,15 @@
-<div>
-<app-MultiLevelMenu></app-MultiLevelMenu>
-</div>
+<mat-sidenav-container class="full-height" autosize="true">
+    <mat-sidenav mode="side" opened (click)="toggleSidebar()">
+        <div mat-menu-item *ngFor="let i of sideMenu" [routerLink]="[i.link]" class="with-icon padded"
+            (click)="$event.stopPropagation()">
+            <mat-icon [matTooltip]="i.label">{{ i.faIcon}}</mat-icon>&nbsp;
+            <span [hidden]="collapse">{{i.label}}</span>
+        </div>
+    </mat-sidenav>
+    <mat-sidenav-content class="padded">
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
 <!-- <div>
     <img height="400px" width="250px" src="../../../../assets/images/headerimg.svg">
 </div> -->

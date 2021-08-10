@@ -10,15 +10,19 @@ import { AppuserdashboardComponent } from './users/appuserdashboard/appuserdashb
 import { ControlhomeComponent } from './controlhome/controlhome.component';
 import { BatchdashboardComponent } from './batchdashboard/batchdashboard.component';
 import { AddMasterDataComponent } from './add-master-data/add-master-data.component';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { ApplicationfeatureComponent } from './applicationfeature/applicationfeature.component';
 
 const routes: Routes = [
   {
-    path: '', component: ControlhomeComponent,
+    path: '', component: HomeComponent,
     children: [
       { path: '', component: settingboardComponent },
-      { path: 'addapproleuser', component: roleuseraddComponent },
+      { path: 'setting', component: settingboardComponent },
+      { path: 'roleuser', component: roleuseraddComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
+      { path: 'appfeature', component: ApplicationfeatureComponent },
       
     ]
   }
@@ -39,5 +43,6 @@ export const settingsComponent = [
   RoleAppPermissiondashboardComponent,
   ControlhomeComponent,
   BatchdashboardComponent,
-  AddMasterDataComponent
+  AddMasterDataComponent,
+  ApplicationfeatureComponent
 ]

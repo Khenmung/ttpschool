@@ -8,7 +8,6 @@ import { SharedataService } from '../../shared/sharedata.service'
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AuthComponents, AuthenticationRoutingModule } from './authentication-routing.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { FeesmanagementModule } from '../FeesManagement/FeesManagement.module';
 
 @NgModule({
   declarations: [AuthComponents],
@@ -22,7 +21,6 @@ import { FeesmanagementModule } from '../FeesManagement/FeesManagement.module';
     FlexLayoutModule,
     SharedhomepageModule,
     AuthenticationRoutingModule,
-    FeesmanagementModule
   ],
   exports: [
     AuthComponents

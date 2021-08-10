@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StudenthomeComponent } from '../StudentSubject/studenthome/studenthome.component';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ExamdashboardComponent } from './examdashboard/examdashboard.component';
+import { ExamhomeComponent } from './examhome/examhome.component';
 import { ExamsComponent } from './exams/exams.component';
 import { ExamslotComponent } from './examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult/examstudentsubjectresult.component';
@@ -9,7 +10,7 @@ import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubjec
 import { StudentactivityComponent } from './studentactivity/studentactivity.component';
 const routes: Routes = [
   {
-    path: '', component: StudenthomeComponent,
+    path: '', component: ExamhomeComponent,
     children: [
       { path: '', component: ExamdashboardComponent },
       { path: 'slot', component: ExamslotComponent },
@@ -32,5 +33,6 @@ export const studentexamComponents = [
   ExamdashboardComponent,
   ExamstudentsubjectresultComponent,
   SlotnclasssubjectComponent,
-  StudentactivityComponent
+  StudentactivityComponent,
+  ExamhomeComponent
 ]

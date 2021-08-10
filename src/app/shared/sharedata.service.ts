@@ -226,15 +226,15 @@ export class SharedataService {
   ChangeClasses(item) {
     this.ClassesSource.next(item);
   }
-  GetApplication() {
-    let list: List = new List();
-    list.fields = ["ApplicationId", "ApplicationName", "Active"];
-    list.PageName = "Applications";
-    list.filter = ["Active eq 1"];
+  // GetApplication() {
+  //   let list: List = new List();
+  //   list.fields = ["ApplicationId", "ApplicationName", "Active"];
+  //   list.PageName = "Applications";
+  //   list.filter = ["Active eq 1"];
     
-    return this.dataservice.get(list);//.toPromise();
+  //   return this.dataservice.get(list);//.toPromise();
       
-    }
+  //   }
   clearData() {
     this.items = [];
     return this.items;

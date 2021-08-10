@@ -9,6 +9,7 @@ import { AutofocusDirective } from './autofocus.directive';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //import { NotfoundComponent } from './components/notfound/notfound.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSidenavModule } from '@angular/material/sidenav';
 //import { EditdropdownComponent } from './editdropdown/editdropdown.component';
 //import { CdkCopyToClipboard } from '@angular/cdk/clipboard';
 //import { HttpClientModule } from '@angular/common/http';
@@ -24,7 +25,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MaterialModule,
     MultiLevelMenuModule,    
     FormsModule,  
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatSidenavModule
   ],
   exports: [
     AreaComponent,

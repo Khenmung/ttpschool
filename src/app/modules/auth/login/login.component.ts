@@ -16,7 +16,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  loading=false;
+  loading = false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -63,9 +63,9 @@ export class LoginComponent implements OnInit {
       this.isLoggedIn = true;
       this.route.navigate(['/']);
     }
-    this.shareddata.GetApplication().subscribe((data: any) => {
-      this.Applications = [...data.value];
-    });
+    // this.shareddata.GetApplication().subscribe((data: any) => {
+    //   this.Applications = [...data.value];
+    // });
   }
 
   onSubmit(): void {
@@ -128,7 +128,7 @@ export class LoginComponent implements OnInit {
   GetMasterData(UserApp) {
     debugger;
     let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
     list.PageName = "MasterDatas";
     list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + UserApp.OrgId + ")"];
     //list.orderBy = "ParentId";
@@ -145,7 +145,7 @@ export class LoginComponent implements OnInit {
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].DEPARTMENT);
         this.shareddata.ChangeDepartment(this.Departments);
 
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].APPLICATION);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].APP);
         this.shareddata.ChangeApplication(this.Applications);
 
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
@@ -199,7 +199,7 @@ export class LoginComponent implements OnInit {
         if (this.RoleFilter.length > 0)
           this.RoleFilter += ')';
         this.GetApplicationFeatures();
-        
+
       });
   }
   getDropDownData(dropdowntype) {
@@ -246,17 +246,27 @@ export class LoginComponent implements OnInit {
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
+    //list.lookupFields=["ApplicationFeature"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
+          var _applicationFeature = '';
+          var _applicationName = '';
+          var _appShortName = '';
 
           this.UserDetail[0]["applicationRolePermission"] = data.value.map(item => {
-            var _applicationFeature = '';
-            if (this.ApplicationFeatures.length > 0 && item.ApplicationFeatureId != null)
-            _applicationFeature = this.ApplicationFeatures.filter(a => a.ApplicationFeatureId == item.ApplicationFeatureId)[0].FeatureName
+            _applicationFeature = '';
+            _applicationName = '';
+            _appShortName = '';
+            if (this.ApplicationFeatures.length > 0 && item.ApplicationFeatureId != null) {
+              var appsfeatures = this.ApplicationFeatures.filter(a => a.ApplicationFeatureId == item.ApplicationFeatureId);
+              _applicationFeature = appsfeatures[0].FeatureName;
+              _applicationName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].Description;
+              _appShortName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].MasterDataName
+            }
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
@@ -267,6 +277,9 @@ export class LoginComponent implements OnInit {
               'roleId': item.RoleId,
               'permissionId': item.PermissionId,
               'permission': _permission,
+              'applicationName': _applicationName,
+              'applicationId': appsfeatures[0].ApplicationId,
+              'appShortName': _appShortName
             }
           })
           this.tokenStorage.saveUserdetail(this.UserDetail);

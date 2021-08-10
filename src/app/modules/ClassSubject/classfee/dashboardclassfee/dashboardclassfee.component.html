@@ -1,0 +1,116 @@
+<div style="margin: 15px;" fxLayout="column" fxLayoutAlign="center center">
+    <strong>Class Fee definition statuses for the current batch.</strong>
+    <mat-divider></mat-divider>
+    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="center space-around">
+        <div *ngFor="let item of ClassStatuses">{{item.class}}
+            <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+            <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+</div>
+<mat-card>
+    <mat-card-title>Class Fees</mat-card-title>
+    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
+    <mat-card-content>
+        <alert></alert>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline">
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="ClassId" #Class>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Fee name</mat-label>
+                <mat-select formControlName="FeeNameId" #FeeName>
+                    <mat-option value="0">---</mat-option>
+                    <mat-option *ngFor="let p of FeeNames" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassFee()">
+                <mat-icon>search</mat-icon>
+            </button><br>
+        </form>
+        <!-- <div class="example-container mat-elevation-z8"> -->
+        <mat-table #table [dataSource]="dataSource" matSort>
+
+            <ng-container matColumnDef="SlNo">
+                <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="FeeNameId" hidden>
+                <mat-header-cell *matHeaderCellDef> FeeID </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FeeNameId}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FeeName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Fee </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FeeName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Amount">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field [style.width.px]="100">
+                        <input matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Amount"
+                            [(value)]="element.Amount" autocomplete="Off">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Recurring">
+                <mat-header-cell *matHeaderCellDef>Recurring </mat-header-cell>
+                <mat-cell style="justify-content: center;" *matCellDef="let element">
+                    <mat-checkbox [(checked)]="element.Recurring" (click)="$event.stopPropagation()"
+                        (change)="updateRecurring(element,$event)">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="YearMonth">
+                <mat-header-cell *matHeaderCellDef>Year Month (YYYYMM)</mat-header-cell>
+                <mat-cell style="justify-content: center;" *matCellDef="let element">
+                    <mat-form-field [style.width.px]="80">
+                        <input matInput type="text" maxlength="6" (blur)="onBlur(element)" [(ngModel)]="element.YearMonth" [(value)]="element.YearMonth">
+                      </mat-form-field>                     
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef>Active </mat-header-cell>
+                <mat-cell style="justify-content: center;" *matCellDef="let element">
+                    <mat-checkbox [(checked)]="element.Active" (click)="$event.stopPropagation()"
+                        (change)="updateActive(element,$event)">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PaymentOrder">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Order </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field [style.width.px]="100">
+                        <input matInput type="number" (blur)='updatePaymentOrder(element,$event)'
+                            [(ngModel)]="element.PaymentOrder" [(value)]="element.PaymentOrder" autocomplete="Off">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button [disabled]="loading || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+        <!-- </div> -->
+    </mat-card-content>
+</mat-card>

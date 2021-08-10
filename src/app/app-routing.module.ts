@@ -17,23 +17,27 @@ const routes: Routes = [
     loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'subject',//runGuardsAndResolvers:'always',
-    loadChildren: () => import('./modules/StudentSubject/student-subject.module').then(m => m.StudentSubjectModule)
-  },
-  {
-    path: 'exam',
-    loadChildren: () => import('./modules/studentexam/studentexam.module').then(m => m.StudentexamModule)
-  },
-  {
-    path: 'control',
+    path: 'admin/:id',
     loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
-    path: 'admin',
-    loadChildren: () => import('./modules/FeesManagement/FeesManagement.module').then(m => m.FeesmanagementModule)
+    path: 'school/:id/subject',//runGuardsAndResolvers:'always',
+    loadChildren: () => import('./modules/ClassSubject/student-subject.module').then(m => m.StudentSubjectModule)
   },
   {
-    path: 'attendance',
+    path: 'school/:id/exam',
+    loadChildren: () => import('./modules/studentexam/studentexam.module').then(m => m.StudentexamModule)
+  },  
+  {
+    path: 'school/:id/reports',
+    loadChildren: () => import('./modules/Reports/reports.module').then(m => m.SchoolReportsModule)
+  },
+  {
+    path: 'school/:id',
+    loadChildren: () => import('./modules/student/student.module').then(m => m.StudentModule)
+  },
+  {
+    path: 'school/:id/attendance',
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
   {

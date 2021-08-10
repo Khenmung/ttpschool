@@ -59,15 +59,14 @@ export class globalconstants {
                 "ORGANIZATION": "organization",
                 "LOCATION": "location",
                 "DEPARTMENT": "department",
-                "APPLICATION": "application",
+                "APP": "application",
                 "ROLE": "role"
             }]
         },
 
         {
             "school": [{
-
-                "GENDER": "gender",
+                "SCHOOLGENDER": "school gender",
                 "RELIGION": "religion",
                 "CITY": "city",
                 "STATE": "state",
@@ -187,6 +186,27 @@ export class globalconstants {
         var filterstr = 'BatchId eq ' + _selectedBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"];
         return filterstr;
 
+    }
+    public static getYears(){
+        var currentYear =  new Date().getFullYear();
+        return [currentYear-1,currentYear,currentYear+1];
+    }
+    public static getMonths(){
+
+        return [
+            { month: 'Jan', val: 1 },
+            { month: 'Feb', val: 2 },
+            { month: 'Mar', val: 3 },
+            { month: 'Apr', val: 4 },
+            { month: 'May', val: 5 },
+            { month: 'Jun', val: 6 },
+            { month: 'Jul', val: 7 },
+            { month: 'Aug', val: 8 },
+            { month: 'Sep', val: 9 },
+            { month: 'Oct', val: 10 },
+            { month: 'Nov', val: 11 },
+            { month: 'Dec', val: 12 },
+          ];
     }
     public static getStandardFilter(userDetail) {
 

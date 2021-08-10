@@ -1,14 +1,17 @@
-<div fxLayout="column" fxLayoutAlign="start">
+<app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
+<app-sidebar></app-sidebar>
+<app-footer></app-footer>
+<!-- <div fxLayout="column" fxLayoutAlign="start">
     <app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
-    <mat-drawer-container class="main" [hasBackdrop]="false">
-        <mat-drawer [opened]="openSideBar" [ngClass]="contentcls">
-            <!-- <app-sidebar></app-sidebar> -->
-            <app-MultiLevelMenu (openLeftMenu)="DownFromMenu($event)"></app-MultiLevelMenu>
+    <mat-drawer-container [hasBackdrop]="false">
+        <mat-drawer [opened]="openSideBar">
+            <app-sidebar></app-sidebar>
+     
         </mat-drawer>
-        <mat-drawer-content fxLayout="row" fxLayoutAlign="space-between start" [ngClass]="contentcls">
+        <mat-drawer-content fxLayout="row" fxLayoutAlign="space-between start">
             <router-outlet></router-outlet>
             <app-right></app-right>
         </mat-drawer-content>
     </mat-drawer-container>
     <app-footer></app-footer>
-</div>
+</div> -->

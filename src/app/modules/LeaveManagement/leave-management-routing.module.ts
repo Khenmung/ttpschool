@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StudenthomeComponent } from '../StudentSubject/studenthome/studenthome.component';
+import { StudenthomeComponent } from '../student/studenthome/studenthome.component';
 import { EmployeeLeaveComponent } from './employee-leave/employee-leave.component';
 import { EmpLeaveComponent } from './emp-leave/emp-leave.component';
 

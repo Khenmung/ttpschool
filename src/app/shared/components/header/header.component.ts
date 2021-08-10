@@ -12,6 +12,8 @@ import { SharedataService } from '../../sharedata.service'
 })
 export class HeaderComponent implements OnInit {
   @Input() deviceXs: boolean;
+  @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
+  
   loading:false;
   searchForm: FormGroup
   NewsNEventPageId = 0;
@@ -19,7 +21,8 @@ export class HeaderComponent implements OnInit {
   toggle: boolean = false;
   userName: string = '';
   loggedIn: boolean;
-  @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
+  loginUserDetail:any;
+
   constructor(
     private aroute: ActivatedRoute,
     private route: Router,
@@ -36,6 +39,7 @@ export class HeaderComponent implements OnInit {
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   Batches = [];
+  PermittedApplications =[];
   ngOnInit(): void {
     //debugger;
 
@@ -43,7 +47,11 @@ export class HeaderComponent implements OnInit {
       searchBatchId: [0]
     })
     this.userName = this.tokenStorage.getUser();
-    //console.log('screensize1',this.deviceXs)
+    this.loginUserDetail = this.tokenStorage.getUserDetail();
+    
+    var apps = this.loginUserDetail[0]["applicationRolePermission"];
+    this.PermittedApplications = apps.filter((v,i,a)=>a.findIndex(t=>(t.applicationId === v.applicationId))===i)
+    //console.log('screensize1',apps)
     if (this.userName === undefined || this.userName === null || this.userName == '')
       this.loggedIn = false;
     else
@@ -91,27 +99,29 @@ export class HeaderComponent implements OnInit {
     this.route.navigate(['/home/about/' + this.NewsNEventPageId]);
   }
   goto(page) {
-    switch (page) {
-      case 'subject':
-        this.route.navigate(['/subject']);
-        break;
-      case 'exam':
-        this.route.navigate(['/exam']);
-        break;
-      case 'control':
-        this.route.navigate(['/control']);
-        break;
-      case 'admin':
-        this.route.navigate(['/admin']);
-        break;
-      default:
-        this.route.navigate(['/admin']);
-    }
+    this.route.navigate(['/' + page]);
+    // switch (page) {
+    //   case 'subject':
+    //     this.route.navigate(['/subject']);
+    //     break;
+    //   case 'exam':
+    //     this.route.navigate(['/exam']);
+    //     break;
+    //   case 'control':
+    //     this.route.navigate(['/control']);
+    //     break;
+    //   case 'admin':
+    //     this.route.navigate(['/admin']);
+    //     break;
+    //   default:
+    //     this.route.navigate(['/admin']);
+    // }
   }
 
   ChangeCurrentBatchId(selected) {
     debugger;
-    if (selected.value == this.CurrentBatchId)
+    //this is for enabling promote student purpose. if selected value is >= current, promote should not be enable 
+    if (selected.value >= this.CurrentBatchId)
       this.tokenStorage.saveCheckEqualBatchId("0");
     else
       this.tokenStorage.saveCheckEqualBatchId("1");

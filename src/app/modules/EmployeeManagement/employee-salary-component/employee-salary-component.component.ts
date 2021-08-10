@@ -40,20 +40,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   EmpComponents: IEmpComponent[] = [];
   SelectedBatchId = 0;
   //StoredForUpdate = [];
-  Months = [
-    { month: 'Jan', val: 1 },
-    { month: 'Feb', val: 2 },
-    { month: 'Mar', val: 3 },
-    { month: 'Apr', val: 4 },
-    { month: 'May', val: 5 },
-    { month: 'Jun', val: 6 },
-    { month: 'Jul', val: 7 },
-    { month: 'Aug', val: 8 },
-    { month: 'Sep', val: 9 },
-    { month: 'Oct', val: 10 },
-    { month: 'Nov', val: 11 },
-    { month: 'Dec', val: 12 },
-  ];
+  Months = [];
   EmployeeVariables = [];
   VariableConfigs = [];
   BasicSalary = 0;
@@ -115,7 +102,6 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     var thisyear = new Date().getFullYear();
-    console.log('year', thisyear);
     this.searchForm = this.fb.group({
       searchEmployee: [''],
       searchMonth: [0],
@@ -123,6 +109,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     });
 
     this.PageLoad();
+    this.Months = globalconstants.getMonths();
     this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
       .pipe(
         startWith(''),

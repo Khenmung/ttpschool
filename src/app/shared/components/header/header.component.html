@@ -39,9 +39,14 @@
         </div>
     </mat-toolbar-row>
     <mat-toolbar-row>hi</mat-toolbar-row>
-    <mat-toolbar-row fxLayout="row" fxLayoutAlign="end center" style="background-color:var(--maincolor1)">
-        <span>
-            <button [disabled]="loading" (click)="goto('control')" class="mat-raised-button">
+    <mat-toolbar-row  style="margin-right: 10px;font-size:medium;color:black" fxLayout="row" 
+                      fxLayoutAlign="end center" 
+                      fxLayoutGap="15px"
+                      style="background-color:lightgray">
+        <!-- <a matButton [routerLink]="['/admin/control']">Admin</a> -->
+        <span *ngFor="let item of PermittedApplications">
+             <a matButton [routerLink]="['/',item.appShortName,item.applicationId]">{{item.applicationName}}</a>
+            <!-- <button [disabled]="loading" (click)="goto('control')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Permissions
             </button>
             <button [disabled]="loading" (click)="goto('subject')" class="mat-raised-button">
@@ -50,9 +55,9 @@
             <button [disabled]="loading" (click)="goto('exam')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Exam
             </button>
-            <button [disabled]="loading" (click)="goto('admin')" class="mat-raised-button">
+            <button [disabled]="loading" (click)="goto('fees')" class="mat-raised-button">
                 <mat-icon>info</mat-icon> Fee Management
-            </button>
+            </button> -->
         </span>
         <span>
             <form [formGroup]="searchForm">

@@ -5,7 +5,8 @@ import { AdminsettingsRoutingModule, settingsComponent } from './control-routing
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { FeesmanagementModule } from '../FeesManagement/FeesManagement.module';
+import { SchoolReportsModule } from '../Reports/reports.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [settingsComponent],
@@ -16,7 +17,8 @@ import { FeesmanagementModule } from '../FeesManagement/FeesManagement.module';
     ReactiveFormsModule,
     AdminsettingsRoutingModule,
     SharedhomepageModule,
-    FeesmanagementModule
+    SchoolReportsModule,
+    FlexLayoutModule
   ],
   exports:[settingsComponent]
 })

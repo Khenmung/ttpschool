@@ -10,7 +10,7 @@
                     <mat-label> Application</mat-label>
                     <mat-select formControlName="ApplicationId" (selectionChange)="FilterFeatures()">
                         <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
-                            {{master.MasterDataName}}
+                            {{master.Description}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

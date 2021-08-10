@@ -175,7 +175,7 @@ title ='';
       ErrorMessage += "User name is required.<br>";
     }
     if (this.AppUsersForm.get("EmailAddress").value == 0) {
-      ErrorMessage += "Please select Section.<br>";
+      ErrorMessage += "Please enter email Id.<br>";
     }
 
     if (ErrorMessage.length > 0) {

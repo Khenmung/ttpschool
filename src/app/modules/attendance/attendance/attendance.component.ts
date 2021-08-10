@@ -150,10 +150,10 @@ export class AttendanceComponent implements OnInit {
       return;
     }
     else {
-      filterStr += " and Section eq " + this.searchForm.get("searchSectionId").value;
+      filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
     }
 
-      filterStr += ' and Batch eq ' + this.SelectedBatchId;
+      filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     
 
     if (filterStr.length == 0) {
@@ -168,7 +168,7 @@ export class AttendanceComponent implements OnInit {
       'Student/Name',
       'RollNo',
       'ClassId',
-      'Section',
+      'SectionId',
       'Active'
     ];
 
@@ -186,7 +186,7 @@ export class AttendanceComponent implements OnInit {
         //  console.log('data.value', data.value);
         this.StudentClassList = studentclass.value.map(item => {
           _class = this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName;
-          _section = this.Sections.filter(c => c.MasterDataId == item.Section)[0].MasterDataName;
+          _section = this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName;
           _ClassRollNoSection = _class + ' - ' + item.RollNo + ' - ' + _section;
           return {
             StudentClassId: item.StudentClassId,
@@ -204,7 +204,7 @@ export class AttendanceComponent implements OnInit {
           this.alert.error("Attendance date cannot be greater than today's date",this.optionAutoClose);
           return;
         }
-        var toDate = new Date(date).setDate(fromDate.getDate()+1);
+        var toDate = date.setDate(fromDate.getDate()+1);
         //console.log('date',this.datepipe.transform(toDate,'dd/MM/yyyy'));
         let list: List = new List();
         list.fields = [
@@ -219,8 +219,8 @@ export class AttendanceComponent implements OnInit {
         list.PageName = "Attendances";
         list.lookupFields = ["StudentClass"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + 
-        " and AttendanceDate gt datetime'" + this.datepipe.transform(fromDate,'yyyy-MM-dd') + "T00:00:00.000Z'"+
-        " and AttendanceDate lt datetime'" + this.datepipe.transform(toDate,'yyyy-MM-dd') + "T00:00:00.000Z'"];
+        " and AttendanceDate ge datetime'" + this.datepipe.transform(fromDate,'yyyy-MM-dd') + "T00:00:00.000Z'"+
+        " and AttendanceDate le datetime'" + this.datepipe.transform(toDate,'yyyy-MM-dd') + "T00:00:00.000Z'"];
        
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
@@ -246,7 +246,7 @@ export class AttendanceComponent implements OnInit {
                   AttendanceDate: new Date(),
                   Remarks: '',
                   StudentClassRollNoSection: sc.StudentClassRollNoSection,
-                  Action: true
+                  Action: false
                 });
             })
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
@@ -284,10 +284,12 @@ export class AttendanceComponent implements OnInit {
         });
   }
   UpdateOrSave(row) {
-
+    var AttendanceDate = new Date(row.AttendanceDate);
+    var toDate = AttendanceDate.setDate(AttendanceDate.getDate() + 1);
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate eq datetime'" + new Date(row.AttendanceDate).toISOString() + "'" +
+      " and AttendanceDate ge datetime'" + this.datepipe.transform(row.AttendanceDate,'yyyy-MM-dd') + "'"+
+      " and AttendanceDate le datetime'" + this.datepipe.transform(toDate,'yyyy-MM-dd') + "' and " +
       this.StandardFilter;
 
     if (row.AttendanceId > 0)

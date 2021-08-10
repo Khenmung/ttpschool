@@ -5,7 +5,7 @@ import { EmployeeManageComponents, EmployeeManagementRoutingModule } from './emp
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
-import { StudentSubjectModule } from '../StudentSubject/student-subject.module';
+import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
@@ -16,7 +16,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     CommonModule,
     EmployeeManagementRoutingModule,
     SharedModule,
-    StudentSubjectModule,
+    //StudentSubjectModule,
     ReactiveFormsModule,
     FormsModule,
     MaterialModule,

@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StudenthomeComponent } from '../StudentSubject/studenthome/studenthome.component';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { AttendanceComponent } from './attendance/attendance.component';
 
 const routes: Routes = [
-  {path:'',component:StudenthomeComponent,
+  {path:'',component:HomeComponent,
   children:[
     {path:'',component:AttendanceComponent}
   ]

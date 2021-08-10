@@ -61,7 +61,7 @@
                 <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field [style.width.px]="150">
-                        <input matInput maxlength="250" (change)="onChangeEvent(element,$event)" [(value)]="element.Remarks"
+                        <input matInput maxlength="250" autocomplete="Off" (change)="onChangeEvent(element,$event)" [(value)]="element.Remarks"
                             [(ngModel)]="element.Remarks">
                     </mat-form-field>
                 </mat-cell>
@@ -73,7 +73,7 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading" [disabled]="!element.Action" matTooltip="view/edit" mat-mini-fab
+                    <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
                         (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
