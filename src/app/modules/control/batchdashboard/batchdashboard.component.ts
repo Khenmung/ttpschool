@@ -46,6 +46,8 @@ export class BatchdashboardComponent implements OnInit {
   BatchData = {
     BatchId: 0,
     BatchName: '',
+    StartDate:Date,
+    EndDate:Date,
     OrgId: 0,
     CurrentBatch: 0,
     Active: 1
@@ -53,6 +55,8 @@ export class BatchdashboardComponent implements OnInit {
   displayedColumns = [
     'BatchName',
     'CurrentBatch',
+    'StartDate',
+    'EndDate',
     'Active',
     'Action'
   ];
@@ -96,6 +100,8 @@ export class BatchdashboardComponent implements OnInit {
     list.fields = [
       'BatchId',
       'BatchName',
+      'StartDate',
+      'EndDate',
       'CurrentBatch',
       'OrgId',
       'Active'
@@ -121,6 +127,8 @@ export class BatchdashboardComponent implements OnInit {
       BatchId: 0,
       BatchName: 'new batch name',
       CurrentBatch: 0,
+      StartDate:new Date(),
+      EndDate:new Date(),
       OrgId: +this.LoginUserDetail[0]["orgId"],
       Active: 1
     }
@@ -131,17 +139,7 @@ export class BatchdashboardComponent implements OnInit {
 
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
-    // let toupdate = {
-    //   //ApplicationId:element.ApplicationId,      
-    //   Active: element.Active == 1 ? 0 : 1
-    // }
-    // this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'patch')
-    //   .subscribe(
-    //     (data: any) => {
-    //       // this.GetApplicationRoles();
-    //       this.alert.success("Data updated successfully.", this.optionAutoClose);
-
-    //     });
+    
   }
   delete(element) {
     let toupdate = {
@@ -194,6 +192,8 @@ export class BatchdashboardComponent implements OnInit {
           this.BatchData.Active = row.Active;
           this.BatchData.BatchId = row.BatchId;
           this.BatchData.BatchName = row.BatchName;
+          this.BatchData.StartDate = row.StartDate;
+          this.BatchData.EndDate = row.EndDate;
           this.BatchData.CurrentBatch = row.CurrentBatch;
           this.BatchData.OrgId = this.LoginUserDetail[0]["orgId"];
           if (this.BatchData.BatchId == 0) {
@@ -244,6 +244,8 @@ export class BatchdashboardComponent implements OnInit {
 export interface IBatches {
   BatchId: number;
   BatchName: string;
+  StartDate:Date;
+  EndDate:Date;
   CurrentBatch: number;
   OrgId: number;
   Active;

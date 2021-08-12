@@ -4,21 +4,37 @@
     <mat-card-content>
         <alert></alert>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
-            <mat-form-field appearance="outline">
+            
+            <mat-form-field appearance="outline" [style.width.px]="350">
+                <mat-label>Student</mat-label>
+                <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                        {{option.Name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Admission Id</mat-label>
                 <input formControlName="StudentId" autocomplete="Off" matInput maxlength="5">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Name</mat-label>
-                <input formControlName="Name" autocomplete="Off" matInput maxlength="50">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
+            </mat-form-field> -->
+            <mat-form-field appearance="outline" [style.width.px]="250">
                 <mat-label>Father</mat-label>
-                <input formControlName="FatherName" autocomplete="Off" matInput maxlength="50">
+                <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
+                <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnF">
+                    <mat-option *ngFor="let option of filteredFathers | async" [value]="option">
+                        {{option.FatherName}}
+                    </mat-option>
+                </mat-autocomplete>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" [style.width.px]="250">
                 <mat-label>Mother</mat-label>
-                <input formControlName="MotherName" autocomplete="Off" matInput maxlength="50">
+                <input type="text" matInput formControlName="MotherName" [matAutocomplete]="autoM">
+                <mat-autocomplete #autoM="matAutocomplete" [displayWith]="displayFnM">
+                    <mat-option *ngFor="let option of filteredMothers | async" [value]="option">
+                        {{option.MotherName}}
+                    </mat-option>
+                </mat-autocomplete>
             </mat-form-field>
             <button [disabled]="loading" class="mat-raised-button" (click)="GetStudent()">
                 <mat-icon>search</mat-icon>

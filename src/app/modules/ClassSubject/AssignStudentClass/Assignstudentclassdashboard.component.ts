@@ -469,7 +469,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SCHOOLGENDER);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
+        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
         this.shareddata.ChangeFeeType(this.FeeTypes);
         this.shareddata.ChangeClasses(this.Classes);

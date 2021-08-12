@@ -44,8 +44,8 @@
                     <mat-label>Fee type</mat-label>
                     <mat-select formControlName="FeeTypeId">
                         <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of FeeType" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
+                        <mat-option *ngFor="let p of FeeType" [value]="p.FeeTypeId">
+                            {{p.FeeTypeName}}
                         </mat-option>
                     </mat-select>
                     <span class="text-danger" *ngIf="f.FeeTypeId.touched && f.FeeTypeId.hasError('required')">Class is

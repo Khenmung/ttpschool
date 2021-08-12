@@ -13,15 +13,15 @@ import { SharedataService } from '../../sharedata.service'
 export class HeaderComponent implements OnInit {
   @Input() deviceXs: boolean;
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
-  
-  loading:false;
+
+  loading: false;
   searchForm: FormGroup
   NewsNEventPageId = 0;
   MenuData = [];
   toggle: boolean = false;
   userName: string = '';
   loggedIn: boolean;
-  loginUserDetail:any;
+  loginUserDetail: any;
 
   constructor(
     private aroute: ActivatedRoute,
@@ -39,18 +39,22 @@ export class HeaderComponent implements OnInit {
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   Batches = [];
-  PermittedApplications =[];
+  PermittedApplications = [];
   ngOnInit(): void {
     //debugger;
-
+    var urlId = 0;
+    this.aroute.paramMap.subscribe(p => {
+      urlId = +p.get('id');
+      this.shareddata.ChangeApplicationId(urlId);
+    })
     this.searchForm = this.fb.group({
       searchBatchId: [0]
     })
     this.userName = this.tokenStorage.getUser();
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-    
+
     var apps = this.loginUserDetail[0]["applicationRolePermission"];
-    this.PermittedApplications = apps.filter((v,i,a)=>a.findIndex(t=>(t.applicationId === v.applicationId))===i)
+    this.PermittedApplications = apps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
     //console.log('screensize1',apps)
     if (this.userName === undefined || this.userName === null || this.userName == '')
       this.loggedIn = false;
@@ -120,6 +124,11 @@ export class HeaderComponent implements OnInit {
 
   ChangeCurrentBatchId(selected) {
     debugger;
+    var _SelectedBatch = this.Batches.filter(b=>b.BatchId==selected)
+    if(_SelectedBatch.length>0)
+    {
+      this.shareddata.ChangeSelectedBatchStartEnd({'StartDate':_SelectedBatch[0].StartDate,'EndDate':_SelectedBatch[0].EndDate});
+    }
     //this is for enabling promote student purpose. if selected value is >= current, promote should not be enable 
     if (selected.value >= this.CurrentBatchId)
       this.tokenStorage.saveCheckEqualBatchId("0");
@@ -155,22 +164,37 @@ export class HeaderComponent implements OnInit {
   }
   getBatches() {
     var list = new List();
-    list.fields = ["BatchId", "BatchName", "CurrentBatch", "Active"];
+    list.fields = [
+      "BatchId",
+      "BatchName",
+      "StartDate",
+      "EndDate",
+      "CurrentBatch",
+      "Active"];
     list.PageName = "Batches";
     list.filter = ["Active eq 1"];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
       this.shareddata.ChangeBatch(this.Batches);
-      this.CurrentBatchId = this.Batches.filter(b => b.CurrentBatch == 1)[0].BatchId;
+      var _currentBatchStartEnd = {};
+      var _currentBatch = this.Batches.filter(b => b.CurrentBatch == 1);
+      if (_currentBatch.length > 0) {
+        _currentBatchStartEnd = {
+          'StartDate': _currentBatch[0].StartDate,
+          'EndDate': _currentBatch[0].EndDate,
+        };
+        this.shareddata.ChangeCurrentBatchStartEnd(_currentBatchStartEnd);
+        this.shareddata.ChangeSelectedBatchStartEnd(_currentBatchStartEnd);
+        this.CurrentBatchId = _currentBatch[0].BatchId;
+      }
       if (this.SelectedBatchId == 0) {
         this.tokenStorage.saveSelectedBatchId(this.CurrentBatchId.toString())
         //this.shareddata.ChangeSelectedBatchId(this.CurrentBatchId);
         this.SelectedBatchId = this.CurrentBatchId;
       }
-
+      
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
-
       this.generateBatchIds(this.CurrentBatchId);
     });
   }

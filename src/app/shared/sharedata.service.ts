@@ -50,6 +50,13 @@ export class SharedataService {
   private SelectedNCurrentBatchIdEqualSource = new BehaviorSubject(0);
   private PreviousBatchIdOfSelecteBatchIdSource = new BehaviorSubject(0);
   private NextBatchIdOfSelecteBatchIdSource = new BehaviorSubject(0);  
+  private ApplicationIdSource = new BehaviorSubject(0);  
+  private SelectedBatchStartEndSource = new BehaviorSubject(this.items);  
+  private CurrentBatchStartEndSource = new BehaviorSubject(this.items);  
+
+  CurrentCurrentBatchStartEndSource = this.CurrentBatchStartEndSource.asObservable(); 
+  CurrentSelectedBatchStartEnd = this.SelectedBatchStartEndSource.asObservable(); 
+  CurrentApplicationId = this.ApplicationIdSource.asObservable(); 
 
   CurrentNextBatchIdOfSelecteBatchId = this.NextBatchIdOfSelecteBatchIdSource.asObservable(); 
   CurrentPreviousBatchIdOfSelecteBatchId = this.PreviousBatchIdOfSelecteBatchIdSource.asObservable(); 
@@ -99,6 +106,15 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangeCurrentBatchStartEnd(item){
+    this.CurrentBatchStartEndSource.next(item);
+  }
+  ChangeSelectedBatchStartEnd(item){
+    this.SelectedBatchStartEndSource.next(item);
+  }
+  ChangeApplicationId(item){
+    this.ApplicationIdSource.next(item);
   }
   ChangeNextBatchIdOfSelecteBatchId(item){
     this.NextBatchIdOfSelecteBatchIdSource.next(item);

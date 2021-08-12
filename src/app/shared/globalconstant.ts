@@ -76,7 +76,6 @@ export class globalconstants {
                 "PRIMARYCONTACT": "primary contact",
                 "CLASS": "class",
                 "BATCH": "batch",
-                "FEETYPE": "fee type",
                 "SECTION": "section",
                 "CLASSGROUP": "class group",
                 "SUBJECTMARKCOMPONENT": "subject mark component",

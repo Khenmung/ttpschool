@@ -1,0 +1,76 @@
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>School Fee Types</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm">
+                <mat-form-field [style.width.pc]="25">
+                    <mat-label>Fee type</mat-label>
+                    <input matInput formControlName="searchFeeTypeName" autocomplete="Off">                        
+                </mat-form-field>
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetFeeTypes()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </form>
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="FeeTypeName">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Fee type
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field>
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" maxlength="250"
+                            [(value)]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Description">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Description
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field>
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" maxlength="250"
+                            [(value)]="element.Description" [(ngModel)]="element.Description">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Formula">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Discount Formula
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field [style.width.pc]="50">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" maxlength="250"
+                            [(value)]="element.Formula" [(ngModel)]="element.Formula">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef>Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

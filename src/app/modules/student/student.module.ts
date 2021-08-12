@@ -8,7 +8,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-
 @NgModule({
   declarations: [StudentComponents],
   imports: [

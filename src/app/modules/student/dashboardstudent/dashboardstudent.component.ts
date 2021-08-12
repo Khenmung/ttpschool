@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TableUtil } from '../../TableUtil';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -12,6 +12,8 @@ import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
 import * as XLSX from 'xlsx';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboardstudent',
@@ -27,13 +29,16 @@ export class DashboardstudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  ApplicationId = 0;
   filterOrgIdNBatchId = '';
   filterOrgIdOnly = '';
+  filterBatchIdNOrgId = '';
   ELEMENT_DATA: IStudent[];
   dataSource: MatTableDataSource<IStudent>;
   displayedColumns = ['StudentId', 'Name', 'ClassName', 'FatherName', 'MotherName',
     'Active', 'ReasonForLeaving', 'Action'];
   allMasterData = [];
+  Students = [];
   Genders = [];
   Classes = [];
   Batches = [];
@@ -55,8 +60,12 @@ export class DashboardstudentComponent implements OnInit {
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
   studentSearchForm: FormGroup;
+  filteredStudents: Observable<IStudent[]>;
+  filteredFathers: Observable<IStudent[]>;
+  filteredMothers: Observable<IStudent[]>;
   LoginUserDetail = [];
   constructor(private dataservice: NaomitsuService,
+    private ar: ActivatedRoute,
     private route: Router,
     private alert: AlertService,
     private fb: FormBuilder,
@@ -64,23 +73,72 @@ export class DashboardstudentComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
+    debugger;
+
+    //this.urlId = +this.ar.snapshot.paramMap.get('id');
     this.LoginUserDetail = this.token.getUserDetail();
+    this.shareddata.CurrentApplicationId.subscribe(a => this.ApplicationId = a);
 
     this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+    this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
     //this.shareddata.ChangeSelectedBatchId
     //this.StandardFilter =globalconstants.getStandardFilter(this.LoginUserDetail);
     this.studentSearchForm = this.fb.group({
       //BatchId: [0, Validators.required],
-      StudentId: [0],
-      Name: [''],
+      //StudentId: [0],
+      searchStudentName: [''],
       FatherName: [''],
       MotherName: ['']
     })
-    this.GetMasterData();
-    // this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
-    // this.dataSource.paginator = this.paginator;
-    // this.dataSource.sort = this.sort;
 
+    this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.Students.slice())
+      );
+    this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.FatherName),
+        map(FatherName => FatherName ? this._filterF(FatherName) : this.Students.slice())
+      );
+      this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.MotherName),
+        map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
+      );
+    this.GetMasterData();
+    this.GetFeeTypes();
+    this.GetStudents();
+  }
+  private _filter(name: string): IStudent[] {
+
+    const filterValue = name.toLowerCase();
+    return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
+
+  }
+  private _filterF(name: string): IStudent[] {
+
+    const filterValue = name.toLowerCase();
+    return this.Students.filter(option => option.FatherName.toLowerCase().includes(filterValue));
+
+  }
+  private _filterM(name: string): IStudent[] {
+
+    const filterValue = name.toLowerCase();
+    return this.Students.filter(option => option.MotherName.toLowerCase().includes(filterValue));
+
+  }
+  displayFn(user: IStudent): string {
+    return user && user.Name ? user.Name : '';
+  }
+  displayFnF(stud: IStudent): string {
+    return stud && stud.FatherName ? stud.FatherName : '';
+  }
+  displayFnM(stud: IStudent): string {
+    return stud && stud.MotherName ? stud.MotherName : '';
   }
   GetMasterData() {
     debugger;
@@ -133,9 +191,6 @@ export class DashboardstudentComponent implements OnInit {
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BLOODGROUP);
         this.shareddata.ChangeBloodgroup(this.Bloodgroup);
 
-        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
-        this.shareddata.ChangeFeeType(this.FeeType);
-
         this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].LANGUAGESUBJECTUPPERCLS);
         this.shareddata.ChangeLanguageSubjectUpper(this.LanguageSubjUpper);
 
@@ -172,23 +227,23 @@ export class DashboardstudentComponent implements OnInit {
       return [];
   }
   fee(id) {
-    this.route.navigate(['/school/stud/addstudentfeepayment/' + id]);
+    this.route.navigate(['/school/' + this.ApplicationId + '/addstudentfeepayment/' + id]);
   }
   class(id) {
-    this.route.navigate(['/school/stud/addstudentcls/' + id]);
+    this.route.navigate(['/school/' + this.ApplicationId + '/addstudentcls/' + id]);
   }
   view(element) {
     debugger;
     this.generateDetail(element);
     //  this.route.navigate(['/admin/addstudent/' + id], { queryParams: { scid: this.StudentClassId, bid: this.BatchId } });
-    this.route.navigate(['/school/stud/addstudent/' + element.StudentId]);
+    this.route.navigate(['/school/' + this.ApplicationId + '/addstudent/' + element.StudentId]);
   }
   feepayment(element) {
     this.generateDetail(element);
-    this.route.navigate(['/school/stud/feepayment']);
+    this.route.navigate(['/school/' + this.ApplicationId + '/feepayment']);
   }
   generateDetail(element) {
-    let StudentName = element.StudentId + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName +',';
+    let StudentName = element.StudentId + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
 
     let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
@@ -205,7 +260,8 @@ export class DashboardstudentComponent implements OnInit {
 
   }
   new() {
-    this.route.navigate(['/school/stud/addstudent']);
+    //var url = this.route.url;
+    this.route.navigate(['/school/' + this.ApplicationId + '/addstudent']);
   }
   ExportTOExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.tableRef.nativeElement);
@@ -239,21 +295,39 @@ export class DashboardstudentComponent implements OnInit {
         }
       })
   }
-  //sum(acc, val) { return ',' + val.StudentId; }
+  GetFeeTypes() {
+    var filter = globalconstants.getStandardFilterWithBatchId(this.token);
+    let list: List = new List();
+    list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
+    list.PageName = "SchoolFeeTypes";
+    list.filter = [filter];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.FeeType = [...data.value];
+        this.shareddata.ChangeFeeType(this.FeeType);
+      })
+
+  }
   GetStudent() {
     debugger;
     //let StudentClassIds = '';
 
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
-    if (this.studentSearchForm.get("Name").value.trim().length > 0)
-      checkFilterString += " and substringof('" + this.studentSearchForm.get("Name").value + "',Name)";
-    if (this.studentSearchForm.get("FatherName").value.trim().length > 0)
-      checkFilterString += " and substringof('" + this.studentSearchForm.get("FatherName").value + "',FatherName)"
-    if (this.studentSearchForm.get("MotherName").value.trim().length > 0)
-      checkFilterString += " and substringof('" + this.studentSearchForm.get("MotherName").value + "',MotherName)"
-    if (this.studentSearchForm.get("StudentId").value > 0) {
-      checkFilterString += " and StudentId eq " + this.studentSearchForm.get("StudentId").value
-    }
+    var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
+    if (studentName != undefined && studentName.trim().length > 0)
+      checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentName").value.StudentId;
+    //checkFilterString += " and substringof('" + this.studentSearchForm.get("searchStudentName").value.Name + "',Name)";      
+    if (this.studentSearchForm.get("FatherName").value.FatherName != undefined)
+      checkFilterString += " and FatherName eq '" + this.studentSearchForm.get("FatherName").value.FatherName + "'";
+    //checkFilterString += " and substringof('" + this.studentSearchForm.get("FatherName").value + "',FatherName)"      
+    if (this.studentSearchForm.get("MotherName").value.MotherName != undefined)
+      checkFilterString += " and MotherName eq '" + this.studentSearchForm.get("MotherName").value.MotherName + "'"
+    //checkFilterString += " and substringof('" + this.studentSearchForm.get("MotherName").value + "',MotherName)"
+
+    // if (this.studentSearchForm.get("StudentId").value > 0) {
+    //   checkFilterString += " and StudentId eq " + this.studentSearchForm.get("StudentId").value
+    // }
 
     //this.filterOrgIdOnly += checkFilterString;
 
@@ -305,6 +379,56 @@ export class DashboardstudentComponent implements OnInit {
       });
 
   }
+  GetStudents() {
+
+    let list: List = new List();
+    list.fields = [
+      'StudentClassId',
+      'StudentId',
+      'ClassId',
+      'RollNo',
+      'SectionId',
+      'Student/Name',
+      'Student/FatherName',
+      'Student/MotherName',
+      'Student/ContactNo',
+      'Student/FatherContactNo',
+      'Student/MotherContactNo',
+    ];
+
+    list.PageName = "StudentClasses";
+    list.lookupFields = ["Student"]
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        //  console.log('data.value', data.value);
+        if (data.value.length > 0) {
+          this.Students = data.value.map(student => {
+            var _classNameobj = this.Classes.filter(c => c.MasterDataId == student.ClassId);
+            var _className = '';
+            if (_classNameobj.length > 0)
+              _className = _classNameobj[0].MasterDataName;
+            var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId)
+            var _section = '';
+            if (_SectionObj.length > 0)
+              _section = _SectionObj[0].MasterDataName;
+            var _RollNo = student.RollNo;
+            var _name = student.Student.Name;
+            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-"+student.Student.ContactNo;
+            return {
+              StudentClassId: student.StudentClassId,
+              StudentId: student.StudentId,
+              Name: _fullDescription,
+              FatherName: student.Student.FatherName + "-" + student.Student.FatherContactNo,
+              MotherName: student.Student.MotherName + "-" + student.Student.MotherContactNo,
+            }
+          })
+        }
+        this.loading = false;
+      })
+  }
 }
 export interface IStudent {
   StudentId: number;
@@ -325,3 +449,5 @@ export interface IStudentDownload {
   RollNo: string;
   Section: string;
 }
+
+

@@ -11,6 +11,8 @@ import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';
 import { SharedataService } from '../../../../shared/sharedata.service';
+import alasql from 'alasql';
+import { evaluate } from 'mathjs';
 
 @Component({
   selector: 'app-addstudentfeepayment',
@@ -49,12 +51,16 @@ export class AddstudentfeepaymentComponent implements OnInit {
     StudentName: '',
     StudentClassName: '',
     FeeTypeId: 0,
+    FeeType: '',
+    Formula: '',
     StudentId: 0,
     ClassId: 0,
     SectionName: '',
     PayAmount: 0,
     StudentClassId: 0
   }
+
+  Months = [];
   StudentName = '';
   loginUserDetail = [];
   Sections = [];
@@ -64,16 +70,18 @@ export class AddstudentfeepaymentComponent implements OnInit {
   Locations = [];
   StudentClassFees: any[] = [];
   FeeTypes = [];
-  ELEMENT_DATA: IStudentFeePayment[] = [];
-  StudentFeePaymentList: IStudentFeePayment[];
+  LedgerListName = 'AccountingLedgerTrialBalances';
+  ELEMENT_DATA: ILedger[] = [];
+  ExistingStudentLedgerList = [];
+  StudentLedgerList: ILedger[];
   Students: string[];
-  dataSource: MatTableDataSource<IStudentFeePayment>;
+  dataSource: MatTableDataSource<ILedger>;
   billdataSource: MatTableDataSource<IPaymentDetail>;
   allMasterData = [];
   searchForm = new FormGroup({
     StudentId: new FormControl(0),
   });
-  StudentBillList=[];
+  StudentBillList = [];
   StudentBillData = {
     PaymentId: 0,
     ClassFeeId: 0,
@@ -100,11 +108,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
   };
   displayedColumns = [
     'SlNo',
-    'Paid',
-    'ClassFeeName',
-    'FeeAmount',
-    'PaidAmt',
-    'BalanceAmt',
+    'MonthName',
+    'TotalCredit',
+    'TotalDebit',
+    'Balance',
     'Action'
   ];
   billDisplayedColumns = [
@@ -124,6 +131,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.PageLoad();
   }
   PageLoad() {
+    this.Months = globalconstants.getMonths();
     this.loginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
@@ -156,20 +164,12 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.cur=c));
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
-        this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
-        // let currentBatch = globalconstants.getCurrentBatch();
-        // let currentBatchObj = this.Batches.filter(item => item.MasterDataName.toLowerCase() == currentBatch.toLowerCase());
-        // if (currentBatchObj.length > 0) {
-        //   this.studentInfoTodisplay.BatchId = currentBatchObj[0].MasterDataId
+        this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
         this.GetStudentClass();
-        // }
-        // else
-        //   this.alert.error("Current batch not defined!", this.optionsNoAutoClose);
+
 
       });
 
@@ -190,8 +190,17 @@ export class AddstudentfeepaymentComponent implements OnInit {
     let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "SectionId", "StudentId", "BatchId", "Student/Name", "ClassId", "FeeTypeId"];
-    list.lookupFields = ["Student"];
+    list.fields = ["StudentClassId",
+      "SectionId",
+      "StudentId",
+      "BatchId",
+      "Student/Name",
+      "ClassId",
+      "FeeTypeId",
+      "SchoolFeeType/FeeTypeName",
+      "SchoolFeeType/Formula"
+    ];
+    list.lookupFields = ["Student", "SchoolFeeType"];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
 
@@ -202,6 +211,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
           //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
           this.studentInfoTodisplay.ClassId = data.value[0].ClassId
           this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
+          this.studentInfoTodisplay.FeeType = data.value[0].SchoolFeeType.FeeTypeName;
+          this.studentInfoTodisplay.Formula = data.value[0].SchoolFeeType.Formula;
           this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
 
           this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
@@ -211,8 +222,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
             return cls.MasterDataId == this.studentInfoTodisplay.ClassId
           })[0].MasterDataName;
           this.studentInfoTodisplay.StudentFeeType = this.FeeTypes.filter(f => {
-            return f.MasterDataId == this.studentInfoTodisplay.FeeTypeId
-          })[0].MasterDataName;
+            return f.FeeTypeId == this.studentInfoTodisplay.FeeTypeId
+          })[0].FeeTypeName;
 
           this.GetStudentFeePayment();
         }
@@ -228,23 +239,35 @@ export class AddstudentfeepaymentComponent implements OnInit {
       return;
 
     let list: List = new List();
-    list.fields = [
-      'StudentFeeId',
-      'StudentClassId',
-      'StudentClass/ClassId',
-      'ClassFeeId',
-      'FeeAmount',
-      'PaidAmt',
-      'BalanceAmt',
-      'BatchId',
-      'PaymentDate',
-      'PaymentDetails/PaymentId',
-      'PaymentDetails/PaymentAmt',
-      'PaymentDetails/PaymentDate',
-      'Active'];
+    // list.fields = [
+    //   'StudentFeeId',
+    //   'StudentClassId',
+    //   'StudentClass/ClassId',
+    //   'ClassFeeId',
+    //   'FeeAmount',
+    //   'PaidAmt',
+    //   'BalanceAmt',
+    //   'BatchId',
+    //   'PaymentDate',
+    //   'PaymentDetails/PaymentId',
+    //   'PaymentDetails/PaymentAmt',
+    //   'PaymentDetails/PaymentDate',
+    //   'Active'];
 
-    list.PageName = "StudentFeePayments";
-    list.lookupFields = ["StudentClass", "PaymentDetails"];
+    //list.PageName = "StudentFeePayments";
+    list.fields = ["StudentEmployeeLedegerId",
+      "StudentClassId",
+      "Month",
+      "AccountGroupId",
+      "AccountNatureId",
+      "TotalDebit",
+      "TotalCredit",
+      "Balance",
+      "OrgId",
+      "BatchId",
+      "Active"]
+    list.PageName = this.LedgerListName;
+    //list.lookupFields = ["StudentClass", "PaymentDetails"];
     list.filter = ['StudentClassId eq ' + this.studentInfoTodisplay.StudentClassId];
     //list.orderBy = "ParentId";
 
@@ -252,7 +275,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
 
-        this.StudentFeePaymentList = [...data.value];
+        this.ExistingStudentLedgerList = [...data.value];
 
         this.GetClassFee(this.studentInfoTodisplay.ClassId);
 
@@ -260,16 +283,27 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
 
   GetClassFee(pclassId) {
-
+    debugger;
     if (pclassId == undefined || pclassId == 0 || this.SelectedBatchId == 0) {
       this.alert.error('Invalid Id', this.optionsNoAutoClose);
       return;
     }
+    //var selectedBatchStartEnd = {};
+    //this.shareddata.CurrentSelectedBatchStartEnd.subscribe(b => selectedBatchStartEnd = b);
 
     let filterstr = "Active eq 1 and BatchId eq " + this.SelectedBatchId + " and ClassId eq " + pclassId;
 
     let list: List = new List();
-    list.fields = ["ClassFeeId", "FeeNameId", "ClassId", "Amount", "BatchId", "Active", "LocationId", "PaymentOrder"];
+    list.fields = [
+      "ClassFeeId",
+      "FeeNameId",
+      "ClassId",
+      "Amount",
+      "BatchId",
+      "Month",
+      "Active",
+      "LocationId",
+      "PaymentOrder"];
     list.PageName = "ClassFees";
     list.orderBy = "PaymentOrder";
     list.filter = [filterstr];
@@ -278,167 +312,135 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.StudentClassFees = [...data.value];
+          this.StudentClassFees = data.value.map(f => {
+            f.FeeName = this.FeeNames.filter(n => n.MasterDataId == f.FeeNameId)[0].MasterDataName;
+            return f;
+          });
           let itemcount = 0;
           let FeeName = '';
-          this.StudentFeePaymentList = [];
+          this.StudentLedgerList = [];
           this.StudentClassFees.forEach((StudentClassFee, indx) => {
-            //itemcount += indx + 1;
-            //console.log('after multi',(DiscountFactor * parseFloat(StudentClassFee.Amount)).toFixed(2))
-            FeeName = this.FeeNames.filter(fee => fee.MasterDataId == StudentClassFee.FeeNameId)[0].MasterDataName;
-            let PayablePercent = 0;
-            let payableAmount = 0;
-            if (FeeName.toLowerCase().includes('admission') || FeeName.toLowerCase().includes('misc')) {
-              this.exceptionColumns = true;
-              PayablePercent = 1;
-            } else
-              PayablePercent = this.GetDiscountFactor(FeeName, indx);
 
-            payableAmount = PayablePercent * parseFloat(StudentClassFee.Amount);
-
-            let existing = this.StudentFeePaymentList.filter(fromdb => fromdb.ClassFeeId == StudentClassFee.ClassFeeId)
+            let existing = this.ExistingStudentLedgerList.filter(fromdb => fromdb.Month == StudentClassFee.Month)
             //let toAdd;
             if (existing.length > 0) {
               existing.forEach(exitem => {
                 itemcount += 1;
 
-                payableAmount = exitem.BalanceAmt;//+payableAmount - parseFloat(existing[0].PaidAmt)
-                let paidAmount = parseFloat(exitem.PaidAmt);
-                let bl = paidAmount == 0 ? parseFloat(StudentClassFee.Amount) : exitem.BalanceAmt;
-
-                this.StudentFeePaymentList.push({
-                  SlNo: itemcount,
-                  StudentFeeId: exitem.StudentFeeId,
+                this.StudentLedgerList.push({
+                  SlNo: itemcount++,
+                  StudentEmployeeLedegerId: exitem.StudentEmployeeLedegerId,
                   StudentClassId: exitem.StudentClassId,
-                  ClassFeeId: +exitem.ClassFeeId,
-                  ClassFeeName: FeeName,
-                  FeeNameId: StudentClassFee.FeeNameId,
-                  FeeAmount: parseFloat(StudentClassFee.Amount),
-                  FeeType: this.studentInfoTodisplay.StudentFeeType,
-                  PaidAmt: parseFloat(exitem.PaidAmt),
-                  Pay: payableAmount,
-                  BalanceAmt: +StudentClassFee.Amount - +exitem.PaidAmt,
-                  PaymentDate: exitem.PaymentDate,
-                  BatchId: exitem.BatchId,
+                  Month: exitem.Month,
+                  AccountGroupId: exitem.AccountGroupId,
+                  AccountNatureId: exitem.AccountNatureId,
+                  TotalDebit: exitem.TotalDebit,
+                  TotalCredit: +exitem.TotalCredit,
                   PaymentOrder: StudentClassFee.PaymentOrder,
-                  Paid: exitem.BalanceAmt == 0 ? true : false,
-                  Action: this.FeePayable,
-                  ExceptionColumns: this.exceptionColumns,
-                  PaymentDetails: exitem.PaymentDetails
+                  Balance: exitem.Balance,
+                  MonthName: this.Months.filter(m => m.val == exitem.Month)[0].month,
+                  BatchId: exitem.BatchId,
+                  Action: false
                 })
                 //this.ELEMENT_DATA.push(toAdd);
               })
             }
-            else
-              this.StudentFeePaymentList.push({
-                SlNo: itemcount++,
-                StudentFeeId: 0,
-                StudentClassId: this.studentInfoTodisplay.StudentClassId,
-                ClassFeeId: +StudentClassFee.ClassFeeId,
-                ClassFeeName: this.FeeNames.filter(fee => fee.MasterDataId == StudentClassFee.FeeNameId)[0].MasterDataName,
-                FeeNameId: StudentClassFee.FeeNameId,
-                FeeAmount: parseFloat(StudentClassFee.Amount),
-                FeeType: this.studentInfoTodisplay.StudentFeeType,
-                PaidAmt: "0.00",
-                Pay: payableAmount,
-                BalanceAmt: StudentClassFee.Amount,
-                PaymentDate: new Date(),
-                BatchId: this.SelectedBatchId,
-                PaymentOrder: StudentClassFee.PaymentOrder,
-                Paid: false,
-                ExceptionColumns: this.exceptionColumns,
-                Action: this.FeePayable,
-                PaymentDetails: []
-              });
+            else {
+              debugger;
+              let AmountAfterFormulaApplied = 0;
+              var formula = this.studentInfoTodisplay.Formula.replace('Amount', StudentClassFee.Amount);
+              console.log('formula', formula)
+              AmountAfterFormulaApplied = evaluate(formula);
 
-          })
-          debugger;
-
-          //let miscId = this.FeeNames.filter(misc => misc.MasterDataName.toLowerCase() == 'misc')[0].MasterDataId;
-          let MiscItem = this.StudentFeePaymentList.filter(m => m.ClassFeeName.toLowerCase().includes('misc'))
-          //only if misc fee type is assigned to the particular class.
-          if (MiscItem.length > 0) {
-            let unpaidmisc = MiscItem.filter(mi => mi.BalanceAmt > 0)
-            //misc fee type exist and paid = false is not present.
-            if (unpaidmisc.length == 0) {
-              this.StudentFeePaymentList.push({
-                SlNo: itemcount++,
-                StudentFeeId: 0,
-                StudentClassId: this.studentInfoTodisplay.StudentClassId,
-                ClassFeeId: +MiscItem[0].ClassFeeId,
-                ClassFeeName: 'Misc',
-                FeeNameId: MiscItem[0].FeeNameId,
-                FeeAmount: parseFloat(MiscItem[0].FeeAmount),
-                PaidAmt: "0.00",
-                FeeType: '',
-                Pay: parseFloat(MiscItem[0].FeeAmount),
-                BalanceAmt: parseFloat(MiscItem[0].FeeAmount),
-                PaymentDate: new Date(),
-                BatchId: this.SelectedBatchId,
-                PaymentOrder: MiscItem[0].PaymentOrder,
-                Paid: false,
-                ExceptionColumns: true,
-                Action: this.FeePayable,
-                PaymentDetails: []
-              })
+              var monthadded = this.StudentLedgerList.filter(f => f.Month == StudentClassFee.Month);
+              if (monthadded.length > 0) {
+                monthadded[0].TotalCredit += +AmountAfterFormulaApplied;
+                monthadded[0].Balance = monthadded[0].TotalCredit;
+              }
+              else
+                this.StudentLedgerList.push({
+                  SlNo: itemcount++,
+                  StudentEmployeeLedegerId: 0,
+                  StudentClassId: this.studentInfoTodisplay.StudentClassId,
+                  Month: StudentClassFee.Month,
+                  AccountGroupId: 0,
+                  AccountNatureId: 0,
+                  TotalDebit: 0,
+                  TotalCredit: +AmountAfterFormulaApplied,
+                  PaymentOrder: StudentClassFee.PaymentOrder,
+                  Balance: +AmountAfterFormulaApplied,
+                  MonthName: this.Months.filter(m => m.val == StudentClassFee.Month)[0].month,
+                  BatchId: StudentClassFee.BatchId,
+                  Action: false
+                });
             }
-          }
+          })
+          // var res = alasql('SELECT MonthName,TotalCredit,TotalDebit,Balance SUM(TotalCredit) AS Amount FROM ? GROUP BY MonthName,Balance', [this.StudentLedgerList] );
+          // console.log('data',this.StudentLedgerList)
+          // console.log('res',res)
         }
         else {
-          this.StudentFeePaymentList = [];
+          this.StudentLedgerList = [];
           this.alert.warn("Fees not defined for this class", this.optionsNoAutoClose);
         }
-        this.FeePayable = true;
-        this.StudentFeePaymentList.forEach((item, index) => {
-          if (item.BalanceAmt > 0 && this.FeePayable == true) {
-            item.Action = true;
-            this.FeePayable = true;
-          }
-          else {
-            item.Action = false;
-            //this.FeePayable =false;
-          }
-        })
-        const rows = [];
-        this.StudentFeePaymentList.forEach(element => rows.push(element, { detailRow: true, element }));
-        //console.log(rows);
-        this.dataSource = new MatTableDataSource<IStudentFeePayment>(rows);
+
+        this.StudentLedgerList.sort((a, b) => a.PaymentOrder - b.PaymentOrder);
+        this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
 
       })
   }
   SelectRow(row, event) {
-    
-      if (event.checked) {
-        this.NewDataCount++;
-        var newdata = {
+
+    if (event.checked) {
+      this.NewDataCount++;
+
+      var newdata = {};
+      if (row.StudentEmployeeLedegerId > 0) {
+        var previousLBId = 0;
+
+        previousLBId = this.FeeNames.filter(fee => fee.MasterDataName.toLowerCase().includes('previous balance'))[0].MasterDataId;
+
+        newdata = {
           SlNo: this.NewDataCount,
           PaymentId: 0,
-          ClassFeeId: row.ClassFeeId,
-          ClassFeeName: row.ClassFeeName,
+          ClassFeeId: 0,
+          ClassFeeName: '',
           PaymentAmt: +row.BalanceAmt,
           PaymentDate: new Date(),
-          PaymentOrder: row.PaymentOrder,
           ParentId: 0,
           OrgId: 0,
           Active: 1
         }
-        this.StudentBillList.push(newdata);
       }
-      else {
-        this.NewDataCount--;
-        this.StudentBillList.splice(this.StudentBillList.indexOf(row), 1);
+      newdata = {
+        SlNo: this.NewDataCount,
+        PaymentId: 0,
+        ClassFeeId: row.ClassFeeId,
+        ClassFeeName: row.ClassFeeName,
+        PaymentAmt: +row.BalanceAmt,
+        PaymentDate: new Date(),
+        PaymentOrder: row.PaymentOrder,
+        ParentId: 0,
+        OrgId: 0,
+        Active: 1
       }
+      this.StudentBillList.push(newdata);
+    }
+    else {
+      this.NewDataCount--;
+      this.StudentBillList.splice(this.StudentBillList.indexOf(row), 1);
+    }
 
-      this.billdataSource = new MatTableDataSource<IPaymentDetail>(this.StudentBillList);
-    
+    this.billdataSource = new MatTableDataSource<IPaymentDetail>(this.StudentBillList);
+
   }
   billpayment() {
     debugger;
-    var maxSlNo =Math.max.apply(Math, this.StudentBillList.map(function(o) { return o.PaymentOrder; }));
+    var maxSlNo = Math.max.apply(Math, this.StudentBillList.map(function (o) { return o.PaymentOrder; }));
 
-    var previouspayments = this.StudentFeePaymentList.filter(f => f.PaymentOrder < maxSlNo && f.BalanceAmt > 0);
+    var previouspayments = this.StudentLedgerList.filter(f => f.PaymentOrder < maxSlNo && f.Balance > 0);
     if (previouspayments.length > 0) {
-      this.alert.error("Previous "+ previouspayments[0].ClassFeeName +" outstanding must be cleared first", this.optionsNoAutoClose);
+      this.alert.error("Previous outstanding must be cleared first", this.optionsNoAutoClose);
     }
     else {
     }
@@ -468,8 +470,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     }
     //payment order has to start from one
     if (row.PaymentOrder > 1) {
-      let previousBalance = this.ELEMENT_DATA.filter(d => d.PaymentOrder == (row.PaymentOrder - 1))[0].BalanceAmt;
-      if (previousBalance > 0 && !row.ClassFeeName.toLowerCase().includes('misc')) {
+      let previousBalance = this.ELEMENT_DATA.filter(d => d.PaymentOrder == (row.PaymentOrder - 1))[0].Balance;
+      if (previousBalance > 0) {
         this.alert.error("Previous balance must be cleared!", this.optionsNoAutoClose);
         return;
       }
@@ -628,34 +630,23 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     this.studentInfoTodisplay.PayAmount = element.Pay;
 
-    //element.Action = true;
-    //let amt = +amount;
-    //element.BalanceAmt = +element.FeeAmount -(+element.PaidAmt + (+amt));
-    //element.PaidAmt = element.PaidAmt + amt;
-    //console.log('element', element);
-    //console.log('$event', amount)
   }
 
 }
-export interface IStudentFeePayment {
-  SlNo: number;
-  StudentFeeId: number;
+export interface ILedger {
+  SlNo: number,
+  StudentEmployeeLedegerId: number;
   StudentClassId: number;
-  ClassFeeId: number;
-  ClassFeeName: string;
-  FeeNameId: number;
-  FeeAmount: any;
-  FeeType: string;
-  PaidAmt: any;
-  Pay: any;
-  BalanceAmt: any;
-  PaymentDate: Date;
-  PaymentOrder: number;
+  Month: number;
+  MonthName: string;
+  AccountGroupId: number;
+  AccountNatureId: number;
+  TotalDebit: number;
+  TotalCredit: number;
+  Balance: number;
   BatchId: number;
-  Paid: boolean;
-  ExceptionColumns: boolean;
+  PaymentOrder: number;
   Action: boolean;
-  PaymentDetails: any[];
 }
 export interface IPaymentDetail {
   PaymentId: number;
@@ -666,3 +657,5 @@ export interface IPaymentDetail {
   OrgId: number;
   Active: number;
 }
+
+

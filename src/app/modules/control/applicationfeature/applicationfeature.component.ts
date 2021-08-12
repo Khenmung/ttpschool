@@ -188,6 +188,11 @@ export class ApplicationfeatureComponent implements OnInit {
   }
   GetApplicationFeatures() {
     debugger;
+    if(this.searchForm.get("searchApplicationName").value==0)
+    {
+      this.alert.info("Please select application",this.optionAutoClose);
+      return;
+    }
     this.loading = true;
     let filterStr = ' ApplicationId eq ' + this.searchForm.get("searchApplicationName").value
     let list: List = new List();

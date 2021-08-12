@@ -19,61 +19,36 @@
                                     <ng-container matColumnDef="SlNo">
                                         <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                                         <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="Paid">
-                                        <mat-header-cell style="display: flex;justify-content: center;"
-                                            *matHeaderCellDef>
-                                        </mat-header-cell>
-                                        <mat-cell style="display: flex;justify-content: center;"
-                                            *matCellDef="let element">
-                                            <mat-icon matTooltip="paid" *ngIf="element.Paid">done</mat-icon>
-                                            <mat-icon matTooltip="pending" *ngIf="!element.Paid">pending</mat-icon>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="ClassFeeName">
-                                        <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                                    </ng-container>                                                                        
+                                    <ng-container matColumnDef="MonthName">
+                                        <mat-header-cell *matHeaderCellDef> Month </mat-header-cell>
                                         <mat-cell *matCellDef="let element">
-                                            <button [disabled]="loading" mat-button
-                                                (click)="expandedElement = expandedElement === element ? null : element">
-                                                {{element.ClassFeeName}}
-                                            </button>
+                                            {{element.MonthName}}
                                         </mat-cell>
                                     </ng-container>
-                                    <ng-container matColumnDef="FeeAmount">
-                                        <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                                    <ng-container matColumnDef="TotalCredit">
+                                        <mat-header-cell *matHeaderCellDef> Fee Amount </mat-header-cell>
                                         <mat-cell *matCellDef="let element">
-                                            {{element.FeeAmount}}
+                                            {{element.TotalCredit}}
                                         </mat-cell>
                                     </ng-container>
-                                    <ng-container matColumnDef="PaidAmt">
-                                        <mat-header-cell *matHeaderCellDef> Paid Amount </mat-header-cell>
+                                    <ng-container matColumnDef="TotalDebit">
+                                        <mat-header-cell *matHeaderCellDef> Paid </mat-header-cell>
                                         <mat-cell *matCellDef="let element">
-                                            {{element.PaidAmt}}
+                                            {{element.TotalDebit}}
                                         </mat-cell>
                                     </ng-container>
-                                    <ng-container matColumnDef="BalanceAmt">
+                                    <ng-container matColumnDef="Balance">
                                         <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
                                         <mat-cell *matCellDef="let element">
-                                            {{element.BalanceAmt}}
+                                            {{element.Balance}}
                                         </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="PaymentDate">
-                                        <mat-header-cell *matHeaderCellDef> Payment Date </mat-header-cell>
-                                        <mat-cell *matCellDef="let element">
-                                            <span *ngIf="element.Paid">{{element.PaymentDate| date:'dd/MM/yyyy'}}</span>
-                                            <mat-form-field *ngIf="!element.Paid && element.Action" appearance="outline"
-                                                [style.width.px]="125">
-                                                <input [(value)]="element.PaymentDate" matInput [matDatepicker]="picker"
-                                                    autocomplete="off" (focus)="picker.open()" readonly>
-                                                <mat-datepicker #picker></mat-datepicker>
-                                            </mat-form-field>
-                                        </mat-cell>
-                                    </ng-container>
+                                    </ng-container>                                    
                                     <ng-container matColumnDef="Action">
                                         <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                                         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center"
                                             fxLayout="row">
-                                            <mat-checkbox [disabled]="loading || element.BalanceAmt==0" mat-mini-fab
+                                            <mat-checkbox [disabled]="loading || element.Balance==0" mat-mini-fab
                                                 (change)="SelectRow(element,$event)">
                                             </mat-checkbox>
                                             <!-- <button [disabled]="loading" mat-mini-fab (click)="UpdateOrSave(element)">
@@ -81,7 +56,7 @@
                                         </button> -->
                                         </mat-cell>
                                     </ng-container>
-                                    <ng-container matColumnDef="expandedDetail">
+                                    <!-- <ng-container matColumnDef="expandedDetail">
                                         <mat-cell *matCellDef="let detail">
                                             <table *ngIf="detail.element.PaymentDetails.length>0">
                                                 <tr style="background-color: lightgray;">
@@ -96,15 +71,15 @@
                                                 </tr>
                                             </table>
                                         </mat-cell>
-                                    </ng-container>
+                                    </ng-container> -->
                                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                                    <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple
+                                    <mat-row *matRowDef="let row; columns: displayedColumns;let i=index" matRipple
                                         class="element-row" [class.expanded]="expandedElement == row"></mat-row>
-                                    <mat-row
+                                    <!-- <mat-row
                                         *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
                                         [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'"
                                         style="overflow: hidden">
-                                    </mat-row>
+                                    </mat-row> -->
                                 </mat-table>
                             </div>
                             <div style="background-color: lightgray;width:1px">&nbsp;</div>

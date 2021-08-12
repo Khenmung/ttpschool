@@ -12,6 +12,8 @@ import { BatchdashboardComponent } from './batchdashboard/batchdashboard.compone
 import { AddMasterDataComponent } from './add-master-data/add-master-data.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ApplicationfeatureComponent } from './applicationfeature/applicationfeature.component';
+import { SchoolFeeTypesComponent } from './school-fee-types/school-fee-types.component';
+import { VariableConfigComponent } from './variable-config/variable-config.component';
 
 const routes: Routes = [
   {
@@ -44,5 +46,7 @@ export const settingsComponent = [
   ControlhomeComponent,
   BatchdashboardComponent,
   AddMasterDataComponent,
-  ApplicationfeatureComponent
+  ApplicationfeatureComponent,
+  SchoolFeeTypesComponent,
+  VariableConfigComponent
 ]

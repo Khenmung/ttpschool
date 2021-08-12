@@ -25,6 +25,7 @@
             </ng-template>
             <app-roleuserdashboard></app-roleuserdashboard>
         </mat-tab>
+        
         <mat-tab>
             <ng-template mat-tab-label>
                 <mat-icon>apps
@@ -32,5 +33,20 @@
             </ng-template>
             <app-RoleAppPermissiondashboard></app-RoleAppPermissiondashboard>
         </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>payments
+                </mat-icon> Fee Types
+            </ng-template>
+            <app-school-fee-types></app-school-fee-types>
+        </mat-tab>
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon>change_history
+                </mat-icon> Variable Config
+            </ng-template>
+            <app-variable-config></app-variable-config>
+        </mat-tab>
+        
     </mat-tab-group>
 </div>

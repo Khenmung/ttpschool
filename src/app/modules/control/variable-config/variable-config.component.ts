@@ -61,7 +61,6 @@ export class VariableConfigComponent implements OnInit {
     "VariableFormula",
     "DisplayOrder",
     "VariableAmount",
-    "VariableTypeId",
     "Active",
     "Action"
   ];
@@ -175,7 +174,7 @@ export class VariableConfigComponent implements OnInit {
           this.VariableConfigData.VariableAmount = row.VariableAmount.toString();
           this.VariableConfigData.Active = row.Active;
           this.VariableConfigData.VariableDescription = row.VariableDescription;
-          this.VariableConfigData.VariableTypeId = row.VariableTypeId;
+          this.VariableConfigData.VariableTypeId = this.searchForm.get("searchTypeId").value;
           this.VariableConfigData.DisplayOrder = row.DisplayOrder;
           this.VariableConfigData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.VariableConfigData.VariableFormula = row.VariableFormula;

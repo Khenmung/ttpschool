@@ -35,7 +35,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   rowCount = 0;
-  SalMonthYear = '';
+  Month = 0;
   CurrentEmployee = [];
   EmpComponents: IEmpComponent[] = [];
   SelectedBatchId = 0;
@@ -74,7 +74,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     EmployeeId: 0,
     EmpComponentId: 0,
     ActualFormulaOrAmount: '',
-    SalMonthYear: 0,
+    Month: 0,
     OrgId: 0,
     Amount: 0,
     Active: 1
@@ -167,7 +167,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = "EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId +
       " and EmpComponentId eq " + row.EmpComponentId +
-      " and SalMonthYear eq " + row.SalMonthYear
+      " and Month eq " + row.Month
 
     if (row.EmployeeSalaryComponentId > 0)
       checkFilterString += " and EmployeeSalaryComponentId ne " + row.EmployeeSalaryComponentId;
@@ -188,7 +188,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         else {
 
           this.EmployeeSalaryComponentData.EmployeeSalaryComponentId = row.EmployeeSalaryComponentId;
-          this.EmployeeSalaryComponentData.SalMonthYear = row.SalMonthYear;
+          this.EmployeeSalaryComponentData.Month = row.Month;
           this.EmployeeSalaryComponentData.ActualFormulaOrAmount = row.ActualFormulaOrAmount.toString();
           this.EmployeeSalaryComponentData.EmployeeId = row.EmployeeId;
           this.EmployeeSalaryComponentData.Active = row.Active;
@@ -410,9 +410,9 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   GetEmployeeSalaryComponents() {
 
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    this.SalMonthYear = this.searchForm.get("searchYear").value + '' + this.searchForm.get("searchMonth").value;
-    var SalMonthYearFilter = ' and SalMonthYear eq ' + this.SalMonthYear
-    console.log("salmonthyear", this.SalMonthYear);
+    this.Month = this.searchForm.get("searchMonth").value;
+    var MonthFilter = ' and Month eq ' + this.Month
+    console.log("Month", this.Month);
     let list: List = new List();
 
     list.fields = [
@@ -420,7 +420,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       "EmployeeId",
       "EmpComponentId",
       "ActualFormulaOrAmount",
-      "SalMonthYear",
+      "Month",
       "Amount",
       "Active"
     ];
@@ -429,7 +429,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     //list.lookupFields = ["EmpEmployeeSalaryComponents"]
     //list.orderBy = "EmployeeGradeHistoryId desc";
     //list.limitTo = 1;
-    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr + SalMonthYearFilter];
+    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr + MonthFilter];
     //list.orderBy = "ParentId";
     this.EmployeeSalaryComponentList = [];
     this.dataservice.get(list)
@@ -443,7 +443,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
           this.EmpComponents.forEach(ec => {
 
             var existing = data.value.filter(e => e.EmpComponentId == ec.EmpSalaryComponentId
-              && e.SalMonthYear == this.SalMonthYear);
+              && e.Month == this.Month);
             if (existing.length > 0) {
               this.EmployeeSalaryComponentList.push({
                 EmployeeSalaryComponentId: existing[0].EmployeeSalaryComponentId,
@@ -452,7 +452,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
                 SalaryComponent: ec.SalaryComponent,
                 ActualFormulaOrAmount: existing[0].ActualFormulaOrAmount,
                 FormulaOrAmount: ec.FormulaOrAmount,
-                SalMonthYear: this.SalMonthYear,
+                Month: this.Month,
                 Amount: existing[0].Amount,
                 Active: existing[0].Active,
                 Action: false
@@ -470,7 +470,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
                 SalaryComponent: ec.SalaryComponent,
                 ActualFormulaOrAmount: ec.FormulaOrAmount,
                 FormulaOrAmount: ec.FormulaOrAmount,
-                SalMonthYear: this.SalMonthYear,
+                Month: this.Month,
                 Amount: 0,
                 Active: 0,
                 Action: false
@@ -614,7 +614,7 @@ export interface IEmployeeSalaryComponent {
   EmpComponentId: number;
   ActualFormulaOrAmount: string;
   FormulaOrAmount: number;
-  SalMonthYear: string;
+  Month: string;
   Amount: number;
   Active: number;
   Action: boolean;

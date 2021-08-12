@@ -398,7 +398,7 @@ export class ExcelDataManagementComponent implements OnInit {
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
-        this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
+        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
         this.shareddata.ChangeFeeType(this.FeeTypes);
         //this.PrimaryContactFatherOrMother= this.getDropDownData(globalconstants.PRIMARYCONTACT);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));

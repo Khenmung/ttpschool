@@ -14,7 +14,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
   styleUrls: ['./addstudentclass.component.scss']
 })
 export class AddstudentclassComponent implements OnInit {
-  loading=false;
+  loading = false;
   breakpoint = 0;
   optionsNoAutoClose = {
     autoClose: false,
@@ -39,7 +39,7 @@ export class AddstudentclassComponent implements OnInit {
   FeeType = [];
   studentclassForm: FormGroup;
   StudentName = '';
-  loginUserDetail =[];
+  loginUserDetail = [];
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
@@ -51,7 +51,7 @@ export class AddstudentclassComponent implements OnInit {
     AdmissionDate: new Date(),
     Remarks: '',
     Active: 1,
-    OrgId:0
+    OrgId: 0
   }
   constructor(private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -77,13 +77,13 @@ export class AddstudentclassComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loginUserDetail = this.tokenstorage.getUserDetail();
-    this.shareddata.CurrentBatch.subscribe(t => (this.Batches = t));
-    this.shareddata.CurrentFeeType.subscribe(t => (this.FeeType = t));
-    this.shareddata.CurrentSection.subscribe(t => (this.Sections = t));
-    this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
-    this.shareddata.CurrentStudentId.subscribe(id => (this.StudentId = id));
-    this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
-    this.shareddata.CurrentStudentName.subscribe(name => (this.StudentName = name));
+    this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
+    this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
+    this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
+    this.shareddata.CurrentClasses.subscribe(cls => this.Classes = cls);
+    this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
+    this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
+    this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.GetStudentClass();
   }
@@ -103,7 +103,7 @@ export class AddstudentclassComponent implements OnInit {
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
-        this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
+        //this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
 
         this.aRoute.paramMap.subscribe(param => {

@@ -38,7 +38,7 @@
                 <mat-icon>search</mat-icon>
             </button><br>
         </form>
-        <!-- <div class="example-container mat-elevation-z8"> -->
+       
         <mat-table #table [dataSource]="dataSource" matSort>
 
             <ng-container matColumnDef="SlNo">
@@ -75,12 +75,14 @@
                     </mat-checkbox>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="YearMonth">
-                <mat-header-cell *matHeaderCellDef>Year Month (YYYYMM)</mat-header-cell>
+            <ng-container matColumnDef="Month">
+                <mat-header-cell *matHeaderCellDef>Month</mat-header-cell>
                 <mat-cell style="justify-content: center;" *matCellDef="let element">
                     <mat-form-field [style.width.px]="80">
-                        <input matInput type="text" maxlength="6" (blur)="onBlur(element)" [(ngModel)]="element.YearMonth" [(value)]="element.YearMonth">
-                      </mat-form-field>                     
+                      <mat-select [(ngModel)]="element.Month" [(value)]="element.Month" (selectionChange)="onBlur(element)">
+                          <mat-option *ngFor="let item of Months" [value]="item.val">{{item.month}}</mat-option>
+                      </mat-select>                      
+                    </mat-form-field>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Active">
@@ -101,7 +103,13 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>
+                    <div *ngIf="ELEMENT_DATA.length>0">
+                        <button [disabled]="loading" mat-mini-fab (click)="saveAll()">
+                            <mat-icon>all_out</mat-icon>
+                        </button>
+                    </div>
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <button [disabled]="loading || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
@@ -111,6 +119,5 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
-        <!-- </div> -->
     </mat-card-content>
 </mat-card>

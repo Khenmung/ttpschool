@@ -19,10 +19,16 @@ import { SharedataService } from '../../../../shared/sharedata.service';
 export class DashboardclassfeeComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
-  options = {
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionAutoClose = {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Months =[];
+  SaveAll = false;
   LoginUserDetail = [];
   StandardFilterWithBatchId = '';
   CurrentBatch = '';
@@ -32,10 +38,11 @@ export class DashboardclassfeeComponent implements OnInit {
   Classes = [];
   Batches = [];
   Locations = [];
-  Months = [];
-  Years=[];
+  //Months = [];
+  //Years = [];
+  DataToSaveInLoop = [];
   ClassStatuses = [];
-  ELEMENT_DATA: Element[];
+  ELEMENT_DATA: Element[]=[];
   dataSource: MatTableDataSource<Element>;
   allMasterData = [];
   searchForm: any;
@@ -46,7 +53,7 @@ export class DashboardclassfeeComponent implements OnInit {
     Amount: 0,
     BatchId: 0,
     Recurring: 0,
-    YearMonth: 0,
+    Month: 0,
     OrgId: 0,
     Active: 0,
     PaymentOrder: 0,
@@ -72,9 +79,8 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   PageLoad() {
     this.loading = true;
-    this.Years = globalconstants.getYears();
-    this.Months = globalconstants.getMonths();
     this.LoginUserDetail = this.token.getUserDetail();
+    this.Months = globalconstants.getMonths();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
 
@@ -94,12 +100,12 @@ export class DashboardclassfeeComponent implements OnInit {
 
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   displayedColumns = [
-    'SlNo', 
-    'FeeName', 
+    'SlNo',
+    'FeeName',
     'Amount',
     'PaymentOrder',
     'Recurring',
-    'YearMonth',
+    'Month',
     'Active',
     'Action'];
   updateActive(row, value) {
@@ -109,28 +115,39 @@ export class DashboardclassfeeComponent implements OnInit {
       row.Active = 0;
     row.Action = true;
   }
-  onBlur(element)
-  {
+  onBlur(element) {
     element.Action = true;
   }
   UpdateSelectedBatchId(value) {
     this.SelectedBatchId = value;
   }
-  UpdateOrSave(row) {
+  saveAll() {
+    this.loading = true;
+    this.SaveAll = true;
+    this.DataToSaveInLoop = this.ELEMENT_DATA.filter(f => f.Action);
+
+    this.DataToSaveInLoop.forEach((record, indx) => {
+      if (record.Action == true) {
+        this.UpdateOrSave(record, indx);
+      }
+
+    })
+  }
+  UpdateOrSave(row, indx) {
     debugger;
     if (row.Amount == 0) {
       row.Action = false;
-      this.alert.error("Amount should be greater than zero.", this.options.autoClose);
+      this.alert.error("Amount should be greater than zero.", this.optionsNoAutoClose);
       return;
     }
     else if (row.Amount > 100000) {
       row.Action = false;
-      this.alert.error("Amount should be smaller than 100,000.", this.options.autoClose);
+      this.alert.error("Amount should be smaller than 100,000.", this.optionsNoAutoClose);
       return;
     }
     else if (row.PaymentOrder > 99) {
       row.Action = false;
-      this.alert.error("only two digits are allowed for payment order!", this.options.autoClose);
+      this.alert.error("only two digits are allowed for payment order!", this.optionsNoAutoClose);
       return;
     }
 
@@ -138,7 +155,7 @@ export class DashboardclassfeeComponent implements OnInit {
     let checkFilterString = "1 eq 1 " +
       " and FeeNameId eq " + row.FeeNameId +
       " and ClassId eq " + row.ClassId +
-      " and YearMonth eq " + row.YearMonth +
+      " and Month eq " + row.Month +
       " and BatchId eq " + row.BatchId +
       " and LocationId eq " + row.LocationId
     if (row.ClassFeeId > 0)
@@ -152,7 +169,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.options);
+          this.alert.error("Record already exists!", this.optionAutoClose);
         }
         else {
           this.classFeeData.Active = row.Active;
@@ -163,20 +180,19 @@ export class DashboardclassfeeComponent implements OnInit {
           this.classFeeData.FeeNameId = row.FeeNameId;
           this.classFeeData.PaymentOrder = +row.PaymentOrder;
           this.classFeeData.LocationId = +row.LocationId;
-          this.classFeeData.YearMonth = row.YearMonth.toString();
+          this.classFeeData.Month = row.Month.toString();
           this.classFeeData.Recurring = +row.Recurring;
           this.classFeeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          console.log('classfeedata', this.classFeeData);
 
           if (this.classFeeData.ClassFeeId == 0)
-            this.insert(row);
+            this.insert(row, indx);
           else
-            this.update(row);
+            this.update(row, indx);
         }
       });
   }
 
-  insert(row) {
+  insert(row, indx) {
 
     debugger;
     this.dataservice.postPatch('ClassFees', this.classFeeData, 0, 'post')
@@ -184,22 +200,32 @@ export class DashboardclassfeeComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully", this.options.autoClose);
+          if (this.DataToSaveInLoop.length > 0) {
+            if (indx == this.DataToSaveInLoop.length - 1) {
+              this.alert.success("All data saved sucessfully.", this.optionAutoClose);
+            }
+          }
+          else
+            this.alert.success("Data saved successfully", this.optionAutoClose);
           //this.router.navigate(['/home/pages']);
         });
 
   }
-  update(row) {
+  update(row, indx) {
 
     this.dataservice.postPatch('ClassFees', this.classFeeData, this.classFeeData.ClassFeeId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data updated successfully", this.options.autoClose);
-          //this.router.navigate(['/home/pages']);
+          if (this.DataToSaveInLoop.length > 0) {
+            if (indx == this.DataToSaveInLoop.length - 1) {
+              this.alert.success("All data saved sucessfully.", this.optionAutoClose);
+            }
+          }
+          else
+            this.alert.success("Data saved successfully", this.optionAutoClose);
         });
-
   }
   GetDistinctClassFee() {
     let list: List = new List();
@@ -207,7 +233,6 @@ export class DashboardclassfeeComponent implements OnInit {
     list.PageName = "ClassFees";
     //list.groupby = "ClassId";
     list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId];
-
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -239,7 +264,7 @@ export class DashboardclassfeeComponent implements OnInit {
   GetClassFee() {
     if (this.searchForm.get("ClassId").value == 0)
       return;
-     
+
 
     let filterstr = "";
     if (this.searchForm.get("ClassId").value > 0)
@@ -256,7 +281,7 @@ export class DashboardclassfeeComponent implements OnInit {
       "ClassId",
       "Amount",
       "Recurring",
-      "YearMonth",
+      "Month",
       "BatchId",
       "Active",
       "LocationId",
@@ -292,7 +317,7 @@ export class DashboardclassfeeComponent implements OnInit {
                   "FeeName": mainFeeName.MasterDataName,
                   "Amount": 0,
                   "Recurring": 0,
-                  "YearMonth": 0,
+                  "Month": 0,
                   "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
                   "Active": 0,
                   "PaymentOrder": 0,
@@ -310,7 +335,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "ClassId": item.ClassId,
                 "FeeName": this.FeeNames.filter(cls => cls.MasterDataId == item.FeeNameId)[0].MasterDataName,
                 "Amount": item.Amount,
-                "YearMonth": item.YearMonth,
+                "Month": item.Month,
                 "Recurring": item.Recurring,
                 "BatchId": item.BatchId,
                 "Active": item.Active,
@@ -332,7 +357,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "FeeName": fee.MasterDataName,
                 "Amount": 0,
                 "Recurring": 0,
-                "YearMonth": 0,
+                "Month": 0,
                 "BatchId": this.SelectedBatchId,
                 "Active": 0,
                 "PaymentOrder": 0,
@@ -343,7 +368,7 @@ export class DashboardclassfeeComponent implements OnInit {
           }
           else {
             this.ELEMENT_DATA = [];
-            this.alert.info("No record found!", this.options.autoClose);
+            this.alert.info("No record found!", this.optionAutoClose);
           }
         }
         //this.ELEMENT_DATA=this.ELEMENT_DATA.sort((a,b)=>(a.PaymentOrder>b.PaymentOrder?1:-1))
@@ -433,10 +458,11 @@ export interface Element {
   FeeNameId: number;
   ClassId: number;
   Amount: any;
-  YearMonth: number;
+  Month: number;
   Recurring: number;
   BatchId: number;
   Active: number;
   PaymentOrder: number;
   LocationId: number;
+  Action: boolean;
 }

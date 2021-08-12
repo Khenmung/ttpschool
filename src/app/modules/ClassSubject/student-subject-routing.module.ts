@@ -4,16 +4,16 @@ import { AssignStudentclassdashboardComponent } from './AssignStudentClass/Assig
 import { ClasssubjectdashboardComponent } from './classsubjectmapping/classsubjectdashboard.component';
 import { ClassmasterdashboardComponent } from './classsmastermapping/classmasterdashboard.component';
 import { StudentSubjectMarkCompComponent } from './student-subject-mark-comp/student-subject-mark-comp.component';
-import { StudenthomeComponent } from '../student/studenthome/studenthome.component';
 import { studentsubjectdashboardComponent } from './studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from './subject-types/subject-types.component';
 import { SubjectdashboardComponent } from './classsubjectdashboard/subjectdashboard.component';
 import { ClasssubjectteacherComponent } from './classsubjectteacher/classsubjectteacher.component';
 import { DashboardclassfeeComponent } from './classfee/dashboardclassfee/dashboardclassfee.component';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
 
 const routes: Routes = [
   {
-    path: '', component: StudenthomeComponent,
+    path: '', component: HomeComponent,
     children: [
       { path: '', component: SubjectdashboardComponent,//runGuardsAndResolvers:'always'
      },
@@ -33,7 +33,6 @@ const routes: Routes = [
 })
 export class StudentSubjectRoutingModule { }
 export const StudentSubjectComponents=[
-  StudenthomeComponent,
   ClasssubjectdashboardComponent,
   studentsubjectdashboardComponent,
   SubjectTypesComponent,
