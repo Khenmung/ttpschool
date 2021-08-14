@@ -2,20 +2,20 @@
 <mat-toolbar>
     <mat-toolbar-row class="width100" fxLayout="row" fxLayoutAlign="space-between center">
         <div fxLayout="row wrap" fxLayoutAlign="start center">
-            <button [disabled]="loading" mat-button (click)="toggleSideBar()">
+            <!-- <button [disabled]="loading" mat-button (click)="toggleSideBar()">
                 <mat-icon>menu</mat-icon>
-            </button>
+            </button> -->
             <a [routerLink]="['/home/display/0/0/']"><img style="border-radius: 3px;" src="assets/images/ttplogo1.png"
                     alt="St Paul's Institute" width="50px" /></a>
         </div>
-
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <span class="rightside" *ngIf="!deviceXs">
                 <button [disabled]="loading" mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
                 </button>
             </span>
-            <button [disabled]="loading" class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu" matTooltip="login">
+            <button [disabled]="loading" class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu"
+                matTooltip="login">
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
                 <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
             </button>
@@ -39,29 +39,17 @@
         </div>
     </mat-toolbar-row>
     <mat-toolbar-row>hi</mat-toolbar-row>
-    <mat-toolbar-row  style="margin-right: 10px;font-size:medium;color:black" fxLayout="row" 
-                      fxLayoutAlign="end center" 
-                      fxLayoutGap="15px"
-                      style="background-color:lightgray">
-        <!-- <a matButton [routerLink]="['/admin/control']">Admin</a> -->
-        <span *ngFor="let item of PermittedApplications">
-             <a matButton [routerLink]="['/',item.appShortName,item.applicationId]">{{item.applicationName}}</a>
-            <!-- <button [disabled]="loading" (click)="goto('control')" class="mat-raised-button">
-                <mat-icon>info</mat-icon> Permissions
-            </button>
-            <button [disabled]="loading" (click)="goto('subject')" class="mat-raised-button">
-                <mat-icon>info</mat-icon> Subject
-            </button>
-            <button [disabled]="loading" (click)="goto('exam')" class="mat-raised-button">
-                <mat-icon>info</mat-icon> Exam
-            </button>
-            <button [disabled]="loading" (click)="goto('fees')" class="mat-raised-button">
-                <mat-icon>info</mat-icon> Fee Management
-            </button> -->
-        </span>
-        <span>
+    <mat-toolbar-row fxLayout="row" fxLayoutAlign="end center"
+        fxLayoutGap="15px" style="background-color:#3CE6BC">
+        <span style="margin-right: 10px;font-size:medium;color:black">
             <form [formGroup]="searchForm">
-                <mat-form-field [style.width.px]="130" style="color: white;">
+                <mat-form-field [style.width.px]="250">
+                    <mat-select formControlName="searchApplicationId" (selectionChange)="ChangeApplication($event)">
+                        <mat-option *ngFor="let item of PermittedApplications" [value]="item.applicationId">
+                            {{item.applicationName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field [style.width.px]="130">
                     <mat-select formControlName="searchBatchId" (selectionChange)="ChangeCurrentBatchId($event)">
                         <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
                     </mat-select>

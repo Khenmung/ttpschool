@@ -19,13 +19,14 @@
     position           : fixed;
     z-index            : 10;
     color              : white;
+    //background-color: #006EDB;
     //background         : url('../../../../assets/images/headerimg.svg');
-    background:  linear-gradient(150deg, var(--maincolor2) 10%, #198CFF 70%, #006EDB 15%);
+    //background:  linear-gradient(150deg, var(--maincolor2) 10%, #198CFF 70%, #006EDB 15%);
     //background-size    : cover;
     //background-repeat: no-repeat;
     //background-size: cover;
-    background-color   : var(--maincolor1); //#0F5298; //#4f8ec2;//
-    box-shadow         : 3px 3px 3px var(--maincolor2);
+    background-color   :#009974;//var(--maincolor1); //#0F5298; //#4f8ec2;//
+    //box-shadow         : 3px 3px 3px var(--maincolor2);
     top                : 0px;
     //height:300px;
     max-width          : 100%;

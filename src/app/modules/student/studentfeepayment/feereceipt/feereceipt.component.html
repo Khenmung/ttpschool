@@ -38,43 +38,35 @@
                 <mat-divider></mat-divider>
         <br>
         <div>
-            <mat-table #table [dataSource]="dataSource">
+            <mat-table [dataSource]="dataSource">
                 <ng-container matColumnDef="SlNo">
                     <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                 </ng-container>
                 <ng-container matColumnDef="FeeName">
-                    <mat-header-cell *matHeaderCellDef> Particulars </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.FeeName}}
-                    </mat-cell>
+                    <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.FeeName}} </mat-cell>
+                    <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                 </ng-container>
-                <ng-container matColumnDef="PaymentAmount">
-                    <mat-header-cell *matHeaderCellDef> Amount &#x20b9; </mat-header-cell>
+                <ng-container matColumnDef="Amount">
+                    <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.PaymentAmount}}
+                        {{element.Amount}}
                     </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action" *ngIf="editReceipt">
-                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading" matTooltip="cancel" (click)="UpdateActive(element)" class="mat-raised-button">
-                            <mat-icon>
-                                cancel
-                            </mat-icon>
-                        </button>
-                    </mat-cell>
+                    <mat-footer-cell *matFooterCellDef fxLayout="row" fxLayoutAlign="space-between center">
+                        <div>Balance: {{Balance}}
+                        </div>
+                        <div>Total: {{ calculateTotal() }}</div>
+                    </mat-footer-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" fxLayoutAlign="space-between center"
-                    fxLayout="row"></mat-row>
-            </mat-table>
-            <div fxLayout="row" fxLayoutAlign="end center">
-                <span style="padding: 10px;"><strong>Total &#x20b9;</strong>: {{studentInfoTodisplay.TotalAmount}}
-                </span>
-            </div>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row">
+                </mat-row>
+                <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
+                </mat-footer-row>
+            </mat-table>            
         </div>
-
     </div>
     <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
         <button [disabled]="loading" matTooltip="generate receipt" *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">

@@ -74,7 +74,7 @@ export class DashboardstudentComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
-
+    this.loading=true;
     //this.urlId = +this.ar.snapshot.paramMap.get('id');
     this.LoginUserDetail = this.token.getUserDetail();
     this.shareddata.CurrentApplicationId.subscribe(a => this.ApplicationId = a);
@@ -142,6 +142,7 @@ export class DashboardstudentComponent implements OnInit {
   }
   GetMasterData() {
     debugger;
+    this.loading=true;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterDatas";
@@ -206,7 +207,7 @@ export class DashboardstudentComponent implements OnInit {
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-
+        this.loading=false;
         this.getSelectedBatchStudentIDRollNo();
 
 
@@ -296,6 +297,7 @@ export class DashboardstudentComponent implements OnInit {
       })
   }
   GetFeeTypes() {
+    this.loading=true;
     var filter = globalconstants.getStandardFilterWithBatchId(this.token);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
@@ -306,31 +308,22 @@ export class DashboardstudentComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeType = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeType);
+        this.loading=false;
       })
 
   }
   GetStudent() {
     debugger;
-    //let StudentClassIds = '';
-
+   
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
     if (studentName != undefined && studentName.trim().length > 0)
       checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentName").value.StudentId;
-    //checkFilterString += " and substringof('" + this.studentSearchForm.get("searchStudentName").value.Name + "',Name)";      
     if (this.studentSearchForm.get("FatherName").value.FatherName != undefined)
       checkFilterString += " and FatherName eq '" + this.studentSearchForm.get("FatherName").value.FatherName + "'";
-    //checkFilterString += " and substringof('" + this.studentSearchForm.get("FatherName").value + "',FatherName)"      
     if (this.studentSearchForm.get("MotherName").value.MotherName != undefined)
       checkFilterString += " and MotherName eq '" + this.studentSearchForm.get("MotherName").value.MotherName + "'"
-    //checkFilterString += " and substringof('" + this.studentSearchForm.get("MotherName").value + "',MotherName)"
-
-    // if (this.studentSearchForm.get("StudentId").value > 0) {
-    //   checkFilterString += " and StudentId eq " + this.studentSearchForm.get("StudentId").value
-    // }
-
-    //this.filterOrgIdOnly += checkFilterString;
-
+   
     let list: List = new List();
     list.fields = ["StudentId", "StudentClasses/StudentClassId",
       "StudentClasses/BatchId",
@@ -380,7 +373,7 @@ export class DashboardstudentComponent implements OnInit {
 
   }
   GetStudents() {
-
+    this.loading=true;
     let list: List = new List();
     list.fields = [
       'StudentClassId',

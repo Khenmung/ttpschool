@@ -3,6 +3,7 @@
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <alert></alert>
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
             
             <mat-form-field appearance="outline" [style.width.px]="350">

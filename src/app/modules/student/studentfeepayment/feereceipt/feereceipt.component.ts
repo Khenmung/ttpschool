@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -14,6 +14,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
   styleUrls: ['./feereceipt.component.scss']
 })
 export class FeereceiptComponent implements OnInit {
+@Input("BillDetail") BillDetail:any[];
   loading=false;
   editReceipt = false;
   optionsNoAutoClose = {
@@ -59,7 +60,7 @@ export class FeereceiptComponent implements OnInit {
   ELEMENT_DATA: IStudentFeePaymentReceipt[];
   StudentFeePaymentList: IStudentFeePaymentReceipt[];
   Students: string[];
-  dataSource: MatTableDataSource<IStudentFeePaymentReceipt>;
+  dataSource: MatTableDataSource<any>;
   dataReceiptSource: MatTableDataSource<IReceipt>;
   allMasterData = [];
   SelectedBatchId =0;
@@ -79,6 +80,9 @@ export class FeereceiptComponent implements OnInit {
     Remarks: '',
     Active: 1
   };
+  OriginalAmountForCalc =0;
+  TotalAmount =0;
+  Balance=0;
   constructor(private dataservice: NaomitsuService,
     private tokenservice:TokenStorageService,
     private alert: AlertService,
@@ -91,11 +95,16 @@ export class FeereceiptComponent implements OnInit {
   back() {
 
   }
+  public calculateTotal() {
+    this.TotalAmount = this.BillDetail.reduce((accum, curr) => accum + curr.Amount, 0);
+    this.OriginalAmountForCalc = this.BillDetail.reduce((accum, curr) => accum + curr.BaseAmountForCalc, 0);
+    this.Balance = this.OriginalAmountForCalc - this.TotalAmount;
+    return this.TotalAmount;
+  }
   displayedColumns = [
     'SlNo',
     'FeeName',
-    'PaymentAmount',
-
+    'Amount'
   ];
   ReceiptDisplayedColumns = [
     'StudentReceiptId',
@@ -105,6 +114,8 @@ export class FeereceiptComponent implements OnInit {
     'Action'
   ]
   PageLoad() {
+    console.log('BillDetail',this.BillDetail)
+    this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.shareddata.CurrentClasses.subscribe(cls=>(this.Classes=cls));
     this.shareddata.CurrentBatch.subscribe(lo=>(this.Batches=lo));
     this.shareddata.CurrentSection.subscribe(pr=>(this.Sections=pr));
@@ -352,7 +363,7 @@ export class FeereceiptComponent implements OnInit {
     let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "Section", "StudentId", "BatchId","RollNo", "Student/Name", "ClassId", "FeeTypeId"];
+    list.fields = ["StudentClassId", "SectionId", "StudentId", "BatchId","RollNo", "Student/Name", "ClassId", "FeeTypeId"];
     list.lookupFields = ["Student"];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
@@ -371,7 +382,7 @@ export class FeereceiptComponent implements OnInit {
           })[0].BatchName
 
           this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
-            return cls.MasterDataId == data.value[0].Section
+            return cls.MasterDataId == data.value[0].SectionId
           })[0].MasterDataName;
           this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
             return cls.MasterDataId == this.studentInfoTodisplay.ClassId

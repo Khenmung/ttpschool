@@ -5,6 +5,7 @@ const USER_KEY = 'auth-user';
 const USER_DETAIL = 'userdetail';
 const REDIRECT_URL = 'redirecturl';
 const SELECTEDBATCHID = 'selectedbatchid';
+const SELECTEDAPPID = 'selectedappid';
 const CHECKBATCHID='checkbatchid'
 const NEXTBATCHID ='nextbatchid';
 const PREVIOUSBATCHID='previousbatchid';
@@ -59,6 +60,13 @@ export class TokenStorageService {
   }
   public getCheckEqualBatchId(): string | null {
     return localStorage.getItem(CHECKBATCHID);
+  }
+  public saveSelectedAppId(token: string): void {
+    localStorage.removeItem(SELECTEDAPPID);
+    localStorage.setItem(SELECTEDAPPID, token);
+  }
+  public getSelectedAPPId(): string | null {
+    return localStorage.getItem(SELECTEDAPPID);
   }
   public saveSelectedBatchId(token: string): void {
     localStorage.removeItem(SELECTEDBATCHID);

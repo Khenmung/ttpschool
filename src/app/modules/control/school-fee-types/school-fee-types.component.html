@@ -4,12 +4,12 @@
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
-    <div style="padding: 15px;" fxLayout="row wrap">
+    <div style="padding: 15px;" fxLayout="column" fxLayoutAlign="center center">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
                 <mat-form-field [style.width.pc]="25">
                     <mat-label>Fee type</mat-label>
-                    <input matInput formControlName="searchFeeTypeName" autocomplete="Off">                        
+                    <input matInput formControlName="searchFeeTypeName" autocomplete="Off">
                 </mat-form-field>
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetFeeTypes()">
                     <mat-icon>search</mat-icon>
@@ -22,7 +22,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field>
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" maxlength="250"
-                            [(value)]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
+                                [(value)]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -32,7 +32,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field>
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" maxlength="250"
-                            [(value)]="element.Description" [(ngModel)]="element.Description">
+                                [(value)]="element.Description" [(ngModel)]="element.Description">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -42,7 +42,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field [style.width.pc]="50">
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" maxlength="250"
-                            [(value)]="element.Formula" [(ngModel)]="element.Formula">
+                                [(value)]="element.Formula" [(ngModel)]="element.Formula">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -62,7 +62,8 @@
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                            (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>
@@ -71,6 +72,9 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
         </div>
-
+        <div style="width:100%;background-color: lightgray;font-size: medium;padding: 10px;"> Below variables can be applied in the
+            formula.
+        </div>
+        <div>StudentName, FeeName, MonthName, ClassName, SectionName, Amount</div>
     </div>
 </div>

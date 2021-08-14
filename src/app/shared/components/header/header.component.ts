@@ -38,16 +38,18 @@ export class HeaderComponent implements OnInit {
   }
   CurrentBatchId = 0;
   SelectedBatchId = 0;
+  SelectedAppId =0;
   Batches = [];
   PermittedApplications = [];
   ngOnInit(): void {
-    //debugger;
+    debugger;
     var urlId = 0;
     this.aroute.paramMap.subscribe(p => {
       urlId = +p.get('id');
       this.shareddata.ChangeApplicationId(urlId);
     })
     this.searchForm = this.fb.group({
+      searchApplicationId:[0],
       searchBatchId: [0]
     })
     this.userName = this.tokenStorage.getUser();
@@ -55,7 +57,7 @@ export class HeaderComponent implements OnInit {
 
     var apps = this.loginUserDetail[0]["applicationRolePermission"];
     this.PermittedApplications = apps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-    //console.log('screensize1',apps)
+    console.log('screensize1',this.PermittedApplications)
     if (this.userName === undefined || this.userName === null || this.userName == '')
       this.loggedIn = false;
     else
@@ -64,11 +66,12 @@ export class HeaderComponent implements OnInit {
     this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
     this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+    this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
     if (this.Batches.length == 0)
       this.getBatches();
     else {
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
-
+      this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
     }
 
   }
@@ -103,25 +106,15 @@ export class HeaderComponent implements OnInit {
     this.route.navigate(['/home/about/' + this.NewsNEventPageId]);
   }
   goto(page) {
-    this.route.navigate(['/' + page]);
-    // switch (page) {
-    //   case 'subject':
-    //     this.route.navigate(['/subject']);
-    //     break;
-    //   case 'exam':
-    //     this.route.navigate(['/exam']);
-    //     break;
-    //   case 'control':
-    //     this.route.navigate(['/control']);
-    //     break;
-    //   case 'admin':
-    //     this.route.navigate(['/admin']);
-    //     break;
-    //   default:
-    //     this.route.navigate(['/admin']);
-    // }
+    this.route.navigate(['/' + page]);    
   }
+  ChangeApplication(applicationId){
 
+    this.tokenStorage.saveSelectedAppId(applicationId.value);
+    var selectedApp=this.PermittedApplications.filter(a=>a.applicationId == applicationId.value);
+    this.route.navigate(['/',selectedApp[0].appShortName,selectedApp[0].applicationId])
+  
+  }
   ChangeCurrentBatchId(selected) {
     debugger;
     var _SelectedBatch = this.Batches.filter(b=>b.BatchId==selected)
@@ -194,6 +187,7 @@ export class HeaderComponent implements OnInit {
       }
       
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
+      this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
       this.generateBatchIds(this.CurrentBatchId);
     });
