@@ -15,6 +15,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
 })
 export class FeereceiptComponent implements OnInit {
 @Input("BillDetail") BillDetail:any[];
+@Input("StudentClass") studentInfoTodisplay:any;
   loading=false;
   editReceipt = false;
   optionsNoAutoClose = {
@@ -26,27 +27,27 @@ export class FeereceiptComponent implements OnInit {
     keepAfterRouteChange: true
   };
   CurrentBatchId=0;
-  studentInfoTodisplay = {
-    Currentbatch: '',
-    currentbatchId: 0,
-    BillNo: 0,
-    StudentName: '',
-    StudentClassName: '',
-    ReceiptDate: 0,
-    StudentId: 0,
-    StudentClassId: 0,
-    ClassId: 0,
-    SectionName: '',
-    RollNo:0,
-    PayAmount: 0,
-    BalanceAmt: 0,
-    PaidAmt: 0,
-    OfflineReceiptNo: 0,
-    TotalAmount: 0,
-    ClassFeeId: 0,
-    ReceiptNo: 0,
-    PaymentDate: Date
-  }
+  // studentInfoTodisplay = {
+  //   Currentbatch: '',
+  //   currentbatchId: 0,
+  //   BillNo: 0,
+  //   StudentName: '',
+  //   StudentClassName: '',
+  //   ReceiptDate: 0,
+  //   StudentId: 0,
+  //   StudentClassId: 0,
+  //   ClassId: 0,
+  //   SectionName: '',
+  //   RollNo:0,
+  //   PayAmount: 0,
+  //   BalanceAmt: 0,
+  //   PaidAmt: 0,
+  //   OfflineReceiptNo: 0,
+  //   TotalAmount: 0,
+  //   ClassFeeId: 0,
+  //   ReceiptNo: 0,
+  //   PaymentDate: Date
+  // }
   NewReceipt = true;
   Saved = false;
   PaymentIds = [];
@@ -127,7 +128,7 @@ export class FeereceiptComponent implements OnInit {
     this.studentInfoTodisplay.currentbatchId =this.SelectedBatchId;
     this.shareddata.CurrentFeeNames.subscribe(b=>(this.FeeNames=b));
         
-    this.GetStudentClass();
+    //this.GetStudentClass();
     // this.route.paramMap.subscribe(param => {
     //   this.studentInfoTodisplay.StudentId = +param.get("id");
     // })

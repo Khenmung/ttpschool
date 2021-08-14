@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+//import { startWith, map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -44,7 +44,6 @@ export class ApplicationfeatureComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
-    'Application',
     'FeatureName',
     'Active',
     'Action'
