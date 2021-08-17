@@ -92,7 +92,12 @@
                                     <mat-footer-row class="sticky-footer" *matFooterRowDef="billDisplayedColumns">
                                     </mat-footer-row>
                                 </mat-table>
-                                <div fxLayout="row" fxLayoutAlign="end center" style="padding: 15px;">
+                                <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 15px;">
+                                    <mat-form-field>
+                                        <input matInput maxlength="20"
+                                            [(ngModel)]="OffLineReceiptNo" [(value)]="OffLineReceiptNo"
+                                            autocomplete="Off">
+                                    </mat-form-field>                             
                                     <button [disabled]="loading || calculateTotal()==0" matTooltip="pay" mat-mini-fab
                                         (click)="billpayment()">
                                         <mat-icon>payments</mat-icon>
@@ -105,7 +110,7 @@
                         <ng-template mat-tab-label>
                             <mat-icon>receipt</mat-icon>Receipt
                         </ng-template>
-                        <app-feereceipt [StudentClass]="studentInfoTodisplay" [BillDetail]="StudentBillList"></app-feereceipt>
+                        <app-feereceipt [OffLineReceiptNo]="OffLineReceiptNo" [StudentClass]="studentInfoTodisplay" [BillDetail]="StudentBillList"></app-feereceipt>
                     </mat-tab>
                 </mat-tab-group>
             </div>

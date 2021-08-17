@@ -6,10 +6,10 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher, MAT_DATE_LOCALE } from '@angular/material/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import {NgxPrintModule} from 'ngx-print';
+//import {NgxPrintModule} from 'ngx-print';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { SchoolReportsComponent, SchoolReportsRoutingModule } from './reports-routing.module';
-import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
+//import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MatTableModule } from '@angular/material/table';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
@@ -27,8 +27,8 @@ import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,
-    MultiLevelMenuModule,
-    NgxPrintModule,
+    // MultiLevelMenuModule,
+    // NgxPrintModule,
     NgxFileDropModule,
     SchoolReportsRoutingModule,
     SharedhomepageModule,

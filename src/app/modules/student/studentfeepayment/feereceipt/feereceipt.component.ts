@@ -11,13 +11,16 @@ import { SharedataService } from '../../../../shared/sharedata.service';
 @Component({
   selector: 'app-feereceipt',
   templateUrl: './feereceipt.component.html',
-  styleUrls: ['./feereceipt.component.scss']
+  styleUrls: ['./feereceipt.component.scss'],
+  //encapsulation: ViewEncapsulation.None
 })
 export class FeereceiptComponent implements OnInit {
 @Input("BillDetail") BillDetail:any[];
 @Input("StudentClass") studentInfoTodisplay:any;
-  loading=false;
-  editReceipt = false;
+@Input("OffLineReceiptNo") OffLineReceiptNo:any;
+
+loading=false;
+  CancelReceipt = false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -27,27 +30,7 @@ export class FeereceiptComponent implements OnInit {
     keepAfterRouteChange: true
   };
   CurrentBatchId=0;
-  // studentInfoTodisplay = {
-  //   Currentbatch: '',
-  //   currentbatchId: 0,
-  //   BillNo: 0,
-  //   StudentName: '',
-  //   StudentClassName: '',
-  //   ReceiptDate: 0,
-  //   StudentId: 0,
-  //   StudentClassId: 0,
-  //   ClassId: 0,
-  //   SectionName: '',
-  //   RollNo:0,
-  //   PayAmount: 0,
-  //   BalanceAmt: 0,
-  //   PaidAmt: 0,
-  //   OfflineReceiptNo: 0,
-  //   TotalAmount: 0,
-  //   ClassFeeId: 0,
-  //   ReceiptNo: 0,
-  //   PaymentDate: Date
-  // }
+  ReceiptHeading =[];
   NewReceipt = true;
   Saved = false;
   PaymentIds = [];
@@ -115,7 +98,7 @@ export class FeereceiptComponent implements OnInit {
     'Action'
   ]
   PageLoad() {
-    console.log('BillDetail',this.BillDetail)
+    //console.log('BillDetail',this.BillDetail)
     this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.shareddata.CurrentClasses.subscribe(cls=>(this.Classes=cls));
     this.shareddata.CurrentBatch.subscribe(lo=>(this.Batches=lo));
@@ -125,6 +108,7 @@ export class FeereceiptComponent implements OnInit {
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b=>(this.SelectedBatchId=b));
     //this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+    this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
     this.studentInfoTodisplay.currentbatchId =this.SelectedBatchId;
     this.shareddata.CurrentFeeNames.subscribe(b=>(this.FeeNames=b));
         
@@ -139,7 +123,7 @@ export class FeereceiptComponent implements OnInit {
     //   this.alert.error("Id is missing", this.optionAutoClose);
     //   return;
     // }
-    // this.GetMasterData();
+     this.GetMasterData();
   }
   UpdateActive(element) {
     let toupdatePaymentDetail = {
@@ -207,22 +191,12 @@ export class FeereceiptComponent implements OnInit {
         })
   }
   edit() {
-    this.editReceipt = true;
-    this.displayedColumns = [
-      'SlNo',
-      'FeeName',
-      'PaymentAmount',
-      'Action'
-    ];
+    this.CancelReceipt = true;   
 
   }
   done() {
-    this.editReceipt = false;
-    this.displayedColumns = [
-      'SlNo',
-      'FeeName',
-      'PaymentAmount',
-    ];
+    this.CancelReceipt = false;
+    
   }
   GetStudentFeePaymentDetails(ReceiptNo) {
     debugger;
@@ -329,22 +303,18 @@ export class FeereceiptComponent implements OnInit {
   }
   GetMasterData() {
     let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId","Description"];
     list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and (MasterDataName eq 'Receipt Heading' or OrgId eq 1)"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        debugger;
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
+        this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].RECEIPTHEADING);
         
-          this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
-        
-        this.GetStudentClass();
+        //this.GetStudentClass();
       });
 
   }

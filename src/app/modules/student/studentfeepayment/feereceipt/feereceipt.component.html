@@ -3,11 +3,10 @@
 <div *ngIf="NewReceipt">
     <div class="divCls" fxLayoutGap="100px" id="printSection">
         <div fxLayout="column" fxLayoutAlign="space-around center">
-            <span style="font-size: 24pt;">
-                <b>ST. PAUL'S INSTITUTE</b>
-            </span>
-            <span>(CBSE Affiliation No. 1230018)</span>
-            <span>New Lamka, Go Cin Khup Veng, Churachandpur</span>
+            <div *ngFor="let item of ReceiptHeading;let i=index">
+                <span style="font-size: x-large;" *ngIf="i==0" [innerHTML]="item.Description"></span>
+                <span *ngIf="i>0" [innerHTML]="item.Description"></span>
+            </div>
         </div>
         <br>
         <div fxLayout="row" fxLayoutAlign="space-between center">
@@ -17,12 +16,10 @@
             <div fxLayout="row" fxLayoutAlign="space-around center">
                 <span>
                     <span><strong>Offline Receipt No.: </strong></span>
-                    <mat-form-field appearance="legacy" [style.width.px]="100">
-                        <input matInput [(ngModel)]="studentInfoTodisplay.OfflineReceiptNo">
-                    </mat-form-field>
+                    {{studentInfoTodisplay.OffLineReceiptNo}}
                 </span>
             </div>
-    
+
             <span>
                 <b>Bill Date</b>: {{studentInfoTodisplay.ReceiptDate|date:'dd/MM/yyyy'}}
             </span>
@@ -35,7 +32,7 @@
                 Roll no. {{studentInfoTodisplay.RollNo}}.
             </span>
         </div>
-                <mat-divider></mat-divider>
+        <mat-divider></mat-divider>
         <br>
         <div>
             <mat-table [dataSource]="dataSource">
@@ -60,34 +57,52 @@
                         <div>Total: {{ calculateTotal() }}</div>
                     </mat-footer-cell>
                 </ng-container>
+
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row">
                 </mat-row>
                 <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
                 </mat-footer-row>
-            </mat-table>            
+            </mat-table>
         </div>
     </div>
     <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
-        <button [disabled]="loading" matTooltip="generate receipt" *ngIf="studentInfoTodisplay.BillNo==0" (click)="whenPrint()" class="mat-raised-button">
+        <button [disabled]="loading" matTooltip="generate receipt" *ngIf="studentInfoTodisplay.BillNo==0"
+            (click)="whenPrint()" class="mat-raised-button">
             <mat-icon>create_new_folder</mat-icon>
         </button>
-        <div *ngIf="Saved || studentInfoTodisplay.BillNo>0">
-            <button [disabled]="loading" matTooltip="edit receipt" *ngIf="!editReceipt" (click)="edit()" class="mat-raised-button">
-                <mat-icon>edit</mat-icon>
-            </button>
-            <button [disabled]="loading" matTooltip="done" *ngIf="editReceipt" (click)="done()" class="mat-raised-button">
-                <mat-icon>checked</mat-icon>
-            </button>
-            <button [disabled]="loading" matTooltip="print" *ngIf="!editReceipt" printSectionId="printSection" [useExistingCss]="true"
-                ngxPrint class="mat-raised-button">
-                <mat-icon>print</mat-icon>
-            </button>            
-        </div>
-        <button [disabled]="loading" matTooltip="back" (click)="GetStudentFeePaymentDetails(0)" class="mat-raised-button">
+        <button [disabled]="loading" matTooltip="back" (click)="GetStudentFeePaymentDetails(0)"
+            class="mat-raised-button">
             <mat-icon>arrow_back</mat-icon>
         </button>
+        <div fxLayout="row" fxLayoutAlign="space-around center" *ngIf="Saved || studentInfoTodisplay.BillNo>0">
+            <div><button [disabled]="loading" matTooltip="cancel receipt" *ngIf="!CancelReceipt" (click)="edit()"
+                    class="mat-raised-button">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+                <button [disabled]="loading" matTooltip="done" *ngIf="editReceipt" (click)="done()"
+                    class="mat-raised-button">
+                    <mat-icon>checked</mat-icon>
+                </button>
+                <button [disabled]="loading" matTooltip="print" *ngIf="!editReceipt" printSectionId="printSection"
+                    [useExistingCss]="true" ngxPrint class="mat-raised-button">
+                    <mat-icon>print</mat-icon>
+                </button>
+            </div>
+            <div style="padding:15px;margin-right:15px;border-collapse:collapse;border: 1px solid lightgray;" *ngIf="CancelReceipt">Are you sure you want to cancel
+                this receipt?<br>
+                <button [disabled]="loading" matTooltip="yes" (click)="CancelReceipt()" class="mat-raised-button">
+                    <mat-icon>done</mat-icon>
+                </button>
+                <button [disabled]="loading" matTooltip="no" (click)="CancelReceipt()" class="mat-raised-button">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </div>
+        </div>
+        
+
     </div>
+
 </div>
 <div *ngIf="!NewReceipt">
     <div style="width:100%;padding:20px" fxLayoutAlign="center center" fxLayout="row" fxLayoutGap="20px">
@@ -99,5 +114,5 @@
             <mat-icon>search</mat-icon>
         </button>
     </div>
-    
+
 </div>

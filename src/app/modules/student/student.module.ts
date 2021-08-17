@@ -7,6 +7,7 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { NgxPrintModule } from 'ngx-print';
 
 @NgModule({
   declarations: [StudentComponents],
@@ -18,7 +19,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MaterialModule,
     SharedModule,
     SharedhomepageModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    NgxPrintModule,
   ]
 })
 export class StudentModule { }

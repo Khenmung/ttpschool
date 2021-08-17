@@ -28,17 +28,18 @@ import { FeereceiptComponent } from '../feereceipt/feereceipt.component';
   ],
 })
 export class AddstudentfeepaymentComponent implements OnInit {
-  @ViewChild(FeereceiptComponent) receipt:FeereceiptComponent;
+  @ViewChild(FeereceiptComponent) receipt: FeereceiptComponent;
   AccountingLedgerTrialBalanceListName = 'AccountingLedgerTrialBalances';
   AccountingVoucherListName = 'AccountingVouchers';
   FeeReceiptListName = 'StudentFeeReceipts';
-  selectedIndex =0;
+  selectedIndex = 0;
   loading = false;
   Balance = 0;
   NewDataCount = 0;
   TotalAmount = 0;
   exceptionColumns: boolean;
   //isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
+  OffLineReceiptNo ='';
   expandedElement: any;
   CurrentRow: any = {};
   FeePayable = true;
@@ -65,7 +66,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
     ClassId: 0,
     SectionName: '',
     PayAmount: 0,
-    StudentClassId: 0
+    StudentClassId: 0,
+    BillNo: 0,
+    ReceiptDate: new Date()
   }
   OriginalAmountForCalc = 0;
   VariableObjList: any[] = [];
@@ -95,11 +98,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
     StudentFeeReceiptId: 0,
     StudentClassId: 0,
     TotalAmount: '',
-    ReceiptNo: '',
+    ReceiptNo: 0,
+    OffLineReceiptNo:'',
     ReceiptDate: new Date(),
     Discount: '',
     BatchId: 0,
-    OrgId: 0
+    OrgId: 0,
+    Active:1
   }
   StudentBillData = {
     AccountingVoucherId: 0,
@@ -156,6 +161,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.PageLoad();
   }
   PageLoad() {
+    this.StudentBillList=[];
+    this.billdataSource = new MatTableDataSource<any>(this.StudentBillList);
     this.Months = globalconstants.getMonths();
     this.loginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
@@ -450,7 +457,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
           PaymentOrder: row.PaymentOrder,
           OrgId: this.loginUserDetail[0]["orgId"],
           SubOrgId: 0,
-          Active: 1
+          Active: 1,
+          Action:true
         });
       }
       else {
@@ -477,7 +485,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
             PaymentOrder: row.PaymentOrder,
             OrgId: this.loginUserDetail[0]["orgId"],
             SubOrgId: 0,
-            Active: 1
+            Active: 1,
+            Action:true
           })
         })
       }
@@ -525,7 +534,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         return;
       }
       else {
-        this.loading=true;
+        this.loading = true;
         var SelectedMonths = this.StudentLedgerList.filter(f => f.Action)
         this.NoOfMonthsInBill = SelectedMonths.length;
         SelectedMonths.forEach(row => {
@@ -563,45 +572,60 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.StudentEmployeeLedegerId = data.StudentEmployeeLedegerId;
-          this.StudentReceiptData.StudentFeeReceiptId = 0;
-          this.StudentReceiptData.TotalAmount = this.TotalAmount.toString();
-          this.StudentReceiptData.BatchId = this.SelectedBatchId;
-          this.StudentReceiptData.OrgId = this.loginUserDetail[0]["orgId"];
-          this.StudentReceiptData.StudentClassId = row.StudentClassId;
-          this.StudentReceiptData.ReceiptNo = '';
-          this.StudentReceiptData.Discount = '0';
-          //console.log('studentfee', this.StudentReceiptData)
-          this.dataservice.postPatch(this.FeeReceiptListName, this.StudentReceiptData, 0, 'post')
-            .subscribe(
-              (data: any) => {
-                //payment detail data;
-                this.StudentBillList.forEach((paydetail, indx) => {
-                  this.StudentBillData.AccountingVoucherId = 0;
-                  this.StudentBillData.ClassFeeId = paydetail.ClassFeeId;
-                  this.StudentBillData.Amount = paydetail.Amount.toString();
-                  this.StudentBillData.DebitCreditId = 0;
-                  this.StudentBillData.FeeReceiptId = data.StudentFeeReceiptId;
-                  this.StudentBillData.GLAccountId = row.StudentEmployeeLedegerId;
-                  this.StudentBillData.ShortText = 'student fee payment';
-                  this.StudentBillData.Active = 1;
-                  this.StudentBillData.OrgId = this.loginUserDetail[0]["orgId"];
-                  //this.StudentBillData.BatchId = this.SelectedBatchId;
-                  this.StudentBillData["CreatedDate"] = new Date();
-                  this.StudentBillData["CreatedBy"] = this.loginUserDetail[0]["userId"];
-                  this.dataservice.postPatch(this.AccountingVoucherListName, this.StudentBillData, 0, 'post')
-                    .subscribe(
-                      (data: any) => {
-                        //this.GetStudentFeePayment();
-                        if (this.NoOfMonthsInBill == 0 && indx == this.StudentBillList.length - 1)
-                        {
-                          this.loading=false;
-                          this.alert.success("Data saved successfully", this.optionAutoClose);
-                          this.tabChanged(1);
-                        }
-                          
-                      })
+          var list = new List();
+          list.fields = ["ReceiptNo"];
+          list.PageName = this.FeeReceiptListName;
+          list.limitTo = 1;
+          list.orderBy = "StudentFeeReceiptId desc";
+          list.filter = [globalconstants.getStandardFilterWithBatchId(this.tokenstorage)];
+          this.dataservice.get(list).subscribe((data: any) => {
+            if (data.value.length > 0)
+              this.StudentReceiptData.ReceiptNo = +(data.value[0].ReceiptNo + 1);
+            else
+              this.StudentReceiptData.ReceiptNo = 1;
+            
+            this.StudentReceiptData.StudentFeeReceiptId = 0;
+            this.StudentReceiptData.TotalAmount = this.TotalAmount.toString();
+            this.StudentReceiptData.BatchId = this.SelectedBatchId;
+            this.StudentReceiptData.OrgId = this.loginUserDetail[0]["orgId"];
+            this.StudentReceiptData.StudentClassId = row.StudentClassId;
+            this.StudentReceiptData.Active = 1;
+            this.StudentReceiptData.OffLineReceiptNo = this.OffLineReceiptNo;
+            this.StudentReceiptData.Discount = '0';
+            //console.log('studentfee', this.StudentReceiptData)
+            this.dataservice.postPatch(this.FeeReceiptListName, this.StudentReceiptData, 0, 'post')
+              .subscribe(
+                (data: any) => {
+                  //payment detail data;
+                  this.studentInfoTodisplay.BillNo = data.StudentFeeReceiptId;
+                  this.StudentBillList.forEach((paydetail, indx) => {
+                    this.StudentBillData.AccountingVoucherId = 0;
+                    this.StudentBillData.ClassFeeId = paydetail.ClassFeeId;
+                    this.StudentBillData.Amount = paydetail.Amount.toString();
+                    this.StudentBillData.DebitCreditId = 0;
+                    this.StudentBillData.FeeReceiptId = data.StudentFeeReceiptId;
+                    this.StudentBillData.GLAccountId = row.StudentEmployeeLedegerId;
+                    this.StudentBillData.ShortText = 'student fee payment';
+                    this.StudentBillData.Active = 1;
+                    this.StudentBillData.OrgId = this.loginUserDetail[0]["orgId"];
+                    //this.StudentBillData.BatchId = this.SelectedBatchId;
+                    this.StudentBillData["CreatedDate"] = new Date();
+                    this.StudentBillData["CreatedBy"] = this.loginUserDetail[0]["userId"];
+                    console.log('StudentBillData',this.StudentBillData)
+                    this.dataservice.postPatch(this.AccountingVoucherListName, this.StudentBillData, 0, 'post')
+                      .subscribe(
+                        (data: any) => {
+                          if (this.NoOfMonthsInBill == 0 && indx == this.StudentBillList.length - 1) {
+                            this.loading = false;
+                            this.alert.success("Data saved successfully", this.optionAutoClose);
+                            this.tabChanged(1);
+                          }
+
+                        })
+                  })
                 })
-              })
+          }
+          )
         });
 
   }
@@ -619,38 +643,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
         });
   }
-  GetDiscountFactor(feeName, indx) {
-    let feeType = this.studentInfoTodisplay.StudentFeeType;
-    let NoOfFreeMonth = 0;
-    let numbericPartInFeetype = 0;
-    let PayablePercent = 0;
-    let splitArray = feeType.toLowerCase().split('%');
-    if (feeName.toLowerCase().includes("admission"))
-      PayablePercent = 1;
-    else if (splitArray.length > 1) {
-      numbericPartInFeetype = parseFloat(splitArray[0]);
-      PayablePercent = (100 - numbericPartInFeetype) / 100;
-    }
-    else {
 
-      let indexOfmonthFree = feeType.toLowerCase().indexOf('month free');
-      if (indexOfmonthFree > -1) {
-        NoOfFreeMonth = +feeType.substr(0, indexOfmonthFree);
-        //equal to is included since admission is also in the loop
-        if (NoOfFreeMonth > 0 && indx <= NoOfFreeMonth)
-          PayablePercent = 0;
-        else
-          PayablePercent = 1;
-      }
-      else if (feeType.toLowerCase().includes("adjusted"))
-        PayablePercent = 1;
-      else if (feeType.toLowerCase() == "free")
-        PayablePercent = 0;
-    }
-
-    return PayablePercent;
+  pad(num: number, size: number): string {
+    let s = num + "";
+    var year = (new Date().getFullYear() + '').substr(2, 2)
+    while (s.length < size - 2) s = "0" + s;
+    return year + s;
   }
-
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -698,7 +697,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         break;
       case 1:
         this.receipt.PageLoad();
-        break;      
+        break;
       default:
         this.PageLoad();
         break;

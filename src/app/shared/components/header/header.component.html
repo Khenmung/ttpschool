@@ -19,6 +19,21 @@
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
                 <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
             </button>
+            <span style="margin-right: 10px;font-size:medium;color:white">
+                <form [formGroup]="searchForm">
+                    <mat-form-field [style.width.px]="250">
+                        <mat-select formControlName="searchApplicationId" (selectionChange)="ChangeApplication($event)">
+                            <mat-option *ngFor="let item of PermittedApplications" [value]="item.applicationId">
+                                {{item.applicationName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field [style.width.px]="130">
+                        <mat-select formControlName="searchBatchId" (selectionChange)="ChangeCurrentBatchId($event)">
+                            <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </form>
+            </span>
             <mat-menu #menu="matMenu">
                 <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
                     <mat-icon>login</mat-icon>login
@@ -38,9 +53,9 @@
             </mat-menu>
         </div>
     </mat-toolbar-row>
-    <mat-toolbar-row>hi</mat-toolbar-row>
-    <mat-toolbar-row fxLayout="row" fxLayoutAlign="end center"
-        fxLayoutGap="15px" style="background-color:#3CE6BC">
+    <!-- <mat-toolbar-row>hi</mat-toolbar-row> -->
+    <!-- <mat-toolbar-row fxLayout="row" fxLayoutAlign="end center"
+        fxLayoutGap="15px" style="background-color:lightgoldenrodyellow">
         <span style="margin-right: 10px;font-size:medium;color:black">
             <form [formGroup]="searchForm">
                 <mat-form-field [style.width.px]="250">
@@ -56,7 +71,7 @@
                 </mat-form-field>
             </form>
         </span>
-    </mat-toolbar-row>
+    </mat-toolbar-row> -->
     <mat-toolbar-row fxShow.gt-xs fxHide.gt-xs
         style="height: 70px !important;box-shadow: 3px 3px 3px var(--maincolor2);" fxLayout="row wrap"
         fxLayoutAlign="space-between center">
