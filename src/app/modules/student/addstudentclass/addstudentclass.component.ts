@@ -100,11 +100,11 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
-        //this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
+        //this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
         this.aRoute.paramMap.subscribe(param => {
           this.GetStudent();

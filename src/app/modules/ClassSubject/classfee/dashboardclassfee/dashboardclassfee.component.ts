@@ -423,10 +423,10 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
 
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
-        //this.MonthYears = this.getDropDownData(globalconstants.MasterDefinitions[0].application);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        //this.MonthYears = this.getDropDownData(globalconstants.MasterDefinitions.application);
 
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.shareddata.ChangeClasses(this.Classes);

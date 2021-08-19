@@ -170,8 +170,8 @@ export class StudentDocumentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].DOCUMENTTYPE);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+        this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.DOCUMENTTYPE);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         this.GetDocuments();
       });

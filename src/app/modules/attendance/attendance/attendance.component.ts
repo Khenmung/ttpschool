@@ -377,10 +377,10 @@ export class AttendanceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
-        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].ATTENDANCESTATUS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+        this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
 
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);

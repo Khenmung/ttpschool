@@ -1,4 +1,4 @@
-<mat-sidenav-container class="full-height" autosize="true">
+<mat-sidenav-container class="flex-container" autosize="true">
     <mat-sidenav mode="side" opened (click)="toggleSidebar()">
         <div mat-menu-item *ngFor="let i of sideMenu" [routerLink]="[i.link]" class="with-icon padded"
             (click)="$event.stopPropagation()">
@@ -6,8 +6,10 @@
             <span [hidden]="collapse">{{i.label}}</span>
         </div>
     </mat-sidenav>
-    <mat-sidenav-content class="padded">
+    <mat-sidenav-content class="maincontent">
+        <!-- <div class="content"> -->
         <router-outlet></router-outlet>
+    <!-- </div> -->
     </mat-sidenav-content>
 </mat-sidenav-container>
 <!-- <div>

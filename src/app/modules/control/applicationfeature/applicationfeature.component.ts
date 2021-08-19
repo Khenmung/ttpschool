@@ -249,7 +249,7 @@ export class ApplicationfeatureComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].APP);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.applications.APP);
         this.loading=false;
       });
   }

@@ -133,11 +133,11 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           //this.TopMasters =this.TopMasters.filter()
           //console.log("top", this.TopMasters);
           //this.DefinedMaster = data.value.filter(m => m.OrgId == this.UserDetails[0]["orgId"]);
-          // let applicationData = globalconstants.MasterDefinitions[0].application;
+          // let applicationData = globalconstants.MasterDefinitions.application;
           // this.ApplicationDataStatus = this.getSettingStatus(applicationData);
           // //delete this.ApplicationDataStatus[0]["APPLICATION"];
-          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].ROLE);
-          // let schoolData = globalconstants.MasterDefinitions[1].school;
+          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.applications.ROLE);
+          // let schoolData = globalconstants.MasterDefinitions.school;
           // this.SchoolDataStatus = this.getSettingStatus(schoolData);
           this.loading = false;
 

@@ -388,17 +388,17 @@ export class ExcelDataManagementComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.AllMasterData = [...data.value];
-        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].UPLOADTYPE);
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SCHOOLGENDER);
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BLOODGROUP);
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CATEGORY);
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].RELIGION);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].STATE);
-        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].PRIMARYCONTACT);
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
-        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEETYPE);
+        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
+        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
         this.shareddata.ChangeFeeType(this.FeeTypes);
         //this.PrimaryContactFatherOrMother= this.getDropDownData(globalconstants.PRIMARYCONTACT);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));

@@ -249,10 +249,10 @@ export class EmpLeaveComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        //this.Emps = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].Emp);
-        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].LEAVE);
-        //this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].COMPONENTTYPE);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
+        //this.Emps = this.getDropDownData(globalconstants.MasterDefinitions.employee.Emp);
+        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.employee.LEAVE);
+        //this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
         this.loading = false;
       });
   }

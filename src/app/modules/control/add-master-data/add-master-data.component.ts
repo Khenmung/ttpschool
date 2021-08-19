@@ -104,11 +104,11 @@ export class AddMasterDataComponent implements OnInit {
 
           this.DefinedMaster = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
           //console.log("DefinedMaster",this.DefinedMaster);
-          let applicationData = globalconstants.MasterDefinitions[0].applications;
+          let applicationData = globalconstants.MasterDefinitions.applications;
           delete applicationData[0]['APPLICATION'];
           this.ApplicationDataStatus = this.getSettingStatus(applicationData);
 
-          let schoolData = globalconstants.MasterDefinitions[1].school;
+          let schoolData = globalconstants.MasterDefinitions.school;
           this.SchoolDataStatus = this.getSettingStatus(schoolData);
           this.loading = false;
 

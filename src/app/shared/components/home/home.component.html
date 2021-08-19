@@ -5,8 +5,7 @@
     <app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
     <mat-drawer-container [hasBackdrop]="false">
         <mat-drawer [opened]="openSideBar">
-            <app-sidebar></app-sidebar>
-     
+            <app-sidebar></app-sidebar>     
         </mat-drawer>
         <mat-drawer-content fxLayout="row" fxLayoutAlign="space-between start">
             <router-outlet></router-outlet>

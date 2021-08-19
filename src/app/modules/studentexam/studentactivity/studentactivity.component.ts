@@ -273,8 +273,8 @@ export class StudentactivityComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetStudents();
       });

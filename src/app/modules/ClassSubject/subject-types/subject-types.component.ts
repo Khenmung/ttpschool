@@ -221,7 +221,7 @@ GetMasterData() {
     .subscribe((data: any) => {
       this.allMasterData = [...data.value];
 
-      //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
+      //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
       this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         
       //this.shareddata.ChangeBatch(this.Batches);

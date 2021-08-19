@@ -448,10 +448,10 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SUBJECT);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].WORKACCOUNT);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
 
         this.shareddata.ChangeClasses(this.Classes);

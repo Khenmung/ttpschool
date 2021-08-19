@@ -110,7 +110,12 @@
                         <ng-template mat-tab-label>
                             <mat-icon>receipt</mat-icon>Receipt
                         </ng-template>
-                        <app-feereceipt [OffLineReceiptNo]="OffLineReceiptNo" [StudentClass]="studentInfoTodisplay" [BillDetail]="StudentBillList"></app-feereceipt>
+                        <app-feereceipt 
+                        (tabChanged)="tabChanged($event)"
+                        [OffLineReceiptNo]="OffLineReceiptNo" 
+                        [StudentClassFees] ="StudentClassFees"
+                        [StudentClass]="studentInfoTodisplay" 
+                        [BillDetail]="StudentBillList"></app-feereceipt>
                     </mat-tab>
                 </mat-tab-group>
             </div>

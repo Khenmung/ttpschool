@@ -139,19 +139,19 @@ export class LoginComponent implements OnInit {
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
-        // this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].ORGANIZATION);
+        // this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions.applications.ORGANIZATION);
         // this.shareddata.ChangeOrganization(this.Organizations);
 
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].DEPARTMENT);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
         this.shareddata.ChangeDepartment(this.Departments);
 
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].APP);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.applications.APP);
         this.shareddata.ChangeApplication(this.Applications);
 
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
         this.shareddata.ChangeLocation(this.Locations);
 
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].ROLE);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.applications.ROLE);
         this.shareddata.ChangeRoles(this.Roles);
 
         this.RoleFilter = ' and (RoleId eq 0';

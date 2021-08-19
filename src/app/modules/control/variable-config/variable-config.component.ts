@@ -307,10 +307,10 @@ export class VariableConfigComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].CONFIGTYPE);
-        // this.Grades = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].GRADE);
-        // this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].SALARYCOMPONENT);
-        // this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].COMPONENTTYPE);
+        this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.CONFIGTYPE);
+        // this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        // this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
+        // this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
         //this.loading = false;
         this.GetVariables();
       });

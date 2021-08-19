@@ -1,4 +1,4 @@
-import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
+//import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
 import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
 import { List } from "./interface";
@@ -53,19 +53,16 @@ export class globalconstants {
             }
         }
     ]
-    public static MasterDefinitions = [
+    public static MasterDefinitions = 
         {
-            "applications": [{
+            "applications": {
                 "ORGANIZATION": "organization",
                 "LOCATION": "location",
                 "DEPARTMENT": "department",
                 "APP": "application",
                 "ROLE": "role"
-            }]
-        },
-
-        {
-            "school": [{
+            },        
+            "school": {
                 "RECEIPTHEADING":"receipt heading",
                 "SCHOOLGENDER": "school gender",
                 "RELIGION": "religion",
@@ -94,10 +91,8 @@ export class globalconstants {
                 "SUBJECT": "subject",
                 "SUBJECTTYPE": "subject type",
                 "ATTENDANCESTATUS": "attendance status"
-            }]
-        },
-        {
-            "employee": [{
+            },        
+            "employee": {
                 "EMPLOYEEGENDER": "employee gender",
                 "EMPLOYMENTTYPE": "employment type",
                 "NATURE": "nature",
@@ -112,9 +107,7 @@ export class globalconstants {
                 "LEAVESTATUS": "leave status",
                 "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
-            }]
-        },
-        {
+            },
             "VariableName": [
                 "Grade",
                 "Department",
@@ -162,9 +155,14 @@ export class globalconstants {
                 "PFAccountNo",
                 "Active",
                 "EmployeeCode"
-            ]
+            ],
+            "accounting": {
+                "ACCOUNTNATURE": "account nature",
+                "ACCOUNTGROUP": "account group"
+            }
         }
-    ];
+
+    
     public static PERMISSIONTYPES = [
         { 'type': 'rwd', 'val': 1 },
         { 'type': 'rw', 'val': 2 },

@@ -1,0 +1,89 @@
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Exam Results</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm">
+                <mat-form-field appearance="outline">
+                    <mat-label>Exam</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                            {{item.ExamName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Class</mat-label>
+                    <mat-select formControlName="searchClassId">
+                        <!-- <mat-option [value]="0">--class--</mat-option> -->
+                        <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Section</mat-label>
+                    <mat-select formControlName="searchSectionId">
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>  
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Subject</mat-label>
+                    <mat-select formControlName="searchSubjectId">
+                        <!-- <mat-option [value]="0">--subject--</mat-option> -->
+                        <mat-option *ngFor="let item of Subjects" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetExamStudentSubjectResults()">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+                    <mat-icon>clear_all</mat-icon>
+                </button> -->
+            </form>            
+
+            <mat-table #table [dataSource]="dataSource">                
+            
+                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
+                        <div *ngIf="ExamStudentSubjectResult.length>0" fxLayoutAlign="center center">
+                        <!-- <mat-checkbox fxLayoutAlign="center center" matTooltip="select all" *ngIf="disCol=='Action'" (click)="$event.stopPropagation()"
+                            (change)="SelectAll($event)">
+                        </mat-checkbox> -->
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                            matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        <!-- <mat-form-field *ngIf="disCol !='StudentClassSubject' && disCol !='Action'">
+                            <input matInput (blur)="onBlur(element,$event)" [attr.name]="disCol" [(value)]="element[disCol]" [(ngModel)]="element[disCol]">
+                        </mat-form-field> -->
+                        <!-- <mat-checkbox matTooltip="select all in row" *ngIf="disCol !='Student'" (click)="$event.stopPropagation()"
+                            (change)="SelectAllInRow(element,$event,disCol)" [checked]="element[disCol]==1?true:false">
+                        </mat-checkbox> -->
+                        {{element[disCol]}}
+                        
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                        {{disCol=='StudentClassSubject'?element[disCol]:''}}
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

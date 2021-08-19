@@ -14,6 +14,10 @@ mat-header-cell{
     display: grid;
     place-items: center;
 }
+.mat-column-Amount,.mat-column-ReceiptNo{
+    display: flex;
+    justify-content: flex-end;
+}
 .mat-column-PaymentAmount,.mat-column-StudentReceiptId,.mat-column-OfflineReceiptNo,.mat-column-TotalAmount{
     display: grid;
     place-items: center end;
@@ -35,4 +39,10 @@ div{
 .mat-raised-button
 {
     margin-right: 15px;
+}
+.mat-row {
+    //border: 1px solid #e7e7e7;
+    //font-weight: bold;
+    min-height: 43px !important;
+    //height: 20px !important;
 }

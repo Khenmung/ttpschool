@@ -140,10 +140,10 @@ export class AppuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].ROLE);
-        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].APPLICATION);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].DEPARTMENT);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.applications.ROLE);
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.applications.APPLICATION);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
         this.shareddata.ChangeRoles(this.Roles);
         this.shareddata.ChangeApplication(this.Applications);
         this.shareddata.ChangeDepartment(this.Departments);

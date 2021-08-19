@@ -358,14 +358,14 @@ export class EmployeeGradehistoryComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].DEPARTMENT);
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].GRADE);
-        this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].SALARYCOMPONENT);
-        this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].COMPONENTTYPE);
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].WORKACCOUNT);
-        this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].JOBTITLE);
-        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].DESIGNATION);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
+        this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
+        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+        this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
+        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.loading = false;
       });
   }

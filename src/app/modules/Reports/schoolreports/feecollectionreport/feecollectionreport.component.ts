@@ -80,6 +80,9 @@ loading=false;
       PaidOrNotPaid: [0, Validators.required],
     })
   }
+  PageLoad(){
+    
+  }
   get f() {
     return this.SearchForm.controls;
   }
@@ -195,13 +198,13 @@ loading=false;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
        
         //since only one current batch is accepted
-        //this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH)[0].MasterDataId;
+        //this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH)[0].MasterDataId;
         this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));

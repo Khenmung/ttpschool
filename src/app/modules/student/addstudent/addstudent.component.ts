@@ -241,15 +241,15 @@ export class AddstudentComponent implements OnInit {
       .subscribe((data: any) => {
         //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SCHOOLGENDER);
-        this.Country = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].COUNTRY);
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BLOODGROUP);
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CATEGORY);
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].RELIGION);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].STATE);
-        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].PRIMARYCONTACT);
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions[0].applications[0].LOCATION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
+        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.school.COUNTRY);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
+        this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
         this.LocationId = this.Location.filter(location => location.MasterDataName.toLowerCase() == "lamka")[0].MasterDataId;
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;

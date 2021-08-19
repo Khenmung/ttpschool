@@ -19,7 +19,7 @@ import { List } from '../../../../shared/interface';
 export class TodayCollectionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  loading=false;
+  loading = false;
   allMasterData = [];
   FeeNames = [];
   Classes = [];
@@ -35,10 +35,10 @@ export class TodayCollectionComponent implements OnInit {
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: FormGroup;
   ErrorMessage: string = '';
-  SelectedBatchId =0;
+  SelectedBatchId = 0;
   constructor(
-    private tokenStorage:TokenStorageService,
-    private shareddata:SharedataService,
+    private tokenStorage: TokenStorageService,
+    private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private formatdate: DatePipe,
     private fb: FormBuilder) { }
@@ -48,8 +48,9 @@ export class TodayCollectionComponent implements OnInit {
       FromDate: [new Date(), Validators.required],
       ToDate: [new Date(), Validators.required],
     })
+  }
+  PageLoad() {
     this.GetMasterData();
-
   }
   GetStudentFeePaymentDetails() {
     debugger;
@@ -68,33 +69,31 @@ export class TodayCollectionComponent implements OnInit {
     list.PageName = "PaymentDetails";
     list.lookupFields = ["StudentFeePayment"];
     list.filter = [filterstring];
-    
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         this.GrandTotalAmount = 0;
         if (data.value.length > 0) {
 
-          var result=[];
+          var result = [];
 
           let ValidFeeNameIds = data.value.filter(f => {
             return f.StudentFeePayment.FeeNameId != null
           })
-          
+
           ValidFeeNameIds.forEach(element => {
 
-           let addedItem =result.filter(item=> item.FeeNameId == element.FeeNameId);
-         
-            if(addedItem.length==0)
-            {
+            let addedItem = result.filter(item => item.FeeNameId == element.FeeNameId);
+
+            if (addedItem.length == 0) {
               result.push({
-                FeeNameId:element.StudentFeePayment.FeeNameId,
+                FeeNameId: element.StudentFeePayment.FeeNameId,
                 TotalAmount: element.PaymentAmt
               })
             }
-            else
-            {
-              addedItem["TotalAmount"] += +element.PaymentAmt; 
+            else {
+              addedItem["TotalAmount"] += +element.PaymentAmt;
             }
 
           });
@@ -102,7 +101,7 @@ export class TodayCollectionComponent implements OnInit {
             this.GrandTotalAmount += +item.TotalAmount;
             debugger;
             return {
-              SlNo: indx+1,
+              SlNo: indx + 1,
               FeeName: this.FeeNames.filter(f => f.MasterDataId == +item.FeeNameId)[0].MasterDataName,
               TotalAmount: item.TotalAmount
             }
@@ -130,11 +129,11 @@ export class TodayCollectionComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].SECTION);
-        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
+        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
         //this.SelectedBatchId = +this.token.getSelectedBatchId();

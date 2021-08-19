@@ -286,10 +286,10 @@ get f(){
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions[1].school[0].BATCH);
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].GRADE);
-        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].LEAVE);
-        this.LeaveStatus = this.getDropDownData(globalconstants.MasterDefinitions[2].employee[0].LEAVESTATUS);
+        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.employee.LEAVE);
+        this.LeaveStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.LEAVESTATUS);
         this.loading = false;
         this.GetEmployees();
       });
