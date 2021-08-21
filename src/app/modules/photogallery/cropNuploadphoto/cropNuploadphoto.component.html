@@ -7,7 +7,7 @@
       <div fxLayout="row" fxLayoutAlign="space-between center">
         <mat-form-field hintLabel="Max 50 characters" appearance="outline" [style.width.pc]=23>
           <mat-label>Enter album</mat-label>
-          <input formControlName="UpdatedFileFolderName" #album matInput maxlength="50" autocomplete="off">
+          <input formControlName="UpdatedFileFolderName" #album matInput [maxlength]="50" autocomplete="off">
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>Existing albums</mat-label>
@@ -17,7 +17,7 @@
         </mat-form-field>
         <mat-form-field hintLabel="Max 50 characters" appearance="outline" [style.width.pc]=21>
           <mat-label>Description</mat-label>
-          <input formControlName="description" #Description matInput maxlength="50" autocomplete="off">
+          <input formControlName="description" #Description matInput [maxlength]="50" autocomplete="off">
         </mat-form-field>
         <input hidden="true" #inputfile type="file" (change)="fileChangeEvent($event)" />
         <button [disabled]="loading" class="mat-raised-button" matTooltip="select file" color="primary" (click)="inputfile.click()">

@@ -20,7 +20,7 @@
                     <div fxLayout="row" fxLayoutAlign="space-between center">
                     <mat-form-field hintLabel="Max 100 characters" appearance="outline" fxFlex="60">
                         <mat-label>Enter folder</mat-label>
-                        <input formControlName="folderName" #album matInput maxlength="100" autocomplete="off">
+                        <input formControlName="folderName" #album matInput [maxlength]="100" autocomplete="off">
                         <mat-hint align="end">{{album.value?.length || 0}}/100</mat-hint>
                     </mat-form-field>
                     <span style="margin:5px">or</span>

@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AttendanceRoutingModule } from './attendance-routing.module';
-import { AttendanceComponent } from './attendance/attendance.component';
+import { AttendanceComponents, AttendanceRoutingModule } from './attendance-routing.module';
+//import { AttendanceComponent } from './studentattendance/studentattendance.component';
 import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
@@ -12,7 +12,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 
 @NgModule({
-  declarations: [AttendanceComponent],
+  declarations: [AttendanceComponents],
   imports: [
     CommonModule,
     AttendanceRoutingModule,
@@ -23,6 +23,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     SharedModule,
     SharedhomepageModule
   ],
+  exports:[AttendanceComponents],
   providers:[{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }]
   
 })

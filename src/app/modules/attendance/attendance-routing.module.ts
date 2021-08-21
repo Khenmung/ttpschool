@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { AttendanceComponent } from './attendance/attendance.component';
+import { StudentAttendanceComponent } from './studentattendance/studentattendance.component';
+import { TeacherAttendanceComponent } from './teacherattendance/teacherattendance.component';
 
 const routes: Routes = [
   {path:'',component:HomeComponent,
   children:[
-    {path:'',component:AttendanceComponent}
+    {path:'',component:StudentAttendanceComponent},
+    {path:'teacher',component:TeacherAttendanceComponent}
   ]
 }
 ];
@@ -16,4 +18,8 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AttendanceRoutingModule { }
+export const AttendanceComponents=[
+  StudentAttendanceComponent,
+  TeacherAttendanceComponent
+]
 

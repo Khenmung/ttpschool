@@ -131,7 +131,8 @@ export class studentsubjectdashboardComponent implements OnInit {
     let list: List = new List();
     list.fields = [
 
-      'Student/Name',
+      'Student/FirstName',
+      'Student/LastName',
       'StudentClassId',
       'RollNo',
       'SectionId',
@@ -157,7 +158,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             Active: item.Active,
             ClassId: item.ClassId,
             RollNo: item.RollNo,
-            Student: item.RollNo + " - " + item.Student.Name,
+            Student: item.RollNo + " - " + item.Student.FirstName + " " + item.Student.LastName,
             SectionId: item.SectionId
           })
         })

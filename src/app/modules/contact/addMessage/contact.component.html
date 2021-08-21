@@ -6,14 +6,14 @@
             <div fxLayout="column" class="container">
                 <mat-form-field appearance="outline" [style.width.px]="300">
                     <mat-label>Name</mat-label>
-                    <input formControlName="Name" #Name matInput maxlength="30" autocomplete="Off" required>
+                    <input formControlName="Name" #Name matInput [maxlength]="30" autocomplete="Off" required>
                     <!-- <mat-hint align="end">{{Name.value?.length || 0}}/30</mat-hint> -->
                     <span class="text-danger" *ngIf="f.Name.touched && f.Name.hasError('required')">Name
                         is required.</span>
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="300">
                     <mat-label>Email</mat-label>
-                    <input formControlName="Email" type="email" #Email matInput maxlength="30" autocomplete="Off"
+                    <input formControlName="Email" type="email" #Email matInput [maxlength]="30" autocomplete="Off"
                         required>
                     <!-- <mat-hint align="end">{{Email.value?.length || 0}}/30</mat-hint> -->
                     <span class="text-danger" *ngIf="f.Email.touched && f.Email.hasError('required')">Email
@@ -23,14 +23,14 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="300">
                     <mat-label>Subject</mat-label>
-                    <input formControlName="Subject" #Subject matInput maxlength="50" autocomplete="Off" required>
+                    <input formControlName="Subject" #Subject matInput [maxlength]="50" autocomplete="Off" required>
                     <!-- <mat-hint align="end">{{Subject.value?.length || 0}}/50</mat-hint> -->
                     <span class="text-danger" *ngIf="f.Subject.touched && f.Subject.hasError('required')">Subject
                         is required.</span>
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex [style.width.px]="300">
                     <mat-label>Message</mat-label>
-                    <textarea formControlName="MessageBody" #MessageBody [style.height.px]="100" matInput maxlength="250" autocomplete="Off"
+                    <textarea formControlName="MessageBody" #MessageBody [style.height.px]="100" matInput [maxlength]="250" autocomplete="Off"
                         cdkTextareaAutosize required></textarea>
                     <!-- <mat-hint align="end">{{MessageBody.value?.length || 0}}/250</mat-hint> -->
                     <span class="text-danger"

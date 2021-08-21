@@ -11,11 +11,11 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-slotnclasssubject',
-  templateUrl: './slotnclasssubject.component.html',
-  styleUrls: ['./slotnclasssubject.component.scss']
+  selector: 'app-examtimetable',
+  templateUrl: './examtimetable.component.html',
+  styleUrls: ['./examtimetable.component.scss']
 })
-export class SlotnclasssubjectComponent implements OnInit {
+export class ExamtimetableComponent implements OnInit {
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -91,115 +91,10 @@ export class SlotnclasssubjectComponent implements OnInit {
     }
   }
 
-  updateActive(row, value) {
-    row.Active = row.Active == 1 ? 0 : 1;
-  }
-  delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
-
-        });
-  }
   loadingFalse() {
     this.loading = false;
   }
-  UpdateOrSave(row) {
-
-    debugger;
-    // if(row.ExamDate ==null)
-    // {
-    //   this.alert.error("Exam date is mandatory!",this.optionAutoClose);
-    //   return;
-    // }
-    // if(row.StartTime.length==0 || row.EndTime.length ==0)
-    // {
-    //   this.alert.error("Start time and end time are mandatory!",this.optionAutoClose);
-    //   return;
-    // }
-    this.loading = true;
-
-    var duplicate = this.SlotNClassSubjects.filter(s => s.SlotId == row.SlotId 
-                                    && s.ClassId == row.ClassId 
-                                    && s.Active == 1
-                                    && s.SlotClassSubjectId!=row.SlotClassSubjectId)
-    if (duplicate.length > 0) {
-      this.loadingFalse();
-      this.alert.error("Two subjects of one class cannot be assigned in the same slot.", this.optionsNoAutoClose);
-      return;
-    }
-    let checkFilterString = "SlotId eq " + this.searchForm.get("searchSlotId").value +
-      " and ClassSubjectId eq " + row.ClassSubjectId;
-
-
-    if (row.SlotClassSubjectId > 0)
-      checkFilterString += " and SlotClassSubjectId ne " + row.SlotClassSubjectId;
-    checkFilterString += " and " + this.StandardFilterWithBatchId;
-
-    let list: List = new List();
-    list.fields = ["SlotClassSubjectId"];
-    list.PageName = "SlotAndClassSubjects";
-    list.filter = [checkFilterString];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        if (data.value.length > 0) {
-          this.loading=false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
-        }
-        else {
-          this.SlotNClassSubjectData.SlotClassSubjectId = row.SlotClassSubjectId;
-          this.SlotNClassSubjectData.SlotId = this.searchForm.get("searchSlotId").value;
-          this.SlotNClassSubjectData.Active = row.Active;
-          this.SlotNClassSubjectData.ClassSubjectId = row.ClassSubjectId;
-          this.SlotNClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.SlotNClassSubjectData.BatchId = this.SelectedBatchId;
-          //console.log('data', this.ClassSubjectData);
-          if (this.SlotNClassSubjectData.SlotClassSubjectId == 0) {
-            this.SlotNClassSubjectData["CreatedDate"] = new Date();
-            this.SlotNClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.SlotNClassSubjectData["UpdatedDate"] = new Date();
-            delete this.SlotNClassSubjectData["UpdatedBy"];
-            //console.log('exam slot', this.SlotNClassSubjectData)
-            this.insert(row);
-          }
-          else {
-            delete this.SlotNClassSubjectData["CreatedDate"];
-            delete this.SlotNClassSubjectData["CreatedBy"];
-            this.SlotNClassSubjectData["UpdatedDate"] = new Date();
-            this.SlotNClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row);
-          }
-        }
-      });
-  }
-
-  insert(row) {
-
-    debugger;
-    this.dataservice.postPatch('SlotAndClassSubjects', this.SlotNClassSubjectData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-          row.SlotClassSubjectId = data.SlotClassSubjectId;
-          this.loadingFalse();
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
-        });
-  }
-  update(row) {
-
-    this.dataservice.postPatch('SlotAndClassSubjects', this.SlotNClassSubjectData, this.SlotNClassSubjectData.SlotClassSubjectId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.loadingFalse();
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
-        });
-  }
+  
   GetClassSubject() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
@@ -232,7 +127,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       });
   }
   GetExamSlots() {
-
+debugger;
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
     //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
@@ -418,22 +313,6 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.loading = false;
       })
   }
-  checkall(value) {
-    this.SlotNClassSubjects.forEach(record => {
-      if (value.checked)
-        record.Active = 1;
-      else
-        record.Active = 0;
-      record.Action = !record.Action;
-    })
-  }
-  saveall() {
-    this.SlotNClassSubjects.forEach(record => {
-      if (record.Action == true) {
-        this.UpdateOrSave(record);
-      }
-    })
-  }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -449,9 +328,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
@@ -488,5 +365,6 @@ export interface ISlotNClassSubject {
   Active: number;
   Action: boolean;
 }
+
 
 

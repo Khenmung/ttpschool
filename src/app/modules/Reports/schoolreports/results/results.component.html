@@ -31,58 +31,29 @@
                         {{item.MasterDataName}}
                     </mat-option>
                 </mat-select>  
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Subject</mat-label>
-                    <mat-select formControlName="searchSubjectId">
-                        <!-- <mat-option [value]="0">--subject--</mat-option> -->
-                        <mat-option *ngFor="let item of Subjects" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
+                </mat-form-field>               
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetExamStudentSubjectResults()">
                     <mat-icon>search</mat-icon>
                 </button>
-                <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+                <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
-                </button> -->
+                </button>
             </form>            
 
-            <mat-table #table [dataSource]="dataSource">                
+            <mat-table #table [dataSource]="dataSource" matSort>                
             
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
-                        <div *ngIf="ExamStudentSubjectResult.length>0" fxLayoutAlign="center center">
-                        <!-- <mat-checkbox fxLayoutAlign="center center" matTooltip="select all" *ngIf="disCol=='Action'" (click)="$event.stopPropagation()"
-                            (change)="SelectAll($event)">
-                        </mat-checkbox> -->
-                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
-                            matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </div>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{disCol!='Action'?disCol:''}}                      
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element ">
-                        <!-- <mat-form-field *ngIf="disCol !='StudentClassSubject' && disCol !='Action'">
-                            <input matInput (blur)="onBlur(element,$event)" [attr.name]="disCol" [(value)]="element[disCol]" [(ngModel)]="element[disCol]">
-                        </mat-form-field> -->
-                        <!-- <mat-checkbox matTooltip="select all in row" *ngIf="disCol !='Student'" (click)="$event.stopPropagation()"
-                            (change)="SelectAllInRow(element,$event,disCol)" [checked]="element[disCol]==1?true:false">
-                        </mat-checkbox> -->
-                        {{element[disCol]}}
-                        
-                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
-                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                        {{disCol=='StudentClassSubject'?element[disCol]:''}}
+                    <mat-cell *matCellDef="let element ">                        
+                        {{element[disCol]}}                                      
                     </mat-cell>
                 </ng-container>
-
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                
             </mat-table>
+            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
         </div>
 
     </div>

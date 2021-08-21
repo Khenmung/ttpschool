@@ -233,7 +233,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
       "SectionId",
       "StudentId",
       "BatchId",
-      "Student/Name",
+      "Student/FirstName",
+      "Student/LastName",
       "ClassId",
       "RollNo",
       "FeeTypeId",
@@ -253,7 +254,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
           this.studentInfoTodisplay.FeeType = data.value[0].SchoolFeeType.FeeTypeName;
           this.studentInfoTodisplay.Formula = data.value[0].SchoolFeeType.Formula;
-          this.studentInfoTodisplay.StudentName = data.value[0].Student.Name;
+          this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + " " + data.value[0].Student.LastName;
 
           this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
             return cls.MasterDataId == data.value[0].SectionId

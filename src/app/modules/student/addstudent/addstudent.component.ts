@@ -136,7 +136,8 @@ export class AddstudentComponent implements OnInit {
     this.studentForm = this.fb.group({
       ReasonForLeavingId: [0],
       StudentId: [0],
-      Name: ['', [Validators.required]],
+      FirstName: ['', [Validators.required]],
+      LastName: [''],
       FatherName: ['', [Validators.required]],
       FatherOccupation: ['', [Validators.required]],
       MotherName: ['', [Validators.required]],
@@ -282,7 +283,8 @@ export class AddstudentComponent implements OnInit {
   SaveOrUpdate() {
     this.loading =true;
     this.studentData = {
-      Name: this.studentForm.get("Name").value,
+      FirstName: this.studentForm.get("FirstName").value,
+      LastName: this.studentForm.get("LastName").value,
       FatherName: this.studentForm.get("FatherName").value,
       FatherOccupation: this.studentForm.get("FatherOccupation").value,
       MotherName: this.studentForm.get("MotherName").value,
@@ -373,7 +375,8 @@ export class AddstudentComponent implements OnInit {
         if (data.value.length > 0) {
           this.studentForm.patchValue({
             StudentId: data.value[0].StudentId,
-            Name: data.value[0].Name,
+            FirstName: data.value[0].FirstName,
+            LastName: data.value[0].LastName,
             FatherName: data.value[0].FatherName,
             MotherName: data.value[0].MotherName,
             FatherOccupation: data.value[0].FatherOccupation,

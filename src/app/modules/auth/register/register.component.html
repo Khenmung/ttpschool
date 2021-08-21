@@ -7,28 +7,28 @@
                 <form *ngIf="!isSuccessful" [formGroup]="RegistrationForm">
                     <mat-form-field appearance="outline">
                         <mat-label>Name</mat-label>
-                        <input formControlName="UserName" autocomplete="Off" #UserName matInput maxlength="50">
+                        <input formControlName="UserName" autocomplete="Off" #UserName matInput [maxlength]="50">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                         <span class="text-danger" *ngIf="f.UserName.touched && f.UserName.hasError('required')">
                             Name is required.</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Contact No.</mat-label>
-                        <input formControlName="ContactNo" autocomplete="Off" #ContactNo matInput maxlength="20">
+                        <input formControlName="ContactNo" autocomplete="Off" #ContactNo matInput [maxlength]="20">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                         <span class="text-danger" *ngIf="f.ContactNo.touched && f.ContactNo.hasError('required')">
                             Contact No. is required.</span>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Organization Name</mat-label>
-                        <input formControlName="OrganizationName" autocomplete="Off" matInput maxlength="50">
+                        <input formControlName="OrganizationName" autocomplete="Off" matInput [maxlength]="50">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                         <span class="text-danger" *ngIf="f.OrganizationName.touched && f.OrganizationName.hasError('required')">
                             Organisation name is required.</span>
                     </mat-form-field>                    
                     <mat-form-field appearance="outline">
                         <mat-label>Email</mat-label>
-                        <input formControlName="Email" type="email" autocomplete="Off" matInput maxlength="50">
+                        <input formControlName="Email" type="email" autocomplete="Off" matInput [maxlength]="50">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                         <span class="text-danger" *ngIf="f.Email.touched && f.Email.hasError('required')">
                             Email is required.</span>
@@ -38,7 +38,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Password</mat-label>
-                        <input formControlName="Password" type="password" matInput autocomplete="Off" maxlength="50">
+                        <input formControlName="Password" type="password" matInput autocomplete="Off" [maxlength]="50">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                         <span class="text-danger" *ngIf="f.Password.touched && f.Password.hasError('required')">
                             password is required.</span>
@@ -48,7 +48,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Confirm Password</mat-label>
-                        <input formControlName="ConfirmPassword" type="password" autocomplete="Off" matInput maxlength="50">
+                        <input formControlName="ConfirmPassword" type="password" autocomplete="Off" matInput [maxlength]="50">
                         <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                         <span class="alert-danger" *ngIf="f.ConfirmPassword.errors && f.submitted">
                             <span *ngIf="f.ConfirmPassword.errors.required">ConfirmPassword is required</span>

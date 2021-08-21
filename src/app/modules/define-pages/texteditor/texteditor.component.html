@@ -9,7 +9,7 @@
                 <div class="column">
                     <mat-form-field appearance="outline" fxFlex [style.width.px]="350">
                         <mat-label>Enter Title</mat-label>
-                        <input formControlName="PageTitle" autocomplete="Off" #input matInput maxlength="50">
+                        <input formControlName="PageTitle" autocomplete="Off" #input matInput [maxlength]="50">
                         <span class="text-danger" *ngIf="f.PageTitle.touched && f.PageTitle.hasError('required')">Title
                             is required.</span>
                     </mat-form-field>

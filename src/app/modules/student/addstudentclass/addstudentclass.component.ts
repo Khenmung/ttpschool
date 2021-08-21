@@ -131,7 +131,7 @@ export class AddstudentclassComponent implements OnInit {
       return;
     }
     let list: List = new List();
-    list.fields = ["StudentId", "Name", "FatherName", "MotherName"];
+    list.fields = ["StudentId", "FirstName","LastName", "FatherName", "MotherName"];
     list.PageName = "Students";
     list.filter = ["Active eq 1 and " + filterOrgId];
 
@@ -139,7 +139,8 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            student.studentName = student.StudentId + " " + student.Name + " " + student.FatherName + " " + student.MotherName;
+            var name = student.FirstName + " " + student.LastName;
+            student.studentName = student.StudentId + "-" + name + "-" + student.FatherName + "-" + student.MotherName;
             return student;
           })
           let ValidStudent = this.Students.filter(student => student.StudentId == this.StudentId)

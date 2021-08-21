@@ -10,7 +10,7 @@ import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubjec
 import { StudentactivityComponent } from './studentactivity/studentactivity.component';
 const routes: Routes = [
   {
-    path: '', component: ExamhomeComponent,
+    path: '', component: HomeComponent,
     children: [
       { path: '', component: ExamdashboardComponent },
       { path: 'slot', component: ExamslotComponent },

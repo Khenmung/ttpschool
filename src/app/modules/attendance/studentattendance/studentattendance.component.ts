@@ -11,11 +11,11 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-attendance',
-  templateUrl: './attendance.component.html',
-  styleUrls: ['./attendance.component.scss']
+  selector: 'app-studentattendance',
+  templateUrl: './studentattendance.component.html',
+  styleUrls: ['./studentattendance.component.scss']
 })
-export class AttendanceComponent implements OnInit {
+export class StudentAttendanceComponent implements OnInit {
 
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
@@ -33,6 +33,7 @@ export class AttendanceComponent implements OnInit {
     keepAfterRouteChange: true
   };
   SaveAll = false;
+  NoOfRecordToUpdate = 0;
   StudentDetailToDisplay = '';
   StudentClassId = 0;
   StandardFilter = '';
@@ -50,7 +51,7 @@ export class AttendanceComponent implements OnInit {
   searchForm = this.fb.group({
     searchClassId: [0],
     searchSectionId: [0],
-    searchAttendanceDate:[new Date()]
+    searchAttendanceDate: [new Date()]
   });
   StudentClassSubjectId = 0;
   StudentAttendanceData = {
@@ -63,7 +64,7 @@ export class AttendanceComponent implements OnInit {
     OrgId: 0
   };
   displayedColumns = [
-    'StudentClassRollNoSection',
+    'StudentRollNo',
     'AttendanceDate',
     'AttendanceStatus',
     'Remarks',
@@ -78,7 +79,7 @@ export class AttendanceComponent implements OnInit {
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
-    private datepipe:DatePipe
+    private datepipe: DatePipe
   ) { }
 
   ngOnInit(): void {
@@ -90,7 +91,7 @@ export class AttendanceComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       //this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
-      
+
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
@@ -103,39 +104,17 @@ export class AttendanceComponent implements OnInit {
   }
   checkall(value) {
     this.StudentAttendanceList.forEach(record => {
-      if (value.checked)
-      {
+      if (value.checked) {
         record.AttendanceStatus = 1;
-       }        
+      }
       else
         record.AttendanceStatus = 0;
       record.Action = !record.Action;
     })
   }
-  saveall() {
-    this.SaveAll = true;
-    this.StudentAttendanceList.forEach((record, indx) => {
-      if (record.Action == true) {
-        this.UpdateOrSave(record);
-      }
-      if (indx == this.StudentAttendanceList.length - 1) {
-        this.alert.success("All attendance saved sucessfully.", this.optionAutoClose);
-        this.SaveAll = false;
-      }
-    })
-  }
-  // GetCurrentBatchIDnAssign() {
-  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-  //   if (CurrentBatches.length > 0) {
-  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
-  //     this.searchForm.patchValue({
-  //       "searchBatchId": this.SelectedBatchId
-  //     })
-  //   }
-  // }
 
   GetStudentAttendance() {
-
+    debugger;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //' and StudentClassId eq ' + this.StudentClassId;
     if (this.searchForm.get("searchClassId").value == 0) {
@@ -153,15 +132,15 @@ export class AttendanceComponent implements OnInit {
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
     }
 
-      filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-    
+    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
+
 
     if (filterStr.length == 0) {
       this.alert.error("Please enter search criteria.", this.optionAutoClose);
       return;
     }
     this.StudentAttendanceList = [];
-    this.dataSource =new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+    this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
     let list: List = new List();
     list.fields = [
       'StudentClassId',
@@ -178,33 +157,36 @@ export class AttendanceComponent implements OnInit {
     this.StudentClassList = [];
     this.dataservice.get(list)
       .subscribe((studentclass: any) => {
-        debugger;
-
+        
         var _class = '';
         var _section = '';
         var _ClassRollNoSection = '';
-        //  console.log('data.value', data.value);
+        if (studentclass.value.length == 0) {
+          this.loading = false;
+          this.alert.error("No student exist in this class/section!", this.optionsNoAutoClose);
+          return;
+        }
+
         this.StudentClassList = studentclass.value.map(item => {
-          _class = this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName;
-          _section = this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName;
-          _ClassRollNoSection = _class + ' - ' + item.RollNo + ' - ' + _section;
+          //_class = this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName;
+          //_section = this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName;
+          //_ClassRollNoSection = _class + ' - ' + item.RollNo + ' - ' + _section;
           return {
             StudentClassId: item.StudentClassId,
             Active: item.Active,
             ClassId: item.ClassId,
             RollNo: item.RollNo,
-            Student: item.Student.Name,
-            StudentClassRollNoSection: item.Student.Name + " - " + _ClassRollNoSection
+            Student: item.Student.FirstName + " " + item.Student.LastName,
+            StudentRollNo: item.Student.FirstName + " " + item.Student.LastName + "-" + item.RollNo
           }
         })
-        var date =this.searchForm.get("searchAttendanceDate").value;
+        var date = this.datepipe.transform(this.searchForm.get("searchAttendanceDate").value, 'yyyy-MM-dd');
         var fromDate = new Date(date);
-        if(fromDate>new Date())
-        {
-          this.alert.error("Attendance date cannot be greater than today's date",this.optionAutoClose);
+        if (fromDate > new Date()) {
+          this.alert.error("Attendance date cannot be greater than today's date", this.optionAutoClose);
           return;
         }
-        var toDate = date.setDate(fromDate.getDate()+1);
+        //var toDate = fromDate.setDate(fromDate.getDate() + 1);
         //console.log('date',this.datepipe.transform(toDate,'dd/MM/yyyy'));
         let list: List = new List();
         list.fields = [
@@ -218,10 +200,10 @@ export class AttendanceComponent implements OnInit {
         ];
         list.PageName = "Attendances";
         list.lookupFields = ["StudentClass"];
-        list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + 
-        " and AttendanceDate ge datetime'" + this.datepipe.transform(fromDate,'yyyy-MM-dd') + "T00:00:00.000Z'"+
-        " and AttendanceDate le datetime'" + this.datepipe.transform(toDate,'yyyy-MM-dd') + "T00:00:00.000Z'"];
-       
+        list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+          " and AttendanceDate eq datetime'" + date + "'"]; //+ //"'" + //"T00:00:00.000Z'" +
+          //" and AttendanceDate le datetime'" + this.datepipe.transform(toDate, 'yyyy-MM-dd')  + "'" //+  "T00:00:00.000Z'"];
+
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
 
@@ -234,7 +216,7 @@ export class AttendanceComponent implements OnInit {
                   AttendanceStatus: existing[0].AttendanceStatus,
                   AttendanceDate: existing[0].AttendanceDate,
                   Remarks: existing[0].Remarks,
-                  StudentClassRollNoSection: sc.StudentClassRollNoSection,
+                  StudentRollNo: sc.StudentRollNo,
                   Action: false
                 });
               }
@@ -245,7 +227,7 @@ export class AttendanceComponent implements OnInit {
                   AttendanceStatus: 0,
                   AttendanceDate: new Date(),
                   Remarks: '',
-                  StudentClassRollNoSection: sc.StudentClassRollNoSection,
+                  StudentRollNo: sc.StudentRollNo,
                   Action: false
                 });
             })
@@ -283,13 +265,17 @@ export class AttendanceComponent implements OnInit {
 
         });
   }
-  UpdateOrSave(row) {
-    var AttendanceDate = new Date(row.AttendanceDate);
-    var toDate = AttendanceDate.setDate(AttendanceDate.getDate() + 1);
+  saveall() {
+    var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
+    this.NoOfRecordToUpdate = toUpdateAttendance.length;
+    toUpdateAttendance.forEach((record, indx) => {
+      this.UpdateOrSave(record, indx);
+    })
+  }
+  UpdateOrSave(row, indx) {
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate ge datetime'" + this.datepipe.transform(row.AttendanceDate,'yyyy-MM-dd') + "'"+
-      " and AttendanceDate le datetime'" + this.datepipe.transform(toDate,'yyyy-MM-dd') + "' and " +
+      " and AttendanceDate eq datetime'" + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') + "' " +
       this.StandardFilter;
 
     if (row.AttendanceId > 0)
@@ -314,48 +300,51 @@ export class AttendanceComponent implements OnInit {
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
           this.StudentAttendanceData.AttendanceStatus = row.AttendanceStatus;
           this.StudentAttendanceData.Remarks = row.Remarks;
-          //console.log('data', this.StudentSubjectData);
           if (this.StudentAttendanceData.AttendanceId == 0) {
             this.StudentAttendanceData["CreatedDate"] = new Date();
             this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentAttendanceData["UpdatedDate"];
             delete this.StudentAttendanceData["UpdatedBy"];
-            //console.log('insert', this.StudentAttendanceData);
-            this.insert(row);
+            this.insert(row, indx);
           }
           else {
             delete this.StudentAttendanceData["CreatedDate"];
             delete this.StudentAttendanceData["CreatedBy"];
             this.StudentAttendanceData["UpdatedDate"] = new Date();
             this.StudentAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+            this.update(indx);
           }
           row.Action = false;
-          // this.OutClassSubjectId.emit(0);
-          // this.CallParentPageFunction.emit();
         }
       });
   }
 
-  insert(row) {
+  insert(row, indx) {
 
-    debugger;
     this.dataservice.postPatch('Attendances', this.StudentAttendanceData, 0, 'post')
       .subscribe(
         (data: any) => {
           this.edited = false;
           row.AttendanceId = data.AttendanceId;
-          if (this.SaveAll == false)
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+          if (this.NoOfRecordToUpdate > 0) {
+            if (this.NoOfRecordToUpdate == indx + 1) {
+              this.NoOfRecordToUpdate = 0;
+              this.alert.success("Data saved successfully.", this.optionAutoClose);
+            }
+          }
         });
   }
-  update() {
+  update(indx) {
     this.dataservice.postPatch('Attendances', this.StudentAttendanceData, this.StudentAttendanceData.AttendanceId, 'patch')
       .subscribe(
         (data: any) => {
           this.edited = false;
-          if (this.SaveAll == false)
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+          if (this.NoOfRecordToUpdate > 0) {
+            if (this.NoOfRecordToUpdate == indx + 1) {
+              this.NoOfRecordToUpdate = 0;
+              this.alert.success("Data saved successfully.", this.optionAutoClose);
+            }
+          }
         });
   }
   isNumeric(str: number) {
@@ -409,7 +398,7 @@ export interface IStudentAttendance {
   StudentClassId: number;
   AttendanceStatus: number;
   AttendanceDate: Date;
-  StudentClassRollNoSection: string;
+  StudentRollNo: string;
   Remarks: string;
   Action: boolean
 }

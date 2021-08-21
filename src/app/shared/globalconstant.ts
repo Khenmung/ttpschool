@@ -63,6 +63,7 @@ export class globalconstants {
                 "ROLE": "role"
             },        
             "school": {
+                "STUDENTGRADE":"student grade",
                 "RECEIPTHEADING":"receipt heading",
                 "SCHOOLGENDER": "school gender",
                 "RELIGION": "religion",

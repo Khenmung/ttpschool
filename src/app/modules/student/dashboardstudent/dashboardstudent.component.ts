@@ -310,7 +310,6 @@ export class DashboardstudentComponent implements OnInit {
         this.shareddata.ChangeFeeType(this.FeeType);
         this.loading=false;
       })
-
   }
   GetStudent() {
     debugger;
@@ -329,7 +328,7 @@ export class DashboardstudentComponent implements OnInit {
       "StudentClasses/BatchId",
       "StudentClasses/ClassId",
       "StudentClasses/RollNo",
-      "Name", "FatherName",
+      "FirstName","LastName", "FatherName",
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
       "ReasonForLeavingId"];
@@ -349,6 +348,7 @@ export class DashboardstudentComponent implements OnInit {
             return sc;
           });
           this.ELEMENT_DATA = formattedData.map(item => {
+            item.Name = item.FirstName + " " + item.LastName;
             if (item.StudentClasses.length == 0)
               item.ClassName = '';
             else {
@@ -381,7 +381,8 @@ export class DashboardstudentComponent implements OnInit {
       'ClassId',
       'RollNo',
       'SectionId',
-      'Student/Name',
+      'Student/FirstName',
+      'Student/LastName',
       'Student/FatherName',
       'Student/MotherName',
       'Student/ContactNo',
@@ -408,7 +409,7 @@ export class DashboardstudentComponent implements OnInit {
             if (_SectionObj.length > 0)
               _section = _SectionObj[0].MasterDataName;
             var _RollNo = student.RollNo;
-            var _name = student.Student.Name;
+            var _name = student.Student.FirstName + " " + student.Student.LastName;
             var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-"+student.Student.ContactNo;
             return {
               StudentClassId: student.StudentClassId,

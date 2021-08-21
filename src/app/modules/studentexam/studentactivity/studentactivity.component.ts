@@ -305,7 +305,8 @@ export class StudentactivityComponent implements OnInit {
       'ClassId',
       'RollNo',
       'SectionId',
-      'Student/Name'
+      'Student/FirstName',
+      'Student/LastName'
     ];
 
     list.PageName = "StudentClasses";
@@ -324,7 +325,7 @@ export class StudentactivityComponent implements OnInit {
               _className = _classNameobj[0].MasterDataName;
             var _Section = this.Sections.filter(f=>f.MasterDataId == student.SectionId)[0].MasterDataName;
             var _RollNo = student.RollNo;
-            var _name = student.Student.Name;
+            var _name = student.Student.FirstName + " " +student.Student.LastName;
             var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
               StudentClassId: student.StudentClassId,

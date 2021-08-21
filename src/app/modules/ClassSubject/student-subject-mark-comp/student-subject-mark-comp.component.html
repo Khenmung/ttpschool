@@ -45,7 +45,7 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
-                        <input matInput type="number" maxlength="3" [(value)]="element.FullMark" [(ngModel)]="element.FullMark" />
+                        <input matInput type="number" [maxlength]="3" [(value)]="element.FullMark" [(ngModel)]="element.FullMark" />
                     </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -53,7 +53,7 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                     <mat-form-field>
-                        <input matInput type="number" maxlength="3" [(value)]="element.PassMark" [(ngModel)]="element.PassMark" />
+                        <input matInput type="number" [maxlength]="3" [(value)]="element.PassMark" [(ngModel)]="element.PassMark" />
                     </mat-form-field>
                     </mat-cell>
                 </ng-container>

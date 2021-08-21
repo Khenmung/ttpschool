@@ -20,7 +20,7 @@
             <mat-grid-tile [colspan]="1" [rowspan]="1">
                 <mat-form-field appearance="outline">
                     <mat-label>Roll No.</mat-label>
-                    <input formControlName="RollNo" autocomplete="Off" #RollNo matInput maxlength="50">
+                    <input formControlName="RollNo" autocomplete="Off" #RollNo matInput [maxlength]="50">
                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                     <span class="text-danger" *ngIf="f.RollNo.touched && f.RollNo.hasError('required')">
                         Roll No. is required.</span>
@@ -64,7 +64,7 @@
             <mat-grid-tile [colspan]="2" [rowspan]="1">
                 <mat-form-field appearance="outline" [style.width.pc]="32">
                     <mat-label>Remarks</mat-label>
-                    <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
+                    <input formControlName="Remarks" autocomplete="Off" #Remarks matInput [maxlength]="250">
                 </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">

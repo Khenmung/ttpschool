@@ -63,7 +63,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   };
   displayedColumns = [
     // 'ClassSubjectId',
-    'ClassName',
+    //'ClassName',
     'SubjectName',
     'SubjectTypeId',
     'TeacherId',
@@ -200,7 +200,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
               SelectHowMany: existing[0].SelectHowMany,
               TeacherId:existing[0].TeacherId,
               //SubjectType: this.SubjectTypes.filter(t => t.SubjectTypeId == existing[0].SubjectTypeId)[0].SubjectTypeName,
-              ClassName: this.Classes.filter(c => c.MasterDataId == existing[0].ClassId)[0].MasterDataName,
+              //ClassName: this.Classes.filter(c => c.MasterDataId == existing[0].ClassId)[0].MasterDataName,
               ClassId: existing[0].ClassId,
               Active: existing[0].Active,
               Action:false
@@ -214,7 +214,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
               SubjectTypeId: 0,
               SelectHowMany: 0,
               ClassId: this.searchForm.get("searchClassId").value,
-              ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
+              //ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
               SubjectName: s.MasterDataName,
               TeacherId:0,
               Active: 0,
@@ -462,7 +462,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
 export interface IClassSubject {
   ClassSubjectId: number;
   ClassId: number;
-  ClassName: string;
+  //ClassName: string;
   SubjectId: number;
   SubjectName: string;
   SubjectTypeId: number;

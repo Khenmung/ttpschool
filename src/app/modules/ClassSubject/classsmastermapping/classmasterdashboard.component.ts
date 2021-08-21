@@ -62,7 +62,6 @@ export class ClassmasterdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    "ClassName",
     "Section",
     "TeacherId",
     "Active",
@@ -208,7 +207,6 @@ export class ClassmasterdashboardComponent implements OnInit {
                 "TeacherClassMappingId": element.TeacherClassMappingId,
                 "TeacherId": element.TeacherId,
                 "ClassId": element.ClassId,
-                "ClassName": this.Classes.filter(f => f.MasterDataId == element.ClassId)[0].MasterDataName,
                 "SectionId": element.SectionId,
                 "Section":this.Sections.filter(f => f.MasterDataId == element.SectionId)[0].MasterDataName,
                 "Active": element.Active,
@@ -221,7 +219,6 @@ export class ClassmasterdashboardComponent implements OnInit {
                 "TeacherClassMappingId": 0,
                 "TeacherId": 0,
                 "ClassId": this.searchForm.get("searchClassId").value,
-                "ClassName": this.Classes.filter(f => f.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
                 "SectionId": s.MasterDataId,
                 "Section":s.MasterDataName,
                 "Active": 0,
@@ -239,7 +236,6 @@ export class ClassmasterdashboardComponent implements OnInit {
                 "TeacherClassMappingId": existing[0].TeacherClassMappingId,
                 "TeacherId": existing[0].TeacherId,
                 "ClassId": existing[0].ClassId,
-                "ClassName": this.Classes.filter(f => f.MasterDataId == existing[0].ClassId)[0].MasterDataName,
                 "SectionId": existing[0].SectionId,
                 "Section": this.Sections.filter(s=>s.MasterDataId == existing[0].SectionId)[0].MasterDataName ,
                 "Active": existing[0].Active,
@@ -251,7 +247,6 @@ export class ClassmasterdashboardComponent implements OnInit {
                 "TeacherClassMappingId": 0,
                 "TeacherId": 0,
                 "ClassId": this.searchForm.get("searchClassId").value,
-                "ClassName": this.Classes.filter(f => f.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
                 "SectionId": s.MasterDataId,
                 "Section": s.MasterDataName,
                 "Active": 0,
@@ -482,7 +477,6 @@ export class ClassmasterdashboardComponent implements OnInit {
 export interface IClassTeacher {
   TeacherClassMappingId: number;
   TeacherId: number;
-  ClassName: string;
   ClassId: number;
   SectionId: number;
   Section: string;

@@ -9,6 +9,14 @@
                 <form [formGroup]="searchForm">
                     <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
                         <mat-form-field fxFlex appearance="outline">
+                            <mat-label>Application</mat-label>
+                            <mat-select formControlName="AppId" fxFlex (selectionChange)="enable($event)">
+                                <mat-option *ngFor="let app of Applications" [value]="app.MasterDataId">
+                                    {{app.Description}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field fxFlex appearance="outline">
                             <mat-label>Master Name</mat-label>
                             <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
                                 <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
@@ -17,7 +25,7 @@
                             </mat-select>
                         </mat-form-field>
                         <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
-                            (click)="GetMasterData()" fxFlex="10">
+                            (click)="GetSearchMaster()" fxFlex="10">
                             <mat-icon>search</mat-icon>
                         </button>
                         <div fxFlex>&nbsp;</div>
@@ -26,16 +34,30 @@
                 <div>
                     <mat-divider></mat-divider>
                     <mat-table [dataSource]="datasource" matSort>
-                        <ng-container matColumnDef="Id">
-                            <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.Id}} </mat-cell>
-                        </ng-container>
                         <ng-container matColumnDef="Name">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 <mat-form-field>
                                     <input matInput [(value)]="element.Name" [(ngModel)]="element.Name"
-                                        autocomplete="Off">
+                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="50">
+                                </mat-form-field>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="Logic">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Logic </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <textarea matInput [(value)]="element.Logic" [(ngModel)]="element.Logic"
+                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="256"></textarea>
+                                </mat-form-field>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="Sequence">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <mat-form-field>
+                                    <input type="number" matInput [(value)]="element.Sequence" [(ngModel)]="element.Sequence"
+                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="100">
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
@@ -44,7 +66,7 @@
                             <mat-cell *matCellDef="let element">
                                 <mat-form-field>
                                     <input matInput [(value)]="element.Description" [(ngModel)]="element.Description"
-                                        autocomplete="Off">
+                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="256">
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
@@ -59,7 +81,7 @@
                                 <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                                     [checked]="element.Active">
                                 </mat-checkbox>&nbsp;
-                                <button [disabled]="loading" matTooltip="view/edit" mat-mini-fab
+                                <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
                                     (click)="UpdateOrSave(element)">
                                     <mat-icon>save</mat-icon>
                                 </button>

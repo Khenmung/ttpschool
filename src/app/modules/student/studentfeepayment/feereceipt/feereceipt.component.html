@@ -45,8 +45,7 @@
         <div class="divCls" fxLayoutGap="100px" id="printSection">
             <div fxLayout="column" fxLayoutAlign="space-around center">
                 <div *ngFor="let item of ReceiptHeading;let i=index">
-                    <span style="font-size: x-large;" *ngIf="i==0" [innerHTML]="item.Description"></span>
-                    <span *ngIf="i>0" [innerHTML]="item.Description"></span>
+                    <span [ngStyle]="item.Logic" [innerHTML]="item.Description"></span>
                 </div>
             </div>
             <br>

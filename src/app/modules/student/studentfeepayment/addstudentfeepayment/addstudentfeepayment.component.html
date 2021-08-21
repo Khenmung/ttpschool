@@ -94,7 +94,7 @@
                                 </mat-table>
                                 <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 15px;">
                                     <mat-form-field>
-                                        <input matInput maxlength="20"
+                                        <input matInput [maxlength]="20"
                                             [(ngModel)]="OffLineReceiptNo" [(value)]="OffLineReceiptNo"
                                             autocomplete="Off">
                                     </mat-form-field>                             

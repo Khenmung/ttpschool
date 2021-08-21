@@ -27,7 +27,7 @@
             </mat-form-field><br>
             <mat-form-field appearance="outline" fxFlex>
                 <mat-label>Amount</mat-label>
-                <input formControlName="Amount" autocomplete="Off" #Amt matInput maxlength="5">
+                <input formControlName="Amount" autocomplete="Off" #Amt matInput [maxlength]="5">
                 <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                 <span class="text-danger" *ngIf="f.Amount.touched && f.Amount.hasError('required')">
                     Amount is required.</span>

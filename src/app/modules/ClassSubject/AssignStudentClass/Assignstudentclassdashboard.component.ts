@@ -39,7 +39,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   };
   StandardFilter = '';
   loading = false;
-  Genders =[];
+  Genders = [];
   Classes = [];
   FeeTypes = [];
   Sections = [];
@@ -70,7 +70,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     'Student',
     'ClassName',
     'SectionId',
-    'RollNo',    
+    'RollNo',
     'FeeTypeId',
     'Promote',
     'Action'
@@ -143,11 +143,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       //this.shareddata.CurrentSelectedBatchId.subscribe(a => this.SelectedBatchId = a);
       this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
-      this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
+      //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
       this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
       this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
       if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
         this.GetMasterData();
+        this.GetFeeTypes();
       }
       else {
 
@@ -159,15 +160,15 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   PromoteAll() {
     var _rowstoupdate = this.StudentClassList.filter(f => f.Promote == 1);
-    this.RowsToUpdate =_rowstoupdate.length;
+    this.RowsToUpdate = _rowstoupdate.length;
     _rowstoupdate.forEach(s => {
       this.UpdatedRows++;
-        s.StudentClassId = 0;
-        delete s.SectionId;
-        s.RollNo = '';
-        this.SelectedBatchId = this.CurrentBatchId;
-        s.ClassId = this.Classes[this.Classes.findIndex(i => s.ClassId) + 1].MasterDataId;
-        this.UpdateOrSave(s);      
+      s.StudentClassId = 0;
+      delete s.SectionId;
+      s.RollNo = '';
+      this.SelectedBatchId = this.CurrentBatchId;
+      s.ClassId = this.Classes[this.Classes.findIndex(i => s.ClassId) + 1].MasterDataId;
+      this.UpdateOrSave(s);
     })
   }
   PromoteRow(row) {
@@ -220,6 +221,21 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   UploadExcel() {
 
   }
+  GetFeeTypes() {
+    this.loading=true;
+    var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    let list: List = new List();
+    list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
+    list.PageName = "SchoolFeeTypes";
+    list.filter = [filter];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.FeeTypes = [...data.value];
+        this.shareddata.ChangeFeeType(this.FeeTypes);
+        this.loading=false;
+      })
+  }
   GetStudentClasses() {
     debugger;
     this.PagePermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
@@ -252,7 +268,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       'RollNo',
       'SectionId',
       'Active',
-      'Student/Name',
+      'Student/FirstName',
+      'Student/LastName',
       'Student/Gender'
     ];
 
@@ -264,19 +281,24 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((StudentClassesdb: any) => {
         var result;
         if (this.searchForm.get("searchGenderId").value > 0)
-           result =StudentClassesdb.value.filter(f=>f.Student.Gender == this.searchForm.get("searchGenderId").value);
+          result = StudentClassesdb.value.filter(f => f.Student.Gender == this.searchForm.get("searchGenderId").value);
         else
-        result =[...StudentClassesdb.value];
+          result = [...StudentClassesdb.value];
 
         result.forEach(s => {
+          var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
+          var _feetype = ''
+          if (feetype.length > 0)
+            _feetype = feetype[0].FeeTypeName;
+            
           this.StudentClassList.push({
             StudentClassId: s.StudentClassId,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
-            Student: s.Student.Name,
+            Student: s.Student.FirstName + " " + s.Student.LastName,
             ClassName: this.Classes.filter(c => c.MasterDataId == s.ClassId)[0].MasterDataName,
             FeeTypeId: s.FeeTypeId,
-            FeeType: this.FeeTypes.filter(t => t.MasterDataId == s.FeeTypeId)[0].MasterDataName,
+            FeeType: _feetype,
             RollNo: s.RollNo,
             SectionId: s.SectionId,
             Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
@@ -396,19 +418,18 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.RowsToUpdate = 0;
               this.UpdatedRows = 0;
             }
-            this.StudentClassList.splice(this.StudentClassList.indexOf(row),1);
+            this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
           }
           else {
-            if (row.Promote == 1)
-            {
+            if (row.Promote == 1) {
               this.alert.success("Student is promoted to next class without section and roll no.", this.optionsNoAutoClose);
-              this.StudentClassList.splice(this.StudentClassList.indexOf(row),1);
+              this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
             }
-              
+
             else
               this.alert.success("Data saved successfully.", this.optionAutoClose);
           }
-          
+
         });
   }
   update() {
@@ -431,7 +452,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'StudentId',
-      'Name'
+      'FirstName',
+      'LastName'
     ];
 
     list.PageName = "Students";
@@ -446,7 +468,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.Students = data.value.map(student => {
             return {
               StudentId: student.StudentId,
-              Name: student.StudentId + ' - ' + student.Name
+              Name: student.StudentId + '-' + student.FirstName+ '-' + student.LastName
             }
           })
         }
@@ -471,7 +493,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.ChangeFeeType(this.FeeTypes);
+        //this.shareddata.ChangeFeeType(this.FeeTypes);
         this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeBatch(this.Batches);
         //this.GetStudents();

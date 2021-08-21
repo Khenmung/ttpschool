@@ -6,6 +6,7 @@ import { FeecollectionreportComponent } from './schoolreports/feecollectionrepor
 import { ResultsComponent } from './schoolreports/results/results.component';
 import { ResultboardComponent } from './schoolreports/resultboard/resultboard.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { ExamtimetableComponent } from './schoolreports/examtimetable/examtimetable.component';
 
 const routes: Routes = [{
   path: '', component: HomeComponent,
@@ -27,5 +28,6 @@ export const SchoolReportsComponent = [
   TodayCollectionComponent,
   FeecollectionreportComponent,
   ResultsComponent,
-  ResultboardComponent
+  ResultboardComponent,
+  ExamtimetableComponent
 ]

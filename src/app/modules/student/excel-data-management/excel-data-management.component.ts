@@ -365,7 +365,7 @@ export class ExcelDataManagementComponent implements OnInit {
   GetStudents() {
 
     let list: List = new List();
-    list.fields = ["StudentId", "Name", "Active"];
+    list.fields = ["StudentId", "FirstName", "LastName","Active"];
     list.PageName = "Students";
     list.filter = ["Active eq 1 and " + this.filterOrgId];
     //list.orderBy = "ParentId";
@@ -399,7 +399,7 @@ export class ExcelDataManagementComponent implements OnInit {
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
-        this.shareddata.ChangeFeeType(this.FeeTypes);
+        //this.shareddata.ChangeFeeType(this.FeeTypes);
         //this.PrimaryContactFatherOrMother= this.getDropDownData(globalconstants.PRIMARYCONTACT);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();

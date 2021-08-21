@@ -104,7 +104,8 @@ loading=false;
 
     let list: List = new List();
     list.fields = [
-      'Student/Name',
+      'Student/FirstName',
+      'Student/LastName',
       'StudentClass/ClassId',
       'StudentClass/RollNo',
       'StudentClass/SectionId',
@@ -127,7 +128,7 @@ loading=false;
           this.ELEMENT_DATA = data.value.map((item, indx) => {
             return {
               SlNo: indx + 1,
-              Name: item.Student.Name,
+              Name: item.Student.FirstName + " " + item.Student.LastName,
               ClassRollNoSection: this.Classes.filter(c => c.MasterDataId == item.StudentClass.ClassId)[0].MasterDataName + ' - ' + this.Sections.filter(s => s.MasterDataId == item.StudentClass.SectionId)[0].MasterDataName,
               RollNo: item.StudentClass.RollNo,
               PaymentDate: item.PaymentDate,
@@ -175,7 +176,7 @@ loading=false;
             if (paid.length == 0) {
               this.StudentDetail.push({
                 SlNo: indx + 1,
-                Name: item.Student.Name,
+                Name: item.Student.FirstName + " " + item.Student.LastName,
                 RollNo: item.RollNo,
                 ClassRollNoSection: this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName + ' - ' + this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName,
               });

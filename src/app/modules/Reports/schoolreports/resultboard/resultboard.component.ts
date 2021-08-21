@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ExamtimetableComponent } from '../examtimetable/examtimetable.component';
 import { FeecollectionreportComponent } from '../feecollectionreport/feecollectionreport.component';
 import { ResultsComponent } from '../results/results.component';
 import { TodayCollectionComponent } from '../today-collection/today-collection.component';
@@ -13,6 +14,7 @@ export class ResultboardComponent implements OnInit {
   @ViewChild(FeecollectionreportComponent) feecollection: FeecollectionreportComponent;
   @ViewChild(TodayCollectionComponent) TodayCollection: TodayCollectionComponent;
   @ViewChild(ResultsComponent) results: ResultsComponent;
+  @ViewChild(ExamtimetableComponent) examtimetable: ExamtimetableComponent;
 
 
   selectedIndex = 0;
@@ -41,12 +43,15 @@ export class ResultboardComponent implements OnInit {
   navigateTab(indx) {
     switch (indx) {
       case 0:
-        this.results.PageLoad();
+        this.examtimetable.PageLoad();
         break;
       case 1:
-        this.TodayCollection.PageLoad();
+        this.results.PageLoad();
         break;
       case 2:
+        this.TodayCollection.PageLoad();
+        break;
+      case 3:
         this.feecollection.PageLoad();
         break;
       // case 3:
@@ -54,7 +59,7 @@ export class ResultboardComponent implements OnInit {
       //   break;
       // case 4:
       //   this.activity.PageLoad();
-      //   break;
+      //   brea                                                                                                                                                        k;
       default:
         this.results.PageLoad();
         break;

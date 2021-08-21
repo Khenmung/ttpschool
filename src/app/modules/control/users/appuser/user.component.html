@@ -9,7 +9,7 @@
                 </ng-template>
                 <mat-form-field appearance="outline">
                     <mat-label>Name</mat-label>
-                    <input formControlName="UserName" autocomplete="Off" #UserName matInput maxlength="50">
+                    <input formControlName="UserName" autocomplete="Off" #UserName matInput [maxlength]="50">
                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                     <span class="text-danger" *ngIf="f.UserName.touched && f.UserName.hasError('required')">
                         UserName is required.</span>
@@ -65,7 +65,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Remarks</mat-label>
-                    <input formControlName="Remarks" autocomplete="Off" #Remarks matInput maxlength="250">
+                    <input formControlName="Remarks" autocomplete="Off" #Remarks matInput [maxlength]="250">
                 </mat-form-field>
                 <mat-checkbox formControlName="Active">
                 </mat-checkbox>&nbsp; Active
