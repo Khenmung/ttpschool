@@ -13,6 +13,7 @@ import { SchoolReportsComponent, SchoolReportsRoutingModule } from './reports-ro
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MatTableModule } from '@angular/material/table';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
+import { NgxPrintModule } from 'ngx-print';
 
 
 @NgModule({
@@ -27,12 +28,11 @@ import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
     ReactiveFormsModule,
     FormsModule,
     FlexLayoutModule,
-    // MultiLevelMenuModule,
-    // NgxPrintModule,
     NgxFileDropModule,
     SchoolReportsRoutingModule,
     SharedhomepageModule,
-    MatTableModule
+    MatTableModule,
+    NgxPrintModule
   ],
   providers:[
     { provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },

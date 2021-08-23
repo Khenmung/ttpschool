@@ -14,7 +14,6 @@ import { SharedataService } from '../../../../shared/sharedata.service';
   selector: 'app-feereceipt',
   templateUrl: './feereceipt.component.html',
   styleUrls: ['./feereceipt.component.scss'],
-  //encapsulation: ViewEncapsulation.None
 })
 export class FeereceiptComponent implements OnInit {
   @Input("BillDetail") BillDetail: any[];
@@ -43,8 +42,6 @@ export class FeereceiptComponent implements OnInit {
   Classes = [];
   Batches = [];
   Locations = [];
-  //StudentClassFees: any[] = [];
-  //FeeTypes = [];
   clickPaymentDetails = [];
   ELEMENT_DATA: IStudentFeePaymentReceipt[];
   StudentFeeReceiptListName = 'StudentFeeReceipts';
@@ -95,12 +92,6 @@ export class FeereceiptComponent implements OnInit {
       this.OriginalAmountForCalc = this.BillDetail.reduce((accum, curr) => accum + curr.BaseAmountForCalc, 0);
       this.Balance = this.OriginalAmountForCalc - this.TotalAmount;
     }
-    // else if (this.clickPaymentDetails != null) {
-    //   //var filteredPaymentDetail = this.clickPaymentDetails.filter(f=>f.month == )  
-    //   this.TotalAmount = this.clickPaymentDetails.reduce((accum, curr) => accum + (+curr.Amount), 0);
-    //   this.OriginalAmountForCalc = this.clickPaymentDetails.reduce((accum, curr) => accum + curr.BaseAmountForCalc, 0);
-    //   this.Balance = this.OriginalAmountForCalc - this.TotalAmount;
-    // }
 
     return this.TotalAmount;
   }
@@ -127,7 +118,6 @@ export class FeereceiptComponent implements OnInit {
     this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
     this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
     this.shareddata.CurrentFeeNames.subscribe(b => (this.FeeNames = b));
-    console.log('fff', this.studentInfoTodisplay)
     debugger;
     this.GetMasterData();
     setTimeout(() => {
@@ -260,18 +250,15 @@ export class FeereceiptComponent implements OnInit {
           if (res.length > 0) {
             this.NewReceipt = true;
             this.ELEMENT_DATA = [...res];
-            //console.log('this.ELEMENT_DATA',this.ELEMENT_DATA)
             this.PaymentIds = res.map(id => id.PaymentId);
             this.dataSource = new MatTableDataSource<IStudentFeePaymentReceipt>(this.ELEMENT_DATA);
           }
           else {
             this.NewReceipt = false;
-            //   this.GetBills();
           }
         }
         else {
           this.NewReceipt = false;
-          //   this.GetBills();
         }
       })
   }
@@ -310,8 +297,6 @@ export class FeereceiptComponent implements OnInit {
             this.StudentFeePaymentList.push(k)
           })
         })
-        console.log('payentdetail', this.StudentFeePaymentList)
-        //console.log("Feereceipt", this.FeeReceipt);
 
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
         this.loading = false;
@@ -323,7 +308,6 @@ export class FeereceiptComponent implements OnInit {
     list.fields = ["MasterDataId", "MasterDataName", "Logic", "ParentId", "Description"];
     list.PageName = "MasterDatas";
     list.filter = ["Active eq 1 and (MasterDataName eq 'Receipt Heading' or OrgId eq 1)"];
-    //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -334,7 +318,6 @@ export class FeereceiptComponent implements OnInit {
           f.Logic = f.Logic!=null?JSON.parse("{"+f.Logic + "}"):''
         })
         this.loading = false;
-        //this.GetStudentClass();
       });
 
   }

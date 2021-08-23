@@ -34,19 +34,20 @@
                 <div>
                     <mat-divider></mat-divider>
                     <mat-table [dataSource]="datasource" matSort>
-                        <ng-container matColumnDef="Name">
+                        <ng-container matColumnDef="MasterDataName">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(value)]="element.Name" [(ngModel)]="element.Name"
-                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="50">
+                                <mat-form-field [style.width.pc]="10">
+                                    <input matInput [(value)]="element.MasterDataName"
+                                        [(ngModel)]="element.MasterDataName" autocomplete="Off" placeholder=""
+                                        (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="Logic">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Logic </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <mat-form-field>
+                                <mat-form-field [style.width.pc]="20">
                                     <textarea matInput [(value)]="element.Logic" [(ngModel)]="element.Logic"
                                         autocomplete="Off" (blur)="onBlur(element)" [maxlength]="256"></textarea>
                                 </mat-form-field>
@@ -55,18 +56,19 @@
                         <ng-container matColumnDef="Sequence">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input type="number" matInput [(value)]="element.Sequence" [(ngModel)]="element.Sequence"
-                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="100">
+                                <mat-form-field [style.width.pc]="2">
+                                    <input type="number" matInput [(value)]="element.Sequence"
+                                        [(ngModel)]="element.Sequence" autocomplete="Off" (blur)="onBlur(element)"
+                                        [max]="100">
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="Description">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <mat-form-field>
-                                    <input matInput [(value)]="element.Description" [(ngModel)]="element.Description"
-                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="256">
+                                <mat-form-field [style.width.pc]="35">
+                                    <textarea matInput [(value)]="element.Description" [(ngModel)]="element.Description"
+                                        autocomplete="Off" (blur)="onBlur(element)" [maxlength]="2000"></textarea>
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
