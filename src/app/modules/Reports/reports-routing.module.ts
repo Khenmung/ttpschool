@@ -8,7 +8,6 @@ import { ResultboardComponent } from './schoolreports/resultboard/resultboard.co
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ExamtimetableComponent } from './schoolreports/examtimetable/examtimetable.component';
 import { CertificatesComponent } from './schoolreports/certificates/certificates.component';
-
 const routes: Routes = [{
   path: '', component: HomeComponent,
   children: [
@@ -31,5 +30,6 @@ export const SchoolReportsComponent = [
   ResultsComponent,
   ResultboardComponent,
   ExamtimetableComponent,
-  CertificatesComponent
+  CertificatesComponent,
+ 
 ]

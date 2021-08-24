@@ -38,7 +38,7 @@
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 <mat-form-field [style.width.pc]="10">
-                                    <input matInput [(value)]="element.MasterDataName"
+                                    <input matInput [value]="element.MasterDataName"
                                         [(ngModel)]="element.MasterDataName" autocomplete="Off" placeholder=""
                                         (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
                                 </mat-form-field>
@@ -48,7 +48,7 @@
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Logic </mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 <mat-form-field [style.width.pc]="20">
-                                    <textarea matInput [(value)]="element.Logic" [(ngModel)]="element.Logic"
+                                    <textarea matInput [value]="element.Logic" [(ngModel)]="element.Logic"
                                         autocomplete="Off" (blur)="onBlur(element)" [maxlength]="256"></textarea>
                                 </mat-form-field>
                             </mat-cell>
@@ -57,7 +57,7 @@
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 <mat-form-field [style.width.pc]="2">
-                                    <input type="number" matInput [(value)]="element.Sequence"
+                                    <input type="number" matInput [value]="element.Sequence"
                                         [(ngModel)]="element.Sequence" autocomplete="Off" (blur)="onBlur(element)"
                                         [max]="100">
                                 </mat-form-field>
@@ -67,7 +67,7 @@
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 <mat-form-field [style.width.pc]="35">
-                                    <textarea matInput [(value)]="element.Description" [(ngModel)]="element.Description"
+                                    <textarea matInput [value]="element.Description" [(ngModel)]="element.Description"
                                         autocomplete="Off" (blur)="onBlur(element)" [maxlength]="2000"></textarea>
                                 </mat-form-field>
                             </mat-cell>
@@ -101,6 +101,13 @@
         </mat-card>
     </div>
     <div>
+        
+        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center" class="boxes">
+            <strong>Below variable name can be added in certificate definition.</strong>    
+            <div *ngFor="let item of StudentVariableNames">
+                {{item}}
+            </div>
+        </div>
         <div fxLayout="column" fxLayoutAlign="center center" class="boxes">
             <strong>Essential data for Application setting Statuses</strong>
             <div

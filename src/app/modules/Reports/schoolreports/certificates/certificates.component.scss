@@ -3,5 +3,11 @@ mat-form-field,button{
 }
 mat-header-row, mat-row{
     border-bottom-style: none;
+    min-height:0px;
   }
-  
+  mat-table{
+      padding: 30px;
+  }
+  .divCls{
+      border: 1px solid lightgray;
+  }

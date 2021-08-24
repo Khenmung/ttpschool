@@ -33,6 +33,7 @@ export class AddMasterDataComponent implements OnInit {
   datasource: MatTableDataSource<IMaster>;
   ApplicationDataStatus = [];
   SchoolDataStatus = [];
+  StudentVariableNames =[];
   DisplayColumns = [
     "MasterDataName",
     "Description",
@@ -81,6 +82,7 @@ export class AddMasterDataComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
+    this.StudentVariableNames = globalconstants.StudentVariableNames;
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails == null) {
       this.alert.error('Please login to be able to add masters!', this.optionAutoClose);

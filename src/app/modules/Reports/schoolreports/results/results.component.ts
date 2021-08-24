@@ -107,7 +107,7 @@ export class ResultsComponent implements OnInit {
 
     }
   }
-
+  clear(){}
   GetStudentSubjects() {
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);

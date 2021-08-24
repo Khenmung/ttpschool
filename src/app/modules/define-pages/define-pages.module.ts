@@ -26,11 +26,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     pageDashboardComponent,
     pageViewComponent,
     DisplaypageComponent,
-    EncodeHTMLPipe,
     MenuConfigComponent,
-    //ContactComponent,
-    //ContactdashboardComponent
-
+    
   ],
   imports: [
     CommonModule,
@@ -52,10 +49,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     TextEditorComponent,
     pageDashboardComponent,
     pageViewComponent,
-    //MaterialModule,
-    //MatFormFieldModule,
-    //MatCardModule,
-
   ]
 })
 export class DefinePagesModule { }

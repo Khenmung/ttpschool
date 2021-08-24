@@ -53,7 +53,7 @@ export class globalconstants {
             }
         }
     ]
-    public static MasterDefinitions = 
+    public static MasterDefinitions =
         {
             "applications": {
                 "ORGANIZATION": "organization",
@@ -61,12 +61,14 @@ export class globalconstants {
                 "DEPARTMENT": "department",
                 "APP": "application",
                 "ROLE": "role"
-            },        
+            },
             "school": {
-                "STYLECLASS":"style class",
-                "CERTIFICATETYPE":"certificate type",
-                "STUDENTGRADE":"student grade",
-                "RECEIPTHEADING":"receipt heading",
+                "COMMONFOOTER": "common footer",
+                "COMMONHEADER": "common header",
+                "COMMONSTYLE": "common style",
+                "CERTIFICATETYPE": "certificate type",
+                "STUDENTGRADE": "student grade",
+                "RECEIPTHEADING": "receipt heading",
                 "SCHOOLGENDER": "school gender",
                 "RELIGION": "religion",
                 "CITY": "city",
@@ -94,7 +96,7 @@ export class globalconstants {
                 "SUBJECT": "subject",
                 "SUBJECTTYPE": "subject type",
                 "ATTENDANCESTATUS": "attendance status"
-            },        
+            },
             "employee": {
                 "EMPLOYEEGENDER": "employee gender",
                 "EMPLOYMENTTYPE": "employment type",
@@ -165,14 +167,54 @@ export class globalconstants {
             }
         }
 
-    
+
     public static PERMISSIONTYPES = [
         { 'type': 'rwd', 'val': 1 },
         { 'type': 'rw', 'val': 2 },
         { 'type': 'read', 'val': 3 },
         { 'type': 'denied', 'val': 4 }
     ];
-
+    public static StudentVariableNames = [
+        "Today",
+        "StudentClass",
+        "Section",
+        "RollNo",
+        "AdmissionDate",
+        "StudentName",
+        "FatherName",
+        "MotherName",
+        "Gender",
+        "PermanentAddress",
+        "PresentAddress",
+        "WhatsAppNumber",
+        "City",
+        "State",
+        "Country",
+        "PinCode",
+        "DOB",
+        "BloodGroup",
+        "Category",
+        "BankAccountNo",
+        "IFSCCode",
+        "MICRNo",
+        "AadharNo",
+        "Religion",
+        "ContactNo",
+        "AlternateContact",
+        "EmailAddress",
+        "LastSchoolPercentage",
+        "TransferFromSchool",
+        "TransferFromSchoolBoard",
+        "FatherOccupation",
+        "FatherContactNo",
+        "MotherContactNo",
+        "MotherOccupation",
+        "NameOfContactPerson",
+        "RelationWithContactPerson",
+        "ContactPersonContactNo",
+        "Location",
+        "ReasonForLeaving"
+    ]
     constructor(
         private dataservice: NaomitsuService,
         private shareddata: SharedataService
@@ -188,11 +230,11 @@ export class globalconstants {
         return filterstr;
 
     }
-    public static getYears(){
-        var currentYear =  new Date().getFullYear();
-        return [currentYear-1,currentYear,currentYear+1];
+    public static getYears() {
+        var currentYear = new Date().getFullYear();
+        return [currentYear - 1, currentYear, currentYear + 1];
     }
-    public static getMonths(){
+    public static getMonths() {
 
         return [
             { month: 'Jan', val: 1 },
@@ -207,7 +249,7 @@ export class globalconstants {
             { month: 'Oct', val: 10 },
             { month: 'Nov', val: 11 },
             { month: 'Dec', val: 12 },
-          ];
+        ];
     }
     public static getStandardFilter(userDetail) {
 
