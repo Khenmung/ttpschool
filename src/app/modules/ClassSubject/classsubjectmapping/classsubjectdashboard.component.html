@@ -1,10 +1,10 @@
-<mat-card>
-    <mat-card-title>Class Subject</mat-card-title>
-    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content>
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Class Subject</strong></div>
+
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
-        <form [formGroup]="searchForm">       
+        <form [formGroup]="searchForm">
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="searchClassId">
@@ -17,7 +17,7 @@
             <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubject()">
                 <mat-icon>search</mat-icon>
             </button>
-        </form>    
+        </form>
         <mat-table #table [dataSource]="dataSource">
             <!-- <ng-container matColumnDef="ClassName">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class/stream
@@ -51,15 +51,16 @@
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     <mat-form-field [style.width.pc]="25">
                         <mat-label>Teacher</mat-label>
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId" [(value)]="element.TeacherId">
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId"
+                            [(value)]="element.TeacherId">
                             <mat-option [value]="0">select</mat-option>
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
                                 {{option.TeacherName}}
                             </mat-option>
-                            </mat-select>
+                        </mat-select>
                     </mat-form-field>
                 </mat-cell>
-            </ng-container>           
+            </ng-container>
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                 <mat-cell *matCellDef="let element">
@@ -72,8 +73,8 @@
                 <mat-header-cell *matHeaderCellDef>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || CheckPermission=='read'" matTooltip="save" mat-mini-fab
-                        (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading || !element.Action || CheckPermission=='read'" matTooltip="save"
+                        mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
 
@@ -82,6 +83,5 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
-    
-    </mat-card-content>
-</mat-card>
+    </div>
+</div>

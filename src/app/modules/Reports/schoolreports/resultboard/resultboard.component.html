@@ -1,34 +1,41 @@
-<div fxLayout="row" fxLayoutAlign="space-around center">
-    <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>info</mat-icon>Exam Time Table
-            </ng-template>
-            <app-examtimetable></app-examtimetable>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>info</mat-icon>Exam Results
-            </ng-template>
-            <app-results></app-results>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>info</mat-icon>fee collection report
-            </ng-template>
-            <app-feecollectionreport></app-feecollectionreport>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>info</mat-icon>Today's Collection
-            </ng-template>
-            <app-today-collection></app-today-collection>
-        </mat-tab>        
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>info</mat-icon>Certificates
-            </ng-template>
-            <app-certificates></app-certificates>
-        </mat-tab>
-    </mat-tab-group>
-</div>
+<mat-card>
+    <mat-card-title>Reports</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <div style="margin:5px">
+            <!-- <div fxLayout="row" fxLayoutAlign="space-around center"> -->
+            <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>Exam Time Table
+                    </ng-template>
+                    <app-examtimetable></app-examtimetable>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>Exam Results
+                    </ng-template>
+                    <app-results></app-results>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>fee collection report
+                    </ng-template>
+                    <app-feecollectionreport></app-feecollectionreport>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>Today's Collection
+                    </ng-template>
+                    <app-today-collection></app-today-collection>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>Certificates
+                    </ng-template>
+                    <app-certificates></app-certificates>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-card-content>
+</mat-card>

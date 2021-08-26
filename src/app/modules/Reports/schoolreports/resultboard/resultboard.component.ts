@@ -24,7 +24,7 @@ export class ResultboardComponent implements OnInit {
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.results.PageLoad();
+      this.examtimetable.PageLoad();
     }, 20);
 
   }

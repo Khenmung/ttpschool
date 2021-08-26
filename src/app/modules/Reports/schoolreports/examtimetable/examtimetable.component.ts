@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -29,7 +30,7 @@ export class ExamtimetableComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   loading = false;
-  SlotNClassSubjects: ISlotNClassSubject[] = [];
+  SlotNClassSubjects = [];
   SelectedBatchId = 0;
   ExamSlots = [];
   Classes = [];
@@ -37,8 +38,10 @@ export class ExamtimetableComponent implements OnInit {
   ExamNames = [];
   SlotNames = [];
   Batches = [];
+  Exams = [];
+  DateArray = [];
   ClassSubjectList = [];
-  dataSource: MatTableDataSource<ISlotNClassSubject>;
+  dataSource: MatTableDataSource<[]>;
   allMasterData = [];
 
   ExamId = 0;
@@ -51,10 +54,6 @@ export class ExamtimetableComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
-//    'Slot',
-    'ClassSubject',
-    'Active',
-    'Action'
   ];
   searchForm: FormGroup;
   constructor(
@@ -71,9 +70,8 @@ export class ExamtimetableComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
-      searchSlotId: [0],
-      searchClassId: [0],
-      searchSubjectId: [0],
+      searchExamId: [0],
+      searchClassId: [0]
     });
   }
 
@@ -94,7 +92,7 @@ export class ExamtimetableComponent implements OnInit {
   loadingFalse() {
     this.loading = false;
   }
-  
+
   GetClassSubject() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
@@ -126,14 +124,37 @@ export class ExamtimetableComponent implements OnInit {
         this.loading = false;
       });
   }
+  GetExams() {
+
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+
+    let list: List = new List();
+
+    list.fields = ["ExamId", "ExamNameId"];
+    list.PageName = "Exams";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.Exams = data.value.map(e => {
+          return {
+            ExamId: e.ExamId,
+            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
+          }
+        })
+        this.loading = false;
+      })
+  }
   GetExamSlots() {
-debugger;
+    debugger;
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
     //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
 
     let list: List = new List();
-    list.fields = ["ExamSlotId",
+    list.fields = [
+      "ExamSlotId",
       "ExamId",
       "SlotNameId",
       "ExamDate",
@@ -147,17 +168,21 @@ debugger;
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //this.Exams = [...data.value];
-        this.ExamSlots = data.value.map(s => {
+        var filteredExams = data.value.filter(d => d.ExamId == this.searchForm.get("searchExamId").value)
+
+        this.ExamSlots = filteredExams.map(s => {
 
           let exams = this.ExamNames.filter(e => e.MasterDataId == s.Exam.ExamNameId);
+          var _slotName = this.SlotNames.filter(e => e.MasterDataId == s.SlotNameId)[0].MasterDataName;
+
           var day = this.weekday[new Date(s.ExamDate).getDay()]
           var _examname = '';
           if (exams.length > 0)
             _examname = exams[0].MasterDataName;
           return {
             SlotId: s.ExamSlotId,
-            SlotName: _examname + " - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - " + s.StartTime + " - " + s.EndTime + " - " + this.SlotNames.filter(n => n.MasterDataId == s.SlotNameId)[0].MasterDataName
+            SlotName: _slotName + " - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - " + s.StartTime + " - " + s.EndTime,
+            ExamName: _examname
           }
         })
         this.GetClassSubject();
@@ -168,16 +193,11 @@ debugger;
     //console.log("this.searchForm.get(searchClassId).value",this.searchForm.get("searchClassId").value)
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchSlotId").value == 0) {
-      this.alert.error("Please select exam slot", this.optionAutoClose);
-      return;
-    }
-    if (this.searchForm.get("searchClassId").value == 0 && this.searchForm.get("searchSubjectId").value > 0) {
-      this.alert.error("Class must be selected if subject is selected.", this.optionAutoClose);
+    if (this.searchForm.get("searchExamId").value == 0) {
+      this.alert.error("Please select exam.", this.optionAutoClose);
       return;
     }
 
-    filterstr = 'SlotId eq ' + this.searchForm.get("searchSlotId").value;
 
     let list: List = new List();
     list.fields = [
@@ -186,130 +206,84 @@ debugger;
       "ClassSubjectId",
       "Active",
       "ExamSlot/SlotNameId",
+      "ExamSlot/ExamId",
+      "ExamSlot/ExamDate",
+      "ExamSlot/StartTime",
+      "ExamSlot/EndTime",
+      "ClassSubject/ClassSubjectId",
       "ClassSubject/SubjectId",
       "ClassSubject/ClassId"];
     list.PageName = "SlotAndClassSubjects";
     list.lookupFields = ["ClassSubject", "ExamSlot"];
     list.filter = [filterstr + orgIdSearchstr];
-    //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var filteredData = [];
+        if (this.searchForm.get("searchClassId").value.length > 0)
+          filteredData = data.value.filter(d => d.ExamSlot.ExamId == this.searchForm.get("searchExamId").value
+            && this.searchForm.get("searchClassId").value.indexOf(d.ClassSubject.ClassId) > -1);
+        else
+          filteredData = data.value.filter(d => d.ExamSlot.ExamId == this.searchForm.get("searchExamId").value);
+
+        var dateTable = [];
         this.SlotNClassSubjects = [];
-        if (this.searchForm.get("searchSubjectId").value == 0 && this.searchForm.get("searchClassId").value.length == 0) {
-          this.ClassSubjectList.forEach(clssub => {
+        this.displayedColumns = [];
+        var _EachExamDate = alasql("select distinct ExamSlot->ExamDate as ExamDate from ? ", [filteredData]);
+        var filteredEachExamDate = [];
+        debugger;
 
-            let existing = data.value.filter(db => db.ClassSubjectId == clssub.ClassSubjectId);
-            if (existing.length > 0)
-              this.SlotNClassSubjects.push({
+        //preparing data for each exam date
+        _EachExamDate.forEach(edate => {
 
-                SlotClassSubjectId: existing[0].SlotClassSubjectId,
-                SlotId: existing[0].SlotId,
-                Slot: this.ExamSlots.filter(s => s.SlotId == existing[0].SlotId)[0].SlotName,
-                ClassSubjectId: existing[0].ClassSubjectId,
-                ClassSubject: clssub.ClassSubject,
-                SubjectId: existing[0].ClassSubject.SubjectId,
-                ClassId: existing[0].ClassSubject.ClassId,
-                Active: existing[0].Active,
-                Action: false
-              });
-            else {
-              this.SlotNClassSubjects.push({
-                SlotClassSubjectId: 0,
-                SlotId: this.searchForm.get("searchSlotId").value,
-                Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
-                ClassSubjectId: clssub.ClassSubjectId,
-                ClassSubject: clssub.ClassSubject,
-                SubjectId: clssub.ClassSubject.SubjectId,
-                ClassId: clssub.ClassSubject.ClassId,
-                Active: 0,
-                Action: false
-              });
+          dateTable = [];
+          var _examDate = this.datepipe.transform(edate.ExamDate, 'dd/MM/yyyy');
+          
+          //filtering only for one exam date
+          filteredEachExamDate = filteredData.filter(f => this.datepipe.transform(f.ExamSlot.ExamDate, 'dd/MM/yyyy') == this.datepipe.transform(edate.ExamDate, 'dd/MM/yyyy'));
+          var day = this.weekday[new Date(edate.ExamDate).getDay()]
+          var _dateHeader = "<b>" + _examDate + " - " + day + "</b>";
+          filteredEachExamDate.forEach(f => {
+            var _subject = this.Subjects.filter(s => s.MasterDataId == f.ClassSubject.SubjectId)[0].MasterDataName;
+            var _class = this.Classes.filter(s => s.MasterDataId == f.ClassSubject.ClassId);
+            var _className = _class[0].MasterDataName;
+            var _classSequence = _class[0].Sequence;
+            var _slotName = this.SlotNames.filter(s => s.MasterDataId == f.ExamSlot.SlotNameId)[0].MasterDataName;
+            var _slotColumn = _slotName + " (" + f.ExamSlot.StartTime + "-" + f.ExamSlot.EndTime + ")";
+            var _classSubject = _className + " " + _subject;
+
+            if (!this.displayedColumns.includes(_slotColumn)) {
+              this.displayedColumns.push(_slotColumn);
+              dateTable[_slotColumn] = '';
             }
+            var emptyrowForThisCol = dateTable.filter(d => d[_slotColumn] == '' || d[_slotColumn] == null);
+            if (emptyrowForThisCol.length > 0)
+              emptyrowForThisCol[0][_slotColumn] = _classSubject;
+            else
+              dateTable.push({
+                ExamDate: _examDate,
+                [_slotColumn]: _classSubject,
+                Sequence: _classSequence
+              })
           })
-        }
-        else {
-          if (this.searchForm.get("searchClassId").value.length > 0 && this.searchForm.get("searchSubjectId").value == 0) {
 
-            filteredData = data.value.filter(item=>this.searchForm.get("searchClassId").value.indexOf(item.ClassSubject.ClassId)>-1)
-            //.filter(d => d.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
+          //sort class wise.
+          dateTable.sort((a, b) => a.Sequence - b.Sequence);
 
-            let fitleredClassSubject = this.ClassSubjectList.filter(f =>this.searchForm.get("searchClassId").value.indexOf(f.ClassId)>-1);
+          //preparing date header
+          var row = JSON.parse(JSON.stringify(dateTable[0]));
+          this.displayedColumns.forEach((c, index) => {
+            row[c] = index == 0 ? _dateHeader : '';
+          })
 
-            fitleredClassSubject.forEach(cs => {
-              let existing = filteredData.filter(ex => ex.ClassSubjectId == cs.ClassSubjectId)
-              if (existing.length > 0) {
-                this.SlotNClassSubjects.push({
-                  SlotClassSubjectId: existing[0].SlotClassSubjectId,
-                  SlotId: this.searchForm.get("searchSlotId").value,
-                  Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
-                  ClassSubjectId: cs.ClassSubjectId,
-                  ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == cs.ClassSubjectId)[0].ClassSubject,
-                  SubjectId: cs.SubjectId,
-                  ClassId: cs.ClassId,
-                  Active: existing[0].Active,
-                  Action: false
-                });
-              }
-              else {
-                this.SlotNClassSubjects.push({
-                  SlotClassSubjectId: 0,
-                  SlotId: this.searchForm.get("searchSlotId").value,
-                  Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
-                  ClassSubjectId: cs.ClassSubjectId,
-                  ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == cs.ClassSubjectId)[0].ClassSubject,
-                  SubjectId: cs.ClassSubject.SubjectId,
-                  ClassId: cs.ClassSubject.ClassId,
-                  Active: 0,
-                  Action: false
-                });
-              }
-            })
-          }
-          else {
-            debugger;
-            if (this.searchForm.get("searchSubjectId").value > 0 && this.searchForm.get("searchClassId").value.length > 0) {
-              filteredData = data.value.filter(d => d.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value
-                && this.searchForm.get("searchClassId").value.indexOf(d.ClassSubject.ClassId)>-1);
-            }
-            if (filteredData.length > 0) {
-              this.SlotNClassSubjects.push({
-                SlotClassSubjectId: filteredData[0].SlotClassSubjectId,
-                SlotId: this.searchForm.get("searchSlotId").value,
-                Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
-                ClassSubjectId: filteredData[0].ClassSubjectId,
-                ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == filteredData[0].ClassSubjectId)[0].ClassSubject,
-                SubjectId: filteredData[0].ClassSubject.SubjectId,
-                ClassId: filteredData[0].ClassSubject.ClassId,
-                Active: filteredData[0].Active,
-                Action: false
-              });
-            }
-            else {
-              var clssubject = this.ClassSubjectList.filter(cs => cs.SubjectId == this.searchForm.get("searchSubjectId").value &&
-                this.searchForm.get("searchClassId").value.indexOf(cs.ClassId)>-1)
-              var _classSubjectId = clssubject[0].ClassSubjectId;
+          //inserting date header
+          dateTable.splice(0, 0, row);
+          
+          //merging arrays;
+          this.SlotNClassSubjects = [...this.SlotNClassSubjects, ...dateTable];
 
-              this.SlotNClassSubjects.push({
-                SlotClassSubjectId: 0,
-                SlotId: this.searchForm.get("searchSlotId").value,
-                Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
-                ClassSubjectId: clssubject[0].ClassSubjectId,
-                ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == _classSubjectId)[0].ClassSubject,
-                SubjectId: clssubject[0].SubjectId,
-                ClassId: clssubject[0].ClassId,
-                Active: 0,
-                Action: false
-              });
-            }
-          }
-        }
-        if (this.SlotNClassSubjects.length == 0) {
-          this.alert.info("No record found! Subject not defined in class subject module.", this.optionsNoAutoClose);
-        }
-        //console.log('this', this.SlotNClassSubjects)
-        this.dataSource = new MatTableDataSource<ISlotNClassSubject>(this.SlotNClassSubjects);
+        })
+        this.dataSource = new MatTableDataSource<any>(this.SlotNClassSubjects);
         this.loading = false;
       })
   }
@@ -319,7 +293,7 @@ debugger;
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Sequence"];
     list.PageName = "MasterDatas";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -334,7 +308,8 @@ debugger;
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
 
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetExamSlots();
+        this.GetExams();
+        //this.GetExamSlots();
       });
   }
   getDropDownData(dropdowntype) {
@@ -363,7 +338,6 @@ export interface ISlotNClassSubject {
   SubjectId: number;
   ClassId: number;
   Active: number;
-  Action: boolean;
 }
 
 

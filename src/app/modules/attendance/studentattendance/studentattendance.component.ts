@@ -144,7 +144,8 @@ export class StudentAttendanceComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'StudentClassId',
-      'Student/Name',
+      'Student/FirstName',
+      'Student/LastName',
       'RollNo',
       'ClassId',
       'SectionId',
@@ -275,7 +276,7 @@ export class StudentAttendanceComponent implements OnInit {
   UpdateOrSave(row, indx) {
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate eq datetime'" + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') + "' " +
+      " and AttendanceDate eq datetime'" + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') + "' and " +
       this.StandardFilter;
 
     if (row.AttendanceId > 0)

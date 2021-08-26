@@ -7,14 +7,22 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field [style.width.pc]="30">
+                <mat-form-field appearance="outline" [style.width.pc]="30">
+                    <mat-label>Exam</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                            {{item.ExamName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <!-- <mat-form-field [style.width.pc]="30">
                     <mat-label>Exam Slot</mat-label>
                     <mat-select formControlName="searchSlotId">
                         <mat-option *ngFor="let item of ExamSlots" [value]="item.SlotId">
                             {{item.SlotName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <mat-form-field appearance="outline" [style.width.pc]="20">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassId" multiple>
@@ -24,7 +32,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+                <!-- <mat-form-field appearance="outline">
                     <mat-label>Subject</mat-label>
                     <mat-select formControlName="searchSubjectId">
                         <mat-option [value]="0">--subject--</mat-option>
@@ -32,49 +40,23 @@
                             {{item.MasterDataName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>                  
+                </mat-form-field>                   -->
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetSlotNClassSubjects()">
                     <mat-icon>search</mat-icon>
                 </button>
-                <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
-                    <mat-icon>clear_all</mat-icon>
-                </button> -->
             </form>
-            <p>Record will be displayed if it is defined in class subject module.</p>
-            <mat-table #table [dataSource]="dataSource">
-          
-                <ng-container matColumnDef="ClassSubject">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class Subject
+            <p>Record will be displayed if it is defined in Subjects in Slot.</p>
+            <mat-table #table [dataSource]="dataSource">          
+                
+                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>{{disCol}}                      
                     </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                           {{element.ClassSubject}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>
-                        <mat-checkbox *ngIf="SlotNClassSubjects.length>0" (click)="$event.stopPropagation()" (change)="checkall($event)">
-                        </mat-checkbox>&nbsp;Active
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                            [checked]="element.Active==1?true:false">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-                        <!-- <button [disabled]="loading" *ngIf="SlotNClassSubjects.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
-                            <mat-icon>all_out</mat-icon>
-                        </button> -->
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
+                    <mat-cell *matCellDef="let element" [innerHTML]="element[disCol]">                        
+                                                             
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>                
             </mat-table>
         </div>
     </div>

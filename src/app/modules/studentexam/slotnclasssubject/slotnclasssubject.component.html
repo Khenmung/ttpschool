@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 0px 15px;">
-        <div><strong>Exam Slot Subject Mapping</strong></div>
+        <div><strong>Subjects in slot</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -18,7 +18,7 @@
                 <mat-form-field appearance="outline" [style.width.pc]="20">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassId" multiple>
-                        <mat-option [value]="0">--class--</mat-option>
+                        <!-- <mat-option [value]="0">--class--</mat-option> -->
                         <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
                             {{item.MasterDataName}}
                         </mat-option>

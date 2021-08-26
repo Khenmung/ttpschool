@@ -46,7 +46,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   StudentSubjects = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
-
+  PagePermission ='';
   ExamId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,

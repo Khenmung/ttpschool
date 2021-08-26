@@ -10,6 +10,8 @@ import { SubjectdashboardComponent } from './classsubjectdashboard/subjectdashbo
 import { ClasssubjectteacherComponent } from './classsubjectteacher/classsubjectteacher.component';
 import { DashboardclassfeeComponent } from './classfee/dashboardclassfee/dashboardclassfee.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { ClassperiodComponent } from '../schooltimetable/classperiod/classperiod.component';
+import { SchooltimetableComponent } from '../schooltimetable/schooltimetable/schooltimetable.component';
 
 const routes: Routes = [
   {
@@ -41,5 +43,7 @@ export const StudentSubjectComponents=[
   AssignStudentclassdashboardComponent,
   ClassmasterdashboardComponent,
   ClasssubjectteacherComponent,
-  DashboardclassfeeComponent
+  DashboardclassfeeComponent,
+  ClassperiodComponent,
+  SchooltimetableComponent
 ]

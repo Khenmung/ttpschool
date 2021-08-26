@@ -280,7 +280,7 @@ export class CertificatesComponent implements OnInit {
         this.loading=false;
       }
       else {
-        console.log('data.value',data.value)
+        //console.log('data.value',data.value)
         debugger;
         data.value.forEach(d => {
           var _studentClass = d.ClassId==null?'': this.Classes.filter(c => c.MasterDataId == d.ClassId)[0].MasterDataName;
@@ -295,11 +295,12 @@ export class CertificatesComponent implements OnInit {
           var _reason = d.Student.ReasonForLeavingId==null?'':this.ReasonForLeaving.filter(c => c.MasterDataId == d.Student.ReasonForLeavingId)[0].MasterDataName;
 
           this.StudentForVariables.push(
+            { name: "Today", val: this.datepipe.transform(new Date(),'dd/MM/yyyy') },
             { name: "StudentClass", val: _studentClass },
             { name: "Section", val:  _section},
             { name: "RollNo", val: d.RollNo },
             { name: "AdmissionDate", val: d.AdmissionDate },
-            { name: "StudentName", val: d.Student.FirstName + " " + d.Student.LastName },
+            { name: "StudentName", val: d.Student.FirstName + " " + (d.Student.LastName==null?'':d.Student.LastName) },
             { name: "FatherName", val: d.Student.FatherName },
             { name: "MotherName", val: d.Student.MotherName },
             { name: "Gender", val:  _gender },
@@ -335,7 +336,7 @@ export class CertificatesComponent implements OnInit {
             { name: "ReasonForLeaving", val: _reason }
           )
         })
-        console.log('this.StudentForVariables',this.StudentForVariables);
+        //console.log('this.StudentForVariables',this.StudentForVariables);
         this.GenerateCertificate();
 
       }

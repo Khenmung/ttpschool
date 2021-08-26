@@ -9,10 +9,10 @@
     </div>
     <mat-divider></mat-divider>
 </div>
-<mat-card>
-    <mat-card-title>Class Fees</mat-card-title>
-    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content>
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Class Fees</strong></div>
+    </div>
         <alert></alert>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="searchForm">
@@ -63,14 +63,14 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field [style.width.px]="100">
                         <input matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Amount"
-                            [(value)]="element.Amount" autocomplete="Off">
+                            [value]="element.Amount" autocomplete="Off">
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Recurring">
                 <mat-header-cell *matHeaderCellDef>Recurring </mat-header-cell>
                 <mat-cell style="justify-content: center;" *matCellDef="let element">
-                    <mat-checkbox [(checked)]="element.Recurring" (click)="$event.stopPropagation()"
+                    <mat-checkbox [checked]="element.Recurring" (click)="$event.stopPropagation()"
                         (change)="updateRecurring(element,$event)">
                     </mat-checkbox>
                 </mat-cell>
@@ -88,7 +88,7 @@
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef>Active </mat-header-cell>
                 <mat-cell style="justify-content: center;" *matCellDef="let element">
-                    <mat-checkbox [(checked)]="element.Active" (click)="$event.stopPropagation()"
+                    <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()"
                         (change)="updateActive(element,$event)">
                     </mat-checkbox>
                 </mat-cell>
@@ -98,7 +98,7 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field [style.width.px]="100">
                         <input matInput type="number" (blur)='updatePaymentOrder(element,$event)'
-                            [(ngModel)]="element.PaymentOrder" [(value)]="element.PaymentOrder" autocomplete="Off">
+                            [(ngModel)]="element.PaymentOrder" [value]="element.PaymentOrder" autocomplete="Off">
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -111,7 +111,7 @@
                     </div>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button [disabled]="loading || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading || !element.Action" mat-mini-fab (click)="UpdateOrSave(element,0)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>
@@ -119,5 +119,4 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
-    </mat-card-content>
-</mat-card>
+   

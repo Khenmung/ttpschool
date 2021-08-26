@@ -1,0 +1,90 @@
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Class Periods</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Class</mat-label>
+                        <mat-select formControlName="searchClassId">
+                            <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetSchoolClassPeriods()">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </div>
+                <div *ngIf="SchoolClassPeriodList.length>0">
+                    Only saved data will be replicated.
+                    <mat-form-field appearance="outline" [style.width.px]="300">
+                        <mat-label>Replicate to classes</mat-label>
+                        <mat-select formControlName="searchClassIdApplyAll" multiple>
+                            <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button [disabled]="loading" matTooltip="replicate periods" class="mat-raised-button" (click)="ReplicateToClasses()">
+                        <mat-icon>
+                            content_copy
+                        </mat-icon>
+                    </button>
+                </div>
+            </form>
+
+            <mat-table #table [dataSource]="dataSource">
+
+                <ng-container matColumnDef="PeriodName">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Period
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                        {{element.PeriodName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="FromToTime">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Start and End Time
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                        <mat-form-field>
+                            <input matInput [maxLength]="13" (blur)="onBlur(element,$event)"
+                                [(ngModel)]="element.FromToTime" autocomplete="Off" [value]="element.FromToTime">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="CheckAll($event)">
+                        </mat-checkbox>&nbsp;Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                            <mat-icon>all_out</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                            (click)="SaveRow(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

@@ -7,6 +7,7 @@ import { SubjectTypesComponent } from '../subject-types/subject-types.component'
 import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
 //import { ClasssubjectteacherComponent } from '../classsubjectteacher/classsubjectteacher.component';
 import { DashboardclassfeeComponent } from '../classfee/dashboardclassfee/dashboardclassfee.component';
+import { ClassperiodComponent } from '../../schooltimetable/classperiod/classperiod.component';
 
 @Component({
   selector: 'app-subjectdashboard',
@@ -21,6 +22,7 @@ export class SubjectdashboardComponent implements OnInit {
   @ViewChild(AssignStudentclassdashboardComponent) studentclass: AssignStudentclassdashboardComponent;
   @ViewChild(ClassmasterdashboardComponent) teacherMapping: ClassmasterdashboardComponent;
   @ViewChild(DashboardclassfeeComponent) dashboardclassfee: DashboardclassfeeComponent;
+  @ViewChild(ClassperiodComponent) Classperiod: ClassperiodComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -49,7 +51,7 @@ export class SubjectdashboardComponent implements OnInit {
     switch (indx) {
       case 0:
         this.dashboardclassfee.PageLoad();
-        break;      
+        break;
       case 1:
         this.subjecttypes.PageLoad();
         break;
@@ -68,6 +70,10 @@ export class SubjectdashboardComponent implements OnInit {
       case 6:
         this.studentsubject.PageLoad();
         break;
+      case 7:
+        this.Classperiod.PageLoad();
+        break;
+
     }
   }
 }

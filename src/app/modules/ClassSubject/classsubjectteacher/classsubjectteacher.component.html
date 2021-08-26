@@ -1,7 +1,7 @@
-<mat-card>
-    <mat-card-title>Class Subject Teacher</mat-card-title>
-    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content>
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Class Subject Teacher</strong></div>
+
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
@@ -47,7 +47,7 @@
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
                                 {{option.TeacherName}}
                             </mat-option>
-                            </mat-select>
+                        </mat-select>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -90,6 +90,5 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
-
-    </mat-card-content>
-</mat-card>
+    </div>
+</div>

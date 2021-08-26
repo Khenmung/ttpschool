@@ -277,7 +277,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.alert.error("Please select exam slot", this.optionAutoClose);
       return;
     }
-    if (this.searchForm.get("searchClassId").value == 0 && this.searchForm.get("searchSubjectId").value > 0) {
+    if (this.searchForm.get("searchClassId").value.length == 0 && this.searchForm.get("searchSubjectId").value > 0) {
       this.alert.error("Class must be selected if subject is selected.", this.optionAutoClose);
       return;
     }
