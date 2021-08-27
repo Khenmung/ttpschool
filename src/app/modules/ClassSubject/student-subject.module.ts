@@ -6,7 +6,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
+//import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
@@ -20,7 +20,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     ReactiveFormsModule,
     SharedModule,
     MaterialModule,
-    MultiLevelMenuModule,
+    //MultiLevelMenuModule,
     FlexLayoutModule,
     StudentSubjectRoutingModule,
     
