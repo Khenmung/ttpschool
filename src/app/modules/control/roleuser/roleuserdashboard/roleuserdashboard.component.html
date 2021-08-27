@@ -41,7 +41,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
                             <mat-label>role</mat-label>
-                            <mat-select [(value)]="element.RoleId" [(ngModel)]="element.RoleId">
+                            <mat-select [value]="element.RoleId" [(ngModel)]="element.RoleId">
                                 <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>

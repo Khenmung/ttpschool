@@ -1,24 +1,24 @@
 <mat-card>
-    <mat-card-title>Class Subject</mat-card-title>
+    <mat-card-title>Leave Management</mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
         <div style="margin:5px">
         <!-- <div fxLayout="row wrap" fxLayoutAlign="space-around center"> -->
             <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
                 class="demo-tab-group">
-                <mat-tab>
+                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Class Fee
+                        <mat-icon>info</mat-icon>Leave
                     </ng-template>
-                    <app-dashboardclassfee></app-dashboardclassfee>
+                    <app-emp-leave></app-emp-leave>
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Subject Types
+                        <mat-icon>info</mat-icon>Employee Leave
                     </ng-template>
-                    <app-subject-types></app-subject-types>
+                    <app-employee-leave></app-employee-leave>
                 </mat-tab>
-                <mat-tab>
+                <!--<mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>info</mat-icon>Subject Teacher
                     </ng-template>
@@ -48,7 +48,7 @@
                     </ng-template>
                     <app-studentsubjectdashboard></app-studentsubjectdashboard>
                 </mat-tab>
-                <!-- <mat-tab>
+                <mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>info</mat-icon>Class Period
                     </ng-template>

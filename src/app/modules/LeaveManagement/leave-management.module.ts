@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { LeaveManagementComponents, LeaveManagementRoutingModule } from './leave-management-routing.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-//import { StudenthomeComponent } from '../StudentSubject/studenthome/studenthome.component';
 import { MaterialModule } from 'src/app/shared/material/material.module';
-import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 @NgModule({
@@ -16,9 +15,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     LeaveManagementRoutingModule,
     SharedhomepageModule,
     MaterialModule,
-    StudentSubjectModule,
+    SharedModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FlexLayoutModule
   ],
   exports:[LeaveManagementComponents]
 })

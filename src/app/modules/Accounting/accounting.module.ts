@@ -19,6 +19,7 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
     ReactiveFormsModule,
     StudentSubjectModule,
     MaterialModule
-  ]
+  ],
+  exports:[AccountingComponents]
 })
 export class AccountingModule { }

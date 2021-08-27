@@ -60,7 +60,7 @@
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.pc]="20">
                             <textarea rows="1" matInput [attr.name]='element.ActualFormulaOrAmount'
-                                (blur)="onBlur(element,$event)" [(value)]="element.ActualFormulaOrAmount"
+                                (blur)="onBlur(element,$event)" [value]="element.ActualFormulaOrAmount"
                                 [(ngModel)]="element.ActualFormulaOrAmount"></textarea>
                         </mat-form-field>
                     </mat-cell>

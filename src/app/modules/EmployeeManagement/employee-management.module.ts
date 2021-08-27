@@ -23,6 +23,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     SharedhomepageModule,
     
   ],
+  exports:[EmployeeManageComponents],
   providers:[{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}]
 })
 export class EmployeeManagementModule { }

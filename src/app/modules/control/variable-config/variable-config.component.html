@@ -71,7 +71,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field>
-                            <mat-select [(ngModel)]="element.VariableTypeId" [(value)]="element.VariableTypeId">
+                            <mat-select [(ngModel)]="element.VariableTypeId" [value]="element.VariableTypeId">
                                 <mat-option *ngFor="let item of ConfigTypes" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>

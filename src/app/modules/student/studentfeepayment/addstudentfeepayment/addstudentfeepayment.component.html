@@ -76,7 +76,7 @@
                                         <mat-cell *matCellDef="let element">
                                             <mat-form-field>
                                                 <input style="text-align: right" [disabled]="element.FeeName!='Admission'" matInput type="number" max="100000"
-                                                    [(ngModel)]="element.Amount" [(value)]="element.Amount"
+                                                    [(ngModel)]="element.Amount" [value]="element.Amount"
                                                     autocomplete="Off">
                                             </mat-form-field>
                                         </mat-cell>
@@ -95,7 +95,7 @@
                                 <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 15px;">
                                     <mat-form-field>
                                         <input matInput [maxlength]="20"
-                                            [(ngModel)]="OffLineReceiptNo" [(value)]="OffLineReceiptNo"
+                                            [(ngModel)]="OffLineReceiptNo" [value]="OffLineReceiptNo"
                                             autocomplete="Off">
                                     </mat-form-field>                             
                                     <button [disabled]="loading || calculateTotal()==0" matTooltip="pay" mat-mini-fab

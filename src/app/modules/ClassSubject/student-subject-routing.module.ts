@@ -44,6 +44,4 @@ export const StudentSubjectComponents=[
   ClassmasterdashboardComponent,
   ClasssubjectteacherComponent,
   DashboardclassfeeComponent,
-  ClassperiodComponent,
-  SchooltimetableComponent
-]
+  ]

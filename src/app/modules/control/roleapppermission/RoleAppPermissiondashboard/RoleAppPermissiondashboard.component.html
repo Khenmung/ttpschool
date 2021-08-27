@@ -47,7 +47,7 @@
                    {{element.Role}}
                         <!-- <mat-form-field>
                             <mat-label>role</mat-label>
-                            <mat-select (selectionChange)="UpdateSaveButton(element)" [(value)]="element.RoleId"  [(ngModel)]="element.RoleId">
+                            <mat-select (selectionChange)="UpdateSaveButton(element)" [value]="element.RoleId"  [(ngModel)]="element.RoleId">
                                 <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
                             </mat-select>
                         </mat-form-field> -->
@@ -64,7 +64,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
                             <mat-label>permission</mat-label>
-                            <mat-select (selectionChange)="UpdateSaveButton(element)" [(value)]="element.PermissionId"  [(ngModel)]="element.PermissionId">
+                            <mat-select (selectionChange)="UpdateSaveButton(element)" [value]="element.PermissionId"  [(ngModel)]="element.PermissionId">
                                 <mat-option *ngFor="let item of Permissions" [value]="item.val">{{item.type}}</mat-option>
                             </mat-select>
                         </mat-form-field>

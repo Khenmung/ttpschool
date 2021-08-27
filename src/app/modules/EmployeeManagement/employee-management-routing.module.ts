@@ -4,12 +4,13 @@ import { EmployeeGradehistoryComponent } from './employee-gradehistory/employee-
 import { EmployeeSalaryComponentComponent } from './employee-salary-component/employee-salary-component.component';
 import { EmpComponentsComponent } from './emp-components/emp-components.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { EmpmanagementboardComponent } from './empmanagementboard/empmanagementboard.component';
 
 const routes: Routes = [
   {
     path:"",component:HomeComponent,
     children:[
-      {path:"",component:EmpComponentsComponent},
+      {path:"",component:EmpmanagementboardComponent},
       {path:"emphistory",component:EmployeeGradehistoryComponent},
       {path:"empsalcomp",component:EmployeeSalaryComponentComponent},
      
@@ -27,5 +28,5 @@ export const EmployeeManageComponents=[
   EmpComponentsComponent,
   EmployeeGradehistoryComponent,
   EmployeeSalaryComponentComponent,
- 
+ EmpmanagementboardComponent
 ]

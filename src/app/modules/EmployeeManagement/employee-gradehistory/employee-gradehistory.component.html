@@ -28,7 +28,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="160" appearance="outline">
-                            <mat-select [(value)]="element.DepartmentId" [(ngModel)]="element.DepartmentId">
+                            <mat-select [value]="element.DepartmentId" [(ngModel)]="element.DepartmentId">
                                 <mat-option *ngFor="let item of Departments" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
@@ -40,7 +40,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="160" appearance="outline">
-                            <mat-select [(value)]="element.EmpGradeId" [(ngModel)]="element.EmpGradeId">
+                            <mat-select [value]="element.EmpGradeId" [(ngModel)]="element.EmpGradeId">
                                 <mat-option *ngFor="let item of Grades" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
@@ -52,7 +52,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="160" appearance="outline">
-                            <mat-select [(value)]="element.WorkAccountId" [(ngModel)]="element.WorkAccountId">
+                            <mat-select [value]="element.WorkAccountId" [(ngModel)]="element.WorkAccountId">
                                 <mat-option *ngFor="let item of WorkAccounts" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
@@ -64,7 +64,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="160" appearance="outline">
-                            <mat-select [(value)]="element.JobTitleId" [(ngModel)]="element.JobTitleId">
+                            <mat-select [value]="element.JobTitleId" [(ngModel)]="element.JobTitleId">
                                 <mat-option *ngFor="let item of JobTitles" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
@@ -76,7 +76,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="160" appearance="outline">
-                            <mat-select [(value)]="element.DesignationId" [(ngModel)]="element.DesignationId">
+                            <mat-select [value]="element.DesignationId" [(ngModel)]="element.DesignationId">
                                 <mat-option *ngFor="let item of Designations" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
@@ -89,7 +89,7 @@
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field [style.width.px]="100" appearance="outline" autocomplete="Off">
                             <input matInput type="number"
-                            [(value)]="element.CTC"
+                            [value]="element.CTC"
                                 [(ngModel)]="element.CTC">
                         </mat-form-field>
                     </mat-cell>
@@ -98,7 +98,7 @@
                     <mat-header-cell *matHeaderCellDef> From Date </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="130">
-                            <input [(ngModel)]="element.FromDate" [(value)]="element.FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
+                            <input [(ngModel)]="element.FromDate" [value]="element.FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
                             <mat-datepicker #FromDate></mat-datepicker>
                         </mat-form-field>
@@ -108,7 +108,7 @@
                     <mat-header-cell *matHeaderCellDef> To Date </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="130">
-                            <input [(value)]="element.ToDate" [(ngModel)]="element.ToDate"
+                            <input [value]="element.ToDate" [(ngModel)]="element.ToDate"
                              matInput [matDatepicker]="ToDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
                             <mat-datepicker #ToDate></mat-datepicker>

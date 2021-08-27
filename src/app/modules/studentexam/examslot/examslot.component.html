@@ -35,7 +35,7 @@
                     <mat-cell *matCellDef="let element">
                         {{element.ExamDate|date:'dd-MM-yyyy'}} - {{element.WeekDay}} 
                         <!-- <mat-form-field appearance="legacy" [style.width.px]="200">
-                            <input [(ngModel)]="element.ExamDate" [(value)]="element.ExamDate" matInput
+                            <input [(ngModel)]="element.ExamDate" [value]="element.ExamDate" matInput
                                 [matDatepicker]="ExamDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="ExamDate"></mat-datepicker-toggle>
                             <mat-datepicker #ExamDate></mat-datepicker>
@@ -48,7 +48,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         {{element.SlotName}}
                         <!-- <mat-form-field [style.width.px]="150">
-                            <mat-select [(value)]="element.SlotNameId" [(ngModel)]="element.SlotNameId">
+                            <mat-select [value]="element.SlotNameId" [(ngModel)]="element.SlotNameId">
                                 <mat-option *ngFor="let item of SlotNames" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}
                                 </mat-option>
@@ -62,7 +62,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="legacy" [style.width.px]="200">
                             <mat-label>Start Time</mat-label>
-                            <input [(value)]="element.StartTime" [(ngModel)]="element.StartTime" matInput
+                            <input [value]="element.StartTime" [(ngModel)]="element.StartTime" matInput
                                 autocomplete="off">
 
                         </mat-form-field>
@@ -73,7 +73,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="legacy" [style.width.px]="200">
                             <mat-label>End Time</mat-label>
-                            <input [(value)]="element.EndTime" [(ngModel)]="element.EndTime" matInput
+                            <input [value]="element.EndTime" [(ngModel)]="element.EndTime" matInput
                                autocomplete="off">
                             
                         </mat-form-field>

@@ -41,16 +41,20 @@ const routes: Routes = [
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
   {
-    path: 'employee',
+    path: 'employee/:id',
     loadChildren: () => import('./modules/EmployeeManagement/employee-management.module').then(m => m.EmployeeManagementModule)
   },
   {
-    path: 'leave',
+    path: 'leave/:id',
     loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)
   },
   {
-    path: 'accounting',
+    path: 'accounting/:id',
     loadChildren: () => import('./modules/Accounting/accounting.module').then(m => m.AccountingModule)
+  },
+  {
+    path: 'school/:id/timetable',
+    loadChildren: () => import('./modules/schooltimetable/schooltimetable.module').then(m => m.SchooltimetableModule)
   },
   { path: '**', component: NotfoundComponent },
   

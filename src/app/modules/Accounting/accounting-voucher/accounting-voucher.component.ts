@@ -145,7 +145,7 @@ export class AccountingVoucherComponent implements OnInit {
     this.AccountingVoucherList.push(newdata);
     this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
   }
-
+  updateDebitCredit(element,val){}
   GetAccountingVoucher() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;

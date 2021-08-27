@@ -33,7 +33,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field>
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                            [(value)]="element.FeatureName" [(ngModel)]="element.FeatureName">
+                            [value]="element.FeatureName" [(ngModel)]="element.FeatureName">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>

@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StudenthomeComponent } from '../student/studenthome/studenthome.component';
 import { EmployeeLeaveComponent } from './employee-leave/employee-leave.component';
 import { EmpLeaveComponent } from './emp-leave/emp-leave.component';
+import { LeaveboardComponent } from './leaveboard/leaveboard.component';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
 
 const routes: Routes = [
   {
-    path: "", component: StudenthomeComponent,
+    path: "", component: HomeComponent,
     children: [
+      { path: "gleave", component: LeaveboardComponent },
       { path: "gleave", component: EmpLeaveComponent },
       { path: "empleave", component: EmployeeLeaveComponent }
     ]
@@ -21,5 +23,6 @@ const routes: Routes = [
 export class LeaveManagementRoutingModule { }
 export const LeaveManagementComponents=[
   EmpLeaveComponent,
-  EmployeeLeaveComponent
+  EmployeeLeaveComponent,
+  LeaveboardComponent
 ]

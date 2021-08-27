@@ -28,7 +28,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
                             <mat-select [disabled]="!newitem" [(ngModel)]="element.LeaveTypeId"
-                                [(value)]="element.LeaveTypeId">
+                                [value]="element.LeaveTypeId">
                                 <mat-option *ngFor="let item of Leaves" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}
                                 </mat-option>
@@ -41,7 +41,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="200">
                             <mat-label>Start Date</mat-label>
-                            <input [(ngModel)]="element.LeaveFrom" [(value)]="element.LeaveFrom" matInput
+                            <input [(ngModel)]="element.LeaveFrom" [value]="element.LeaveFrom" matInput
                                 [matDatepicker]="LeaveFrom" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="LeaveFrom"></mat-datepicker-toggle>
                             <mat-datepicker #LeaveFrom></mat-datepicker>
@@ -53,7 +53,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="200">
                             <mat-label>End Date</mat-label>
-                            <input [(value)]="element.LeaveTo" [(ngModel)]="element.LeaveTo" matInput
+                            <input [value]="element.LeaveTo" [(ngModel)]="element.LeaveTo" matInput
                                 [matDatepicker]="LeaveTo" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="LeaveTo"></mat-datepicker-toggle>
                             <mat-datepicker #LeaveTo></mat-datepicker>
@@ -64,7 +64,7 @@
                     <mat-header-cell *matHeaderCellDef> Reason for leave </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.px]="300" appearance="outline">
-                            <textarea type="number" matInput autocomplete="Off" [(value)]="element.LeaveReason"
+                            <textarea type="number" matInput autocomplete="Off" [value]="element.LeaveReason"
                                 [(ngModel)]="element.LeaveReason"></textarea>
                         </mat-form-field>
                     </mat-cell>
@@ -73,7 +73,7 @@
                     <mat-header-cell *matHeaderCellDef> No Of Days </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.px]="100" appearance="outline">
-                            <textarea type="number" matInput autocomplete="Off" [(value)]="element.NoOfDays"
+                            <textarea type="number" matInput autocomplete="Off" [value]="element.NoOfDays"
                                 [(ngModel)]="element.NoOfDays"></textarea>
                         </mat-form-field>
                     </mat-cell>
@@ -82,7 +82,7 @@
                     <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-select [disabled]="!newitem" [(ngModel)]="element.LeaveStatusId" [style.width.px]="170"
-                        [(value)]="element.LeaveStatusId">
+                        [value]="element.LeaveStatusId">
                         <mat-option *ngFor="let item of LeaveStatus" [value]="item.MasterDataId">
                             {{item.MasterDataName}}
                         </mat-option>
@@ -93,7 +93,7 @@
                     <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.px]="300" appearance="outline">
-                            <textarea matInput autocomplete="Off" [(value)]="element.Remarks"
+                            <textarea matInput autocomplete="Off" [value]="element.Remarks"
                                 [(ngModel)]="element.Remarks"></textarea>
                         </mat-form-field>
                     </mat-cell>

@@ -17,7 +17,7 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field>
                         <mat-label>batch</mat-label>
-                        <input matInput [(value)]="element.BatchName" [(ngModel)]="element.BatchName" [maxlength]="50">
+                        <input matInput [value]="element.BatchName" [(ngModel)]="element.BatchName" [maxlength]="50">
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -34,7 +34,7 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline" [style.width.px]="130">
                         <mat-label>Start</mat-label>
-                        <input [(ngModel)]="element.StartDate" [(value)]="element.StartDate" matInput
+                        <input [(ngModel)]="element.StartDate" [value]="element.StartDate" matInput
                             [matDatepicker]="StartDate" autocomplete="off">
                         <mat-datepicker-toggle matSuffix [for]="StartDate"></mat-datepicker-toggle>
                         <mat-datepicker #StartDate></mat-datepicker>
@@ -46,7 +46,7 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline" [style.width.px]="130">
                         <mat-label>End</mat-label>
-                        <input [(ngModel)]="element.EndDate" [(value)]="element.EndDate" matInput
+                        <input [(ngModel)]="element.EndDate" [value]="element.EndDate" matInput
                             [matDatepicker]="EndDate" autocomplete="off">
                         <mat-datepicker-toggle matSuffix [for]="EndDate"></mat-datepicker-toggle>
                         <mat-datepicker #EndDate></mat-datepicker>

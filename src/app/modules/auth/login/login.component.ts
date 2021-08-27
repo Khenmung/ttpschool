@@ -59,6 +59,7 @@ export class LoginComponent implements OnInit {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       //console.log("authlogin",this.deviceXs);
     });
+    debugger;
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
       this.route.navigate(['/']);

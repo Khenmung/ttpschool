@@ -22,7 +22,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field>
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [(value)]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
+                                [value]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -32,7 +32,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field>
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [(value)]="element.Description" [(ngModel)]="element.Description">
+                                [value]="element.Description" [(ngModel)]="element.Description">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -42,7 +42,7 @@
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field [style.width.pc]="50">
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [(value)]="element.Formula" [(ngModel)]="element.Formula">
+                                [value]="element.Formula" [(ngModel)]="element.Formula">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>

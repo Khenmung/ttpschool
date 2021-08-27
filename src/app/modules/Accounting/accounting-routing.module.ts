@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StudenthomeComponent } from '../student/studenthome/studenthome.component';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { AccountingVoucherComponent } from './accounting-voucher/accounting-voucher.component';
+import { AccountingboardComponent } from './accountingboard/accountingboard.component';
+import { TrialBalanceComponent } from './trial-balance/trial-balance.component';
 
 const routes: Routes = [
   {
-    path: "", component: StudenthomeComponent,
+    path: "", component: HomeComponent,
     children: [
-      { path: "", component: AccountingVoucherComponent }
+      { path: "", component: AccountingboardComponent }
     ]
   }
 ];
@@ -18,5 +20,7 @@ const routes: Routes = [
 })
 export class AccountingRoutingModule { }
 export const AccountingComponents=[
-  AccountingVoucherComponent
+  AccountingVoucherComponent,
+  TrialBalanceComponent,
+  AccountingboardComponent
 ]

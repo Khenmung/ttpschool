@@ -1,1 +1,59 @@
-<p>schooltimetable works!</p>
+<div>
+    <div style="padding:15px 15px 0px 15px;">
+        <div><strong>Time Table</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Class</mat-label>
+                        <mat-select formControlName="searchClassId">
+                            <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                        (click)="GetSchoolTimeTable()">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                </div>
+            </form>
+
+            <mat-table #table [dataSource]="dataSource">
+
+                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>{{disCol=='Action'?'':disCol}}
+                        <div *ngIf="SchoolTimeTableList.length>0" fxLayoutAlign="center center">
+                            <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                                matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
+                                <mat-icon>save</mat-icon>
+                            </button>
+                        </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element ">
+                        <mat-form-field *ngIf="disCol !='Day' && disCol !='recess' && disCol !='break' && disCol !='Action'" [style.width.px]="100">
+                            <mat-select (blur)="onBlur(element,$event)" [(ngModel)]="element[disCol]"
+                                [value]="element[disCol]">
+                                <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.ClassSubjectId">
+                                    {{item.SubjectName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                        {{disCol=='Day'?element[disCol]:''}}
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

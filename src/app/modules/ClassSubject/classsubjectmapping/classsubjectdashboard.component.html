@@ -37,7 +37,7 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field>
                         <mat-label>subject type</mat-label>
-                        <mat-select (selectionChange)="updateSelectHowMany(element)" [(value)]="element.SubjectTypeId"
+                        <mat-select (selectionChange)="updateSelectHowMany(element)" [value]="element.SubjectTypeId"
                             [(ngModel)]="element.SubjectTypeId">
                             <mat-option *ngFor="let item of SubjectTypes" [value]="item.SubjectTypeId">
                                 {{item.SubjectTypeName}}</mat-option>
@@ -52,7 +52,7 @@
                     <mat-form-field [style.width.pc]="25">
                         <mat-label>Teacher</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId"
-                            [(value)]="element.TeacherId">
+                            [value]="element.TeacherId">
                             <mat-option [value]="0">select</mat-option>
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
                                 {{option.TeacherName}}
