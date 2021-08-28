@@ -201,6 +201,8 @@ export class LoginComponent implements OnInit {
           this.RoleFilter += ')';
         this.GetApplicationFeatures();
 
+      },error=>{
+        this.tokenStorage.signOut();
       });
   }
   getDropDownData(dropdowntype) {
@@ -284,6 +286,7 @@ export class LoginComponent implements OnInit {
             }
           })
           this.tokenStorage.saveUserdetail(this.UserDetail);
+          //this.tokenStorage.
           console.log('userdetail', this.tokenStorage.getUserDetail());
           this.isLoginFailed = false;
           this.isLoggedIn = true;

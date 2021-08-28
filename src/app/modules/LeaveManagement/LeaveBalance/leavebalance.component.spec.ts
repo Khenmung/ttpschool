@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GradeLeaveComponent } from './grade-leave.component';
+import { LeaveBalanceComponent } from './leavebalance.component';
 
 describe('GradeLeaveComponent', () => {
-  let component: GradeLeaveComponent;
-  let fixture: ComponentFixture<GradeLeaveComponent>;
+  let component: LeaveBalanceComponent;
+  let fixture: ComponentFixture<LeaveBalanceComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GradeLeaveComponent ]
+      declarations: [ LeaveBalanceComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(GradeLeaveComponent);
+    fixture = TestBed.createComponent(LeaveBalanceComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { LeaveBalanceComponent } from '../LeaveBalance/leavebalance.component';
+import { EmployeeLeaveComponent } from '../employee-leave/employee-leave.component';
 
 @Component({
   selector: 'app-leaveboard',
@@ -6,12 +8,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./leaveboard.component.scss']
 })
 export class LeaveboardComponent implements OnInit {
+  @ViewChild(LeaveBalanceComponent) leave:LeaveBalanceComponent;
+  @ViewChild(EmployeeLeaveComponent) empleave:EmployeeLeaveComponent;
   selectedIndex = 0;
   constructor() { }
 
   ngOnInit(): void {
     setTimeout(() => {
-      //this.dashboardclassfee.PageLoad();
+      this.leave.PageLoad();
     }, 50);
 
   }
@@ -32,12 +36,12 @@ export class LeaveboardComponent implements OnInit {
   navigateTab(indx) {
     debugger;
     switch (indx) {
-      // case 0:
-      //   this.dashboardclassfee.PageLoad();
-      //   break;
-      // case 1:
-      //   this.subjecttypes.PageLoad();
-      //   break;
+      case 0:
+        this.leave.PageLoad();
+        break;
+      case 1:
+        this.empleave.PageLoad();
+        break;
       // case 2:
       //   this.classsubject.PageLoad();
       //   break;

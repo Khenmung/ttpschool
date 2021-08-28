@@ -589,7 +589,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       return '';
   }
   getVariables() {
-    this.EmployeeVariables = [...globalconstants.MasterDefinitions[3].VariableName];
+    this.EmployeeVariables = [...globalconstants.MasterDefinitions.EmployeeVariableName];
   }
   getDropDownData(dropdowntype) {
     let Id = 0;

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { EmployeeLeaveComponent } from './employee-leave/employee-leave.component';
-import { EmpLeaveComponent } from './emp-leave/emp-leave.component';
+import { LeaveBalanceComponent } from './LeaveBalance/leavebalance.component';
 import { LeaveboardComponent } from './leaveboard/leaveboard.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 
@@ -9,8 +9,8 @@ const routes: Routes = [
   {
     path: "", component: HomeComponent,
     children: [
-      { path: "gleave", component: LeaveboardComponent },
-      { path: "gleave", component: EmpLeaveComponent },
+      { path: "", component: LeaveboardComponent },
+      { path: "gleave", component: LeaveBalanceComponent },
       { path: "empleave", component: EmployeeLeaveComponent }
     ]
   }
@@ -22,7 +22,7 @@ const routes: Routes = [
 })
 export class LeaveManagementRoutingModule { }
 export const LeaveManagementComponents=[
-  EmpLeaveComponent,
+  LeaveBalanceComponent,
   EmployeeLeaveComponent,
   LeaveboardComponent
 ]

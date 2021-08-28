@@ -349,8 +349,8 @@ export class EmpComponentsComponent implements OnInit {
       })
   }
   getEmployeeVariables() {
-    this.EmployeeVariables = [...globalconstants.MasterDefinitions.VariableName];
-    // globalconstants.MasterDefinitions[3].VariableName.forEach(f=>{
+    this.EmployeeVariables = [...globalconstants.MasterDefinitions.EmployeeVariableName];
+    // globalconstants.MasterDefinitions.VariableName.forEach(f=>{
     //   switch(f)
     //   {
     //     case 

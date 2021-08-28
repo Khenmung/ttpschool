@@ -56,8 +56,13 @@ export class HeaderComponent implements OnInit {
     this.loginUserDetail = this.tokenStorage.getUserDetail();
 
     var apps = this.loginUserDetail[0]["applicationRolePermission"];
+    if(apps==undefined)
+    {
+      this.tokenStorage.signOut();
+      this.route.navigate(['/auth/login']);
+    }
     this.PermittedApplications = apps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-    console.log('screensize1',this.PermittedApplications)
+    //console.log('screensize1',this.PermittedApplications)
     if (this.userName === undefined || this.userName === null || this.userName == '')
       this.loggedIn = false;
     else

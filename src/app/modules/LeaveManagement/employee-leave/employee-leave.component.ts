@@ -28,7 +28,7 @@ export class EmployeeLeaveComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  EmployeeLeaveListName = 'EmployeeLeaves';
+  EmployeeLeaveListName = 'LeaveEmployeeLeaves';
   StandardFilter = '';
   newitem =false;
   loading = false;
@@ -288,8 +288,8 @@ get f(){
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
-        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.employee.LEAVE);
-        this.LeaveStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.LEAVESTATUS);
+        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
+        this.LeaveStatus = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVESTATUS);
         this.loading = false;
         this.GetEmployees();
       });

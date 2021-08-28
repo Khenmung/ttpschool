@@ -2,19 +2,22 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { IEmployee } from '../../EmployeeManagement/employee-gradehistory/employee-gradehistory.component';
 
 @Component({
-  selector: 'app-emp-leave',
-  templateUrl: './Emp-leave.component.html',
-  styleUrls: ['./Emp-leave.component.scss']
+  selector: 'app-leavebalance',
+  templateUrl: './leavebalance.component.html',
+  styleUrls: ['./leavebalance.component.scss']
 })
-export class EmpLeaveComponent implements OnInit {
+export class LeaveBalanceComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -25,33 +28,38 @@ export class EmpLeaveComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  EmpLeaveListName = 'EmployeeEmpLeaves';
+  LeaveBalanceListName = 'LeaveBalances';
   StandardFilter = '';
   loading = false;
   rowCount = 0;
-  EmpLeaveList: IEmpLeave[] = [];
+  LeaveBalanceList: ILeaveBalance[] = [];
   SelectedBatchId = 0;
   //StoredForUpdate = [];
   //SubjectMarkComponents = [];
   //MarkComponents = [];
   //Emps = [];
-  Leaves =[];
+  Leaves = [];
   //SalaryComponents = [];
   //ComponentTypes = [];
-  //Batches = [];
-  dataSource: MatTableDataSource<IEmpLeave>;
+  OpenAdjustCloseLeaves = [];
+  Employees = [];
+  filteredOptions: Observable<IEmployee[]>;
+  dataSource: MatTableDataSource<ILeaveBalance>;
   allMasterData = [];
 
-  EmpLeaveData = {
-    EmpLeaveId: 0,
-    LeaveTypeId: 0,
-    NoOfDays: 0,
+  LeaveBalanceData = {
+    LeaveBalanceId: 0,
+    EmployeeId: 0,
+    LeaveNameId: 0,
+    LeaveOpenAdjustCloseId: 0,
+    YearMonth: 0,
+    FinancialYearId: 0,
     OrgId: 0,
     Active: 0
   };
   displayedColumns = [
+    "Employee",
     "Leave",
-    "NoOfDays",
     "Active",
     "Action"
   ];
@@ -60,20 +68,34 @@ export class EmpLeaveComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    //private route: ActivatedRoute,
     private nav: Router,
-    //private shareddata: SharedataService,
-    //private datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
-      searchEmpId: [0],
+      searchLeaveId: [0]
     });
     this.PageLoad();
+    this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.Employees.slice())
+      );
+
   }
+  private _filter(name: string): IEmployee[] {
+
+    const filterValue = name.toLowerCase();
+    return this.Employees.filter(option => option.Name.toLowerCase().includes(filterValue));
+
+  }
+  displayFn(user: IEmployee): string {
+    return user && user.Name ? user.Name : '';
+  }
+
 
   PageLoad() {
     this.loading = true;
@@ -122,15 +144,16 @@ export class EmpLeaveComponent implements OnInit {
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let checkFilterString = "LeaveTypeId eq " + row.LeaveTypeId
+    let checkFilterString = "LeaveNameId eq " + row.LeaveNameId +
+      " and EmployeeId eq " + this.searchForm.get("searchEmployee").value
 
-    if (row.EmpLeaveId > 0)
-      checkFilterString += " and EmpLeaveId ne " + row.EmpLeaveId;
+    if (row.LeaveBalanceId > 0)
+      checkFilterString += " and LeaveBalanceId ne " + row.LeaveBalanceId;
     checkFilterString += " and " + this.StandardFilter;
 
     let list: List = new List();
-    list.fields = ["EmpLeaveId"];
-    list.PageName = this.EmpLeaveListName;
+    list.fields = ["LeaveBalanceId"];
+    list.PageName = this.LeaveBalanceListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -142,25 +165,28 @@ export class EmpLeaveComponent implements OnInit {
         }
         else {
 
-          this.EmpLeaveData.EmpLeaveId = row.EmpLeaveId;
-          this.EmpLeaveData.Active = row.Active;
-          this.EmpLeaveData.LeaveTypeId = row.LeaveTypeId;
-          this.EmpLeaveData.NoOfDays = row.NoOfDays;
-          this.EmpLeaveData.OrgId = this.LoginUserDetail[0]["orgId"];
-          console.log('data', this.EmpLeaveData);
-          if (this.EmpLeaveData.EmpLeaveId == 0) {
-            this.EmpLeaveData["CreatedDate"] = new Date();
-            this.EmpLeaveData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.EmpLeaveData["UpdatedDate"] = new Date();
-            delete this.EmpLeaveData["UpdatedBy"];
+          this.LeaveBalanceData.LeaveBalanceId = row.LeaveBalanceId;
+          this.LeaveBalanceData.EmployeeId = row.EmployeeId;
+          this.LeaveBalanceData.LeaveOpenAdjustCloseId = row.LeaveOpenAdjustCloseId;
+          this.LeaveBalanceData.YearMonth = row.YearMonth;
+          this.LeaveBalanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.LeaveBalanceData.FinancialYearId = this.SelectedBatchId;
+          this.LeaveBalanceData.Active = row.Active;
+
+          console.log('data', this.LeaveBalanceData);
+          if (this.LeaveBalanceData.LeaveBalanceId == 0) {
+            this.LeaveBalanceData["CreatedDate"] = new Date();
+            this.LeaveBalanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.LeaveBalanceData["UpdatedDate"] = new Date();
+            delete this.LeaveBalanceData["UpdatedBy"];
             //console.log('exam slot', this.ExamStudentSubjectResultData)
             this.insert(row);
           }
           else {
-            delete this.EmpLeaveData["CreatedDate"];
-            delete this.EmpLeaveData["CreatedBy"];
-            this.EmpLeaveData["UpdatedDate"] = new Date();
-            this.EmpLeaveData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.LeaveBalanceData["CreatedDate"];
+            delete this.LeaveBalanceData["CreatedBy"];
+            this.LeaveBalanceData["UpdatedDate"] = new Date();
+            this.LeaveBalanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
         }
@@ -170,10 +196,10 @@ export class EmpLeaveComponent implements OnInit {
   insert(row) {
 
     debugger;
-    this.dataservice.postPatch(this.EmpLeaveListName, this.EmpLeaveData, 0, 'post')
+    this.dataservice.postPatch(this.LeaveBalanceListName, this.LeaveBalanceData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.EmpLeaveId = data.EmpLeaveId;
+          row.LeaveBalanceId = data.LeaveBalanceId;
           this.loading = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
@@ -185,7 +211,7 @@ export class EmpLeaveComponent implements OnInit {
   }
   update(row) {
     //console.log("this.EmpComponentData", this.EmpComponentData);
-    this.dataservice.postPatch(this.EmpLeaveListName, this.EmpLeaveData, this.EmpLeaveData.EmpLeaveId, 'patch')
+    this.dataservice.postPatch(this.LeaveBalanceListName, this.LeaveBalanceData, this.LeaveBalanceData.LeaveBalanceId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
@@ -239,66 +265,102 @@ export class EmpLeaveComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId","Sequence"];
     list.PageName = "MasterDatas";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        debugger;
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         //this.Emps = this.getDropDownData(globalconstants.MasterDefinitions.employee.Emp);
-        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.employee.LEAVE);
+        this.OpenAdjustCloseLeaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.OPENADJUSTCLOSE);
+        this.OpenAdjustCloseLeaves.sort((a,b)=>a.Sequence - b.Sequence);
+        this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
+        this.Leaves.sort((a,b)=>a.Sequence - b.Sequence);
         //this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
         this.loading = false;
+        this.GetEmployees();
       });
   }
-  GetEmpLeave() {
+  GetEmployees() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
 
     list.fields = [
-      "EmpLeaveId",
-      "EmployeeEmpId",
-      "LeaveTypeId",
-      "NoOfDays",      
+      "EmpEmployeeId",
+      "EmployeeCode",
+      "FirstName",
+      "LastName"];
+    list.PageName = "EmpEmployees";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+
+        this.Employees = data.value.map(m => {
+          return {
+            EmployeeId: m.EmpEmployeeId,
+            Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
+          }
+        })
+        console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
+        //this.GetGradeComponents();
+      })
+
+  }
+  GetLeaveBalance() {
+
+    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let list: List = new List();
+
+    list.fields = [
+      "LeaveBalanceId",
+      "EmployeeId",
+      "LeavePolicyId",
+      "NoOfDays",
+      "YearMonth",
       "Active"
     ];
 
-    list.PageName = this.EmpLeaveListName;
-    list.filter = ["LeaveTypeId eq " + this.searchForm.get("searchLeaveId").value + orgIdSearchstr];
+    list.PageName = this.LeaveBalanceListName;
+    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployeeId").value + " and " + orgIdSearchstr];
     //list.orderBy = "ParentId";
-    this.EmpLeaveList = [];
+    this.LeaveBalanceList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         var existingdata;
-        this.Leaves.forEach(s => {
-          //var _Emp = this.Emps.filter(g => g.MasterDataId == this.searchForm.get("searchEmpId").value)[0].MasterDataName;
-          existingdata = data.value.filter(d => d.LeaveTypeId == s.MasterDataId);
-          if (existingdata.length > 0) {
-            existingdata[0].Leave = s.MasterDataName;
-            this.EmpLeaveList.push(existingdata[0]);
-          }
-          else {            
+        this.OpenAdjustCloseLeaves.forEach(o => {
+          //var filteredleave =this.Leaves.filter(l=>l.LeaveOpenAdjustCloseId == o.LeaveOpenAdjustCloseId);
+          this.Leaves.forEach(s => {
+            //var _Emp = this.Emps.filter(g => g.MasterDataId == this.searchForm.get("searchEmpId").value)[0].MasterDataName;
+            existingdata = data.value.filter(d => d.LeaveNameId == s.MasterDataId && d.LeaveOpenAdjustCloseId ==o.MasterDataId);
+            if (existingdata.length > 0) {
+              existingdata[0].Leave = s.MasterDataName;
+              this.LeaveBalanceList.push(existingdata[0]);
+            }
+            else {
 
-            this.EmpLeaveList.push({
-              EmpLeaveId: 0,
-              EmployeeEmpId:0,
-              LeaveTypeId: s.MasterDataId,
-              Leave: s.MasterDataName,
-              NoOfDays:0,
-              Active: 0,
-              Action: true
-            })
+              this.LeaveBalanceList.push({
+                LeaveBalanceId: 0,
+                EmployeeId: 0,
+                LeavePolicyId: s.MasterDataId,
+                Leave: s.MasterDataName,
+                NoOfDays: 0,
+                YearMonth: 0,
+                Active: 0,
+                Action: true
+              })
 
-          }
+            }
+          })
         })
-
-        this.dataSource = new MatTableDataSource<IEmpLeave>(this.EmpLeaveList);
+        this.dataSource = new MatTableDataSource<ILeaveBalance>(this.LeaveBalanceList);
       })
   }
 
@@ -319,12 +381,13 @@ export class EmpLeaveComponent implements OnInit {
   }
 
 }
-export interface IEmpLeave {
-  EmpLeaveId: number;
-  EmployeeEmpId: number;
-  Leave:string;
-  LeaveTypeId: number;
+export interface ILeaveBalance {
+  LeaveBalanceId: number;
+  EmployeeId: number;
+  LeavePolicyId: number;
+  Leave: string;
   NoOfDays: number;
+  YearMonth: number;
   Active: number;
   Action: boolean;
 }
