@@ -8,14 +8,14 @@ import { EmployeeLeaveComponent } from '../employee-leave/employee-leave.compone
   styleUrls: ['./leaveboard.component.scss']
 })
 export class LeaveboardComponent implements OnInit {
-  @ViewChild(LeaveBalanceComponent) leave:LeaveBalanceComponent;
+  @ViewChild(LeaveBalanceComponent) leavebalance:LeaveBalanceComponent;
   @ViewChild(EmployeeLeaveComponent) empleave:EmployeeLeaveComponent;
   selectedIndex = 0;
   constructor() { }
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.leave.PageLoad();
+      this.leavebalance.PageLoad();
     }, 50);
 
   }
@@ -37,7 +37,7 @@ export class LeaveboardComponent implements OnInit {
     debugger;
     switch (indx) {
       case 0:
-        this.leave.PageLoad();
+        this.leavebalance.PageLoad();
         break;
       case 1:
         this.empleave.PageLoad();

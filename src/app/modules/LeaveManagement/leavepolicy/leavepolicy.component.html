@@ -21,16 +21,15 @@
                         <mat-option *ngFor="let month of DropDownMonths" [value]="month['val']">{{month['MonthName']}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button [disabled]="loading" class="mat-raised-button" (click)="GetLeaveBalance()">
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetLeavePolicy()">
                     <mat-icon>search</mat-icon>
                 </button>
             </form>
             <mat-table #table [dataSource]="dataSource">
                 
-      
-                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+               <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
-                        <div *ngIf="LeaveBalanceList.length>0" fxLayoutAlign="center center">
+                        <div *ngIf="LeavePolicyList.length>0" fxLayoutAlign="center center">
                         <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
                             matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
                             <mat-icon>save</mat-icon>

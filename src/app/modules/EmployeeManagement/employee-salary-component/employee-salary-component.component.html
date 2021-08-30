@@ -20,7 +20,7 @@
                     <mat-label>Month</mat-label>
                     <mat-select formControlName='searchMonth'>
                         <mat-option [value]="0">select</mat-option>
-                        <mat-option *ngFor="let item of Months" [value]="item.val">{{item.month}}</mat-option>
+                        <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field [style.width.px]="50">

@@ -3,12 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { evaluate } from 'mathjs';
+import { observable, Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IEmployee } from '../../EmployeeManagement/employee-gradehistory/employee-gradehistory.component';
 
@@ -28,20 +31,41 @@ export class LeaveBalanceComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  PagePermission = '';
   LeaveBalanceListName = 'LeaveBalances';
   StandardFilter = '';
   loading = false;
   rowCount = 0;
-  LeaveBalanceList: ILeaveBalance[] = [];
+  LeavePolicies = [];
+  RawLeaveBalance = [];
+  LeaveBalanceList: any[] = [];
   SelectedBatchId = 0;
-  //StoredForUpdate = [];
+  StoredForUpdate = [];
   //SubjectMarkComponents = [];
   //MarkComponents = [];
   //Emps = [];
   Leaves = [];
-  //SalaryComponents = [];
-  //ComponentTypes = [];
+  Grades = [];
+  Departments = [];
+  WorkAccounts = [];
+  Designations = [];
+  JobTitles = [];
+  Genders = [];
+  City = [];
+  Countries = [];
+  States = [];
+  BloodGroups = [];
+  Religions = [];
+  Categories = [];
+  Locations = [];
+  EmploymentStatus = [];
+  EmploymentTypes = [];
+  Natures = [];
+  MaritalStatus = [];
+  ComponentTypes = [];
+  VariableTypes = [];
   OpenAdjustCloseLeaves = [];
+  DropDownMonths = [];
   Employees = [];
   filteredOptions: Observable<IEmployee[]>;
   dataSource: MatTableDataSource<ILeaveBalance>;
@@ -53,7 +77,7 @@ export class LeaveBalanceComponent implements OnInit {
     LeaveNameId: 0,
     LeaveOpenAdjustCloseId: 0,
     YearMonth: 0,
-    FinancialYearId: 0,
+    BatchId: 0,
     OrgId: 0,
     Active: 0
   };
@@ -65,6 +89,8 @@ export class LeaveBalanceComponent implements OnInit {
   ];
   searchForm: FormGroup;
   constructor(
+    private shareddata: SharedataService,
+    private contentService: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -75,7 +101,7 @@ export class LeaveBalanceComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
-      searchLeaveId: [0]
+      searchEmployee: [0]
     });
     this.PageLoad();
     this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
@@ -84,6 +110,8 @@ export class LeaveBalanceComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Employees.slice())
       );
+
+    this.DropDownMonths = this.GetSessionFormattedMonths();
 
   }
   private _filter(name: string): IEmployee[] {
@@ -138,6 +166,53 @@ export class LeaveBalanceComponent implements OnInit {
 
         });
   }
+  GetSessionFormattedMonths() {
+    var _sessionStartEnd = {
+      StartDate: new Date(),
+      EndDate: new Date()
+    };
+    var Months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ]
+    var monthArray = [];
+    //setTimeout(() => {
+
+      this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
+        
+        if (b.length !=0) {
+          _sessionStartEnd = {...b};
+          console.log('b',b)
+          var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();
+          var startMonth = new Date(_sessionStartEnd.StartDate).getMonth();
+
+          for (var month = 0; month < 12; month++, startMonth++) {
+            monthArray.push({
+              MonthName: Months[startMonth]+ " " + _Year,
+              val: _Year + startMonth.toString().padStart(2, "0")
+            })
+            if(startMonth == 11)
+            {
+              startMonth =  -1;
+              _Year++; 
+            }
+          }
+        }
+      });
+      console.log('monthArray',monthArray);
+    //}, 3000);
+    return monthArray;
+  }
   UpdateOrSave(row) {
 
     debugger;
@@ -170,7 +245,7 @@ export class LeaveBalanceComponent implements OnInit {
           this.LeaveBalanceData.LeaveOpenAdjustCloseId = row.LeaveOpenAdjustCloseId;
           this.LeaveBalanceData.YearMonth = row.YearMonth;
           this.LeaveBalanceData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.LeaveBalanceData.FinancialYearId = this.SelectedBatchId;
+          this.LeaveBalanceData.BatchId = this.SelectedBatchId;
           this.LeaveBalanceData.Active = row.Active;
 
           console.log('data', this.LeaveBalanceData);
@@ -265,7 +340,7 @@ export class LeaveBalanceComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId","Sequence"];
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
     list.PageName = "MasterDatas";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -274,19 +349,195 @@ export class LeaveBalanceComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         this.allMasterData = [...data.value];
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        //this.Emps = this.getDropDownData(globalconstants.MasterDefinitions.employee.Emp);
         this.OpenAdjustCloseLeaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.OPENADJUSTCLOSE);
-        this.OpenAdjustCloseLeaves.sort((a,b)=>a.Sequence - b.Sequence);
+        this.OpenAdjustCloseLeaves.sort((a, b) => a.Sequence - b.Sequence);
         this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
-        this.Leaves.sort((a,b)=>a.Sequence - b.Sequence);
-        //this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
-        this.loading = false;
+        this.Leaves.sort((a, b) => a.Sequence - b.Sequence);
+
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
+        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+        this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
+        this.City = this.getDropDownData(globalconstants.MasterDefinitions.school.CITY);
+        this.Countries = this.getDropDownData(globalconstants.MasterDefinitions.school.COUNTRY);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
+        this.BloodGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
+        this.Religions = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
+        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
+        this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);;
+        this.Natures = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
+        this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
+        this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
+        this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.CONFIGTYPE);
+
         this.GetEmployees();
+        this.GetLeavePolicy();
       });
   }
-  GetEmployees() {
+  GetLeavePolicy() {
 
+    var orgIdAndBatchSearchstr = 'BatchId eq ' + this.SelectedBatchId + ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.loading = true;
+    let list: List = new List();
+
+    list.fields = [
+      "LeavePolicyId",
+      "LeaveNameId",
+      "LeaveOpenAdjustCloseId",
+      "FormulaOrDays"];
+    list.PageName = "LeavePolicies";
+    list.filter = ["Active eq 1 and " + orgIdAndBatchSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.LeavePolicies = [...data.value];
+        this.loading = false;
+      })
+
+  }
+  GetCurrentEmployeeVariableData(empId, OrgId) {
+
+    var VariableConfigs = [];
+    var orgIdSearchstr = ' and OrgId eq ' + OrgId;
+    var searchfilter = '';
+    if (empId > 0)
+      searchfilter = " and EmployeeId eq " + empId
+
+    let list: List = new List();
+
+    list.fields = ["*,EmpEmployee/*"];
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    list.lookupFields = ["EmpEmployee"];
+    list.filter = ["IsCurrent eq 1 and Active eq 1" + searchfilter + orgIdSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+
+        debugger;
+        var existingdata;
+        this.displayedColumns = ["Employee"];
+        var forDisplay = [];
+        var employeeVariable = {};
+        var employees = [...data.value];
+        employees.forEach(item => {
+          employeeVariable =
+          {
+            "Grade": this.getMasterText(this.Grades, item.EmpGradeId),
+            "Department": this.getMasterText(this.Departments, item.DepartmentId),
+            "CTC": item.CTC,
+            "GradeFromDate": item.FromDate,
+            "GradeToDate": item.ToDate,
+            "ApprovedBy": item.ApprovedBy,
+            "WorkAccount": this.getMasterText(this.WorkAccounts, item.WorkAccountId),
+            "JobTitle": this.getMasterText(this.JobTitles, item.JobTitleId),
+            "Designation": this.getMasterText(this.Designations, item.DesignationId),
+            "EmployeeId": item.EmpEmployeeId,
+            "FirstName": item.EmpEmployee.FirstName,
+            "LastName": item.EmpEmployee.LastName,
+            "FatherName": item.EmpEmployee.FatherName,
+            "MotherName": item.EmpEmployee.MotherName,
+            "Gender": this.getMasterText(this.Genders, item.EmpEmployee.Gender),
+            "Address": item.EmpEmployee.Address,
+            "DOB": item.EmpEmployee.DOB,
+            "DOJ": item.EmpEmployee.DOJ,
+            "City": this.getMasterText(this.City, item.EmpEmployee.CityId),
+            "Pincode": item.EmpEmployee.pincode,
+            "State": this.getMasterText(this.States, item.EmpEmployee.StateId),
+            "Country": this.getMasterText(this.Countries, item.EmpEmployee.CountryId),
+            "Bloodgroup": this.getMasterText(this.BloodGroups, item.EmpEmployee.Bloodgroup),
+            "Category": this.getMasterText(this.Categories, item.EmpEmployee.CategoryId),
+            "BankAccountNo": item.EmpEmployee.BankAccountNo,
+            "IFSCcode": item.EmpEmployee.IFSCcode,
+            "MICRNo": item.EmpEmployee.MICRNo,
+            "AdhaarNo": item.EmpEmployee.AdhaarNo,
+            "Religion": this.getMasterText(this.Religions, item.EmpEmployee.ReligionId),
+            "ContactNo": item.EmpEmployee.ContactNo,
+            "AlternateContactNo": item.EmpEmployee.AlternateContactNo,
+            "EmailAddress": item.EmpEmployee.EmailAddress,
+            "Location": this.getMasterText(this.Locations, item.EmpEmployee.LocationId),
+            "EmploymentStatus": this.getMasterText(this.EmploymentStatus, item.EmpEmployee.EmploymentStatusId),
+            "EmploymentType": this.getMasterText(this.EmploymentTypes, item.EmpEmployee.EmploymentTypeId),
+            "EmploymentTerm": this.getMasterText(this.Natures, item.EmpEmployee.EmploymentTermId),
+            "ConfirmationDate": item.EmpEmployee.ConfirmationDate,
+            "NoticePeriodDays": item.EmpEmployee.NoticePeriodDays,
+            "ProbationPeriodDays": item.EmpEmployee.ProbationPeriodDays,
+            "PAN": item.EmpEmployee.PAN,
+            "PassportNo": item.EmpEmployee.PassportNo,
+            "MaritalStatus": this.getMasterText(this.MaritalStatus, item.EmpEmployee.MaritalStatusId),
+            "MarriedDate": item.EmpEmployee.MarriedDate,
+            "PFAccountNo": item.EmpEmployee.PFAccountNo,
+            "Active": item.EmpEmployee.Active,
+            "EmployeeCode": item.EmpEmployee.EmployeeCode
+          }
+          forDisplay["Employee"] = employeeVariable["FirstName"] + " " + employeeVariable["LastName"];
+          //return VariableConfigs;
+          this.OpenAdjustCloseLeaves.forEach(o => {
+            //var filteredleave =this.Leaves.filter(l=>l.LeaveOpenAdjustCloseId == o.LeaveOpenAdjustCloseId);
+            this.Leaves.forEach(s => {
+
+              var _leavePolicyObj = this.LeavePolicies.filter(g => g.LeaveOpenAdjustCloseId == o.MasterDataId);
+              var _leavePolicyId = 0, _NoOfDays = 0, _formula = '';
+              var _columnName = o.MasterDataName + " " + s.MasterDataName;
+              if (!this.displayedColumns.includes(_columnName))
+                this.displayedColumns.push(_columnName)
+
+
+              if (_leavePolicyObj.length > 0)
+                _leavePolicyId = _leavePolicyObj[0].LeavePolicyId;
+
+              Object.keys(employeeVariable).forEach(e => {
+                if (_leavePolicyObj[0].FormulaOrDays.includes('[' + e + ']'))
+                  _leavePolicyObj[0].FormulaOrDays = _leavePolicyObj[0].FormulaOrDays.replaceAll('[' + e + ']', VariableConfigs[e]);
+
+              })
+              _formula = _leavePolicyObj[0].FormulaOrDays;
+              _NoOfDays = evaluate(_formula);
+
+              existingdata = this.RawLeaveBalance.filter(d => d.LeaveNameId == s.MasterDataId
+                && d.LeaveOpenAdjustCloseId == o.MasterDataId
+                && d.EmployeeId == item.EmpEmployeeId);
+              if (existingdata.length > 0) {
+                existingdata[0].Leave = s.MasterDataName;
+                this.StoredForUpdate.push(existingdata[0]);
+                forDisplay[_columnName] = existingdata[0].NoOfDays
+              }
+              else {
+
+                var newdata = {
+                  LeaveBalanceId: 0,
+                  EmployeeId: 0,
+                  LeavePolicyId: _leavePolicyId,
+                  Leave: s.MasterDataName,
+                  NoOfDays: _NoOfDays,
+                  YearMonth: 0,
+                  Active: 0,
+                  Action: true
+                }
+                this.StoredForUpdate.push(newdata);
+                forDisplay[_columnName] = _NoOfDays;
+              }
+            })
+          })
+
+          this.LeaveBalanceList.push(forDisplay);
+        });
+        ///////
+        this.displayedColumns.push("Action");
+        this.dataSource = new MatTableDataSource<any>(this.LeaveBalanceList);
+      })
+  }
+  getMasterText(arr, itemId) {
+    var filtered = arr.filter(f => f.MasterDataId == itemId);
+    if (filtered.length > 0)
+      return filtered[0].MasterDataName;
+    else
+      return '';
+  }
+  UpdateAll() { }
+  GetEmployees() {
+    this.loading = true;
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
@@ -307,7 +558,8 @@ export class LeaveBalanceComponent implements OnInit {
             Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
           }
         })
-        console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
+        this.loading = false;
+        //console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
         //this.GetGradeComponents();
       })
 
@@ -316,6 +568,12 @@ export class LeaveBalanceComponent implements OnInit {
 
     var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
+    var _employeeId = 0;
+    var EmployeeFilter = '';
+    if (this.searchForm.get("searchEmployee").value.length > 0) {
+      _employeeId = this.searchForm.get("searchEmployee").value.EmployeeId;
+      EmployeeFilter = " and EmployeeId eq " + _employeeId;
+    }
     let list: List = new List();
 
     list.fields = [
@@ -328,39 +586,18 @@ export class LeaveBalanceComponent implements OnInit {
     ];
 
     list.PageName = this.LeaveBalanceListName;
-    list.filter = ["EmployeeId eq " + this.searchForm.get("searchEmployeeId").value + " and " + orgIdSearchstr];
+    list.filter = [orgIdSearchstr  + EmployeeFilter];
     //list.orderBy = "ParentId";
     this.LeaveBalanceList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
-        var existingdata;
-        this.OpenAdjustCloseLeaves.forEach(o => {
-          //var filteredleave =this.Leaves.filter(l=>l.LeaveOpenAdjustCloseId == o.LeaveOpenAdjustCloseId);
-          this.Leaves.forEach(s => {
-            //var _Emp = this.Emps.filter(g => g.MasterDataId == this.searchForm.get("searchEmpId").value)[0].MasterDataName;
-            existingdata = data.value.filter(d => d.LeaveNameId == s.MasterDataId && d.LeaveOpenAdjustCloseId ==o.MasterDataId);
-            if (existingdata.length > 0) {
-              existingdata[0].Leave = s.MasterDataName;
-              this.LeaveBalanceList.push(existingdata[0]);
-            }
-            else {
+        //var employeeVariables:any=
+        this.RawLeaveBalance = [...data.value];
 
-              this.LeaveBalanceList.push({
-                LeaveBalanceId: 0,
-                EmployeeId: 0,
-                LeavePolicyId: s.MasterDataId,
-                Leave: s.MasterDataName,
-                NoOfDays: 0,
-                YearMonth: 0,
-                Active: 0,
-                Action: true
-              })
+        this.GetCurrentEmployeeVariableData(_employeeId, this.LoginUserDetail[0]["orgId"]);
 
-            }
-          })
-        })
-        this.dataSource = new MatTableDataSource<ILeaveBalance>(this.LeaveBalanceList);
+
+        //this.dataSource = new MatTableDataSource<ILeaveBalance>(this.LeaveBalanceList);
       })
   }
 
@@ -391,3 +628,7 @@ export interface ILeaveBalance {
   Active: number;
   Action: boolean;
 }
+// export interface IMonth{
+//   val:number;
+//   monthName:string;
+// }

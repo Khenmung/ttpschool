@@ -55,7 +55,7 @@ export class SharedataService {
   private CurrentBatchStartEndSource = new BehaviorSubject(this.items);  
 
   CurrentCurrentBatchStartEndSource = this.CurrentBatchStartEndSource.asObservable(); 
-  CurrentSelectedBatchStartEnd = this.SelectedBatchStartEndSource.asObservable(); 
+  CurrentSelectedBatchStartEnd$ = this.SelectedBatchStartEndSource.asObservable(); 
   CurrentApplicationId = this.ApplicationIdSource.asObservable(); 
 
   CurrentNextBatchIdOfSelecteBatchId = this.NextBatchIdOfSelecteBatchIdSource.asObservable(); 

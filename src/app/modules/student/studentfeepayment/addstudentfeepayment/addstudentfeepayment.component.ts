@@ -14,6 +14,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import { FeereceiptComponent } from '../feereceipt/feereceipt.component';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-addstudentfeepayment',
@@ -152,7 +153,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
     'FeeName',
     'Amount'
   ]
-  constructor(private dataservice: NaomitsuService,
+  constructor(
+    private contentService: ContentService,
+    private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private route: ActivatedRoute,
@@ -166,7 +169,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   PageLoad() {
     this.StudentBillList = [];
     this.billdataSource = new MatTableDataSource<any>(this.StudentBillList);
-    this.Months = globalconstants.getMonths();
+    this.Months =this.contentService.GetSessionFormattedMonths();
     this.loginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 

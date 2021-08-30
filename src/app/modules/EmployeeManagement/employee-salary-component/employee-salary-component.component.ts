@@ -14,6 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import {
   chain, evaluate, round, sqrt, min, max
 } from 'mathjs';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-employee-salary-component',
@@ -89,6 +90,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   ];
   searchForm: FormGroup;
   constructor(
+    private contentService: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -109,7 +111,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     });
 
     this.PageLoad();
-    this.Months = globalconstants.getMonths();
+    this.Months = this.contentService.GetSessionFormattedMonths();
     this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
       .pipe(
         startWith(''),
@@ -515,16 +517,17 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   }
   GetCurrentEmployee() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    if (this.searchForm.get("searchEmployee").value.EmployeeId == 0)
-      return;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var searchfilter ='';
+    if (this.searchForm.get("searchEmployee").value.EmployeeId > 0)
+    searchfilter = " and EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId
 
     let list: List = new List();
 
     list.fields = ["*,EmpEmployee/*"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["EmpEmployee"];
-    list.filter = ["Active eq 1 and EmployeeId eq " + this.searchForm.get("searchEmployee").value.EmployeeId + orgIdSearchstr];
+    list.filter = ["IsCurrent eq 1 and Active eq 1" + searchfilter + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //this.CurrentEmployee = 
