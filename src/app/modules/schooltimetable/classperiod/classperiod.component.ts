@@ -36,6 +36,7 @@ export class ClassperiodComponent implements OnInit {
   StoredForUpdate = [];
   Classes = [];
   Periods = [];
+  PeriodTypes = [];  
   Batches = [];
   AllClassPeriods = [];
   SchoolClassPeriodListName = "SchoolClassPeriods";
@@ -47,6 +48,7 @@ export class ClassperiodComponent implements OnInit {
     SchoolClassPeriodId: 0,
     ClassId: 0,
     PeriodId: 0,
+    PeriodTypeId:0,
     FromToTime: '',
     OrgId: 0,
     BatchId: 0,
@@ -136,6 +138,7 @@ export class ClassperiodComponent implements OnInit {
           this.SchoolClassPeriodData.ClassId = row.ClassId;
           this.SchoolClassPeriodData.Active = row.Active;
           this.SchoolClassPeriodData.PeriodId = row.PeriodId;
+          this.SchoolClassPeriodData.PeriodTypeId = row.PeriodTypeId;
           this.SchoolClassPeriodData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SchoolClassPeriodData.BatchId = this.SelectedBatchId;
           this.SchoolClassPeriodData.FromToTime = row.FromToTime;
@@ -212,6 +215,7 @@ export class ClassperiodComponent implements OnInit {
       "SchoolClassPeriodId",
       "ClassId",
       "PeriodId",
+      "PeriodTypeId",
       "FromToTime",
       "Active"
     ];
@@ -221,6 +225,7 @@ export class ClassperiodComponent implements OnInit {
     //list.orderBy = "ParentId";
     this.displayedColumns = [
       'PeriodName',
+      'PeriodTypeId',
       'FromToTime',
       'Active',
       'Action'
@@ -241,6 +246,7 @@ export class ClassperiodComponent implements OnInit {
               "SchoolClassPeriodId": existing[0].SchoolClassPeriodId,
               "ClassId": existing[0].ClassId,
               "PeriodId": existing[0].PeriodId,
+              "PeriodTypeId":existing[0].PeriodTypeId,
               "PeriodName": this.Periods.filter(c => c.MasterDataId == existing[0].PeriodId)[0].MasterDataName,
               "FromToTime": existing[0].FromToTime,
               "Active": existing[0].Active,
@@ -252,6 +258,7 @@ export class ClassperiodComponent implements OnInit {
               "SchoolClassPeriodId": 0,
               "ClassId": this.searchForm.get("searchClassId").value,
               "PeriodId": p.MasterDataId,
+              "PeriodTypeId":0,
               "PeriodName": p.MasterDataName,
               "FromToTime": '',
               "Active": 0,
@@ -290,6 +297,7 @@ export class ClassperiodComponent implements OnInit {
       "SchoolClassPeriodId",
       "ClassId",
       "PeriodId",
+      "PeriodTypeId",
       "FromToTime",
       "Active"
     ];
@@ -379,6 +387,7 @@ export class ClassperiodComponent implements OnInit {
         this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
         this.shareddata.ChangeBatch(this.Batches);
         this.loading = false;
       });
@@ -405,6 +414,7 @@ export interface ISchoolClassPeriod {
   SchoolClassPeriodId: number;
   ClassId: number;
   PeriodId: number;
+  PeriodTypeId:number;
   FromToTime: string;
   OrgId: number;
   BatchId: number;

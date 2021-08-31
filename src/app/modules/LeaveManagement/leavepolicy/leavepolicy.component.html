@@ -1,12 +1,12 @@
 <div>
     <div style="padding:15px 15px 0px 15px;">
-        <div><strong>Leaves</strong></div>
+        <div><strong>Leave Policy</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
-            <form [formGroup]="searchForm">
+            <!-- <form [formGroup]="searchForm">
                 <mat-form-field [style.width.pc]="25" appearance="outline">
                     <mat-label>Employee</mat-label>
                     <input type="text" matInput formControlName="searchEmployee" [matAutocomplete]="auto">
@@ -24,28 +24,49 @@
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetLeavePolicy()">
                     <mat-icon>search</mat-icon>
                 </button>
-            </form>
+            </form> -->
             <mat-table #table [dataSource]="dataSource">
-                
-               <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
-                        <div *ngIf="LeavePolicyList.length>0" fxLayoutAlign="center center">
-                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
-                            matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </div>
+                <ng-container matColumnDef="Leave">
+                    <mat-header-cell *matHeaderCellDef>Leave
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element ">
-                        <mat-form-field *ngIf="disCol !='Employee' && disCol !='Action'">
-                            <input matInput (blur)="onBlur(element,$event)" [attr.name]="disCol" [value]="element[disCol]" [(ngModel)]="element[disCol]">
+                    <mat-cell *matCellDef="let element">
+                        {{element.Leave}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="LeaveType">
+                    <mat-header-cell *matHeaderCellDef>Leave Type
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.LeaveType}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="FormulaOrDays">
+                    <mat-header-cell *matHeaderCellDef>Formula Or Days
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field [style.width.px]="350">
+                            <textarea matInput (blur)="onBlur(element)" [(ngModel)]="element.FormulaOrDays" [value]="element.FormulaOrDays"></textarea>
                         </mat-form-field>
-                        
-                        <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
-                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <!-- <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                            <mat-icon>add</mat-icon>
+                        </button> -->
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
-                        {{disCol=='Employee'?element[disCol]:''}}
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

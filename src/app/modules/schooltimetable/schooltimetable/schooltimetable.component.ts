@@ -76,7 +76,7 @@ export class SchooltimetableComponent implements OnInit {
     debugger;
     this.searchForm = this.fb.group({
       searchClassId: [0],
-      searchClassIdApplyAll: [0]
+      searchSectionId:[0]
     });
 
   }
@@ -223,6 +223,11 @@ export class SchooltimetableComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+
+        //iterrate through class
+            //iterrate through weekdays
+               // iterate through class periods
+
         var forDisplay;
         this.ClassWiseSubjects = this.ClassSubjects.filter(f=>f.ClassId == this.searchForm.get("searchClassId").value);
         console.log(this.ClassSubjects)
@@ -241,6 +246,8 @@ export class SchooltimetableComponent implements OnInit {
               this.displayedColumns.push(c.Period);
             var existing = data.value.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId)
             if (existing.length > 0) {
+              existing[0].Day =p.MasterDataName;
+              existing[0].Period =c.Period;
               this.StoredForUpdate.push(existing[0]);
               forDisplay[c.Period] = this.ClassSubjects.filter(s => s.ClassSubjectId == existing[0].ClassSubjectId)[0].SubjectName                
             }
@@ -250,10 +257,12 @@ export class SchooltimetableComponent implements OnInit {
               this.StoredForUpdate.push({
                 "TimeTableId":0,
                 "DayId":p.MasterDataId,
+                "Day":p.MasterDataName,
                 "ClassId":c.ClassId,
                 "SectionId":this.searchForm.get("searchSectionId").value,
-                "SchoolClassPeriodId":0,
+                "SchoolClassPeriodId":c.SchoolClassPeriodId,
                 "ClassSubjectId":0,
+                "Period":c.Period,
                 "Active":0
               })
             }
@@ -263,6 +272,8 @@ export class SchooltimetableComponent implements OnInit {
           this.SchoolTimeTableList.push(forDisplay);
           
         })
+        console.log('StoredForUpdate',this.StoredForUpdate)
+        this.displayedColumns.push("Active");
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<ISchoolTimeTable>(this.SchoolTimeTableList);
         this.loading = false;
@@ -281,7 +292,14 @@ export class SchooltimetableComponent implements OnInit {
     })
   }
 
-  onBlur(element, event) {
+  onBlur(element, event,columnName) {
+    debugger;
+    var rowtoUpdateForSavingPurpose = this.StoredForUpdate.filter(s=>s.Period == columnName && s.Day == element.Day);
+    if(rowtoUpdateForSavingPurpose.length>0)
+    {
+      rowtoUpdateForSavingPurpose[0]["ClassSubjectId"] = event.value;      
+    }
+    
     element.Action = true;
   }
   GetAllClassPeriods() {
@@ -317,31 +335,27 @@ export class SchooltimetableComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "ClassSubjectTeacherId",
-      "TeacherId",
       "ClassSubjectId",
-      "ClassSubject/ClassId",
-      "ClassSubject/SubjectId",
+      "ClassId",
+      "SubjectId",
+      "TeacherId",
       "EmpEmployee/ShortName"
-
     ];
-    list.PageName = "ClassSubjectTeachers";
-    list.lookupFields = ["EmpEmployee", "ClassSubject"];
+    list.PageName = "ClassSubjects";
+    list.lookupFields = ["EmpEmployee"];
     list.filter = [filterStr];
     this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(cs => {
-          var _class = this.Classes.filter(c => c.MasterDataId == cs.ClassSubject.ClassId)[0].MasterDataName;
-          var _subject = this.Subjects.filter(c => c.MasterDataId == cs.ClassSubject.SubjectId)[0].MasterDataName;
-          var _shortNameObj = this.Subjects.filter(c => c.MasterDataId == cs.EmpEmployee.ShortName)
-          var _shortName = '';
-          if (_shortNameObj.length > 0)
-            _shortName = "," + _shortNameObj[0].MasterDataName;
+          var _class = this.Classes.filter(c => c.MasterDataId == cs.ClassId)[0].MasterDataName;
+          var _subject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)[0].MasterDataName;
+          var _shortName = cs.EmpEmployee.ShortName;
+            _shortName = _shortName==null?'':", " + _shortName;
 
           return {
             ClassSubjectId: cs.ClassSubjectId,
-            ClassId: cs.ClassSubject.ClassId,
+            ClassId: cs.ClassId,
             ClassName: _class,
             SubjectName: _subject + _shortName
           }
@@ -408,7 +422,8 @@ export class SchooltimetableComponent implements OnInit {
     this.rowCount = 0;
 
     this.DataToSave = 1;
-    this.UpdateOrSave(element);
+    
+    
   }
   GetMasterData() {
 
@@ -430,7 +445,7 @@ export class SchooltimetableComponent implements OnInit {
         this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeBatch(this.Batches);
         //this.loading = false;
         this.GetClassSubject();

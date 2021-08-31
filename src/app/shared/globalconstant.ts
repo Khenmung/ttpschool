@@ -63,6 +63,7 @@ export class globalconstants {
                 "ROLE": "role"
             },
             "school": {
+                "PERIODTYPE":"period type",
                 "WEEKDAYS": "week days",
                 "PERIOD": "school period",
                 "COMMONFOOTER": "common footer",

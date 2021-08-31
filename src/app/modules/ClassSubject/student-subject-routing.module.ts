@@ -6,24 +6,22 @@ import { ClassmasterdashboardComponent } from './classsmastermapping/classmaster
 import { StudentSubjectMarkCompComponent } from './student-subject-mark-comp/student-subject-mark-comp.component';
 import { studentsubjectdashboardComponent } from './studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from './subject-types/subject-types.component';
-import { SubjectdashboardComponent } from './classsubjectdashboard/subjectdashboard.component';
-import { ClasssubjectteacherComponent } from './classsubjectteacher/classsubjectteacher.component';
+import { ClassSubjectboardComponent } from './classsubjectboard/classsubjectboard.component';
+//import { ClasssubjectteacherComponent } from './classsubjectteacher/classsubjectteacher.component';
 import { DashboardclassfeeComponent } from './classfee/dashboardclassfee/dashboardclassfee.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { ClassperiodComponent } from '../schooltimetable/classperiod/classperiod.component';
-import { SchooltimetableComponent } from '../schooltimetable/schooltimetable/schooltimetable.component';
 
 const routes: Routes = [
   {
     path: '', component: HomeComponent,
     children: [
-      { path: '', component: SubjectdashboardComponent,//runGuardsAndResolvers:'always'
+      { path: '', component: ClassSubjectboardComponent,//runGuardsAndResolvers:'always'
      },
       { path: 'studentsubject', component: studentsubjectdashboardComponent },
       { path: 'subjecttypes', component: SubjectTypesComponent },
       { path: 'components', component: StudentSubjectMarkCompComponent },
       { path: 'classteacher', component: ClassmasterdashboardComponent },
-      { path: 'classsubjteacher', component: ClasssubjectteacherComponent },
+  //    { path: 'classsubjteacher', component: ClasssubjectteacherComponent },
       
     ]
   }
@@ -39,9 +37,9 @@ export const StudentSubjectComponents=[
   studentsubjectdashboardComponent,
   SubjectTypesComponent,
   StudentSubjectMarkCompComponent, 
-  SubjectdashboardComponent,
+  ClassSubjectboardComponent,
   AssignStudentclassdashboardComponent,
   ClassmasterdashboardComponent,
-  ClasssubjectteacherComponent,
+  //ClasssubjectteacherComponent,
   DashboardclassfeeComponent,
   ]

@@ -59,9 +59,9 @@ export class LeavepolicyComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
-    "LeaveName",
-    "Type",
-    "Formula",
+    "Leave",
+    "LeaveType",
+    "FormulaOrDays",
     "Active",
     "Action"
   ];
@@ -78,18 +78,18 @@ export class LeavepolicyComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
-    this.searchForm = this.fb.group({
-      searchEmployee: [0]
-    });
-    this.PageLoad();
-    this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.Employees.slice())
-      );
+    // this.searchForm = this.fb.group({
+    //   searchEmployee: [0]
+    // });
+    //this.PageLoad();
+    // this.filteredOptions = this.searchForm.get("searchEmployee").valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => typeof value === 'string' ? value : value.Name),
+    //     map(Name => Name ? this._filter(Name) : this.Employees.slice())
+    //   );
 
-    this.DropDownMonths = this.GetSessionFormattedMonths();
+    // this.DropDownMonths = this.GetSessionFormattedMonths();
 
   }
   private _filter(name: string): IEmployee[] {
@@ -109,7 +109,7 @@ export class LeavepolicyComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
 
@@ -195,9 +195,8 @@ export class LeavepolicyComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = "LeaveNameId eq " + row.LeaveNameId +
-      " and EmployeeId eq " + this.searchForm.get("searchEmployee").value
+      " and LeaveOpenAdjustCloseId eq " + row.LeaveOpenAdjustCloseId
 
     if (row.LeavePolicyId > 0)
       checkFilterString += " and LeavePolicyId ne " + row.LeavePolicyId;
@@ -292,12 +291,8 @@ export class LeavepolicyComponent implements OnInit {
   //     }
   //   })
   // }
-  onBlur(element, event) {
-    debugger;
-    var _colName = event.srcElement.name;
-    console.log("event", event);
-    //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
-    //row[0][_colName] = element[_colName];
+  onBlur(element) {
+    element.Action =true;
   }
 
   // UpdateAll() {
@@ -331,7 +326,7 @@ export class LeavepolicyComponent implements OnInit {
         this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
         this.Leaves.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.GetEmployees();
+        //this.GetEmployees();
         this.GetLeavePolicy();
       });
   }
@@ -369,12 +364,12 @@ export class LeavepolicyComponent implements OnInit {
 
     var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);// 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    var _employeeId = 0;
-    var EmployeeFilter = '';
-    if (this.searchForm.get("searchEmployee").value.length > 0) {
-      _employeeId = this.searchForm.get("searchEmployee").value.EmployeeId;
-      EmployeeFilter = " and EmployeeId eq " + _employeeId;
-    }
+    //var _employeeId = 0;
+    //var EmployeeFilter = '';
+    // if (this.searchForm.get("searchEmployee").value.length > 0) {
+    //   _employeeId = this.searchForm.get("searchEmployee").value.EmployeeId;
+    //   EmployeeFilter = " and EmployeeId eq " + _employeeId;
+    // }
     let list: List = new List();
 
     list.fields = [
@@ -386,7 +381,7 @@ export class LeavepolicyComponent implements OnInit {
     ];
 
     list.PageName = this.LeavePolicyListName;
-    list.filter = [orgIdSearchstr + EmployeeFilter];
+    list.filter = [orgIdSearchstr];
     //list.orderBy = "ParentId";
     this.LeavePolicyList = [];
     this.dataservice.get(list)
@@ -396,23 +391,27 @@ export class LeavepolicyComponent implements OnInit {
             var existing = data.value.filter(d => d.LeaveOpenAdjustCloseId == o.MasterDataId && d.LeaveNameId == l.MasterDataId);
             if (existing.length > 0) {
               existing[0].Action = false;
+              existing[0].Leave = l.MasterDataName;
+              existing[0].LeaveType = o.MasterDataName;
+
               this.LeavePolicyList.push(existing[0]);
             }
             else
               this.LeavePolicyList.push({
                 "LeavePolicyId": 0,
                 "LeaveNameId": l.MasterDataId,
-                "LeaveOpenAdjustCloseId": o.LeaveOpenAdjustCloseId,
+                "Leave":l.MasterDataName,
+                "LeaveOpenAdjustCloseId": o.MasterDataId, 
+                "LeaveType":o.MasterDataName,               
                 "FormulaOrDays": '',
                 "Active": 0,
                 "Action": false
               })
           })
         })
-        this.LeavePolicyList = data.value.map(d => {
-          d.Leave = this.Leaves.filter(l => l.MasterDataId == d.LeaveNameId);
-          return d;
-        })
+        console.log('LeavePolicyList',this.LeavePolicyList);
+
+        this.loading=false;
         this.dataSource = new MatTableDataSource<ILeavePolicy>(this.LeavePolicyList);
       })
   }

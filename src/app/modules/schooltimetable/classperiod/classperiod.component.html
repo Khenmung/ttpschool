@@ -16,7 +16,8 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetSchoolClassPeriods()">
+                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                        (click)="GetSchoolClassPeriods()">
                         <mat-icon>search</mat-icon>
                     </button>
                 </div>
@@ -30,7 +31,8 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <button [disabled]="loading" matTooltip="replicate periods" class="mat-raised-button" (click)="ReplicateToClasses()">
+                    <button [disabled]="loading" matTooltip="replicate periods" class="mat-raised-button"
+                        (click)="ReplicateToClasses()">
                         <mat-icon>
                             content_copy
                         </mat-icon>
@@ -45,6 +47,19 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                         {{element.PeriodName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PeriodTypeId">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Period Type
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                        <mat-form-field>
+                            <mat-select (selectionChange)="onBlur(element,$event)" [(ngModel)]="element.PeriodTypeId"
+                                [value]="element.PeriodTypeId">
+                                <mat-option *ngFor="let item of PeriodTypes" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FromToTime">

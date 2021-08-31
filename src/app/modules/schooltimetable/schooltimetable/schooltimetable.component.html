@@ -16,6 +16,14 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Section</mat-label>
+                        <mat-select formControlName="searchSectionId">
+                            <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
                         (click)="GetSchoolTimeTable()">
                         <mat-icon>search</mat-icon>
@@ -35,19 +43,27 @@
                         </div>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
-                        <mat-form-field *ngIf="disCol !='Day' && disCol !='recess' && disCol !='break' && disCol !='Action'" [style.width.px]="100">
-                            <mat-select (blur)="onBlur(element,$event)" [(ngModel)]="element[disCol]"
-                                [value]="element[disCol]">
-                                <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.ClassSubjectId">
-                                    {{item.SubjectName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                        <span *ngIf="disCol =='Active'">
+                            <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                                [checked]="element.Active==1?true:false">
+                            </mat-checkbox>
+                        </span>
+                        <span *ngIf="disCol !='Day' && disCol !='recess' && disCol !='break' 
+                        && disCol !='Active' && disCol !='Action'">
+                            <mat-form-field [style.width.px]="100">
+                                <mat-select (selectionChange)="onBlur(element,$event,disCol)" [(ngModel)]="element[disCol]"
+                                    [value]="element[disCol]">
+                                    <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.ClassSubjectId">
+                                        {{item.SubjectName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </span>
                         <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
                             matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
                             <mat-icon>save</mat-icon>
                         </button>
-                        {{disCol=='Day'?element[disCol]:''}}
+                        {{ disCol =='recess' || disCol =='break'?disCol:disCol =='Day'?element[disCol]:''}}
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

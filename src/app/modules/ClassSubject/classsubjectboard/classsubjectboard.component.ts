@@ -10,11 +10,11 @@ import { DashboardclassfeeComponent } from '../classfee/dashboardclassfee/dashbo
 import { ClassperiodComponent } from '../../schooltimetable/classperiod/classperiod.component';
 
 @Component({
-  selector: 'app-subjectdashboard',
-  templateUrl: './subjectdashboard.component.html',
-  styleUrls: ['./subjectdashboard.component.scss']
+  selector: 'app-classsubjectboard',
+  templateUrl: './classsubjectboard.component.html',
+  styleUrls: ['./classsubjectboard.component.scss']
 })
-export class SubjectdashboardComponent implements OnInit {
+export class ClassSubjectboardComponent implements OnInit {
   @ViewChild(SubjectTypesComponent) subjecttypes: SubjectTypesComponent;
   @ViewChild(StudentSubjectMarkCompComponent) subjectmarkComponent: StudentSubjectMarkCompComponent;
   @ViewChild(ClasssubjectdashboardComponent) classsubject: ClasssubjectdashboardComponent;

@@ -6,7 +6,13 @@
         <!-- <div fxLayout="row wrap" fxLayoutAlign="space-around center"> -->
             <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
                 class="demo-tab-group">
-                 <mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon> Leave Policy
+                    </ng-template>
+                    <app-leavepolicy></app-leavepolicy>
+                </mat-tab>
+                <mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>info</mat-icon>Leave
                     </ng-template>
@@ -18,13 +24,8 @@
                     </ng-template>
                     <app-employee-leave></app-employee-leave>
                 </mat-tab>
+                
                 <!--<mat-tab>
-                    <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Subject Teacher
-                    </ng-template>
-                    <app-classsubjectdashboard></app-classsubjectdashboard>
-                </mat-tab>
-                <mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>info</mat-icon>Class Master
                     </ng-template>
