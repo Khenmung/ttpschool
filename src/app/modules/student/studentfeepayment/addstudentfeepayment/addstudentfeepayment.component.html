@@ -49,7 +49,7 @@
                                         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center"
                                             fxLayout="row">
                                             <mat-checkbox [disabled]="loading || element.Balance==0" mat-mini-fab
-                                                (change)="SelectRow(element,$event)" [(checked)]="element.Action">
+                                                (change)="SelectRow(element,$event)" [checked]="element.Action">
                                             </mat-checkbox>
                                         </mat-cell>
                                     </ng-container>
@@ -110,8 +110,7 @@
                         <ng-template mat-tab-label>
                             <mat-icon>receipt</mat-icon>Receipt
                         </ng-template>
-                        <app-feereceipt 
-                        (tabChanged)="tabChanged($event)"
+                        <app-feereceipt
                         [OffLineReceiptNo]="OffLineReceiptNo" 
                         [StudentClassFees] ="StudentClassFees"
                         [StudentClass]="studentInfoTodisplay" 

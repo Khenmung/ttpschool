@@ -50,6 +50,7 @@ export class ClassperiodComponent implements OnInit {
     PeriodId: 0,
     PeriodTypeId:0,
     FromToTime: '',
+    Sequence:0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
@@ -142,6 +143,7 @@ export class ClassperiodComponent implements OnInit {
           this.SchoolClassPeriodData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SchoolClassPeriodData.BatchId = this.SelectedBatchId;
           this.SchoolClassPeriodData.FromToTime = row.FromToTime;
+          this.SchoolClassPeriodData.Sequence = row.Sequence;
 
           //console.log('data', this.ClassSubjectData);
           if (this.SchoolClassPeriodData.SchoolClassPeriodId == 0) {
@@ -217,6 +219,7 @@ export class ClassperiodComponent implements OnInit {
       "PeriodId",
       "PeriodTypeId",
       "FromToTime",
+      "Sequence",
       "Active"
     ];
     list.PageName = this.SchoolClassPeriodListName;
@@ -227,6 +230,7 @@ export class ClassperiodComponent implements OnInit {
       'PeriodName',
       'PeriodTypeId',
       'FromToTime',
+      'Sequence',
       'Active',
       'Action'
     ];
@@ -249,6 +253,7 @@ export class ClassperiodComponent implements OnInit {
               "PeriodTypeId":existing[0].PeriodTypeId,
               "PeriodName": this.Periods.filter(c => c.MasterDataId == existing[0].PeriodId)[0].MasterDataName,
               "FromToTime": existing[0].FromToTime,
+              "Sequence": existing[0].Sequence,
               "Active": existing[0].Active,
               "Action": false
             })
@@ -261,6 +266,7 @@ export class ClassperiodComponent implements OnInit {
               "PeriodTypeId":0,
               "PeriodName": p.MasterDataName,
               "FromToTime": '',
+              "Sequence": 0,
               "Active": 0,
               "Action": false
             })
@@ -299,6 +305,7 @@ export class ClassperiodComponent implements OnInit {
       "PeriodId",
       "PeriodTypeId",
       "FromToTime",
+      "Sequence",
       "Active"
     ];
     list.PageName = this.SchoolClassPeriodListName;
@@ -416,6 +423,7 @@ export interface ISchoolClassPeriod {
   PeriodId: number;
   PeriodTypeId:number;
   FromToTime: string;
+  Sequence:number;
   OrgId: number;
   BatchId: number;
   Active: number;

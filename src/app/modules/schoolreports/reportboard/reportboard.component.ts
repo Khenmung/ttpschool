@@ -6,11 +6,11 @@ import { ResultsComponent } from '../results/results.component';
 import { TodayCollectionComponent } from '../today-collection/today-collection.component';
 
 @Component({
-  selector: 'app-resultboard',
-  templateUrl: './resultboard.component.html',
-  styleUrls: ['./resultboard.component.scss']
+  selector: 'app-reportboard',
+  templateUrl: './reportboard.component.html',
+  styleUrls: ['./reportboard.component.scss']
 })
-export class ResultboardComponent implements OnInit {
+export class ReportboardComponent implements OnInit {
 
   @ViewChild(FeecollectionreportComponent) feecollection: FeecollectionreportComponent;
   @ViewChild(TodayCollectionComponent) TodayCollection: TodayCollectionComponent;

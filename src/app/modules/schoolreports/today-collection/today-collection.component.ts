@@ -6,9 +6,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { NaomitsuService } from '../../../../shared/databaseService';
-import { globalconstants } from '../../../../shared/globalconstant';
-import { List } from '../../../../shared/interface';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { globalconstants } from '../../../shared/globalconstant';
+import { List } from '../../../shared/interface';
 //import { IStudentFeePaymentReceipt } from '../../feereceipt/feereceipt.component';
 
 @Component({

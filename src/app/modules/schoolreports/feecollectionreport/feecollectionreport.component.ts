@@ -4,11 +4,11 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AlertService } from '../../../../shared/components/alert/alert.service';
-import { NaomitsuService } from '../../../../shared/databaseService';
-import { globalconstants } from '../../../../shared/globalconstant';
-import { List } from '../../../../shared/interface';
-import { SharedataService } from '../../../../shared/sharedata.service';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { globalconstants } from '../../../shared/globalconstant';
+import { List } from '../../../shared/interface';
+import { SharedataService } from '../../../shared/sharedata.service';
 
 @Component({
   selector: 'app-feecollectionreport',

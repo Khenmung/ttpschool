@@ -58,9 +58,9 @@ export class ContentService {
       'Dec'
     ]
     var monthArray = [];
-    //setTimeout(() => {
 
-      this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
+    this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
+      if (b.length != 0) {
         _sessionStartEnd = b
 
         var _Year = _sessionStartEnd.StartDate.getFullYear();
@@ -73,8 +73,8 @@ export class ContentService {
           })
           startMonth = startMonth == 12 ? 1 : startMonth;
         }
-      });
-    //}, 3000);
+      }
+    });
     return monthArray;
   }
   Getcontent(title: string, query: string) {

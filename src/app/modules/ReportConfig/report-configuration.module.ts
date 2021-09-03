@@ -1,25 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AdminsettingsRoutingModule, settingsComponent } from './control-routing.module';
+import { ReportConfigComponents, ReportConfigurationRoutingModule } from './report-configuration-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { SchoolReportsModule } from '../schoolreports/reports.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
+
+
 @NgModule({
-  declarations: [settingsComponent],
+  declarations: [ReportConfigComponents],
   imports: [
     CommonModule,
-    MaterialModule,
+    ReportConfigurationRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    AdminsettingsRoutingModule,
+    MaterialModule,
+    SharedModule,
     SharedhomepageModule,
-    SchoolReportsModule,
     FlexLayoutModule
   ],
-  exports:[settingsComponent]
+  exports:[ReportConfigComponents]
 })
-export class ControlModule { }
+export class ReportConfigurationModule { }

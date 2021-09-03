@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorStateMatcher, MAT_DATE_LOCALE } from '@angular/material/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxFileDropModule } from 'ngx-file-drop';
-import { SchoolReportsComponent, SchoolReportsRoutingModule } from './reports-routing.module';
+import { SchoolReportsComponents, SchoolReportsRoutingModule } from './reports-routing.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MatTableModule } from '@angular/material/table';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
@@ -16,7 +16,7 @@ import { NgxPrintModule } from 'ngx-print';
 
 @NgModule({
   declarations: [
-    SchoolReportsComponent
+    SchoolReportsComponents
   ],
   imports: [
     CommonModule,
@@ -36,6 +36,6 @@ import { NgxPrintModule } from 'ngx-print';
     { provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ],
-  exports:[SchoolReportsComponent]
+  exports:[SchoolReportsComponents]
 })
 export class SchoolReportsModule { }

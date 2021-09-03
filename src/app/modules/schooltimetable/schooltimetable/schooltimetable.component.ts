@@ -34,6 +34,7 @@ export class SchooltimetableComponent implements OnInit {
   DataToSave = 0;
   SelectedBatchId = 0;
   StoredForUpdate = [];
+  PeriodTypes = [];
   Classes = [];
   Sections = [];
   Subjects = [];
@@ -41,11 +42,11 @@ export class SchooltimetableComponent implements OnInit {
   Periods = [];
   Batches = [];
   ClassSubjects = [];
-  ClassWiseSubjects=[];
+  ClassWiseSubjects = [];
   AllClassPeriods = [];
   SchoolTimeTableListName = "SchoolTimeTables";
   SchoolTimeTableList = [];
-  dataSource: MatTableDataSource<ISchoolTimeTable>;
+  dataSource: MatTableDataSource<any[]>;
   allMasterData = [];
   PagePermission = '';
   SchoolTimeTableData = {
@@ -59,7 +60,7 @@ export class SchooltimetableComponent implements OnInit {
     BatchId: 0,
     Active: 0
   };
-  displayedColumns = [];
+  displayedColumns:any[] = [];
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
@@ -70,15 +71,17 @@ export class SchooltimetableComponent implements OnInit {
     private shareddata: SharedataService,
     private datepipe: DatePipe,
     private fb: FormBuilder
-  ) { }
+  ) { 
+    
+  }
 
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
       searchClassId: [0],
-      searchSectionId:[0]
+      searchSectionId: [0]
     });
-
+    this.dataSource =new MatTableDataSource<any[]>([]);
   }
 
   PageLoad() {
@@ -92,21 +95,22 @@ export class SchooltimetableComponent implements OnInit {
 
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
-      
+
     }
   }
   updateActive(row, value) {
 
     row.Action = true;
     row.Active = value.checked ? 1 : 0;
+    var updateActive =this.StoredForUpdate.filter(s=>s.DayId==row.DayId);
+    updateActive.forEach(u=>u.Active=1)
   }
   UpdateOrSave(row) {
 
     debugger;
 
     this.loading = true;
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and SectionId eq " + row.SectionId +
+    let checkFilterString ="SectionId eq " + row.SectionId +
       " and DayId eq " + row.DayId +
       " and SchoolClassPeriodId eq " + row.SchoolClassPeriodId
 
@@ -128,17 +132,18 @@ export class SchooltimetableComponent implements OnInit {
         }
         else {
 
+          this.SchoolTimeTableData.TimeTableId = row.TimeTableId;
           this.SchoolTimeTableData.SchoolClassPeriodId = row.SchoolClassPeriodId;
           this.SchoolTimeTableData.ClassId = row.ClassId;
           this.SchoolTimeTableData.Active = row.Active;
-          this.SchoolTimeTableData.DayId = row.PeriodId;
+          this.SchoolTimeTableData.DayId = row.DayId;
           this.SchoolTimeTableData.SectionId = row.SectionId;
           this.SchoolTimeTableData.ClassSubjectId = row.ClassSubjectId;
 
           this.SchoolTimeTableData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SchoolTimeTableData.BatchId = this.SelectedBatchId;
 
-          //console.log('data', this.ClassSubjectData);
+          console.log('data', this.SchoolTimeTableData);
           if (this.SchoolTimeTableData.TimeTableId == 0) {
             this.SchoolTimeTableData["CreatedDate"] = new Date();
             this.SchoolTimeTableData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -202,8 +207,13 @@ export class SchooltimetableComponent implements OnInit {
       this.alert.info("Please select class", this.optionAutoClose);
       return;
     }
+    if (this.searchForm.get("searchSectionId").value == 0) {
+      this.alert.info("Please select section", this.optionAutoClose);
+      return;
+    }
     this.loading = true;
-    filterstr = 'ClassId eq ' + this.searchForm.get("searchClassId").value;
+    filterstr = 'ClassId eq ' + this.searchForm.get("searchClassId").value+
+                ' and SectionId eq '+ this.searchForm.get("searchSectionId").value
 
     let list: List = new List();
     list.fields = [
@@ -216,6 +226,7 @@ export class SchooltimetableComponent implements OnInit {
       "Active"
     ];
     list.PageName = this.SchoolTimeTableListName;
+    //list.lookupFields = ["SchoolClassPeriod"]
     list.filter = [filterstr + orgIdSearchstr];
     this.displayedColumns = [
       'Day'
@@ -223,86 +234,77 @@ export class SchooltimetableComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        var dbTimeTable= data.value.map((d=>{
+            d.Day = this.WeekDays.filter(w=>w.MasterDataId == d.DayId)[0].MasterDataName;
+          return d;
+        }))
+        var forDisplay:any[]=[];
+        var _classId = this.searchForm.get("searchClassId").value;
+        //this is used in html for subject dropdown.
+        this.ClassWiseSubjects = this.ClassSubjects.filter(f => f.ClassId == _classId);
 
         //iterrate through class
-            //iterrate through weekdays
-               // iterate through class periods
+        //iterrate through weekdays
+        // iterate through class periods
 
-        var forDisplay;
-        this.ClassWiseSubjects = this.ClassSubjects.filter(f=>f.ClassId == this.searchForm.get("searchClassId").value);
-        console.log(this.ClassSubjects)
-        console.log('dropdown',this.ClassWiseSubjects);
+        //console.log('this.WeekDays',this.WeekDays);
         this.WeekDays.forEach(p => {
-          forDisplay = {
-            Day: p.MasterDataName
-          }
-          var forSelectedClsPeriods; 
-          var filterPeriods= this.AllClassPeriods.filter(a => a.ClassId == this.searchForm.get("searchClassId").value);
+          forDisplay =[];
+          forDisplay["Day"] = p.MasterDataName;
+          forDisplay["DayId"] = p.MasterDataId;
           
-          forSelectedClsPeriods =filterPeriods.sort((a,b)=>a.Sequence - b.Sequence);
-          
+          var forSelectedClsPeriods;
+          var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
+
+          forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
+
           forSelectedClsPeriods.forEach(c => {
-            if (!this.displayedColumns.includes(c.Period))
-              this.displayedColumns.push(c.Period);
-            var existing = data.value.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId)
+            var _period = c.PeriodType.includes('Free Time') ? 'f_' + c.Period : c.Period;
+
+            if (!this.displayedColumns.includes(_period))
+              this.displayedColumns.push(_period);
+
+            var existing = dbTimeTable.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId && d.DayId ==p.MasterDataId)
             if (existing.length > 0) {
-              existing[0].Day =p.MasterDataName;
-              existing[0].Period =c.Period;
+              existing[0].Period = _period;
+              existing[0].Action = false;
               this.StoredForUpdate.push(existing[0]);
-              forDisplay[c.Period] = this.ClassSubjects.filter(s => s.ClassSubjectId == existing[0].ClassSubjectId)[0].SubjectName                
+              forDisplay[c.Period] = existing[0].ClassSubjectId;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
+              forDisplay["Active"] =existing[0].Active;
             }
-            else
-            {
-              forDisplay[c.Period] =0;
+            else {
+              forDisplay[c.Period] = 0;
+              
               this.StoredForUpdate.push({
-                "TimeTableId":0,
-                "DayId":p.MasterDataId,
-                "Day":p.MasterDataName,
-                "ClassId":c.ClassId,
-                "SectionId":this.searchForm.get("searchSectionId").value,
-                "SchoolClassPeriodId":c.SchoolClassPeriodId,
-                "ClassSubjectId":0,
-                "Period":c.Period,
-                "Active":0
+                "TimeTableId": 0,
+                "DayId": p.MasterDataId,
+                "Day": p.MasterDataName,
+                "ClassId": c.ClassId,
+                "SectionId": this.searchForm.get("searchSectionId").value,
+                "SchoolClassPeriodId": c.SchoolClassPeriodId,
+                "ClassSubjectId": 0,
+                "Period": _period,
+                "Active": 0,
+                "Action":false
               })
             }
 
           })
-          forDisplay["Action"] = '';
+          forDisplay["Action"] = false;
+          //forDisplay["Active"] = 0;
           this.SchoolTimeTableList.push(forDisplay);
-          
+
         })
+        console.log('displaycolumn',this.displayedColumns)
+        console.log('forDisplay',forDisplay)
         console.log('StoredForUpdate',this.StoredForUpdate)
-        this.displayedColumns.push("Active");
+        //this.displayedColumns.push("Active");
         this.displayedColumns.push("Action");
-        this.dataSource = new MatTableDataSource<ISchoolTimeTable>(this.SchoolTimeTableList);
+        this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
         this.loading = false;
       })
   }
-  UpdateAll(){
-
-  }
-  CheckAll(value) {
-    this.SchoolTimeTableList.forEach(record => {
-      if (value.checked)
-        record.Active = 1;
-      else
-        record.Active = 0;
-      record.Action = !record.Action;
-    })
-  }
-
-  onBlur(element, event,columnName) {
-    debugger;
-    var rowtoUpdateForSavingPurpose = this.StoredForUpdate.filter(s=>s.Period == columnName && s.Day == element.Day);
-    if(rowtoUpdateForSavingPurpose.length>0)
-    {
-      rowtoUpdateForSavingPurpose[0]["ClassSubjectId"] = event.value;      
-    }
-    
-    element.Action = true;
-  }
-  GetAllClassPeriods() {
+    GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
     var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -315,6 +317,8 @@ export class SchooltimetableComponent implements OnInit {
       "SchoolClassPeriodId",
       "ClassId",
       "PeriodId",
+      "PeriodTypeId",
+      "Sequence",
       "FromToTime",
       "Active"
     ];
@@ -323,10 +327,15 @@ export class SchooltimetableComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllClassPeriods = data.value.map(m => {
+          var _PeriodType = '';
+          if (m.PeriodTypeId != null)
+          _PeriodType = this.PeriodTypes.filter(p => p.MasterDataId == m.PeriodTypeId)[0].MasterDataName;
+
           m.Period = this.Periods.filter(p => p.MasterDataId == m.PeriodId)[0].MasterDataName;
+          m.PeriodType = _PeriodType;
           return m;
         });
-        this.loading=false;
+        this.loading = false;
       })
   }
   GetClassSubject() {
@@ -344,14 +353,14 @@ export class SchooltimetableComponent implements OnInit {
     list.PageName = "ClassSubjects";
     list.lookupFields = ["EmpEmployee"];
     list.filter = [filterStr];
-    this.loading=true;
+    this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(cs => {
           var _class = this.Classes.filter(c => c.MasterDataId == cs.ClassId)[0].MasterDataName;
           var _subject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)[0].MasterDataName;
           var _shortName = cs.EmpEmployee.ShortName;
-            _shortName = _shortName==null?'':", " + _shortName;
+          _shortName = _shortName == null ? '' : ", " + _shortName;
 
           return {
             ClassSubjectId: cs.ClassSubjectId,
@@ -360,7 +369,7 @@ export class SchooltimetableComponent implements OnInit {
             SubjectName: _subject + _shortName
           }
         })
-        this.loading=false;
+        this.loading = false;
       })
   }
   ReplicateToClasses() {
@@ -404,27 +413,64 @@ export class SchooltimetableComponent implements OnInit {
 
 
   }
-  SaveAll() {
-
-    this.loading = true;
-    this.rowCount = 0;
-    var checkedRows = this.SchoolTimeTableList.filter(f => f.Action);
-    this.DataToSave = checkedRows.length;
-
-    checkedRows.forEach(record => {
-      this.UpdateOrSave(record);
-
-    })
-  }
+  
   SaveRow(element) {
     debugger;
     this.loading = true;
     this.rowCount = 0;
 
-    this.DataToSave = 1;
-    
-    
+    var _toUpdate = this.StoredForUpdate.filter(s => s.Day == element.Day && s.Action);
+
+    var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
+    if(validated.length>0 )
+    {
+      this.loading=false;
+      this.alert.error("Subject must be selected for periods",this.optionsNoAutoClose);
+      return;
+    }
+    var totalRows = _toUpdate.length;
+    for (var rowCount = 0; rowCount < totalRows; rowCount++) {
+        this.UpdateOrSave(_toUpdate[rowCount]);
+    }
+
   }
+  SaveAll() {
+    var _toUpdate = this.StoredForUpdate.filter(s => s.Action);
+
+    var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
+    if(validated.length>0)
+    {
+      this.loading=false;
+      this.alert.error("Subject must be selected for periods",this.optionsNoAutoClose);
+      return;
+    }
+
+    var totalRows = _toUpdate.length;
+    for (var rowCount = 0; rowCount < totalRows; rowCount++) {
+            this.UpdateOrSave(_toUpdate[rowCount]);
+    }
+  }
+  CheckAll(value) {
+    this.SchoolTimeTableList.forEach(record => {
+      if (value.checked)
+        record.Active = 1;
+      else
+        record.Active = 0;
+      record.Action = !record.Action;
+    })
+  }
+
+  onBlur(element, event, columnName) {
+    debugger;
+    var rowtoUpdateForSavingPurpose = this.StoredForUpdate.filter(s => s.Period == columnName && s.Day == element.Day);
+    if (rowtoUpdateForSavingPurpose.length > 0) {
+      rowtoUpdateForSavingPurpose[0]["ClassSubjectId"] = event.value;
+      rowtoUpdateForSavingPurpose[0]["Action"] =true;
+    }
+
+    element.Action = true;
+  }
+
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -440,9 +486,11 @@ export class SchooltimetableComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
-
         this.Periods.sort((a, b) => a.Sequence - b.Sequence);
+
+        this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
         this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
+
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -471,6 +519,7 @@ export class SchooltimetableComponent implements OnInit {
 
 }
 export interface ISchoolTimeTable {
+
   TimeTableId: number;
   DayId: number;
   ClassId: number;

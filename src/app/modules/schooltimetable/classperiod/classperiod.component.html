@@ -72,6 +72,16 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="Sequence">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Sequence
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                        <mat-form-field [style.width.px]="50">
+                            <input matInput type="number" [max]="100" (blur)="onBlur(element,$event)"
+                                [(ngModel)]="element.Sequence" autocomplete="Off" [value]="element.Sequence">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="CheckAll($event)">

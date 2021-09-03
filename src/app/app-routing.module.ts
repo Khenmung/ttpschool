@@ -30,7 +30,11 @@ const routes: Routes = [
   },  
   {
     path: 'school/:id/reports',
-    loadChildren: () => import('./modules/Reports/reports.module').then(m => m.SchoolReportsModule)
+    loadChildren: () => import('./modules/schoolreports/reports.module').then(m => m.SchoolReportsModule)
+  },
+  {
+    path: 'school/:id/reportconfig',
+    loadChildren: () => import('./modules/ReportConfig/report-configuration.module').then(m => m.ReportConfigurationModule)
   },
   {
     path: 'school/:id',

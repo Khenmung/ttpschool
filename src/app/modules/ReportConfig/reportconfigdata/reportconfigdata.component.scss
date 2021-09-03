@@ -1,0 +1,15 @@
+mat-form-field{
+    flex:1 1 100%;
+    margin-right: 15px;
+    
+}
+.mat-column-AvailableFields{
+    flex: 1 1 30%;
+}
+//
+.mat-column-ReportName,.mat-column-TableNames{
+    flex: 1 1 10%;
+}
+.mat-column-Active{
+    justify-content: center;
+}
