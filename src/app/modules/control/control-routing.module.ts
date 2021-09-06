@@ -14,6 +14,7 @@ import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ApplicationfeatureComponent } from './applicationfeature/applicationfeature.component';
 import { SchoolFeeTypesComponent } from './school-fee-types/school-fee-types.component';
 import { VariableConfigComponent } from './variable-config/variable-config.component';
+import { ApplicationpriceComponent } from './applicationprice/applicationprice.component';
 
 const routes: Routes = [
   {
@@ -48,5 +49,6 @@ export const settingsComponent = [
   AddMasterDataComponent,
   ApplicationfeatureComponent,
   SchoolFeeTypesComponent,
-  VariableConfigComponent
+  VariableConfigComponent,
+  ApplicationpriceComponent
 ]

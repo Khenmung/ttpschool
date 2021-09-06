@@ -425,7 +425,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         //this.MonthYears = this.getDropDownData(globalconstants.MasterDefinitions.application);
 
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));

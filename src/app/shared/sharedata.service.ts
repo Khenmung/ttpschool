@@ -40,7 +40,7 @@ export class SharedataService {
   private RandomImagesSource = new BehaviorSubject(this.items);
   private OrganizationSource = new BehaviorSubject(this.items);
   private DepartmentSource = new BehaviorSubject(this.items);
-  private ApplicationSource = new BehaviorSubject(this.items);
+  private PermittedApplicationsSource = new BehaviorSubject(this.items);
   private RolesSource = new BehaviorSubject(this.items);
   private AppUsersSource = new BehaviorSubject(this.items);
   private OrganizationMastersSource = new BehaviorSubject(this.items);
@@ -53,7 +53,9 @@ export class SharedataService {
   private ApplicationIdSource = new BehaviorSubject(0);  
   private SelectedBatchStartEndSource = new BehaviorSubject(this.items);  
   private CurrentBatchStartEndSource = new BehaviorSubject(this.items);  
+  private CustomerPlanSource = new BehaviorSubject(this.items);  
 
+  CurrentCustomerPlanSource = this.CustomerPlanSource.asObservable(); 
   CurrentCurrentBatchStartEndSource = this.CurrentBatchStartEndSource.asObservable(); 
   CurrentSelectedBatchStartEnd$ = this.SelectedBatchStartEndSource.asObservable(); 
   CurrentApplicationId = this.ApplicationIdSource.asObservable(); 
@@ -68,7 +70,7 @@ export class SharedataService {
   CurrentAppUsers = this.AppUsersSource.asObservable(); 
  
   CurrentRoles = this.RolesSource.asObservable(); 
-  CurrentApplication = this.ApplicationSource.asObservable();
+  CurrentPermittedApplications = this.PermittedApplicationsSource.asObservable();
   
   CurrentDepartment = this.DepartmentSource.asObservable();
   CurrentOrganization = this.OrganizationSource.asObservable();
@@ -107,6 +109,9 @@ export class SharedataService {
   ngOnInit() {
 
   }
+  ChangeCustomerPlan(item){
+    this.CustomerPlanSource.next(item);
+  }
   ChangeCurrentBatchStartEnd(item){
     this.CurrentBatchStartEndSource.next(item);
   }
@@ -144,8 +149,8 @@ export class SharedataService {
   ChangeRoles(item){
     this.RolesSource.next(item);
   }
-  ChangeApplication(item){
-    this.ApplicationSource.next(item);
+  ChangePermittedApplications(item){
+    this.PermittedApplicationsSource.next(item);
   }
   ChangeOrganization(item){
     this.OrganizationSource.next(item);

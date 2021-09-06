@@ -138,6 +138,7 @@ export class OrgreportcolumnsComponent implements OnInit {
         }
         else {
 
+
           this.OrgReportColumnsData.ReportOrgReportColumnId = row.ReportOrgReportColumnId;
           this.OrgReportColumnsData.ReportOrgReportNameId = row.ReportOrgReportNameId;
           this.OrgReportColumnsData.ColumnDisplayName = row.ColumnDisplayName;

@@ -55,12 +55,15 @@ export class globalconstants {
     ]
     public static MasterDefinitions =
         {
-            "applications": {
+            "ttpapps": {
                 "ORGANIZATION": "organization",
                 "LOCATION": "location",
                 "DEPARTMENT": "department",
-                "APP": "application",
+                "TTPAPP": "application",
                 "ROLE": "role"
+            },
+            "admin":{
+                "CURRENCY":"currency"
             },
             "school": {
                 "PERIODTYPE":"period type",

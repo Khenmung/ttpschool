@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit {
   }
   CurrentBatchId = 0;
   SelectedBatchId = 0;
-  SelectedAppId =0;
+  SelectedAppId = 0;
   Batches = [];
   PermittedApplications = [];
   ngOnInit(): void {
@@ -49,25 +49,26 @@ export class HeaderComponent implements OnInit {
       this.shareddata.ChangeApplicationId(urlId);
     })
     this.searchForm = this.fb.group({
-      searchApplicationId:[0],
+      searchApplicationId: [0],
       searchBatchId: [0]
     })
     this.userName = this.tokenStorage.getUser();
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-
-    var apps = this.loginUserDetail[0]["applicationRolePermission"];
-    if(apps==undefined)
-    {
+    var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
+    var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
+    this.shareddata.ChangePermittedApplications(_UniquePermittedApplications);
+    this.shareddata.CurrentPermittedApplications.subscribe(p => this.PermittedApplications = p);
+   
+    if (this.PermittedApplications.length == 0) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
     }
-    this.PermittedApplications = apps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-    //console.log('screensize1',this.PermittedApplications)
+
+
     if (this.userName === undefined || this.userName === null || this.userName == '')
       this.loggedIn = false;
     else
       this.loggedIn = true;
-    //    console.log("loggedin", this.loggedIn)
     this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
     this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
@@ -111,21 +112,20 @@ export class HeaderComponent implements OnInit {
     this.route.navigate(['/home/about/' + this.NewsNEventPageId]);
   }
   goto(page) {
-    this.route.navigate(['/' + page]);    
+    this.route.navigate(['/' + page]);
   }
-  ChangeApplication(applicationId){
+  ChangeApplication(applicationId) {
 
     this.tokenStorage.saveSelectedAppId(applicationId.value);
-    var selectedApp=this.PermittedApplications.filter(a=>a.applicationId == applicationId.value);
-    this.route.navigate(['/',selectedApp[0].appShortName,selectedApp[0].applicationId])
-  
+    var selectedApp = this.PermittedApplications.filter(a => a.applicationId == applicationId.value);
+    this.route.navigate(['/', selectedApp[0].appShortName, selectedApp[0].applicationId])
+
   }
   ChangeCurrentBatchId(selected) {
     debugger;
-    var _SelectedBatch = this.Batches.filter(b=>b.BatchId==selected)
-    if(_SelectedBatch.length>0)
-    {
-      this.shareddata.ChangeSelectedBatchStartEnd({'StartDate':_SelectedBatch[0].StartDate,'EndDate':_SelectedBatch[0].EndDate});
+    var _SelectedBatch = this.Batches.filter(b => b.BatchId == selected)
+    if (_SelectedBatch.length > 0) {
+      this.shareddata.ChangeSelectedBatchStartEnd({ 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
     }
     //this is for enabling promote student purpose. if selected value is >= current, promote should not be enable 
     if (selected.value >= this.CurrentBatchId)
@@ -190,7 +190,7 @@ export class HeaderComponent implements OnInit {
         //this.shareddata.ChangeSelectedBatchId(this.CurrentBatchId);
         this.SelectedBatchId = this.CurrentBatchId;
       }
-      
+
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);

@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
-import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { SharedataService } from 'src/app/shared/sharedata.service';
 import { AuthService } from '../../../_services/auth.service';
 
 @Component({
@@ -29,6 +29,7 @@ export class RegisterComponent implements OnInit {
     Email: null,
     Password: null
   };
+  CustomerPlan =[];
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
@@ -40,6 +41,7 @@ export class RegisterComponent implements OnInit {
     Active: 1,
     UserId: 0,
     RoleId: 0,
+    PlanId:0,
     ApplicationId: 0,
     CreatedDate: new Date(),
     UpdatedDate: new Date(),
@@ -47,6 +49,7 @@ export class RegisterComponent implements OnInit {
     UpdatedBy: 0
   };
   constructor(
+    private shareddata: SharedataService,
     private authService: AuthService,
     private fb: FormBuilder,
     private alert: AlertService,
@@ -68,6 +71,7 @@ export class RegisterComponent implements OnInit {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       //console.log("authlogin",this.deviceXs);
     });
+    this.shareddata.CurrentCustomerPlanSource.subscribe(p=>this.CustomerPlan=p);
   }
   gotohome() {
     this.route.navigate(['/home']);
@@ -96,6 +100,7 @@ export class RegisterComponent implements OnInit {
             EmailAddress: this.RegistrationForm.get("Email").value,
             ContactNo: this.RegistrationForm.get("ContactNo").value,
             UserName: this.RegistrationForm.get("UserName").value,
+            PlanId: this.CustomerPlan["PlanId"],
             OrgId: organization.OrganizationId,
             CreatedDate: today,
             ValidFrom: today,

@@ -107,6 +107,7 @@ export class LoginComponent implements OnInit {
       'RoleUsers/Active',
       'Organization/OrganizationName',
       'Organization/LogoPath',
+      'Organization/Active',
       'Active',
     ];
 
@@ -120,8 +121,11 @@ export class LoginComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.GetMasterData(data.value[0]);
-
+          if (data.value[0].Organization.Active == 1)
+            this.GetMasterData(data.value[0]);
+          else {
+            this.alert.info("User's Organization not active!, Please contact your administrator!", this.optionsNoAutoClose);
+          }
         }
       })
   }
@@ -140,19 +144,18 @@ export class LoginComponent implements OnInit {
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
-        // this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions.applications.ORGANIZATION);
+        // this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ORGANIZATION);
         // this.shareddata.ChangeOrganization(this.Organizations);
 
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.shareddata.ChangeDepartment(this.Departments);
 
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.applications.APP);
-        this.shareddata.ChangeApplication(this.Applications);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.TTPAPP);
 
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.shareddata.ChangeLocation(this.Locations);
 
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.applications.ROLE);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
         this.shareddata.ChangeRoles(this.Roles);
 
         this.RoleFilter = ' and (RoleId eq 0';
@@ -201,7 +204,7 @@ export class LoginComponent implements OnInit {
           this.RoleFilter += ')';
         this.GetApplicationFeatures();
 
-      },error=>{
+      }, error => {
         this.tokenStorage.signOut();
       });
   }
@@ -285,6 +288,7 @@ export class LoginComponent implements OnInit {
               'appShortName': _appShortName
             }
           })
+
           this.tokenStorage.saveUserdetail(this.UserDetail);
           //this.tokenStorage.
           console.log('userdetail', this.tokenStorage.getUserDetail());

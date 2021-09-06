@@ -249,7 +249,7 @@ export class AddstudentComponent implements OnInit {
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
         this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
-        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
         this.LocationId = this.Location.filter(location => location.MasterDataName.toLowerCase() == "lamka")[0].MasterDataId;

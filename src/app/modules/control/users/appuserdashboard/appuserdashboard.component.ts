@@ -140,18 +140,18 @@ export class AppuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.applications.ROLE);
-        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.applications.APPLICATION);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.APPLICATION);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.shareddata.ChangeRoles(this.Roles);
-        this.shareddata.ChangeApplication(this.Applications);
+        this.shareddata.ChangePermittedApplications(this.Applications);
         this.shareddata.ChangeDepartment(this.Departments);
         this.shareddata.ChangeLocation(this.Locations);
         this.shareddata.CurrentOrganization.subscribe(o => this.Organizations = o);
         this.shareddata.CurrentDepartment.subscribe(d => this.Departments = d);
         this.shareddata.CurrentLocation.subscribe(l => this.Locations = l);
-        this.shareddata.CurrentApplication.subscribe(a => this.Applications = a);
+        this.shareddata.CurrentPermittedApplications.subscribe(a => this.Applications = a);
         this.GetUsers();
 
         //this.GetRoleUser();

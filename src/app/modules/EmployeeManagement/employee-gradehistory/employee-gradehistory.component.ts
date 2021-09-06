@@ -359,7 +359,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
         this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);

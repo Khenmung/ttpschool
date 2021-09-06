@@ -77,14 +77,8 @@ export class roleappAddComponent implements OnInit {
       this.route.navigate(['auth/login']);
       //return;
     }
-    // this.shareddata.GetApplication().subscribe((data:any)=>{
-    //   this.Applications = data.value.map(item=>{
-    //     return item;
-    //   });
-    // });
-    this.shareddata.CurrentApplication.subscribe(a => this.Applications = a);
+    this.shareddata.CurrentPermittedApplications.subscribe(a => this.Applications = a);
     this.shareddata.CurrentRoles.subscribe(r => this.Roles = r);
-    //this.shareddata.CurrentApplication.subscribe(a=>this.Applications = a);
     this.Permissions = globalconstants.PERMISSIONTYPES;
     this.GetAppRole();
   }

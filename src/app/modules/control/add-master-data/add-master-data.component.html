@@ -11,8 +11,8 @@
                         <mat-form-field fxFlex appearance="outline">
                             <mat-label>Application</mat-label>
                             <mat-select formControlName="AppId" fxFlex (selectionChange)="enable($event)">
-                                <mat-option *ngFor="let app of Applications" [value]="app.MasterDataId">
-                                    {{app.Description}}
+                                <mat-option *ngFor="let app of PermittedApplications" [value]="app.applicationId">
+                                    {{app.applicationName}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -21,6 +21,14 @@
                             <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
                                 <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
                                     {{master.MasterDataName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field fxFlex appearance="outline">
+                            <mat-label>Organization</mat-label>
+                            <mat-select formControlName="OrgId" fxFlex>
+                                <mat-option *ngFor="let master of Organizations" [value]="master.OrganizationId">
+                                    {{master.OrganizationName}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -56,9 +64,9 @@
                         <ng-container matColumnDef="Sequence">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <mat-form-field [style.width.pc]="2">
+                                <mat-form-field [style.width.px]="50">
                                     <input type="number" matInput [value]="element.Sequence"
-                                        [(ngModel)]="element.Sequence" autocomplete="Off" (blur)="onBlur(element)"
+                                        [(ngModel)]="element.Sequence" autocomplete="Off" (blur)="ReSequence(element)"
                                         [max]="100">
                                 </mat-form-field>
                             </mat-cell>
@@ -66,17 +74,21 @@
                         <ng-container matColumnDef="Description">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <mat-form-field [style.width.pc]="35">
+                                <mat-form-field [style.width.pc]="25">
                                     <textarea matInput [value]="element.Description" [(ngModel)]="element.Description"
                                         autocomplete="Off" (blur)="onBlur(element)" [maxlength]="2000"></textarea>
                                 </mat-form-field>
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="Active">
-                            <mat-header-cell *matHeaderCellDef>
-                                <button [disabled]="loading" matTooltip="new item" *ngIf="enableAddNew"
+                            <mat-header-cell *matHeaderCellDef style="justify-content: center;">
+                                <button style="margin-right: 15px;" [disabled]="loading" matTooltip="new item" *ngIf="enableAddNew"
                                     class="mat-raised-button" (click)="AddData()" fxFlex="10">
                                     <mat-icon>add</mat-icon>
+                                </button>
+                                <button [disabled]="loading" matTooltip="save all"
+                                    class="mat-raised-button" (click)="SaveAll()" fxFlex="10">
+                                    <mat-icon>all_out</mat-icon>
                                 </button>
                             </mat-header-cell>
                             <mat-cell *matCellDef="let element">

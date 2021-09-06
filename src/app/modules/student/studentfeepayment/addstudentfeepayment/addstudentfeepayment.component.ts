@@ -206,7 +206,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
         this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
         this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);

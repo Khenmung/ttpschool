@@ -293,7 +293,7 @@ export class EmpComponentsComponent implements OnInit {
         //this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.applications.DEPARTMENT);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
@@ -304,7 +304,7 @@ export class EmpComponentsComponent implements OnInit {
         this.BloodGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
         this.Religions = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
         this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.applications.LOCATION);
+        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
         this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);;
         this.Natures = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);

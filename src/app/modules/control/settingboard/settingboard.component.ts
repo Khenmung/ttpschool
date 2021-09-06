@@ -6,6 +6,7 @@ import { RoleAppPermissiondashboardComponent } from '../roleapppermission/RoleAp
 import { BatchdashboardComponent } from '../batchdashboard/batchdashboard.component';
 import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
 import { VariableConfigComponent } from '../variable-config/variable-config.component';
+import { ApplicationpriceComponent } from '../applicationprice/applicationprice.component';
 
 @Component({
   selector: 'app-signup',
@@ -20,6 +21,7 @@ export class settingboardComponent implements OnInit, AfterViewInit {
   @ViewChild(BatchdashboardComponent) batchdashboard: BatchdashboardComponent;
   @ViewChild(SchoolFeeTypesComponent) feetype: SchoolFeeTypesComponent;
   @ViewChild(VariableConfigComponent) varconfig: VariableConfigComponent;
+  @ViewChild(ApplicationpriceComponent) prices: ApplicationpriceComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -35,6 +37,7 @@ export class settingboardComponent implements OnInit, AfterViewInit {
     //this.masterSettingData.PageLoad();
   }
   tabChanged(event) {
+ debugger;
     //console.log(event);
     switch (event) {
       case 0:
@@ -57,6 +60,9 @@ export class settingboardComponent implements OnInit, AfterViewInit {
         break;
       case 6:
         this.varconfig.PageLoad();
+        break;
+      case 7:
+        this.prices.PageLoad();
         break;
       default:
         this.masterSettingData.PageLoad();

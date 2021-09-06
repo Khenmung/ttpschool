@@ -136,7 +136,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           // let applicationData = globalconstants.MasterDefinitions.application;
           // this.ApplicationDataStatus = this.getSettingStatus(applicationData);
           // //delete this.ApplicationDataStatus[0]["APPLICATION"];
-          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.applications.ROLE);
+          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
           // let schoolData = globalconstants.MasterDefinitions.school;
           // this.SchoolDataStatus = this.getSettingStatus(schoolData);
           this.loading = false;
