@@ -1,6 +1,6 @@
 <div>
-    <div style="padding:15px 15px 0px 15px;">
-        <div><strong>Application Pricing</strong></div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div><strong>Organization Apps</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -9,19 +9,20 @@
             <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
                 <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
                     <mat-form-field appearance="outline">
-                        <mat-label>Application</mat-label>
-                        <mat-select formControlName="searchApplicationId">
-                            <mat-option *ngFor="let item of Applications" [value]="item.MasterDataId">
-                                {{item.Description}}
+                        <mat-label>Organization</mat-label>
+                        <mat-select formControlName="searchOrgId">
+                            <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
+                                {{item.OrganizationName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
-                        (click)="GetApplicationPrice()">
+                        (click)="GetCustomerApps()">
                         <mat-icon>search</mat-icon>
                     </button>
                 </div>
             </form>
+          
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="ApplicationName">
                     <mat-header-cell *matHeaderCellDef>Application
@@ -34,52 +35,69 @@
                     <mat-header-cell *matHeaderCellDef>PCPM
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.pc]="5">
-                            <input type="number" (blur)="onBlur(element)" [(ngModel)]="element.PCPM" [value]="element.PCPM" matInput
-                                autocomplete="off">
-                        </mat-form-field>
+                        {{element.PCPM}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="MinCount">
                     <mat-header-cell *matHeaderCellDef>Min Count
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.pc]="5">
-                            <input type="number" (blur)="onBlur(element)" [(ngModel)]="element.MinCount" [value]="element.MinCount" matInput
-                                autocomplete="off">
-                        </mat-form-field>
+                       {{element.MinCount}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="MinPrice">
                     <mat-header-cell *matHeaderCellDef>MinPrice
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.pc]="5">
-                            <input type="number" (blur)="onBlur(element)" [(ngModel)]="element.MinPrice" [value]="element.MinPrice" matInput
-                                autocomplete="off">
-                        </mat-form-field>
+                        {{element.MinPrice}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="CurrencyId">
+                <ng-container matColumnDef="Currency">
                     <mat-header-cell *matHeaderCellDef>Currency
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
+                       {{element.Currency}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PersonOrItemCount">
+                    <mat-header-cell *matHeaderCellDef>Person Or ItemCount
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.pc]="5">
-                            <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.CurrencyId" [value]="element.CurrencyId">
-                                <mat-option *ngFor="let item of Currencies" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}</mat-option>
-                            </mat-select>
+                            <input (blur)="onBlur(element)" type="number"
+                            [(ngModel)]="element.PersonOrItemCount" [value]="element.PersonOrItemCount" matInput
+                                autocomplete="off" [max]="100000">                          
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Description">
-                    <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+                <ng-container matColumnDef="LoginUserCount">
+                    <mat-header-cell *matHeaderCellDef>Login User Count
+                    </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.pc]="20">
-                            <textarea (blur)="onBlur(element)" [(ngModel)]="element.Description" [value]="element.Description" matInput
+                        <mat-form-field appearance="outline" [style.width.pc]="5">
+                            <input (blur)="onBlur(element)" type="number"
+                            [(ngModel)]="element.LoginUserCount" [value]="element.LoginUserCount" matInput
+                                autocomplete="off" [max]="100000">                          
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>                
+                <ng-container matColumnDef="Formula">
+                    <mat-header-cell *matHeaderCellDef> Formula </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.pc]="15">
+                            <textarea (blur)="onBlur(element)" 
+                            [(ngModel)]="element.Formula" 
+                            [value]="element.Formula" matInput
                                 autocomplete="off" [maxlength]="1000">
                             </textarea>
                         </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="AmountPerMonth">
+                    <mat-header-cell *matHeaderCellDef>Amount Per Month
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                       {{element.AmountPerMonth}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">

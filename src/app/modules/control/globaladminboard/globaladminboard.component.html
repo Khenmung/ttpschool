@@ -1,0 +1,37 @@
+<mat-card>
+    <mat-card-title>Global Admin</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <div style="margin:5px">
+            <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>first_page</mat-icon> Features
+                    </ng-template>
+                    <app-applicationfeature></app-applicationfeature>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>change_history
+                        </mat-icon> Pricing
+                    </ng-template>
+                    <app-applicationprice></app-applicationprice>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>change_history
+                        </mat-icon> Customer Apps
+                    </ng-template>
+                    <app-customerapps></app-customerapps>
+                </mat-tab>
+                <!-- <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>change_history
+                        </mat-icon> Customer Invoice
+                    </ng-template>
+                    <app-customerinvoice></app-customerinvoice>
+                </mat-tab> -->
+            </mat-tab-group>
+        </div>
+    </mat-card-content>
+</mat-card>

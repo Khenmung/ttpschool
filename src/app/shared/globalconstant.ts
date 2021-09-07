@@ -1,7 +1,6 @@
 //import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
 import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
-import { List } from "./interface";
 import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
@@ -55,15 +54,17 @@ export class globalconstants {
     ]
     public static MasterDefinitions =
         {
+            
+            "admin":{
+                "CURRENCY":"currency"
+            },
             "ttpapps": {
                 "ORGANIZATION": "organization",
                 "LOCATION": "location",
                 "DEPARTMENT": "department",
                 "TTPAPP": "application",
+                "bang":"application",
                 "ROLE": "role"
-            },
-            "admin":{
-                "CURRENCY":"currency"
             },
             "school": {
                 "PERIODTYPE":"period type",

@@ -11,11 +11,11 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-applicationprice',
-  templateUrl: './applicationprice.component.html',
-  styleUrls: ['./applicationprice.component.scss']
+  selector: 'app-customerinvoice',
+  templateUrl: './customerinvoice.component.html',
+  styleUrls: ['./customerinvoice.component.scss']
 })
-export class ApplicationpriceComponent implements OnInit {
+export class CustomerinvoiceComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -30,32 +30,34 @@ export class ApplicationpriceComponent implements OnInit {
   loading = false;
   Applications = [];
   //ReportNames = [];
+  Organizations =[];
   Currencies = [];
-  ApplicationPriceListName = "ApplicationPrices";
-  ApplicationPriceList = [];
-  dataSource: MatTableDataSource<IApplicationPrice>;
+  CustomerInvoiceListName = "CustomerInvoices";
+  CustomerInvoiceList = [];
+  dataSource: MatTableDataSource<ICustomerInvoice>;
   allMasterData = [];
   PagePermission = '';
-  ApplicationPriceData = {
-    ApplicationPriceId: 0,
-    ApplicationId: 0,
-    PCPM: 0,
-    MinCount: 0,
-    MinPrice: 0,
-    CurrencyId: 0,
-    Description: '',
+  CustomerInvoiceData = {
+    CustomerInvoiceId: 0,
+    CustomerId: 0,
+    StudentClassId: 0,
+    DueForMonth: 0,
+    InvoiceDate: 0,
+    TotalAmount: 0,
+    DueDate: new Date(),
+    PaymentStatusId: 0,
     OrgId: 0,
     Active: 0
   };
   displayedColumns = [
-    "ApplicationName",
-    "PCPM",
-    "MinCount",
-    "MinPrice",
-    "CurrencyId",
-    "Description",
-    "Active",
-    "Action"
+    "CustomerInvoiceId",
+    "CustomerId",
+    "StudentClassId",
+    "DueForMonth",
+    "InvoiceDate",
+    "TotalAmount",
+    "DueDate",
+    "PaymentStatusId"
   ];
   searchForm: FormGroup;
   constructor(
@@ -74,9 +76,9 @@ export class ApplicationpriceComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
-      searchApplicationId: [0]
+      searchCustomerId: [0]
     });
-    this.dataSource = new MatTableDataSource<IApplicationPrice>([]);
+    this.dataSource = new MatTableDataSource<ICustomerInvoice>([]);
   }
 
   PageLoad() {
@@ -86,8 +88,8 @@ export class ApplicationpriceComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
 
-      this.GetMasterData();
-
+      //this.GetMasterData();
+      this.GetOrganizations();
     }
   }
   updateActive(row, value) {
@@ -105,12 +107,12 @@ export class ApplicationpriceComponent implements OnInit {
     // let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
     //   " and ApplicationId eq " + row.ApplicationId;
 
-    // if (row.ApplicationPriceId > 0)
-    //   checkFilterString += " and ApplicationPriceId ne " + row.ApplicationPriceId;
+    // if (row.CustomerInvoiceId > 0)
+    //   checkFilterString += " and CustomerInvoiceId ne " + row.CustomerInvoiceId;
 
     // let list: List = new List();
-    // list.fields = ["ApplicationPriceId"];
-    // list.PageName = this.ApplicationPriceListName;
+    // list.fields = ["CustomerInvoiceId"];
+    // list.PageName = this.CustomerInvoiceListName;
     // list.filter = [checkFilterString];
 
     // this.dataservice.get(list)
@@ -122,30 +124,30 @@ export class ApplicationpriceComponent implements OnInit {
     //     }
     //     else {
 
-    this.ApplicationPriceData.ApplicationPriceId = row.ApplicationPriceId;
-    this.ApplicationPriceData.ApplicationId = row.ApplicationId;
-    this.ApplicationPriceData.MinCount = row.MinCount;
-    this.ApplicationPriceData.MinPrice = row.MinPrice.toString();
-    this.ApplicationPriceData.CurrencyId = row.CurrencyId;
-    this.ApplicationPriceData.Description = row.Description;
-    this.ApplicationPriceData.PCPM = row.PCPM;
-    this.ApplicationPriceData.Active = row.Active;
-    this.ApplicationPriceData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.CustomerInvoiceData.CustomerInvoiceId = row.CustomerInvoiceId;
+    this.CustomerInvoiceData.CustomerId = row.CustomerId;
+    this.CustomerInvoiceData.DueDate = row.DueDate;
+    this.CustomerInvoiceData.DueForMonth = row.DueForMonth;
+    this.CustomerInvoiceData.InvoiceDate = row.InvoiceDate;
+    this.CustomerInvoiceData.PaymentStatusId = row.PaymentStatusId;
+    this.CustomerInvoiceData.TotalAmount = row.TotalAmount;
+    this.CustomerInvoiceData.Active = row.Active;
+    this.CustomerInvoiceData.OrgId = this.LoginUserDetail[0]["orgId"];
 
-    console.log('data', this.ApplicationPriceData);
-    if (this.ApplicationPriceData.ApplicationPriceId == 0) {
-      this.ApplicationPriceData["CreatedDate"] = new Date();
-      this.ApplicationPriceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-      this.ApplicationPriceData["UpdatedDate"] = new Date();
-      delete this.ApplicationPriceData["UpdatedBy"];
+    console.log('data', this.CustomerInvoiceData);
+    if (this.CustomerInvoiceData.CustomerInvoiceId == 0) {
+      this.CustomerInvoiceData["CreatedDate"] = new Date();
+      this.CustomerInvoiceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+      this.CustomerInvoiceData["UpdatedDate"] = new Date();
+      delete this.CustomerInvoiceData["UpdatedBy"];
       //console.log('exam slot', this.SchoolClassPeriodListData)
       this.insert(row);
     }
     else {
-      delete this.ApplicationPriceData["CreatedDate"];
-      delete this.ApplicationPriceData["CreatedBy"];
-      this.ApplicationPriceData["UpdatedDate"] = new Date();
-      this.ApplicationPriceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+      delete this.CustomerInvoiceData["CreatedDate"];
+      delete this.CustomerInvoiceData["CreatedBy"];
+      this.CustomerInvoiceData["UpdatedDate"] = new Date();
+      this.CustomerInvoiceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
       this.update(row);
     }
     //}
@@ -155,10 +157,10 @@ export class ApplicationpriceComponent implements OnInit {
   insert(row) {
 
     debugger;
-    this.dataservice.postPatch(this.ApplicationPriceListName, this.ApplicationPriceData, 0, 'post')
+    this.dataservice.postPatch(this.CustomerInvoiceListName, this.CustomerInvoiceData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.ApplicationPriceId = data.ApplicationPriceId;
+          row.CustomerInvoiceId = data.CustomerInvoiceId;
           row.Action = false;
           this.loading = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
@@ -166,74 +168,63 @@ export class ApplicationpriceComponent implements OnInit {
   }
   update(row) {
 
-    this.dataservice.postPatch(this.ApplicationPriceListName, this.ApplicationPriceData, this.ApplicationPriceData.ApplicationPriceId, 'patch')
+    this.dataservice.postPatch(this.CustomerInvoiceListName, this.CustomerInvoiceData, this.CustomerInvoiceData.CustomerInvoiceId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
-
-  GetApplicationPrice() {
-
-    this.ApplicationPriceList = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
-    // if (this.searchForm.get("searchApplicationId").value == 0) {
-    //   this.alert.info("Please select application", this.optionAutoClose);
-    //   return;
-    // }
-
-    this.loading = true;
-    var _searchAppId = this.searchForm.get("searchApplicationId").value;
-
-    if (_searchAppId > 0)
-      filterstr += " and ApplicationId eq " + _searchAppId;
+  GetOrganizations() {
 
     let list: List = new List();
     list.fields = [
-      "ApplicationPriceId",
-      "ApplicationId",
-      "PCPM",
-      "MinCount",
-      "MinPrice",
-      "CurrencyId",
-      "Description",
-      "OrgId",
+      "OrganizationId",
+      "OrganizationName"
+    ];
+    list.PageName = "Organizations";
+    list.filter = ["Active eq 1"];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.Organizations = [...data.value];
+      })
+  }
+  GetCustomerInvoice() {
+
+    this.CustomerInvoiceList = [];
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = 'Active eq 1 ';
+    if (this.searchForm.get("searchCustomerId").value == 0) {
+      this.alert.info("Please select Customer", this.optionAutoClose);
+      return;
+    }
+
+    this.loading = true;
+    var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
+
+    if (_searchCustomerId > 0)
+      filterstr += " and CustomerId eq " + _searchCustomerId;
+
+    let list: List = new List();
+    list.fields = [
+      "CustomerInvoiceId",
+      "CustomerId",
+      "DueForMonth",
+      "InvoiceDate",
+      "TotalAmount",
+      "DueDate",
+      "PaymentStatusId",
       "Active"
     ];
-    list.PageName = this.ApplicationPriceListName;
+    list.PageName = this.CustomerInvoiceListName;
+    
     list.filter = [filterstr + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
-        if (_searchAppId > 0)
-          this.ApplicationPriceList = [...data.value];
-        else {
-          this.Applications.forEach(a => {
-            var existing = data.value.filter(f => f.ApplicationId == a.MasterDataId);
-            if (existing.length > 0) {
-              existing[0].Action = false;
-              existing[0].ApplicationName = a.Description;
-              this.ApplicationPriceList.push(existing[0]);
-            }
-            else {
-              this.ApplicationPriceList.push({
-                "ApplicationPriceId": 0,
-                "ApplicationId": a.MasterDataId,
-                "ApplicationName": a.Description,
-                "PCPM": 0,
-                "MinCount": 0,
-                "MinPrice": 0,
-                "CurrencyId": 0,
-                "Description": '',
-                "Active": 0,
-                "Action": false
-              })
-            }
-          })
-        }
-        this.dataSource = new MatTableDataSource<any>(this.ApplicationPriceList);
+        this.CustomerInvoiceList = [...data.value];
+        
+        this.dataSource = new MatTableDataSource<any>(this.CustomerInvoiceList);
         this.loading = false;
       })
   }
@@ -257,7 +248,7 @@ export class ApplicationpriceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.admin.CURRENCY);
+        //this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.admin.CURRENCY);
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
 
         // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
@@ -285,18 +276,19 @@ export class ApplicationpriceComponent implements OnInit {
   }
 
 }
-export interface IApplicationPrice {
-  ApplicationPriceId: number;
-  ApplicationId: number;
-  PCPM: number;
-  MinCount: number;
-  MinPrice: number;
-  CurrencyId: number;
-  Description: string;
+export interface ICustomerInvoice {
+  CustomerInvoiceId: number;
+  CustomerId: number;
+  StudentClassId: number;
+  DueForMonth: number;
+  InvoiceDate: number;
+  TotalAmount: number;
+  DueDate: Date;
+  PaymentStatusId: number;
   OrgId: number;
   Active: number;
-
 }
+
 
 
 

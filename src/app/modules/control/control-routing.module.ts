@@ -15,6 +15,9 @@ import { ApplicationfeatureComponent } from './applicationfeature/applicationfea
 import { SchoolFeeTypesComponent } from './school-fee-types/school-fee-types.component';
 import { VariableConfigComponent } from './variable-config/variable-config.component';
 import { ApplicationpriceComponent } from './applicationprice/applicationprice.component';
+import { GlobaladminboardComponent } from './globaladminboard/globaladminboard.component';
+import { CustomerinvoiceComponent } from './customerinvoice/customerinvoice.component';
+import { CustomerappsComponent } from './customerapps/customerapps.component';
 
 const routes: Routes = [
   {
@@ -22,6 +25,7 @@ const routes: Routes = [
     children: [
       { path: '', component: settingboardComponent },
       { path: 'setting', component: settingboardComponent },
+      { path: 'globaladmin', component: GlobaladminboardComponent },
       { path: 'roleuser', component: roleuseraddComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
@@ -50,5 +54,8 @@ export const settingsComponent = [
   ApplicationfeatureComponent,
   SchoolFeeTypesComponent,
   VariableConfigComponent,
-  ApplicationpriceComponent
+  ApplicationpriceComponent,
+  GlobaladminboardComponent,
+  CustomerinvoiceComponent,
+  CustomerappsComponent
 ]

@@ -150,7 +150,7 @@ export class LoginComponent implements OnInit {
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.shareddata.ChangeDepartment(this.Departments);
 
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.TTPAPP);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
 
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.shareddata.ChangeLocation(this.Locations);

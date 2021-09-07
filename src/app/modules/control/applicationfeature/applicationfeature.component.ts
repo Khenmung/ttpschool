@@ -249,7 +249,7 @@ export class ApplicationfeatureComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.TTPAPP);
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         this.loading=false;
       });
   }
