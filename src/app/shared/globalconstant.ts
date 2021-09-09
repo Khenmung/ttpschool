@@ -64,7 +64,9 @@ export class globalconstants {
                 "DEPARTMENT": "department",
                 "TTPAPP": "application",
                 "bang":"application",
-                "ROLE": "role"
+                "ROLE": "role",
+                "INVOICECOMPONENT": "invoice component",
+                "PAYMENTSTATUS": "payment status"
             },
             "school": {
                 "PERIODTYPE":"period type",

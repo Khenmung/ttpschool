@@ -1,8 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { AddMasterDataComponent } from '../../control/add-master-data/add-master-data.component';
 import { ApplicationfeatureComponent } from '../applicationfeature/applicationfeature.component';
 import { ApplicationpriceComponent } from '../applicationprice/applicationprice.component';
 import { CustomerappsComponent } from '../customerapps/customerapps.component';
 import { CustomerinvoiceComponent } from '../customerinvoice/customerinvoice.component';
+import { CustomerinvoicecomponentsComponent } from '../customerinvoicecomponents/customerinvoicecomponents.component';
+import { ReportconfigdataComponent } from '../reportconfigdata/reportconfigdata.component';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -15,6 +18,9 @@ export class GlobaladminboardComponent implements OnInit {
   @ViewChild(ApplicationpriceComponent) prices: ApplicationpriceComponent;
   @ViewChild(CustomerinvoiceComponent) customerinvoice: CustomerinvoiceComponent;
   @ViewChild(CustomerappsComponent) Customerapps: CustomerappsComponent;
+  @ViewChild(AddMasterDataComponent) masters: AddMasterDataComponent;
+  @ViewChild(CustomerinvoicecomponentsComponent) customerinvoicecomponents: CustomerinvoicecomponentsComponent;
+  @ViewChild(ReportconfigdataComponent) reportconfigdata: ReportconfigdataComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -30,7 +36,7 @@ export class GlobaladminboardComponent implements OnInit {
     //this.masterSettingData.PageLoad();
   }
   tabChanged(event) {
- debugger;
+    debugger;
     //console.log(event);
     switch (event) {
       case 0:
@@ -43,8 +49,18 @@ export class GlobaladminboardComponent implements OnInit {
         this.Customerapps.PageLoad();
         break;
       case 3:
+        this.customerinvoicecomponents.PageLoad();
+        break;
+      case 4:
         this.customerinvoice.PageLoad();
         break;
+      case 5:
+        this.masters.PageLoad();
+        break;
+      case 6:
+        this.reportconfigdata.PageLoad();
+        break;
+
       //      default:
       //   this.masterSettingData.PageLoad();
       //   break;

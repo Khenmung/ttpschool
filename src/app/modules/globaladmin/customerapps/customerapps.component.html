@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Organization Apps</strong></div>
+        <div><strong>Customer Apps</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -9,13 +9,14 @@
             <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
                 <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
                     <mat-form-field appearance="outline">
-                        <mat-label>Organization</mat-label>
-                        <mat-select formControlName="searchOrgId">
+                        <mat-label>Customer</mat-label>
+                        <mat-select formControlName="searchCustomerId">
                             <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
                                 {{item.OrganizationName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
+                   
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
                         (click)="GetCustomerApps()">
                         <mat-icon>search</mat-icon>

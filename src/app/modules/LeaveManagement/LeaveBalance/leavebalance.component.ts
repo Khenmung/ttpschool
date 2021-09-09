@@ -209,7 +209,7 @@ export class LeaveBalanceComponent implements OnInit {
           }
         }
       });
-      console.log('monthArray',monthArray);
+      //console.log('monthArray',monthArray);
     //}, 3000);
     return monthArray;
   }

@@ -60,6 +60,10 @@ const routes: Routes = [
     path: 'school/:id/timetable',
     loadChildren: () => import('./modules/schooltimetable/schooltimetable.module').then(m => m.SchooltimetableModule)
   },
+  {
+    path: 'globaladmin/:id',
+    loadChildren: () => import('./modules/globaladmin/globaladmin.module').then(m => m.GlobaladminModule)
+  },
   { path: '**', component: NotfoundComponent },
   
 

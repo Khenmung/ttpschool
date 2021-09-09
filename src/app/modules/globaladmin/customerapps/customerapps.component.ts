@@ -80,7 +80,7 @@ export class CustomerappsComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
-      searchOrgId: [0]
+      searchCustomerId: [0]
     });
     this.dataSource = new MatTableDataSource<ICustomerApps>([]);
   }
@@ -219,22 +219,20 @@ export class CustomerappsComponent implements OnInit {
   GetCustomerApps() {
 
     this.CustomerAppsList = [];
-    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchOrgId").value == 0) {
+    if (this.searchForm.get("searchCustomerId").value == 0) {
       this.alert.info("Please select organization", this.optionAutoClose);
       return;
     }
 
     this.loading = true;
     
-    var _searchOrgId = this.searchForm.get("searchOrgId").value;
+    var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
 
-    if (_searchOrgId > 0)
-      filterstr += " and OrgId eq " + _searchOrgId;
-    else
-      filterstr += " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-
+    if (_searchCustomerId > 0)
+      filterstr += " and CustomerId eq " + _searchCustomerId;
+    
     let list: List = new List();
     list.fields = [
       "CustomerAppsId",

@@ -11,13 +11,9 @@ import { ControlhomeComponent } from './controlhome/controlhome.component';
 import { BatchdashboardComponent } from './batchdashboard/batchdashboard.component';
 import { AddMasterDataComponent } from './add-master-data/add-master-data.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { ApplicationfeatureComponent } from './applicationfeature/applicationfeature.component';
+import { ApplicationfeatureComponent } from '../globaladmin/applicationfeature/applicationfeature.component';
 import { SchoolFeeTypesComponent } from './school-fee-types/school-fee-types.component';
 import { VariableConfigComponent } from './variable-config/variable-config.component';
-import { ApplicationpriceComponent } from './applicationprice/applicationprice.component';
-import { GlobaladminboardComponent } from './globaladminboard/globaladminboard.component';
-import { CustomerinvoiceComponent } from './customerinvoice/customerinvoice.component';
-import { CustomerappsComponent } from './customerapps/customerapps.component';
 
 const routes: Routes = [
   {
@@ -25,7 +21,6 @@ const routes: Routes = [
     children: [
       { path: '', component: settingboardComponent },
       { path: 'setting', component: settingboardComponent },
-      { path: 'globaladmin', component: GlobaladminboardComponent },
       { path: 'roleuser', component: roleuseraddComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
@@ -51,11 +46,6 @@ export const settingsComponent = [
   ControlhomeComponent,
   BatchdashboardComponent,
   AddMasterDataComponent,
-  ApplicationfeatureComponent,
   SchoolFeeTypesComponent,
   VariableConfigComponent,
-  ApplicationpriceComponent,
-  GlobaladminboardComponent,
-  CustomerinvoiceComponent,
-  CustomerappsComponent
 ]

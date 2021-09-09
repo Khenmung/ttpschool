@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -28,13 +29,20 @@ export class CustomerinvoiceComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   loading = false;
+  CustomerApps = [];
+  CurrentCustomerApps = [];
   Applications = [];
-  //ReportNames = [];
-  Organizations =[];
+  DropDownMonths = [];
+  Organizations = [];
   Currencies = [];
+  PaymentStatus = [];
   CustomerInvoiceListName = "CustomerInvoices";
+  InvoiceComponentListName = "CustomerInvoiceComponents";
   CustomerInvoiceList = [];
-  dataSource: MatTableDataSource<ICustomerInvoice>;
+  InvoiceComponents = [];
+  CustomerInvoiceComponents = [];
+  CustomerAppDataSource: MatTableDataSource<ICustomerAppsDisplay>;
+  CustomerInvoiceDataSource: MatTableDataSource<ICustomerInvoice>;
   allMasterData = [];
   PagePermission = '';
   CustomerInvoiceData = {
@@ -42,22 +50,29 @@ export class CustomerinvoiceComponent implements OnInit {
     CustomerId: 0,
     StudentClassId: 0,
     DueForMonth: 0,
-    InvoiceDate: 0,
+    InvoiceDate: new Date(),
     TotalAmount: 0,
     DueDate: new Date(),
     PaymentStatusId: 0,
     OrgId: 0,
     Active: 0
   };
-  displayedColumns = [
-    "CustomerInvoiceId",
-    "CustomerId",
-    "StudentClassId",
+  InvoiceDisplayedColumns = [
+    "CustomerName",
     "DueForMonth",
     "InvoiceDate",
     "TotalAmount",
     "DueDate",
-    "PaymentStatusId"
+    "PaymentStatusId",
+    "Active",
+    "Action"
+  ];
+  CustomerAppDisplayedColumns = [
+    "ApplicationName",
+    "LoginUserCount",
+    "PersonOrItemCount",
+    "AmountPerMonth",
+    "Currency"
   ];
   searchForm: FormGroup;
   constructor(
@@ -76,9 +91,11 @@ export class CustomerinvoiceComponent implements OnInit {
   ngOnInit(): void {
     debugger;
     this.searchForm = this.fb.group({
-      searchCustomerId: [0]
+      searchOrgId: [0],
+      searchYearMonth:[0]
     });
-    this.dataSource = new MatTableDataSource<ICustomerInvoice>([]);
+    this.CustomerAppDataSource = new MatTableDataSource<ICustomerAppsDisplay>([]);
+    this.CustomerInvoiceDataSource = new MatTableDataSource<ICustomerInvoice>([]);
   }
 
   PageLoad() {
@@ -87,9 +104,11 @@ export class CustomerinvoiceComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
-      //this.GetMasterData();
+      this.DropDownMonths = this.GetSessionFormattedMonths();
       this.GetOrganizations();
+      this.GetCustomerApps();
+      this.GetMasterData();
+
     }
   }
   updateActive(row, value) {
@@ -130,7 +149,7 @@ export class CustomerinvoiceComponent implements OnInit {
     this.CustomerInvoiceData.DueForMonth = row.DueForMonth;
     this.CustomerInvoiceData.InvoiceDate = row.InvoiceDate;
     this.CustomerInvoiceData.PaymentStatusId = row.PaymentStatusId;
-    this.CustomerInvoiceData.TotalAmount = row.TotalAmount;
+    this.CustomerInvoiceData.TotalAmount = row.TotalAmount.toString();
     this.CustomerInvoiceData.Active = row.Active;
     this.CustomerInvoiceData.OrgId = this.LoginUserDetail[0]["orgId"];
 
@@ -189,21 +208,59 @@ export class CustomerinvoiceComponent implements OnInit {
         this.Organizations = [...data.value];
       })
   }
+  GetCustomerInvoiceComponents() {
+
+    var orgIdSearchstr = " and OrgId eq " + this.LoginUserDetail[0]["orgId"]
+    let list: List = new List();
+    list.fields = [
+      "CustomerInvoiceComponentId",
+      "CustomerId",
+      "InvoiceComponentId",
+      "Formula",
+      "Active"      
+    ];
+
+    list.PageName = this.InvoiceComponentListName;
+    //list.lookupFields = ["CustomerInvoice"]
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.CustomerInvoiceComponents = data.value.map(v => {
+          var component = this.InvoiceComponents.filter(inv => inv.MasterDataId == v.InvoiceComponentId);
+          if (component.length > 0) {
+            v.InvoiceComponentName = component[0].MasterDataName;
+            v.Description = component[0].Description;
+            v.Logic = component[0].Logic;
+            v.CustomerId = component[0].CustomerId;
+          }
+          return v;
+        });
+        this.loading = false;
+      })
+  }
   GetCustomerInvoice() {
 
     this.CustomerInvoiceList = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchCustomerId").value == 0) {
+    if (this.searchForm.get("searchOrgId").value == 0) {
       this.alert.info("Please select Customer", this.optionAutoClose);
+      return;
+    }
+    if (this.searchForm.get("searchYearMonth").value == 0) {
+      this.alert.info("Please select year month", this.optionAutoClose);
       return;
     }
 
     this.loading = true;
-    var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
+    var _searchCustomerId = this.searchForm.get("searchOrgId").value;
+    var _searchYearMonth = this.searchForm.get("searchYearMonth").value;
 
     if (_searchCustomerId > 0)
       filterstr += " and CustomerId eq " + _searchCustomerId;
+    if (_searchYearMonth > 0)
+      filterstr += " and DueForMonth eq " + _searchYearMonth;
 
     let list: List = new List();
     list.fields = [
@@ -214,33 +271,134 @@ export class CustomerinvoiceComponent implements OnInit {
       "TotalAmount",
       "DueDate",
       "PaymentStatusId",
-      "Active"
+      "Active"     
     ];
+
     list.PageName = this.CustomerInvoiceListName;
-    
+    //list.lookupFields = ["CustomerInvoiceComponents"];
+
     list.filter = [filterstr + orgIdSearchstr];
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
-        this.CustomerInvoiceList = [...data.value];
-        
-        this.dataSource = new MatTableDataSource<any>(this.CustomerInvoiceList);
+        var _SelectedCustomerApps = this.CustomerApps.filter(c => c.CustomerAppsId == _searchCustomerId);
+        this.CurrentCustomerApps = [..._SelectedCustomerApps];
+        if (data.value.length > 0) {
+          this.CustomerInvoiceList = data.value.map(db=>{
+            db.CustomerName =this.Organizations.filter(f=>f.OrganizationId == _searchCustomerId)[0].OrganizationName;
+            return db;
+          });
+        }
+        else {
+          var _TotalAmount = _SelectedCustomerApps.reduce((acc, current) => acc + (+current.AmountPerMonth), 0);
+          var _formula = '';
+          var _custinvComp = this.CustomerInvoiceComponents.filter(c => c.CustomerId == _searchCustomerId);
+          _custinvComp.forEach(inv => {
+            _formula = inv.Formula.length > 0 ? inv.Formula : inv.Logic;
+            if (inv.Logic.length > 0) {
+              _formula = inv.Logic.replaceAll('[TotalAmount]', _TotalAmount);
+              _TotalAmount = evaluate(_formula);
+            }
+
+          })
+          const _DueDate = new Date();
+          _DueDate.setDate(_DueDate.getDate() + 10);
+
+          this.CustomerInvoiceList.push({
+            "CustomerInvoiceId": 0,
+            "CustomerId": _searchCustomerId,
+            "CustomerName":this.Organizations.filter(f=>f.OrganizationId == _searchCustomerId)[0].OrganizationName,
+            "DueForMonth": +_searchYearMonth,
+            "InvoiceDate": new Date(),
+            "TotalAmount": _TotalAmount,
+            "DueDate": _DueDate,
+            "PaymentStatusId": this.PaymentStatus.filter(p => p.MasterDataName.toLowerCase() == 'pending')[0].MasterDataId,
+            "Active": 0,
+            "Action": false
+          })
+        }
+        console.log('Organizations',this.Organizations)
+        this.CustomerInvoiceDataSource = new MatTableDataSource<any>(this.CustomerInvoiceList);
         this.loading = false;
       })
   }
+  GetCustomerApps() {
 
+    var filterstr = 'Active eq 1 ';
 
+    let list: List = new List();
+    list.fields = [
+      "CustomerAppsId",
+      "ApplicationPriceId",
+      "LoginUserCount",
+      "PersonOrItemCount",
+      "AmountPerMonth",
+      "Active"
+    ];
+    list.PageName = "CustomerApps";
+    list.filter = [filterstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.CustomerApps = [...data.value];
+      })
+  }
   onBlur(element) {
     element.Action = true;
   }
+  GetSessionFormattedMonths() {
+    var _sessionStartEnd = {
+      StartDate: new Date(),
+      EndDate: new Date()
+    };
+    var Months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ]
+    var monthArray = [];
+    //setTimeout(() => {
 
+    this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
+
+      if (b.length != 0) {
+        _sessionStartEnd = { ...b };
+        //console.log('b',b)
+        var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();
+        var startMonth = new Date(_sessionStartEnd.StartDate).getMonth();
+
+        for (var month = 0; month < 12; month++, startMonth++) {
+          monthArray.push({
+            MonthName: Months[startMonth] + " " + _Year,
+            val: _Year + startMonth.toString().padStart(2, "0")
+          })
+          if (startMonth == 11) {
+            startMonth = -1;
+            _Year++;
+          }
+        }
+      }
+    });
+    //console.log('monthArray',monthArray);
+    //}, 3000);
+    return monthArray;
+  }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "Logic", "ParentId", "Sequence"];
     list.PageName = "MasterDatas";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -248,14 +406,10 @@ export class CustomerinvoiceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.admin.CURRENCY);
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-
-        // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        // this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        // this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        // this.shareddata.ChangeBatch(this.Batches);
-        this.loading = false;
+        this.InvoiceComponents = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.INVOICECOMPONENT);
+        this.PaymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.PAYMENTSTATUS);
+        this.GetCustomerInvoiceComponents();
       });
   }
 
@@ -281,15 +435,28 @@ export interface ICustomerInvoice {
   CustomerId: number;
   StudentClassId: number;
   DueForMonth: number;
-  InvoiceDate: number;
+  InvoiceDate: Date;
   TotalAmount: number;
   DueDate: Date;
   PaymentStatusId: number;
   OrgId: number;
   Active: number;
 }
+export interface ICustomerAppsDisplay {
+  ApplicationName?: string;
+  LoginUserCount?: number;
+  PersonOrItemCount?: number;
+  AmountPerMonth?: number;
+  Currency?: string;
+}
 
-
+export interface ICustomerInvoiceComponent {
+  CustomerInvoiceComponentId: number;
+  CustomerInvoiceId: number;
+  InvoiceComponentId: number;
+  OrgId: number;
+  Active: number;
+}
 
 
 

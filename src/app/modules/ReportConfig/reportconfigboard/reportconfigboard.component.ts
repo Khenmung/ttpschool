@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { OrgreportcolumnsComponent } from '../orgreportcolumns/orgreportcolumns.component';
 import { OrgReportNamesComponent } from '../OrgReportNames/OrgReportNames.component';
 import { ReportConfigComponents } from '../report-configuration-routing.module';
-import { ReportconfigdataComponent } from '../reportconfigdata/reportconfigdata.component';
+import { ReportconfigdataComponent } from '../../globaladmin/reportconfigdata/reportconfigdata.component';
 
 @Component({
   selector: 'app-reportconfigboard',
@@ -11,7 +11,6 @@ import { ReportconfigdataComponent } from '../reportconfigdata/reportconfigdata.
 })
 export class ReportconfigboardComponent implements OnInit {
   @ViewChild(OrgReportNamesComponent) orgreportName: OrgReportNamesComponent;
-  @ViewChild(ReportconfigdataComponent) reportconfigdata: ReportconfigdataComponent;
   @ViewChild(OrgreportcolumnsComponent) reportcolumn: OrgreportcolumnsComponent;
   selectedIndex = 0;
 
@@ -46,9 +45,9 @@ export class ReportconfigboardComponent implements OnInit {
       case 1:
         this.reportcolumn.PageLoad();
         break;
-      case 2:
-        this.reportconfigdata.PageLoad();
-        break;      
+      // case 2:
+      //   this.reportconfigdata.PageLoad();
+      //   break;      
     }
   }
 }

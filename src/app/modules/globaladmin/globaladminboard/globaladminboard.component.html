@@ -12,25 +12,46 @@
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>change_history
+                        <mat-icon>sell
                         </mat-icon> Pricing
                     </ng-template>
                     <app-applicationprice></app-applicationprice>
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>change_history
+                        <mat-icon>apps
                         </mat-icon> Customer Apps
                     </ng-template>
                     <app-customerapps></app-customerapps>
                 </mat-tab>
-                <!-- <mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>grid_view
+                        </mat-icon> Customer Invoice Components
+                    </ng-template>
+                    <app-customerinvoicecomponents></app-customerinvoicecomponents>
+                </mat-tab>
+                <mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>change_history
                         </mat-icon> Customer Invoice
                     </ng-template>
                     <app-customerinvoice></app-customerinvoice>
-                </mat-tab> -->
+                </mat-tab>                
+                     <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>change_history
+                        </mat-icon> Masters
+                    </ng-template>
+                    <app-add-master-data></app-add-master-data>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>Report Config Data
+                    </ng-template>
+                    <app-reportconfigdata></app-reportconfigdata>
+                </mat-tab>
+                
             </mat-tab-group>
         </div>
     </mat-card-content>

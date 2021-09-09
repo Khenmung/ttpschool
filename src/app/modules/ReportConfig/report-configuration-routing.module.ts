@@ -4,7 +4,7 @@ import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { OrgreportcolumnsComponent } from './orgreportcolumns/orgreportcolumns.component';
 import { OrgReportNamesComponent } from './OrgReportNames/OrgReportNames.component';
 import { ReportconfigboardComponent } from './reportconfigboard/reportconfigboard.component';
-import { ReportconfigdataComponent } from './reportconfigdata/reportconfigdata.component';
+//import { ReportconfigdataComponent } from '../globaladmin/reportconfigdata/reportconfigdata.component';
 
 const routes: Routes = [
   {
@@ -21,7 +21,7 @@ const routes: Routes = [
 export class ReportConfigurationRoutingModule { }
 export const ReportConfigComponents = [
   OrgReportNamesComponent,
-  ReportconfigdataComponent,
+  //ReportconfigdataComponent,
   ReportconfigboardComponent,
   OrgreportcolumnsComponent
 ]
