@@ -1,0 +1,34 @@
+<mat-card>
+    <mat-card-title>Class/Course </mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <div style="margin:5px">
+            <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>loyalty</mat-icon> Class/Course Detail
+                    </ng-template>
+                    <app-classdetail></app-classdetail>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>lightbulb</mat-icon> Class Fee
+                    </ng-template>
+                    <app-dashboardclassfee></app-dashboardclassfee>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>foundation</mat-icon> Class Prerequisites
+                    </ng-template>
+                    <app-classprerequisite></app-classprerequisite>
+                </mat-tab>
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>info</mat-icon>Class Master
+                    </ng-template>
+                    <app-classmasterdashboard></app-classmasterdashboard>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -2,8 +2,8 @@
     <strong>Class Fee definition statuses for the current batch.</strong>
     <mat-divider></mat-divider>
     <br>
-    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="center space-around">
-        <div *ngFor="let item of ClassStatuses">{{item.class}}
+    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="center space-between">
+        <div *ngFor="let item of ClassStatuses">{{item.className}}
             <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
             <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
         </div>
@@ -20,8 +20,8 @@
         <mat-form-field appearance="outline">
             <mat-label>Class</mat-label>
             <mat-select formControlName="ClassId" #Class>
-                <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
-                    {{p.MasterDataName}}
+                <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                    {{p.ClassName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -75,12 +75,12 @@
                 </mat-checkbox>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Month">
-            <mat-header-cell *matHeaderCellDef>Month</mat-header-cell>
+        <ng-container matColumnDef="YearMonth">
+            <mat-header-cell *matHeaderCellDef>Year Month</mat-header-cell>
             <mat-cell style="justify-content: center;" *matCellDef="let element">
                 <mat-form-field [style.width.px]="80">
-                    <mat-select [(ngModel)]="element.Month" [value]="element.Month" (selectionChange)="onBlur(element)">
-                        <mat-option *ngFor="let item of Months" [value]="item.val">{{item.month}}</mat-option>
+                    <mat-select [(ngModel)]="element.YearMonth" [value]="element.YearMonth" (selectionChange)="onBlur(element)">
+                        <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </mat-cell>

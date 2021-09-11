@@ -365,7 +365,7 @@ export class FeereceiptComponent implements OnInit {
           })[0].MasterDataName;
           this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
             return cls.MasterDataId == this.studentInfoTodisplay.ClassId
-          })[0].MasterDataName;
+          })[0].ClassName;
 
           this.GetStudentFeePaymentDetails(0);
         }

@@ -30,6 +30,13 @@ export class ContentService {
     list.PageName = "EmpEmployees";
     return this.dataservice.get(list);
   }
+  GetClasses(orgId) {
+    let list = new List();
+    list.fields = ["*"];
+    list.filter =["Active eq 1 and OrgId eq " + orgId];
+    list.PageName = "ClassMasters";
+    return this.dataservice.get(list);
+  }
 
   getMasterText(arr, itemId) {
     var filtered = arr.filter(f => f.MasterDataId == itemId);
@@ -58,7 +65,7 @@ export class ContentService {
       'Dec'
     ]
     var monthArray = [];
-
+    debugger;
     this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
       if (b.length != 0) {
         _sessionStartEnd = b

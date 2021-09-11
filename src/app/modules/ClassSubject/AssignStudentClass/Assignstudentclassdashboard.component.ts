@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -78,6 +79,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   Students: IStudent[] = [];
   filteredOptions: Observable<IStudent[]>;
   constructor(
+    private contentservice: ContentService,
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -94,13 +96,6 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       searchClassId: [0],
       searchGenderId: [0],
     });
-    // this.filteredOptions = this.searchForm.get("searchStudentName").valueChanges
-    //   .pipe(
-    //     startWith(''),
-    //     map(value => typeof value === 'string' ? value : value.Name),
-    //     map(Name => Name ? this._filter(Name) : this.Students.slice())
-    //   );
-    //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
   }
   private _filter(name: string): IStudent[] {
 
@@ -119,6 +114,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data:any)=>{
+        this.Classes= [...data.value];
+      })
+      this.shareddata.ChangeClasses(this.Classes);
       this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
@@ -140,7 +139,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         ];
       //console.log('log', this.CheckPermission)
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
+      
+      //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       //this.shareddata.CurrentSelectedBatchId.subscribe(a => this.SelectedBatchId = a);
       this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
       //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
@@ -296,7 +296,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             ClassId: s.ClassId,
             StudentId: s.StudentId,
             Student: s.Student.FirstName + " " + s.Student.LastName,
-            ClassName: this.Classes.filter(c => c.MasterDataId == s.ClassId)[0].MasterDataName,
+            ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
             FeeTypeId: s.FeeTypeId,
             FeeType: _feetype,
             RollNo: s.RollNo,
@@ -490,11 +490,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         //this.shareddata.ChangeFeeType(this.FeeTypes);
-        this.shareddata.ChangeClasses(this.Classes);
+        //this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeBatch(this.Batches);
         //this.GetStudents();
         this.loading = false;

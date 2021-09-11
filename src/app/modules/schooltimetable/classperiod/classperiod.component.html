@@ -11,8 +11,8 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Class</mat-label>
                         <mat-select formControlName="searchClassId">
-                            <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
-                                {{item.MasterDataName}}
+                            <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                                {{item.ClassName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -26,8 +26,8 @@
                     <mat-form-field appearance="outline" [style.width.px]="300">
                         <mat-label>Replicate to classes</mat-label>
                         <mat-select formControlName="searchClassIdApplyAll" multiple>
-                            <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
-                                {{item.MasterDataName}}
+                            <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                                {{item.ClassName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

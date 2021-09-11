@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -60,7 +61,7 @@ export class ExamtimetableComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
+    private contentservice: ContentService,
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
@@ -81,7 +82,12 @@ export class ExamtimetableComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
@@ -112,7 +118,7 @@ export class ExamtimetableComponent implements OnInit {
         debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
-          var _class = this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName;
+          var _class = this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName;
           var _subject = this.Subjects.filter(c => c.MasterDataId == item.SubjectId)[0].MasterDataName;
           return {
             ClassSubjectId: item.ClassSubjectId,
@@ -304,7 +310,6 @@ export class ExamtimetableComponent implements OnInit {
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
 
         this.shareddata.ChangeBatch(this.Batches);

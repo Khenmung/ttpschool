@@ -154,7 +154,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     'Amount'
   ]
   constructor(
-    private contentService: ContentService,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -169,7 +169,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   PageLoad() {
     this.StudentBillList = [];
     this.billdataSource = new MatTableDataSource<any>(this.StudentBillList);
-    this.Months =this.contentService.GetSessionFormattedMonths();
+    this.Months =this.contentservice.GetSessionFormattedMonths();
     this.loginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
@@ -184,7 +184,14 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
     this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
     this.GetMasterData();
-    //this.GetStudentClass();
+    this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+    if (this.Classes.length == 0) {
+      this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+
+      });
+    }
+
   }
   public calculateTotal() {
     this.TotalAmount = this.StudentBillList.reduce((accum, curr) => accum + curr.Amount, 0);
@@ -204,7 +211,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -264,7 +271,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           })[0].MasterDataName;
           this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
             return cls.MasterDataId == this.studentInfoTodisplay.ClassId
-          })[0].MasterDataName;
+          })[0].ClassName;
           this.studentInfoTodisplay.StudentFeeType = this.FeeTypes.filter(f => {
             return f.FeeTypeId == this.studentInfoTodisplay.FeeTypeId
           })[0].FeeTypeName;

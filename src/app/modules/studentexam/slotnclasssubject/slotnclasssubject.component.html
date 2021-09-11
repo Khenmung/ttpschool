@@ -19,8 +19,8 @@
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassId" multiple>
                         <!-- <mat-option [value]="0">--class--</mat-option> -->
-                        <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
+                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                            {{item.ClassName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

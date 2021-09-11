@@ -1,36 +1,28 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ClasssubjectdashboardComponent } from '../classsubjectmapping/classsubjectdashboard.component';
+import { SubjectDetailComponent } from '../subjectdetail/subjectdetail.component';
 import { StudentSubjectMarkCompComponent } from '../student-subject-mark-comp/student-subject-mark-comp.component';
 import { AssignStudentclassdashboardComponent } from '../AssignStudentClass/Assignstudentclassdashboard.component';
 import { studentsubjectdashboardComponent } from '../studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from '../subject-types/subject-types.component';
-import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
-//import { ClasssubjectteacherComponent } from '../classsubjectteacher/classsubjectteacher.component';
-import { DashboardclassfeeComponent } from '../classfee/dashboardclassfee/dashboardclassfee.component';
 import { ClassperiodComponent } from '../../schooltimetable/classperiod/classperiod.component';
 
 @Component({
-  selector: 'app-classsubjectboard',
-  templateUrl: './classsubjectboard.component.html',
-  styleUrls: ['./classsubjectboard.component.scss']
+  selector: 'app-subjectboard',
+  templateUrl: './subjectboard.component.html',
+  styleUrls: ['./subjectboard.component.scss']
 })
-export class ClassSubjectboardComponent implements OnInit {
+export class SubjectBoardComponent implements OnInit {
   @ViewChild(SubjectTypesComponent) subjecttypes: SubjectTypesComponent;
   @ViewChild(StudentSubjectMarkCompComponent) subjectmarkComponent: StudentSubjectMarkCompComponent;
-  @ViewChild(ClasssubjectdashboardComponent) classsubject: ClasssubjectdashboardComponent;
+  @ViewChild(SubjectDetailComponent) subjectdetail: SubjectDetailComponent;
   @ViewChild(studentsubjectdashboardComponent) studentsubject: studentsubjectdashboardComponent;
   @ViewChild(AssignStudentclassdashboardComponent) studentclass: AssignStudentclassdashboardComponent;
-  @ViewChild(ClassmasterdashboardComponent) teacherMapping: ClassmasterdashboardComponent;
-  @ViewChild(DashboardclassfeeComponent) dashboardclassfee: DashboardclassfeeComponent;
   @ViewChild(ClassperiodComponent) Classperiod: ClassperiodComponent;
   selectedIndex = 0;
   constructor() { }
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.dashboardclassfee.PageLoad();
-    }, 50);
-
+    
   }
   tabChanged(tabChangeEvent: number) {
     this.selectedIndex = tabChangeEvent;
@@ -50,27 +42,21 @@ export class ClassSubjectboardComponent implements OnInit {
     debugger;
     switch (indx) {
       case 0:
-        this.dashboardclassfee.PageLoad();
-        break;
-      case 1:
         this.subjecttypes.PageLoad();
         break;
+      case 1:
+        this.subjectdetail.PageLoad();
+        break;
       case 2:
-        this.classsubject.PageLoad();
-        break;
-      case 3:
-        this.teacherMapping.PageLoad();
-        break;
-      case 4:
         this.subjectmarkComponent.PageLoad();
         break;
-      case 5:
+      case 3:
         this.studentclass.PageLoad();
         break;
-      case 6:
+      case 4:
         this.studentsubject.PageLoad();
         break;
-      case 7:
+      case 5:
         this.Classperiod.PageLoad();
         break;
 

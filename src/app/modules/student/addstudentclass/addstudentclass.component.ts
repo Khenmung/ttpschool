@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -39,7 +40,7 @@ export class AddstudentclassComponent implements OnInit {
   FeeType = [];
   studentclassForm: FormGroup;
   StudentName = '';
-  loginUserDetail = [];
+  LoginUserDetail = [];
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
@@ -53,7 +54,9 @@ export class AddstudentclassComponent implements OnInit {
     Active: 1,
     OrgId: 0
   }
-  constructor(private dataservice: NaomitsuService,
+  constructor(
+    private contentservice: ContentService,
+    private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private aRoute: ActivatedRoute,
     private alert: AlertService,
@@ -76,16 +79,27 @@ export class AddstudentclassComponent implements OnInit {
   }
   PageLoad() {
     debugger;
-    this.loginUserDetail = this.tokenstorage.getUserDetail();
-    this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
-    this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
-    this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
-    this.shareddata.CurrentClasses.subscribe(cls => this.Classes = cls);
-    this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
-    this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
-    this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.GetStudentClass();
+    this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    if (this.LoginUserDetail == null)
+      this.nav.navigate(['/auth/login']);
+    else {
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
+
+
+      this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
+      this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
+      this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
+      this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
+      this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
+      this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.GetStudentClass();
+    }
   }
   get f() { return this.studentclassForm.controls }
 
@@ -98,12 +112,8 @@ export class AddstudentclassComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
-        //this.FeeType = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
         this.aRoute.paramMap.subscribe(param => {
@@ -131,7 +141,7 @@ export class AddstudentclassComponent implements OnInit {
       return;
     }
     let list: List = new List();
-    list.fields = ["StudentId", "FirstName","LastName", "FatherName", "MotherName"];
+    list.fields = ["StudentId", "FirstName", "LastName", "FatherName", "MotherName"];
     list.PageName = "Students";
     list.filter = ["Active eq 1 and " + filterOrgId];
 
@@ -249,7 +259,7 @@ export class AddstudentclassComponent implements OnInit {
       this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
       this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
       this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
-      this.studentclassData.OrgId = this.loginUserDetail[0]["orgId"];
+      this.studentclassData.OrgId = this.LoginUserDetail[0]["orgId"];
       this.studentclassData.StudentId = this.StudentId;
       if (this.StudentClassId == 0)
         this.insert();

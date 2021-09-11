@@ -19,7 +19,6 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Certificates</mat-label>
                     <mat-select formControlName="searchCertificateTypeId" #cerId>
-                        <!-- <mat-option [value]="0">--class--</mat-option> -->
                         <mat-option *ngFor="let item of CertificateTypes" [value]="item.MasterDataId">
                             {{item.MasterDataName}}
                         </mat-option>

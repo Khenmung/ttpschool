@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -10,11 +11,11 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-classsubjectdashboard',
-  templateUrl: './classsubjectdashboard.component.html',
-  styleUrls: ['./classsubjectdashboard.component.scss']
+  selector: 'app-subjectdetail',
+  templateUrl: './subjectdetail.component.html',
+  styleUrls: ['./subjectdetail.component.scss']
 })
-export class ClasssubjectdashboardComponent implements OnInit {
+export class SubjectDetailComponent implements OnInit {
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
@@ -32,8 +33,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
   CheckPermission = '';
   StandardFilterWithBatchId = '';
   loading = false;
-  WorkAccounts =[];
-  Teachers =[];
+  WorkAccounts = [];
+  Teachers = [];
   Classes = [];
   Subjects = [];
   SubjectTypes = [];
@@ -55,6 +56,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   ClassSubjectData = {
     ClassSubjectId: 0,
     ClassId: 0,
+    Credits:0,
     OrgId: 0,
     BatchId: 0,
     SubjectId: 0,
@@ -62,10 +64,9 @@ export class ClasssubjectdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    // 'ClassSubjectId',
-    //'ClassName',
     'SubjectName',
     'SubjectTypeId',
+    'Credits',
     'TeacherId',
     'Active',
     'Action'
@@ -74,6 +75,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   Students: any;
 
   constructor(
+    private contentservice: ContentService,
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -93,18 +95,68 @@ export class ClasssubjectdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+
+
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
       //console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
+      //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
       this.GetMasterData();
       this.GetSubjectTypes();
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+
+        });
+      }
     }
   }
+  GetSessionFormattedMonths() {
+    var _sessionStartEnd = {
+      StartDate: new Date(),
+      EndDate: new Date()
+    };
+    var Months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ]
+    var monthArray = [];
+    //setTimeout(() => {
 
+    this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
+
+      if (b.length != 0) {
+        _sessionStartEnd = { ...b };
+        //console.log('b',b)
+        var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();
+        var startMonth = new Date(_sessionStartEnd.StartDate).getMonth();
+
+        for (var month = 0; month < 12; month++, startMonth++) {
+          monthArray.push({
+            MonthName: Months[startMonth] + " " + _Year,
+            val: _Year + startMonth.toString().padStart(2, "0")
+          })
+          if (startMonth == 11) {
+            startMonth = -1;
+            _Year++;
+          }
+        }
+      }
+    });
+    return monthArray;
+  }
   GetClassSubjectId(event) {
     this.ClassSubjectId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
@@ -157,6 +209,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
       'ClassSubjectId',
       'SubjectId',
       'ClassId',
+      'Credits',
       'SubjectTypeId',
       'TeacherId',
       'Active',
@@ -178,7 +231,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
             SubjectId: item.SubjectId,
             SubjectTypeId: item.SubjectTypeId,
             ClassId: item.ClassId,
-            TeacherId:item.TeacherId,
+            Credits:item.Credits,
+            TeacherId: item.TeacherId,
             SelectHowMany: item.SubjectType.SelectHowMany,
             Active: item.Active
           }
@@ -198,27 +252,26 @@ export class ClasssubjectdashboardComponent implements OnInit {
               SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
               SubjectTypeId: existing[0].SubjectTypeId,
               SelectHowMany: existing[0].SelectHowMany,
-              TeacherId:existing[0].TeacherId,
-              //SubjectType: this.SubjectTypes.filter(t => t.SubjectTypeId == existing[0].SubjectTypeId)[0].SubjectTypeName,
-              //ClassName: this.Classes.filter(c => c.MasterDataId == existing[0].ClassId)[0].MasterDataName,
+              TeacherId: existing[0].TeacherId,
+              Credits: existing[0].Credits,
               ClassId: existing[0].ClassId,
               Active: existing[0].Active,
-              Action:false
+              Action: false
             });
           }
           else {
-          
+
             this.ClassSubjectList.push({
               ClassSubjectId: 0,
               SubjectId: s.MasterDataId,
               SubjectTypeId: 0,
               SelectHowMany: 0,
+              Credits: 0,
               ClassId: this.searchForm.get("searchClassId").value,
-              //ClassName: this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
               SubjectName: s.MasterDataName,
-              TeacherId:0,
+              TeacherId: 0,
               Active: 0,
-              Action:false
+              Action: false
             });
           }
           //})
@@ -242,9 +295,8 @@ export class ClasssubjectdashboardComponent implements OnInit {
       //searchBatchId: this.SelectedBatchId
     });
   }
-  onBlur(element)
-  {
-    element.Action=true;
+  onBlur(element) {
+    element.Action = true;
   }
   updateActive(row, value) {
 
@@ -277,7 +329,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
   updateSelectHowMany(row) {
     debugger;
     row.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == row.SubjectTypeId)[0].SelectHowMany;
-    row.Action =true;
+    row.Action = true;
   }
   UpdateOrSave(row) {
 
@@ -320,6 +372,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
           this.ClassSubjectData.Active = row.Active;
           this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
           this.ClassSubjectData.ClassId = row.ClassId;
+          this.ClassSubjectData.Credits = row.Credits;
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -336,7 +389,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
             delete this.ClassSubjectData["CreatedBy"];
             this.ClassSubjectData["UpdatedDate"] = new Date();
             this.ClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+            this.update(row);
           }
         }
       });
@@ -350,16 +403,18 @@ export class ClasssubjectdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action =false;
           row.ClassSubjectId = data.ClassSubjectId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
-  update() {
+  update(row) {
 
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, this.ClassSubjectData.ClassSubjectId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action =false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -413,7 +468,7 @@ export class ClasssubjectdashboardComponent implements OnInit {
 
       })
   }
-    GetMasterData() {
+  GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
 
@@ -428,12 +483,9 @@ export class ClasssubjectdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
 
-        this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.shareddata.ChangeBatch(this.Batches);
         this.GetSubjectTypes();
@@ -462,14 +514,14 @@ export class ClasssubjectdashboardComponent implements OnInit {
 export interface IClassSubject {
   ClassSubjectId: number;
   ClassId: number;
-  //ClassName: string;
+  Credits: number;
   SubjectId: number;
   SubjectName: string;
   SubjectTypeId: number;
   SelectHowMany: number;
-  TeacherId:number,
+  TeacherId: number,
   Active;
-  Action:false;
+  Action: false;
 }
 export interface ITeachers {
   TeacherId: number;

@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -50,6 +51,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     Active: 0
   };
   constructor(
+    private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
@@ -75,6 +77,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
     this.SelectedBatchId = +this.token.getSelectedBatchId();
     this.GetMasterData();
+    if (this.Classes.length == 0) {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+
+      });
+    }
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   displayedColumns = ['ClassSubject', 'SubjectComponent', 'FullMark', 'PassMark', 'Active', 'Action'];
@@ -87,9 +95,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   UpdateSelectedBatchId(value) {
     this.SelectedBatchId = value;
   }
+  onBlur(element)
+  {
+    element.Action =true;
+  }
   UpdateOrSave(row) {
     debugger;
-    this.loading =true;
+    this.loading = true;
     let checkFilterString = "1 eq 1 " +
       " and ClassSubjectId eq " + row.ClassSubjectId +
       " and SubjectComponentId eq " + row.SubjectComponentId
@@ -105,12 +117,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.loading =false;
+          this.loading = false;
           this.alert.error("Record already exists!", this.options);
         }
         else {
           this.classSubjectComponentData.Active = row.Active;// == true ? 1 : 0;
-          this.classSubjectComponentData.ClassSubjectMarkComponentId =row.ClassSubjectMarkComponentId;
+          this.classSubjectComponentData.ClassSubjectMarkComponentId = row.ClassSubjectMarkComponentId;
           this.classSubjectComponentData.ClassSubjectId = row.ClassSubjectId;
           this.classSubjectComponentData.SubjectComponentId = row.SubjectComponentId;
           this.classSubjectComponentData.FullMark = row.FullMark;
@@ -144,7 +156,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading=false;
+          this.loading = false;
           row.Action = false;
           row.ClassSubjectMarkComponentId = data.ClassSubjectMarkComponentId;
           this.alert.success("Data saved successfully", this.options);
@@ -157,7 +169,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, this.classSubjectComponentData.ClassSubjectMarkComponentId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading=false;
+          this.loading = false;
           row.Action = false;
           this.alert.success("Data updated successfully", this.options);
           //this.router.navigate(['/home/pages']);
@@ -181,12 +193,10 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
-        
+        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+
         this.shareddata.ChangeBatch(this.Batches);
-        
+
         this.GetClassSubject();
         this.loading = false;
       });
@@ -221,7 +231,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   // }
   GetClassSubject() {
 
-    
+
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
@@ -237,8 +247,15 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(cs => {
-          var _class = this.Classes.filter(c => c.MasterDataId == cs.ClassId)[0].MasterDataName;
-          var _subject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)[0].MasterDataName;
+          var _class = '';
+          var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
+          if (objclass.length > 0)
+            _class = objclass[0].ClassName;
+
+          var _subject = ''
+          var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
+          if (objsubject.length > 0)
+            _subject = objsubject[0].MasterDataName;
           return {
             ClassSubjectId: cs.ClassSubjectId,
             Active: cs.Active,
@@ -252,12 +269,11 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   GetClassSubjectComponent() {
 
-    if (this.searchForm.get("ClassId").value == 0)
-    {
-      this.alert.error("Please select class.",this.options.autoClose);
+    if (this.searchForm.get("ClassId").value == 0) {
+      this.alert.error("Please select class.", this.options.autoClose);
       return;
     }
-    this.loading=true;
+    this.loading = true;
     let list: List = new List();
     list.fields = [
       "ClassSubjectMarkComponentId",
@@ -324,12 +340,11 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         //this.ELEMENT_DATA=this.ELEMENT_DATA.sort((a,b)=>(a.PaymentOrder>b.PaymentOrder?1:-1))
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
-        this.loading=false;
+        this.loading = false;
         //console.log("element data", this.ELEMENT_DATA)
       });
   }
-  updateActive(row, value) {
-    debugger;
+  updateActive(row) {
     row.Action = true;
     row.Active = row.Active == 1 ? 0 : 1;
   }

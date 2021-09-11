@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,6 +13,8 @@ import { AddstudentfeepaymentComponent } from '../studentfeepayment/addstudentfe
 import { FeereceiptComponent } from '../studentfeepayment/feereceipt/feereceipt.component';
 import { StudentDocumentComponent } from '../StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
 import { SharedataService } from '../../../shared/sharedata.service';
+import { ContentService } from 'src/app/shared/content.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-addstudent',
@@ -30,6 +31,7 @@ export class AddstudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  loginUserDetail=[];
   StudentLeaving = false;
   StudentName = '';
   StudentClassId = 0;
@@ -108,15 +110,17 @@ export class AddstudentComponent implements OnInit {
     });
   }
 
-  constructor(private dataservice: NaomitsuService,
-    private routeUrl: ActivatedRoute,
+  constructor(
+    private contentservice: ContentService,
+    private dataservice: NaomitsuService,
     private route: Router,
     private alert: AlertService,
     private fb: FormBuilder,
-    private formatdate: DatePipe,
     private alertMessage: AlertService,
     private fileUploadService: FileUploadService,
-    private shareddata: SharedataService
+    private shareddata: SharedataService,
+    private tokenService: TokenStorageService,
+
   ) {
     this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
     this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
@@ -180,9 +184,16 @@ export class AddstudentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.loginUserDetail = this.tokenService.getUserDetail();
     if (this.Id > 0)
       this.GetStudent();
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];  
+        });
+      }
+  
   }
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
@@ -250,7 +261,7 @@ export class AddstudentComponent implements OnInit {
         this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
         this.LocationId = this.Location.filter(location => location.MasterDataName.toLowerCase() == "lamka")[0].MasterDataId;
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;

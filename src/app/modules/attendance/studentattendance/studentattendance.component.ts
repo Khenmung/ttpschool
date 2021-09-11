@@ -4,6 +4,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -41,9 +42,11 @@ export class StudentAttendanceComponent implements OnInit {
   Sections = [];
   Classes = [];
   Subjects = [];
+  ClassSubjects = [];
   SelectedBatchId = 0;
   Batches = [];
   AttendanceStatus = [];
+  FilteredClassSubjects = [];
   StudentAttendanceList: IStudentAttendance[] = [];
   StudentClassList = [];
   dataSource: MatTableDataSource<IStudentAttendance>;
@@ -51,14 +54,14 @@ export class StudentAttendanceComponent implements OnInit {
   searchForm = this.fb.group({
     searchClassId: [0],
     searchSectionId: [0],
-    searchAttendanceDate: [new Date()]
+    searchClassSubjectId: [0]
   });
   StudentClassSubjectId = 0;
   StudentAttendanceData = {
     AttendanceId: 0,
     StudentClassId: 0,
     AttendanceStatus: 0,
-    AttendanceDate: Date,
+    AttendanceDate: new Date(),
     Remarks: '',
     BatchId: 0,
     OrgId: 0
@@ -73,6 +76,7 @@ export class StudentAttendanceComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -90,16 +94,23 @@ export class StudentAttendanceComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
 
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
-
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      })
+      this.GetClassSubject();
     }
 
   }
   PageLoad() {
+
+  }
+  bindClassSubject() {
+    var clssubjectId = this.searchForm.get("searchClassId").value;
+    this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassSubjectId == clssubjectId);
 
   }
   checkall(value) {
@@ -124,12 +135,18 @@ export class StudentAttendanceComponent implements OnInit {
     else {
       filterStr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
     }
-    if (this.searchForm.get("searchSectionId").value == 0) {
-      this.alert.error("Please enter section.", this.optionAutoClose);
+    var filterStrClsSub ='';
+    var _sectionId = this.searchForm.get("searchSectionId").value;
+    var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
+    if (_sectionId == 0 && _classSubjectId == 0) {
+      this.alert.error("Please select either section or subject.", this.optionAutoClose);
       return;
     }
-    else {
-      filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
+    if (_sectionId > 0) {
+      filterStr += " and SectionId eq " + _sectionId;
+    }
+    if (_classSubjectId > 0) {
+      filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
     }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
@@ -158,7 +175,7 @@ export class StudentAttendanceComponent implements OnInit {
     this.StudentClassList = [];
     this.dataservice.get(list)
       .subscribe((studentclass: any) => {
-        
+
         var _class = '';
         var _section = '';
         var _ClassRollNoSection = '';
@@ -169,9 +186,6 @@ export class StudentAttendanceComponent implements OnInit {
         }
 
         this.StudentClassList = studentclass.value.map(item => {
-          //_class = this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName;
-          //_section = this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName;
-          //_ClassRollNoSection = _class + ' - ' + item.RollNo + ' - ' + _section;
           return {
             StudentClassId: item.StudentClassId,
             Active: item.Active,
@@ -181,20 +195,15 @@ export class StudentAttendanceComponent implements OnInit {
             StudentRollNo: item.Student.FirstName + " " + item.Student.LastName + "-" + item.RollNo
           }
         })
-        var date = this.datepipe.transform(this.searchForm.get("searchAttendanceDate").value, 'yyyy-MM-dd');
-        var fromDate = new Date(date);
-        if (fromDate > new Date()) {
-          this.alert.error("Attendance date cannot be greater than today's date", this.optionAutoClose);
-          return;
-        }
-        //var toDate = fromDate.setDate(fromDate.getDate() + 1);
-        //console.log('date',this.datepipe.transform(toDate,'dd/MM/yyyy'));
+        var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+
         let list: List = new List();
         list.fields = [
           "AttendanceId",
           "StudentClassId",
           "AttendanceDate",
           "AttendanceStatus",
+          "ClassSubjectId",
           "Remarks",
           "OrgId",
           "BatchId"
@@ -202,8 +211,7 @@ export class StudentAttendanceComponent implements OnInit {
         list.PageName = "Attendances";
         list.lookupFields = ["StudentClass"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          " and AttendanceDate eq datetime'" + date + "'"]; //+ //"'" + //"T00:00:00.000Z'" +
-          //" and AttendanceDate le datetime'" + this.datepipe.transform(toDate, 'yyyy-MM-dd')  + "'" //+  "T00:00:00.000Z'"];
+          " and AttendanceDate eq datetime'" + date + "'" + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
@@ -216,6 +224,7 @@ export class StudentAttendanceComponent implements OnInit {
                   StudentClassId: existing[0].StudentClassId,
                   AttendanceStatus: existing[0].AttendanceStatus,
                   AttendanceDate: existing[0].AttendanceDate,
+                  ClassSubjectId: existing[0].ClassSubjectId,
                   Remarks: existing[0].Remarks,
                   StudentRollNo: sc.StudentRollNo,
                   Action: false
@@ -227,6 +236,7 @@ export class StudentAttendanceComponent implements OnInit {
                   StudentClassId: sc.StudentClassId,
                   AttendanceStatus: 0,
                   AttendanceDate: new Date(),
+                  ClassSubjectId: 0,
                   Remarks: '',
                   StudentRollNo: sc.StudentRollNo,
                   Action: false
@@ -274,9 +284,10 @@ export class StudentAttendanceComponent implements OnInit {
     })
   }
   UpdateOrSave(row, indx) {
+    var today = new Date();
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate eq datetime'" + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') + "' and " +
+      " and AttendanceDate eq datetime'" + this.datepipe.transform(today, 'yyyy-MM-dd') + "' and " +
       this.StandardFilter;
 
     if (row.AttendanceId > 0)
@@ -295,7 +306,7 @@ export class StudentAttendanceComponent implements OnInit {
         }
         else {
           this.StudentAttendanceData.StudentClassId = row.StudentClassId;
-          this.StudentAttendanceData.AttendanceDate = row.AttendanceDate;
+          this.StudentAttendanceData.AttendanceDate = today;
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
@@ -353,6 +364,40 @@ export class StudentAttendanceComponent implements OnInit {
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
+  GetClassSubject() {
+
+    let list: List = new List();
+    list.fields = [
+      'ClassSubjectId',
+      'SubjectId',
+      'ClassId',
+    ];
+
+    list.PageName = "ClassSubjects";
+    list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId];
+    this.ClassSubjects = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        //  console.log('data.value', data.value);
+        this.ClassSubjects = data.value.map(item => {
+          var _classname = ''
+          var objCls = this.Classes.filter(f => f.ClassId == item.ClassId)
+          if (objCls.length > 0)
+            _classname = objCls[0].ClassName;
+
+          var _subjectName = '';
+          var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
+          if (objsubject.length > 0)
+            _subjectName = objsubject[0].MasterDataName;
+
+          return {
+            ClassSubjectId: item.ClassSubjectId,
+            ClassSubject: _classname + "-" + _subjectName
+          }
+        })
+      })
+  }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -368,11 +413,11 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
 
-        this.shareddata.ChangeClasses(this.Classes);
+        //this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.loading = false;
       });
@@ -398,6 +443,7 @@ export interface IStudentAttendance {
   AttendanceId: number;
   StudentClassId: number;
   AttendanceStatus: number;
+  ClassSubjectId: number;
   AttendanceDate: Date;
   StudentRollNo: string;
   Remarks: string;

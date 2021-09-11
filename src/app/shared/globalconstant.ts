@@ -69,6 +69,9 @@ export class globalconstants {
                 "PAYMENTSTATUS": "payment status"
             },
             "school": {
+                "DURATION":"duration",
+                "STUDYAREA":"study area",
+                "STUDYMODE":"study mode",
                 "PERIODTYPE":"period type",
                 "WEEKDAYS": "week days",
                 "PERIOD": "school period",
@@ -86,7 +89,6 @@ export class globalconstants {
                 "CATEGORY": "category",
                 "BLOODGROUP": "blood group",
                 "PRIMARYCONTACT": "primary contact",
-                "CLASS": "class",
                 "BATCH": "batch",
                 "SECTION": "section",
                 "CLASSGROUP": "class group",

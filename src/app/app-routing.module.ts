@@ -21,6 +21,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
+    path: 'school/:id/cls',
+    loadChildren: () => import('./modules/classes/classes.module').then(m => m.ClassesModule)
+  },
+  {
     path: 'school/:id/subject',//runGuardsAndResolvers:'always',
     loadChildren: () => import('./modules/ClassSubject/student-subject.module').then(m => m.StudentSubjectModule)
   },

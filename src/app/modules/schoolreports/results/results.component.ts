@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { evaluate, i } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -72,6 +73,7 @@ export class ResultsComponent implements OnInit {
   ];
   searchForm: FormGroup;
   constructor(
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -101,13 +103,18 @@ export class ResultsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
 
     }
   }
-  clear(){}
+  clear() { }
   GetStudentSubjects() {
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -140,9 +147,9 @@ export class ResultsComponent implements OnInit {
           _class = '';
           _subject = '';
 
-          let _stdClass = this.Classes.filter(c => c.MasterDataId == s.ClassSubject.ClassId);
+          let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
           if (_stdClass.length > 0)
-            _class = _stdClass[0].MasterDataName;
+            _class = _stdClass[0].ClassName;
 
           let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.ClassSubject.SubjectId);
           if (_stdSubject.length > 0)
@@ -249,7 +256,7 @@ export class ResultsComponent implements OnInit {
             filteredStudentSubjects.forEach(f => {
               var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
               if (stud.length > 0)
-                f.Student = stud[0].Student.FirstName + "-" +stud[0].Student.LastName + "-" + f.Student;
+                f.Student = stud[0].Student.FirstName + "-" + stud[0].Student.LastName + "-" + f.Student;
             })
 
             var filteredIndividualStud = alasql("select distinct Student from ? ", [filteredStudentSubjects]);
@@ -319,8 +326,6 @@ export class ResultsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);

@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -71,6 +72,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   //Students: any;
 
   constructor(
+    private contentservice: ContentService,
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -112,23 +114,24 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+          this.shareddata.ChangeClasses(this.Classes);
+        })
+
+      }
+
       //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
       //console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-      //this.shareddata.CurrentFeeType.subscribe(r => this.FeeTypes = r);
 
-      //if (this.Classes.length == 0 || this.Subjects.length == 0) {
+      this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+
       this.GetMasterData();
-      //}
-      //else {
-      // this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-      // this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-      // this.loading = false;
-      //}
 
     }
   }
@@ -142,41 +145,25 @@ export class ClassmasterdashboardComponent implements OnInit {
     //   this.classSubjectAdd.PageLoad();
     // }, 50);
   }
-
-  // addnew() {
-  //   var newdata = {
-  //     TeacherClassMappingId: 0,
-  //     TeacherId: 0,
-  //     ClassName: this.Classes.filter(f => f.MasterDataId == this.searchForm.get("searchClassId").value)[0].MasterDataName,
-  //     ClassId: this.searchForm.get("searchClassId").value,
-  //     SectionId: 0,
-  //     Section:''
-  //     Active: 0,
-  //     Action: true
-  //   }
-  //   this.ClassSubjectTeacherList.push(newdata);
-  //   this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
-  // }
-
+  
   GetClassTeacher() {
     let filterStr = this.StandardFilterWithBatchId;//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
     var _teacherId = this.searchForm.get("searchTeacherId").value.TeacherId;
     var _classId = this.searchForm.get("searchClassId").value;
-    if(_teacherId==undefined && _classId ==0)
-    {
-      this.loading=false;
-      this.alert.info("Please select atleast one of the options",this.optionAutoClose);
+    if (_teacherId == undefined && _classId == 0) {
+      this.loading = false;
+      this.alert.info("Please select atleast one of the options", this.optionAutoClose);
       return;
     }
-    
+
     if (_teacherId != undefined)
       filterStr += " and TeacherId eq " + _teacherId;
     if (_classId != 0)
       filterStr += " and ClassId eq " + _classId;
-    
-      // else {
+
+    // else {
     //   this.loading = false;
     //   this.alert.error("Please select teacher", this.optionAutoClose);
     //   return;
@@ -208,7 +195,7 @@ export class ClassmasterdashboardComponent implements OnInit {
                 "TeacherId": element.TeacherId,
                 "ClassId": element.ClassId,
                 "SectionId": element.SectionId,
-                "Section":this.Sections.filter(f => f.MasterDataId == element.SectionId)[0].MasterDataName,
+                "Section": this.Sections.filter(f => f.MasterDataId == element.SectionId)[0].MasterDataName,
                 "Active": element.Active,
                 "Action": false
               })
@@ -220,7 +207,7 @@ export class ClassmasterdashboardComponent implements OnInit {
                 "TeacherId": 0,
                 "ClassId": this.searchForm.get("searchClassId").value,
                 "SectionId": s.MasterDataId,
-                "Section":s.MasterDataName,
+                "Section": s.MasterDataName,
                 "Active": 0,
                 "Action": false
               })
@@ -237,7 +224,7 @@ export class ClassmasterdashboardComponent implements OnInit {
                 "TeacherId": existing[0].TeacherId,
                 "ClassId": existing[0].ClassId,
                 "SectionId": existing[0].SectionId,
-                "Section": this.Sections.filter(s=>s.MasterDataId == existing[0].SectionId)[0].MasterDataName ,
+                "Section": this.Sections.filter(s => s.MasterDataId == existing[0].SectionId)[0].MasterDataName,
                 "Active": existing[0].Active,
                 "Action": false
               })
@@ -419,7 +406,7 @@ export class ClassmasterdashboardComponent implements OnInit {
         debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjects = data.value.map(item => {
-          var _classname = this.Classes.filter(f => f.MasterDataId == item.ClassId)[0].MasterDataName;
+          var _classname = this.Classes.filter(f => f.ClassId == item.ClassId)[0].ClassName;
           var _subjectName = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)[0].MasterDataName;
 
           return {
@@ -444,12 +431,12 @@ export class ClassmasterdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
 
-        this.shareddata.ChangeClasses(this.Classes);
+        //this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.shareddata.ChangeBatch(this.Batches);
         this.GetTeachers();

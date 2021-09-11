@@ -3,6 +3,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -16,13 +18,14 @@ import { SharedataService } from '../../../shared/sharedata.service';
   styleUrls: ['./feecollectionreport.component.scss']
 })
 export class FeecollectionreportComponent implements OnInit {
-@ViewChild('PaidPaginator') PaidPaginator:MatPaginator;
-@ViewChild('UnPaidPaginator') UnPaidPaginator:MatPaginator;
-loading=false;
+  @ViewChild('PaidPaginator') PaidPaginator: MatPaginator;
+  @ViewChild('UnPaidPaginator') UnPaidPaginator: MatPaginator;
+  loading = false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  LoginUserDetail = [];
   TotalPaidStudentCount = 0;
   TotalUnPaidStudentCount = 0;
   allMasterData = [];
@@ -51,37 +54,49 @@ loading=false;
     "RollNo"
 
   ]
-  SelectedBatchId=0;
+  SelectedBatchId = 0;
   dataSource: MatTableDataSource<ITodayReceipt>;
   UnpaidDataSource: MatTableDataSource<INotPaidStudent>;
   SearchForm: FormGroup;
   ErrorMessage: string = '';
   //alert: any;
-  constructor(private dataservice: NaomitsuService,
-    private formatdate: DatePipe,
+  constructor(
+    private dataservice: NaomitsuService,
+    private contentservice: ContentService,
     private fb: FormBuilder,
     private alert: AlertService,
-    private shareddata:SharedataService,
-    private tokenservice:TokenStorageService) { }
+    private shareddata: SharedataService,
+    private tokenservice: TokenStorageService,
+    private nav: Router
+  ) { }
 
   ngOnInit(): void {
-    //this.GetMasterData();
-    //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
-    this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-    this.shareddata.CurrentFeeNames.subscribe(c=>(this.FeeNames=c));
-    this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
-    this.shareddata.CurrentClasses.subscribe(c=>(this.Classes=c));
-    this.shareddata.CurrentSection.subscribe(c=>(this.Sections=c));
+    this.LoginUserDetail = this.tokenservice.getUserDetail();
+    if (this.LoginUserDetail == null)
+      this.nav.navigate(['/auth/login']);
+    else {
 
-    
-    this.SearchForm = this.fb.group({
-      //BatchId: [this.BatchId, Validators.required],
-      FeeNameId: [0, Validators.required],
-      PaidOrNotPaid: [0, Validators.required],
-    })
+
+      this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+      this.shareddata.CurrentFeeNames.subscribe(c => (this.FeeNames = c));
+      this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+      this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
+  
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
+
+      this.SearchForm = this.fb.group({
+        FeeNameId: [0, Validators.required],
+        PaidOrNotPaid: [0, Validators.required],
+      })
+    }
   }
-  PageLoad(){
-    
+  PageLoad() {
+
   }
   get f() {
     return this.SearchForm.controls;
@@ -129,7 +144,7 @@ loading=false;
             return {
               SlNo: indx + 1,
               Name: item.Student.FirstName + " " + item.Student.LastName,
-              ClassRollNoSection: this.Classes.filter(c => c.MasterDataId == item.StudentClass.ClassId)[0].MasterDataName + ' - ' + this.Sections.filter(s => s.MasterDataId == item.StudentClass.SectionId)[0].MasterDataName,
+              ClassRollNoSection: this.Classes.filter(c => c.ClassId == item.StudentClass.ClassId)[0].ClassName + ' - ' + this.Sections.filter(s => s.MasterDataId == item.StudentClass.SectionId)[0].MasterDataName,
               RollNo: item.StudentClass.RollNo,
               PaymentDate: item.PaymentDate,
             }
@@ -178,7 +193,7 @@ loading=false;
                 SlNo: indx + 1,
                 Name: item.Student.FirstName + " " + item.Student.LastName,
                 RollNo: item.RollNo,
-                ClassRollNoSection: this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName + ' - ' + this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName,
+                ClassRollNoSection: this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName + ' - ' + this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName,
               });
             }
           });
@@ -200,18 +215,12 @@ loading=false;
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-       
-        //since only one current batch is accepted
-        //this.BatchId = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH)[0].MasterDataId;
-        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
-        this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
-        //this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
 
-        //this.SearchForm.patchValue({ 'BatchId': this.SelectedBatchId });
+        //since only one current batch is accepted
+        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+
       });
 
   }

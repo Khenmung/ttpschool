@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -32,16 +34,19 @@ export class TodayCollectionComponent implements OnInit {
     "FeeName",
     "TotalAmount"
   ]
+  LoginUserDetail = [];
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: FormGroup;
   ErrorMessage: string = '';
   SelectedBatchId = 0;
   constructor(
+    private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private formatdate: DatePipe,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private nav: Router) { }
 
   ngOnInit(): void {
     this.SearchForm = this.fb.group({
@@ -50,7 +55,20 @@ export class TodayCollectionComponent implements OnInit {
     })
   }
   PageLoad() {
-    this.GetMasterData();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    if (this.LoginUserDetail == null)
+      this.nav.navigate(['/auth/login']);
+    else {
+
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
+
+      this.GetMasterData();
+    }
   }
   GetStudentFeePaymentDetails() {
     debugger;
@@ -130,13 +148,10 @@ export class TodayCollectionComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
-        //this.SelectedBatchId = +this.token.getSelectedBatchId();
+
       });
 
   }

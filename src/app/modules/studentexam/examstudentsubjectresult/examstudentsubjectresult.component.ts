@@ -247,9 +247,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           _class = '';
           _subject = '';
 
-          let _stdClass = this.Classes.filter(c => c.MasterDataId == s.ClassSubject.ClassId);
+          let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
           if (_stdClass.length > 0)
-            _class = _stdClass[0].MasterDataName;
+            _class = _stdClass[0].ClassName;
 
           let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.ClassSubject.SubjectId);
           if (_stdSubject.length > 0)
@@ -506,16 +506,12 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.shareddata.ChangeBatch(this.Batches);
-        //this.GetCurrentBatchIDnAssign();
         this.GetExams();
 
       });

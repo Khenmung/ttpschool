@@ -1,17 +1,10 @@
 <mat-card>
-    <mat-card-title>Class Subject</mat-card-title>
+    <mat-card-title>Subject</mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
         <div style="margin:5px">
-        <!-- <div fxLayout="row wrap" fxLayoutAlign="space-around center"> -->
             <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
                 class="demo-tab-group">
-                <mat-tab>
-                    <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Class Fee
-                    </ng-template>
-                    <app-dashboardclassfee></app-dashboardclassfee>
-                </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>info</mat-icon>Subject Types
@@ -20,19 +13,13 @@
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Class Subject Teacher
+                        <mat-icon>info</mat-icon>Subject Detail
                     </ng-template>
-                    <app-classsubjectdashboard></app-classsubjectdashboard>
-                </mat-tab>
+                    <app-subjectdetail></app-subjectdetail>
+                </mat-tab>               
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Class Master
-                    </ng-template>
-                    <app-classmasterdashboard></app-classmasterdashboard>
-                </mat-tab>
-                <mat-tab>
-                    <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Mark Components
+                        <mat-icon>info</mat-icon>Subject Components
                     </ng-template>
                     <app-student-subject-mark-comp></app-student-subject-mark-comp>
                 </mat-tab>
@@ -48,12 +35,6 @@
                     </ng-template>
                     <app-studentsubjectdashboard></app-studentsubjectdashboard>
                 </mat-tab>
-                <!-- <mat-tab>
-                    <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Class Period
-                    </ng-template>
-                    <app-classperiod></app-classperiod>
-                </mat-tab> -->
             </mat-tab-group>
         </div>
     </mat-card-content>

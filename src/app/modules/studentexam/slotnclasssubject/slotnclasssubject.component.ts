@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -51,13 +52,14 @@ export class SlotnclasssubjectComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
-//    'Slot',
+    //    'Slot',
     'ClassSubject',
     'Active',
     'Action'
   ];
   searchForm: FormGroup;
   constructor(
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -88,6 +90,14 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
       this.GetMasterData();
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+
+        });
+      }
+
     }
   }
 
@@ -124,10 +134,10 @@ export class SlotnclasssubjectComponent implements OnInit {
     // }
     this.loading = true;
 
-    var duplicate = this.SlotNClassSubjects.filter(s => s.SlotId == row.SlotId 
-                                    && s.ClassId == row.ClassId 
-                                    && s.Active == 1
-                                    && s.SlotClassSubjectId!=row.SlotClassSubjectId)
+    var duplicate = this.SlotNClassSubjects.filter(s => s.SlotId == row.SlotId
+      && s.ClassId == row.ClassId
+      && s.Active == 1
+      && s.SlotClassSubjectId != row.SlotClassSubjectId)
     if (duplicate.length > 0) {
       this.loadingFalse();
       this.alert.error("Two subjects of one class cannot be assigned in the same slot.", this.optionsNoAutoClose);
@@ -150,7 +160,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.loading=false;
+          this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
@@ -219,7 +229,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
-          var _class = this.Classes.filter(c => c.MasterDataId == item.ClassId)[0].MasterDataName;
+          var _class = this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName;
           var _subject = this.Subjects.filter(c => c.MasterDataId == item.SubjectId)[0].MasterDataName;
           return {
             ClassSubjectId: item.ClassSubjectId,
@@ -337,10 +347,10 @@ export class SlotnclasssubjectComponent implements OnInit {
         else {
           if (this.searchForm.get("searchClassId").value.length > 0 && this.searchForm.get("searchSubjectId").value == 0) {
 
-            filteredData = data.value.filter(item=>this.searchForm.get("searchClassId").value.indexOf(item.ClassSubject.ClassId)>-1)
+            filteredData = data.value.filter(item => this.searchForm.get("searchClassId").value.indexOf(item.ClassSubject.ClassId) > -1)
             //.filter(d => d.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
 
-            let fitleredClassSubject = this.ClassSubjectList.filter(f =>this.searchForm.get("searchClassId").value.indexOf(f.ClassId)>-1);
+            let fitleredClassSubject = this.ClassSubjectList.filter(f => this.searchForm.get("searchClassId").value.indexOf(f.ClassId) > -1);
 
             fitleredClassSubject.forEach(cs => {
               let existing = filteredData.filter(ex => ex.ClassSubjectId == cs.ClassSubjectId)
@@ -376,7 +386,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             debugger;
             if (this.searchForm.get("searchSubjectId").value > 0 && this.searchForm.get("searchClassId").value.length > 0) {
               filteredData = data.value.filter(d => d.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value
-                && this.searchForm.get("searchClassId").value.indexOf(d.ClassSubject.ClassId)>-1);
+                && this.searchForm.get("searchClassId").value.indexOf(d.ClassSubject.ClassId) > -1);
             }
             if (filteredData.length > 0) {
               this.SlotNClassSubjects.push({
@@ -393,7 +403,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             }
             else {
               var clssubject = this.ClassSubjectList.filter(cs => cs.SubjectId == this.searchForm.get("searchSubjectId").value &&
-                this.searchForm.get("searchClassId").value.indexOf(cs.ClassId)>-1)
+                this.searchForm.get("searchClassId").value.indexOf(cs.ClassId) > -1)
               var _classSubjectId = clssubject[0].ClassSubjectId;
 
               this.SlotNClassSubjects.push({
@@ -449,11 +459,8 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.BatchId=c));
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
 
         this.shareddata.ChangeBatch(this.Batches);

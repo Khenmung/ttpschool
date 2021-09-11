@@ -1,27 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AssignStudentclassdashboardComponent } from './AssignStudentClass/Assignstudentclassdashboard.component';
-import { ClasssubjectdashboardComponent } from './classsubjectmapping/classsubjectdashboard.component';
-import { ClassmasterdashboardComponent } from './classsmastermapping/classmasterdashboard.component';
+import { SubjectDetailComponent } from './subjectdetail/subjectdetail.component';
 import { StudentSubjectMarkCompComponent } from './student-subject-mark-comp/student-subject-mark-comp.component';
 import { studentsubjectdashboardComponent } from './studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from './subject-types/subject-types.component';
-import { ClassSubjectboardComponent } from './classsubjectboard/classsubjectboard.component';
+import { SubjectBoardComponent } from './subjectboard/subjectboard.component';
 //import { ClasssubjectteacherComponent } from './classsubjectteacher/classsubjectteacher.component';
-import { DashboardclassfeeComponent } from './classfee/dashboardclassfee/dashboardclassfee.component';
+//import { DashboardclassfeeComponent } from '../classes/dashboardclassfee/dashboardclassfee.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 
 const routes: Routes = [
   {
     path: '', component: HomeComponent,
     children: [
-      { path: '', component: ClassSubjectboardComponent,//runGuardsAndResolvers:'always'
+      { path: '', component: SubjectBoardComponent,//runGuardsAndResolvers:'always'
      },
       { path: 'studentsubject', component: studentsubjectdashboardComponent },
       { path: 'subjecttypes', component: SubjectTypesComponent },
       { path: 'components', component: StudentSubjectMarkCompComponent },
-      { path: 'classteacher', component: ClassmasterdashboardComponent },
-  //    { path: 'classsubjteacher', component: ClasssubjectteacherComponent },
       
     ]
   }
@@ -33,13 +30,10 @@ const routes: Routes = [
 })
 export class StudentSubjectRoutingModule { }
 export const StudentSubjectComponents=[
-  ClasssubjectdashboardComponent,
+  SubjectDetailComponent,
   studentsubjectdashboardComponent,
   SubjectTypesComponent,
   StudentSubjectMarkCompComponent, 
-  ClassSubjectboardComponent,
+  SubjectBoardComponent,
   AssignStudentclassdashboardComponent,
-  ClassmasterdashboardComponent,
-  //ClasssubjectteacherComponent,
-  DashboardclassfeeComponent,
   ]

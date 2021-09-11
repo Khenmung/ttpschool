@@ -9,6 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-excel-data-management',
@@ -16,7 +17,9 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./excel-data-management.component.scss']
 })
 export class ExcelDataManagementComponent implements OnInit {
-  constructor(private dataservice: NaomitsuService,
+  constructor(
+    private contentservice: ContentService,
+    private dataservice: NaomitsuService,
     private fb: FormBuilder,
     private alert: AlertService,
     private shareddata: SharedataService,
@@ -43,7 +46,14 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentStates.subscribe(c => (this.States = c));
     this.shareddata.CurrentPrimaryContact.subscribe(c => (this.PrimaryContact = c));
     this.shareddata.CurrentLocation.subscribe(c => (this.Location = c));
+    
     this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+    if (this.Classes.length == 0) {
+      this.contentservice.GetClasses(this.loginDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+
+      });
+    }
     this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
     this.shareddata.CurrentUploadType.subscribe(c => (this.UploadTypes = c));
@@ -396,15 +406,9 @@ export class ExcelDataManagementComponent implements OnInit {
         this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
-        //this.shareddata.ChangeFeeType(this.FeeTypes);
-        //this.PrimaryContactFatherOrMother= this.getDropDownData(globalconstants.PRIMARYCONTACT);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c => (this.SelectedBatchId = c));
-        //this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.GetStudents();
       });
 

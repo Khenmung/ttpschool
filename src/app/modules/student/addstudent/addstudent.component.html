@@ -307,8 +307,8 @@
                                 <mat-label>Class for which admission is sought</mat-label>
                                 <mat-select formControlName="ClassAdmissionSought">
                                     <mat-option value="0">---</mat-option>
-                                    <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
-                                        {{p.MasterDataName}}
+                                    <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                                        {{p.ClassName}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>

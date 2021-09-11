@@ -1,9 +1,9 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -60,19 +60,18 @@ export class SchooltimetableComponent implements OnInit {
     BatchId: 0,
     Active: 0
   };
-  displayedColumns:any[] = [];
+  displayedColumns: any[] = [];
   searchForm: FormGroup;
   constructor(
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: FormBuilder
-  ) { 
-    
+  ) {
+
   }
 
   ngOnInit(): void {
@@ -81,7 +80,7 @@ export class SchooltimetableComponent implements OnInit {
       searchClassId: [0],
       searchSectionId: [0]
     });
-    this.dataSource =new MatTableDataSource<any[]>([]);
+    this.dataSource = new MatTableDataSource<any[]>([]);
   }
 
   PageLoad() {
@@ -92,6 +91,12 @@ export class SchooltimetableComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
 
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
@@ -102,15 +107,15 @@ export class SchooltimetableComponent implements OnInit {
 
     row.Action = true;
     row.Active = value.checked ? 1 : 0;
-    var updateActive =this.StoredForUpdate.filter(s=>s.DayId==row.DayId);
-    updateActive.forEach(u=>u.Active=1)
+    var updateActive = this.StoredForUpdate.filter(s => s.DayId == row.DayId);
+    updateActive.forEach(u => u.Active = 1)
   }
   UpdateOrSave(row) {
 
     debugger;
 
     this.loading = true;
-    let checkFilterString ="SectionId eq " + row.SectionId +
+    let checkFilterString = "SectionId eq " + row.SectionId +
       " and DayId eq " + row.DayId +
       " and SchoolClassPeriodId eq " + row.SchoolClassPeriodId
 
@@ -212,8 +217,8 @@ export class SchooltimetableComponent implements OnInit {
       return;
     }
     this.loading = true;
-    filterstr = 'ClassId eq ' + this.searchForm.get("searchClassId").value+
-                ' and SectionId eq '+ this.searchForm.get("searchSectionId").value
+    filterstr = 'ClassId eq ' + this.searchForm.get("searchClassId").value +
+      ' and SectionId eq ' + this.searchForm.get("searchSectionId").value
 
     let list: List = new List();
     list.fields = [
@@ -234,11 +239,11 @@ export class SchooltimetableComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        var dbTimeTable= data.value.map((d=>{
-            d.Day = this.WeekDays.filter(w=>w.MasterDataId == d.DayId)[0].MasterDataName;
+        var dbTimeTable = data.value.map((d => {
+          d.Day = this.WeekDays.filter(w => w.MasterDataId == d.DayId)[0].MasterDataName;
           return d;
         }))
-        var forDisplay:any[]=[];
+        var forDisplay: any[] = [];
         var _classId = this.searchForm.get("searchClassId").value;
         //this is used in html for subject dropdown.
         this.ClassWiseSubjects = this.ClassSubjects.filter(f => f.ClassId == _classId);
@@ -249,10 +254,10 @@ export class SchooltimetableComponent implements OnInit {
 
         //console.log('this.WeekDays',this.WeekDays);
         this.WeekDays.forEach(p => {
-          forDisplay =[];
+          forDisplay = [];
           forDisplay["Day"] = p.MasterDataName;
           forDisplay["DayId"] = p.MasterDataId;
-          
+
           var forSelectedClsPeriods;
           var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
 
@@ -264,17 +269,17 @@ export class SchooltimetableComponent implements OnInit {
             if (!this.displayedColumns.includes(_period))
               this.displayedColumns.push(_period);
 
-            var existing = dbTimeTable.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId && d.DayId ==p.MasterDataId)
+            var existing = dbTimeTable.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId && d.DayId == p.MasterDataId)
             if (existing.length > 0) {
               existing[0].Period = _period;
               existing[0].Action = false;
               this.StoredForUpdate.push(existing[0]);
               forDisplay[c.Period] = existing[0].ClassSubjectId;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
-              forDisplay["Active"] =existing[0].Active;
+              forDisplay["Active"] = existing[0].Active;
             }
             else {
               forDisplay[c.Period] = 0;
-              
+
               this.StoredForUpdate.push({
                 "TimeTableId": 0,
                 "DayId": p.MasterDataId,
@@ -285,7 +290,7 @@ export class SchooltimetableComponent implements OnInit {
                 "ClassSubjectId": 0,
                 "Period": _period,
                 "Active": 0,
-                "Action":false
+                "Action": false
               })
             }
 
@@ -295,16 +300,16 @@ export class SchooltimetableComponent implements OnInit {
           this.SchoolTimeTableList.push(forDisplay);
 
         })
-        console.log('displaycolumn',this.displayedColumns)
-        console.log('forDisplay',forDisplay)
-        console.log('StoredForUpdate',this.StoredForUpdate)
+        console.log('displaycolumn', this.displayedColumns)
+        console.log('forDisplay', forDisplay)
+        console.log('StoredForUpdate', this.StoredForUpdate)
         //this.displayedColumns.push("Active");
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
         this.loading = false;
       })
   }
-    GetAllClassPeriods() {
+  GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
     var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -329,7 +334,7 @@ export class SchooltimetableComponent implements OnInit {
         this.AllClassPeriods = data.value.map(m => {
           var _PeriodType = '';
           if (m.PeriodTypeId != null)
-          _PeriodType = this.PeriodTypes.filter(p => p.MasterDataId == m.PeriodTypeId)[0].MasterDataName;
+            _PeriodType = this.PeriodTypes.filter(p => p.MasterDataId == m.PeriodTypeId)[0].MasterDataName;
 
           m.Period = this.Periods.filter(p => p.MasterDataId == m.PeriodId)[0].MasterDataName;
           m.PeriodType = _PeriodType;
@@ -357,9 +362,16 @@ export class SchooltimetableComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(cs => {
-          var _class = this.Classes.filter(c => c.MasterDataId == cs.ClassId)[0].MasterDataName;
-          var _subject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)[0].MasterDataName;
-          var _shortName = cs.EmpEmployee.ShortName;
+          var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId);
+          var _class = '';
+          if (objclass.length > 0)
+            _class = objclass[0].ClassName;
+          var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId);
+          var _subject = '';
+          if (objsubject.length > 0)
+            _subject = objsubject[0].MasterDataName;
+          
+            var _shortName = cs.EmpEmployee.ShortName;
           _shortName = _shortName == null ? '' : ", " + _shortName;
 
           return {
@@ -413,7 +425,7 @@ export class SchooltimetableComponent implements OnInit {
 
 
   }
-  
+
   SaveRow(element) {
     debugger;
     this.loading = true;
@@ -422,15 +434,14 @@ export class SchooltimetableComponent implements OnInit {
     var _toUpdate = this.StoredForUpdate.filter(s => s.Day == element.Day && s.Action);
 
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
-    if(validated.length>0 )
-    {
-      this.loading=false;
-      this.alert.error("Subject must be selected for periods",this.optionsNoAutoClose);
+    if (validated.length > 0) {
+      this.loading = false;
+      this.alert.error("Subject must be selected for periods", this.optionsNoAutoClose);
       return;
     }
     var totalRows = _toUpdate.length;
     for (var rowCount = 0; rowCount < totalRows; rowCount++) {
-        this.UpdateOrSave(_toUpdate[rowCount]);
+      this.UpdateOrSave(_toUpdate[rowCount]);
     }
 
   }
@@ -438,16 +449,15 @@ export class SchooltimetableComponent implements OnInit {
     var _toUpdate = this.StoredForUpdate.filter(s => s.Action);
 
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
-    if(validated.length>0)
-    {
-      this.loading=false;
-      this.alert.error("Subject must be selected for periods",this.optionsNoAutoClose);
+    if (validated.length > 0) {
+      this.loading = false;
+      this.alert.error("Subject must be selected for periods", this.optionsNoAutoClose);
       return;
     }
 
     var totalRows = _toUpdate.length;
     for (var rowCount = 0; rowCount < totalRows; rowCount++) {
-            this.UpdateOrSave(_toUpdate[rowCount]);
+      this.UpdateOrSave(_toUpdate[rowCount]);
     }
   }
   CheckAll(value) {
@@ -465,7 +475,7 @@ export class SchooltimetableComponent implements OnInit {
     var rowtoUpdateForSavingPurpose = this.StoredForUpdate.filter(s => s.Period == columnName && s.Day == element.Day);
     if (rowtoUpdateForSavingPurpose.length > 0) {
       rowtoUpdateForSavingPurpose[0]["ClassSubjectId"] = event.value;
-      rowtoUpdateForSavingPurpose[0]["Action"] =true;
+      rowtoUpdateForSavingPurpose[0]["Action"] = true;
     }
 
     element.Action = true;
@@ -491,7 +501,6 @@ export class SchooltimetableComponent implements OnInit {
         this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
         this.WeekDays = this.getDropDownData(globalconstants.MasterDefinitions.school.WEEKDAYS);
 
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeBatch(this.Batches);

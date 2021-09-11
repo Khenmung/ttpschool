@@ -7,8 +7,8 @@
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
-                <mat-select formControlName="searchClassId">
-                    <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">{{item.MasterDataName}}
+                <mat-select formControlName="searchClassId" (selectionChange)="bindClassSubject()">
+                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -20,11 +20,18 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
+                <mat-label>Subject</mat-label>
+                <mat-select formControlName="searchClassSubjectId">
+                    <mat-option *ngFor="let item of FilteredClassSubjects" [value]="item.ClassSubjectId">{{item.ClassSubject}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Attendance Date</mat-label>
                 <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
                 <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
                 <mat-datepicker #AttendanceDate></mat-datepicker>
-            </mat-form-field>
+            </mat-form-field> -->
             <button [disabled]="loading" (click)="GetStudentAttendance()" class="mat-raised-button">
                 <mat-icon>search</mat-icon>
             </button>
@@ -73,7 +80,7 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                     <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
-                        (click)="UpdateOrSave(element)">
+                        (click)="UpdateOrSave(element,0)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>

@@ -1,8 +1,9 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -68,6 +69,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
+    private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private route: ActivatedRoute,
@@ -89,6 +91,12 @@ export class studentsubjectdashboardComponent implements OnInit {
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];  
+        });
+      }
+
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
       if (this.Classes.length == 0 || this.Subjects.length == 0)
@@ -248,10 +256,10 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.displayedColumns.push("Action");
         }
         else {
-          var cls = this.Classes.filter(c => c.MasterDataId == this.searchForm.get("searchClassId").value)
+          var cls = this.Classes.filter(c => c.ClassId == this.searchForm.get("searchClassId").value)
           var _clsName = '';
           if (cls.length > 0)
-            _clsName = cls[0].MasterDataName;
+            _clsName = cls[0].ClassName;
 
           this.alert.info("No student found for the selected class " + _clsName, this.optionAutoClose);
           this.loading = false;
@@ -294,7 +302,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       "Subject": _subjectName,
       "ClassSubjectId": clssubject.ClassSubjectId,
       "ClassId": clssubject.ClassId,
-      "ClassName": this.Classes.filter(c => c.MasterDataId == clssubject.ClassId)[0].MasterDataName,
+      "ClassName": this.Classes.filter(c => c.ClassId == clssubject.ClassId)[0].ClassName,
       "Action": false,
       "Active": clssubject.Active,
     }
@@ -540,7 +548,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
 
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));

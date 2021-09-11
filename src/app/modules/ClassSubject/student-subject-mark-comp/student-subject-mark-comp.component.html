@@ -1,15 +1,14 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Mark Components</strong></div>
+        <div><strong>Subject Components</strong></div>
 
         <alert></alert>
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline">
-                <mat-label>Class/Stream</mat-label>
+                <mat-label>Class/Course</mat-label>
                 <mat-select formControlName="ClassId">
-                    <mat-option value="0">All</mat-option>
-                    <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
-                        {{p.MasterDataName}}
+                    <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                        {{p.ClassName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -45,7 +44,7 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
-                            <input matInput type="number" [maxlength]="3" [value]="element.FullMark"
+                            <input matInput (blur)="onBlur(element)" type="number" [maxlength]="3" [value]="element.FullMark"
                                 [(ngModel)]="element.FullMark" />
                         </mat-form-field>
                     </mat-cell>
@@ -54,7 +53,7 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
-                            <input matInput type="number" [maxlength]="3" [value]="element.PassMark"
+                            <input (blur)="onBlur(element)" matInput type="number" [maxlength]="3" [value]="element.PassMark"
                                 [(ngModel)]="element.PassMark" />
                         </mat-form-field>
                     </mat-cell>
@@ -62,7 +61,7 @@
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element)"
                             [checked]="element.Active">
                         </mat-checkbox>
                     </mat-cell>
@@ -70,7 +69,7 @@
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

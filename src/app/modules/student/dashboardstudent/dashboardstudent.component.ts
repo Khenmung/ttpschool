@@ -14,6 +14,7 @@ import * as XLSX from 'xlsx';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-dashboardstudent',
@@ -64,8 +65,9 @@ export class DashboardstudentComponent implements OnInit {
   filteredFathers: Observable<IStudent[]>;
   filteredMothers: Observable<IStudent[]>;
   LoginUserDetail = [];
-  constructor(private dataservice: NaomitsuService,
-    private ar: ActivatedRoute,
+  constructor(
+    private contentservice: ContentService,
+    private dataservice: NaomitsuService,
     private route: Router,
     private alert: AlertService,
     private fb: FormBuilder,
@@ -74,7 +76,7 @@ export class DashboardstudentComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
-    this.loading=true;
+    this.loading = true;
     //this.urlId = +this.ar.snapshot.paramMap.get('id');
     this.LoginUserDetail = this.token.getUserDetail();
     this.shareddata.CurrentApplicationId.subscribe(a => this.ApplicationId = a);
@@ -103,12 +105,19 @@ export class DashboardstudentComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.FatherName),
         map(FatherName => FatherName ? this._filterF(FatherName) : this.Students.slice())
       );
-      this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
+    this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.MotherName),
         map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
       );
+    this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+    if (this.Classes.length == 0) {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      });
+    }
+
     this.GetMasterData();
     this.GetFeeTypes();
     this.GetStudents();
@@ -142,7 +151,7 @@ export class DashboardstudentComponent implements OnInit {
   }
   GetMasterData() {
     debugger;
-    this.loading=true;
+    this.loading = true;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterDatas";
@@ -163,8 +172,8 @@ export class DashboardstudentComponent implements OnInit {
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        this.shareddata.ChangeClasses(this.Classes);
+        // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        // this.shareddata.ChangeClasses(this.Classes);
 
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         //this.shareddata.ChangeBatch(this.Batches);
@@ -207,7 +216,7 @@ export class DashboardstudentComponent implements OnInit {
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        this.loading=false;
+        this.loading = false;
         this.getSelectedBatchStudentIDRollNo();
 
 
@@ -248,7 +257,11 @@ export class DashboardstudentComponent implements OnInit {
 
     let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
-      var _clsName = this.Classes.filter(f => f.MasterDataId == studentclass[0].ClassId)[0].MasterDataName;
+      var _clsName = '';
+      var objcls = this.Classes.filter(f => f.ClassId == studentclass[0].ClassId);
+      if (objcls.length > 0)
+        _clsName = objcls[0].ClassName
+
       var _sectionName = this.Sections.filter(f => f.MasterDataId == studentclass[0].SectionId)[0].MasterDataName;
       this.StudentClassId = studentclass[0].StudentClassId
       StudentName += "\n " + _clsName + "-" + _sectionName;
@@ -297,7 +310,7 @@ export class DashboardstudentComponent implements OnInit {
       })
   }
   GetFeeTypes() {
-    this.loading=true;
+    this.loading = true;
     var filter = globalconstants.getStandardFilterWithBatchId(this.token);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
@@ -308,12 +321,12 @@ export class DashboardstudentComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeType = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeType);
-        this.loading=false;
+        this.loading = false;
       })
   }
   GetStudent() {
     debugger;
-   
+
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
     if (studentName != undefined && studentName.trim().length > 0)
@@ -322,13 +335,13 @@ export class DashboardstudentComponent implements OnInit {
       checkFilterString += " and FatherName eq '" + this.studentSearchForm.get("FatherName").value.FatherName + "'";
     if (this.studentSearchForm.get("MotherName").value.MotherName != undefined)
       checkFilterString += " and MotherName eq '" + this.studentSearchForm.get("MotherName").value.MotherName + "'"
-   
+
     let list: List = new List();
     list.fields = ["StudentId", "StudentClasses/StudentClassId",
       "StudentClasses/BatchId",
       "StudentClasses/ClassId",
       "StudentClasses/RollNo",
-      "FirstName","LastName", "FatherName",
+      "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
       "ReasonForLeavingId"];
@@ -352,10 +365,13 @@ export class DashboardstudentComponent implements OnInit {
             if (item.StudentClasses.length == 0)
               item.ClassName = '';
             else {
-              item.ClassName = this.Classes.filter(cls => {
+              var clsobj = this.Classes.filter(cls => {
                 return cls.MasterDataId == item.StudentClasses[0].ClassId
-              }
-              )[0].MasterDataName;
+              })
+              if (clsobj.length > 0)
+                item.ClassName = clsobj[0].ClassName;
+              else
+                item.ClassName = '';
             }
             item.Action = "";
 
@@ -373,7 +389,7 @@ export class DashboardstudentComponent implements OnInit {
 
   }
   GetStudents() {
-    this.loading=true;
+    this.loading = true;
     let list: List = new List();
     list.fields = [
       'StudentClassId',
@@ -400,17 +416,17 @@ export class DashboardstudentComponent implements OnInit {
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            var _classNameobj = this.Classes.filter(c => c.MasterDataId == student.ClassId);
+            var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
             var _className = '';
             if (_classNameobj.length > 0)
-              _className = _classNameobj[0].MasterDataName;
+              _className = _classNameobj[0].ClassName;
             var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId)
             var _section = '';
             if (_SectionObj.length > 0)
               _section = _SectionObj[0].MasterDataName;
             var _RollNo = student.RollNo;
             var _name = student.Student.FirstName + " " + student.Student.LastName;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-"+student.Student.ContactNo;
+            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.Student.ContactNo;
             return {
               StudentClassId: student.StudentClassId,
               StudentId: student.StudentId,

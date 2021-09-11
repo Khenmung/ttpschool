@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -59,6 +60,7 @@ export class StudentactivityComponent implements OnInit {
   ];
   searchForm: FormGroup;
   constructor(
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -102,9 +104,15 @@ export class StudentactivityComponent implements OnInit {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
 
       this.GetMasterData();
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+  
+        });
+  
     }
   }
-
+  }
   updateActive(row, value) {
     //if(!row.Action)
     //row.Action = !row.Action;
@@ -273,7 +281,7 @@ export class StudentactivityComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetStudents();
@@ -319,10 +327,10 @@ export class StudentactivityComponent implements OnInit {
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            var _classNameobj = this.Classes.filter(c => c.MasterDataId == student.ClassId);
+            var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
             var _className = '';
             if (_classNameobj.length > 0)
-              _className = _classNameobj[0].MasterDataName;
+              _className = _classNameobj[0].ClassName;
             var _Section = this.Sections.filter(f=>f.MasterDataId == student.SectionId)[0].MasterDataName;
             var _RollNo = student.RollNo;
             var _name = student.Student.FirstName + " " +student.Student.LastName;

@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { IStudent } from 'src/app/modules/ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -83,6 +84,7 @@ export class CertificatesComponent implements OnInit {
   searchForm: FormGroup;
   constructor(
     @Inject(DOCUMENT) private document: Document,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -134,6 +136,12 @@ export class CertificatesComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
 
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
 
@@ -172,9 +180,9 @@ export class CertificatesComponent implements OnInit {
           _class = '';
           _subject = '';
 
-          let _stdClass = this.Classes.filter(c => c.MasterDataId == s.ClassSubject.ClassId);
+          let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
           if (_stdClass.length > 0)
-            _class = _stdClass[0].MasterDataName;
+            _class = _stdClass[0].ClassName;
 
           let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.ClassSubject.SubjectId);
           if (_stdSubject.length > 0)
@@ -216,7 +224,7 @@ export class CertificatesComponent implements OnInit {
     }
     else {
 
-      filterstr += " and StudentClassId eq " + pStudentClassId;      
+      filterstr += " and StudentClassId eq " + pStudentClassId;
       list.fields = [
         "StudentClassId",
         "ClassId",
@@ -277,37 +285,37 @@ export class CertificatesComponent implements OnInit {
             StudentClassId: d.StudentClassId
           }
         });
-        this.loading=false;
+        this.loading = false;
       }
       else {
         //console.log('data.value',data.value)
         debugger;
         data.value.forEach(d => {
-          var _studentClass = d.ClassId==null?'': this.Classes.filter(c => c.MasterDataId == d.ClassId)[0].MasterDataName;
-          var _section =d.SectionId==null?'':this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName ;
-          var _gender =d.Student.Gender==null?'': this.Genders.filter(c => c.MasterDataId == d.Student.Gender)[0].MasterDataName;
-          var _city = d.Student.City==null?'':this.City.filter(c => c.MasterDataId == d.Student.City)[0].MasterDataName;
-          var _state =  d.Student.State==null?'':this.State.filter(c => c.MasterDataId == d.Student.State)[0].MasterDataName;
-          var _country = d.Student.Country==null?'':this.Country.filter(c => c.MasterDataId == d.Student.Country)[0].MasterDataName;
-          var _bloodgroup = d.Student.Bloodgroup==null?'':this.BloodGroup.filter(c => c.MasterDataId == d.Student.Bloodgroup)[0].MasterDataName;
-          var _category =d.Student.Category==null?'':this.Category.filter(c => c.MasterDataId == d.Student.Category)[0].MasterDataName;
-          var _religion =d.Student.Religion==null?'':this.Religion.filter(c => c.MasterDataId == d.Student.Religion)[0].MasterDataName;
-          var _reason = d.Student.ReasonForLeavingId==null?'':this.ReasonForLeaving.filter(c => c.MasterDataId == d.Student.ReasonForLeavingId)[0].MasterDataName;
+          var _studentClass = d.ClassId == null ? '' : this.Classes.filter(c => c.ClassId == d.ClassId)[0].ClassName;
+          var _section = d.SectionId == null ? '' : this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName;
+          var _gender = d.Student.Gender == null ? '' : this.Genders.filter(c => c.MasterDataId == d.Student.Gender)[0].MasterDataName;
+          var _city = d.Student.City == null ? '' : this.City.filter(c => c.MasterDataId == d.Student.City)[0].MasterDataName;
+          var _state = d.Student.State == null ? '' : this.State.filter(c => c.MasterDataId == d.Student.State)[0].MasterDataName;
+          var _country = d.Student.Country == null ? '' : this.Country.filter(c => c.MasterDataId == d.Student.Country)[0].MasterDataName;
+          var _bloodgroup = d.Student.Bloodgroup == null ? '' : this.BloodGroup.filter(c => c.MasterDataId == d.Student.Bloodgroup)[0].MasterDataName;
+          var _category = d.Student.Category == null ? '' : this.Category.filter(c => c.MasterDataId == d.Student.Category)[0].MasterDataName;
+          var _religion = d.Student.Religion == null ? '' : this.Religion.filter(c => c.MasterDataId == d.Student.Religion)[0].MasterDataName;
+          var _reason = d.Student.ReasonForLeavingId == null ? '' : this.ReasonForLeaving.filter(c => c.MasterDataId == d.Student.ReasonForLeavingId)[0].MasterDataName;
 
           this.StudentForVariables.push(
-            { name: "Today", val: this.datepipe.transform(new Date(),'dd/MM/yyyy') },
+            { name: "Today", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
             { name: "StudentClass", val: _studentClass },
-            { name: "Section", val:  _section},
+            { name: "Section", val: _section },
             { name: "RollNo", val: d.RollNo },
             { name: "AdmissionDate", val: d.AdmissionDate },
-            { name: "StudentName", val: d.Student.FirstName + " " + (d.Student.LastName==null?'':d.Student.LastName) },
+            { name: "StudentName", val: d.Student.FirstName + " " + (d.Student.LastName == null ? '' : d.Student.LastName) },
             { name: "FatherName", val: d.Student.FatherName },
             { name: "MotherName", val: d.Student.MotherName },
-            { name: "Gender", val:  _gender },
+            { name: "Gender", val: _gender },
             { name: "PermanentAddress", val: d.Student.PermanentAddress },
             { name: "PresentAddress", val: d.Student.PresentAddress },
             { name: "WhatsAppNumber", val: d.Student.WhatsAppNumber },
-            { name: "City", val:  _city },
+            { name: "City", val: _city },
             { name: "State", val: _state },
             { name: "Country", val: _country },
             { name: "PinCode", val: d.Student.Pincode },
@@ -354,7 +362,7 @@ export class CertificatesComponent implements OnInit {
     _certificateBody.forEach(c => {
       this.StudentForVariables.forEach(s => {
         if (c.Description.includes('[' + s.name.trim() + ']'))
-        c.Description = c.Description.replaceAll('[' + s.name.trim() + ']', s.val);
+          c.Description = c.Description.replaceAll('[' + s.name.trim() + ']', s.val);
       });
     })
     _certificateBody.sort((a, b) => a.Sequence - b.Sequence);
@@ -443,7 +451,7 @@ export class CertificatesComponent implements OnInit {
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
 
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);

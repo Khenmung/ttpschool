@@ -9,8 +9,8 @@
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="ClassId" #ClassId>
                         <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Classes" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
+                        <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                            {{p.ClassName}}
                         </mat-option>
                     </mat-select>
                     <span class="text-danger" *ngIf="f.ClassId.touched && f.ClassId.hasError('required')">Class is

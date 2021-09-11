@@ -1,0 +1,144 @@
+<div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div><strong>Class Detail</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm">
+                <mat-form-field appearance="outline" [style.width.pc]="25">
+                    <mat-label>Class</mat-label>
+                    <mat-select formControlName="searchClassName">
+                        <mat-option *ngFor="let option of ClassMasters" [value]="option.ClassId">
+                            {{option.ClassName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetClassMasters()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </form>
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="ClassName">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class Name
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="150">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                                [value]="element.ClassName" [(ngModel)]="element.ClassName">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="DurationId">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Duration
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="100">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.DurationId"
+                                [(ngModel)]="element.DurationId">
+                                <mat-option *ngFor="let item of Durations" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="StudyAreaId">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Study Area
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="100">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.StudyAreaId"
+                                [(ngModel)]="element.StudyAreaId">
+                                <mat-option *ngFor="let item of StudyArea" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="StudyModeId">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Study Mode
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field [style.width.px]="100" appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.StudyModeId"
+                                [(ngModel)]="element.StudyModeId">
+                                <mat-option *ngFor="let item of StudyMode" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="MinStudent">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Min Student
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="100">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" type="number" [max]="250"
+                                [value]="element.MinStudent" [(ngModel)]="element.MinStudent">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="MaxStudent">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Max Student
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="100">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" type="number" [max]="250"
+                                [value]="element.MaxStudent" [(ngModel)]="element.MaxStudent">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="StartDate">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Start Date
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="130">
+                            <input [(ngModel)]="element.StartDate" [value]="element.StartDate" matInput
+                                [matDatepicker]="StartDate" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="StartDate"></mat-datepicker-toggle>
+                            <mat-datepicker #StartDate></mat-datepicker>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="EndDate">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>End Date
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="130">
+                            <input [(ngModel)]="element.EndDate" [value]="element.EndDate" matInput
+                                [matDatepicker]="EndDate" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="EndDate"></mat-datepicker-toggle>
+                            <mat-datepicker #EndDate></mat-datepicker>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>                
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef>Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                            (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

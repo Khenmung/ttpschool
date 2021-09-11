@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -61,10 +62,9 @@ export class ClassperiodComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
-    private datepipe: DatePipe,
+    private contentservice: ContentService,
     private fb: FormBuilder
   ) { }
 
@@ -85,7 +85,12 @@ export class ClassperiodComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
+      if (this.Classes.length == 0) {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
       this.GetAllClassPeriods();
@@ -393,7 +398,6 @@ export class ClassperiodComponent implements OnInit {
         this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
         this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
         this.shareddata.ChangeBatch(this.Batches);
         this.loading = false;
