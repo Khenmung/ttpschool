@@ -38,11 +38,11 @@ ngOnInit(): void {
     }, this.httpOptions);
   }
   changePassword(confirmPassword: string, OldPassword: string, password: string): Observable<any> {
-    this.httpOptions = {
-      headers: new HttpHeaders({ 'Accept': 'application/json; odata=verbose',
-                                 'Content-Type': 'application/json',
-                                 'Authorization': 'Bearer ' + this.token.getToken()})
-    };
+    // this.httpOptions = {
+    //   headers: new HttpHeaders({ 'Accept': 'application/json; odata=verbose',
+    //                              'Content-Type': 'application/json',
+    //                              'Authorization': 'Bearer ' + this.token.getToken()})
+    // };
     //console.log(this.httpOptions);
     return this.http.post(this.AUTH_API + '/api/Account/ChangePassword', {
       OldPassword: OldPassword,

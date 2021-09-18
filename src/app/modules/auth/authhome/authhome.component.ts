@@ -16,7 +16,8 @@ export class AuthHomeComponent implements OnInit {
   mediaSub: Subscription;
   deviceXs: boolean;
 
-  constructor(private userService: UserService,
+  constructor(
+    private userService: UserService,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private mediaObserver: MediaObserver) { }
