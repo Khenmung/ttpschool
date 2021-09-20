@@ -94,7 +94,10 @@ export class AddMasterDataComponent implements OnInit {
     debugger;
 
     this.UserDetails = this.tokenStorage.getUserDetail();
-
+    if (this.UserDetails.length == 0) {
+      this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
+      this.route.navigate(['auth/login']);
+    }
     this.loading = true;
     this.shareddata.CurrentApplicationId.subscribe(s => this.SelectedApplicationId = s);
     this.shareddata.CurrentPermittedApplications.subscribe(p => this.PermittedApplications = p);
@@ -102,10 +105,7 @@ export class AddMasterDataComponent implements OnInit {
     this.SelectedApplicationName = this.PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)[0].applicationName;
     this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
 
-    if (this.UserDetails == null) {
-      this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
-      this.route.navigate(['auth/login']);
-    }
+    
     this.OrgId = this.UserDetails[0]["orgId"];
     this.searchForm.patchValue({ "OrgId": this.OrgId });
     if (this.UserDetails[0]["org"].toLowerCase()!="ttp")

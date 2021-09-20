@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 const RANDOMIMAGE_KEY = 'random-images';
 const TOKEN_KEY = 'auth-token';
+const REFRESHTOKEN_KEY = 'refresh-token';
 const USER_KEY = 'auth-user';
 const USER_DETAIL = 'userdetail';
 const REDIRECT_URL = 'redirecturl';
@@ -46,13 +47,20 @@ export class TokenStorageService {
   public getPreviousBatchId(): string | null {
     return localStorage.getItem(TOKEN_KEY);
   }
-
+  
+  public saveRefreshToken(RefreshToken: string): void {
+    localStorage.removeItem(REFRESHTOKEN_KEY);
+    localStorage.setItem(REFRESHTOKEN_KEY, RefreshToken);
+  }
   public saveToken(token: string): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.setItem(TOKEN_KEY, token);
   }
   public getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
+  }
+  public getRefreshToken(): string | null {
+    return localStorage.getItem(REFRESHTOKEN_KEY);
   }
   public saveCheckEqualBatchId(token: string): void {
     localStorage.removeItem(CHECKBATCHID);

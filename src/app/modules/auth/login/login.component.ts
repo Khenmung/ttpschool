@@ -78,8 +78,9 @@ export class LoginComponent implements OnInit {
       data => {
         debugger;
         //console.log("login data",data);
-        this.tokenStorage.saveToken(data.access_token);
-        this.tokenStorage.saveUser(data.userName);
+        this.tokenStorage.saveToken(data.Token);
+        this.tokenStorage.saveRefreshToken(data.RefreshToken);
+        this.tokenStorage.saveUser(username);
         this.GetApplicationRoleUser();
         //this.GetMasterData();        
       },
@@ -120,9 +121,10 @@ export class LoginComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        if (data.value.length > 0) {
-          if (data.value[0].Organization.Active == 1)
-            this.GetMasterData(data.value[0]);
+        console.log("data",data)
+        if (data.length > 0) {
+          if (data[0].Organization.Active == 1)
+            this.GetMasterData(data[0]);
           else {
             this.alert.info("User's Organization not active!, Please contact your administrator!", this.optionsNoAutoClose);
           }

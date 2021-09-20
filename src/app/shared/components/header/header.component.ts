@@ -52,34 +52,39 @@ export class HeaderComponent implements OnInit {
       searchApplicationId: [0],
       searchBatchId: [0]
     })
-    this.userName = this.tokenStorage.getUser();
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-    var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
-    var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-    this.shareddata.ChangePermittedApplications(_UniquePermittedApplications);
-    this.shareddata.CurrentPermittedApplications.subscribe(p => this.PermittedApplications = p);
-   
-    if (this.PermittedApplications.length == 0) {
+    if (this.loginUserDetail.length == 0) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
     }
-
-
-    if (this.userName === undefined || this.userName === null || this.userName == '')
-      this.loggedIn = false;
-    else
-      this.loggedIn = true;
-    this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
-    this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
-    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-    if (this.Batches.length == 0)
-      this.getBatches();
     else {
-      this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
-      this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
-    }
+      this.userName = this.tokenStorage.getUser();
+      var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
+      var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
+      this.shareddata.ChangePermittedApplications(_UniquePermittedApplications);
+      this.shareddata.CurrentPermittedApplications.subscribe(p => this.PermittedApplications = p);
 
+      if (this.PermittedApplications.length == 0) {
+        this.tokenStorage.signOut();
+        this.route.navigate(['/auth/login']);
+      }
+
+
+      if (this.userName === undefined || this.userName === null || this.userName == '')
+        this.loggedIn = false;
+      else
+        this.loggedIn = true;
+      this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
+      this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+      if (this.Batches.length == 0)
+        this.getBatches();
+      else {
+        this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
+        this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
+      }
+    }
   }
   toggleSideBar() {
     this.toggleSideBarForme.emit();

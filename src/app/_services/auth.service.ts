@@ -8,7 +8,7 @@ import { TokenStorageService } from './token-storage.service';
   providedIn: 'root'
 })
 export class AuthService implements OnInit {
-  httpOptions:{};
+  httpOptions:{headers:{"Content-Type":"application/json"}};
   AUTH_API: string = '';//'http://localhost:8070/';
   constructor(private http: HttpClient,
     private token:TokenStorageService) {
@@ -22,11 +22,12 @@ ngOnInit(): void {
 
 }
   login(myusername: string, mypassword: string): Observable<any> {
-    //return this.http.post(this.AUTH_API + '/Token', {
-    const formdata: FormData = new FormData();
-    let val = "grant_type=password&username=" + myusername + "&password=" + mypassword
+    let val = {
+      "email":  myusername,      
+      "password": mypassword
+    }
 
-    return this.http.post(this.AUTH_API + '/token', val, this.httpOptions);
+    return this.http.post(this.AUTH_API + '/api/AuthManagement/login', val);
   }
 
   register(confirmPassword: string, email: string, password: string): Observable<any> {
