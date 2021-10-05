@@ -16,6 +16,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  userInfo=[];
   loading = false;
   optionsNoAutoClose = {
     autoClose: false,
@@ -64,6 +65,7 @@ export class LoginComponent implements OnInit {
       this.isLoggedIn = true;
       this.route.navigate(['/']);
     }
+    this.GetApplicationFeatures();
     // this.shareddata.GetApplication().subscribe((data: any) => {
     //   this.Applications = [...data.value];
     // });
@@ -78,8 +80,8 @@ export class LoginComponent implements OnInit {
       data => {
         debugger;
         //console.log("login data",data);
-        this.tokenStorage.saveToken(data.Token);
-        this.tokenStorage.saveRefreshToken(data.RefreshToken);
+        //this.tokenStorage.saveToken(data.Token);
+        //this.tokenStorage.saveRefreshToken(data.RefreshToken);
         this.tokenStorage.saveUser(username);
         this.GetApplicationRoleUser();
         //this.GetMasterData();        
@@ -93,38 +95,30 @@ export class LoginComponent implements OnInit {
 
   GetApplicationRoleUser() {
 
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo')); 
+    
+    console.log('userinfo after login',this.userInfo)
     let list: List = new List();
     list.fields = [
-      'ApplicationUserId',
-      'UserName',
-      'EmailAddress',
+      'UserId',
+      'RoleId',
       'OrgId',
-      'ManagerId',
-      'LocationId',
-      'DepartmentId',
-      'ValidFrom',
-      'ValidTo',
-      'RoleUsers/RoleId',
-      'RoleUsers/Active',
-      'Organization/OrganizationName',
-      'Organization/LogoPath',
-      'Organization/Active',
-      'Active',
+      'Active'
     ];
 
-    list.PageName = "AppUsers";
-    list.lookupFields = ["RoleUsers", "Organization"];
+    list.PageName = "RoleUsers";
+    list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
 
-    list.filter = ["Active eq 1 and EmailAddress eq '" + this.tokenStorage.getUser() + "'"];
+    list.filter = ["Active eq 1 and UserId eq '" + this.userInfo["Id"] + "'"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         console.log("data",data)
-        if (data.length > 0) {
-          if (data[0].Organization.Active == 1)
-            this.GetMasterData(data[0]);
+        if (data.value.length > 0) {
+          if (data.value[0].Org.Active == 1)
+            this.GetMasterData(data.value);
           else {
             this.alert.info("User's Organization not active!, Please contact your administrator!", this.optionsNoAutoClose);
           }
@@ -132,12 +126,12 @@ export class LoginComponent implements OnInit {
       })
   }
 
-  GetMasterData(UserApp) {
+  GetMasterData(UserRole) {
     debugger;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
-    list.PageName = "MasterDatas";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + UserApp.OrgId + ")"];
+    list.PageName = "MasterItems";
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + UserRole[0].OrgId + ")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -161,30 +155,26 @@ export class LoginComponent implements OnInit {
         this.shareddata.ChangeRoles(this.Roles);
 
         this.RoleFilter = ' and (RoleId eq 0';
-        var _location = '';
-        if (this.Locations.length > 0 && UserApp.LocationId != null)
-          _location = this.Locations.filter(l => l.MasterDataId == UserApp.LocationId)[0].MasterDataName;
-        var _department = '';
-        if (this.Departments.length > 0 && UserApp.DepartmentId != null)
-          _department = this.Departments.filter(l => l.MasterDataId == UserApp.DepartmentId)[0].MasterDataName;
+        //var _location = '';
+        // if (this.Locations.length > 0 && UserRole.LocationId != null)
+        //   _location = this.Locations.filter(l => l.MasterDataId == UserRole.LocationId)[0].MasterDataName;
+        // var _department = '';
+        // if (this.Departments.length > 0 && UserRole.DepartmentId != null)
+        //   _department = this.Departments.filter(l => l.MasterDataId == UserRole.DepartmentId)[0].MasterDataName;
         var __organization = '';
-        if (UserApp.OrgId != null)
-          __organization = UserApp.Organization.OrganizationName;
+        if (UserRole[0].OrgId != null)
+          __organization = UserRole[0].Org.OrganizationName;
 
         this.UserDetail = [{
-          userId: UserApp.ApplicationUserId,
-          userName: UserApp.UserName,
-          email: UserApp.EmailAddress,
-          orgId: UserApp.OrgId,
+          userId: this.userInfo["Id"],
+          userName: this.userInfo["email"],
+          email: this.userInfo["email"],
+          orgId: UserRole[0].OrgId,
           org: __organization,
-          locationId: UserApp.LocationId,
-          location: _location,
-          departmentId: UserApp.DepartmentId,
-          department: _department,
-          validfrom: UserApp.ValidFrom,
-          validto: UserApp.ValidTo,
-          managerId: UserApp.ManagerId,
-          RoleUsers: UserApp.RoleUsers.map(roleuser => {
+          //validfrom: UserRole.ValidFrom,
+          //validto: UserRole.ValidTo,
+          //managerId: UserRole.ManagerId,
+          RoleUsers: UserRole.map(roleuser => {
             if (roleuser.Active == 1 && roleuser.RoleId != null) {
               this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
               var _role = '';
@@ -204,46 +194,14 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.saveUserdetail(this.UserDetail);
         if (this.RoleFilter.length > 0)
           this.RoleFilter += ')';
-        this.GetApplicationFeatures();
+          this.GetApplicationRolesPermission();
+          
 
       }, error => {
         this.tokenStorage.signOut();
       });
   }
-  getDropDownData(dropdowntype) {
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      let Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      });
-    }
-    else
-      return [];
-  }
-  GetApplicationFeatures() {
-
-    let list: List = new List();
-    list.fields = [
-      'ApplicationFeatureId',
-      'FeatureName',
-      'ApplicationId'
-    ];
-
-    list.PageName = "ApplicationFeatures";
-    list.filter = ["Active eq 1"];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        debugger;
-        if (data.value.length > 0) {
-          this.ApplicationFeatures = [...data.value];
-          this.GetApplicationRolesPermission();
-        }
-      })
-  }
+    
   GetApplicationRolesPermission() {
 
     let list: List = new List();
@@ -293,7 +251,7 @@ export class LoginComponent implements OnInit {
 
           this.tokenStorage.saveUserdetail(this.UserDetail);
           //this.tokenStorage.
-          console.log('userdetail', this.tokenStorage.getUserDetail());
+          //console.log('userdetail', this.tokenStorage.getUserDetail());
           this.isLoginFailed = false;
           this.isLoggedIn = true;
           this.username = this.tokenStorage.getUser();
@@ -305,7 +263,40 @@ export class LoginComponent implements OnInit {
         }
       })
   }
+  GetApplicationFeatures() {
 
+    let list: List = new List();
+    list.fields = [
+      'ApplicationFeatureId',
+      'FeatureName',
+      'ApplicationId'
+    ];
+
+    list.PageName = "ApplicationFeatures";
+    list.filter = ["Active eq 1"];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        if (data.value.length > 0) {
+          this.ApplicationFeatures = [...data.value];
+          
+        }
+      })
+  }
+  getDropDownData(dropdowntype) {
+    let Ids = this.allMasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    })
+    if (Ids.length > 0) {
+      let Id = Ids[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      });
+    }
+    else
+      return [];
+  }
   gotohome() {
     this.route.navigate(['/home']);
   }

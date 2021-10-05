@@ -372,9 +372,9 @@ export class ClassmasterdashboardComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["EmpEmployee/EmpEmployeeId", "EmpEmployee/FirstName", "EmpEmployee/LastName", "WorkAccountId"];
+    list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["EmpEmployee"]
+    list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName","LastName)"]
     list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
     //list.orderBy = "ParentId";
     this.Teachers = [];
@@ -382,8 +382,8 @@ export class ClassmasterdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         data.value.filter(f => {
           this.Teachers.push({
-            TeacherId: f.EmpEmployee.EmpEmployeeId,
-            TeacherName: f.EmpEmployee.FirstName + " " + f.EmpEmployee.LastName
+            TeacherId: f.Employee.EmpEmployeeId,
+            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
           })
         })
 
@@ -423,7 +423,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     let list: List = new List();
 
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 

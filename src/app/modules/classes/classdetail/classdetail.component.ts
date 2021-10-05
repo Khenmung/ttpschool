@@ -266,7 +266,7 @@ export class ClassdetailComponent implements OnInit {
     let list: List = new List();
 
     list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["Active eq 1 and (ParentId eq 0 or MasterDataName eq 'Application' or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
     //list.orderBy = "ParentId";
 

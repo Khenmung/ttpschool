@@ -118,7 +118,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   GetTopMasters() {
     let list: List = new List();
     list.fields = ["MasterDataId", "ParentId", "MasterDataName", "Description", "Active", "OrgId"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["(ParentId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] + ") and Active eq 1"];//this.searchForm.get("ParentId").value];
     debugger;
     this.dataservice.get(list)

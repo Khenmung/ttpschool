@@ -15,7 +15,7 @@ import { AuthService } from '../../../_services/auth.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-  loading=false;
+  loading = false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -29,7 +29,7 @@ export class RegisterComponent implements OnInit {
     Email: null,
     Password: null
   };
-  CustomerPlan =[];
+  CustomerPlan = [];
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
@@ -41,7 +41,7 @@ export class RegisterComponent implements OnInit {
     Active: 1,
     UserId: 0,
     RoleId: 0,
-    PlanId:0,
+    PlanId: 0,
     ApplicationId: 0,
     CreatedDate: new Date(),
     UpdatedDate: new Date(),
@@ -71,7 +71,7 @@ export class RegisterComponent implements OnInit {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       //console.log("authlogin",this.deviceXs);
     });
-    this.shareddata.CurrentCustomerPlanSource.subscribe(p=>this.CustomerPlan=p);
+    this.shareddata.CurrentCustomerPlan.subscribe(p => this.CustomerPlan = p);
   }
   gotohome() {
     this.route.navigate(['/home']);
@@ -100,7 +100,6 @@ export class RegisterComponent implements OnInit {
             EmailAddress: this.RegistrationForm.get("Email").value,
             ContactNo: this.RegistrationForm.get("ContactNo").value,
             UserName: this.RegistrationForm.get("UserName").value,
-            PlanId: this.CustomerPlan["PlanId"],
             OrgId: organization.OrganizationId,
             CreatedDate: today,
             ValidFrom: today,
@@ -116,7 +115,7 @@ export class RegisterComponent implements OnInit {
                 this.isSignUpFailed = false;
               }, (error) => {
                 console.log('creating user error', error);
-      
+
               });
         }, (error) => {
           console.log('creating organization error', error);
@@ -125,24 +124,38 @@ export class RegisterComponent implements OnInit {
 
   }
   get f() { return this.RegistrationForm.controls; }
-  
+
   onSave(): void {
     this.errorMessage = '';
-    const { ConfirmPassword, Email, Password, OrganisationName } = this.RegistrationForm.value;
+    const { UserName, ConfirmPassword, Email, Password, OrganizationName, ContactNo } = this.RegistrationForm.value;
     debugger;
-    this.authService.register(ConfirmPassword, Email, Password).subscribe(
+    var userDetail = {
+      ConfirmPassword: ConfirmPassword,
+      Email: Email,
+      Password: Password,
+      Username: UserName,
+      OrganizationName: OrganizationName,
+      ContactNo: ContactNo
+    }
+    this.authService.register(userDetail).subscribe(
       data => {
-        //console.log('register data', data);
-        this.AddAppUsers()
-        // this.isSuccessful = true;
-        // this.isSignUpFailed = false;
+        //this.AddAppUsers()
+        this.alert.success("Congratulations! Your registration is successful.", this.optionsNoAutoClose);
+        this.isSuccessful = true;
+        this.isSignUpFailed = false;
       },
       err => {
+        var modelState;
+        if (err.error.ModelState != null)
+          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+        else if (err.error != null)
+          modelState = JSON.parse(JSON.stringify(err.error));
+        else
+          modelState = JSON.parse(JSON.stringify(err));
 
-        var modelState = err.error.ModelState;
         //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
         for (var key in modelState) {
-          if (modelState.hasOwnProperty(key)) {
+          if (modelState.hasOwnProperty(key) && key == 'errors') {
             this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key];
             //errors.push(modelState[key]);//list of error messages in an array
           }

@@ -12,7 +12,7 @@ export class SharedataService {
   StudentId = 0;
   StudentClassId = 0;
   
-  private MasterDataSource = new BehaviorSubject(this.items);
+  private MasterItemsource = new BehaviorSubject(this.items);
   private CurrentBatchIdSource = new BehaviorSubject(0);
   private BatchSource = new BehaviorSubject(this.items);
   private StudentIdSource = new BehaviorSubject(this.StudentId);
@@ -54,9 +54,12 @@ export class SharedataService {
   private SelectedBatchStartEndSource = new BehaviorSubject(this.items);  
   private CurrentBatchStartEndSource = new BehaviorSubject(this.items);  
   private CustomerPlanSource = new BehaviorSubject(this.items);  
+  private UserInfoSource = new BehaviorSubject(this.items);  
 
-  CurrentCustomerPlanSource = this.CustomerPlanSource.asObservable(); 
-  CurrentCurrentBatchStartEndSource = this.CurrentBatchStartEndSource.asObservable(); 
+  CurrentUserInfo = this.UserInfoSource.asObservable(); 
+
+  CurrentCustomerPlan = this.CustomerPlanSource.asObservable(); 
+  CurrentCurrentBatchStartEnd = this.CurrentBatchStartEndSource.asObservable(); 
   CurrentSelectedBatchStartEnd$ = this.SelectedBatchStartEndSource.asObservable(); 
   CurrentApplicationId = this.ApplicationIdSource.asObservable(); 
 
@@ -87,7 +90,7 @@ export class SharedataService {
   CurrentFeeType = this.FeeTypeSource.asObservable();
   CurrentSection = this.SectionSource.asObservable();
   CurrentPrimaryContact = this.PrimaryContactSource.asObservable();
-  CurrentMasterData = this.MasterDataSource.asObservable();
+  CurrentMasterData = this.MasterItemsource.asObservable();
   CurrentBatchId = this.CurrentBatchIdSource.asObservable();
   CurrentBatch = this.BatchSource.asObservable();
   CurrentStudentId = this.StudentIdSource.asObservable();
@@ -108,6 +111,9 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangeUserInfo(item){
+    this.UserInfoSource.next(item);
   }
   ChangeCustomerPlan(item){
     this.CustomerPlanSource.next(item);
@@ -208,7 +214,7 @@ export class SharedataService {
   }
   ChangeMasterData(item) {
 
-    this.MasterDataSource.next(item);
+    this.MasterItemsource.next(item);
   }
   ChangeCurrentBatchId(item) {
 

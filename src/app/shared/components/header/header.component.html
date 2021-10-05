@@ -38,7 +38,7 @@
                 <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
                     <mat-icon>login</mat-icon>login
                 </button>
-                <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="createlogin()">
+                <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="createlogin()">
                     <mat-icon>create</mat-icon>Create login
                 </button>
                 <button [disabled]="loading" mat-menu-item *ngIf="loggedIn" (click)="addUser()">

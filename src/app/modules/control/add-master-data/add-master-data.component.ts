@@ -126,7 +126,7 @@ export class AddMasterDataComponent implements OnInit {
       "MasterDataName", "Description",
       "Logic", "Sequence", "ApplicationId",
       "Active", "OrgId"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["(ParentId eq 0 or OrgId eq 0)" + applicationFilter];
     debugger;
     this.dataservice.get(list)
@@ -328,7 +328,7 @@ export class AddMasterDataComponent implements OnInit {
     list.fields = ["MasterDataId", "MasterDataName",
       "Description", "Logic", "ApplicationId",
       "Sequence", "ParentId", "OrgId", "Active"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["ParentId eq " + this.searchForm.get("ParentId").value + " and OrgId eq " + this.OrgId];
 
     this.dataservice.get(list)
@@ -383,7 +383,7 @@ export class AddMasterDataComponent implements OnInit {
             // UploadDate: new Date()
           }
 
-          this.dataservice.postPatch('MasterDatas', mastertoUpdate, row.MasterDataId, 'patch')
+          this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
             .subscribe(res => {
               this.alert.success("Master data " + message + " successfully.", this.optionAutoClose);
             });
@@ -449,7 +449,7 @@ export class AddMasterDataComponent implements OnInit {
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
       mastertoUpdate["ApplicationId"] = 0;//this.UserDetails[0]["applicationId"];
       //console.log('data to update',mastertoUpdate);
-      this.dataservice.postPatch('MasterDatas', mastertoUpdate, 0, 'post')
+      this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {
             row.MasterDataId = res.MasterDataId;
@@ -463,7 +463,7 @@ export class AddMasterDataComponent implements OnInit {
     }
     else {
       //selectedMasterDataId = newlyAddedRow[0].Id;
-      this.dataservice.postPatch('MasterDatas', mastertoUpdate, row.MasterDataId, 'patch')
+      this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
         .subscribe(res => {
           this.loading = false;
           row.Action = false;
@@ -491,7 +491,7 @@ export class AddMasterDataComponent implements OnInit {
       return item.Id == row.Id
     })[0].Id;
 
-    this.dataservice.postPatch('MasterDatas', mastertoUpdate, selectedMasterDataId, 'patch')
+    this.dataservice.postPatch('MasterItems', mastertoUpdate, selectedMasterDataId, 'patch')
       .subscribe(res => {
         this.alert.success("Master data updated!", this.optionAutoClose);
       });

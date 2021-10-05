@@ -306,7 +306,7 @@ export class FeereceiptComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "Logic", "ParentId", "Description"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["Active eq 1 and (MasterDataName eq 'Receipt Heading' or OrgId eq 1)"];
 
     this.dataservice.get(list)

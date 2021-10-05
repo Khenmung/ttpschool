@@ -38,7 +38,7 @@ export class NaomitsuService {
   get<returnType>(list: List): Observable<returnType> {
 
     var url;
-    url = this.END_POINT + "/api/" + list.PageName + "?$select=" + list.fields.toString();
+    url = this.END_POINT + "/odata/" + list.PageName + "?$select=" + list.fields.toString();
     //url = "/odata/" + list.PageName + "?$select=" + list.fields.toString();
     if (list.hasOwnProperty('lookupFields') && list.lookupFields.toString().length > 0) {
       url += "&$expand=" + list.lookupFields.toString();
@@ -87,7 +87,7 @@ export class NaomitsuService {
     //Config.ServiceBaseURL + '/odata/' + model + '/(' + id + ')',
     //console.log('hh',`${this.END_POINT}/odata/${model}${id ? '(' + id + ')': ''}`);
     return this.http[method](
-      `${this.END_POINT}/api/${model}${id ? '(' + id + ')' : ''}`,
+      `${this.END_POINT}/odata/${model}${id ? '(' + id + ')' : ''}`,
       data, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -96,7 +96,7 @@ export class NaomitsuService {
     ) as Observable<returnType>;
   }
   postFile(caption: string, fileToUpload: File) {
-    const endpoint = `${this.END_POINT}/api/saveimage`; //"http://localhost:8070/PhotoGalleryAPI"
+    const endpoint = `${this.END_POINT}/odata/saveimage`; //"http://localhost:8070/PhotoGalleryAPI"
     const formdata: FormData = new FormData();
     formdata.append("Image", fileToUpload, fileToUpload.name);
     formdata.append("ImageCaption", caption);

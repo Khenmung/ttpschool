@@ -164,7 +164,7 @@ export class StudentDocumentComponent implements OnInit {
   GetMasterData() {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["(" + this.FilterOrgIdOnly + " or ParentId eq 0) and Active eq 1"];
  
     this.dataservice.get(list)

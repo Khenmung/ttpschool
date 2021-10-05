@@ -341,7 +341,7 @@ export class LeaveBalanceComponent implements OnInit {
     let list: List = new List();
 
     list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
@@ -408,9 +408,9 @@ export class LeaveBalanceComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["*,EmpEmployee/*"];
+    list.fields = ["*"];
     list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["EmpEmployee"];
+    list.lookupFields = ["Employee($SELECT=*)"];
     list.filter = ["IsCurrent eq 1 and Active eq 1" + searchfilter + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -434,42 +434,42 @@ export class LeaveBalanceComponent implements OnInit {
             "JobTitle": this.getMasterText(this.JobTitles, item.JobTitleId),
             "Designation": this.getMasterText(this.Designations, item.DesignationId),
             "EmployeeId": item.EmpEmployeeId,
-            "FirstName": item.EmpEmployee.FirstName,
-            "LastName": item.EmpEmployee.LastName,
-            "FatherName": item.EmpEmployee.FatherName,
-            "MotherName": item.EmpEmployee.MotherName,
-            "Gender": this.getMasterText(this.Genders, item.EmpEmployee.Gender),
-            "Address": item.EmpEmployee.Address,
-            "DOB": item.EmpEmployee.DOB,
-            "DOJ": item.EmpEmployee.DOJ,
-            "City": this.getMasterText(this.City, item.EmpEmployee.CityId),
-            "Pincode": item.EmpEmployee.pincode,
-            "State": this.getMasterText(this.States, item.EmpEmployee.StateId),
-            "Country": this.getMasterText(this.Countries, item.EmpEmployee.CountryId),
-            "Bloodgroup": this.getMasterText(this.BloodGroups, item.EmpEmployee.Bloodgroup),
-            "Category": this.getMasterText(this.Categories, item.EmpEmployee.CategoryId),
-            "BankAccountNo": item.EmpEmployee.BankAccountNo,
-            "IFSCcode": item.EmpEmployee.IFSCcode,
-            "MICRNo": item.EmpEmployee.MICRNo,
-            "AdhaarNo": item.EmpEmployee.AdhaarNo,
-            "Religion": this.getMasterText(this.Religions, item.EmpEmployee.ReligionId),
-            "ContactNo": item.EmpEmployee.ContactNo,
-            "AlternateContactNo": item.EmpEmployee.AlternateContactNo,
-            "EmailAddress": item.EmpEmployee.EmailAddress,
-            "Location": this.getMasterText(this.Locations, item.EmpEmployee.LocationId),
-            "EmploymentStatus": this.getMasterText(this.EmploymentStatus, item.EmpEmployee.EmploymentStatusId),
-            "EmploymentType": this.getMasterText(this.EmploymentTypes, item.EmpEmployee.EmploymentTypeId),
-            "EmploymentTerm": this.getMasterText(this.Natures, item.EmpEmployee.EmploymentTermId),
-            "ConfirmationDate": item.EmpEmployee.ConfirmationDate,
-            "NoticePeriodDays": item.EmpEmployee.NoticePeriodDays,
-            "ProbationPeriodDays": item.EmpEmployee.ProbationPeriodDays,
-            "PAN": item.EmpEmployee.PAN,
-            "PassportNo": item.EmpEmployee.PassportNo,
-            "MaritalStatus": this.getMasterText(this.MaritalStatus, item.EmpEmployee.MaritalStatusId),
-            "MarriedDate": item.EmpEmployee.MarriedDate,
-            "PFAccountNo": item.EmpEmployee.PFAccountNo,
-            "Active": item.EmpEmployee.Active,
-            "EmployeeCode": item.EmpEmployee.EmployeeCode
+            "FirstName": item.Employee.FirstName,
+            "LastName": item.Employee.LastName,
+            "FatherName": item.Employee.FatherName,
+            "MotherName": item.Employee.MotherName,
+            "Gender": this.getMasterText(this.Genders, item.Employee.Gender),
+            "Address": item.Employee.Address,
+            "DOB": item.Employee.DOB,
+            "DOJ": item.Employee.DOJ,
+            "City": this.getMasterText(this.City, item.Employee.CityId),
+            "Pincode": item.Employee.pincode,
+            "State": this.getMasterText(this.States, item.Employee.StateId),
+            "Country": this.getMasterText(this.Countries, item.Employee.CountryId),
+            "Bloodgroup": this.getMasterText(this.BloodGroups, item.Employee.Bloodgroup),
+            "Category": this.getMasterText(this.Categories, item.Employee.CategoryId),
+            "BankAccountNo": item.Employee.BankAccountNo,
+            "IFSCcode": item.Employee.IFSCcode,
+            "MICRNo": item.Employee.MICRNo,
+            "AdhaarNo": item.Employee.AdhaarNo,
+            "Religion": this.getMasterText(this.Religions, item.Employee.ReligionId),
+            "ContactNo": item.Employee.ContactNo,
+            "AlternateContactNo": item.Employee.AlternateContactNo,
+            "EmailAddress": item.Employee.EmailAddress,
+            "Location": this.getMasterText(this.Locations, item.Employee.LocationId),
+            "EmploymentStatus": this.getMasterText(this.EmploymentStatus, item.Employee.EmploymentStatusId),
+            "EmploymentType": this.getMasterText(this.EmploymentTypes, item.Employee.EmploymentTypeId),
+            "EmploymentTerm": this.getMasterText(this.Natures, item.Employee.EmploymentTermId),
+            "ConfirmationDate": item.Employee.ConfirmationDate,
+            "NoticePeriodDays": item.Employee.NoticePeriodDays,
+            "ProbationPeriodDays": item.Employee.ProbationPeriodDays,
+            "PAN": item.Employee.PAN,
+            "PassportNo": item.Employee.PassportNo,
+            "MaritalStatus": this.getMasterText(this.MaritalStatus, item.Employee.MaritalStatusId),
+            "MarriedDate": item.Employee.MarriedDate,
+            "PFAccountNo": item.Employee.PFAccountNo,
+            "Active": item.Employee.Active,
+            "EmployeeCode": item.Employee.EmployeeCode
           }
           forDisplay["Employee"] = employeeVariable["FirstName"] + " " + employeeVariable["LastName"];
           //return VariableConfigs;

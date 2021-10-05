@@ -315,7 +315,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     let list: List = new List();
 
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
@@ -524,9 +524,9 @@ export class EmployeeSalaryComponentComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["*,EmpEmployee/*"];
+    list.fields = ["*"];
     list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["EmpEmployee"];
+    list.lookupFields = ["Employee/*"];
     list.filter = ["IsCurrent eq 1 and Active eq 1" + searchfilter + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -543,42 +543,42 @@ export class EmployeeSalaryComponentComponent implements OnInit {
             { "VariableName": "JobTitle", "VariableAmount": this.getMasterText(this.JobTitles, item.JobTitleId) },
             { "VariableName": "Designation", "VariableAmount": this.getMasterText(this.Designations, item.DesignationId) },
             { "VariableName": "EmployeeId", "VariableAmount": item.EmpEmployeeId },
-            { "VariableName": "FirstName", "VariableAmount": item.EmpEmployee.FirstName },
-            { "VariableName": "LastName", "VariableAmount": item.EmpEmployee.LastName },
-            { "VariableName": "FatherName", "VariableAmount": item.EmpEmployee.FatherName },
-            { "VariableName": "MotherName", "VariableAmount": item.EmpEmployee.MotherName },
-            { "VariableName": "Gender", "VariableAmount": this.getMasterText(this.Genders, item.EmpEmployee.Gender) },
-            { "VariableName": "Address", "VariableAmount": item.EmpEmployee.Address },
-            { "VariableName": "DOB", "VariableAmount": item.EmpEmployee.DOB },
-            { "VariableName": "DOJ", "VariableAmount": item.EmpEmployee.DOJ },
-            { "VariableName": "City", "VariableAmount": this.getMasterText(this.City, item.EmpEmployee.CityId) },
-            { "VariableName": "Pincode", "VariableAmount": item.EmpEmployee.pincode },
-            { "VariableName": "State", "VariableAmount": this.getMasterText(this.States, item.EmpEmployee.StateId) },
-            { "VariableName": "Country", "VariableAmount": this.getMasterText(this.Countries, item.EmpEmployee.CountryId) },
-            { "VariableName": "Bloodgroup", "VariableAmount": this.getMasterText(this.BloodGroups, item.EmpEmployee.Bloodgroup) },
-            { "VariableName": "Category", "VariableAmount": this.getMasterText(this.Categories, item.EmpEmployee.CategoryId) },
-            { "VariableName": "BankAccountNo", "VariableAmount": item.EmpEmployee.BankAccountNo },
-            { "VariableName": "IFSCcode", "VariableAmount": item.EmpEmployee.IFSCcode },
-            { "VariableName": "MICRNo", "VariableAmount": item.EmpEmployee.MICRNo },
-            { "VariableName": "AdhaarNo", "VariableAmount": item.EmpEmployee.AdhaarNo },
-            { "VariableName": "Religion", "VariableAmount": this.getMasterText(this.Religions, item.EmpEmployee.ReligionId) },
-            { "VariableName": "ContactNo", "VariableAmount": item.EmpEmployee.ContactNo },
-            { "VariableName": "AlternateContactNo", "VariableAmount": item.EmpEmployee.AlternateContactNo },
-            { "VariableName": "EmailAddress", "VariableAmount": item.EmpEmployee.EmailAddress },
-            { "VariableName": "Location", "VariableAmount": this.getMasterText(this.Locations, item.EmpEmployee.LocationId) },
-            { "VariableName": "EmploymentStatus", "VariableAmount": this.getMasterText(this.EmploymentStatus, item.EmpEmployee.EmploymentStatusId) },
-            { "VariableName": "EmploymentType", "VariableAmount": this.getMasterText(this.EmploymentTypes, item.EmpEmployee.EmploymentTypeId) },
-            { "VariableName": "EmploymentTerm", "VariableAmount": this.getMasterText(this.Natures, item.EmpEmployee.EmploymentTermId) },
-            { "VariableName": "ConfirmationDate", "VariableAmount": item.EmpEmployee.ConfirmationDate },
-            { "VariableName": "NoticePeriodDays", "VariableAmount": item.EmpEmployee.NoticePeriodDays },
-            { "VariableName": "ProbationPeriodDays", "VariableAmount": item.EmpEmployee.ProbationPeriodDays },
-            { "VariableName": "PAN", "VariableAmount": item.EmpEmployee.PAN },
-            { "VariableName": "PassportNo", "VariableAmount": item.EmpEmployee.PassportNo },
-            { "VariableName": "MaritalStatus", "VariableAmount": this.getMasterText(this.MaritalStatus, item.EmpEmployee.MaritalStatusId) },
-            { "VariableName": "MarriedDate", "VariableAmount": item.EmpEmployee.MarriedDate },
-            { "VariableName": "PFAccountNo", "VariableAmount": item.EmpEmployee.PFAccountNo },
-            { "VariableName": "Active", "VariableAmount": item.EmpEmployee.Active },
-            { "VariableName": "EmployeeCode", "VariableAmount": item.EmpEmployee.EmployeeCode }
+            { "VariableName": "FirstName", "VariableAmount": item.Employee.FirstName },
+            { "VariableName": "LastName", "VariableAmount": item.Employee.LastName },
+            { "VariableName": "FatherName", "VariableAmount": item.Employee.FatherName },
+            { "VariableName": "MotherName", "VariableAmount": item.Employee.MotherName },
+            { "VariableName": "Gender", "VariableAmount": this.getMasterText(this.Genders, item.Employee.Gender) },
+            { "VariableName": "Address", "VariableAmount": item.Employee.Address },
+            { "VariableName": "DOB", "VariableAmount": item.Employee.DOB },
+            { "VariableName": "DOJ", "VariableAmount": item.Employee.DOJ },
+            { "VariableName": "City", "VariableAmount": this.getMasterText(this.City, item.Employee.CityId) },
+            { "VariableName": "Pincode", "VariableAmount": item.Employee.pincode },
+            { "VariableName": "State", "VariableAmount": this.getMasterText(this.States, item.Employee.StateId) },
+            { "VariableName": "Country", "VariableAmount": this.getMasterText(this.Countries, item.Employee.CountryId) },
+            { "VariableName": "Bloodgroup", "VariableAmount": this.getMasterText(this.BloodGroups, item.Employee.Bloodgroup) },
+            { "VariableName": "Category", "VariableAmount": this.getMasterText(this.Categories, item.Employee.CategoryId) },
+            { "VariableName": "BankAccountNo", "VariableAmount": item.Employee.BankAccountNo },
+            { "VariableName": "IFSCcode", "VariableAmount": item.Employee.IFSCcode },
+            { "VariableName": "MICRNo", "VariableAmount": item.Employee.MICRNo },
+            { "VariableName": "AdhaarNo", "VariableAmount": item.Employee.AdhaarNo },
+            { "VariableName": "Religion", "VariableAmount": this.getMasterText(this.Religions, item.Employee.ReligionId) },
+            { "VariableName": "ContactNo", "VariableAmount": item.Employee.ContactNo },
+            { "VariableName": "AlternateContactNo", "VariableAmount": item.Employee.AlternateContactNo },
+            { "VariableName": "EmailAddress", "VariableAmount": item.Employee.EmailAddress },
+            { "VariableName": "Location", "VariableAmount": this.getMasterText(this.Locations, item.Employee.LocationId) },
+            { "VariableName": "EmploymentStatus", "VariableAmount": this.getMasterText(this.EmploymentStatus, item.Employee.EmploymentStatusId) },
+            { "VariableName": "EmploymentType", "VariableAmount": this.getMasterText(this.EmploymentTypes, item.Employee.EmploymentTypeId) },
+            { "VariableName": "EmploymentTerm", "VariableAmount": this.getMasterText(this.Natures, item.Employee.EmploymentTermId) },
+            { "VariableName": "ConfirmationDate", "VariableAmount": item.Employee.ConfirmationDate },
+            { "VariableName": "NoticePeriodDays", "VariableAmount": item.Employee.NoticePeriodDays },
+            { "VariableName": "ProbationPeriodDays", "VariableAmount": item.Employee.ProbationPeriodDays },
+            { "VariableName": "PAN", "VariableAmount": item.Employee.PAN },
+            { "VariableName": "PassportNo", "VariableAmount": item.Employee.PassportNo },
+            { "VariableName": "MaritalStatus", "VariableAmount": this.getMasterText(this.MaritalStatus, item.Employee.MaritalStatusId) },
+            { "VariableName": "MarriedDate", "VariableAmount": item.Employee.MarriedDate },
+            { "VariableName": "PFAccountNo", "VariableAmount": item.Employee.PFAccountNo },
+            { "VariableName": "Active", "VariableAmount": item.Employee.Active },
+            { "VariableName": "EmployeeCode", "VariableAmount": item.Employee.EmployeeCode }
           )
         });
         console.log("v inside", this.VariableConfigs)

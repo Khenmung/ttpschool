@@ -388,7 +388,7 @@ export class ClassperiodComponent implements OnInit {
     let list: List = new List();
 
     list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Sequence"];
-    list.PageName = "MasterDatas";
+    list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 

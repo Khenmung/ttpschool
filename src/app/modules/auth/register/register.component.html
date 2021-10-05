@@ -1,4 +1,4 @@
-<mat-card [ngClass]="{'width100':deviceXs,'width80':!deviceXs}">
+<mat-card>
     <mat-card-title style="margin-left: 20px;margin-top: 20px;">Sign up</mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
@@ -65,13 +65,15 @@
                             <mat-icon>cancel</mat-icon>
                         </button>
                     </div>
-                    <div style="padding: 20px;" class="alert alert-warning" *ngIf="errorMessage.length>0">
-                        Signup failed!<br />{{ errorMessage }}
+                    <div style="margin-top:15px;padding: 15px;" 
+                    class="alert alert-warning" 
+                    *ngIf="errorMessage.length>0"
+                    innerHTML="Signup failed!<br />{{ errorMessage }}">                        
                     </div>
                 </form>
                 <div class="alert alert-success" *ngIf="isSuccessful">
                     Please check and click on the link provided in your email for verification.
-                    <button [disabled]="loading" class="mat-raised-button" (click)="gotologin()">click to login</button>    
+                    <button [disabled]="loading" style="margin: 15px;" class="mat-raised-button" (click)="gotologin()">click to login</button>    
                 </div>
             </div>
         <!-- </div> -->
