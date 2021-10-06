@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -16,6 +17,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  jwtHelper = new JwtHelperService();
   userInfo=[];
   loading = false;
   optionsNoAutoClose = {
@@ -71,20 +73,47 @@ export class LoginComponent implements OnInit {
     // });
   }
 
-  onSubmit(): void {
+  // onSubmit(): void {
 
+  //   const { username, password } = this.form;
+
+  //   this.authService.login(username, password).subscribe(
+
+  //     data => {
+  //       debugger;
+  //       //console.log("login data",data);
+  //       //this.tokenStorage.saveToken(data.Token);
+  //       //this.tokenStorage.saveRefreshToken(data.RefreshToken);
+  //       this.tokenStorage.saveUser(username);
+  //       this.GetApplicationRoleUser();
+  //       //this.GetMasterData();        
+  //     },
+  //     err => {
+  //       this.errorMessage = err.error.message;
+  //       this.isLoginFailed = true;
+  //     }
+  //   );
+  // }
+  onSubmit(): void {
     const { username, password } = this.form;
 
     this.authService.login(username, password).subscribe(
-
       data => {
         debugger;
-        //console.log("login data",data);
-        //this.tokenStorage.saveToken(data.Token);
-        //this.tokenStorage.saveRefreshToken(data.RefreshToken);
-        this.tokenStorage.saveUser(username);
+        this.tokenStorage.saveToken(data.token);
+        this.tokenStorage.saveRefreshToken(data.refreshToken);
+        this.tokenStorage.saveUser(data);
+
+        const decodedUser = this.jwtHelper.decodeToken(data.token);
+        this.userInfo = JSON.parse(JSON.stringify(decodedUser));
+        //  localStorage.setItem('expiration', decodedUser.exp);
+        //  localStorage.setItem('userInfo',decodedUser);
+        this.isLoginFailed = false;
+        this.isLoggedIn = true;
+        //this.roles = this.tokenStorage.getUser().roles;
         this.GetApplicationRoleUser();
-        //this.GetMasterData();        
+        this.reloadPage();
+        
       },
       err => {
         this.errorMessage = err.error.message;
@@ -93,9 +122,12 @@ export class LoginComponent implements OnInit {
     );
   }
 
+  reloadPage(): void {
+    window.location.reload();
+  }
   GetApplicationRoleUser() {
 
-    this.userInfo = JSON.parse(localStorage.getItem('userInfo')); 
+    //this.userInfo = JSON.parse(localStorage.getItem('userInfo')); 
     
     console.log('userinfo after login',this.userInfo)
     let list: List = new List();
@@ -300,7 +332,5 @@ export class LoginComponent implements OnInit {
   gotohome() {
     this.route.navigate(['/home']);
   }
-  reloadPage(): void {
-    window.location.reload();
-  }
+  
 }

@@ -14,6 +14,7 @@ import { AuthTokenInterceptors } from './interceptors/auth.token.interceptors';
 import { AuthService } from './_services/auth.service';
 import { AuthGuard } from './guards/auth.guard';
 import { SharedataService } from './shared/sharedata.service';
+import { authInterceptorProviders } from './_helpers/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -35,11 +36,7 @@ import { SharedataService } from './shared/sharedata.service';
   ],
   providers: [
     DatePipe,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthTokenInterceptors,
-      multi: true
-    },
+    authInterceptorProviders,
     //SharedataService,
     AuthService, 
     AuthGuard

@@ -32,12 +32,12 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                    <button [disabled]="loading || CurrentPagePermission=='Read'" matTooltip="add new" mat-mini-fab (click)="addnew()">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading" [disabled]="CurrentPagePermission=='Read'" matTooltip="save"
+                    <button [disabled]="loading || !element.Action || CurrentPagePermission=='Read'" matTooltip="save"
                         mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>

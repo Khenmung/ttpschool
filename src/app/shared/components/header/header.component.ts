@@ -105,7 +105,7 @@ export class HeaderComponent implements OnInit {
   logout() {
     debugger;
     this.tokenStorage.signOut();
-    this.route.navigate(['/home']);
+    this.route.navigate(['/auth/login']);
   }
   contactus() {
     this.route.navigate(["/home/addmessage"]);

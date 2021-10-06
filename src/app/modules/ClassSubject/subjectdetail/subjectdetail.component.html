@@ -48,7 +48,7 @@
                 <mat-header-cell *matHeaderCellDef> Credits </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field>
-                        <input matInput type="number" [value]="element.Credits" (blur)="onBlur(element)"
+                        <input matInput type="number" max="100" [value]="element.Credits" (blur)="onBlur(element)"
                             [(ngModel)]="element.Credits" autocomplete="Off">
                     </mat-form-field>
                 </mat-cell>
@@ -61,7 +61,6 @@
                         <mat-label>Teacher</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId"
                             [value]="element.TeacherId">
-                            <mat-option [value]="0">select</mat-option>
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
                                 {{option.TeacherName}}
                             </mat-option>

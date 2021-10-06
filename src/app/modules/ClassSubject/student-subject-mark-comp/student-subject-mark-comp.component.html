@@ -1,81 +1,86 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Subject Components</strong></div>
-
-        <alert></alert>
-        <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
-                <mat-label>Class/Course</mat-label>
-                <mat-select formControlName="ClassId">
-                    <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
-                        {{p.ClassName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Subject</mat-label>
-                <mat-select formControlName="SubjectId" #SubjectId>
-                    <mat-option value="0">All</mat-option>
-                    <mat-option *ngFor="let p of Subjects" [value]="p.MasterDataId">
-                        {{p.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubjectComponent()">
-                <mat-icon>search</mat-icon>
-            </button><br>
-        </form>
-        <div class="example-container mat-elevation-z8">
-            <mat-table #table [dataSource]="dataSource" matSort>
-
-                <ng-container matColumnDef="ClassSubject">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Class Subject </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ClassSubject}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="SubjectComponent">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Component </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.SubjectComponent}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="FullMark">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field>
-                            <input matInput (blur)="onBlur(element)" type="number" [maxlength]="3" [value]="element.FullMark"
-                                [(ngModel)]="element.FullMark" />
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="PassMark">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field>
-                            <input (blur)="onBlur(element)" matInput type="number" [maxlength]="3" [value]="element.PassMark"
-                                [(ngModel)]="element.PassMark" />
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element)"
-                            [checked]="element.Active">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-            </mat-table>
-        </div>
     </div>
+    <alert></alert>
+    <form [formGroup]="searchForm">
+        <mat-form-field appearance="outline">
+            <mat-label>Class/Course</mat-label>
+            <mat-select formControlName="ClassId">
+                <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                    {{p.ClassName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Subject</mat-label>
+            <mat-select formControlName="SubjectId" #SubjectId>
+                <mat-option value="0">All</mat-option>
+                <mat-option *ngFor="let p of Subjects" [value]="p.MasterDataId">
+                    {{p.MasterDataName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubjectComponent()">
+            <mat-icon>search</mat-icon>
+        </button><br>
+    </form>
+    <div class="example-container mat-elevation-z8">
+        <mat-table #table [dataSource]="dataSource" matSort>
+
+            <ng-container matColumnDef="ClassSubject">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Class Subject </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ClassSubject}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="SubjectComponent">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Component </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.SubjectComponent}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FullMark">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field>
+                        <input #fullMark="ngModel" matInput (blur)="onBlur(element)" type="number" max="100"
+                            [value]="element.FullMark" [(ngModel)]="element.FullMark" />
+                            <mat-error *ngIf="fullMark?.invalid">  
+                                <div *ngIf="fullMark.errors.max">Max is 100</div>  
+                            </mat-error>
+                        </mat-form-field>
+                    
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PassMark">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field>
+                        <input (blur)="onBlur(element)" matInput type="number" [maxlength]="3"
+                            [value]="element.PassMark" [(ngModel)]="element.PassMark" />
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element)"
+                        [checked]="element.Active">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                        (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+    </div>
+</div>

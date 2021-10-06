@@ -36,20 +36,8 @@ ngOnInit(): void {
     }
     if (val && val.email && val.password) {
      
-      return this.http.post(this.AUTH_API + '/api/AuthManagement/login',val).pipe(
-        map((data: any) => {
-          if (!data) {
-            return false;
-          }
-          localStorage.setItem('access_token', data.token);
-          localStorage.setItem('refresh_token', data.refreshToken);
-          var decodedUser = this.jwtHelper.decodeToken(data.token);
-          console.log('decodedUser',decodedUser)
-          localStorage.setItem('expiration', decodedUser.exp);
-          localStorage.setItem('userInfo',JSON.stringify(decodedUser));
-          return true;
-        })
-      );
+      return this.http.post(this.AUTH_API + '/api/AuthManagement/login',val,this.httpOptions)
+      
     }
     return of(false);
     //return this.http.post(this.AUTH_API + '/api/AuthManagement/login', val);

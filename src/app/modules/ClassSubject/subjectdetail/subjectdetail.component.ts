@@ -53,12 +53,14 @@ export class SubjectDetailComponent implements OnInit {
     searchClassId: [0],
   });
   ClassSubjectId = 0;
+  
   ClassSubjectData = {
     ClassSubjectId: 0,
     ClassId: 0,
     Credits:0,
     OrgId: 0,
     BatchId: 0,
+    TeacherId:0,
     SubjectId: 0,
     SubjectTypeId: 0,
     Active: 1
@@ -341,7 +343,12 @@ export class SubjectDetailComponent implements OnInit {
       this.loading = false;
       return;
     }
-
+    if (row.Credits > 100)
+    {
+      this.alert.error("Credits can not be greater than 100.", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
     let checkFilterString = "ClassId eq " + row.ClassId +
       " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
     // " and Active eq " + row.Active +
@@ -374,7 +381,8 @@ export class SubjectDetailComponent implements OnInit {
           this.ClassSubjectData.Credits = row.Credits;
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
-          this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ClassSubjectData.TeacherId = row.TeacherId;          
+          this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];          
           this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {
             this.ClassSubjectData["CreatedDate"] = new Date();
@@ -397,6 +405,7 @@ export class SubjectDetailComponent implements OnInit {
 
   insert(row) {
 
+    console.log('this.ClassSubjectData',this.ClassSubjectData)
     debugger;
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, 0, 'post')
       .subscribe(

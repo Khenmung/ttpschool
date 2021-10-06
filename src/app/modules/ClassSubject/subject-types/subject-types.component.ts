@@ -201,7 +201,10 @@ GetSubjectTypes() {
 
   this.dataservice.get(list)
     .subscribe((data: any) => {
-      this.SubjectTypes = [...data.value];
+      this.SubjectTypes = data.value.map(m=>{
+        m.Action=false;
+        return m;
+      });
       this.dataSource = new MatTableDataSource<ISubjectType>(this.SubjectTypes);
       this.loading = false;
     })

@@ -22,6 +22,9 @@ export class SubjectBoardComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    setTimeout(() => {
+      this.navigateTab(0)  
+    }, 100);
     
   }
   tabChanged(tabChangeEvent: number) {
@@ -59,7 +62,9 @@ export class SubjectBoardComponent implements OnInit {
       case 5:
         this.Classperiod.PageLoad();
         break;
-
+      default:
+        this.subjecttypes.PageLoad();
+        break;
     }
   }
 }

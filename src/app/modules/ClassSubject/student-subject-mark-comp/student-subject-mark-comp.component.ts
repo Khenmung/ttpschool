@@ -97,6 +97,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   onBlur(element)
   {
+    debugger;
     element.Action =true;
   }
   UpdateOrSave(row) {
@@ -283,12 +284,10 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       "PassMark",
       "BatchId",
       "OrgId",
-      "Active",
-      "ClassSubject/SubjectId",
-      "ClassSubject/ClassId"
+      "Active"     
     ];
     list.PageName = "ClassSubjectMarkComponents";
-    list.lookupFields = ["ClassSubject"];
+    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)"];
     list.filter = ["Active eq 1 and " + this.StandardFilter];
     //list.orderBy = "ParentId";
     this.ELEMENT_DATA = [];
