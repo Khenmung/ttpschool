@@ -96,9 +96,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.SelectedBatchId = value;
   }
   onBlur(element)
-  {
-    debugger;
-    element.Action =true;
+  {    
+    element.Action =element.PassMark<1000 && element.FullMark<1000?true:false;
   }
   UpdateOrSave(row) {
     debugger;

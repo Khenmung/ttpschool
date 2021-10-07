@@ -18,7 +18,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
 })
 export class LoginComponent implements OnInit {
   jwtHelper = new JwtHelperService();
-  userInfo=[];
+  userInfo = [];
   loading = false;
   optionsNoAutoClose = {
     autoClose: false,
@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
     debugger;
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
-      this.route.navigate(['/']);
+      this.route.navigate(['/dashboard']);
     }
     this.GetApplicationFeatures();
     // this.shareddata.GetApplication().subscribe((data: any) => {
@@ -112,8 +112,8 @@ export class LoginComponent implements OnInit {
         this.isLoggedIn = true;
         //this.roles = this.tokenStorage.getUser().roles;
         this.GetApplicationRoleUser();
-        this.reloadPage();
-        
+        //this.reloadPage();
+
       },
       err => {
         this.errorMessage = err.error.message;
@@ -128,8 +128,8 @@ export class LoginComponent implements OnInit {
   GetApplicationRoleUser() {
 
     //this.userInfo = JSON.parse(localStorage.getItem('userInfo')); 
-    
-    console.log('userinfo after login',this.userInfo)
+
+    console.log('userinfo after login', this.userInfo)
     let list: List = new List();
     list.fields = [
       'UserId',
@@ -147,7 +147,7 @@ export class LoginComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        console.log("data",data)
+        console.log("data", data)
         if (data.value.length > 0) {
           if (data.value[0].Org.Active == 1)
             this.GetMasterData(data.value);
@@ -226,14 +226,14 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.saveUserdetail(this.UserDetail);
         if (this.RoleFilter.length > 0)
           this.RoleFilter += ')';
-          this.GetApplicationRolesPermission();
-          
+        this.GetApplicationRolesPermission();
+
 
       }, error => {
         this.tokenStorage.signOut();
       });
   }
-    
+
   GetApplicationRolesPermission() {
 
     let list: List = new List();
@@ -287,7 +287,10 @@ export class LoginComponent implements OnInit {
           this.isLoginFailed = false;
           this.isLoggedIn = true;
           this.username = this.tokenStorage.getUser();
-          this.route.navigate([this.tokenStorage.getRedirectUrl()]);
+          var gotoUrl = this.tokenStorage.getRedirectUrl();
+          if (gotoUrl.length == 0)
+            gotoUrl = '/dashboard';
+          this.route.navigate([gotoUrl]);
         }
         else {
           this.alert.info("Initial minimal settings must be done.", this.optionsNoAutoClose);
@@ -312,7 +315,7 @@ export class LoginComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           this.ApplicationFeatures = [...data.value];
-          
+
         }
       })
   }
@@ -330,7 +333,7 @@ export class LoginComponent implements OnInit {
       return [];
   }
   gotohome() {
-    this.route.navigate(['/home']);
+    this.route.navigate(['/dashboard']);
   }
-  
+
 }

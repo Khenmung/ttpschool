@@ -13,6 +13,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/website.module').then(m => m.WebsiteModule)
   },
   {
+    path: 'dashboard',
+    loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule)
+  },
+  {
     path: 'auth',
     loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
   },
@@ -21,31 +25,31 @@ const routes: Routes = [
     loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
-    path: 'school/:id/cls',
+    path: 'edu/:id/cls',
     loadChildren: () => import('./modules/classes/classes.module').then(m => m.ClassesModule)
   },
   {
-    path: 'school/:id/subject',//runGuardsAndResolvers:'always',
+    path: 'edu/:id/subject',//runGuardsAndResolvers:'always',
     loadChildren: () => import('./modules/ClassSubject/student-subject.module').then(m => m.StudentSubjectModule)
   },
   {
-    path: 'school/:id/exam',
+    path: 'edu/:id/exam',
     loadChildren: () => import('./modules/studentexam/studentexam.module').then(m => m.StudentexamModule)
   },  
   {
-    path: 'school/:id/reports',
+    path: 'edu/:id/reports',
     loadChildren: () => import('./modules/schoolreports/reports.module').then(m => m.SchoolReportsModule)
   },
   {
-    path: 'school/:id/reportconfig',
+    path: 'edu/:id/reportconfig',
     loadChildren: () => import('./modules/ReportConfig/report-configuration.module').then(m => m.ReportConfigurationModule)
   },
   {
-    path: 'school/:id',
+    path: 'edu/:id',
     loadChildren: () => import('./modules/student/student.module').then(m => m.StudentModule)
   },
   {
-    path: 'school/:id/attendance',
+    path: 'edu/:id/attendance',
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
   {
@@ -61,7 +65,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/Accounting/accounting.module').then(m => m.AccountingModule)
   },
   {
-    path: 'school/:id/timetable',
+    path: 'edu/:id/timetable',
     loadChildren: () => import('./modules/schooltimetable/schooltimetable.module').then(m => m.SchooltimetableModule)
   },
   {

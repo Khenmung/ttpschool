@@ -24,15 +24,15 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<Object>> {
     let authReq = req;
     const token = this.tokenService.getToken();
-    debugger;
+    
     if (token != null) {
       authReq = this.addTokenHeader(req, token);
     }
 
     return next.handle(authReq).pipe(
       catchError(error => {
-        debugger;
         if (error instanceof HttpErrorResponse && !authReq.url.includes('auth/login') && error.status === 401) {
+          console.log('inside 401')
           return this.handle401Error(authReq, next);
         }
 

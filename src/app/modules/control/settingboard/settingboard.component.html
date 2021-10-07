@@ -1,51 +1,58 @@
+<mat-card>
+    <mat-card-title>Initial Settings</mat-card-title>
+    <mat-card-subtitle></mat-card-subtitle>
+    <mat-card-content>
+        <div style="margin:5px">
+            <div fxLayout="row wrap" fxLayoutAlign="start center" fxLayout.xs="column" fxLayoutGap="30px">
+                <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>first_page</mat-icon> Essential Data
+                        </ng-template>
+                        <app-add-master-data></app-add-master-data>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>layers</mat-icon> Batches
+                        </ng-template>
+                        <app-batchdashboard></app-batchdashboard>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>people</mat-icon> Users
+                        </ng-template>
+                        <app-appuserdashboard></app-appuserdashboard>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>group_work</mat-icon> Role User
+                        </ng-template>
+                        <app-roleuserdashboard></app-roleuserdashboard>
+                    </mat-tab>
 
-<div fxLayout="row wrap" fxLayoutAlign="start center" fxLayout.xs="column" fxLayoutGap="30px">
-    <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)" >
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>first_page</mat-icon> Essential Data
-            </ng-template>
-            <app-add-master-data></app-add-master-data>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>layers</mat-icon> Batches
-            </ng-template>
-            <app-batchdashboard></app-batchdashboard>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>people</mat-icon> Users
-            </ng-template>
-            <app-appuserdashboard></app-appuserdashboard>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>group_work</mat-icon> Role User
-            </ng-template>
-            <app-roleuserdashboard></app-roleuserdashboard>
-        </mat-tab>
-        
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>apps
-                </mat-icon> Application Role Permission
-            </ng-template>
-            <app-RoleAppPermissiondashboard></app-RoleAppPermissiondashboard>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>payments
-                </mat-icon> Fee Types
-            </ng-template>
-            <app-school-fee-types></app-school-fee-types>
-        </mat-tab>
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>change_history
-                </mat-icon> Variable Config
-            </ng-template>
-            <app-variable-config></app-variable-config>
-        </mat-tab>              
-    </mat-tab-group>
-</div>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>apps
+                            </mat-icon> Application Role Permission
+                        </ng-template>
+                        <app-RoleAppPermissiondashboard></app-RoleAppPermissiondashboard>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>payments
+                            </mat-icon> Fee Types
+                        </ng-template>
+                        <app-school-fee-types></app-school-fee-types>
+                    </mat-tab>
+                    <mat-tab>
+                        <ng-template mat-tab-label>
+                            <mat-icon>change_history
+                            </mat-icon> Variable Config
+                        </ng-template>
+                        <app-variable-config></app-variable-config>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

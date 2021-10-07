@@ -44,10 +44,10 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field>
-                        <input #fullMark="ngModel" matInput (blur)="onBlur(element)" type="number" max="100"
+                        <input #fullMark="ngModel" matInput (blur)="onBlur(element)" type="number" max="1000"
                             [value]="element.FullMark" [(ngModel)]="element.FullMark" />
                             <mat-error *ngIf="fullMark?.invalid">  
-                                <div *ngIf="fullMark.errors.max">Max is 100</div>  
+                                <div *ngIf="fullMark.errors.max">Max is 1000</div>  
                             </mat-error>
                         </mat-form-field>
                     
@@ -57,9 +57,12 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field>
-                        <input (blur)="onBlur(element)" matInput type="number" [maxlength]="3"
+                        <input (blur)="onBlur(element)" #PassMark="ngModel" matInput type="number" [max]="1000"
                             [value]="element.PassMark" [(ngModel)]="element.PassMark" />
-                    </mat-form-field>
+                            <mat-error *ngIf="PassMark?.invalid">  
+                                <div *ngIf="PassMark.errors.max">Max is 1000</div>  
+                            </mat-error>
+                        </mat-form-field>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Active">

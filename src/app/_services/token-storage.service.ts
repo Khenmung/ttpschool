@@ -91,13 +91,14 @@ export class TokenStorageService {
     localStorage.removeItem(USER_DETAIL);
     localStorage.setItem(USER_DETAIL, JSON.stringify(userdetail));
   }
-  public saveredirectionurl(url: any): void {
+  public saveRedirectionUrl(url: any): void {
     localStorage.removeItem(REDIRECT_URL);
     localStorage.setItem(REDIRECT_URL, JSON.stringify(url));
   }
   public getRedirectUrl(): any {
     const redirecturl = localStorage.getItem(REDIRECT_URL);
     if (redirecturl) {
+      localStorage.removeItem(REDIRECT_URL)
       return JSON.parse(redirecturl);
     }
     return "";

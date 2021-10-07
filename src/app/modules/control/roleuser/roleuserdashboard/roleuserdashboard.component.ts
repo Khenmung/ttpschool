@@ -103,7 +103,7 @@ export class roleuserdashboardComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0) {
 
-      this.tokenstorage.saveredirectionurl(window.location.pathname);
+      this.tokenstorage.saveRedirectionUrl(window.location.pathname);
       this.nav.navigate(['/auth/login']);
     }
     else {

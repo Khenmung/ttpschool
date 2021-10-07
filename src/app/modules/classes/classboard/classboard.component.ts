@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClassdetailComponent } from '../classdetail/classdetail.component';
 import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
+import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
 
 @Component({
@@ -12,6 +13,7 @@ export class ClassboardComponent implements OnInit {
   @ViewChild(ClassdetailComponent) Classdetail:ClassdetailComponent;
   @ViewChild(DashboardclassfeeComponent) classfee:DashboardclassfeeComponent;
   @ViewChild(ClassprerequisiteComponent) prequisites:ClassprerequisiteComponent;
+  @ViewChild(ClassmasterdashboardComponent) master:ClassmasterdashboardComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -43,6 +45,9 @@ export class ClassboardComponent implements OnInit {
         break;
       case 2:
         this.prequisites.PageLoad();
+        break;
+      case 3:
+        this.master.PageLoad();
         break;
       // case 3:
       //   this.subjectmarkComponent.PageLoad();

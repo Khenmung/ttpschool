@@ -344,6 +344,7 @@ export class ClassmasterdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.TeacherClassMappingId = data.TeacherClassMappingId;
+          row.Action =false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
@@ -353,6 +354,7 @@ export class ClassmasterdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action =false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }

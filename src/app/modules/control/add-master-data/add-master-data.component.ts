@@ -102,20 +102,30 @@ export class AddMasterDataComponent implements OnInit {
     this.shareddata.CurrentApplicationId.subscribe(s => this.SelectedApplicationId = s);
     this.shareddata.CurrentPermittedApplications.subscribe(p => this.PermittedApplications = p);
     //console.log('this.PermittedApplications',this.PermittedApplications)
-    this.SelectedApplicationName = this.PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)[0].applicationName;
-    this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
+    this.SelectedApplicationName = '';
+    var apps = this.PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
 
-    
-    this.OrgId = this.UserDetails[0]["orgId"];
-    this.searchForm.patchValue({ "OrgId": this.OrgId });
-    if (this.UserDetails[0]["org"].toLowerCase()!="ttp")
-      this.searchForm.controls['OrgId'].disable();
+    if (apps.length == 0) {
+      this.alert.error('Application selected is not valid!', this.optionAutoClose);
+      this.route.navigate(['auth/login']);
+    }
+    else if (apps.length > 0) {
+      this.SelectedApplicationName = apps[0].applicationName;
 
-    this.GetTopMasters();
-    this.GetOrganizations();
+      this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
+
+
+      this.OrgId = this.UserDetails[0]["orgId"];
+      this.searchForm.patchValue({ "OrgId": this.OrgId });
+      if (this.UserDetails[0]["org"].toLowerCase() != "ttp")
+        this.searchForm.controls['OrgId'].disable();
+
+      this.GetTopMasters();
+      this.GetOrganizations();
+    }
   }
-
   GetTopMasters() {
+
     var applicationFilter = '';
     if (!this.SelectedApplicationName.toLowerCase().includes("admin")) {
       applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
@@ -132,12 +142,17 @@ export class AddMasterDataComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          var _applicationId = data.value.filter(d => d.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
-          var _certificateId = data.value.filter(d => d.MasterDataName.toLowerCase() == 'certificate type')[0].MasterDataId;
+          // var _applicationId =-1; 
 
-          this.TopMasters = data.value.filter(m => {
-            return m.ParentId == 0 && m.MasterDataId != _applicationId && m.ParentId != _applicationId
-          });
+          // var appIds = data.value.filter(d => d.MasterDataName.toLowerCase() == 'application')
+          // if(appIds.length>0)
+          // _applicationId = appIds[0].MasterDataId;
+
+          // //var _certificateId = data.value.filter(d => d.MasterDataName.toLowerCase() == 'certificate type')[0].MasterDataId;
+
+          // this.TopMasters = data.value.filter(m => {
+          //   return m.ParentId == 0 && m.MasterDataId != _applicationId && m.ParentId != _applicationId
+          // });
 
           this.DefinedMaster = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
           let applicationData = globalconstants.MasterDefinitions.ttpapps;
@@ -321,7 +336,7 @@ export class AddMasterDataComponent implements OnInit {
     this.enableTopEdit = false;
     this.enableAddNew = true;
 
-    if(this.SelectedApplicationName.toLowerCase().includes("admin"))
+    if (this.SelectedApplicationName.toLowerCase().includes("admin"))
       this.OrgId = this.searchForm.get("OrgId").value;
 
     let list: List = new List();

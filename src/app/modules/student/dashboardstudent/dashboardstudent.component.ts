@@ -237,20 +237,20 @@ export class DashboardstudentComponent implements OnInit {
       return [];
   }
   fee(id) {
-    this.route.navigate(['/school/' + this.ApplicationId + '/addstudentfeepayment/' + id]);
+    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudentfeepayment/' + id]);
   }
   class(id) {
-    this.route.navigate(['/school/' + this.ApplicationId + '/addstudentcls/' + id]);
+    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudentcls/' + id]);
   }
   view(element) {
     debugger;
     this.generateDetail(element);
     //  this.route.navigate(['/admin/addstudent/' + id], { queryParams: { scid: this.StudentClassId, bid: this.BatchId } });
-    this.route.navigate(['/school/' + this.ApplicationId + '/addstudent/' + element.StudentId]);
+    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudent/' + element.StudentId]);
   }
   feepayment(element) {
     this.generateDetail(element);
-    this.route.navigate(['/school/' + this.ApplicationId + '/feepayment']);
+    this.route.navigate(['/edu/' + this.ApplicationId + '/feepayment']);
   }
   generateDetail(element) {
     let StudentName = element.StudentId + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
@@ -275,7 +275,7 @@ export class DashboardstudentComponent implements OnInit {
   }
   new() {
     //var url = this.route.url;
-    this.route.navigate(['/school/' + this.ApplicationId + '/addstudent']);
+    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudent']);
   }
   ExportTOExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.tableRef.nativeElement);

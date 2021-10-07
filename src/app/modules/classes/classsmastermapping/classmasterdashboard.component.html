@@ -1,13 +1,12 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div style="padding: 15px;"><strong>Class Master</strong></div>
+        <div style="padding: 15px;"><strong>Master</strong></div>
 
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline">
                 <mat-select formControlName="searchClassId">
-                    <mat-option [value]="0">select class</mat-option>
                     <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
                         {{item.ClassName}}</mat-option>
                 </mat-select>
