@@ -149,7 +149,7 @@ export class TrialBalanceComponent implements OnInit {
 
   GetAccountingVoucher() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    //debugger;
+    ////debugger;
     this.loading = true;
 
     filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
@@ -176,7 +176,7 @@ export class TrialBalanceComponent implements OnInit {
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         this.AccountingVoucherList = [...data.value];
         this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
         this.loading = false;
@@ -206,7 +206,7 @@ export class TrialBalanceComponent implements OnInit {
 
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
 
     // let checkFilterString = "TeacherId eq " + row.TeacherId +
@@ -224,7 +224,7 @@ export class TrialBalanceComponent implements OnInit {
 
     // this.dataservice.get(list)
     //   .subscribe((data: any) => {
-    //     debugger;
+    //     //debugger;
     //     if (data.value.length > 0) {
     //       this.loading = false;
     //       this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -266,7 +266,7 @@ export class TrialBalanceComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -307,7 +307,7 @@ export class TrialBalanceComponent implements OnInit {
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         this.GLAccounts = data.value.map(f => {
           return {

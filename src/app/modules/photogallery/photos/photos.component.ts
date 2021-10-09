@@ -70,7 +70,7 @@ export class PhotosComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          debugger;
+          //debugger;
           var browsePath = '';
           this.images = data.value.map(item => {
             browsePath = globalconstants.apiUrl + "/Image/" + item.Album.AlbumName + "/" + item.PhotoPath;

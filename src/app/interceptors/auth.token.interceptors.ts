@@ -24,7 +24,7 @@ export class AuthTokenInterceptors implements HttpInterceptor {
       return next.handle(req);
     }
     const access_token = JSON.parse(localStorage.getItem('access_token'));
-    debugger;
+    //debugger;
     if (access_token && access_token !='null') {
       const expiration = localStorage.getItem('expiration');
       if (Date.now() < Number(expiration) * 1000) {

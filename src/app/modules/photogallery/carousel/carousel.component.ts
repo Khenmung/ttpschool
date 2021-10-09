@@ -61,7 +61,7 @@ export class CarouselComponent implements OnInit {
     this.loading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        ////debugger;
         if (data.value.length > 0) {
           var browsePath='';
           this.selectedAlbum = data.value.filter(item=>{
@@ -93,7 +93,7 @@ export class CarouselComponent implements OnInit {
   }
   getNestedFolders(fileId) {
     let ParentItem = this.Albums.filter(item => item.FileId == fileId);
-    debugger;
+    //debugger;
     while (ParentItem.length > 0) {
       this.folderHierarachy += ParentItem[0].FileName + "/";
       ParentItem = this.Albums.filter(item => item.FileId == ParentItem[0].ParentId)

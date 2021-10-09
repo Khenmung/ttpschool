@@ -34,7 +34,7 @@ export class ExamsComponent implements OnInit {
   Batches = [];
   dataSource: MatTableDataSource<IExams>;
   allMasterData = [];
-
+  Permission='';
   ExamId = 0;
   ExamsData = {
     ExamId: 0,
@@ -64,7 +64,7 @@ export class ExamsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
 
   }
 
@@ -74,6 +74,11 @@ export class ExamsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      var feature = globalconstants.AppAndMenuAndFeatures.edu.examination.exam;     
+      this.Permission= globalconstants.getPermission(this.LoginUserDetail,this.tokenstorage,feature);
+      if(this.Permission=='')
+        this.nav.navigate(['/auth/login']);
+        
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
@@ -122,7 +127,7 @@ export class ExamsComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
@@ -139,7 +144,7 @@ export class ExamsComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -174,7 +179,7 @@ export class ExamsComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('Exams', this.ExamsData, 0, 'post')
       .subscribe(
         (data: any) => {

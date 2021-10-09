@@ -102,7 +102,7 @@ export class AlbumsComponent implements OnInit {
   }
   getNestedFolders(parentId) {
     let ParentItem = this.AllAlbums.filter(item => item.FileId == parentId);
-    debugger;
+    //debugger;
     while (ParentItem.length > 0) {
       this.folderHierarachy += ParentItem[0].FileName + "/";
       this.folderDisplayHierachy += ParentItem[0].UpdatedFileFolderName + "/";
@@ -113,7 +113,7 @@ export class AlbumsComponent implements OnInit {
     this.alert.success("url copied", this.options);
   }
   getFiles(album, mode) {
-    debugger;
+    //debugger;
     let folderSearch = '';
 
     if (album != undefined) {
@@ -152,7 +152,7 @@ export class AlbumsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          debugger;
+          //debugger;
           var browsePath = '';
           this.Albums = data.value.map(item => {
             this.folderHierarachy='Image/';

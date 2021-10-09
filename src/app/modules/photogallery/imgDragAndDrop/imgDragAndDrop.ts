@@ -63,7 +63,7 @@ export class ImgDragAndDropComponent implements OnInit {
     }
   }
   onSelect(event) {
-    debugger;
+    //debugger;
     this.files.push(...event.addedFiles);
 
     this.formData = new FormData();
@@ -112,7 +112,7 @@ export class ImgDragAndDropComponent implements OnInit {
   //   );
   // }
   Upload() {
-    debugger;
+    //debugger;
     if (this.Requestsize > globalconstants.RequestLimit) {
       this.alert.error("File upload limit is 20mb!", this.options);
       return;
@@ -186,7 +186,7 @@ export class ImgDragAndDropComponent implements OnInit {
     list.fields = ["FileId", "UpdatedFileFolderName"];
     list.PageName = "FilesNPhotoes";
     list.filter = ["Active eq 1 and FileOrFolder eq 1 and FileOrPhoto eq 1"];
-    debugger;
+    //debugger;
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {

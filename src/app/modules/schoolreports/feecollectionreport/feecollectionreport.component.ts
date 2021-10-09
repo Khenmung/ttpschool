@@ -103,7 +103,7 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetStudentFeePaymentReport() {
-    debugger;
+    //debugger;
 
     if (this.SearchForm.value.FeeNameId == 0 || this.SearchForm.value.BatchId == 0) {
       this.alert.error('Batch and Fee are required to select!', this.options.autoClose);
@@ -136,7 +136,7 @@ export class FeecollectionreportComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //this.TotalAmount = 0;
         if (data.value.length > 0) {
           //this.TotalStudentCount = data.value.length;

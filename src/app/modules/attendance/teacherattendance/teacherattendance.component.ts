@@ -80,7 +80,7 @@ export class TeacherAttendanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     
@@ -111,7 +111,7 @@ export class TeacherAttendanceComponent implements OnInit {
   }
   
   GetTeacherAttendance() {
-    debugger;
+    //debugger;
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     var _workAccountId = 0;
@@ -200,11 +200,11 @@ export class TeacherAttendanceComponent implements OnInit {
   }
   UpdateActive(element, event) {
     element.Action = true;
-    debugger;
+    //debugger;
     element.AttendanceStatus = event.checked == true ? 1 : 0;
   }
   onChangeEvent(row, value) {
-    debugger;
+    //debugger;
     if (row.Remarks.length > 0)
       row.Action = true;
   }
@@ -232,7 +232,7 @@ export class TeacherAttendanceComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }

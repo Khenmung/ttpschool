@@ -99,7 +99,7 @@ export class LeaveBalanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchEmployee: [0]
     });
@@ -138,13 +138,13 @@ export class LeaveBalanceComponent implements OnInit {
     }
   }
   updateCommonComponent(row, value) {
-    debugger;
+    //debugger;
     row.Action = true;
     row.CommonComponent = value.checked == 1 ? 1 : 0;
 
   }
   updateDeduction(row, value) {
-    debugger;
+    //debugger;
     row.Action = true;
     row.Deduction = value.checked == 1 ? 1 : 0;
   }
@@ -215,7 +215,7 @@ export class LeaveBalanceComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -233,7 +233,7 @@ export class LeaveBalanceComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -270,7 +270,7 @@ export class LeaveBalanceComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.LeaveBalanceListName, this.LeaveBalanceData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -316,7 +316,7 @@ export class LeaveBalanceComponent implements OnInit {
   //   })
   // }
   onBlur(element, event) {
-    debugger;
+    //debugger;
     var _colName = event.srcElement.name;
     console.log("event", event);
     //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
@@ -329,7 +329,7 @@ export class LeaveBalanceComponent implements OnInit {
   //   })
   // }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
 
@@ -347,7 +347,7 @@ export class LeaveBalanceComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         this.allMasterData = [...data.value];
         this.OpenAdjustCloseLeaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.OPENADJUSTCLOSE);
         this.OpenAdjustCloseLeaves.sort((a, b) => a.Sequence - b.Sequence);
@@ -415,7 +415,7 @@ export class LeaveBalanceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
-        debugger;
+        //debugger;
         var existingdata;
         this.displayedColumns = ["Employee"];
         var forDisplay = [];

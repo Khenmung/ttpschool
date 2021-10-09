@@ -19,7 +19,7 @@ export class ContentService {
     throw new Error('Method not implemented.');
   }
   AddUpdateContent(pagecontent: any) {
-    //debugger  
+    ////debugger  
     this.url = globalconstants.apiUrl + '/odata/Pages';
     //this.url ="/odata/Pages"; 
     return this.http.post(this.url, pagecontent);
@@ -65,7 +65,7 @@ export class ContentService {
       'Dec'
     ]
     var monthArray = [];
-    debugger;
+    //debugger;
     this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
       if (b.length != 0) {
         _sessionStartEnd = b
@@ -85,7 +85,7 @@ export class ContentService {
     return monthArray;
   }
   Getcontent(title: string, query: string) {
-    debugger
+    //debugger
     this.url = globalconstants.apiUrl + '/odata/' + title + '?' + query;
     //this.url = '/odata/' +title + '?' + query;  
     //console.log(this.url);
@@ -97,21 +97,21 @@ export class ContentService {
   }
 
   GetPageTypes() {
-    //debugger  
+    ////debugger  
     this.url = globalconstants.apiUrl + '/odata/PageTypes?$filter=Active eq true';
     //this.url = '/odata/PageTypes?$filter=Active eq true';  
     //var filter = ''
     return this.http.get(this.url);
   }
   GetcontentLatest(pageGroupId: number, pageName: string) {
-    debugger
+    //debugger
     let filter = "PageName eq '" + pageName + "' and PageNameId eq " + pageGroupId;
     this.url = globalconstants.apiUrl + '/odata/Pages?$select=PageId,Version&$orderby=Version desc&$top=1&$filter=' + filter;
     //this.url = '/odata/Pages?$select=PageId,Version&$orderby=Version desc&$top=1&$filter=' + filter;  
     return this.http.get(this.url);
   }
   GetcontentById(Id: number) {
-    debugger
+    //debugger
     this.url = globalconstants.apiUrl + '/odata/Pages?$filter=PageId eq ' + Id;
     //this.url = '/odata/Pages?$filter=PageId eq ' + Id;  
     return this.http.get(this.url);

@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit {
     this.route.navigate(["/auth/signup"]);
   }
   logout() {
-    debugger;
+    //debugger;
     this.tokenStorage.signOut();
     this.route.navigate(['/auth/login']);
   }

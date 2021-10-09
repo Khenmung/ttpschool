@@ -82,7 +82,7 @@ export class ClassdetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchClassName: [0]
     });
@@ -145,7 +145,7 @@ export class ClassdetailComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = "ClassName eq '" + row.ClassName + "'"
 
@@ -158,7 +158,7 @@ export class ClassdetailComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -202,7 +202,7 @@ export class ClassdetailComponent implements OnInit {
   }
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.ClassMasterListName, this.ClassMasterData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -223,7 +223,7 @@ export class ClassdetailComponent implements OnInit {
         });
   }
   GetClassMasters() {
-    debugger;
+    //debugger;
 
     this.loading = true;
     let filterStr = 'BatchId eq ' + this.SelectedBatchId
@@ -251,7 +251,7 @@ export class ClassdetailComponent implements OnInit {
     this.ClassMasterList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.ClassMasterList = [...data.value];
         }

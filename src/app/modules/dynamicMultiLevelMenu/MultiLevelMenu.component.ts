@@ -64,7 +64,7 @@ export class MultiLevelMenuComponent implements OnInit {
   }
 
   selectedItem(menu: any) {
-    debugger;
+    //debugger;
     //console.log('menu', menu);
     this.openLeftMenu.emit('1');
     this.navigate.navigate([menu.link]);
@@ -105,7 +105,7 @@ export class MultiLevelMenuComponent implements OnInit {
     this.selectedIndex = _index;
   }
   GetMenuData() {
-    debugger;
+    //debugger;
     let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
 

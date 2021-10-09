@@ -21,6 +21,7 @@ export class AuthGuard implements CanActivate{
         | UrlTree> {
         var userData; 
         this.shareddata.CurrentUserInfo.subscribe(s=>userData =s);
+        //debugger;
         if(userData && userData.sub){ // sub represents user id value
             if(state.url.indexOf("/login") != -1){
                 // loggin user trying to access login page

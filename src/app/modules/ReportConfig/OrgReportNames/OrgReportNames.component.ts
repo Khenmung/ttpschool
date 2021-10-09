@@ -62,7 +62,7 @@ export class OrgReportNamesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchReportTypeId: [0]
     });
@@ -72,7 +72,8 @@ export class OrgReportNamesComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.shareddata.CurrentApplicationId.subscribe(b => this.SelectedApplicationId = b);
+    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    //this.shareddata.CurrentApplicationId.subscribe(b => this.SelectedApplicationId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -103,7 +104,7 @@ export class OrgReportNamesComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     if(row.UserReportName.trim().length==0)
     {
       this.alert.error("Please enter report name!",this.optionAutoClose);
@@ -131,7 +132,7 @@ export class OrgReportNamesComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -167,7 +168,7 @@ export class OrgReportNamesComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.OrgReportNamesListName, this.OrgReportNamesData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -232,7 +233,7 @@ export class OrgReportNamesComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         this.OrgReportNamesList = data.value.map(d => {
           d.Action = false;
           return d;
@@ -247,7 +248,7 @@ export class OrgReportNamesComponent implements OnInit {
   }
 
   onBlur(element) {
-    debugger;
+    //debugger;
 
     element.Action = true;
   }

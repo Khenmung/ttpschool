@@ -80,7 +80,7 @@ export class DisplaypageComponent implements OnInit {
       this.route.navigate(['/home/about/' + this.GroupId]);
   }
   GetLatestPage(pHistoryId) {
-    debugger;
+    //debugger;
     let IdtoDisplay = pHistoryId;
     //let pages: any[];
     let filterstring = '';
@@ -203,7 +203,7 @@ export class DisplaypageComponent implements OnInit {
     list.filter = ["Active eq 1 and PageId eq " + parentId];
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0)
 
           if (this.loop == 0 && data.value[0].ParentId > 0) {

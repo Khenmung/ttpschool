@@ -60,7 +60,7 @@ export class FiledragAndDropComponent implements OnInit {
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
     //console.log('this.files', this.files)
-    debugger;
+    //debugger;
     this.Processing = true;
     for (const droppedFile of files) {
 
@@ -107,7 +107,7 @@ export class FiledragAndDropComponent implements OnInit {
     }
 
     let error: boolean = false;
-    debugger;
+    //debugger;
 
     let selectedAlbum = this.dragdropForm.get("folderName").value;
     let selectedAlbumId = this.dragdropForm.get("parentId").value;

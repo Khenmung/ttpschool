@@ -63,7 +63,7 @@ export class PhotobrowserComponent implements OnInit {
   }
   view(event) {
     //console.log('this.Albums.length',event)
-    debugger;
+    //debugger;
     this.selectedAlbum = event;
     // let selectedAlbumId = this.Albums.filter(item => {
     //   return item.UpdatedFileFolderName == this.selectedAlbum
@@ -113,7 +113,7 @@ export class PhotobrowserComponent implements OnInit {
     this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        ////debugger;
         let count = 0;
         if (data.value.length > 0) {
           var browsePath = '';

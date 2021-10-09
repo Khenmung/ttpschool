@@ -82,7 +82,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
   }
   PageLoad() {
-    debugger;
+    //debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.StudentClassId = 1;
@@ -109,7 +109,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
   
   GetStudentClassSubject() {
-    debugger;
+    //debugger;
 
     if (this.searchForm.get("searchClassId").value == 0) {
       this.alert.info("Please select class", this.optionAutoClose);
@@ -153,7 +153,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((studentclassdb: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         this.StudentSubjectList = [];
         var _studentClassExisting = [];
@@ -376,7 +376,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   }
   SelectAllInRow(element, event, colName) {
     //element.Action = true;
-    debugger;
+    //debugger;
     //element.Active = event.checked == true ? 1 : 0;
     var columnexist = [];
     if (colName == 'Action') {
@@ -404,7 +404,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   }
   SaveRow(element) {
     //console.log("element", element)
-    debugger;
+    //debugger;
     this.loading=true;
     this.rowCount = 0;
     //var columnexist;
@@ -455,7 +455,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionAutoClose);
           return;
@@ -497,7 +497,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('StudentClassSubjects', this.StudentSubjectData, 0, 'post')
       .subscribe(
         (data: any) => {

@@ -34,7 +34,7 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline" [style.width.px]="130">
                         <mat-label>Start</mat-label>
-                        <input [(ngModel)]="element.StartDate" [value]="element.StartDate" matInput
+                        <input [(ngModel)]="element.StartDate" (dateChange)="onBlur(element)" [value]="element.StartDate" matInput
                             [matDatepicker]="StartDate" autocomplete="off">
                         <mat-datepicker-toggle matSuffix [for]="StartDate"></mat-datepicker-toggle>
                         <mat-datepicker #StartDate></mat-datepicker>
@@ -46,7 +46,7 @@
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline" [style.width.px]="130">
                         <mat-label>End</mat-label>
-                        <input [(ngModel)]="element.EndDate" [value]="element.EndDate" matInput
+                        <input [(ngModel)]="element.EndDate" (dateChange)="onBlur(element)" [value]="element.EndDate" matInput
                             [matDatepicker]="EndDate" autocomplete="off">
                         <mat-datepicker-toggle matSuffix [for]="EndDate"></mat-datepicker-toggle>
                         <mat-datepicker #EndDate></mat-datepicker>
@@ -67,7 +67,7 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
 

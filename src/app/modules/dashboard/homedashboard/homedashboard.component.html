@@ -1,8 +1,7 @@
 <mat-card>
-    <mat-card-title>Dashboard</mat-card-title>
+    <mat-card-title></mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content>
-        <div style="display: flex; justify-content: center;">
+    <mat-card-content style="min-height: 100vh;display: flex; justify-content: center;align-items: center">        
             <form [formGroup]="searchForm">
                 <mat-form-field [style.width.px]="250" appearance="outline">
                     <mat-select formControlName="searchApplicationId">
@@ -18,7 +17,6 @@
                 <button [disabled]="loading" class="mat-raised-button" (click)="ChangeApplication()">
                     <mat-icon>search</mat-icon>
                 </button>
-            </form>
-        </div>
+            </form>        
     </mat-card-content>
 </mat-card>

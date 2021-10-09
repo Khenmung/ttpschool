@@ -87,7 +87,9 @@ export class BatchdashboardComponent implements OnInit {
     }
   }
 
-
+  onBlur(row){
+    row.Action=true;
+  }
   GetBatches() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
@@ -112,7 +114,7 @@ export class BatchdashboardComponent implements OnInit {
     this.BatchList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         this.BatchList = [...data.value];
         this.dataSource = new MatTableDataSource<IBatches>(this.BatchList);
         this.loading = false;
@@ -155,7 +157,7 @@ export class BatchdashboardComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     if (row.CurrentBatch == 1 && row.Active == 0) {
       this.alert.error("Current batch should be active!", this.optionAutoClose);
       return;
@@ -208,7 +210,7 @@ export class BatchdashboardComponent implements OnInit {
             delete this.BatchData["CreatedBy"];
             this.BatchData["UpdatedDate"] = new Date();
             this.BatchData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+            this.update(row);
           }
         }
       });
@@ -216,21 +218,23 @@ export class BatchdashboardComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('Batches', this.BatchData, 0, 'post')
       .subscribe(
         (data: any) => {
           this.loading=false;
           row.BatchId = data.BatchId;
+          row.Action=false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
-  update() {
+  update(row) {
 
     this.dataservice.postPatch('Batches', this.BatchData, this.BatchData.BatchId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading=false;
+          row.Action=false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }

@@ -347,7 +347,7 @@ export class AddstudentComponent implements OnInit {
 
     this.dataservice.postPatch('Students', this.studentData, 0, 'post')
       .subscribe((result: any) => {
-        debugger;
+        //debugger;
         if (result != undefined) {
           this.studentForm.patchValue({
             StudentId: result.StudentId
@@ -380,7 +380,7 @@ export class AddstudentComponent implements OnInit {
     list.PageName = "Students";
     list.filter = ["StudentId eq " + this.Id];
     //list.orderBy = "ParentId";
-    debugger;
+    //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {

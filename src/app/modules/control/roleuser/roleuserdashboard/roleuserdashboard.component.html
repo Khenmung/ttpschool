@@ -28,20 +28,20 @@
             </form>
         </div>
         <div [ngClass]="{'disableDiv': RoleUserId!=0}">
-            <mat-table #table [dataSource]="dataSource">
+            <mat-table #table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="User">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Name
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Name
                     </mat-header-cell>
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                         {{element.User}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="RoleId">
-                    <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Role </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field>
                             <mat-label>role</mat-label>
-                            <mat-select [value]="element.RoleId" [(ngModel)]="element.RoleId">
+                            <mat-select [value]="element.RoleId" (selectionChange)="onBlur(element)" [(ngModel)]="element.RoleId">
                                 <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
@@ -62,7 +62,7 @@
                         </button> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon matTooltip="save">save</mat-icon>
                         </button>
                     </mat-cell>
@@ -70,6 +70,7 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
+            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
         </div> 
     </mat-card-content>
 </mat-card>

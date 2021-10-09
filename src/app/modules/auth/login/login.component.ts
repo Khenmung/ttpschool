@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       //console.log("authlogin",this.deviceXs);
     });
-    debugger;
+    //debugger;
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
       this.route.navigate(['/dashboard']);
@@ -80,7 +80,7 @@ export class LoginComponent implements OnInit {
   //   this.authService.login(username, password).subscribe(
 
   //     data => {
-  //       debugger;
+  //       //debugger;
   //       //console.log("login data",data);
   //       //this.tokenStorage.saveToken(data.Token);
   //       //this.tokenStorage.saveRefreshToken(data.RefreshToken);
@@ -99,7 +99,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(username, password).subscribe(
       data => {
-        debugger;
+        //debugger;
         this.tokenStorage.saveToken(data.token);
         this.tokenStorage.saveRefreshToken(data.refreshToken);
         this.tokenStorage.saveUser(data);
@@ -129,7 +129,7 @@ export class LoginComponent implements OnInit {
 
     //this.userInfo = JSON.parse(localStorage.getItem('userInfo')); 
 
-    console.log('userinfo after login', this.userInfo)
+    //console.log('userinfo after login', this.userInfo)
     let list: List = new List();
     list.fields = [
       'UserId',
@@ -146,7 +146,7 @@ export class LoginComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         console.log("data", data)
         if (data.value.length > 0) {
           if (data.value[0].Org.Active == 1)
@@ -159,7 +159,7 @@ export class LoginComponent implements OnInit {
   }
 
   GetMasterData(UserRole) {
-    debugger;
+    //debugger;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
     list.PageName = "MasterItems";
@@ -249,41 +249,42 @@ export class LoginComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           var _applicationFeature = '';
           var _applicationName = '';
           var _appShortName = '';
-
-          this.UserDetail[0]["applicationRolePermission"] = data.value.map(item => {
+          this.UserDetail[0]["applicationRolePermission"] =[];
+          data.value.forEach(item => {
             _applicationFeature = '';
             _applicationName = '';
             _appShortName = '';
             if (this.ApplicationFeatures.length > 0 && item.ApplicationFeatureId != null) {
-              var appsfeatures = this.ApplicationFeatures.filter(a => a.ApplicationFeatureId == item.ApplicationFeatureId);
-              _applicationFeature = appsfeatures[0].FeatureName;
-              _applicationName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].Description;
-              _appShortName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].MasterDataName
-            }
-            var _permission = '';
-            if (item.PermissionId != null)
-              _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
+              var appsfeatures = this.ApplicationFeatures.filter(a => a.PageId == item.ApplicationFeatureId);
+              if (appsfeatures.length > 0) {
+                _applicationFeature = appsfeatures[0].PageTitle;
+                _applicationName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].Description;
+                _appShortName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].MasterDataName
 
-            return {
-              'applicationFeatureId': item.ApplicationFeatureId,
-              'applicationFeature': _applicationFeature,
-              'roleId': item.RoleId,
-              'permissionId': item.PermissionId,
-              'permission': _permission,
-              'applicationName': _applicationName,
-              'applicationId': appsfeatures[0].ApplicationId,
-              'appShortName': _appShortName
+                var _permission = '';
+                if (item.PermissionId != null)
+                  _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
+                debugger;
+                
+                this.UserDetail[0]["applicationRolePermission"].push({
+                  'applicationFeatureId': item.ApplicationFeatureId,
+                  'applicationFeature': _applicationFeature,
+                  'roleId': item.RoleId,
+                  'permissionId': item.PermissionId,
+                  'permission': _permission,
+                  'applicationName': _applicationName,
+                  'applicationId': appsfeatures[0].ApplicationId,
+                  'appShortName': _appShortName
+                });
+              }
             }
           })
-
           this.tokenStorage.saveUserdetail(this.UserDetail);
-          //this.tokenStorage.
-          //console.log('userdetail', this.tokenStorage.getUserDetail());
           this.isLoginFailed = false;
           this.isLoggedIn = true;
           this.username = this.tokenStorage.getUser();
@@ -302,17 +303,18 @@ export class LoginComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      'ApplicationFeatureId',
-      'FeatureName',
+      'PageId',
+      'PageTitle',
+      'label',
       'ApplicationId'
     ];
 
-    list.PageName = "ApplicationFeatures";
+    list.PageName = "Pages";
     list.filter = ["Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.ApplicationFeatures = [...data.value];
 

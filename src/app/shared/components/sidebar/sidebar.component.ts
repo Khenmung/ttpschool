@@ -1,6 +1,6 @@
 import { Component, OnInit, Output } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { EventEmitter } from 'events';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../databaseService';
 import { List } from '../../interface';
 import { SharedataService } from '../../sharedata.service';
@@ -12,35 +12,35 @@ import { SharedataService } from '../../sharedata.service';
 })
 export class SidebarComponent implements OnInit {
   //@Output() openLeftMenu1:new EventEmitter();
-  sideMenu=[];
-  collapse=false;
-  ApplicationId=0;
-  constructor(private dataservice:NaomitsuService,
-    private shareddata:SharedataService,
-    private ar:ActivatedRoute) { }
+  sideMenu = [];
+  collapse = false;
+  ApplicationId = 0;
+  constructor(
+    private dataservice: NaomitsuService,
+    private shareddata: SharedataService,
+    private tokenStorage: TokenStorageService,
+    private route: Router) { }
 
   ngOnInit(): void {
-    this.ar.params.subscribe(param=>{
-      this.ApplicationId = param["id"];
-    })
-
+    // this.ar.params.subscribe(param=>{
+    //   this.ApplicationId = param["id"];
+    // })
+    this.ApplicationId = +this.tokenStorage.getSelectedAPPId();
+    if (this.ApplicationId == 0)
+      this.route.navigate(['/dashboard']);
     this.GetMenuData();
   }
-  open(){
-    
+  open() {
+
   }
-  toggleSidebar(){
-    this.collapse =!this.collapse;
+  toggleSidebar() {
+    this.collapse = !this.collapse;
   }
   GetMenuData() {
-    debugger;
+    //debugger;
     let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
-    strFilter = "Active eq 1 and ApplicationId eq " + this.ApplicationId;
-    // if (containAdmin > -1)
-    //   strFilter = "Active eq 1 and ApplicationId eq 2";
-    // else
-    //   strFilter = "Active eq 1 and ApplicationId eq 1"
+    strFilter = "ParentId eq 0 and Active eq 1 and ApplicationId eq " + this.ApplicationId;
 
     let list: List = new List();
     list.fields = [
@@ -50,15 +50,13 @@ export class SidebarComponent implements OnInit {
       , "link"
       , "ParentId"
       , "HasSubmenu"
-      ,"UpdateDate"
+      , "UpdateDate"
     ];
-    //this.list.lookupFields = ["PageGroup", "PageHistories"];
+    
     list.PageName = "Pages";
     list.orderBy = "DisplayOrder";
     list.filter = [strFilter];
-    //const columns = ["PageId", "Page Title", "PageGroupName", "Active", "Action"];
-    //if(!this.loggedIn)
-
+    
     this.dataservice.get(list).subscribe((data: any) => {
       this.sideMenu = [...data.value];
       let NewsNEvents = this.sideMenu.filter(item => {
@@ -67,29 +65,34 @@ export class SidebarComponent implements OnInit {
       if (NewsNEvents.length > 0) {
         this.shareddata.ChangeNewsNEventId(NewsNEvents[0].PageId);
       }
-      //console.log('this.sideMenu',this.sideMenu)
+      
+      var appName =location.pathname.split('/')[1];
+      if(appName.length>0)
+      {
+        
+      
       this.shareddata.ChangePageData(this.sideMenu);
-
+      }
     });
 
 
   }
 
 }
-export class MenuItem{
+export class MenuItem {
   constructor(
-    public label:string,
-    public link:string,
-    public toolTip:string,
-    public faIcon:string=''
-  ){}
+    public label: string,
+    public link: string,
+    public toolTip: string,
+    public faIcon: string = ''
+  ) { }
 }
 
-export const menuList=[
-  new MenuItem('Chemistry','employee','Chemistry class material','science'),
-  new MenuItem('Biology','Biology','Biology class material','biotech'),
-  new MenuItem('Math','Math','Math class material','calculate'),
-  new MenuItem('Physics','Physics','Physics class material','flash_on'),
+export const menuList = [
+  new MenuItem('Chemistry', 'employee', 'Chemistry class material', 'science'),
+  new MenuItem('Biology', 'Biology', 'Biology class material', 'biotech'),
+  new MenuItem('Math', 'Math', 'Math class material', 'calculate'),
+  new MenuItem('Physics', 'Physics', 'Physics class material', 'flash_on'),
 ];
 
 

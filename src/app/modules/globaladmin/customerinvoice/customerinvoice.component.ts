@@ -89,7 +89,7 @@ export class CustomerinvoiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchOrgId: [0],
       searchYearMonth:[0]
@@ -120,7 +120,7 @@ export class CustomerinvoiceComponent implements OnInit {
 
   UpdateOrSave(row) {
 
-    // debugger;
+    // //debugger;
 
     // this.loading = true;
     // let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
@@ -136,7 +136,7 @@ export class CustomerinvoiceComponent implements OnInit {
 
     // this.dataservice.get(list)
     //   .subscribe((data: any) => {
-    //     debugger;
+    //     //debugger;
     //     if (data.value.length > 0) {
     //       this.loading = false;
     //       this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -175,7 +175,7 @@ export class CustomerinvoiceComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.CustomerInvoiceListName, this.CustomerInvoiceData, 0, 'post')
       .subscribe(
         (data: any) => {

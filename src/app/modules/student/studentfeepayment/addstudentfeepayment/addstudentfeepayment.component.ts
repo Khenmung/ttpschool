@@ -257,7 +257,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
           this.studentInfoTodisplay.ClassId = data.value[0].ClassId
@@ -286,7 +286,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       })
   }
   GetStudentFeePayment() {
-    debugger;
+    //debugger;
     if (this.studentInfoTodisplay.StudentId == 0)
       return;
 
@@ -310,7 +310,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
 
         this.ExistingStudentLedgerList = [...data.value];
 
@@ -320,7 +320,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
 
   GetClassFee(pclassId) {
-    debugger;
+    //debugger;
     if (pclassId == undefined || pclassId == 0 || this.SelectedBatchId == 0) {
       this.alert.error('Invalid Id', this.optionsNoAutoClose);
       return;
@@ -345,7 +345,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.StudentClassFees = data.value.map(f => {
             f.FeeName = this.FeeNames.filter(n => n.MasterDataId == f.FeeNameId)[0].MasterDataName;
@@ -379,7 +379,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 })
             }
             else {
-              debugger;
+              //debugger;
               let AmountAfterFormulaApplied = 0;
               this.VariableObjList.push(studentClassFee);
               //console.log('before',this.VariableObjList)
@@ -510,7 +510,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       }
     }
     else {
-      debugger;
+      //debugger;
       this.NewDataCount--;
       var toDelete = this.StudentBillList.filter(f => f.Month == row.Month);
       toDelete.forEach(d => {
@@ -524,7 +524,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
   }
   billpayment() {
-    debugger;
+    //debugger;
     var error = [];
     var maxPaymentOrder = Math.max.apply(Math, this.StudentBillList.map(function (o) { return o.PaymentOrder; }));
 
@@ -573,7 +573,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
   insert() {
 
-    debugger;
+    //debugger;
 
     var list = new List();
     list.fields = ["ReceiptNo"];
@@ -600,7 +600,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.dataservice.postPatch(this.FeeReceiptListName, this.StudentReceiptData, 0, 'post')
         .subscribe(
           (feeReceiptData: any) => {
-            debugger;
+            //debugger;
             var SelectedMonths = this.StudentLedgerList.filter(f => f.Action)
             //this.NoOfMonthsInBill = SelectedMonths.length;
             SelectedMonths.forEach(row => {
@@ -705,7 +705,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     value = "";
   }
   enableAction(element, amount) {
-    debugger;
+    //debugger;
     if (amount.length == 0)
       element.Pay = 0.00;
     else

@@ -69,7 +69,7 @@ export class ExamtimetableComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchExamId: [0],
       searchClassId: [0]
@@ -115,7 +115,7 @@ export class ExamtimetableComponent implements OnInit {
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
           var _class = this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName;
@@ -153,7 +153,7 @@ export class ExamtimetableComponent implements OnInit {
       })
   }
   GetExamSlots() {
-    debugger;
+    //debugger;
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
     //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
@@ -237,7 +237,7 @@ export class ExamtimetableComponent implements OnInit {
         this.displayedColumns = [];
         var _EachExamDate = alasql("select distinct ExamSlot->ExamDate as ExamDate from ? ", [filteredData]);
         var filteredEachExamDate = [];
-        debugger;
+        //debugger;
 
         //preparing data for each exam date
         _EachExamDate.forEach(edate => {

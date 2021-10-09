@@ -90,7 +90,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchEmployeeName: [''],
     });
@@ -147,7 +147,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -168,7 +168,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -208,7 +208,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('EmpEmployeeGradeSalHistories', this.EmployeeGradeHistoryData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -254,7 +254,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
   //   })
   // }
   onBlur(element, event) {
-    debugger;
+    //debugger;
     var _colName = event.srcElement.name;
     console.log("event", event);
     var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
@@ -267,7 +267,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
   //   })
   // }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
     //var columnexist;
@@ -371,7 +371,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
   }
   GetEmployeeGradeHistory() {
     this.loading = true;
-    debugger;
+    //debugger;
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var filterstr = 'EmployeeId eq ' + this.searchForm.get("searchEmployeeName").value.EmployeeId;
@@ -413,7 +413,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0)
           this.EmployeeGradeHistoryList = data.value.map((h, indx) => {
             if (indx == 0)

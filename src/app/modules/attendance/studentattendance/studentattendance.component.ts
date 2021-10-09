@@ -87,7 +87,7 @@ export class StudentAttendanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.StudentClassId = 1;
@@ -125,7 +125,7 @@ export class StudentAttendanceComponent implements OnInit {
   }
 
   GetStudentAttendance() {
-    debugger;
+    //debugger;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //' and StudentClassId eq ' + this.StudentClassId;
     if (this.searchForm.get("searchClassId").value == 0) {
@@ -256,11 +256,11 @@ export class StudentAttendanceComponent implements OnInit {
   }
   UpdateActive(element, event) {
     element.Action = true;
-    debugger;
+    //debugger;
     element.AttendanceStatus = event.checked == true ? 1 : 0;
   }
   onChangeEvent(row, value) {
-    debugger;
+    //debugger;
     if (row.Remarks.length > 0)
       row.Action = true;
   }
@@ -300,7 +300,7 @@ export class StudentAttendanceComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
@@ -378,7 +378,7 @@ export class StudentAttendanceComponent implements OnInit {
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjects = data.value.map(item => {
           var _classname = ''

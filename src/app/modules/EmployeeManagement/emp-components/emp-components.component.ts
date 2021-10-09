@@ -88,7 +88,7 @@ export class EmpComponentsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchComponentId: [0],
     });
@@ -108,7 +108,7 @@ export class EmpComponentsComponent implements OnInit {
     }
   }
   // updateDeduction(row, value) {
-  //   debugger;
+  //   //debugger;
   //   row.Action = true;
   //   row.Deduction = value.checked == 1 ? 1 : 0;
   // }
@@ -121,7 +121,7 @@ export class EmpComponentsComponent implements OnInit {
 
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = "SalaryComponent eq '" + row.SalaryComponent + "'";
 
@@ -136,7 +136,7 @@ export class EmpComponentsComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -171,7 +171,7 @@ export class EmpComponentsComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.EmpComponentListName, this.EmpComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -220,7 +220,7 @@ export class EmpComponentsComponent implements OnInit {
   }
  
   onBlur(element, event) {
-    debugger;
+    //debugger;
     //var _colName = event.srcElement.name;
     element.Action =true;
     //console.log("event", event);
@@ -234,7 +234,7 @@ export class EmpComponentsComponent implements OnInit {
     })
   }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
     //var columnexist;
@@ -338,7 +338,7 @@ export class EmpComponentsComponent implements OnInit {
     this.EmpComponentList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         data.value.forEach(f=>{
           f.Action=false;
         })

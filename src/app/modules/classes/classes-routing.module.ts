@@ -20,6 +20,7 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
+
 export class ClassesRoutingModule { }
 export const ClassesComponents = [
   ClassdetailComponent,

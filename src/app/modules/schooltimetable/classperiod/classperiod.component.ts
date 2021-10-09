@@ -69,7 +69,7 @@ export class ClassperiodComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchClassId: [0],
       searchClassIdApplyAll: [0]
@@ -115,7 +115,7 @@ export class ClassperiodComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     let checkFilterString = "ClassId eq " + row.ClassId +
@@ -133,7 +133,7 @@ export class ClassperiodComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -172,7 +172,7 @@ export class ClassperiodComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.SchoolClassPeriodListName, this.SchoolClassPeriodData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -241,7 +241,7 @@ export class ClassperiodComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         var forDisplay;
 
         this.Periods.forEach(p => {
@@ -374,7 +374,7 @@ export class ClassperiodComponent implements OnInit {
     })
   }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
 

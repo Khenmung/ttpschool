@@ -85,7 +85,7 @@ export class ResultsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchExamId: [0],
       searchClassId: [0],
@@ -236,7 +236,7 @@ export class ResultsComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {
-        debugger;
+        //debugger;
         this.GetStudents(this.searchForm.get("searchClassId").value)
           .subscribe((data: any) => {
             this.Students = [...data.value];

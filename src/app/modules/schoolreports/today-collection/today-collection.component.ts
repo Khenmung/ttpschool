@@ -71,7 +71,7 @@ export class TodayCollectionComponent implements OnInit {
     }
   }
   GetStudentFeePaymentDetails() {
-    debugger;
+    //debugger;
     this.ErrorMessage = '';
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
@@ -90,7 +90,7 @@ export class TodayCollectionComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         this.GrandTotalAmount = 0;
         if (data.value.length > 0) {
 
@@ -117,7 +117,7 @@ export class TodayCollectionComponent implements OnInit {
           });
           this.ELEMENT_DATA = result.map((item, indx) => {
             this.GrandTotalAmount += +item.TotalAmount;
-            debugger;
+            //debugger;
             return {
               SlNo: indx + 1,
               FeeName: this.FeeNames.filter(f => f.MasterDataId == +item.FeeNameId)[0].MasterDataName,

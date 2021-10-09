@@ -60,7 +60,7 @@ export class ApplicationfeatureComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchApplicationName: [0]
     });
@@ -116,7 +116,7 @@ export class ApplicationfeatureComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = "ApplicationId eq " + row.ApplicationId +
       " and FeatureName eq '" + row.FeatureName + "'";
@@ -130,7 +130,7 @@ export class ApplicationfeatureComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -164,7 +164,7 @@ export class ApplicationfeatureComponent implements OnInit {
   }
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.ApplicationFeatureListName, this.ApplicationFeatureData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -185,7 +185,7 @@ export class ApplicationfeatureComponent implements OnInit {
         });
   }
   GetApplicationFeatures() {
-    debugger;
+    //debugger;
     if(this.searchForm.get("searchApplicationName").value==0)
     {
       this.alert.info("Please select application",this.optionAutoClose);
@@ -206,7 +206,7 @@ export class ApplicationfeatureComponent implements OnInit {
     this.ApplicationFeatureList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.ApplicationFeatureList = data.value.map(item => {

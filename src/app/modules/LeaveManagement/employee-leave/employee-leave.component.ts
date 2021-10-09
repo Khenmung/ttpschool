@@ -86,7 +86,7 @@ export class EmployeeLeaveComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchEmployee: [0],
     });
@@ -143,7 +143,7 @@ export class EmployeeLeaveComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -163,7 +163,7 @@ export class EmployeeLeaveComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -207,7 +207,7 @@ get f(){
 }
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.EmployeeLeaveListName, this.EmployeeLeaveData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -254,7 +254,7 @@ get f(){
   //   })
   // }
   onBlur(element, event) {
-    debugger;
+    //debugger;
     var _colName = event.srcElement.name;
     console.log("event", event);
     //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
@@ -267,7 +267,7 @@ get f(){
   //   })
   // }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
 
@@ -349,7 +349,7 @@ get f(){
     this.EmployeeLeaveList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0)
           this.EmployeeLeaveList = [...data.value];
         else {

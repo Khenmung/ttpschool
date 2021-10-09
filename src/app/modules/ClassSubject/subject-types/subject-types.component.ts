@@ -66,7 +66,7 @@ export class SubjectTypesComponent implements OnInit {
 
 PageLoad() {
   
-  //debugger;
+  ////debugger;
   
   //this.shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(s=>this.CheckBatchIdForEdit =s);
   this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
@@ -118,7 +118,7 @@ delete (element) {
 }
 UpdateOrSave(row) {
 
-  debugger;
+  //debugger;
 
   this.loading =true;
   let checkFilterString = " and SubjectTypeName eq '" + row.SubjectTypeName + "' "
@@ -135,7 +135,7 @@ UpdateOrSave(row) {
 
   this.dataservice.get(list)
     .subscribe((data: any) => {
-      debugger;
+      //debugger;
       if (data.value.length > 0) {
         this.loading=false;
         this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -170,7 +170,7 @@ UpdateOrSave(row) {
 
 insert(row) {
 
-  debugger;
+  //debugger;
   this.dataservice.postPatch('SubjectTypes', this.SubjectTypeData, 0, 'post')
     .subscribe(
       (data: any) => {

@@ -36,7 +36,7 @@ export class GlobaladminboardComponent implements OnInit {
     //this.masterSettingData.PageLoad();
   }
   tabChanged(event) {
-    debugger;
+    //debugger;
     //console.log(event);
     switch (event) {
       case 0:

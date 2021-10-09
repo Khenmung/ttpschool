@@ -78,7 +78,7 @@ export class AddstudentclassComponent implements OnInit {
     });
   }
   PageLoad() {
-    debugger;
+    //debugger;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -169,7 +169,7 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   GetStudentClass() {
-    debugger;
+    //debugger;
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
     if (this.StudentId == 0 && this.StudentClassId == 0) {
       this.alert.error("Invalid Student Id", this.optionsAutoClose);
@@ -227,7 +227,7 @@ export class AddstudentclassComponent implements OnInit {
     this.nav.navigate(['/admin/dashboardstudent']);
   }
   UpdateOrSave() {
-    debugger;
+    //debugger;
     let ErrorMessage = '';
 
     if (this.studentclassForm.get("ClassId").value == 0) {
@@ -272,7 +272,7 @@ export class AddstudentclassComponent implements OnInit {
 
   insert() {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {

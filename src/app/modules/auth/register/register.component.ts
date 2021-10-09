@@ -106,7 +106,7 @@ export class RegisterComponent implements OnInit {
             ValidTo: today,// new Date(today.setDate(today.getMonth() + 1)),
             Active: 1
           }
-          debugger;
+          //debugger;
           this.dataservice.postPatch('AppUsers', AppUsersData, 0, 'post')
             .subscribe(
               (appuser: any) => {
@@ -128,7 +128,7 @@ export class RegisterComponent implements OnInit {
   onSave(): void {
     this.errorMessage = '';
     const { UserName, ConfirmPassword, Email, Password, OrganizationName, ContactNo } = this.RegistrationForm.value;
-    debugger;
+    //debugger;
     var userDetail = {
       ConfirmPassword: ConfirmPassword,
       Email: Email,

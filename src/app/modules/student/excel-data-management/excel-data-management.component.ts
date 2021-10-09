@@ -116,7 +116,7 @@ export class ExcelDataManagementComponent implements OnInit {
   studentData: any[];
   Uploadtype = '';
   onselectchange(event) {
-    //debugger;
+    ////debugger;
     //    console.log('event', event);
     this.Uploadtype = this.UploadTypes.filter(item => {
       return item.MasterDataId == event.value
@@ -166,7 +166,7 @@ export class ExcelDataManagementComponent implements OnInit {
     this.readExcel();
   }
   readExcel() {
-    debugger;
+    //debugger;
 
     let readFile = new FileReader();
     this.ErrorMessage = '';

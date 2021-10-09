@@ -72,7 +72,7 @@ export class StudentactivityComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchStudentName: [0]
     });
@@ -132,7 +132,7 @@ export class StudentactivityComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = "StudentClassId eq " + row.StudentClassId +
       " and Activity eq '" + row.Activity + "'";
@@ -148,7 +148,7 @@ export class StudentactivityComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -188,7 +188,7 @@ export class StudentactivityComponent implements OnInit {
   }
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('StudentActivities', this.StudentActivityData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -209,7 +209,7 @@ export class StudentactivityComponent implements OnInit {
         });
   }
   GetStudentActivity() {
-    debugger;
+    //debugger;
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
@@ -231,7 +231,7 @@ export class StudentactivityComponent implements OnInit {
     this.StudentActivityList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.StudentActivityList = data.value.map(item => {
@@ -323,7 +323,7 @@ export class StudentactivityComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {

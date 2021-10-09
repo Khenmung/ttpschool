@@ -36,7 +36,7 @@ export class LeaveboardComponent implements OnInit {
     this.navigateTab(this.selectedIndex);
   }
   navigateTab(indx) {
-    debugger;
+    //debugger;
     switch (indx) {
       case 0:
         this.leavepolicy.PageLoad();

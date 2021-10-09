@@ -67,7 +67,7 @@ export class ContactComponent implements OnInit {
         })
   }
   insert() {
-    debugger;
+    //debugger;
     this.naomitsuService.postPatch('Messages', this.ContactForm.value, 0, 'post')
       .subscribe(
         (data: any) => {

@@ -178,7 +178,7 @@ export class MenuConfigComponent implements OnInit {
       return;
 
     let PartialPage = {};
-    debugger;
+    //debugger;
     switch (columnName) {
       case "falcon":
         element.falcon = event;

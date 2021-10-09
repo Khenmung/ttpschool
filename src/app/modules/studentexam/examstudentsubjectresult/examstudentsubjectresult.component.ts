@@ -75,7 +75,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchExamId: [0],
       searchClassId: [0],
@@ -124,7 +124,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -144,7 +144,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -187,7 +187,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('ExamStudentSubjectResults', this.ExamStudentSubjectResultData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -362,7 +362,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == this.searchForm.get("searchClassId").value
             && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value
@@ -462,7 +462,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     })
   }
   onBlur(element, event) {
-    debugger;
+    //debugger;
     var _colName = event.srcElement.name;
     console.log("event", event);
     var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
@@ -475,7 +475,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     })
   }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
     //var columnexist;

@@ -69,7 +69,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       SubjectId: [0],
       ClassId: [0]
     });
-    debugger;
+    //debugger;
     //this.GetClassFee();
 
   }
@@ -100,7 +100,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     element.Action =element.PassMark<1000 && element.FullMark<1000?true:false;
   }
   UpdateOrSave(row) {
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = "1 eq 1 " +
       " and ClassSubjectId eq " + row.ClassSubjectId +
@@ -152,7 +152,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -292,7 +292,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.ELEMENT_DATA = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         var clsSubjFiltered = [];
         //if all subject is selected.
         clsSubjFiltered = data.value.filter(item => item.ClassSubject.ClassId == this.searchForm.get("ClassId").value);

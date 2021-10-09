@@ -10,6 +10,8 @@ const SELECTEDAPPID = 'selectedappid';
 const CHECKBATCHID='checkbatchid'
 const NEXTBATCHID ='nextbatchid';
 const PREVIOUSBATCHID='previousbatchid';
+const PERMITTED_APPS='Permitted_Apps';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -91,9 +93,20 @@ export class TokenStorageService {
     localStorage.removeItem(USER_DETAIL);
     localStorage.setItem(USER_DETAIL, JSON.stringify(userdetail));
   }
+  public savePermittedApplications(perApp: any): void {
+    localStorage.removeItem(PERMITTED_APPS);
+    localStorage.setItem(PERMITTED_APPS, JSON.stringify(perApp));
+  }
   public saveRedirectionUrl(url: any): void {
     localStorage.removeItem(REDIRECT_URL);
     localStorage.setItem(REDIRECT_URL, JSON.stringify(url));
+  }
+  public getPermittedApplications(): any {
+    const permittedApps = localStorage.getItem(PERMITTED_APPS);
+    if (permittedApps) {
+      return JSON.parse(permittedApps);
+    }
+    return "";
   }
   public getRedirectUrl(): any {
     const redirecturl = localStorage.getItem(REDIRECT_URL);

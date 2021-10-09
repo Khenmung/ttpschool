@@ -36,11 +36,9 @@ export class SharedataService {
   private PagesDataSource = new BehaviorSubject(this.items);
   private NewsNEventIdSource = new BehaviorSubject(-1);
   private ReasonForLeavingSource = new BehaviorSubject(this.items);
-  //private SelectedBatchIdSource = new BehaviorSubject(0);
   private RandomImagesSource = new BehaviorSubject(this.items);
   private OrganizationSource = new BehaviorSubject(this.items);
   private DepartmentSource = new BehaviorSubject(this.items);
-  private PermittedApplicationsSource = new BehaviorSubject(this.items);
   private RolesSource = new BehaviorSubject(this.items);
   private AppUsersSource = new BehaviorSubject(this.items);
   private OrganizationMastersSource = new BehaviorSubject(this.items);
@@ -50,7 +48,7 @@ export class SharedataService {
   private SelectedNCurrentBatchIdEqualSource = new BehaviorSubject(0);
   private PreviousBatchIdOfSelecteBatchIdSource = new BehaviorSubject(0);
   private NextBatchIdOfSelecteBatchIdSource = new BehaviorSubject(0);  
-  private ApplicationIdSource = new BehaviorSubject(0);  
+  //private ApplicationIdSource = new BehaviorSubject(0);  
   private SelectedBatchStartEndSource = new BehaviorSubject(this.items);  
   private CurrentBatchStartEndSource = new BehaviorSubject(this.items);  
   private CustomerPlanSource = new BehaviorSubject(this.items);  
@@ -61,7 +59,7 @@ export class SharedataService {
   CurrentCustomerPlan = this.CustomerPlanSource.asObservable(); 
   CurrentCurrentBatchStartEnd = this.CurrentBatchStartEndSource.asObservable(); 
   CurrentSelectedBatchStartEnd$ = this.SelectedBatchStartEndSource.asObservable(); 
-  CurrentApplicationId = this.ApplicationIdSource.asObservable(); 
+  //CurrentApplicationId = this.ApplicationIdSource.asObservable(); 
 
   CurrentNextBatchIdOfSelecteBatchId = this.NextBatchIdOfSelecteBatchIdSource.asObservable(); 
   CurrentPreviousBatchIdOfSelecteBatchId = this.PreviousBatchIdOfSelecteBatchIdSource.asObservable(); 
@@ -73,7 +71,7 @@ export class SharedataService {
   CurrentAppUsers = this.AppUsersSource.asObservable(); 
  
   CurrentRoles = this.RolesSource.asObservable(); 
-  CurrentPermittedApplications = this.PermittedApplicationsSource.asObservable();
+  //CurrentPermittedApplications = this.PermittedApplicationsSource.asObservable();
   
   CurrentDepartment = this.DepartmentSource.asObservable();
   CurrentOrganization = this.OrganizationSource.asObservable();
@@ -124,9 +122,9 @@ export class SharedataService {
   ChangeSelectedBatchStartEnd(item){
     this.SelectedBatchStartEndSource.next(item);
   }
-  ChangeApplicationId(item){
-    this.ApplicationIdSource.next(item);
-  }
+  // ChangeApplicationId(item){
+  //   this.ApplicationIdSource.next(item);
+  // }
   ChangeNextBatchIdOfSelecteBatchId(item){
     this.NextBatchIdOfSelecteBatchIdSource.next(item);
   }
@@ -155,9 +153,9 @@ export class SharedataService {
   ChangeRoles(item){
     this.RolesSource.next(item);
   }
-  ChangePermittedApplications(item){
-    this.PermittedApplicationsSource.next(item);
-  }
+  // ChangePermittedApplications(item){
+  //   this.PermittedApplicationsSource.next(item);
+  // }
   ChangeOrganization(item){
     this.OrganizationSource.next(item);
   }

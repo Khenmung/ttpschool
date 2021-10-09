@@ -102,7 +102,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     var thisyear = new Date().getFullYear();
     this.searchForm = this.fb.group({
       searchEmployee: [''],
@@ -163,7 +163,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -182,7 +182,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -219,7 +219,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('EmpEmployeeSalaryComponents', this.EmployeeSalaryComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -271,7 +271,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   //   })
   // }
   onBlur(element, event) {
-    debugger;
+    //debugger;
     //var _colName = event.srcElement.name;
     var formula = element["ActualFormulaOrAmount"];
     element["Amount"] = this.resolveFormula(formula);//_amount;
@@ -291,7 +291,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   //   })
   // }
   // SaveRow(element) {
-  //   debugger;
+  //   //debugger;
   //   this.loading = true;
   //   this.rowCount = 0;
   //   //var columnexist;
@@ -391,7 +391,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     this.EmpComponents = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //var _percentorAmount = '';
         this.EmpComponents = data.value.map(d => {
           // var _percentorAmountArray = this.ComponentTypes.filter(p => p.MasterDataId == d.CommonComponent)[0].MasterDataName;
@@ -436,7 +436,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     this.EmployeeSalaryComponentList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           var objBasic = this.EmpComponents.filter(b => b.SalaryComponent.toLowerCase().includes("basic"));
           if (objBasic.length > 0)

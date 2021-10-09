@@ -109,7 +109,7 @@ export class NewsdashboardComponent implements OnInit {
     this.navigate.navigate(['/home/pages/']);
   }
   applyFilter(filterValue: string) {
-    debugger;
+    //debugger;
     if (filterValue.length > 2) {
       filterValue = filterValue.trim(); // Remove whitespace
       //filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches

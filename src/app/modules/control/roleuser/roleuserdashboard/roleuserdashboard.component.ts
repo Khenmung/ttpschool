@@ -1,8 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -12,6 +11,9 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { roleuseraddComponent } from '../roleuseradd/roleuseradd.component';
 import { map, startWith } from 'rxjs/operators';
+import { AuthService } from 'src/app/_services/auth.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-roleuserdashboard',
@@ -22,6 +24,9 @@ export class roleuserdashboardComponent implements OnInit {
   @ViewChild("table") mattable;
   @ViewChild("container") container: ElementRef;
   @ViewChild(roleuseraddComponent, { static: false }) roleuseradd: roleuseraddComponent;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  
   loading = false;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
@@ -53,7 +58,7 @@ export class roleuserdashboardComponent implements OnInit {
   filterOrgIdNBatchId = '';
   RoleUserId = 0;
   RoleUserData = {
-    UserId: 0,
+    UserId: '',
     RoleUserId: 0,
     RoleId: 0,
     BatchId: 0,
@@ -70,9 +75,8 @@ export class roleuserdashboardComponent implements OnInit {
   constructor(private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
+    private authservice: AuthService,
     private nav: Router,
-    private datepipe: DatePipe,
     private shareddata: SharedataService,
     private fb: FormBuilder) {
   }
@@ -86,7 +90,7 @@ export class roleuserdashboardComponent implements OnInit {
       );
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      
+
   }
   private _filter(name: string): IUser[] {
 
@@ -98,7 +102,7 @@ export class roleuserdashboardComponent implements OnInit {
     return user && user.UserName ? user.UserName : '';
   }
   PageLoad() {
-    debugger;
+    //debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0) {
@@ -131,7 +135,7 @@ export class roleuserdashboardComponent implements OnInit {
   addnew() {
     var newdata = {
       RoleUserId: 0,
-      UserId: this.searchForm.get("searchUserName").value.ApplicationUserId,
+      UserId: this.searchForm.get("searchUserName").value.Id,
       User: this.searchForm.get("searchUserName").value.UserName,
       RoleId: 0,
       Role: '',
@@ -139,6 +143,8 @@ export class roleuserdashboardComponent implements OnInit {
     }
     this.RoleUserList.push(newdata);
     this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
+    this.dataSource.paginator=this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   GetMasterData() {
@@ -156,15 +162,13 @@ export class roleuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
-        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.APPLICATION);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
 
         this.shareddata.ChangeRoles(this.Roles);
-        this.shareddata.ChangePermittedApplications(this.Applications);
+        this.Applications = this.tokenstorage.getPermittedApplications();
         this.shareddata.ChangeDepartment(this.Departments);
         this.shareddata.ChangeLocation(this.Locations);
-        //this.GetRoleUser();
         this.GetUsers();
         this.loading = false;
       });
@@ -190,62 +194,65 @@ export class roleuserdashboardComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      'ApplicationUserId',
+      'Id',
       'UserName'
     ];
 
-    list.PageName = "AppUsers";
+    list.PageName = "AuthManagement";
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
     this.RoleUserList = [];
 
-    this.dataservice.get(list)
+    this.authservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
-        if (data.value.length > 0) {
-          this.Users = [...data.value];
+        if (data.length > 0) {
+          this.Users = [...data];
         }
       })
   }
   GetRoleUser() {
 
-    //console.log(this.LoginUserDetail);
+    var filterstr='';
+    if(this.searchForm.get("searchUserName").value!='')
+    filterstr = " and UserId eq '" + this.searchForm.get("searchUserName").value.Id + "'"
     this.loading = true;
     let list: List = new List();
     list.fields = [
       'RoleUserId',
       'UserId',
-      'AppUser/UserName',
+      //'AppUser/UserName',
       'RoleId',
       'Active'];
 
     list.PageName = "RoleUsers";
-    list.lookupFields = ["AppUser"];
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and UserId eq ' + this.searchForm.get("searchUserName").value.ApplicationUserId];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + filterstr];
     this.RoleUserList = [];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         //var filteredUsers = data.value.filter(d => d.UserId == this.searchForm.get("searchUserName").value.ApplicationUserId)
         if (data.value.length > 0) {
 
-          this.RoleUserList = data.value.map(item => {
-            return {
+          data.value.forEach(item => {
+            var validuser = this.Users.filter(u => u.Id == item.UserId)
+            if(validuser.length>0)
+            this.RoleUserList.push({
               RoleUserId: item.RoleUserId,
               UserId: item.UserId,
-              User: item.AppUser.UserName,
+              User: validuser[0].UserName,
               RoleId: item.RoleId,
               Role: this.Roles.length == 0 ? '' : this.Roles.filter(a => a.MasterDataId == item.RoleId)[0].MasterDataName,
               Active: item.Active
-            }
+            });
           });
         }
         else {
           this.RoleUserList.push({
             RoleUserId: 0,
-            UserId: this.searchForm.get("searchUserName").value.ApplicationUserId,
+            UserId: this.searchForm.get("searchUserName").value.Id,
             User: this.searchForm.get("searchUserName").value.UserName,
             RoleId: 0,
             Role: '',
@@ -255,6 +262,8 @@ export class roleuserdashboardComponent implements OnInit {
         }
         //this.Applications = 
         this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loading = false;
       });
   }
@@ -262,22 +271,15 @@ export class roleuserdashboardComponent implements OnInit {
   updateActive(row, value) {
 
     row.Active = value.checked ? 1 : 0;
-
-    // let toupdate = {
-    //   Active: element.Active == 1 ? 0 : 1
-    // }
-
-    // this.dataservice.postPatch('RoleUsers', toupdate, element.RoleUserId, 'patch')
-    //   .subscribe(
-    //     (data: any) => {
-    //       this.alert.success("Data updated successfully.", this.optionAutoClose);
-    //     });
+    row.Action=true;
   }
-
+  onBlur(row) {
+    row.Action = true;
+  }
 
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
 
     if (row.RoleId == 0) {
@@ -290,7 +292,7 @@ export class roleuserdashboardComponent implements OnInit {
     }
 
     var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-    let checkFilterString = "UserId eq " + row.UserId + " and RoleId eq " + row.RoleId + " and " + StandardFilter;
+    let checkFilterString = "UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId + " and " + StandardFilter;
 
     if (row.RoleUserId > 0)
       checkFilterString += " and RoleUserId ne " + row.RoleUserId;
@@ -328,7 +330,7 @@ export class roleuserdashboardComponent implements OnInit {
             delete this.RoleUserData["CreatedBy"];
             this.RoleUserData["UpdatedDate"] = new Date();
             this.RoleUserData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+            this.update(row);
           }
         }
       });
@@ -336,21 +338,23 @@ export class roleuserdashboardComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('RoleUsers', this.RoleUserData, 0, 'post')
       .subscribe(
         (data: any) => {
           row.RoleUserId = data.RoleUserId;
           this.loading = false;
+
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
-  update() {
+  update(row) {
 
     this.dataservice.postPatch('RoleUsers', this.RoleUserData, this.RoleUserData.RoleUserId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -372,14 +376,14 @@ export interface IBatches {
 export interface IRoleUsers {
 
   RoleUserId: number;
-  UserId: number;
+  UserId: string;
   User: string;
   RoleId: number;
   Role: string;
   Active;
 }
 export interface IUser {
-  ApplicationUserId: number;
+  Id: string;
   UserName: string;
 }
 

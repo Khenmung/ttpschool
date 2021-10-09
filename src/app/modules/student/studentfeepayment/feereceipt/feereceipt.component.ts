@@ -118,7 +118,7 @@ export class FeereceiptComponent implements OnInit {
     this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
     this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
     this.shareddata.CurrentFeeNames.subscribe(b => (this.FeeNames = b));
-    debugger;
+    //debugger;
     this.GetMasterData();
     setTimeout(() => {
 
@@ -129,7 +129,7 @@ export class FeereceiptComponent implements OnInit {
   }
 
   viewDetail(row) {
-    debugger;
+    //debugger;
     this.clickPaymentDetails = this.StudentFeePaymentList.filter(f => f.FeeReceiptId == row.StudentFeeReceiptId);
     this.studentInfoTodisplay.ReceiptNo = row.ReceiptNo;
     this.studentInfoTodisplay.OffLineReceiptNo = row.OffLineReceiptNo;
@@ -139,7 +139,7 @@ export class FeereceiptComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.clickPaymentDetails);
   }
   CancelReceipt() {
-    debugger;
+    //debugger;
     this.loading = true;
     let receipt = {
       Active: 0
@@ -183,7 +183,7 @@ export class FeereceiptComponent implements OnInit {
 
   }
   GetStudentFeePaymentDetails(ReceiptNo) {
-    debugger;
+    //debugger;
     if (this.studentInfoTodisplay.StudentId == 0)
       return;
     let filterstring = '';
@@ -216,7 +216,7 @@ export class FeereceiptComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         let res: any[];
         if (data.value.length > 0) {
           this.studentInfoTodisplay.ReceiptNo = ReceiptNo;
@@ -311,7 +311,7 @@ export class FeereceiptComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         this.allMasterData = [...data.value];
         this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
         this.ReceiptHeading.forEach(f => {
@@ -349,7 +349,7 @@ export class FeereceiptComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.studentInfoTodisplay.StudentClassId = data.value[0].StudentClassId;
           this.studentInfoTodisplay.ClassId = data.value[0].ClassId;

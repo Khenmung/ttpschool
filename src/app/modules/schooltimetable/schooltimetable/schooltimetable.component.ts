@@ -75,7 +75,7 @@ export class SchooltimetableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchClassId: [0],
       searchSectionId: [0]
@@ -112,7 +112,7 @@ export class SchooltimetableComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     let checkFilterString = "SectionId eq " + row.SectionId +
@@ -130,7 +130,7 @@ export class SchooltimetableComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -170,7 +170,7 @@ export class SchooltimetableComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.SchoolTimeTableListName, this.SchoolTimeTableData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -238,7 +238,7 @@ export class SchooltimetableComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         var dbTimeTable = data.value.map((d => {
           d.Day = this.WeekDays.filter(w => w.MasterDataId == d.DayId)[0].MasterDataName;
           return d;
@@ -427,7 +427,7 @@ export class SchooltimetableComponent implements OnInit {
   }
 
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
 
@@ -471,7 +471,7 @@ export class SchooltimetableComponent implements OnInit {
   }
 
   onBlur(element, event, columnName) {
-    debugger;
+    //debugger;
     var rowtoUpdateForSavingPurpose = this.StoredForUpdate.filter(s => s.Period == columnName && s.Day == element.Day);
     if (rowtoUpdateForSavingPurpose.length > 0) {
       rowtoUpdateForSavingPurpose[0]["ClassSubjectId"] = event.value;

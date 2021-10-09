@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -70,14 +70,14 @@ export class roleappAddComponent implements OnInit {
       
   }
   PageLoad(){
-    debugger;
+    //debugger;
     this.loading =true;
     this.UserDetail = this.tokenstorage.getUserDetail();
     if (this.UserDetail == null) {
       this.route.navigate(['auth/login']);
       //return;
     }
-    this.shareddata.CurrentPermittedApplications.subscribe(a => this.Applications = a);
+    this.Applications = this.tokenstorage.getPermittedApplications();
     this.shareddata.CurrentRoles.subscribe(r => this.Roles = r);
     this.Permissions = globalconstants.PERMISSIONTYPES;
     this.GetAppRole();
@@ -146,7 +146,7 @@ export class roleappAddComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
@@ -179,7 +179,7 @@ export class roleappAddComponent implements OnInit {
 
   insert() {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('ApplicationRoles', this.AppRoleData, 0, 'post')
       .subscribe(
         (data: any) => {

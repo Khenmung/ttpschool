@@ -65,7 +65,7 @@ export class ClassprerequisiteComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchClassId: [0]
     });
@@ -131,7 +131,7 @@ export class ClassprerequisiteComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     var _searchClassId =  this.searchForm.get("searchClassId").value;
     if(_searchClassId ==0)
     {
@@ -151,7 +151,7 @@ export class ClassprerequisiteComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -189,7 +189,7 @@ export class ClassprerequisiteComponent implements OnInit {
   }
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.PrerequisiteListName, this.PrerequisiteData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -210,7 +210,7 @@ export class ClassprerequisiteComponent implements OnInit {
         });
   }
   GetPrerequisites() {
-    debugger;
+    //debugger;
 
     this.loading = true;
     let filterStr = 'BatchId eq ' + this.SelectedBatchId
@@ -237,7 +237,7 @@ export class ClassprerequisiteComponent implements OnInit {
     this.PrerequisiteList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.PrerequisiteList = [...data.value];
         }

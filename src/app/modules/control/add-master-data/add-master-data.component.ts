@@ -91,7 +91,7 @@ export class AddMasterDataComponent implements OnInit {
 
   PageLoad() {
 
-    debugger;
+    //debugger;
 
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails.length == 0) {
@@ -99,30 +99,28 @@ export class AddMasterDataComponent implements OnInit {
       this.route.navigate(['auth/login']);
     }
     this.loading = true;
-    this.shareddata.CurrentApplicationId.subscribe(s => this.SelectedApplicationId = s);
-    this.shareddata.CurrentPermittedApplications.subscribe(p => this.PermittedApplications = p);
-    //console.log('this.PermittedApplications',this.PermittedApplications)
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+    this.PermittedApplications = this.tokenStorage.getPermittedApplications();
     this.SelectedApplicationName = '';
     var apps = this.PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
 
     if (apps.length == 0) {
       this.alert.error('Application selected is not valid!', this.optionAutoClose);
-      this.route.navigate(['auth/login']);
+      this.route.navigate(['/dashboard']);
     }
     else if (apps.length > 0) {
       this.SelectedApplicationName = apps[0].applicationName;
-
-      this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
-
-
-      this.OrgId = this.UserDetails[0]["orgId"];
-      this.searchForm.patchValue({ "OrgId": this.OrgId });
-      if (this.UserDetails[0]["org"].toLowerCase() != "ttp")
-        this.searchForm.controls['OrgId'].disable();
-
-      this.GetTopMasters();
-      this.GetOrganizations();
     }
+
+    this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
+    this.OrgId = this.UserDetails[0]["orgId"];
+    this.searchForm.patchValue({ "OrgId": this.OrgId });
+    if (this.UserDetails[0]["org"].toLowerCase() != "ttp")
+      this.searchForm.controls['OrgId'].disable();
+
+    this.GetTopMasters();
+    this.GetOrganizations();
+    //}
   }
   GetTopMasters() {
 
@@ -132,27 +130,17 @@ export class AddMasterDataComponent implements OnInit {
     }
 
     let list: List = new List();
-    list.fields = ["MasterDataId", "ParentId",
+    list.fields = [
+      "MasterDataId", "ParentId",
       "MasterDataName", "Description",
       "Logic", "Sequence", "ApplicationId",
       "Active", "OrgId"];
     list.PageName = "MasterItems";
     list.filter = ["(ParentId eq 0 or OrgId eq 0)" + applicationFilter];
-    debugger;
+    //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          // var _applicationId =-1; 
-
-          // var appIds = data.value.filter(d => d.MasterDataName.toLowerCase() == 'application')
-          // if(appIds.length>0)
-          // _applicationId = appIds[0].MasterDataId;
-
-          // //var _certificateId = data.value.filter(d => d.MasterDataName.toLowerCase() == 'certificate type')[0].MasterDataId;
-
-          // this.TopMasters = data.value.filter(m => {
-          //   return m.ParentId == 0 && m.MasterDataId != _applicationId && m.ParentId != _applicationId
-          // });
 
           this.DefinedMaster = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
           let applicationData = globalconstants.MasterDefinitions.ttpapps;
@@ -174,7 +162,7 @@ export class AddMasterDataComponent implements OnInit {
     list.fields = ["OrganizationId", "OrganizationName"];
     list.PageName = "Organizations";
     list.filter = ["Active eq 1"];
-    debugger;
+    //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.Organizations = [...data.value];
@@ -214,7 +202,7 @@ export class AddMasterDataComponent implements OnInit {
     });
   }
   ReSequence(editedrow) {
-    debugger;
+    //debugger;
     var diff = 0;
     if (editedrow.Sequence != editedrow.OldSequence) {
 
@@ -251,11 +239,11 @@ export class AddMasterDataComponent implements OnInit {
     }
   }
   onBlur(element) {
-    debugger;
+    //debugger;
     element.Action = true;
   }
   enable(elment) {
-    debugger;
+    //debugger;
     if (elment.value > 0)
       this.enableTopEdit = true;
     else
@@ -264,7 +252,7 @@ export class AddMasterDataComponent implements OnInit {
       || t.ParentId == this.searchForm.get("AppId").value);
   }
   EditTopMaster() {
-    debugger;
+    //debugger;
     this.enableAddNew = false;
     let toedit = this.TopMasters.filter(t => {
       return t.MasterDataId == this.searchForm.get("ParentId").value
@@ -300,7 +288,7 @@ export class AddMasterDataComponent implements OnInit {
     this.topMaster = 0;
   }
   AddData() {
-    debugger;
+    //debugger;
     this.enableTopEdit = false;
 
     if (this.searchForm.get("ParentId").value == 0 && this.topMaster == 0) {
@@ -372,7 +360,7 @@ export class AddMasterDataComponent implements OnInit {
   }
   updateActive(row, value) {
     //console.log('clicked',value);
-    debugger;
+    //debugger;
     let message = value.checked == true ? "activated" : "deactivated";
     this.dialog.openConfirmDialog("Are you sure you want to " + message + " " + row.MasterDataName + "?")
       .afterClosed().subscribe(res => {
@@ -415,7 +403,7 @@ export class AddMasterDataComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     if (row.MasterDataName.length == 0 || row.MasterDataName.length > 50) {
       this.loading = false;
@@ -489,7 +477,7 @@ export class AddMasterDataComponent implements OnInit {
     this.enableTopEdit = false;
   }
   updateDescription(value, row) {
-    debugger;
+    //debugger;
     if (row.Description.toLowerCase() == value.toLowerCase())
       return;
     let confirmYesNo: Boolean = false;

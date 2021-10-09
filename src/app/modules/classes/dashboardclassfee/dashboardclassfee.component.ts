@@ -193,7 +193,7 @@ export class DashboardclassfeeComponent implements OnInit {
     return monthArray;
   }
   UpdateOrSave(row, indx) {
-    debugger;
+    //debugger;
     if (row.Amount == 0) {
       row.Action = false;
       this.alert.error("Amount should be greater than zero.", this.optionsNoAutoClose);
@@ -253,7 +253,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
   insert(row, indx) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('ClassFees', this.classFeeData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -295,7 +295,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           const unique = [...new Set(data.value.map(item => {
             return item.ClassId
@@ -357,7 +357,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
 
         if (data.value.length > 0) {
 

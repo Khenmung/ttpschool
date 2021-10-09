@@ -138,7 +138,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
 
   View(element) {
-    // debugger;
+    // //debugger;
     // this.ClassSubjectId = element.ClassSubjectId;
     // this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     // setTimeout(() => {
@@ -148,7 +148,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   
   GetClassTeacher() {
     let filterStr = this.StandardFilterWithBatchId;//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    debugger;
+    //debugger;
     this.loading = true;
     var _teacherId = this.searchForm.get("searchTeacherId").value.TeacherId;
     var _classId = this.searchForm.get("searchClassId").value;
@@ -185,7 +185,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.ClassSubjectTeacherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         if (_classId != 0 && _teacherId != undefined) {
           if (data.value.length > 0)
@@ -271,7 +271,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
 
     // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
@@ -298,7 +298,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -338,7 +338,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.TeacherClassSubjectListName, this.ClassSubjectTeacherData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -405,7 +405,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjects = data.value.map(item => {
           var _classname = this.Classes.filter(f => f.ClassId == item.ClassId)[0].ClassName;

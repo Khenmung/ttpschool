@@ -97,7 +97,7 @@ export class CertificatesComponent implements OnInit {
 
   ngOnInit(): void {
     //this.loadTheme();
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchStudentName: [0],
       searchCertificateTypeId: [0]
@@ -289,7 +289,7 @@ export class CertificatesComponent implements OnInit {
       }
       else {
         //console.log('data.value',data.value)
-        debugger;
+        //debugger;
         data.value.forEach(d => {
           var _studentClass = d.ClassId == null ? '' : this.Classes.filter(c => c.ClassId == d.ClassId)[0].ClassName;
           var _section = d.SectionId == null ? '' : this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName;
@@ -421,7 +421,7 @@ export class CertificatesComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {
-        debugger;
+        //debugger;
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
 
         this.loading = false;
@@ -477,7 +477,7 @@ export class CertificatesComponent implements OnInit {
 
   }
   GetCertificates() {
-    debugger;
+    //debugger;
     if (this.searchForm.get("searchCertificateTypeId").value == 0) {
       this.alert.info("Please select certificate type!", this.optionsNoAutoClose);
       return;

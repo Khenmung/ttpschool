@@ -91,7 +91,7 @@ title ='';
     this.GetAppUsers();
   }
   PageLoad() {
-    //debugger;
+    ////debugger;
     //this.GetAppUsers();
   }
   get f() { return this.AppUsersForm.controls }
@@ -164,7 +164,7 @@ title ='';
     //this.nav.navigate(['/admin/dashboardstudent']);
   }
   UpdateOrSave() {
-    debugger;
+    //debugger;
 
     let ErrorMessage = '';
 
@@ -202,7 +202,7 @@ title ='';
       this.AppUsersData.CreatedBy = 0;
       this.AppUsersData.UpdatedBy = 0;
       this.AppUsersData.ApplicationUserId = this.UserId;
-      debugger;
+      //debugger;
       if (this.UserId == 0)
         this.insert();
       else {
@@ -216,7 +216,7 @@ title ='';
   }
   insert() {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('AppUsers', this.AppUsersData, 0, 'post')
       .subscribe(
         (data: any) => {

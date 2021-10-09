@@ -36,7 +36,7 @@ export class ChangePasswordComponent implements OnInit {
   }
   onSubmit(): void {
     const { ConfirmPassword, OldPassword, NewPassword } = this.form;
-    debugger;
+    //debugger;
     this.authService.changePassword(ConfirmPassword, OldPassword, NewPassword).subscribe(
       data => {
         //console.log(data);

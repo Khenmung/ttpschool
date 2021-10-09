@@ -64,7 +64,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchFeeTypeName: ['']
     });
@@ -101,7 +101,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = " FeeTypeName eq '" + row.FeeTypeName + "'";
 
@@ -114,7 +114,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -151,7 +151,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   }
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.FeeTypeListName, this.FeeTypeData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -172,7 +172,7 @@ export class SchoolFeeTypesComponent implements OnInit {
         });
   }
   GetFeeTypes() {
-    debugger;
+    //debugger;
     // if (this.searchForm.get("searchFeeTypeName").value.length < 3)
     // {
     //   this.alert.info("Please enter atleast 3 characters.",this.optionAutoClose);
@@ -197,7 +197,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     this.FeeTypeList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.FeeTypeList = [...data.value];

@@ -71,7 +71,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchSlotId: [0],
       searchClassId: [0],
@@ -121,7 +121,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     // if(row.ExamDate ==null)
     // {
     //   this.alert.error("Exam date is mandatory!",this.optionAutoClose);
@@ -158,7 +158,7 @@ export class SlotnclasssubjectComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -192,7 +192,7 @@ export class SlotnclasssubjectComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('SlotAndClassSubjects', this.SlotNClassSubjectData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -226,7 +226,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
           var _class = this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName;
@@ -383,7 +383,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             })
           }
           else {
-            debugger;
+            //debugger;
             if (this.searchForm.get("searchSubjectId").value > 0 && this.searchForm.get("searchClassId").value.length > 0) {
               filteredData = data.value.filter(d => d.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value
                 && this.searchForm.get("searchClassId").value.indexOf(d.ClassSubject.ClassId) > -1);

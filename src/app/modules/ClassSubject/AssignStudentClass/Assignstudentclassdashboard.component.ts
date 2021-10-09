@@ -107,7 +107,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     return user && user.Name ? user.Name : '';
   }
   PageLoad() {
-    debugger;
+    //debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
 
@@ -182,7 +182,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     }
   }
   CheckPromoteAll(event) {
-    debugger;
+    //debugger;
     var _promote = 0;
     if (event.checked) {
       _promote = 1;
@@ -205,7 +205,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   }
   promotePreviousBatch() {
-    debugger;
+    //debugger;
 
     var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(4) - 1;
     var previousBatchId = this.Batches[previousBatchIndex];
@@ -237,7 +237,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       })
   }
   GetStudentClasses() {
-    debugger;
+    //debugger;
     this.PagePermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
@@ -346,7 +346,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
 
     let checkFilterString = "ClassId eq " + row.ClassId +
@@ -364,7 +364,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -403,7 +403,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -462,7 +462,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {

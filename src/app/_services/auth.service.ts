@@ -1,11 +1,11 @@
 import { Injectable, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
 import { globalconstants } from '../shared/globalconstant';
 import { TokenStorageService } from './token-storage.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { map } from 'rxjs/operators';
 import { SharedataService } from '../shared/sharedata.service';
+import { List } from '../shared/interface';
 
 @Injectable({
   providedIn: 'root'
@@ -74,4 +74,38 @@ ngOnInit(): void {
   callRefershToken(payload){
     return this.http.post(this.AUTH_API + "/api/AuthManagement/RefreshToken",payload);
   }
+  //GetUsers(payload){
+  get<returnType>(list: List): Observable<returnType> {
+
+      var url;
+      url = this.AUTH_API + "/api/" + list.PageName + "?$select=" + list.fields.toString();
+      //url = "/odata/" + list.PageName + "?$select=" + list.fields.toString();
+      if (list.hasOwnProperty('lookupFields') && list.lookupFields.toString().length > 0) {
+        url += "&$expand=" + list.lookupFields.toString();
+      }
+      if (list.hasOwnProperty('filter') && list.filter && list.filter.toString().length > 0) {
+        url += "&$filter=" + list.filter;
+      }
+      if (list.hasOwnProperty('groupby') && list.groupby && list.groupby.toString().length > 0) {
+        url += "&$groupby=" + list.groupby;
+      }
+      if (list.hasOwnProperty('limitTo') && list.limitTo > 0) {
+        url += "&$top=" + list.limitTo.toString();
+      }
+      if (list.hasOwnProperty('orderBy') && list.orderBy) {
+        url += "&$orderby=" + list.orderBy.toString();
+      }
+      console.log("GetListItems URL: " + url);
+  
+      var req = {
+        method: 'GET',
+        cache: false,
+        url: url,
+        headers: {
+          "Accept": "application/json; odata=verbose",
+        }
+      }
+    return this.http["get"](url) as Observable<returnType>;
+    }
+  
 }

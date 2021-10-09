@@ -52,7 +52,7 @@ export class pageDashboardComponent implements OnInit {
     this.GetParentPage(this.Id);
   }
   getDetails(parentId) {
-    debugger;
+    //debugger;
     this.list.fields = ["PageId", "PageTitle", "ParentId", "PageHistories/PageHistoryId", "PageHistories/Published", "PageHistories/Version", "Active"];
     this.list.PageName = "Pages";
     this.list.lookupFields = ["PageHistories"];
@@ -85,7 +85,7 @@ export class pageDashboardComponent implements OnInit {
               Action: ""
             })
           });
-          debugger;
+          //debugger;
           this.columns = columns.map(column => {
             return {
               columnDef: column,
@@ -220,7 +220,7 @@ export class pageDashboardComponent implements OnInit {
         })
   }
   // confirm(event: Event, element, value) {
-  //   debugger;
+  //   //debugger;
   //   try {
   //     this.confirmationService.confirm({
   //       target: event.target,

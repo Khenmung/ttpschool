@@ -144,7 +144,7 @@ export class roleuseraddComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.alertservice.error("Record already exists!", this.optionsNoAutoClose);
         }
@@ -168,7 +168,7 @@ export class roleuseraddComponent implements OnInit {
 
   insert() {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch('RoleUsers', this.RoleUserData, 0, 'post')
       .subscribe(
         (data: any) => {

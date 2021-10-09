@@ -98,7 +98,7 @@ export class TextEditorComponent implements OnInit {
     this.loading = true;
     this.checklogin();
     this.GetParentPage();
-    debugger;
+    //debugger;
     this.ar.queryParamMap
       .subscribe((params) => {
         this.Id = this.ar.snapshot.params.id;
@@ -214,7 +214,7 @@ export class TextEditorComponent implements OnInit {
     list.limitTo = 1;
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           if (data.value[0].Page.PhotoPath == null || data.value[0].Page.PhotoPath == "")
             this.imgURL = "";
@@ -261,7 +261,7 @@ export class TextEditorComponent implements OnInit {
     this.onSave();
   }
   onSave() {
-    debugger;
+    //debugger;
     //console.log('to update', this.PageDetailForm.value)
     if (this.Id == undefined) {
       this.insert();
@@ -327,7 +327,7 @@ export class TextEditorComponent implements OnInit {
               .subscribe(
                 (history: any) => {
                   this.alert.success("Data saved successfully", this.options);
-                  debugger;
+                  //debugger;
                   if (this.PublishOrDraft == 1) {
                     if (this.PageDetailForm.value.PageTitle.toUpperCase().includes("NEWS"))
                       this.PageDetail.link = '/home/about/' + this.Id + "/" + pageId;
@@ -375,7 +375,7 @@ export class TextEditorComponent implements OnInit {
 
       this.PageDetail.PageTitle = this.PageDetailForm.value.PageTitle;// .get("PageTitle").value;
       this.PageDetail.label = this.PageDetailForm.value.PageTitle;
-      debugger;
+      //debugger;
       this.PageDetail.HasSubmenu = this.PageDetailForm.value.HasSubmenu == true ? 1 : 0;
 
       ///if it has no sub menu, link has to be defined only when it is published.

@@ -15,16 +15,6 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field fxFlex appearance="outline">
-                    <mat-label>Feature</mat-label>
-                    <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
-                        <mat-option [value]="0">select</mat-option>
-                        <mat-option *ngFor="let feature of FilteredFeatures" [value]="feature.ApplicationFeatureId">
-                            {{feature.FeatureName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-
-                <mat-form-field fxFlex appearance="outline">
                     <mat-label>Role</mat-label>
                     <mat-select formControlName="RoleId" fxFlex (selectionChange)="enable($event)">
                         <mat-option *ngFor="let role of Roles" [value]="role.MasterDataId">
@@ -32,6 +22,15 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <mat-form-field fxFlex appearance="outline">
+                    <mat-label>Feature</mat-label>
+                    <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
+                        <mat-option [value]="0">select</mat-option>
+                        <mat-option *ngFor="let feature of FilteredFeatures" [value]="feature.PageId">
+                            {{feature.PageTitle}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>                
                 <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetApplicationFeatureRole()" fxFlex="10">
                     <mat-icon>search</mat-icon>
                 </button>
@@ -41,22 +40,16 @@
         <div>
             <mat-divider></mat-divider>
             <mat-table [dataSource]="datasource" matSort>
-                <ng-container matColumnDef="Role">
+                <!-- <ng-container matColumnDef="Role">
                     <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                   {{element.Role}}
-                        <!-- <mat-form-field>
-                            <mat-label>role</mat-label>
-                            <mat-select (selectionChange)="UpdateSaveButton(element)" [value]="element.RoleId"  [(ngModel)]="element.RoleId">
-                                <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field> -->
+                   {{element.Role}}                     
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="FeatureName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Feature </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.FeatureName}}
+                       <span [innerHTML]="element.FeatureName"></span>
                     </mat-cell>
                 </ng-container>                
                 <ng-container matColumnDef="PermissionId">
@@ -81,10 +74,16 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>              
+                        <button *ngIf="ApplicationRoleList.length>0" 
+                            [disabled]="currentPermission=='read' || loading" 
+                            matTooltip="save all" mat-mini-fab
+                        (click)="UpdateAll()">
+                        <mat-icon *ngIf="!loading">loupe</mat-icon>
+                    </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="currentPermission=='read' || loading" matTooltip="view/edit" mat-mini-fab
-                            (click)="UpdateOrSave(element)">
+                        <button [disabled]="!element.Action || currentPermission=='read' || loading" matTooltip="view/edit" mat-mini-fab
+                            (click)="Save(element)">
                             <mat-icon *ngIf="!loading">save</mat-icon>
                         </button>
                     </mat-cell>

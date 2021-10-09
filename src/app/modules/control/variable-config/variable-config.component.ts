@@ -77,7 +77,7 @@ export class VariableConfigComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.searchForm = this.fb.group({
       searchVariableName: [''],
       searchTypeId: [0]
@@ -127,13 +127,13 @@ export class VariableConfigComponent implements OnInit {
     this.dataSource = new MatTableDataSource<IVariableConfig>(this.VariableConfigList);
   }
   updateCommonComponent(row, value) {
-    debugger;
+    //debugger;
     row.Action = true;
     row.CommonComponent = value.checked == 1 ? 1 : 0;
 
   }
   updateDeduction(row, value) {
-    debugger;
+    //debugger;
     row.Action = true;
     row.Deduction = value.checked == 1 ? 1 : 0;
   }
@@ -145,7 +145,7 @@ export class VariableConfigComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
 
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -162,7 +162,7 @@ export class VariableConfigComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -200,7 +200,7 @@ export class VariableConfigComponent implements OnInit {
 
   insert(row) {
 
-    debugger;
+    //debugger;
     this.dataservice.postPatch(this.ListName, this.VariableConfigData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -253,7 +253,7 @@ export class VariableConfigComponent implements OnInit {
   // }
 
   onBlur(element, event) {
-    debugger;
+    //debugger;
     var _colName = event.srcElement.name;
     var formula = element["VariableFormula"];
     //console.log("event", _colName);
@@ -276,7 +276,7 @@ export class VariableConfigComponent implements OnInit {
   //   })
   // }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
     //var columnexist;
@@ -351,7 +351,7 @@ export class VariableConfigComponent implements OnInit {
     this.VariableConfigList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         data.value.forEach(f => {
           f.Action = false;
         })
@@ -384,7 +384,7 @@ export class VariableConfigComponent implements OnInit {
     this.VariableConfigList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         this.VariableConfig = [...data.value];
         this.loading = false;
       })

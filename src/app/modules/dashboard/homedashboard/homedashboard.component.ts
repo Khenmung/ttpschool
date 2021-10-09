@@ -35,11 +35,11 @@ export class HomeDashboardComponent implements OnInit {
     private dataservice:NaomitsuService) { }
 
   ngOnInit(): void {
-    var urlId = 0;
-    this.aroute.paramMap.subscribe(p => {
-      urlId = +p.get('id');
-      this.shareddata.ChangeApplicationId(urlId);
-    })
+    // var urlId = 0;
+    // this.aroute.paramMap.subscribe(p => {
+    //   urlId = +p.get('id');
+    //   this.shareddata.ChangeApplicationId(urlId);
+    // })
 
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
@@ -51,18 +51,18 @@ export class HomeDashboardComponent implements OnInit {
       this.route.navigate(['/auth/login']);
     }
     else {
+      debugger;
       this.userName = this.tokenStorage.getUser();
       var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
+
       var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-      this.shareddata.ChangePermittedApplications(_UniquePermittedApplications);
-      this.shareddata.CurrentPermittedApplications.subscribe(p => this.PermittedApplications = p);
+      this.PermittedApplications =[..._UniquePermittedApplications];
 
       if (this.PermittedApplications.length == 0) {
         this.tokenStorage.signOut();
         this.route.navigate(['/auth/login']);
       }
-
-
+      this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);      
       if (this.userName === undefined || this.userName === null || this.userName == '')
         this.loggedIn = false;
       else
@@ -73,21 +73,21 @@ export class HomeDashboardComponent implements OnInit {
       this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
       if (this.Batches.length == 0)
         this.getBatches();
-      else {
+      
         this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
         this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
-      }
+      
     }
   }
   ChangeApplication() {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     this.tokenStorage.saveSelectedAppId(SelectedAppId);
     var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
-    this.route.navigate(['/', selectedApp[0].appShortName, selectedApp[0].applicationId])
+    this.route.navigate(['/', selectedApp[0].appShortName])
 
   }
   ChangeCurrentBatchId(selected) {
-    debugger;
+    //debugger;
     var _SelectedBatch = this.Batches.filter(b => b.BatchId == selected)
     if (_SelectedBatch.length > 0) {
       this.shareddata.ChangeSelectedBatchStartEnd({ 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
@@ -152,7 +152,6 @@ export class HomeDashboardComponent implements OnInit {
       }
       if (this.SelectedBatchId == 0) {
         this.tokenStorage.saveSelectedBatchId(this.CurrentBatchId.toString())
-        //this.shareddata.ChangeSelectedBatchId(this.CurrentBatchId);
         this.SelectedBatchId = this.CurrentBatchId;
       }
 

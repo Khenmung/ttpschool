@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit {
       this.openSideBar = !this.openSideBar;
   }
   sideBarToggler() {
-    debugger;
+    //debugger;
     this.openSideBar = !this.openSideBar;
     //console.log('this.deviceXs in toggle',this.deviceXs)
     if (!this.openSideBar && this.deviceXs)

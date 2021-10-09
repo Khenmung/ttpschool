@@ -30,7 +30,7 @@ export class DashboardstudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  ApplicationId = 0;
+  //ApplicationId = 0;
   filterOrgIdNBatchId = '';
   filterOrgIdOnly = '';
   filterBatchIdNOrgId = '';
@@ -75,11 +75,11 @@ export class DashboardstudentComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
-    debugger;
+    //debugger;
     this.loading = true;
     //this.urlId = +this.ar.snapshot.paramMap.get('id');
     this.LoginUserDetail = this.token.getUserDetail();
-    this.shareddata.CurrentApplicationId.subscribe(a => this.ApplicationId = a);
+    //this.shareddata.CurrentApplicationId.subscribe(a => this.ApplicationId = a);
 
     this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
     this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
@@ -150,7 +150,7 @@ export class DashboardstudentComponent implements OnInit {
     return stud && stud.MotherName ? stud.MotherName : '';
   }
   GetMasterData() {
-    debugger;
+    //debugger;
     this.loading = true;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
@@ -237,20 +237,20 @@ export class DashboardstudentComponent implements OnInit {
       return [];
   }
   fee(id) {
-    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudentfeepayment/' + id]);
+    this.route.navigate(['/edu/addstudentfeepayment/' + id]);
   }
   class(id) {
-    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudentcls/' + id]);
+    this.route.navigate(['/edu/addstudentcls/' + id]);
   }
   view(element) {
-    debugger;
+    //debugger;
     this.generateDetail(element);
     //  this.route.navigate(['/admin/addstudent/' + id], { queryParams: { scid: this.StudentClassId, bid: this.BatchId } });
-    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudent/' + element.StudentId]);
+    this.route.navigate(['/edu/addstudent/' + element.StudentId]);
   }
   feepayment(element) {
     this.generateDetail(element);
-    this.route.navigate(['/edu/' + this.ApplicationId + '/feepayment']);
+    this.route.navigate(['/edu/feepayment']);
   }
   generateDetail(element) {
     let StudentName = element.StudentId + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
@@ -275,7 +275,7 @@ export class DashboardstudentComponent implements OnInit {
   }
   new() {
     //var url = this.route.url;
-    this.route.navigate(['/edu/' + this.ApplicationId + '/addstudent']);
+    this.route.navigate(['/edu/addstudent']);
   }
   ExportTOExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.tableRef.nativeElement);
@@ -325,7 +325,7 @@ export class DashboardstudentComponent implements OnInit {
       })
   }
   GetStudent() {
-    debugger;
+    //debugger;
 
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
@@ -412,7 +412,7 @@ export class DashboardstudentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {

@@ -8,6 +8,50 @@ export class globalconstants {
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
+    public static AppAndMenuAndFeatures =
+        {
+            'edu': {
+                'control': {},
+                'classcourse': { 'detail': 'detail', 'fee': 'fee', 'prerequisite': 'prerequisite', 'master': 'master' },
+                'subject': {
+                    'subjecttype': 'subjecttype',
+                    'subjectdetail': 'subjectdetail',
+                    'subjectcomponent': 'subjectcomponent',
+                    'classstudent': 'classstudent',
+                    'subjectstudent': 'subjectstudent'
+                },
+                'examination': {
+                    'exam': 'exam',
+                    'examslot': 'examslot',
+                    'subjectinslot': 'subjectinslot',
+                    'examsubjectmark': 'examsubjectmark',
+                    'studentactivity': 'studentactivity'
+                },
+                'timetable':{
+                    'classperiod':'classperiod',
+                    'timetable':'timetable',
+                },
+                'attendance':{
+                    'studentattendance':'studentattendance'
+                },
+                'student':{
+                    'detail':'detail',
+                    'feepayment':'feepayment'
+                },
+                'reportconfiguration':{},
+                'exceldataupload':{
+                    'uploadstudent':'uploadstudent',
+                    'uploadteacher':'uploadteacher',
+                },
+                'report':{
+                    'studentreport':'studentreport',
+                    'teacherreport':'teacherreport',
+                }
+            },
+            'employee':{
+                
+            }
+        };
     public static Pages = [
         {
             'AUTH': {
@@ -54,25 +98,25 @@ export class globalconstants {
     ]
     public static MasterDefinitions =
         {
-            
-            "admin":{
-                "CURRENCY":"currency"
+
+            "admin": {
+                "CURRENCY": "currency"
             },
             "ttpapps": {
                 "ORGANIZATION": "organization",
                 "LOCATION": "location",
                 "DEPARTMENT": "department",
                 "TTPAPP": "application",
-                "bang":"application",
+                "bang": "application",
                 "ROLE": "role",
                 "INVOICECOMPONENT": "invoice component",
                 "PAYMENTSTATUS": "payment status"
             },
             "school": {
-                "DURATION":"duration",
-                "STUDYAREA":"study area",
-                "STUDYMODE":"study mode",
-                "PERIODTYPE":"period type",
+                "DURATION": "duration",
+                "STUDYAREA": "study area",
+                "STUDYMODE": "study mode",
+                "PERIODTYPE": "period type",
                 "WEEKDAYS": "week days",
                 "PERIOD": "school period",
                 "COMMONFOOTER": "common footer",
@@ -108,13 +152,13 @@ export class globalconstants {
                 "SUBJECTTYPE": "subject type",
                 "ATTENDANCESTATUS": "attendance status"
             },
-            "leave":{
+            "leave": {
                 "OPENADJUSTCLOSE": "open adjust close",
                 "LEAVE": "employee leave",
                 "LEAVESTATUS": "leave status"
             },
             "employee": {
-            
+
                 "EMPLOYEEGENDER": "employee gender",
                 "EMPLOYMENTTYPE": "employment type",
                 "NATURE": "nature",
@@ -124,7 +168,7 @@ export class globalconstants {
                 "JOBTITLE": "job title",
                 "DESIGNATION": "designation",
                 "SALARYCOMPONENT": "salary component",
-                "GRADE": "grade",              
+                "GRADE": "grade",
                 "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
             },
@@ -251,7 +295,7 @@ export class globalconstants {
         return [currentYear - 1, currentYear, currentYear + 1];
     }
     public static getMonths() {
-       
+
         return [
             { month: 'Jan', val: 1 },
             { month: 'Feb', val: 2 },
@@ -273,6 +317,7 @@ export class globalconstants {
         return filterstr;
 
     }
+
     public static getPermission(token, tokenservice: TokenStorageService, feature: any) {
         var checkBatchIdNSelectedId = 0;
         checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();
