@@ -1,10 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TokenStorageService } from '../../../_services/token-storage.service';
-import { NaomitsuService } from '../../databaseService';
-import { List } from '../../interface';
-import { SharedataService } from '../../sharedata.service'
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -16,6 +12,7 @@ export class HeaderComponent implements OnInit {
   loading: false;
   userName: string = '';
   loggedIn: boolean;
+  SelectedApplicationName='';
   constructor(
     private route: Router,
     private tokenStorage: TokenStorageService   
@@ -28,6 +25,14 @@ export class HeaderComponent implements OnInit {
       this.loggedIn = false;
     else
       this.loggedIn = true;
+      var PermittedApplications = this.tokenStorage.getPermittedApplications();
+      var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
+      this.SelectedApplicationName = '';
+      var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
+  
+      if (apps.length > 0) {
+        this.SelectedApplicationName = apps[0].applicationName;
+      }
   }
 
   changepassword() {

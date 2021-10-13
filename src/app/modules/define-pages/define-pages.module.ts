@@ -7,15 +7,12 @@ import { pageViewComponent } from './pageView/pageView.component';
 import { MaterialModule } from '../../shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DisplaypageComponent } from './displaypage/displaypage.component';
-import { EncodeHTMLPipe } from '../../encode-html.pipe'
 import { SharedModule } from '../../shared/shared.module';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
-import { MenuConfigComponent } from './menu-config/menu-config.component';
+//import { MenuConfigComponent } from '../globaladmin/menu-config/menu-config.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-//import { ContactComponent } from '../contact/addMessage/contact.component';
-//import { ContactdashboardComponent } from '../contact/contactdashboard/contactdashboard.component';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { AlbumsModule } from '../photogallery/albums/albums.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -26,7 +23,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     pageDashboardComponent,
     pageViewComponent,
     DisplaypageComponent,
-    MenuConfigComponent,
     
   ],
   imports: [

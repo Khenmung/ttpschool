@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field [style.width.pc]="20">
+                <mat-form-field [style.width.pc]="20" appearance="outline">
                     <mat-label>Variable</mat-label>
                     <input type="text" matInput formControlName="searchVariableName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -16,7 +16,7 @@
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
-                <mat-form-field [style.width.px]="120">
+                <mat-form-field [style.width.px]="120" appearance="outline">
                     <mat-label>Type</mat-label>
                     <mat-select formControlName="searchTypeId">
                         <mat-option *ngFor="let item of ConfigTypes" [value]="item.MasterDataId">

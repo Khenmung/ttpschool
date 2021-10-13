@@ -1,8 +1,8 @@
 <div fxLayout="column" fxLayoutAlign="center space-between">
     <div>
-        <mat-card class="boxes">
+        <!-- <mat-card class="boxes">
             <mat-card-title>Essential Data</mat-card-title>
-            <mat-card-content>
+            <mat-card-content> -->
                 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
                 <alert></alert>
                 <br>
@@ -109,8 +109,6 @@
                     </mat-table>
                     <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
                 </div>
-            </mat-card-content>
-        </mat-card>
     </div>
     <div>
         

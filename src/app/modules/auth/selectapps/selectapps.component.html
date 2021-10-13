@@ -1,0 +1,95 @@
+<div style="min-height: 100vh;margin-top:-100px; display: flex;flex-direction: column; align-items:center;justify-content: center;">
+    
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
+    <div style="display:flex;flex-direction: column; justify-content:center;width: 80%;">
+        <div style="padding:15px 15px 10px 15px;background-color: white;">
+            <div><strong>Select Applications</strong></div>
+        </div>
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="ApplicationName">
+                <mat-header-cell *matHeaderCellDef>Application
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ApplicationName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PCPM">
+                <mat-header-cell *matHeaderCellDef>PUPM
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.PCPM}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="MinCount">
+                <mat-header-cell *matHeaderCellDef>Min Count
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.MinCount}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="MinPrice">
+                <mat-header-cell *matHeaderCellDef>MinPrice
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.MinPrice}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Currency">
+                <mat-header-cell *matHeaderCellDef>Currency
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Currency}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="PersonOrItemCount">
+                <mat-header-cell *matHeaderCellDef>Person Or ItemCount
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline" [style.width.pc]="5">
+                        <input (blur)="onBlur(element)" type="number" [(ngModel)]="element.PersonOrItemCount"
+                            [value]="element.PersonOrItemCount" matInput autocomplete="off" [max]="100000">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <!-- <ng-container matColumnDef="LoginUserCount">
+                    <mat-header-cell *matHeaderCellDef>Login User Count
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.pc]="5">
+                            <input (blur)="onBlur(element)" type="number" [(ngModel)]="element.LoginUserCount"
+                                [value]="element.LoginUserCount" matInput autocomplete="off" [max]="100000">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container> -->
+
+            <ng-container matColumnDef="AmountPerMonth">
+                <mat-header-cell *matHeaderCellDef>Amount Per Month
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.AmountPerMonth}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+        <span style="background-color: white; padding: 15px;display:flex;justify-content: center;">
+            <div style="padding: 15px;"><b>Total Amount:</b></div>
+            <div style="padding: 15px;">{{TotalAmount}}</div>
+            <button class="mat-raised-button" (click)="SaveAll()">Proceed</button>
+            <form>
+                <script src="https://checkout.razorpay.com/v1/payment-button.js"
+                    data-payment_button_id="pl_I8p4hFG58WltQn" async> </script>
+            </form>
+        </span>
+    </div>
+</div>
+<!-- </div> -->

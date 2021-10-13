@@ -1,9 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup} from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TableUtil } from '../../TableUtil';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -77,17 +77,11 @@ export class DashboardstudentComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.loading = true;
-    //this.urlId = +this.ar.snapshot.paramMap.get('id');
     this.LoginUserDetail = this.token.getUserDetail();
-    //this.shareddata.CurrentApplicationId.subscribe(a => this.ApplicationId = a);
-
+    
     this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
     this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
-    //this.shareddata.ChangeSelectedBatchId
-    //this.StandardFilter =globalconstants.getStandardFilter(this.LoginUserDetail);
     this.studentSearchForm = this.fb.group({
-      //BatchId: [0, Validators.required],
-      //StudentId: [0],
       searchStudentName: [''],
       FatherName: [''],
       MotherName: ['']

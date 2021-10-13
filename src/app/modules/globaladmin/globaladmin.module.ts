@@ -7,6 +7,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { ControlModule } from '../control/control.module';
+import { DefinePagesModule } from '../define-pages/define-pages.module';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { ControlModule } from '../control/control.module';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    ControlModule
+    ControlModule,
+    DefinePagesModule
   ],
   exports:[GlobalAdminComponents]
 })

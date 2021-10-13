@@ -60,7 +60,7 @@ export class SidebarComponent implements OnInit {
     this.dataservice.get(list).subscribe((data: any) => {
       this.sideMenu = [...data.value];
       let NewsNEvents = this.sideMenu.filter(item => {
-        return item.Label.toUpperCase() == 'NEWS N EVENTS'
+        return item.label.toUpperCase() == 'NEWS N EVENTS'
       })
       if (NewsNEvents.length > 0) {
         this.shareddata.ChangeNewsNEventId(NewsNEvents[0].PageId);

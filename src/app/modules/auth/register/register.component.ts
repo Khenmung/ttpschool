@@ -82,7 +82,9 @@ export class RegisterComponent implements OnInit {
   PageLoad() {
 
   }
-
+  selectapps(){
+    this.route.navigate(["/auth/apps"]);
+  }
   AddAppUsers() {
     let orgToUpdate = {
       OrganizationName: this.RegistrationForm.get("OrganizationName").value,
@@ -140,7 +142,7 @@ export class RegisterComponent implements OnInit {
     this.authService.register(userDetail).subscribe(
       data => {
         //this.AddAppUsers()
-        this.alert.success("Congratulations! Your registration is successful.", this.optionsNoAutoClose);
+        this.alert.success("Congratulations! Your registration is successful.", this.optionsAutoClose);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
       },

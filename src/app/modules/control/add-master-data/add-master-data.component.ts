@@ -50,7 +50,6 @@ export class AddMasterDataComponent implements OnInit {
   UserDetails = [];
 
   constructor(
-    private shareddata: SharedataService,
     private fb: FormBuilder,
     private route: Router,
     private tokenStorage: TokenStorageService,
@@ -243,7 +242,7 @@ export class AddMasterDataComponent implements OnInit {
     element.Action = true;
   }
   enable(elment) {
-    //debugger;
+    debugger;
     if (elment.value > 0)
       this.enableTopEdit = true;
     else
@@ -440,9 +439,6 @@ export class AddMasterDataComponent implements OnInit {
       Active: 1
     }
 
-    // let newlyAddedRow = this.MasterData.filter(item => {
-    //   return item.Name == row.Name
-    // });
 
     let selectedMasterDataId = 0;
     //mastertoUpdate.MasterDataId = newlyAddedRow[0].Id;
@@ -450,8 +446,8 @@ export class AddMasterDataComponent implements OnInit {
 
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
-      mastertoUpdate["ApplicationId"] = 0;//this.UserDetails[0]["applicationId"];
-      //console.log('data to update',mastertoUpdate);
+      mastertoUpdate["ApplicationId"] = this.searchForm.get("AppId").value;
+      console.log('data to update',mastertoUpdate);
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {

@@ -63,16 +63,11 @@ export class AppuserdashboardComponent implements OnInit {
   AppUsersData = {
     Id: 0,
     UserName: '',
-    EmailAddress: 0,
-    Address: '',
-    ContactNo: '',
+    Email: 0,
+    PhoneNumber: '',
     ValidFrom: Date,
     ValidTo: Date,
     OrgId: 0,
-    DepartmentId: 0,
-    LocationId: 0,
-    ManagerId: 0,
-    Remarks: '',
     CreatedDate: new Date(),
     CreatedBy: 0,
     Active: 1,
@@ -213,8 +208,8 @@ export class AppuserdashboardComponent implements OnInit {
     //debugger;
     this.loading = true;
     let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
-    if (this.searchForm.get("searchUserName").value.ApplicationUserId > 0) {
-      filterStr += " and ApplicationUserId eq " + this.searchForm.get("searchUserName").value.ApplicationUserId;
+    if (this.searchForm.get("searchUserName").value.Id > 0) {
+      filterStr += " and Id eq " + this.searchForm.get("searchUserName").value.Id;
     }
 
     let list: List = new List();
@@ -224,13 +219,10 @@ export class AppuserdashboardComponent implements OnInit {
       "Email",
       "PhoneNumber",
       "OrgId",
-      "DepartmentId",
-      "LocationId",
       "ValidFrom",
       "ValidTo",
       "Active",
-      "RoleUsers/RoleId"
-    ];
+     ];
     list.PageName = "AuthManagement";
     list.lookupFields = ["Org($select=OrganizationName)"];
     list.filter = ["Active eq 1" + filterStr];
@@ -238,43 +230,32 @@ export class AppuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          var _department;
-          var _departmentName = '';
-          var _location;
-          var _locationName = '';
+          // var _department;
+          // var _departmentName = '';
+          // var _location;
+          // var _locationName = '';
           this.AppUsers = data.value.map(u => {
-            _department = '';
-            _departmentName = '';
-            _location = '';
-            _department = this.Departments.filter(o => o.MasterDataId == u.DepartmentId);
-            if (_department.length > 0)
-              _departmentName = _department[0].MasterDataName
+            // _department = '';
+            // _departmentName = '';
+            // _location = '';
+            // _department = this.Departments.filter(o => o.MasterDataId == u.DepartmentId);
+            // if (_department.length > 0)
+            //   _departmentName = _department[0].MasterDataName
 
-            _location = this.Locations.filter(o => o.MasterDataId == u.LocationId);
-            if (_location.length > 0)
-              _locationName = _location[0].MasterDataName;
+            // _location = this.Locations.filter(o => o.MasterDataId == u.LocationId);
+            // if (_location.length > 0)
+            //   _locationName = _location[0].MasterDataName;
 
             return {
-              "ApplicationUserId": u.ApplicationUserId,
+              "Id": u.Id,
               "UserName": u.UserName,
               "EmailAddress": u.EmailAddress,
               "ContactNo": u.ContactNo,
               "OrgId": u.OrgId,
               "OrgName": u.Org.OrganizationName,
-              "DepartmentId": u.DepartmentId,
-              "Department": _departmentName,
-              "LocationId": u.LocationId,
-              "Location": _locationName,
               "ValidFrom": u.ValidFrom,
               "ValidTo": u.ValidTo,
-              "Active": u.Active,
-              // "RoleUsers": u.RoleUsers.map(d => {
-
-              //   return {
-              //     Role: this.Roles.length == 0 ? '' : this.Roles.filter(a => a.MasterDataId == d.RoleId)[0].MasterDataName,
-              //     RoleId: d.RoleId,
-              //   }
-              //}),
+              "Active": u.Active              
             }
           });
         }
@@ -297,8 +278,8 @@ export class AppuserdashboardComponent implements OnInit {
     if (row.UserName.length == 0) {
       ErrorMessage += "User name is required.<br>";
     }
-    if (row.EmailAddress.length == 0) {
-      ErrorMessage += "Please select Section.<br>";
+    if (row.Email.length == 0) {
+      ErrorMessage += "Please email is required.<br>";
     }
 
     if (ErrorMessage.length > 0) {
@@ -308,12 +289,12 @@ export class AppuserdashboardComponent implements OnInit {
 
     var duplicatecheck = "UserName eq '" + row.UserName + "' and OrgId eq " + this.LoginDetail[0]["orgId"]
 
-    if (row.ApplicationUserId > 0)
-      duplicatecheck += ' and Id ne ' + row.ApplicationUserId;
+    if (row.Id.length > 0)
+      duplicatecheck += " and Id ne '" + row.Id + "'";
 
     let list = new List();
     list.fields = ["Id"];
-    list.PageName = "AuthManagement/";
+    list.PageName = "AuthManagement";
     list.filter = ["Active eq 1 and " + duplicatecheck]
     this.dataservice.get(list).subscribe((data: any) => {
       if (data.value.length > 0) {
@@ -324,22 +305,13 @@ export class AppuserdashboardComponent implements OnInit {
         this.AppUsersData.Active = 1;
         this.AppUsersData.Id = row.Id;
         this.AppUsersData.UserName = row.UserName;
-        this.AppUsersData.EmailAddress = row.EmailAddress;
-        this.AppUsersData.Address = '';
-        this.AppUsersData.ContactNo = row.ContactNo;
+        this.AppUsersData.Email = row.Email;
+        this.AppUsersData.PhoneNumber = row.PhoneNumber;
         this.AppUsersData.ValidFrom = row.ValidFrom;
         this.AppUsersData.ValidTo = row.ValidTo;
         this.AppUsersData.OrgId = this.LoginDetail[0]["orgId"];
-        this.AppUsersData.DepartmentId = 0;
-        this.AppUsersData.LocationId = 0;
-        this.AppUsersData.ManagerId = 0;
-        this.AppUsersData.Remarks = '';
         this.AppUsersData.CreatedBy = this.LoginDetail[0]["userId"];
-        //this.AppUsersData.UpdatedBy = 0;
-        //this.AppUsersData.ApplicationUserId = this.UserId;
-        console.log('user dasta', this.AppUsersData)
-        //debugger;
-        if (row.ApplicationUserId == 0)
+        if (row.Id == 0)
           this.insert(row);
         else {
           this.update();
@@ -354,11 +326,11 @@ export class AppuserdashboardComponent implements OnInit {
   insert(row) {
 
     //debugger;
-    this.dataservice.postPatch('AuthManagement/Adduser', this.AppUsersData, 0, 'post')
+    this.dataservice.postPatch('AuthManagement/Register', this.AppUsersData, 0, 'post')
       .subscribe(
         (data: any) => {
 
-          row.ApplicationUserId = data.Id;
+          row.Id = data.Id;
           this.loading = false;
           this.alert.success("Data saved successfully", this.optionsAutoClose);
           //this.router.navigate(['/home/pages']);
@@ -368,7 +340,7 @@ export class AppuserdashboardComponent implements OnInit {
   }
   update() {
 
-    this.dataservice.postPatch('AuthManagement/patchuser', this.AppUsersData, this.AppUsersData.Id, 'patch')
+    this.dataservice.postPatch('AuthManagement', this.AppUsersData, this.AppUsersData.Id, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
@@ -378,17 +350,14 @@ export class AppuserdashboardComponent implements OnInit {
   }
 }
 export interface IAppUser {
-  UserId: string;
+  Id: string;
   UserName: string;
   Email: string;
-  Department: string;
-  Location: string;
-  ContactNo: string;
+  PhoneNumber: string;
   ValidFrom: Date;
   ValidTo: Date;
   OrgName: string;
   Active: number;
-  RoleUsers: [];
 }
 export interface IUser {
   Id: string;

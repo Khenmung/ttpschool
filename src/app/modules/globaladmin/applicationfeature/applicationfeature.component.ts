@@ -68,6 +68,7 @@ export class ApplicationfeatureComponent implements OnInit {
   }
 
   PageLoad() {
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)

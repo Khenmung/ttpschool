@@ -1,5 +1,5 @@
 <mat-card class="boxes">
-    <mat-card-title> Role Application Feature Permission</mat-card-title>
+    <mat-card-title> Role Feature Permission</mat-card-title>
     <mat-card-content>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
@@ -40,12 +40,6 @@
         <div>
             <mat-divider></mat-divider>
             <mat-table [dataSource]="datasource" matSort>
-                <!-- <ng-container matColumnDef="Role">
-                    <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                   {{element.Role}}                     
-                    </mat-cell>
-                </ng-container> -->
                 <ng-container matColumnDef="FeatureName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Feature </mat-header-cell>
                     <mat-cell *matCellDef="let element">

@@ -103,6 +103,7 @@ export class globalconstants {
                 "CURRENCY": "currency"
             },
             "ttpapps": {
+                "REPORTNAMES": "ttp report name",
                 "ORGANIZATION": "organization",
                 "LOCATION": "location",
                 "DEPARTMENT": "department",
@@ -113,6 +114,7 @@ export class globalconstants {
                 "PAYMENTSTATUS": "payment status"
             },
             "school": {
+                "REPORTNAMES": "edu report name",
                 "DURATION": "duration",
                 "STUDYAREA": "study area",
                 "STUDYMODE": "study mode",
@@ -153,12 +155,13 @@ export class globalconstants {
                 "ATTENDANCESTATUS": "attendance status"
             },
             "leave": {
+                "REPORTNAMES": "leave report name",
                 "OPENADJUSTCLOSE": "open adjust close",
                 "LEAVE": "employee leave",
                 "LEAVESTATUS": "leave status"
             },
             "employee": {
-
+                "REPORTNAMES": "employee report name",
                 "EMPLOYEEGENDER": "employee gender",
                 "EMPLOYMENTTYPE": "employment type",
                 "NATURE": "nature",

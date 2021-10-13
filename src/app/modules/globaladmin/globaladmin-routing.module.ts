@@ -7,7 +7,8 @@ import { CustomerappsComponent } from './customerapps/customerapps.component';
 import { CustomerinvoiceComponent } from './customerinvoice/customerinvoice.component';
 import { CustomerinvoicecomponentsComponent } from './customerinvoicecomponents/customerinvoicecomponents.component';
 import { GlobaladminboardComponent } from './globaladminboard/globaladminboard.component';
-import { ReportconfigdataComponent } from './reportconfigdata/reportconfigdata.component';
+import { MenuConfigComponent } from './menu-config/menu-config.component';
+import { ReportConfigItemComponent } from './reportconfigitem/reportconfigitem.component';
 
 const routes: Routes = [
   {
@@ -31,5 +32,6 @@ export const GlobalAdminComponents = [
   ApplicationfeatureComponent,
   CustomerinvoicecomponentsComponent,
   GlobaladminboardComponent,
-  ReportconfigdataComponent
+  ReportConfigItemComponent,
+  MenuConfigComponent
 ]

@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AddMasterDataComponent } from '../../control/add-master-data/add-master-data.component';
-import { ApplicationfeatureComponent } from '../applicationfeature/applicationfeature.component';
+import { MenuConfigComponent } from '../menu-config/menu-config.component';
 import { ApplicationpriceComponent } from '../applicationprice/applicationprice.component';
 import { CustomerappsComponent } from '../customerapps/customerapps.component';
 import { CustomerinvoiceComponent } from '../customerinvoice/customerinvoice.component';
 import { CustomerinvoicecomponentsComponent } from '../customerinvoicecomponents/customerinvoicecomponents.component';
-import { ReportconfigdataComponent } from '../reportconfigdata/reportconfigdata.component';
+import { ReportConfigItemComponent } from '../reportconfigitem/reportconfigitem.component';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -13,20 +13,20 @@ import { ReportconfigdataComponent } from '../reportconfigdata/reportconfigdata.
   styleUrls: ['./globaladminboard.component.scss']
 })
 export class GlobaladminboardComponent implements OnInit {
-
-  @ViewChild(ApplicationfeatureComponent) features: ApplicationfeatureComponent;
   @ViewChild(ApplicationpriceComponent) prices: ApplicationpriceComponent;
   @ViewChild(CustomerinvoiceComponent) customerinvoice: CustomerinvoiceComponent;
   @ViewChild(CustomerappsComponent) Customerapps: CustomerappsComponent;
   @ViewChild(AddMasterDataComponent) masters: AddMasterDataComponent;
   @ViewChild(CustomerinvoicecomponentsComponent) customerinvoicecomponents: CustomerinvoicecomponentsComponent;
-  @ViewChild(ReportconfigdataComponent) reportconfigdata: ReportconfigdataComponent;
+  @ViewChild(ReportConfigItemComponent) reportconfigdata: ReportConfigItemComponent;
+  @ViewChild(MenuConfigComponent) menuconfig: MenuConfigComponent;
   selectedIndex = 0;
   constructor() { }
 
   ngOnInit(): void {
+    debugger;
     setTimeout(() => {
-      this.features.PageLoad();
+      this.menuconfig.PageLoad();
     }, 100);
 
   }
@@ -40,7 +40,7 @@ export class GlobaladminboardComponent implements OnInit {
     //console.log(event);
     switch (event) {
       case 0:
-        this.features.PageLoad();
+        this.menuconfig.PageLoad();
         break;
       case 1:
         this.prices.PageLoad();

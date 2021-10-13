@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="column" fxLayoutAlign="center center">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field [style.width.pc]="25">
+                <mat-form-field [style.width.pc]="25" appearance="outline">
                     <mat-label>Fee type</mat-label>
                     <input matInput formControlName="searchFeeTypeName" autocomplete="Off">
                 </mat-form-field>
@@ -20,7 +20,7 @@
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Fee type
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
                                 [value]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
                         </mat-form-field>

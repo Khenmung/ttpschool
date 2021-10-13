@@ -7,7 +7,8 @@
             </button> -->
             <a [routerLink]="['/home/display/0/0/']"><img style="border-radius: 3px;" src="assets/images/ttplogo1.png"
                     alt="St Paul's Institute" width="50px" /></a>
-        </div>
+            <span>{{SelectedApplicationName}}</span>    
+                </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <span class="rightside" *ngIf="!deviceXs">
                 <button [disabled]="loading" mat-button (click)="contactus()">

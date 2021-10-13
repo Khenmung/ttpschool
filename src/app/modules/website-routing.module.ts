@@ -5,7 +5,6 @@ import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component'
 import { ContactComponent } from './contact/addMessage/contact.component';
 import { ContactdashboardComponent } from './contact/contactdashboard/contactdashboard.component';
 import { DisplaypageComponent } from './define-pages/displaypage/displaypage.component';
-import { MenuConfigComponent } from './define-pages/menu-config/menu-config.component';
 import { pageDashboardComponent } from './define-pages/pageDashboard/pageDashboard.component';
 import { pageViewComponent } from './define-pages/pageView/pageView.component';
 import { TextEditorComponent } from './define-pages/texteditor/texteditor.component';
@@ -40,7 +39,6 @@ const routes: Routes = [
       { path: 'addmessage', component: ContactComponent },
       { path: 'message/:id', component: ContactComponent },
       { path: 'about/:parentid', component: NewsdashboardComponent },
-      { path: 'config', component: MenuConfigComponent },
     ]
   }
 ];

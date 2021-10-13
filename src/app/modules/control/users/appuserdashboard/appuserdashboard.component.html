@@ -109,7 +109,7 @@
                             </button>
                         </mat-cell>
                     </ng-container>
-                    <ng-container matColumnDef="expandedDetail">
+                    <!-- <ng-container matColumnDef="expandedDetail">
                         <mat-cell *matCellDef="let detail">
                             <table *ngIf="detail.element.RoleUsers.length>0">
                                 <tr style="background-color: lightgray;">
@@ -122,7 +122,7 @@
                                 </tr>
                             </table>
                         </mat-cell>
-                    </ng-container>
+                    </ng-container> -->
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
                         [class.expanded]="expandedElement == row"></mat-row>

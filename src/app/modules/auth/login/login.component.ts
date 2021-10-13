@@ -221,6 +221,7 @@ export class LoginComponent implements OnInit {
               return false;
           })
         }]
+        
         //login detail is save even though roles are not defined.
         //so that user can continue their settings.
         this.tokenStorage.saveUserdetail(this.UserDetail);

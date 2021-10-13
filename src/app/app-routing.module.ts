@@ -22,7 +22,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
   },
   {
-    path: 'admin',
+    path: 'common',
     loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
@@ -32,6 +32,10 @@ const routes: Routes = [
   {
     path: 'edu/cls',
     loadChildren: () => import('./modules/classes/classes.module').then(m => m.ClassesModule)
+  },
+  {
+    path: 'edu/setting',
+    loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
     path: 'edu/timetable',
@@ -50,10 +54,6 @@ const routes: Routes = [
     loadChildren: () => import('./modules/schoolreports/reports.module').then(m => m.SchoolReportsModule)
   },
   {
-    path: 'edu/reportconfig',
-    loadChildren: () => import('./modules/ReportConfig/report-configuration.module').then(m => m.ReportConfigurationModule)
-  },  
-  {
     path: 'edu/attendance',
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
@@ -70,7 +70,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/Accounting/accounting.module').then(m => m.AccountingModule)
   },  
   {
-    path: 'globaladmin',
+    path: 'admin/globaladmin',
     loadChildren: () => import('./modules/globaladmin/globaladmin.module').then(m => m.GlobaladminModule)
   },
   { path: '**', component: NotfoundComponent },

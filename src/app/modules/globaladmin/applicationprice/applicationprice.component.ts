@@ -1,13 +1,11 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -62,10 +60,7 @@ export class ApplicationpriceComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: FormBuilder
   ) {
 
@@ -98,34 +93,18 @@ export class ApplicationpriceComponent implements OnInit {
   }
 
   UpdateOrSave(row) {
+    
+    if(row.PCPM<1)
+    {
+      this.alert.error("Please enter PCPM.",this.optionAutoClose);
+      return;
+    }
 
-    // //debugger;
-
-    // this.loading = true;
-    // let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-    //   " and ApplicationId eq " + row.ApplicationId;
-
-    // if (row.ApplicationPriceId > 0)
-    //   checkFilterString += " and ApplicationPriceId ne " + row.ApplicationPriceId;
-
-    // let list: List = new List();
-    // list.fields = ["ApplicationPriceId"];
-    // list.PageName = this.ApplicationPriceListName;
-    // list.filter = [checkFilterString];
-
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    //     //debugger;
-    //     if (data.value.length > 0) {
-    //       this.loading = false;
-    //       this.alert.error("Record already exists!", this.optionsNoAutoClose);
-    //     }
-    //     else {
-
+    this.loading=true;
     this.ApplicationPriceData.ApplicationPriceId = row.ApplicationPriceId;
     this.ApplicationPriceData.ApplicationId = row.ApplicationId;
     this.ApplicationPriceData.MinCount = row.MinCount;
-    this.ApplicationPriceData.MinPrice = row.MinPrice.toString();
+    this.ApplicationPriceData.MinPrice = row.MinPrice;
     this.ApplicationPriceData.CurrencyId = row.CurrencyId;
     this.ApplicationPriceData.Description = row.Description;
     this.ApplicationPriceData.PCPM = row.PCPM;
@@ -148,13 +127,10 @@ export class ApplicationpriceComponent implements OnInit {
       this.ApplicationPriceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
       this.update(row);
     }
-    //}
-    //});
   }
 
   insert(row) {
 
-    //debugger;
     this.dataservice.postPatch(this.ApplicationPriceListName, this.ApplicationPriceData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -179,10 +155,7 @@ export class ApplicationpriceComponent implements OnInit {
     this.ApplicationPriceList = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    // if (this.searchForm.get("searchApplicationId").value == 0) {
-    //   this.alert.info("Please select application", this.optionAutoClose);
-    //   return;
-    // }
+   
 
     this.loading = true;
     var _searchAppId = this.searchForm.get("searchApplicationId").value;
@@ -208,7 +181,10 @@ export class ApplicationpriceComponent implements OnInit {
       .subscribe((data: any) => {
 
         if (_searchAppId > 0)
-          this.ApplicationPriceList = [...data.value];
+          this.ApplicationPriceList = data.value.map(e=>{
+            e.ApplicationName = this.Applications.filter(a=>a.MasterDataId==e.ApplicationId)[0].Description;
+            return e;
+          });
         else {
           this.Applications.forEach(a => {
             var existing = data.value.filter(f => f.ApplicationId == a.MasterDataId);
@@ -233,6 +209,7 @@ export class ApplicationpriceComponent implements OnInit {
             }
           })
         }
+        console.log('app',this.ApplicationPriceList)
         this.dataSource = new MatTableDataSource<any>(this.ApplicationPriceList);
         this.loading = false;
       })
@@ -260,10 +237,6 @@ export class ApplicationpriceComponent implements OnInit {
         this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.admin.CURRENCY);
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
 
-        // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        // this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        // this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        // this.shareddata.ChangeBatch(this.Batches);
         this.loading = false;
       });
   }

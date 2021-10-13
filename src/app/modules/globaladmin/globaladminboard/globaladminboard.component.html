@@ -6,9 +6,10 @@
             <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>first_page</mat-icon> Features
+                        <mat-icon>change_history
+                        </mat-icon> Features
                     </ng-template>
-                    <app-applicationfeature></app-applicationfeature>
+                    <app-menu-config></app-menu-config>
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
@@ -27,7 +28,7 @@
                 <mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>grid_view
-                        </mat-icon> Customer Invoice Components
+                        </mat-icon>Invoice Components
                     </ng-template>
                     <app-customerinvoicecomponents></app-customerinvoicecomponents>
                 </mat-tab>
@@ -47,9 +48,9 @@
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Report Config Data
+                        <mat-icon>info</mat-icon>Report Config Item
                     </ng-template>
-                    <app-reportconfigdata></app-reportconfigdata>
+                    <app-ReportConfigItem></app-ReportConfigItem>
                 </mat-tab>
                 
             </mat-tab-group>

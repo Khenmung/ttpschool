@@ -1,22 +1,20 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-customerapps',
-  templateUrl: './customerapps.component.html',
-  styleUrls: ['./customerapps.component.scss']
+  selector: 'app-selectapps',
+  templateUrl: './selectapps.component.html',
+  styleUrls: ['./selectapps.component.scss']
 })
-export class CustomerappsComponent implements OnInit {
+export class SelectappsComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -30,12 +28,13 @@ export class CustomerappsComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   Applications = [];
-  //ReportNames = [];
+  ToUpdateCount = -1;
+  TotalAmount = 0;
   Organizations = [];
   Currencies = [];
   CustomerAppsListName = "CustomerApps";
   CustomerAppsList = [];
-  ApplicationPricing =[];
+  ApplicationPricing = [];
   dataSource: MatTableDataSource<ICustomerApps>;
   allMasterData = [];
   PagePermission = '';
@@ -49,19 +48,18 @@ export class CustomerappsComponent implements OnInit {
     OrgId: 0,
     Active: 0,
   };
-  
+
   displayedColumns = [
     "ApplicationName",
     "PCPM",
     "MinCount",
     "MinPrice",
-    "LoginUserCount",
-    "PersonOrItemCount",    
-    "Formula",
+    //"LoginUserCount",
+    "PersonOrItemCount",
+    //"Formula",
     "AmountPerMonth",
     "Currency",
-    "Active",
-    "Action"
+    "Active"
   ];
   searchForm: FormGroup;
   constructor(
@@ -80,36 +78,46 @@ export class CustomerappsComponent implements OnInit {
       searchCustomerId: [0]
     });
     this.dataSource = new MatTableDataSource<ICustomerApps>([]);
-  }
-
-  PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.GetCustomerApps();
 
-      this.GetMasterData();
-      this.GetOrganizations();
-      this.GetApplicationPricing();
     }
   }
+
   updateActive(row, value) {
 
     row.Action = true;
     row.Active = value.checked ? 1 : 0;
+    this.onBlur(row);
 
   }
+  SaveAll() {
+    var selectedapps = this.CustomerAppsList.filter(a => a.Active);
+    if (selectedapps.length == 0) {
+      this.alert.info("Please select application", this.optionAutoClose);
+      return;
+    }
+    this.loading = true;
+    this.ToUpdateCount = selectedapps.length;
 
+    selectedapps.forEach(app => {
+      this.ToUpdateCount--;
+      this.UpdateOrSave(app);
+    });
+  }
   UpdateOrSave(row) {
 
     this.CustomerAppsData.CustomerAppsId = row.CustomerAppsId;
     this.CustomerAppsData.ApplicationPriceId = row.ApplicationPriceId;
     this.CustomerAppsData.AmountPerMonth = row.AmountPerMonth;
     this.CustomerAppsData.Formula = row.Formula;
-    this.CustomerAppsData.LoginUserCount = row.LoginUserCount;
+    this.CustomerAppsData.LoginUserCount = 0;
     this.CustomerAppsData.PersonOrItemCount = row.PersonOrItemCount;
-    this.CustomerAppsData.Active = row.Active;    
+    this.CustomerAppsData.Active = row.Active;
     this.CustomerAppsData.OrgId = this.LoginUserDetail[0]["orgId"];
 
     console.log('data', this.CustomerAppsData);
@@ -136,9 +144,13 @@ export class CustomerappsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.CustomerAppsId = data.CustomerAppsId;
-          row.Action = false;
-          this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          //row.Action = false;
+          if (this.ToUpdateCount == 0) {
+            this.ToUpdateCount = -1;
+            this.loading = false;
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.nav.navigate(["/dashboard"]);
+          }
         });
   }
   update(row) {
@@ -147,7 +159,10 @@ export class CustomerappsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          if (this.ToUpdateCount == 0) {
+            this.ToUpdateCount = -1;
+            this.alert.success("Data updated successfully.", this.optionAutoClose);
+          }
         });
   }
   GetOrganizations() {
@@ -164,106 +179,69 @@ export class CustomerappsComponent implements OnInit {
         this.Organizations = [...data.value];
       })
   }
-  GetApplicationPricing(){
-    
-      let list: List = new List();
-      list.fields = [
-        "ApplicationPriceId",
-        "MinCount",
-        "MinPrice",
-        "PCPM",
-        "ApplicationId",
-        "Description",
-        "CurrencyId",
-        "Active"
-        
-      ];
-      list.PageName = "ApplicationPrices";
-      list.filter = ["Active eq 1"];
-      this.dataservice.get(list)
-        .subscribe((data: any) => {
-          this.ApplicationPricing =[...data.value];
+  GetApplicationPricing() {
+
+    let list: List = new List();
+    list.fields = [
+      "ApplicationPriceId",
+      "MinCount",
+      "MinPrice",
+      "PCPM",
+      "ApplicationId",
+      "Description",
+      "CurrencyId",
+      "Active"
+
+    ];
+    list.PageName = "ApplicationPrices";
+    list.filter = ["Active eq 1"];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        var customerapp: ICustomerApps = {};
+        this.ApplicationPricing = data.value.map(p => {
+          customerapp = {};
+          customerapp.AmountPerMonth = 0;
+          customerapp.CurrencyId = p.CurrencyId;
+          customerapp.CustomerAppsId = 0;
+          customerapp.ApplicationPriceId = p.ApplicationPriceId;
+          customerapp.Formula = '';
+          customerapp.LoginUserCount = 0;
+          customerapp.PersonOrItemCount = 0;
+          customerapp.MinCount = p.MinCount;
+          customerapp.MinPrice = p.MinPrice;
+          customerapp.PCPM = p.PCPM;
+          customerapp.Description = p.Description;
+          customerapp.ApplicationName = this.Applications.filter(a => a.MasterDataId == p.ApplicationId)[0].Description;
+          customerapp.Currency = this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName;
+          customerapp.Active = 0;
+          this.CustomerAppsList.push(customerapp)
         })
+
+        this.dataSource = new MatTableDataSource(this.CustomerAppsList);
+      })
   }
   GetCustomerApps() {
 
     this.CustomerAppsList = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchCustomerId").value == 0) {
-      this.alert.info("Please select organization", this.optionAutoClose);
-      return;
-    }
+    var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     this.loading = true;
-    
-    var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
 
-    if (_searchCustomerId > 0)
-      filterstr += " and OrgId eq " + _searchCustomerId;
-    
     let list: List = new List();
     list.fields = [
-      "CustomerAppsId",
-      "ApplicationPriceId",
-      "LoginUserCount",
-      "PersonOrItemCount",
-      "Formula",
-      "AmountPerMonth",
-      "Active",
-      
+      "CustomerAppsId"
     ];
     list.PageName = this.CustomerAppsListName;
-    //list.lookupFields = [];
     list.filter = [filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var customerapp: ICustomerApps;
-
-        this.ApplicationPricing.forEach(p=>{
-          customerapp = {};  
-          var d =  data.value.filter(db=>db.ApplicationPriceId == p.ApplicationPriceId);
-            if(d.length>0)
-            {
-              
-              customerapp.AmountPerMonth = d[0].AmountPerMonth;
-              customerapp.CurrencyId = p.CurrencyId;
-              customerapp.CustomerAppsId = d[0].CustomerAppsId;
-              customerapp.ApplicationPriceId = d[0].ApplicationPriceId;
-              customerapp.Formula = d[0].Formula;
-              customerapp.LoginUserCount = d[0].LoginUserCount;
-              customerapp.PersonOrItemCount = d[0].PersonOrItemCount;
-              customerapp.MinCount = p.MinCount;
-              customerapp.MinPrice = p.MinPrice;
-              customerapp.PCPM = p.PCPM;
-              customerapp.Description = p.Description;
-              customerapp.ApplicationName = this.Applications.filter(a => a.MasterDataId == p.ApplicationId)[0].Description;
-              customerapp.Currency = this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName;
-    
-            }
-            else
-            {
-              customerapp.AmountPerMonth = 0;
-              customerapp.CurrencyId = p.CurrencyId;
-              customerapp.CustomerAppsId = 0;
-              customerapp.ApplicationPriceId = p.ApplicationPriceId;
-              customerapp.Formula = '';
-              customerapp.LoginUserCount = 0;
-              customerapp.PersonOrItemCount = 0;
-              customerapp.MinCount = p.MinCount;
-              customerapp.MinPrice = p.MinPrice;
-              customerapp.PCPM = p.PCPM;
-              customerapp.Description = p.Description;
-              customerapp.ApplicationName = this.Applications.filter(a => a.MasterDataId == p.ApplicationId)[0].Description;
-              customerapp.Currency = this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName;
-    
-            }
-            this.CustomerAppsList.push(customerapp)
-    
-          })
-        //console.log('this.CustomerAppsList',this.CustomerAppsList);
-        this.dataSource = new MatTableDataSource<any>(this.CustomerAppsList);
         this.loading = false;
+        
+        //checking if this page has been visited by user of this org.
+        if (data.value.length > 0)
+          this.nav.navigate(["/dashboard"]);
+        else
+          this.GetMasterData();
       })
   }
 
@@ -271,11 +249,12 @@ export class CustomerappsComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
     var formula = element.Description;
-    Object.keys(element).forEach(prop=>{
-        if(formula.includes('['+ prop + ']') && prop !='Description')
-        formula = formula.replaceAll('['+ prop + ']',element[prop]);
+    Object.keys(element).forEach(prop => {
+      if (formula.includes('[' + prop + ']') && prop != 'Description')
+        formula = formula.replaceAll('[' + prop + ']', element[prop]);
     })
     element["AmountPerMonth"] = evaluate(formula);
+    this.TotalAmount = this.CustomerAppsList.reduce((accum, curr) => accum + curr.AmountPerMonth, 0);
   }
 
   GetMasterData() {
@@ -294,11 +273,7 @@ export class CustomerappsComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.admin.CURRENCY);
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-
-        // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        // this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        // this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        // this.shareddata.ChangeBatch(this.Batches);
+        this.GetApplicationPricing();
         this.loading = false;
       });
   }
@@ -332,7 +307,7 @@ export interface ICustomerApps {
   MinPrice?: number,
   CurrencyId?: number,
   ApplicationName?: string;
-  Description?:string;
+  Description?: string;
   Currency?: string;
   OrgId?: number;
   Active?: number;

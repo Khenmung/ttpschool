@@ -1,9 +1,9 @@
 <mat-sidenav-container class="flex-container" autosize="true">
     <mat-sidenav mode="side" opened (click)="toggleSidebar()">
-        <div mat-menu-item *ngFor="let i of sideMenu" [routerLink]="[i.Link]" class="with-icon padded"
+        <div mat-menu-item *ngFor="let i of sideMenu" [routerLink]="[i.link]" class="with-icon padded"
             (click)="$event.stopPropagation()">
-            <mat-icon [matTooltip]="i.Label">{{ i.FaIcon}}</mat-icon>&nbsp;
-            <span [hidden]="collapse">{{i.Label}}</span>
+            <mat-icon [matTooltip]="i.label">{{ i.faIcon}}</mat-icon>&nbsp;
+            <span [hidden]="collapse">{{i.label}}</span>
         </div>
     </mat-sidenav>
     <mat-sidenav-content class="maincontent">

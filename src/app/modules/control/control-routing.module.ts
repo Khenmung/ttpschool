@@ -14,6 +14,7 @@ import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ApplicationfeatureComponent } from '../globaladmin/applicationfeature/applicationfeature.component';
 import { SchoolFeeTypesComponent } from './school-fee-types/school-fee-types.component';
 import { VariableConfigComponent } from './variable-config/variable-config.component';
+import { UserreportconfigComponent } from './userreportconfig/userreportconfig.component';
 
 const routes: Routes = [
   {
@@ -48,4 +49,5 @@ export const settingsComponent = [
   AddMasterDataComponent,
   SchoolFeeTypesComponent,
   VariableConfigComponent,
+  UserreportconfigComponent
 ]
