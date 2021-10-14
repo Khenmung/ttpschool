@@ -10,11 +10,11 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-userreportconfig',
-  templateUrl: './userreportconfig.component.html',
-  styleUrls: ['./userreportconfig.component.scss']
+  selector: 'app-userconfigreportname',
+  templateUrl: './userconfigreportname.component.html',
+  styleUrls: ['./userconfigreportname.component.scss']
 })
-export class UserreportconfigComponent implements OnInit {
+export class UserconfigreportnameComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   BaseReportId = 0;
@@ -23,8 +23,7 @@ export class UserreportconfigComponent implements OnInit {
   DisplayColumns = [
     "ReportName",
     "DisplayName",
-    "Formula",
-    "ColumnSequence",
+    //"Formula",
     "TableNames",
     "Active",
     "Action"
@@ -39,6 +38,7 @@ export class UserreportconfigComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  ColumnsOfAvailableReports = [];
   StandardFilterWithBatchId = '';
   loading = false;
   AvailableReportNames = [];
@@ -79,8 +79,7 @@ export class UserreportconfigComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
-      searchAvailableReportName: [0],
-      searchReportName: [0]
+      searchAvailableReportName: [0]
     });
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
     this.Applications = this.tokenstorage.getPermittedApplications();
@@ -135,8 +134,6 @@ export class UserreportconfigComponent implements OnInit {
     //debugger;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     var ApplicationId = this.searchForm.get("searchApplicationId").value;
-    var MyReportNameId = this.searchForm.get("searchReportName").value;
-    var ReportNameId = this.searchForm.get("searchAvailableReportName").value;
     if (ApplicationId == 0) {
       this.alert.error("Please select application name", this.optionAutoClose);
       return;
@@ -147,15 +144,9 @@ export class UserreportconfigComponent implements OnInit {
     }
     this.loading = true;
     let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-
-    if (MyReportNameId > 0)
-      checkFilterString += " and ParentId eq " + MyReportNameId;
-
-    if (this.ApplicationName.toLowerCase() != "ttp" && ReportNameId == 0) {
-      this.alert.error("Please select report name", this.optionAutoClose);
-      return;
-    }
+      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ParentId eq " + AvailableReportId;
+    
     if (row.ReportConfigItemId > 0)
       checkFilterString += " and ReportConfigItemId ne " + row.ReportConfigItemId;
 
@@ -174,19 +165,13 @@ export class UserreportconfigComponent implements OnInit {
         }
         else {
 
-          //if my reportname is not selected.
-          if (MyReportNameId == 0)
-            this.ParentId = AvailableReportId;
-          else
-            this.ParentId = MyReportNameId;
-
           this.ReportConfigItemData.ReportConfigItemId = row.ReportConfigItemId;
           this.ReportConfigItemData.ApplicationId = row.ApplicationId;
           this.ReportConfigItemData.DisplayName = row.DisplayName;
           this.ReportConfigItemData.ColumnSequence = row.ColumnSequence;
           this.ReportConfigItemData.Formula = row.Formula;
           this.ReportConfigItemData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ReportConfigItemData.ParentId = this.ParentId;
+          this.ReportConfigItemData.ParentId = AvailableReportId;
           this.ReportConfigItemData.UserId = row.UserId;
           this.ReportConfigItemData.Active = row.Active;
           this.ReportConfigItemData.ReportName = row.ReportName;
@@ -270,20 +255,17 @@ export class UserreportconfigComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
     }
   }
-
+  get f() {
+    return this.searchForm.controls;
+  }
   GetReportConfigItem() {
     debugger;
     this.ReportConfigItemList = [];
-    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    if (this.searchForm.get("searchApplicationId").value == 0) {
-      this.alert.info("Please select application", this.optionAutoClose);
-      return;
-    }
-    var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
+    
     var ApplicationId = this.searchForm.get("searchApplicationId").value;
-    var MyReportNameId = this.searchForm.get("searchReportName").value;
-
+    var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
+    
     if (ApplicationId == 0) {
       this.alert.error("Please select application name", this.optionAutoClose);
       return;
@@ -294,11 +276,8 @@ export class UserreportconfigComponent implements OnInit {
     }
 
     this.loading = true;
-    filterstr = "ApplicationId eq " + this.searchForm.get("searchApplicationId").value
-    if (MyReportNameId > 0)
-      filterstr += " and ParentId eq " + MyReportNameId;
-    else
-      filterstr += " and ParentId eq " + AvailableReportId;
+    filterstr += " and ApplicationId eq " + this.searchForm.get("searchApplicationId").value
+    filterstr += " and ParentId eq " + AvailableReportId;
 
     let list: List = new List();
     list.fields = [
@@ -320,11 +299,11 @@ export class UserreportconfigComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ReportConfigItemList = [];
-        this.ReportConfigItemList = data.value.map(d => {
-          d.Action = false;
-          return d;
-        })
-
+          this.ReportConfigItemList = data.value.map(d => {
+            d.Action = false;
+            return d;
+          });
+    
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
         this.loading = false;
       })
@@ -381,13 +360,8 @@ export class UserreportconfigComponent implements OnInit {
     this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
       && a.ParentId == this.BaseReportId);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
-  }
-  GetMyReportNames() {
-    this.ReportConfigItemList = [];
-    this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
-      && a.ParentId == this.searchForm.get("searchAvailableReportName").value);
-    this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
-  }
+  } 
+  
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {
@@ -423,6 +397,7 @@ export interface IReportConfigItem {
   UpdatedDate: Date;
 
 }
+
 
 
 

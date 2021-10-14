@@ -99,14 +99,16 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(username, password).subscribe(
       data => {
-        //debugger;
+        debugger;
         this.tokenStorage.saveToken(data.token);
         this.tokenStorage.saveRefreshToken(data.refreshToken);
         this.tokenStorage.saveUser(data);
 
         const decodedUser = this.jwtHelper.decodeToken(data.token);
         this.userInfo = JSON.parse(JSON.stringify(decodedUser));
-        //  localStorage.setItem('expiration', decodedUser.exp);
+        
+        localStorage.setItem('orgId', decodedUser.sid);
+        localStorage.setItem('userId', decodedUser.Id);
         //  localStorage.setItem('userInfo',decodedUser);
         this.isLoginFailed = false;
         this.isLoggedIn = true;
@@ -147,13 +149,18 @@ export class LoginComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        console.log("data", data)
+        //console.log("data", data)
         if (data.value.length > 0) {
           if (data.value[0].Org.Active == 1)
             this.GetMasterData(data.value);
           else {
             this.alert.info("User's Organization not active!, Please contact your administrator!", this.optionsNoAutoClose);
           }
+        }
+        else
+        {
+          //if no roleuser data present redirect to select apps.
+          this.route.navigate(["/auth/apps"]);
         }
       })
   }
@@ -163,7 +170,7 @@ export class LoginComponent implements OnInit {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + UserRole[0].OrgId + ")"];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq 0 or OrgId eq " + UserRole[0].OrgId + ")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

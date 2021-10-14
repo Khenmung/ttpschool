@@ -3,6 +3,7 @@ import { ClassdetailComponent } from '../classdetail/classdetail.component';
 import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
 import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
+import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
 
 @Component({
   selector: 'app-classboard',
@@ -14,6 +15,7 @@ export class ClassboardComponent implements OnInit {
   @ViewChild(DashboardclassfeeComponent) classfee:DashboardclassfeeComponent;
   @ViewChild(ClassprerequisiteComponent) prequisites:ClassprerequisiteComponent;
   @ViewChild(ClassmasterdashboardComponent) master:ClassmasterdashboardComponent;
+  @ViewChild(SchoolFeeTypesComponent) feetypes:SchoolFeeTypesComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -44,24 +46,14 @@ export class ClassboardComponent implements OnInit {
         this.classfee.PageLoad();
         break;
       case 2:
-        this.prequisites.PageLoad();
+        this.feetypes.PageLoad();
         break;
       case 3:
+        this.prequisites.PageLoad();
+        break;
+      case 4:
         this.master.PageLoad();
         break;
-      // case 3:
-      //   this.subjectmarkComponent.PageLoad();
-      //   break;
-      // case 4:
-      //   this.studentclass.PageLoad();
-      //   break;
-      // case 5:
-      //   this.studentsubject.PageLoad();
-      //   break;
-      // case 6:
-      //   this.Classperiod.PageLoad();
-      //   break;
-
     }
   }
 }

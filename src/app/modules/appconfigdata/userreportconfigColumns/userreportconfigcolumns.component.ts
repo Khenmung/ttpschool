@@ -10,11 +10,11 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-ReportConfigItem',
-  templateUrl: './ReportConfigItem.component.html',
-  styleUrls: ['./ReportConfigItem.component.scss']
+  selector: 'app-userreportconfigcolumns',
+  templateUrl: './userreportconfigColumns.component.html',
+  styleUrls: ['./userreportconfigColumns.component.scss']
 })
-export class ReportConfigItemComponent implements OnInit {
+export class UserReportConfigColumnsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   BaseReportId = 0;
@@ -39,8 +39,10 @@ export class ReportConfigItemComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  ColumnsOfAvailableReports = [];
   StandardFilterWithBatchId = '';
   loading = false;
+  AvailableReportNames = [];
   AppReportNames = [];
   Applications = [];
   ReportNames = [];
@@ -78,6 +80,7 @@ export class ReportConfigItemComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
+      searchAvailableReportName: [0],
       searchReportName: [0]
     });
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
@@ -110,6 +113,7 @@ export class ReportConfigItemComponent implements OnInit {
     var newdata = {
       ReportConfigItemId: 0,
       ReportName: '',
+      DisplayName: '',
       ParentId: 0,
       Formula: '',
       ColumnSequence: 0,
@@ -120,8 +124,8 @@ export class ReportConfigItemComponent implements OnInit {
       Active: 0,
       Action: false
     }
-    console.log('DisplayColumns', this.DisplayColumns)
-    console.log('this.ReportConfigItemList', this.ReportConfigItemList)
+    //console.log('DisplayColumns', this.DisplayColumns)
+    //console.log('this.ReportConfigItemList', this.ReportConfigItemList)
     this.ReportConfigItemList.push(newdata);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
     this.dataSource.paginator = this.paginator;
@@ -130,15 +134,27 @@ export class ReportConfigItemComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
-
-    let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-      " and ApplicationId eq " + row.ApplicationId;
-
-    var ReportNameId =this.searchForm.get("searchReportName").value
-    if (this.ApplicationName.toLowerCase() != "ttp" && ReportNameId == 0) {
-      this.alert.error("Please select report name", this.optionAutoClose);
+    var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
+    var ApplicationId = this.searchForm.get("searchApplicationId").value;
+    var MyReportNameId = this.searchForm.get("searchReportName").value;
+    if (ApplicationId == 0) {
+      this.alert.error("Please select application name", this.optionAutoClose);
       return;
     }
+    if (AvailableReportId == 0) {
+      this.alert.error("Please select available report name", this.optionAutoClose);
+      return;
+    }
+    if (MyReportNameId == 0) {
+      this.alert.error("Please select my report name", this.optionAutoClose);
+      return;
+    }
+
+    this.loading = true;
+    let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
+      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ParentId eq " + MyReportNameId;
+
     if (row.ReportConfigItemId > 0)
       checkFilterString += " and ReportConfigItemId ne " + row.ReportConfigItemId;
 
@@ -156,10 +172,6 @@ export class ReportConfigItemComponent implements OnInit {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
-          if (ReportNameId == 0)
-            this.ParentId = this.BaseReportId;
-          else
-            this.ParentId = ReportNameId;
 
           this.ReportConfigItemData.ReportConfigItemId = row.ReportConfigItemId;
           this.ReportConfigItemData.ApplicationId = row.ApplicationId;
@@ -167,7 +179,7 @@ export class ReportConfigItemComponent implements OnInit {
           this.ReportConfigItemData.ColumnSequence = row.ColumnSequence;
           this.ReportConfigItemData.Formula = row.Formula;
           this.ReportConfigItemData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ReportConfigItemData.ParentId = this.ParentId;
+          this.ReportConfigItemData.ParentId = MyReportNameId;
           this.ReportConfigItemData.UserId = row.UserId;
           this.ReportConfigItemData.Active = row.Active;
           this.ReportConfigItemData.ReportName = row.ReportName;
@@ -251,21 +263,39 @@ export class ReportConfigItemComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
     }
   }
-
+  get f() {
+    return this.searchForm.controls;
+  }
   GetReportConfigItem() {
     debugger;
     this.ReportConfigItemList = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]; //+ ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    var ApplicationId = this.searchForm.get("searchApplicationId").value;
+    var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
+    var MyReportNameId = this.searchForm.get("searchReportName").value;
+
     if (this.searchForm.get("searchApplicationId").value == 0) {
       this.alert.info("Please select application", this.optionAutoClose);
       return;
     }
+    if (ApplicationId == 0) {
+      this.alert.error("Please select application name", this.optionAutoClose);
+      return;
+    }
+    if (AvailableReportId == 0) {
+      this.alert.error("Please select available report name", this.optionAutoClose);
+      return;
+    }
+    if (MyReportNameId == 0) {
+      this.alert.error("Please select my report name", this.optionAutoClose);
+      return;
+    }
 
     this.loading = true;
-    filterstr = "ApplicationId eq " + this.searchForm.get("searchApplicationId").value
-    if (this.searchForm.get("searchReportName").value > 0)
-      filterstr += " and ParentId eq " + this.searchForm.get("searchReportName").value;
+    filterstr += " and ApplicationId eq " + this.searchForm.get("searchApplicationId").value
+    filterstr += " and ParentId eq " + MyReportNameId;
 
     let list: List = new List();
     list.fields = [
@@ -283,13 +313,25 @@ export class ReportConfigItemComponent implements OnInit {
     ];
     list.PageName = this.ReportConfigItemListName;
     //list.lookupFields = ["SchoolClassPeriod"]
-    list.filter = [filterstr +orgIdSearchstr];
+    list.filter = [filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        var MyReportNameId = this.searchForm.get("searchReportName").value;
         this.ReportConfigItemList = [];
-        this.ReportConfigItemList = data.value.map(d => {
-          d.Action = false;
-          return d;
+        var applicationAvailableReportCol = this.ColumnsOfAvailableReports.filter(f => f.ParentId == this.searchForm.get("searchAvailableReportName").value);
+        applicationAvailableReportCol.forEach(a => {
+          var existing = data.value.filter(d => d.ReportName == a.ReportName);
+          if (existing.length > 0) {
+            existing[0].Action = false;
+            this.ReportConfigItemList.push(existing[0]);
+          }
+          else {
+            a.Active = 0;
+            a.Action = false;
+            a.ReportConfigItemId = 0;
+            a.ParentId = MyReportNameId;
+            this.ReportConfigItemList.push(a);
+          }
         })
 
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
@@ -307,10 +349,11 @@ export class ReportConfigItemComponent implements OnInit {
       "ReportConfigItemId"
     ]
     list.PageName = this.ReportConfigItemListName;
-    list.filter = ["Active eq 1 and ReportName eq 'Reports'"];
+    list.filter = ["Active eq 1 and ReportName eq 'Reports' and OrgId eq 0"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
+debugger;
         if (data.value.length > 0) {
           this.BaseReportId = data.value[0].ReportConfigItemId;
           this.GetReportNames();
@@ -335,7 +378,8 @@ export class ReportConfigItemComponent implements OnInit {
       "UserId",
       "Active"]
     list.PageName = this.ReportConfigItemListName;
-    list.filter = ["Active eq 1 and ParentId eq " + this.BaseReportId];
+    list.filter = ["Active eq 1 and (ParentId eq " + this.BaseReportId +
+      " or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -343,13 +387,40 @@ export class ReportConfigItemComponent implements OnInit {
         this.loading = false;
       });
   }
-  GetAppReportNames() {
+  GetAvailableReportNames() {
     this.ReportConfigItemList = [];
-    this.AppReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
+    this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
       && a.ParentId == this.BaseReportId);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
   }
+  GetMyReportNames() {
+    this.ReportConfigItemList = [];
+    this.AppReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
+      && a.ParentId == this.searchForm.get("searchAvailableReportName").value);
+    this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
+    this.getAvailableReportColumn();
+  }
+  getAvailableReportColumn() {
+    let list: List = new List();
+    list.fields = [
+      "ReportConfigItemId",
+      "ReportName",
+      "DisplayName",
+      "ParentId",
+      "ApplicationId",
+      "TableNames",
+      "OrgId",
+      "UserId",
+      "Active"]
+    list.PageName = this.ReportConfigItemListName;
+    list.filter = ["OrgId eq 0 and Active eq 1 and ParentId eq " + this.searchForm.get("searchAvailableReportName").value];
 
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.ColumnsOfAvailableReports = [...data.value];
+        this.loading = false;
+      });
+  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {
@@ -385,6 +456,7 @@ export interface IReportConfigItem {
   UpdatedDate: Date;
 
 }
+
 
 
 

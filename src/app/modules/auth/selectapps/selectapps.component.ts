@@ -26,6 +26,8 @@ export class SelectappsComponent implements OnInit {
     keepAfterRouteChange: true
   };
   StandardFilterWithBatchId = '';
+  OrgId = 0;
+  UserId ="";
   loading = false;
   Applications = [];
   ToUpdateCount = -1;
@@ -83,7 +85,12 @@ export class SelectappsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.GetCustomerApps();
+      this.OrgId = +localStorage.getItem('orgId');
+      this.UserId = localStorage.getItem('userId');
+      if (this.OrgId == 0 || isNaN(this.OrgId))
+        this.nav.navigate(['/auth/login']);
+      else
+        this.GetCustomerApps();
 
     }
   }
@@ -118,12 +125,12 @@ export class SelectappsComponent implements OnInit {
     this.CustomerAppsData.LoginUserCount = 0;
     this.CustomerAppsData.PersonOrItemCount = row.PersonOrItemCount;
     this.CustomerAppsData.Active = row.Active;
-    this.CustomerAppsData.OrgId = this.LoginUserDetail[0]["orgId"];
+    this.CustomerAppsData.OrgId = this.OrgId;
 
     console.log('data', this.CustomerAppsData);
     if (this.CustomerAppsData.CustomerAppsId == 0) {
       this.CustomerAppsData["CreatedDate"] = new Date();
-      this.CustomerAppsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+      this.CustomerAppsData["CreatedBy"] = this.UserId;
       this.CustomerAppsData["UpdatedDate"] = new Date();
       delete this.CustomerAppsData["UpdatedBy"];
       this.insert(row);
@@ -132,14 +139,14 @@ export class SelectappsComponent implements OnInit {
       delete this.CustomerAppsData["CreatedDate"];
       delete this.CustomerAppsData["CreatedBy"];
       this.CustomerAppsData["UpdatedDate"] = new Date();
-      this.CustomerAppsData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+      this.CustomerAppsData["UpdatedBy"] = this.UserId;
       this.update(row);
     }
   }
 
   insert(row) {
 
-    //debugger;
+    debugger;
     this.dataservice.postPatch(this.CustomerAppsListName, this.CustomerAppsData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -223,7 +230,7 @@ export class SelectappsComponent implements OnInit {
   GetCustomerApps() {
 
     this.CustomerAppsList = [];
-    var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var filterstr = 'Active eq 1 and OrgId eq ' + this.OrgId;
 
     this.loading = true;
 
@@ -236,7 +243,7 @@ export class SelectappsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.loading = false;
-        
+
         //checking if this page has been visited by user of this org.
         if (data.value.length > 0)
           this.nav.navigate(["/dashboard"]);
@@ -259,7 +266,7 @@ export class SelectappsComponent implements OnInit {
 
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
+    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq 0 or OrgId eq ' + this.OrgId + ')';
 
     let list: List = new List();
 

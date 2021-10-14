@@ -107,14 +107,6 @@
             </div>
         </div>
         <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
-            <!-- <button [disabled]="loading" matTooltip="generate receipt" *ngIf="studentInfoTodisplay.ReceiptNo==0"
-                (click)="whenPrint()" class="mat-raised-button">
-                <mat-icon>create_new_folder</mat-icon>
-            </button>
-            <button [disabled]="loading" matTooltip="back" (click)="GetStudentFeePaymentDetails(0)"
-                class="mat-raised-button">
-                <mat-icon>arrow_back</mat-icon>
-            </button> -->
             <div fxLayout="row" fxLayoutAlign="space-around center" *ngIf="studentInfoTodisplay.ReceiptNo>0 && BillStatus==1">
                 <div>
                     <button [disabled]="loading" matTooltip="cancel receipt" *ngIf="!CancelReceiptMode" (click)="edit()"

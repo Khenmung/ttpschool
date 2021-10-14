@@ -12,10 +12,10 @@ export class HeaderComponent implements OnInit {
   loading: false;
   userName: string = '';
   loggedIn: boolean;
-  SelectedApplicationName='';
+  SelectedApplicationName = '';
   constructor(
     private route: Router,
-    private tokenStorage: TokenStorageService   
+    private tokenStorage: TokenStorageService
   ) {
   }
   ngOnInit(): void {
@@ -25,14 +25,19 @@ export class HeaderComponent implements OnInit {
       this.loggedIn = false;
     else
       this.loggedIn = true;
-      var PermittedApplications = this.tokenStorage.getPermittedApplications();
+    var PermittedApplications = this.tokenStorage.getPermittedApplications();
+    if (PermittedApplications.length == 0) {
+      this.route.navigate(["/auth/apps"]);
+    }
+    else {
       var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
       this.SelectedApplicationName = '';
       var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
-  
+
       if (apps.length > 0) {
         this.SelectedApplicationName = apps[0].applicationName;
       }
+    }
   }
 
   changepassword() {

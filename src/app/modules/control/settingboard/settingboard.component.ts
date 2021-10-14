@@ -4,10 +4,6 @@ import { roleuserdashboardComponent } from '../roleuser/roleuserdashboard/roleus
 import { AppuserdashboardComponent } from '../users/appuserdashboard/appuserdashboard.component';
 import { RoleAppPermissiondashboardComponent } from '../roleapppermission/RoleAppPermissiondashboard/RoleAppPermissiondashboard.component';
 import { BatchdashboardComponent } from '../batchdashboard/batchdashboard.component';
-import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
-import { VariableConfigComponent } from '../variable-config/variable-config.component';
-import { ApplicationpriceComponent } from '../../globaladmin/applicationprice/applicationprice.component';
-import { UserreportconfigComponent } from '../userreportconfig/userreportconfig.component';
 
 @Component({
   selector: 'app-signup',
@@ -20,9 +16,6 @@ export class settingboardComponent implements OnInit, AfterViewInit {
   @ViewChild(roleuserdashboardComponent) roleuserdashboard: roleuserdashboardComponent;
   @ViewChild(RoleAppPermissiondashboardComponent) roleapppermissiondashboard: RoleAppPermissiondashboardComponent;
   @ViewChild(BatchdashboardComponent) batchdashboard: BatchdashboardComponent;
-  @ViewChild(SchoolFeeTypesComponent) feetype: SchoolFeeTypesComponent;
-  @ViewChild(VariableConfigComponent) varconfig: VariableConfigComponent;
-  @ViewChild(UserreportconfigComponent) userreportconfig: UserreportconfigComponent;
   selectedIndex = 0;
   constructor() { }
 
@@ -55,15 +48,6 @@ export class settingboardComponent implements OnInit, AfterViewInit {
         break;
       case 4:
         this.roleapppermissiondashboard.PageLoad();
-        break;
-      case 5:
-        this.feetype.PageLoad();
-        break;
-      case 6:
-        this.varconfig.PageLoad();
-        break;
-      case 7:
-        this.userreportconfig.PageLoad();
         break;
       default:
         this.masterSettingData.PageLoad();

@@ -8,12 +8,10 @@ import { DatePipe } from '@angular/common';
 import { MatConfirmDialogComponent } from './shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NotfoundComponent } from './shared/components/notfound/notfound.component';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './shared/material/material.module';
-import { AuthTokenInterceptors } from './interceptors/auth.token.interceptors';
 import { AuthService } from './_services/auth.service';
 import { AuthGuard } from './guards/auth.guard';
-import { SharedataService } from './shared/sharedata.service';
 import { authInterceptorProviders } from './_helpers/auth.interceptor';
 
 @NgModule({

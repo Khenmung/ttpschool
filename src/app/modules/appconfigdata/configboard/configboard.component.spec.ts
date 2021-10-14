@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserreportconfigComponent } from './userreportconfig.component';
+import { ConfigboardComponent } from './configboard.component';
 
-describe('UserreportconfigComponent', () => {
-  let component: UserreportconfigComponent;
-  let fixture: ComponentFixture<UserreportconfigComponent>;
+describe('ConfigboardComponent', () => {
+  let component: ConfigboardComponent;
+  let fixture: ComponentFixture<ConfigboardComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserreportconfigComponent ]
+      declarations: [ ConfigboardComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UserreportconfigComponent);
+    fixture = TestBed.createComponent(ConfigboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

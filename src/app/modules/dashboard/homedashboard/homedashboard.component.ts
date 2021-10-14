@@ -32,7 +32,7 @@ export class HomeDashboardComponent implements OnInit {
     private fb: FormBuilder,
     private route: Router,
     private aroute: ActivatedRoute,
-    private dataservice:NaomitsuService) { }
+    private dataservice: NaomitsuService) { }
 
   ngOnInit(): void {
     // var urlId = 0;
@@ -54,29 +54,32 @@ export class HomeDashboardComponent implements OnInit {
       debugger;
       this.userName = this.tokenStorage.getUser();
       var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
-
-      var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-      this.PermittedApplications =[..._UniquePermittedApplications];
-
-      if (this.PermittedApplications.length == 0) {
-        this.tokenStorage.signOut();
-        this.route.navigate(['/auth/login']);
+      if (PermittedApps.length == 0) {
+        this.route.navigate(["/auth/apps"]);
       }
-      this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);      
-      if (this.userName === undefined || this.userName === null || this.userName == '')
-        this.loggedIn = false;
-      else
-        this.loggedIn = true;
-      this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
-      this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
-      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-      if (this.Batches.length == 0)
-        this.getBatches();
-      
+      else {
+        var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
+        this.PermittedApplications = [..._UniquePermittedApplications];
+
+        if (this.PermittedApplications.length == 0) {
+          this.tokenStorage.signOut();
+          this.route.navigate(['/auth/login']);
+        }
+        this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);
+        if (this.userName === undefined || this.userName === null || this.userName == '')
+          this.loggedIn = false;
+        else
+          this.loggedIn = true;
+        this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
+        this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+        if (this.Batches.length == 0)
+          this.getBatches();
+
         this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
         this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
-      
+      }
     }
   }
   ChangeApplication() {
