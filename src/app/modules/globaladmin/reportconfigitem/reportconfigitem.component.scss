@@ -4,11 +4,11 @@ mat-form-field{
     
 }
 
-.mat-column-Formula,.mat-column-ReportName,.mat-column-TableNames{
+.mat-column-DisplayName,.mat-column-Formula,.mat-column-ReportName,.mat-column-TableNames{
     flex: 1 1 200px;
 }
 .mat-column-ColumnSequence{
-    flex:1 1 100px;
+    flex:1 1 50px;
 }
 .mat-column-Active{
     justify-content: center;

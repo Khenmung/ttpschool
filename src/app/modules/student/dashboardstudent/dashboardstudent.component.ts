@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { TableUtil } from '../../TableUtil';
+import { TableUtil } from '../../../shared/TableUtil';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
@@ -331,15 +331,12 @@ export class DashboardstudentComponent implements OnInit {
       checkFilterString += " and MotherName eq '" + this.studentSearchForm.get("MotherName").value.MotherName + "'"
 
     let list: List = new List();
-    list.fields = ["StudentId", "StudentClasses/StudentClassId",
-      "StudentClasses/BatchId",
-      "StudentClasses/ClassId",
-      "StudentClasses/RollNo",
+    list.fields = ["StudentId",    
       "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
       "ReasonForLeavingId"];
-    list.lookupFields = ["StudentClasses"];
+    list.lookupFields = ["StudentClasses($select=StudentClassId,BatchId,ClassId,RollNo)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";
@@ -390,18 +387,11 @@ export class DashboardstudentComponent implements OnInit {
       'StudentId',
       'ClassId',
       'RollNo',
-      'SectionId',
-      'Student/FirstName',
-      'Student/LastName',
-      'Student/FatherName',
-      'Student/MotherName',
-      'Student/ContactNo',
-      'Student/FatherContactNo',
-      'Student/MotherContactNo',
+      'SectionId'   
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student"]
+    list.lookupFields = ["Student($select=FirstName,LastName,FatherName,MotherName,ContactNo,FatherContactNo,MotherContactNo)"]
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)

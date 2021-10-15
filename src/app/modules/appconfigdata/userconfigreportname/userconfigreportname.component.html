@@ -32,7 +32,7 @@
             </form>
             <mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="ReportName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                             <mat-form-field [style.width.pc]="10" appearance="outline">
                                 <input matInput [value]="element.ReportName" [(ngModel)]="element.ReportName"
@@ -42,7 +42,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="DisplayName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Display Name </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> Display Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.pc]="10" appearance="outline">
                             <input matInput [value]="element.DisplayName" [(ngModel)]="element.DisplayName"

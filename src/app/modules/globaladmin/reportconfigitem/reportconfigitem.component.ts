@@ -134,7 +134,7 @@ export class ReportConfigItemComponent implements OnInit {
     let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
       " and ApplicationId eq " + row.ApplicationId;
 
-    var ReportNameId =this.searchForm.get("searchReportName").value
+    var ReportNameId = this.searchForm.get("searchReportName").value
     if (this.ApplicationName.toLowerCase() != "ttp" && ReportNameId == 0) {
       this.alert.error("Please select report name", this.optionAutoClose);
       return;
@@ -166,7 +166,7 @@ export class ReportConfigItemComponent implements OnInit {
           this.ReportConfigItemData.DisplayName = row.DisplayName;
           this.ReportConfigItemData.ColumnSequence = row.ColumnSequence;
           this.ReportConfigItemData.Formula = row.Formula;
-          this.ReportConfigItemData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ReportConfigItemData.OrgId = 0;
           this.ReportConfigItemData.ParentId = this.ParentId;
           this.ReportConfigItemData.UserId = row.UserId;
           this.ReportConfigItemData.Active = row.Active;
@@ -255,17 +255,20 @@ export class ReportConfigItemComponent implements OnInit {
   GetReportConfigItem() {
     debugger;
     this.ReportConfigItemList = [];
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]; //+ ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = ' and OrgId eq 0';
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchApplicationId").value == 0) {
+    var searchApplicationId = this.searchForm.get("searchApplicationId").value;
+    if (searchApplicationId == 0) {
       this.alert.info("Please select application", this.optionAutoClose);
       return;
     }
 
     this.loading = true;
-    filterstr = "ApplicationId eq " + this.searchForm.get("searchApplicationId").value
+    filterstr = "ApplicationId eq " + searchApplicationId;
     if (this.searchForm.get("searchReportName").value > 0)
       filterstr += " and ParentId eq " + this.searchForm.get("searchReportName").value;
+    else
+      filterstr += " and ParentId eq " + searchApplicationId;
 
     let list: List = new List();
     list.fields = [
@@ -282,8 +285,7 @@ export class ReportConfigItemComponent implements OnInit {
       "Active"
     ];
     list.PageName = this.ReportConfigItemListName;
-    //list.lookupFields = ["SchoolClassPeriod"]
-    list.filter = [filterstr +orgIdSearchstr];
+    list.filter = [filterstr + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ReportConfigItemList = [];

@@ -9,12 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { EncodeHTMLPipe } from '../encode-html.pipe';
+import { GrdFilterPipe } from './gridfilter';
 
 @NgModule({
   declarations: [
     AreaComponent,
     AutofocusDirective,
-    EncodeHTMLPipe
+    EncodeHTMLPipe,
+    GrdFilterPipe
     ],
   imports: [
     CommonModule,

@@ -1,14 +1,14 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { TableUtil } from '../../../shared/TableUtil';
 
 @Component({
   selector: 'app-getreport',
@@ -16,6 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./getreport.component.scss']
 })
 export class GetreportComponent implements OnInit {
+
+  @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   BaseReportId = 0;
@@ -35,15 +37,22 @@ export class GetreportComponent implements OnInit {
   ColumnsOfSelectedReports = [];
   StandardFilterWithBatchId = '';
   loading = false;
+  ReportName = '';
+  searchCondition1;
+  searchConditionText = [];
   AvailableReportNames = [];
   MyAppReportNames = [];
   Applications = [];
   ReportNames = [];
   ReportConfigItemListName = "ReportConfigItems";
+  
   ReportConfigItemList = [];
   dataSource: MatTableDataSource<IReportConfigItem>;
   allMasterData = [];
   PagePermission = '';
+  FilterColumns = [];
+  FilterConditions = [];
+  FilterCriteria = [];
   ReportConfigItemData = {
     ReportConfigItemId: 0,
     ReportName: '',
@@ -73,12 +82,36 @@ export class GetreportComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
-      searchAvailableReportName: [0],
-      searchReportName: [0]
+      searchReportName: [0],
+      searchFilterColumn: [0],
+      searchCondition: [''],
+      searchCriteria:[''],
+      //searchConditionText:['']
+
     });
-    //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
+    this.FilterConditions = [
+      { "text": "equal", "val": "eq" },
+      { "text": "greater than", "val": "gt" },
+      { "text": "less than", "val": "lt" },
+      { "text": "greater than n equal", "val": "ge" },
+      { "text": "less than n equal", "val": "le" },
+      { "text": "like", "val": "substringof" }
+    ];
+    this.dataSource = new MatTableDataSource([]);
     this.Applications = this.tokenstorage.getPermittedApplications();
+
   }
+
+  applyFilter(filterValue) {
+    debugger;
+    if (filterValue.target.value)
+      return;
+
+    var filterstr = filterValue.target.value.trim();
+    filterstr = filterstr.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.dataSource.filter = filterstr;
+  }
+
 
   PageLoad() {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
@@ -288,8 +321,9 @@ export class GetreportComponent implements OnInit {
         this.MyAppReportNames.push(temp[0]);
       }
     })
-
-    //this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
+  }
+  GetFilterColumn() {
+    this.FilterColumns = this.ReportNames.filter(f => f.ParentId == this.searchForm.get("searchReportName").value);
   }
   getSelectedReportColumn() {
 
@@ -318,37 +352,86 @@ export class GetreportComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        this.ReportName = this.MyAppReportNames.filter(m => m.ReportConfigItemId == MyReportNameId)[0].ReportName;
         this.ColumnsOfSelectedReports = [...data.value];
+
         var list = new List();
         list.PageName = this.MyAppReportNames.filter(m => m.ReportConfigItemId == MyReportNameId)[0].TableNames;
         var displaycol = '';
         list.fields = this.ColumnsOfSelectedReports.map(m => {
-          displaycol = m.DisplayName.length == 0 ? m.ReportName : m.DisplayName;
-          this.DisplayColumns.push(displaycol);
+          displaycol = m.ReportName;//m.DisplayName.length == 0 ? m.ReportName : m.DisplayName;
+          if (!this.DisplayColumns.includes(displaycol))
+            this.DisplayColumns.push(displaycol);
           return m.ReportName;
         }).sort((a, b) => a.ColumnSequence - b.ColumnSequence);
+        
+        var filter = this.FilterCriteria.join(" and ");
+        list.filter = [filter + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+
+        // this.FilterCriteria.forEach(f=>{
+        //   list.filter.push(f);
+        // })
+        
         this.dataservice.get(list)
           .subscribe((data: any) => {
-            var whereFormulaIsNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.Formula.length > 0)
-            console.log("data.value",data.value)
-            whereFormulaIsNotEmpty.forEach(f => {
-              
-              data.value.forEach(row => {
+            this.ReportConfigItemList = [...data.value];
+            if (this.ReportConfigItemList.length == 0) {
+              this.alert.info("No record found.", this.optionAutoClose);
+            }
+            //var whereFormulaIsNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.Formula.length > 0)
+            //console.log("data.value", data.value)
 
-                Object.keys(row).forEach(prop => {
-                  if (f.Formula.includes('[' + prop + ']'))
-                    f.Formula = f.Formula.replaceAll('[' + prop + ']', row[prop]);
-                })
-                  console.log("formula",f.Formula)
-                row[f.ReportName] = evaluate(f.Formula);
+            // data.value.forEach(row => {
+            //   whereFormulaIsNotEmpty.forEach(f => {
+            //     Object.keys(row).forEach(prop => {
+            //       if (f.Formula.includes('[' + prop + ']'))
+            //         f.Formula = f.Formula.replaceAll('[' + prop + '  ]', "'" + row[prop] + "'");
+            //     })
+            //     //  console.log("formula",evaluate(f.Formula))
+            //     row[f.ReportName] = evaluate(f.Formula);
 
-              })
-            })
-
-            this.dataSource = new MatTableDataSource(data.value);
+            //   })
+            // })
+            //console.log('displaycolumn',this.DisplayColumns)
+            //console.log("data.value",data.value)
+            this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+            // this.dataSource.filterPredicate = function (data, filter: string): boolean {
+            //   var present: boolean = false;
+            //   Object.keys(data).forEach((col) => {
+            //     if (data[col].toLowerCase().includes(filter))
+            //     {          
+            //       present = true;
+            //     } 
+            //   })
+            //   return present;
+            // };
           })
         this.loading = false;
       });
+  }
+  AddSearchFilter() {
+    var columnName = this.searchForm.get("searchFilterColumn").value;
+    var condition = this.searchForm.get("searchCondition").value;
+    var value = this.searchForm.get("searchCriteria").value;
+
+    var filtertext = columnName + " " + condition + " '" + value + "'";
+    this.FilterCriteria.push(filtertext);
+
+  }
+  RemoveSearchFilter() {
+    debugger;
+      console.log('dd',this.searchCondition1);
+  }
+  onNgModelChange(event) {
+    debugger;
+    this.searchCondition1 =event.option[0].value;
+    console.log('dd',this.searchCondition1);
+  }
+  ExportToExcel() {
+    const datatoExport: Partial<any>[] = [...this.ReportConfigItemList];
+    TableUtil.exportArrayToExcel(datatoExport, this.ReportName);
   }
   getDropDownData(dropdowntype) {
     let Id = 0;
