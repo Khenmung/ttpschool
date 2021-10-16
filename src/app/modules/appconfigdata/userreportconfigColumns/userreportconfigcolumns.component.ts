@@ -23,9 +23,9 @@ export class UserReportConfigColumnsComponent implements OnInit {
   DisplayColumns = [
     "ReportName",
     "DisplayName",
-    "Formula",
-    "ColumnSequence",
-    "TableNames",
+    // "Formula",
+    // "TableNames",
+    "ColumnSequence",   
     "Active",
     "Action"
   ];
@@ -42,6 +42,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
   ColumnsOfAvailableReports = [];
   StandardFilterWithBatchId = '';
   loading = false;
+  ToUpateCount = -1;
   AvailableReportNames = [];
   AppReportNames = [];
   Applications = [];
@@ -117,6 +118,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       ParentId: 0,
       Formula: '',
       ColumnSequence: 0,
+      OldSequence:0,
       ApplicationId: appId,
       TableNames: '',
       OrgId: 0,
@@ -130,6 +132,19 @@ export class UserReportConfigColumnsComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+  SaveAll() {
+    var edited = this.ReportConfigItemList.filter(f => f.Action);
+    this.ToUpateCount = edited.length;
+    edited.forEach(f => {
+      this.ToUpateCount--;
+      this.UpdateOrSave(f);
+    })
+  }
+  Save(row)
+  {
+    this.ToUpateCount=0;
+    this.UpdateOrSave(row)
   }
   UpdateOrSave(row) {
 
@@ -214,7 +229,10 @@ export class UserReportConfigColumnsComponent implements OnInit {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          if (this.ToUpateCount == 0) {
+            this.ToUpateCount = -1;
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
+          }
         });
   }
   update(row) {
@@ -223,51 +241,58 @@ export class UserReportConfigColumnsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          row.Action=false;
+          if (this.ToUpateCount == 0) {
+            this.ToUpateCount = -1;
+            this.alert.success("Data updated successfully.", this.optionAutoClose);
+          }
         });
   }
   ReSequence(editedrow) {
-    //debugger;
-    var diff = 0;
-    if (editedrow.Sequence != editedrow.OldSequence) {
+    debugger;
+    //var diff = 0;
+    if (editedrow.ColumnSequence != editedrow.OldSequence) {
 
-      if (editedrow.Sequence > editedrow.OldSequence) {
-        var filteredData = this.ReportConfigItemList.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
-          && currentrow.Sequence > editedrow.OldSequence
-          && currentrow.Sequence <= editedrow.Sequence)
+      if (editedrow.ColumnSequence > editedrow.OldSequence) {
+        var filteredData = this.ReportConfigItemList.filter(currentrow => currentrow.ReportConfigItemId != editedrow.ReportConfigItemId
+          && currentrow.ColumnSequence > editedrow.OldSequence
+          && currentrow.ColumnSequence <= editedrow.ColumnSequence)
 
         filteredData.forEach(currentrow => {
 
-          currentrow.Sequence -= 1;
+          currentrow.ColumnSequence -= 1;
           currentrow.OldSequence -= 1;
           currentrow.Action = true;
 
         });
       }
-      else if (editedrow.Sequence < editedrow.OldSequence) {
-        var filteredData = this.ReportConfigItemList.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
-          && currentrow.Sequence >= editedrow.Sequence
-          && currentrow.Sequence < editedrow.OldSequence)
+      else if (editedrow.ColumnSequence < editedrow.OldSequence) {
+        var filteredData = this.ReportConfigItemList.filter(currentrow => currentrow.ReportConfigItemId != editedrow.ReportConfigItemId
+          && currentrow.ColumnSequence >= editedrow.ColumnSequence
+          && currentrow.ColumnSequence < editedrow.OldSequence)
 
         filteredData.forEach(currentrow => {
-          currentrow.Sequence += 1;
+          currentrow.ColumnSequence += 1;
           currentrow.OldSequence += 1;
           currentrow.Action = true;
         })
       }
-      editedrow.Action = true;
-      editedrow.OldSequence = editedrow.Sequence;
-      this.ReportConfigItemList.sort((a, b) => a.Sequence - b.Sequence);
+      
+      editedrow.OldSequence = editedrow.ColumnSequence;
+      this.ReportConfigItemList.sort((a, b) => a.ColumnSequence - b.ColumnSequence);
       this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
+      //this.onBlur(editedrow);
     }
+    editedrow.Action = true;
   }
   get f() {
     return this.searchForm.controls;
   }
   GetReportConfigItem() {
     debugger;
+
     this.ReportConfigItemList = [];
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -276,19 +301,15 @@ export class UserReportConfigColumnsComponent implements OnInit {
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     var MyReportNameId = this.searchForm.get("searchReportName").value;
 
-    if (this.searchForm.get("searchApplicationId").value == 0) {
-      this.alert.info("Please select application", this.optionAutoClose);
-      return;
-    }
     if (ApplicationId == 0) {
       this.alert.error("Please select application name", this.optionAutoClose);
       return;
     }
-    if (AvailableReportId == 0) {
+    if (AvailableReportId == undefined || AvailableReportId == 0) {
       this.alert.error("Please select available report name", this.optionAutoClose);
       return;
     }
-    if (MyReportNameId == 0) {
+    if (MyReportNameId == undefined || MyReportNameId == 0) {
       this.alert.error("Please select my report name", this.optionAutoClose);
       return;
     }
@@ -323,18 +344,24 @@ export class UserReportConfigColumnsComponent implements OnInit {
           var existing = data.value.filter(d => d.ReportName == a.ReportName);
           if (existing.length > 0) {
             existing[0].Action = false;
+            existing[0].OldSequence = existing[0].ColumnSequence;
+            existing[0].TableNames = a.TableNames;
             this.ReportConfigItemList.push(existing[0]);
           }
           else {
             a.Active = 0;
             a.Action = false;
             a.ReportConfigItemId = 0;
+            a.OldSequence = a.ColumnSequence;
             a.ParentId = MyReportNameId;
+      
             this.ReportConfigItemList.push(a);
           }
         })
 
+        this.ReportConfigItemList.sort((a,b)=>a.ColumnSequence - b.ColumnSequence);
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
+        
         this.loading = false;
       })
   }
@@ -353,7 +380,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-debugger;
+        debugger;
         if (data.value.length > 0) {
           this.BaseReportId = data.value[0].ReportConfigItemId;
           this.GetReportNames();
@@ -388,6 +415,7 @@ debugger;
       });
   }
   GetAvailableReportNames() {
+    debugger;
     this.ReportConfigItemList = [];
     this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
       && a.ParentId == this.BaseReportId);
@@ -408,6 +436,7 @@ debugger;
       "DisplayName",
       "ParentId",
       "ApplicationId",
+      "ColumnSequence",
       "TableNames",
       "OrgId",
       "UserId",

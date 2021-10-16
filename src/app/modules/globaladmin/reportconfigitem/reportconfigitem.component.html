@@ -37,7 +37,7 @@
                 <ng-container matColumnDef="ReportName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="200" appearance="outline">
+                        <mat-form-field [style.width.px]="150" appearance="outline">
                             <input matInput [value]="element.ReportName"
                                 [(ngModel)]="element.ReportName" autocomplete="Off" placeholder=""
                                 (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
@@ -47,29 +47,29 @@
                 <ng-container matColumnDef="DisplayName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Display Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="200" appearance="outline">
+                        <mat-form-field [style.width.px]="150" appearance="outline">
                             <input matInput [value]="element.DisplayName"
                                 [(ngModel)]="element.DisplayName" autocomplete="Off" placeholder=""
                                 (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Formula">
+                <!-- <ng-container matColumnDef="Formula">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Formula </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="200" appearance="outline">
+                        <mat-form-field [style.width.px]="150" appearance="outline">
                             <textarea matInput [value]="element.Formula" [(ngModel)]="element.Formula"
                                 autocomplete="Off" (blur)="onBlur(element)" [maxlength]="256"></textarea>
                         </mat-form-field>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                
                 <ng-container matColumnDef="TableNames">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Table Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="200" appearance="outline">
-                            <input matInput [value]="element.TableNames" [(ngModel)]="element.TableNames"
-                                autocomplete="Off" (blur)="onBlur(element)" [maxlength]="50">
+                        <mat-form-field [style.width.px]="250" appearance="outline">
+                            <textarea matInput [value]="element.TableNames" [(ngModel)]="element.TableNames"
+                                autocomplete="Off" (blur)="onBlur(element)" [maxlength]="450"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -77,7 +77,7 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.px]="50" appearance="outline">
-                            <input type="number" matInput [value]="element.ColumnSequence"
+                            <input type="number" matInput [value]="element.ColumnSequence" 
                                 [(ngModel)]="element.ColumnSequence" autocomplete="Off" (blur)="ReSequence(element)"
                                 [max]="100">
                         </mat-form-field>
@@ -96,9 +96,13 @@
                         <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
                             <mat-icon>add</mat-icon>
                         </button>
+                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                            <mat-icon>all_out</mat-icon>
+                        </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || Permission=='read' || !element.Action" 
+                        matTooltip="save" mat-mini-fab (click)="Save(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

@@ -27,7 +27,6 @@
                     <mat-form-field appearance="outline">
                         <mat-label>My Report Name</mat-label>
                         <mat-select formControlName="searchReportName">
-                            <mat-option>--select my report name--</mat-option>
                             <mat-option *ngFor="let item of AppReportNames" [value]="item.ReportConfigItemId">
                                 {{item.ReportName}}
                             </mat-option>
@@ -56,7 +55,7 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Formula">
+                <!-- <ng-container matColumnDef="Formula">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Formula </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.pc]="10" appearance="outline">
@@ -73,7 +72,7 @@
                                 autocomplete="Off" (blur)="onBlur(element)" [maxlength]="50">
                         </mat-form-field>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="ColumnSequence">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -94,13 +93,13 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
-                            <mat-icon>add</mat-icon>
+                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="SaveAll()">
+                            <mat-icon>all_out</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
-                            mat-mini-fab (click)="UpdateOrSave(element)">
+                            mat-mini-fab (click)="Save(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

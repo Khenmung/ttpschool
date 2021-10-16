@@ -22,9 +22,9 @@ export class UserconfigreportnameComponent implements OnInit {
   Permission = '';
   DisplayColumns = [
     "ReportName",
-    "DisplayName",
+    //"DisplayName",
     //"Formula",
-    "TableNames",
+    //"TableNames",
     "Active",
     "Action"
   ];
