@@ -136,12 +136,10 @@ export class CertificatesComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
 
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-        });
-      }
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      });
+
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
 
@@ -160,16 +158,12 @@ export class CertificatesComponent implements OnInit {
       'StudentClassSubjectId',
       'ClassSubjectId',
       'StudentClassId',
-      'Active',
-      'ClassSubject/SubjectId',
-      'ClassSubject/ClassId',
-      'StudentClass/StudentId',
-      'StudentClass/RollNo',
-      'StudentClass/SectionId'
+      'Active'
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject", "StudentClass"]
+    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)",
+      "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -217,9 +211,7 @@ export class CertificatesComponent implements OnInit {
       list.fields = [
         "StudentClassId",
         "ClassId",
-        "StudentId",
-        "Student/FirstName",
-        "Student/LastName"
+        "StudentId"
       ];
     }
     else {
@@ -231,47 +223,47 @@ export class CertificatesComponent implements OnInit {
         "SectionId",
         "RollNo",
         "AdmissionDate",
-        "StudentId",
-        "Student/FirstName",
-        "Student/LastName",
-        "Student/FatherName",
-        "Student/MotherName",
-        "Student/Gender",
-        "Student/PermanentAddress",
-        "Student/PresentAddress",
-        "Student/WhatsAppNumber",
-        "Student/City",
-        "Student/Pincode",
-        "Student/State",
-        "Student/Country",
-        "Student/DOB",
-        "Student/Bloodgroup",
-        "Student/Category",
-        "Student/BankAccountNo",
-        "Student/IFSCCode",
-        "Student/MICRNo",
-        "Student/AadharNo",
-        "Student/Religion",
-        "Student/ContactNo",
-        "Student/AlternateContact",
-        "Student/EmailAddress",
-        "Student/LastSchoolPercentage",
-        "Student/TransferFromSchool",
-        "Student/TransferFromSchoolBoard",
-        "Student/Remarks",
-        "Student/FatherOccupation",
-        "Student/FatherContactNo",
-        "Student/MotherContactNo",
-        "Student/MotherOccupation",
-        "Student/NameOfContactPerson",
-        "Student/RelationWithContactPerson",
-        "Student/ContactPersonContactNo",
-        "Student/LocationId",
-        "Student/ReasonForLeavingId"
+        "StudentId"
       ];
     }
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student"];
+    if (pStudentClassId == 0) {
+      list.lookupFields = ["Student($select=FirstName,LastName)"];
+    }
+    else
+      list.lookupFields = [
+        "Student($select=FirstName,LastName," +
+        "FatherName,MotherName,Gender,PermanentAddress," +
+        "PresentAddress," +
+        "WhatsAppNumber," +
+        "City," +
+        "Pincode," +
+        "State," +
+        "Country," +
+        "DOB," +
+        "Bloodgroup," +
+        "Category," +
+        "BankAccountNo," +
+        "IFSCCode," +
+        "MICRNo," +
+        "AadharNo," +
+        "Religion," +
+        "ContactNo," +
+        "AlternateContact," +
+        "EmailAddress," +
+        "LastSchoolPercentage," +
+        "TransferFromSchool," +
+        "TransferFromSchoolBoard," +
+        "Remarks," +
+        "FatherOccupation," +
+        "FatherContactNo," +
+        "MotherContactNo," +
+        "MotherOccupation," +
+        "NameOfContactPerson," +
+        "RelationWithContactPerson," +
+        "ContactPersonContactNo," +
+        "LocationId," +
+        "ReasonForLeavingId)"];
     list.filter = [filterstr + orgIdSearchstr];
 
     this.dataservice.get(list).subscribe((data: any) => {

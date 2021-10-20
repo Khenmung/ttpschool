@@ -312,13 +312,11 @@ export class StudentactivityComponent implements OnInit {
       'StudentId',
       'ClassId',
       'RollNo',
-      'SectionId',
-      'Student/FirstName',
-      'Student/LastName'
+      'SectionId'
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student"]
+    list.lookupFields = ["Student($select=FirstName,LastName)"]
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)

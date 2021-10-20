@@ -105,12 +105,11 @@ export class DashboardstudentComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.MotherName),
         map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
       );
-    this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-    if (this.Classes.length == 0) {
+    
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
-    }
+    
 
     this.GetMasterData();
     this.GetFeeTypes();
@@ -263,8 +262,10 @@ export class DashboardstudentComponent implements OnInit {
 
     this.shareddata.ChangeStudentName(StudentName);
 
-    this.shareddata.ChangeStudentClassId(this.StudentClassId);
-    this.shareddata.ChangeStudentId(element.StudentId);
+    //this.shareddata.ChangeStudentClassId(this.StudentClassId);
+    this.token.saveStudentClassId(this.StudentClassId.toString());
+    this.token.saveStudentId(element.StudentId);
+    //this.shareddata.ChangeStudentId(element.StudentId);
 
   }
   new() {

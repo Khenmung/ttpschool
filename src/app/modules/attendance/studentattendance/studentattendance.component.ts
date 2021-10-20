@@ -34,7 +34,7 @@ export class StudentAttendanceComponent implements OnInit {
     keepAfterRouteChange: true
   };
   SaveAll = false;
-  NoOfRecordToUpdate = 0;
+  NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
   StudentClassId = 0;
   StandardFilter = '';
@@ -54,7 +54,8 @@ export class StudentAttendanceComponent implements OnInit {
   searchForm = this.fb.group({
     searchClassId: [0],
     searchSectionId: [0],
-    searchClassSubjectId: [0]
+    searchClassSubjectId: [0],
+    searchAttendanceDate: new Date()
   });
   StudentClassSubjectId = 0;
   StudentAttendanceData = {
@@ -62,13 +63,13 @@ export class StudentAttendanceComponent implements OnInit {
     StudentClassId: 0,
     AttendanceStatus: 0,
     AttendanceDate: new Date(),
+    ClassSubjectId: 0,
     Remarks: '',
     BatchId: 0,
     OrgId: 0
   };
   displayedColumns = [
     'StudentRollNo',
-    'AttendanceDate',
     'AttendanceStatus',
     'Remarks',
     'Action'
@@ -87,7 +88,7 @@ export class StudentAttendanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //debugger;
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.StudentClassId = 1;
@@ -109,8 +110,9 @@ export class StudentAttendanceComponent implements OnInit {
 
   }
   bindClassSubject() {
-    var clssubjectId = this.searchForm.get("searchClassId").value;
-    this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassSubjectId == clssubjectId);
+    debugger;
+    var classId = this.searchForm.get("searchClassId").value;
+    this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
 
   }
   checkall(value) {
@@ -135,7 +137,7 @@ export class StudentAttendanceComponent implements OnInit {
     else {
       filterStr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
     }
-    var filterStrClsSub ='';
+    var filterStrClsSub = '';
     var _sectionId = this.searchForm.get("searchSectionId").value;
     var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
     if (_sectionId == 0 && _classSubjectId == 0) {
@@ -161,8 +163,6 @@ export class StudentAttendanceComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'StudentClassId',
-      'Student/FirstName',
-      'Student/LastName',
       'RollNo',
       'ClassId',
       'SectionId',
@@ -170,7 +170,7 @@ export class StudentAttendanceComponent implements OnInit {
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student"];
+    list.lookupFields = ["Student($select=FirstName,LastName)"];
     list.filter = [filterStr];
     this.StudentClassList = [];
     this.dataservice.get(list)
@@ -211,7 +211,7 @@ export class StudentAttendanceComponent implements OnInit {
         list.PageName = "Attendances";
         list.lookupFields = ["StudentClass"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          " and AttendanceDate eq datetime'" + date + "'" + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
+          " and AttendanceDate eq " + date + "" + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
@@ -279,16 +279,24 @@ export class StudentAttendanceComponent implements OnInit {
   saveall() {
     var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
     this.NoOfRecordToUpdate = toUpdateAttendance.length;
-    toUpdateAttendance.forEach((record, indx) => {
-      this.UpdateOrSave(record, indx);
+    toUpdateAttendance.forEach((record) => {
+      this.NoOfRecordToUpdate--;
+      this.UpdateOrSave(record);
     })
   }
-  UpdateOrSave(row, indx) {
+  UpdateOrSave(row) {
+
+    this.NoOfRecordToUpdate = 0;
     var today = new Date();
+    var clssubjectid = this.searchForm.get("searchClassSubjectId").value
+    if (clssubjectid == undefined)
+      clssubjectid = 0;
+
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate eq datetime'" + this.datepipe.transform(today, 'yyyy-MM-dd') + "' and " +
-      this.StandardFilter;
+      " and AttendanceDate eq " + this.datepipe.transform(today, 'yyyy-MM-dd')
+    if (clssubjectid > 0)
+      checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
     if (row.AttendanceId > 0)
       checkFilterString += " and AttendanceId ne " + row.AttendanceId;
@@ -296,7 +304,7 @@ export class StudentAttendanceComponent implements OnInit {
     let list: List = new List();
     list.fields = ["AttendanceId"];
     list.PageName = "Attendances";
-    list.filter = [checkFilterString];
+    list.filter = [checkFilterString + " and " +this.StandardFilter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -305,57 +313,57 @@ export class StudentAttendanceComponent implements OnInit {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
+
           this.StudentAttendanceData.StudentClassId = row.StudentClassId;
           this.StudentAttendanceData.AttendanceDate = today;
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
           this.StudentAttendanceData.AttendanceStatus = row.AttendanceStatus;
+          this.StudentAttendanceData.ClassSubjectId = clssubjectid;
           this.StudentAttendanceData.Remarks = row.Remarks;
           if (this.StudentAttendanceData.AttendanceId == 0) {
             this.StudentAttendanceData["CreatedDate"] = new Date();
             this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentAttendanceData["UpdatedDate"];
             delete this.StudentAttendanceData["UpdatedBy"];
-            this.insert(row, indx);
+            this.insert(row);
           }
           else {
             delete this.StudentAttendanceData["CreatedDate"];
             delete this.StudentAttendanceData["CreatedBy"];
             this.StudentAttendanceData["UpdatedDate"] = new Date();
             this.StudentAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(indx);
+            this.update(row);
           }
           row.Action = false;
         }
       });
   }
 
-  insert(row, indx) {
+  insert(row) {
 
     this.dataservice.postPatch('Attendances', this.StudentAttendanceData, 0, 'post')
       .subscribe(
         (data: any) => {
           this.edited = false;
           row.AttendanceId = data.AttendanceId;
-          if (this.NoOfRecordToUpdate > 0) {
-            if (this.NoOfRecordToUpdate == indx + 1) {
-              this.NoOfRecordToUpdate = 0;
-              this.alert.success("Data saved successfully.", this.optionAutoClose);
-            }
+          row.Action = false;
+          if (this.NoOfRecordToUpdate == 0) {
+            this.NoOfRecordToUpdate = -1;
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
           }
         });
   }
-  update(indx) {
+  update(row) {
     this.dataservice.postPatch('Attendances', this.StudentAttendanceData, this.StudentAttendanceData.AttendanceId, 'patch')
       .subscribe(
         (data: any) => {
           this.edited = false;
-          if (this.NoOfRecordToUpdate > 0) {
-            if (this.NoOfRecordToUpdate == indx + 1) {
-              this.NoOfRecordToUpdate = 0;
-              this.alert.success("Data saved successfully.", this.optionAutoClose);
-            }
+          row.Action = false;
+          if (this.NoOfRecordToUpdate == 0) {
+            this.NoOfRecordToUpdate = -1;
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
           }
         });
   }
@@ -365,7 +373,7 @@ export class StudentAttendanceComponent implements OnInit {
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
   GetClassSubject() {
-
+    debugger;
     let list: List = new List();
     list.fields = [
       'ClassSubjectId',
@@ -393,7 +401,8 @@ export class StudentAttendanceComponent implements OnInit {
 
           return {
             ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _classname + "-" + _subjectName
+            ClassSubject: _classname + "-" + _subjectName,
+            ClassId: item.ClassId
           }
         })
       })
@@ -413,11 +422,8 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-
-        //this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.loading = false;
       });

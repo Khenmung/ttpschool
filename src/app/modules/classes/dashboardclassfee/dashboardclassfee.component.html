@@ -1,4 +1,4 @@
-<div style="margin: 15px;" fxLayout="column" fxLayoutAlign="center center">
+<!-- <div style="margin: 15px;" fxLayout="column" fxLayoutAlign="center center">
     <strong>Class Fee definition statuses for the current batch.</strong>
     <mat-divider></mat-divider>
     <br>
@@ -9,7 +9,7 @@
         </div>
     </div>
     <mat-divider></mat-divider>
-</div>
+</div> -->
 <div>
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Fee</strong></div>
@@ -67,19 +67,19 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Recurring">
+        <!-- <ng-container matColumnDef="Recurring">
             <mat-header-cell *matHeaderCellDef>Recurring </mat-header-cell>
             <mat-cell style="justify-content: center;" *matCellDef="let element">
                 <mat-checkbox [checked]="element.Recurring" (click)="$event.stopPropagation()"
                     (change)="updateRecurring(element,$event)">
                 </mat-checkbox>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="YearMonth">
-            <mat-header-cell *matHeaderCellDef>Year Month</mat-header-cell>
+        </ng-container> -->
+        <ng-container matColumnDef="Month">
+            <mat-header-cell *matHeaderCellDef>Month</mat-header-cell>
             <mat-cell style="justify-content: center;" *matCellDef="let element">
                 <mat-form-field [style.width.px]="80">
-                    <mat-select [(ngModel)]="element.YearMonth" [value]="element.YearMonth" (selectionChange)="onBlur(element)">
+                    <mat-select [(ngModel)]="element.Month" [value]="element.Month" (selectionChange)="onBlur(element)">
                         <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -105,13 +105,13 @@
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
                 <div *ngIf="ELEMENT_DATA.length>0">
-                    <button [disabled]="loading" mat-mini-fab (click)="saveAll()">
+                    <button [disabled]="loading" mat-mini-fab (click)="SaveAll()">
                         <mat-icon>all_out</mat-icon>
                     </button>
                 </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button [disabled]="loading || !element.Action" mat-mini-fab (click)="UpdateOrSave(element,0)">
+                <button [disabled]="loading || !element.Action" mat-mini-fab (click)="Save(element)">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-cell>

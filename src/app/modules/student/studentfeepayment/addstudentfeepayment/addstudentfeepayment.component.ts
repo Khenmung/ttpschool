@@ -81,8 +81,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
   Classes = [];
   Batches = [];
   Locations = [];
-  AccountNature=[];
-  AccountGroup =[];
+  AccountNature = [];
+  AccountGroup = [];
   StudentClassFees: any[] = [];
   FeeTypes = [];
   LedgerListName = 'AccountingLedgerTrialBalances';
@@ -101,7 +101,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     StudentFeeReceiptId: 0,
     StudentClassId: 0,
     TotalAmount: '',
-    Balance:'',
+    Balance: '',
     ReceiptNo: 0,
     OffLineReceiptNo: '',
     ReceiptDate: new Date(),
@@ -169,28 +169,26 @@ export class AddstudentfeepaymentComponent implements OnInit {
   PageLoad() {
     this.StudentBillList = [];
     this.billdataSource = new MatTableDataSource<any>(this.StudentBillList);
-    this.Months =this.contentservice.GetSessionFormattedMonths();
+    this.Months = this.contentservice.GetSessionFormattedMonths();
     this.loginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
-    this.shareddata.CurrentStudentId.subscribe(fy => (this.studentInfoTodisplay.StudentId = fy));
-    this.shareddata.CurrentStudentClassId.subscribe(fy => (this.studentInfoTodisplay.StudentClassId = fy));
+    //this.shareddata.CurrentStudentId.subscribe(fy => (this.studentInfoTodisplay.StudentId = fy));
+    this.studentInfoTodisplay.StudentId = this.tokenstorage.getStudentId()
+    //this.shareddata.CurrentStudentClassId.subscribe(fy => (this.studentInfoTodisplay.StudentClassId = fy));
+    this.studentInfoTodisplay.StudentClassId = this.tokenstorage.getStudentClassId();
     this.shareddata.CurrentStudentName.subscribe(fy => (this.StudentName = fy));
 
     this.shareddata.CurrentFeeNames.subscribe(fy => (this.FeeNames = fy));
-    this.shareddata.CurrentClasses.subscribe(fy => (this.Classes = fy));
     this.shareddata.CurrentBatch.subscribe(fy => (this.Batches = fy));
     this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
     this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
     this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
-    this.GetMasterData();
-    this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-    if (this.Classes.length == 0) {
-      this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
+    this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+      this.GetMasterData();
+    });
 
-      });
-    }
 
   }
   public calculateTotal() {
@@ -211,7 +209,6 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -232,26 +229,26 @@ export class AddstudentfeepaymentComponent implements OnInit {
     });
   }
   GetStudentClass() {
-
+    debugger;
     if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0)
       return;
 
     let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId",
+    list.fields = [
+      "StudentClassId",
       "SectionId",
       "StudentId",
       "BatchId",
-      "Student/FirstName",
-      "Student/LastName",
       "ClassId",
       "RollNo",
-      "FeeTypeId",
-      "SchoolFeeType/FeeTypeName",
-      "SchoolFeeType/Formula"
+      "FeeTypeId"
     ];
-    list.lookupFields = ["Student", "SchoolFeeType"];
+    list.lookupFields = [
+      "Student($select=FirstName,LastName)",
+      "FeeType($select=FeeTypeName,Formula)"
+    ];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
 
@@ -262,19 +259,27 @@ export class AddstudentfeepaymentComponent implements OnInit {
           //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
           this.studentInfoTodisplay.ClassId = data.value[0].ClassId
           this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
-          this.studentInfoTodisplay.FeeType = data.value[0].SchoolFeeType.FeeTypeName;
-          this.studentInfoTodisplay.Formula = data.value[0].SchoolFeeType.Formula;
+          this.studentInfoTodisplay.FeeType = data.value[0].FeeType.FeeTypeName;
+          this.studentInfoTodisplay.Formula = data.value[0].FeeType.Formula;
           this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + " " + data.value[0].Student.LastName;
 
           this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
             return cls.MasterDataId == data.value[0].SectionId
           })[0].MasterDataName;
-          this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
+
+          var clsObj = this.Classes.filter(cls => {
             return cls.MasterDataId == this.studentInfoTodisplay.ClassId
-          })[0].ClassName;
-          this.studentInfoTodisplay.StudentFeeType = this.FeeTypes.filter(f => {
+          })
+          if (clsObj.length > 0)
+            this.studentInfoTodisplay.StudentClassName = clsObj[0].ClassName;
+
+          
+          var feeObj=this.FeeTypes.filter(f => {
             return f.FeeTypeId == this.studentInfoTodisplay.FeeTypeId
-          })[0].FeeTypeName;
+          })
+          if(feeObj.length>0)
+          this.studentInfoTodisplay.StudentFeeType = feeObj[0].FeeTypeName;
+
           this.studentInfoTodisplay.Formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
           this.VariableObjList.push(this.studentInfoTodisplay);
           this.GetStudentFeePayment();
@@ -349,7 +354,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         if (data.value.length > 0) {
           this.StudentClassFees = data.value.map(f => {
             f.FeeName = this.FeeNames.filter(n => n.MasterDataId == f.FeeNameId)[0].MasterDataName;
-            f.MonthName = this.Months.filter(m => m.val == f.Month)[0].month
+            f.MonthName = this.Months.filter(m => m.val == f.Month)[0].MonthName
             return f;
           });
           let itemcount = 0;
@@ -586,7 +591,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.StudentReceiptData.ReceiptNo = +(data.value[0].ReceiptNo + 1);
       else
         this.StudentReceiptData.ReceiptNo = 1;
-        this.studentInfoTodisplay.ReceiptNo = this.StudentReceiptData.ReceiptNo;
+      this.studentInfoTodisplay.ReceiptNo = this.StudentReceiptData.ReceiptNo;
       this.StudentReceiptData.StudentFeeReceiptId = 0;
       this.StudentReceiptData.TotalAmount = this.TotalAmount.toString();
       this.StudentReceiptData.BatchId = this.SelectedBatchId;

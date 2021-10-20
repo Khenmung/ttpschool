@@ -30,6 +30,7 @@ export class SubjectDetailComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  ClassSubjectListName ="ClassSubjects";
   CheckPermission = '';
   StandardFilterWithBatchId = '';
   loading = false;
@@ -217,7 +218,7 @@ export class SubjectDetailComponent implements OnInit {
       'Active',
     ];
 
-    list.PageName = "ClassSubjects";
+    list.PageName = this.ClassSubjectListName;
     list.lookupFields = ["SubjectType($select=SelectHowMany)"];
     list.filter = [filterStr];
     this.ClassSubjectList = [];
@@ -349,6 +350,13 @@ export class SubjectDetailComponent implements OnInit {
       this.loading = false;
       return;
     }
+    console.log("row.TeacherId",row.TeacherId);
+    if (row.TeacherId ==0)
+    {
+      this.alert.error("Please select teacher for the subject.", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
     let checkFilterString = "ClassId eq " + row.ClassId +
       " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
     // " and Active eq " + row.Active +
@@ -361,7 +369,7 @@ export class SubjectDetailComponent implements OnInit {
 
     let list: List = new List();
     list.fields = ["ClassSubjectId"];
-    list.PageName = "ClassSubjects";
+    list.PageName = this.ClassSubjectListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)

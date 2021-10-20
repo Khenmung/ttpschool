@@ -83,19 +83,19 @@ export class AddstudentclassComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-      }
+     // }
 
 
       this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
       this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
-      this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
-      this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
+      //this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
+      this.StudentId = this.tokenstorage.getStudentId();
+      this.StudentClassId =  this.tokenstorage.getStudentClassId()
+      //this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
       this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.GetStudentClass();
@@ -278,7 +278,8 @@ export class AddstudentclassComponent implements OnInit {
         (data: any) => {
           //console.log('before',this.StudentClassId);
           this.StudentClassId = data.StudentClassId;
-          this.shareddata.ChangeStudentClassId(this.StudentClassId);
+          this.tokenstorage.saveStudentClassId(this.StudentClassId +"")
+          //this.shareddata.ChangeStudentClassId(this.StudentClassId);
           //console.log('after',this.StudentClassId);
 
           this.alert.success("Data saved successfully", this.optionsAutoClose);

@@ -114,14 +114,9 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      if (this.Classes.length == 0) {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          this.shareddata.ChangeClasses(this.Classes);
+          this.Classes = [...data.value];          
         })
-
-      }
 
       //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();

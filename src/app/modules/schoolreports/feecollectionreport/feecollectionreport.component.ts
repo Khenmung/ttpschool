@@ -82,12 +82,10 @@ export class FeecollectionreportComponent implements OnInit {
       this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
       this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
   
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-      }
+      
 
       this.SearchForm = this.fb.group({
         FeeNameId: [0, Validators.required],

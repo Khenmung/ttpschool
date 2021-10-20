@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./examslot.component.scss']
 })
 export class ExamslotComponent implements OnInit {
-  weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -30,6 +30,7 @@ export class ExamslotComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   loading = false;
+  DataCountToUpdate = 0;
   ExamSlots: IExamSlots[] = [];
   SelectedBatchId = 0;
   Exams = [];
@@ -89,16 +90,10 @@ export class ExamslotComponent implements OnInit {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.shareddata.CurrentBatch.subscribe(b=>this.Batches=b);
+      this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
       this.GetMasterData();
     }
   }
-  // GetCurrentBatchIDnAssign() {
-  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-  //   if (CurrentBatches.length > 0) {
-  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
-  //   }
-  // }
   updateActive(row, value) {
     row.Action = true;
     row.Active = row.Active == 1 ? 0 : 1;
@@ -115,6 +110,18 @@ export class ExamslotComponent implements OnInit {
 
         });
   }
+  SaveAll() {
+    var toUpdate = this.ExamSlots.filter(f => f.Action);
+    this.DataCountToUpdate = toUpdate.length;
+    toUpdate.forEach(f => {
+      this.DataCountToUpdate--;
+      this.UpdateOrSave(f);
+    })
+  }
+  Save(row) {
+    this.DataCountToUpdate = 0;
+    this.UpdateOrSave(row);
+  }
   UpdateOrSave(row) {
 
     //debugger;
@@ -130,11 +137,11 @@ export class ExamslotComponent implements OnInit {
       this.alert.error("Start time and end time are mandatory!", this.optionAutoClose);
       return;
     }
-    var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate()+1)
+    var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate() + 1)
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
       " and SlotNameId eq " + row.SlotNameId +
-      " and ExamDate gt datetime'" + this.datepipe.transform(row.ExamDate,'yyyy-MM-dd') + "'" +
-      " and ExamDate lt datetime'" + this.datepipe.transform(dateplusone,'yyyy-MM-dd') + "'"
+      " and ExamDate gt " + this.datepipe.transform(row.ExamDate, 'yyyy-MM-dd') +
+      " and ExamDate lt " + this.datepipe.transform(dateplusone, 'yyyy-MM-dd')
 
 
     if (row.ExamSlotId > 0)
@@ -150,7 +157,7 @@ export class ExamslotComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading=false;
+          this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
@@ -178,7 +185,7 @@ export class ExamslotComponent implements OnInit {
             delete this.ExamSlotsData["CreatedBy"];
             this.ExamSlotsData["UpdatedDate"] = new Date();
             this.ExamSlotsData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+            this.update(row);
           }
         }
       });
@@ -193,22 +200,29 @@ export class ExamslotComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.ExamSlotId = data.ExamSlotId;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          row.Action = false;
+          if (this.DataCountToUpdate == 0) {
+            this.DataCountToUpdate = -1;
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
+          }
         });
   }
-  update() {
+  update(row) {
 
     this.dataservice.postPatch('ExamSlots', this.ExamSlotsData, this.ExamSlotsData.ExamSlotId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          row.Action = false;
+          if (this.DataCountToUpdate == 0) {
+            this.DataCountToUpdate = -1;
+            this.alert.success("Data updated successfully.", this.optionAutoClose);
+          }
         });
   }
   GetExams() {
 
     //var orgIdSearchstr = this.StandardFilterWithBatchId;// ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
     let list: List = new List();
 
     list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate"];
@@ -254,25 +268,26 @@ export class ExamslotComponent implements OnInit {
     list.PageName = "ExamSlots";
     list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId + filterstr];
     //list.orderBy = "ParentId";
-    this.ExamSlots =[];
+    this.ExamSlots = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _startDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].StartDate);
         var _endDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].EndDate);
         var _examDate = _startDate;
-        var day ='';
+        var day = '';
         //var dtstring;
-        while ( _examDate < _endDate) {
+        while (_examDate < _endDate) {
           day = this.weekday[_examDate.getDay()];
           //dtstring =new Date(_examDate);
-           this.SlotNames.forEach(e => {
-            let existing = data.value.filter(db =>{
-              var same = this.datepipe.transform(db.ExamDate,'dd/MM/yyyy') === this.datepipe.transform(_examDate,'dd/MM/yyyy')
-              return db.SlotNameId == e.MasterDataId && same 
-            } );
+          this.SlotNames.forEach(e => {
+            let existing = data.value.filter(db => {
+              var same = this.datepipe.transform(db.ExamDate, 'dd/MM/yyyy') === this.datepipe.transform(_examDate, 'dd/MM/yyyy')
+              return db.SlotNameId == e.MasterDataId && same
+            });
             if (existing.length > 0) {
               existing[0].SlotName = e.MasterDataName;
               existing[0].WeekDay = day;
+              existing[0].Action = false;
               this.ExamSlots.push(existing[0]);
             }
             else {
@@ -282,21 +297,25 @@ export class ExamslotComponent implements OnInit {
                 SlotNameId: e.MasterDataId,
                 SlotName: e.MasterDataName,
                 ExamDate: new Date(_examDate.getTime()),
-                WeekDay:day,
+                WeekDay: day,
                 StartTime: '',
                 EndTime: '',
                 OrgId: 0,
                 BatchId: 0,
-                Active: 0
+                Active: 0,
+                Action: false
               });
-              }
-            })
+            }
+          })
           _examDate.setDate(_examDate.getDate() + 1);
         }
         //console.log('this', this.ExamSlots)
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
         this.loading = false;
       })
+  }
+  onBlur(row) {
+    row.Action = true;
   }
   GetMasterData() {
 
@@ -313,7 +332,6 @@ export class ExamslotComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.GetExams();
       });
@@ -341,11 +359,12 @@ export interface IExamSlots {
   SlotNameId: number;
   SlotName: string;
   ExamDate: Date;
-  WeekDay:string;
+  WeekDay: string;
   StartTime: string;
   EndTime: string;
   OrgId: number;
   BatchId: number;
   Active: number;
+  Action: boolean
 }
 

@@ -85,6 +85,9 @@ PageLoad() {
 //    this.GetMasterData();      
   }
 }
+onBlur(row){
+row.Action=true;
+}
 addnew(){
  
   let toadd={    
@@ -93,7 +96,8 @@ addnew(){
       OrgId: 0,
       BatchId: 0,
       SelectHowMany: 0,
-      Active: 1
+      Active: 1,
+      Action:false
     };
     this.SubjectTypes.push(toadd);
     this.dataSource = new MatTableDataSource<ISubjectType>(this.SubjectTypes);
@@ -162,7 +166,7 @@ UpdateOrSave(row) {
           this.SubjectTypeData["UpdatedDate"] = new Date();
           this.SubjectTypeData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
           console.log('this',this.SubjectTypeData)
-          this.update();
+          this.update(row);
         }        
       }
     });
@@ -175,16 +179,18 @@ insert(row) {
     .subscribe(
       (data: any) => {
         row.SubjectTypeId = data.SubjectTypeId;
+        row.Action=false;
         this.loading=false;
         this.alert.success("Data saved successfully.", this.optionAutoClose);
       });
 }
-update() {
+update(row) {
 
   this.dataservice.postPatch('SubjectTypes', this.SubjectTypeData, this.SubjectTypeData.SubjectTypeId, 'patch')
     .subscribe(
       (data: any) => {
         this.loading=false;
+        row.Action=false;
         this.alert.success("Data updated successfully.", this.optionAutoClose);
       });
 }

@@ -5,6 +5,7 @@ import { globalconstants } from './globalconstant';
 import { NaomitsuService } from './databaseService';
 import { List } from './interface';
 import { SharedataService } from './sharedata.service';
+import { TokenStorageService } from '../_services/token-storage.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,6 +13,7 @@ export class ContentService {
 
   url: any;
   constructor(
+    private tokenService:TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
     private shareddata: SharedataService) { }
@@ -47,8 +49,6 @@ export class ContentService {
   }
   GetSessionFormattedMonths() {
     var _sessionStartEnd = {
-      StartDate: new Date(),
-      EndDate: new Date()
     };
     var Months = [
       'Jan',
@@ -65,23 +65,36 @@ export class ContentService {
       'Dec'
     ]
     var monthArray = [];
-    //debugger;
-    this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
-      if (b.length != 0) {
-        _sessionStartEnd = b
+    debugger;
+    _sessionStartEnd = JSON.parse(this.tokenService.getSelectedBatchStartEnd());
 
-        var _Year = _sessionStartEnd.StartDate.getFullYear();
-        var startMonth = _sessionStartEnd.StartDate.getMonth() + 1;
+    var _Year = new Date(_sessionStartEnd["StartDate"]).getFullYear();
+    var startMonth = new Date(_sessionStartEnd["StartDate"]).getMonth() + 1;
 
-        for (var month = 0; month < 12; month++, startMonth++) {
-          monthArray.push({
-            MonthName: Months[startMonth],
-            val: _Year + startMonth.toString().padStart(2, "0")
-          })
-          startMonth = startMonth == 12 ? 1 : startMonth;
-        }
-      }
-    });
+    for (var month = 0; month < 12; month++, startMonth++) {
+      monthArray.push({
+        MonthName: Months[startMonth],
+        val: _Year + startMonth.toString().padStart(2, "0")
+      })
+      startMonth = startMonth == 12 ? 1 : startMonth;
+    }
+
+    // this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
+    //   if (b.length != 0) {
+    //      = b
+
+    //     var _Year = _sessionStartEnd.StartDate.getFullYear();
+    //     var startMonth = _sessionStartEnd.StartDate.getMonth() + 1;
+
+    //     for (var month = 0; month < 12; month++, startMonth++) {
+    //       monthArray.push({
+    //         MonthName: Months[startMonth],
+    //         val: _Year + startMonth.toString().padStart(2, "0")
+    //       })
+    //       startMonth = startMonth == 12 ? 1 : startMonth;
+    //     }
+    //   }
+    // });
     return monthArray;
   }
   Getcontent(title: string, query: string) {

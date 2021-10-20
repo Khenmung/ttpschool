@@ -3,6 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import alasql from 'alasql';
+import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
@@ -31,6 +32,7 @@ export class FeereceiptComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  LoginUserDetail=[];
   BillStatus = 0;
   CurrentBatchId = 0;
   ReceiptHeading = [];
@@ -74,7 +76,8 @@ export class FeereceiptComponent implements OnInit {
   constructor(private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService,
     private alert: AlertService,
-    private shareddata: SharedataService) { }
+    private shareddata: SharedataService,
+    private contentservice:ContentService) { }
 
   ngOnInit(): void {
   }
@@ -109,11 +112,15 @@ export class FeereceiptComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.dataSource = new MatTableDataSource<any>(this.BillDetail);
-    this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
+    this.LoginUserDetail = this.tokenservice.getUserDetail();
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data:any)=>{
+      this.Classes= [...data.value];
+    }) 
     this.shareddata.CurrentBatch.subscribe(lo => (this.Batches = lo));
     this.shareddata.CurrentSection.subscribe(pr => (this.Sections = pr));
-    this.shareddata.CurrentStudentId.subscribe(id => (this.studentInfoTodisplay.StudentId = id));
-    this.shareddata.CurrentStudentClassId.subscribe(scid => (this.studentInfoTodisplay.StudentClassId = scid));
+    
+    this.studentInfoTodisplay.StudentId = this.tokenservice.getStudentId();
+    this.studentInfoTodisplay.StudentClassId = this.tokenservice.getStudentClassId();
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
     this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
@@ -194,15 +201,7 @@ export class FeereceiptComponent implements OnInit {
     filterstring += ' and Active eq 1';
 
     let list: List = new List();
-    list.fields = [
-      'StudentFeePayment/StudentFeeId',
-      'StudentFeePayment/StudentClassId',
-      'StudentFeePayment/StudentId',
-      'StudentFeePayment/PaidAmt',
-      'StudentFeePayment/BalanceAmt',
-      'ClassFee/FeeNameId',
-      'StudentFeeReceipt/OfflineReceiptNo',
-      'StudentFeeReceipt/TotalAmount',
+    list.fields = [     
       'PaymentId',
       'ParentId',
       'ClassFeeId',
@@ -210,7 +209,8 @@ export class FeereceiptComponent implements OnInit {
       'ReceiptNo',
       'PaymentDate'];
     list.PageName = "PaymentDetails";
-    list.lookupFields = ["StudentFeePayment", "ClassFee", "StudentFeeReceipt"];
+    list.lookupFields = ["StudentFeePayment($select=StudentFeeId,StudentClassId,StudentId,PaidAmt,BalanceAmt)",
+     "ClassFee($select=FeeNameId)", "StudentFeeReceipt($select=OfflineReceiptNo,TotalAmount)"];
     list.filter = [filterstring];
     list.orderBy = "PaymentId";
 
@@ -274,17 +274,11 @@ export class FeereceiptComponent implements OnInit {
       "OffLineReceiptNo",
       "ReceiptDate",
       "Discount",
-      "Active",
-      "AccountingVouchers/AccountingVoucherId",
-      "AccountingVouchers/GLAccountId",
-      "AccountingVouchers/FeeReceiptId",
-      "AccountingVouchers/Amount",
-      "AccountingVouchers/ClassFeeId"
-
+      "Active"
     ];
 
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["AccountingVouchers"];
+    list.lookupFields = ["AccountingVouchers($select=AccountingVoucherId,GLAccountId,FeeReceiptId,Amount,ClassFeeId)"];
     list.filter = ["StudentClassId eq " + this.studentInfoTodisplay.StudentClassId];
 
     this.dataservice.get(list)
@@ -338,12 +332,10 @@ export class FeereceiptComponent implements OnInit {
       "StudentId",
       "BatchId",
       "RollNo",
-      "Student/FirstName",
-      "Student/LastName",
       "ClassId",
       "FeeTypeId"];
 
-    list.lookupFields = ["Student"];
+    list.lookupFields = ["Student($select=FirstName,LastName)"];
     list.PageName = "StudentClasses";
     list.filter = [filterstr];
 

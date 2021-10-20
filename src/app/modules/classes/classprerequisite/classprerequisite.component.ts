@@ -28,7 +28,7 @@ export class ClassprerequisiteComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  PrerequisiteListName = 'ClassRequisites';
+  PrerequisiteListName = 'ClassPrerequisites';
   Applications = [];
   loading = false;
   SelectedBatchId = 0;

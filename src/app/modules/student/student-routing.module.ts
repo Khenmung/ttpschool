@@ -4,7 +4,6 @@ import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { AddstudentComponent } from './addstudent/addstudent.component';
 import { AddstudentclassComponent } from './addstudentclass/addstudentclass.component';
 import { DashboardstudentComponent } from './dashboardstudent/dashboardstudent.component';
-import { ExcelDataManagementComponent } from './excel-data-management/excel-data-management.component';
 import { DashboardstudentdocumentComponent } from './StudentDocument/dashboardstudentdocument/dashboardstudentdocument.component';
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from './studentfeepayment/feereceipt/feereceipt.component';
@@ -35,7 +34,6 @@ export const StudentComponents = [
   AddstudentfeepaymentComponent,
   DashboardstudentComponent,
   FeereceiptComponent,
-  ExcelDataManagementComponent,
   DashboardstudentdocumentComponent,
   StudentDocumentComponent
 ]

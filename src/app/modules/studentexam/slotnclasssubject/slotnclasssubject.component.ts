@@ -30,6 +30,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   loading = false;
+  DataToUpdateCount = -1;
   SlotNClassSubjects: ISlotNClassSubject[] = [];
   SelectedBatchId = 0;
   ExamSlots = [];
@@ -80,6 +81,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
 
   PageLoad() {
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
@@ -90,19 +92,16 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
       this.GetMasterData();
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-
-        });
-      }
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      })
 
     }
   }
 
   updateActive(row, value) {
     row.Active = row.Active == 1 ? 0 : 1;
+    row.Action=true;
   }
   delete(element) {
     let toupdate = {
@@ -119,19 +118,12 @@ export class SlotnclasssubjectComponent implements OnInit {
   loadingFalse() {
     this.loading = false;
   }
+  Save(row) {
+    this.DataToUpdateCount = 0;
+    this.UpdateOrSave(row);
+  }
   UpdateOrSave(row) {
 
-    //debugger;
-    // if(row.ExamDate ==null)
-    // {
-    //   this.alert.error("Exam date is mandatory!",this.optionAutoClose);
-    //   return;
-    // }
-    // if(row.StartTime.length==0 || row.EndTime.length ==0)
-    // {
-    //   this.alert.error("Start time and end time are mandatory!",this.optionAutoClose);
-    //   return;
-    // }
     this.loading = true;
 
     var duplicate = this.SlotNClassSubjects.filter(s => s.SlotId == row.SlotId
@@ -198,7 +190,10 @@ export class SlotnclasssubjectComponent implements OnInit {
         (data: any) => {
           row.SlotClassSubjectId = data.SlotClassSubjectId;
           this.loadingFalse();
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          if (this.DataToUpdateCount == 0) {
+            this.DataToUpdateCount = -1;
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
+          }
         });
   }
   update(row) {
@@ -207,8 +202,15 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loadingFalse();
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          row.Action = false;
+          if (this.DataToUpdateCount == 0) {
+            this.DataToUpdateCount = -1;
+            this.alert.success("Data updated successfully.", this.optionAutoClose);
+          }
         });
+  }
+  onBlur(element){
+    element.Action=true;
   }
   GetClassSubject() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -229,7 +231,10 @@ export class SlotnclasssubjectComponent implements OnInit {
         //debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
-          var _class = this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName;
+          var _class = '';
+          var clsobj = this.Classes.filter(c => c.ClassId == item.ClassId)
+          if (clsobj.length > 0)
+            _class = clsobj[0].ClassName;
           var _subject = this.Subjects.filter(c => c.MasterDataId == item.SubjectId)[0].MasterDataName;
           return {
             ClassSubjectId: item.ClassSubjectId,
@@ -241,6 +246,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.loading = false;
       });
   }
+
   GetExamSlots() {
 
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -253,10 +259,10 @@ export class SlotnclasssubjectComponent implements OnInit {
       "SlotNameId",
       "ExamDate",
       "StartTime",
-      "EndTime",
-      "Exam/ExamNameId"];
+      "EndTime"
+    ];
     list.PageName = "ExamSlots";
-    list.lookupFields = ["Exam"];
+    list.lookupFields = ["Exam($select=ExamNameId)"];
     list.filter = ["Active eq 1 " + orgIdSearchstr + filterstr];
     //list.orderBy = "ParentId";
 
@@ -299,12 +305,10 @@ export class SlotnclasssubjectComponent implements OnInit {
       "SlotClassSubjectId",
       "SlotId",
       "ClassSubjectId",
-      "Active",
-      "ExamSlot/SlotNameId",
-      "ClassSubject/SubjectId",
-      "ClassSubject/ClassId"];
+      "Active"
+    ];
     list.PageName = "SlotAndClassSubjects";
-    list.lookupFields = ["ClassSubject", "ExamSlot"];
+    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)", "Slot($select=SlotNameId)"];
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
@@ -437,11 +441,12 @@ export class SlotnclasssubjectComponent implements OnInit {
       record.Action = !record.Action;
     })
   }
-  saveall() {
-    this.SlotNClassSubjects.forEach(record => {
-      if (record.Action == true) {
-        this.UpdateOrSave(record);
-      }
+  SaveAll() {
+    var toUpdate = this.SlotNClassSubjects.filter(f => f.Action);
+    this.DataToUpdateCount = toUpdate.length;
+    toUpdate.forEach(record => {
+      this.DataToUpdateCount--;
+      this.UpdateOrSave(record);
     })
   }
   GetMasterData() {

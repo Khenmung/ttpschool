@@ -31,7 +31,7 @@ export class AddstudentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  loginUserDetail=[];
+  loginUserDetail = [];
   StudentLeaving = false;
   StudentName = '';
   StudentClassId = 0;
@@ -129,11 +129,12 @@ export class AddstudentComponent implements OnInit {
     this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
     this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
     this.shareddata.CurrentStates.subscribe(st => (this.States = st));
-    this.shareddata.CurrentClasses.subscribe(cls => (this.Classes = cls));
     this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
     this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
-    this.shareddata.CurrentStudentId.subscribe(id => (this.Id = id));
-    this.shareddata.CurrentStudentClassId.subscribe(scid => (this.StudentClassId = scid));
+
+    this.Id = this.tokenService.getStudentId();
+    this.StudentClassId = this.tokenService.getStudentClassId()
+
     this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
     this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
     this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
@@ -150,8 +151,6 @@ export class AddstudentComponent implements OnInit {
       PresentAddress: ['', [Validators.required]],
       PermanentAddress: ['', [Validators.required]],
       City: [0],
-      //Pincode: new FormControl('', [Validators.required]),
-      //State: [0],
       Country: [0],
       DOB: [new Date(), [Validators.required]],
       Bloodgroup: [0],
@@ -187,13 +186,9 @@ export class AddstudentComponent implements OnInit {
     this.loginUserDetail = this.tokenService.getUserDetail();
     if (this.Id > 0)
       this.GetStudent();
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];  
-        });
-      }
-  
+    this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+    });
   }
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
@@ -228,7 +223,7 @@ export class AddstudentComponent implements OnInit {
         break;
       case 5:
         this.studentDocument.PageLoad();
-        break;          
+        break;
     }
   }
   back() {
@@ -239,7 +234,7 @@ export class AddstudentComponent implements OnInit {
       this.StudentLeaving = true;
     else {
       this.StudentLeaving = false;
-      this.studentForm.patchValue({ReasonForLeavingId:this.ReasonForLeaving.filter(r=>r.MasterDataName.toLowerCase()=='active')[0].MasterDataId});
+      this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
     }
   }
   GetMasterData() {
@@ -270,7 +265,7 @@ export class AddstudentComponent implements OnInit {
         this.studentForm.patchValue({ LocationId: this.LocationId });
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
         this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
-        this.studentForm.patchValue({ReasonForLeavingId:this.ReasonForLeaving.filter(r=>r.MasterDataName.toLowerCase()=='active')[0].MasterDataId});
+        this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
       });
 
   }
@@ -292,7 +287,7 @@ export class AddstudentComponent implements OnInit {
 
   }
   SaveOrUpdate() {
-    this.loading =true;
+    this.loading = true;
     this.studentData = {
       FirstName: this.studentForm.get("FirstName").value,
       LastName: this.studentForm.get("LastName").value,
@@ -352,7 +347,7 @@ export class AddstudentComponent implements OnInit {
           this.studentForm.patchValue({
             StudentId: result.StudentId
           })
-          this.loading=false;
+          this.loading = false;
           this.alert.success("Student's data saved successfully.", this.options);
 
         }
@@ -365,7 +360,7 @@ export class AddstudentComponent implements OnInit {
     this.dataservice.postPatch('Students', this.studentData, +this.studentForm.get("StudentId").value, 'patch')
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
-        this.loading=false;
+        this.loading = false;
         this.alert.success("Student's data updated successfully.", this.options);
       })
   }

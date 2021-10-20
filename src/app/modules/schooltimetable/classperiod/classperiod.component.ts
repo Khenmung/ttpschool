@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -37,7 +38,7 @@ export class ClassperiodComponent implements OnInit {
   StoredForUpdate = [];
   Classes = [];
   Periods = [];
-  PeriodTypes = [];  
+  PeriodTypes = [];
   Batches = [];
   AllClassPeriods = [];
   SchoolClassPeriodListName = "SchoolClassPeriods";
@@ -49,9 +50,9 @@ export class ClassperiodComponent implements OnInit {
     SchoolClassPeriodId: 0,
     ClassId: 0,
     PeriodId: 0,
-    PeriodTypeId:0,
+    PeriodTypeId: 0,
     FromToTime: '',
-    Sequence:0,
+    Sequence: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
@@ -59,6 +60,7 @@ export class ClassperiodComponent implements OnInit {
   displayedColumns = [];
   searchForm: FormGroup;
   constructor(
+    private datepipe:DatePipe,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -85,12 +87,10 @@ export class ClassperiodComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-        });
-      }
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      });
+
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
       this.GetAllClassPeriods();
@@ -116,8 +116,27 @@ export class ClassperiodComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
+    this.loading =false;
+
+    if(row.PeriodTypeId==0)
+    {
+      this.alert.error("Please select period type.",this.optionAutoClose);
+      return;
+    }
+    if(row.FromToTime==0)
+    {
+      this.alert.error("Please enter period time.",this.optionAutoClose);
+      return;
+    }
+    if(row.Sequence==0)
+    {
+      this.alert.error("Please enter sequence of period.",this.optionAutoClose);
+      return;
+    }
 
     this.loading = true;
+    
+    
     let checkFilterString = "ClassId eq " + row.ClassId +
       " and PeriodId eq " + row.PeriodId
 
@@ -152,9 +171,9 @@ export class ClassperiodComponent implements OnInit {
 
           //console.log('data', this.ClassSubjectData);
           if (this.SchoolClassPeriodData.SchoolClassPeriodId == 0) {
-            this.SchoolClassPeriodData["CreatedDate"] = new Date();
+            this.SchoolClassPeriodData["CreatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd') ;
             this.SchoolClassPeriodData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.SchoolClassPeriodData["UpdatedDate"] = new Date();
+            this.SchoolClassPeriodData["UpdatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
             delete this.SchoolClassPeriodData["UpdatedBy"];
             //console.log('exam slot', this.SchoolClassPeriodListData)
             this.insert(row);
@@ -162,7 +181,7 @@ export class ClassperiodComponent implements OnInit {
           else {
             delete this.SchoolClassPeriodData["CreatedDate"];
             delete this.SchoolClassPeriodData["CreatedBy"];
-            this.SchoolClassPeriodData["UpdatedDate"] = new Date();
+            this.SchoolClassPeriodData["UpdatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
             this.SchoolClassPeriodData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
@@ -179,8 +198,8 @@ export class ClassperiodComponent implements OnInit {
           row.SchoolClassPeriodId = data.SchoolClassPeriodId;
           row.Action = false;
           this.loading = false;
-          this.rowCount++;
-          if (this.rowCount == this.DataToSave) {
+          if (this.DataToSave==0) {
+            this.DataToSave =-1;
             this.loading = false;
             this.alert.success("Data saved successfully", this.optionAutoClose);
           }
@@ -192,14 +211,13 @@ export class ClassperiodComponent implements OnInit {
     this.dataservice.postPatch(this.SchoolClassPeriodListName, this.SchoolClassPeriodData, this.SchoolClassPeriodData.SchoolClassPeriodId, 'patch')
       .subscribe(
         (data: any) => {
-          //this.loading = false;
           this.rowCount++;
           row.Action = false;
-          if (this.rowCount == this.DataToSave) {
+          if (this.DataToSave==0) {
+            this.DataToSave =-1;
             this.loading = false;
             this.alert.success("Data saved successfully", this.optionAutoClose);
           }
-          //this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
 
@@ -255,7 +273,7 @@ export class ClassperiodComponent implements OnInit {
               "SchoolClassPeriodId": existing[0].SchoolClassPeriodId,
               "ClassId": existing[0].ClassId,
               "PeriodId": existing[0].PeriodId,
-              "PeriodTypeId":existing[0].PeriodTypeId,
+              "PeriodTypeId": existing[0].PeriodTypeId,
               "PeriodName": this.Periods.filter(c => c.MasterDataId == existing[0].PeriodId)[0].MasterDataName,
               "FromToTime": existing[0].FromToTime,
               "Sequence": existing[0].Sequence,
@@ -268,7 +286,7 @@ export class ClassperiodComponent implements OnInit {
               "SchoolClassPeriodId": 0,
               "ClassId": this.searchForm.get("searchClassId").value,
               "PeriodId": p.MasterDataId,
-              "PeriodTypeId":0,
+              "PeriodTypeId": 0,
               "PeriodName": p.MasterDataName,
               "FromToTime": '',
               "Sequence": 0,
@@ -288,7 +306,7 @@ export class ClassperiodComponent implements OnInit {
         record.Active = 1;
       else
         record.Active = 0;
-      record.Action = !record.Action;
+      record.Action = true;
     })
   }
 
@@ -369,6 +387,7 @@ export class ClassperiodComponent implements OnInit {
     this.DataToSave = checkedRows.length;
 
     checkedRows.forEach(record => {
+      this.DataToSave--;
       this.UpdateOrSave(record);
 
     })
@@ -378,7 +397,7 @@ export class ClassperiodComponent implements OnInit {
     this.loading = true;
     this.rowCount = 0;
 
-    this.DataToSave = 1;
+    this.DataToSave = 0;
     this.UpdateOrSave(element);
   }
   GetMasterData() {
@@ -425,9 +444,9 @@ export interface ISchoolClassPeriod {
   SchoolClassPeriodId: number;
   ClassId: number;
   PeriodId: number;
-  PeriodTypeId:number;
+  PeriodTypeId: number;
   FromToTime: string;
-  Sequence:number;
+  Sequence: number;
   OrgId: number;
   BatchId: number;
   Active: number;

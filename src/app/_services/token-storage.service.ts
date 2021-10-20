@@ -11,6 +11,10 @@ const CHECKBATCHID='checkbatchid'
 const NEXTBATCHID ='nextbatchid';
 const PREVIOUSBATCHID='previousbatchid';
 const PERMITTED_APPS='Permitted_Apps';
+const CURRENTBATCHSTARTEND='CurrentBatchStartEnd';
+const SELECTEDBATCHSTARTEND='SelectedBatchStartEnd';
+const STUDENTID='StudentId';
+const STUDENTCLASSID='StudentClassId';
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +36,16 @@ export class TokenStorageService {
     if (images) {
       return JSON.parse(JSON.stringify(images));
     }
-
     return "";    
+  }
+  
+  public saveCurrentBatchStartEnd(token: any): void {
+    localStorage.removeItem(CURRENTBATCHSTARTEND);
+    localStorage.setItem(CURRENTBATCHSTARTEND, JSON.stringify(token));
+  }
+  public saveSelectedBatchStartEnd(token: any): void {
+    localStorage.removeItem(SELECTEDBATCHSTARTEND);
+    localStorage.setItem(SELECTEDBATCHSTARTEND, JSON.stringify(token));
   }
   public saveNextBatchId(token: string): void {
     localStorage.removeItem(NEXTBATCHID);
@@ -68,8 +80,37 @@ export class TokenStorageService {
     localStorage.removeItem(CHECKBATCHID);
     localStorage.setItem(CHECKBATCHID, token);
   }
+  public saveStudentClassId(token: string): void {
+    localStorage.removeItem(STUDENTCLASSID);
+    localStorage.setItem(STUDENTCLASSID, token);
+  }
+  public saveStudentId(token: string): void {
+    localStorage.removeItem(STUDENTID);
+    localStorage.setItem(STUDENTID, token);
+  }
+  public getCurrentBatchStartEnd(): string|null {
+    var batch=localStorage.getItem(CURRENTBATCHSTARTEND);
+    if (batch) {
+      return JSON.parse(JSON.stringify(batch));
+    }
+    return "";
+    
+  }
+  public getSelectedBatchStartEnd(): string|null {
+    var batch=localStorage.getItem(SELECTEDBATCHSTARTEND);
+    if (batch) {
+      return JSON.parse(JSON.stringify(batch));
+    }
+    return "";
+  }
   public getCheckEqualBatchId(): string | null {
     return localStorage.getItem(CHECKBATCHID);
+  }
+  public getStudentId(): number | null {
+    return +localStorage.getItem(STUDENTID);
+  }
+  public getStudentClassId(): number | null {
+    return +localStorage.getItem(STUDENTCLASSID);
   }
   public saveSelectedAppId(token: string): void {
     localStorage.removeItem(SELECTEDAPPID);

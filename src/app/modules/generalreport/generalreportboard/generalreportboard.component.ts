@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ExcelDataManagementComponent } from '../excel-data-management/excel-data-management.component';
 import { GetreportComponent } from '../getreport/getreport.component';
 
 @Component({
@@ -8,6 +9,7 @@ import { GetreportComponent } from '../getreport/getreport.component';
 })
 export class GeneralReportboardComponent implements OnInit {
   @ViewChild(GetreportComponent) Getreport:GetreportComponent;
+  @ViewChild(ExcelDataManagementComponent) excelUpload:ExcelDataManagementComponent;
     selectedIndex = 0;
     constructor() { }
   
@@ -29,9 +31,9 @@ export class GeneralReportboardComponent implements OnInit {
         case 0:
           this.Getreport.PageLoad();
           break;
-        // case 1:
-        //   this.userreportconfigcolumns.PageLoad();
-        //   break;
+        case 1:
+          this.excelUpload.PageLoad();
+          break;
         // case 2:
         //   this.variableconfig.PageLoad();
         //   break;

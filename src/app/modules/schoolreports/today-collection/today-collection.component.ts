@@ -60,12 +60,10 @@ export class TodayCollectionComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
 
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-      }
+      
 
       this.GetMasterData();
     }

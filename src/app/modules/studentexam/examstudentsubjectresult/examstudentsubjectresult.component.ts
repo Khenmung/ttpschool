@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -67,10 +68,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
+    private contentservice: ContentService,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
 
@@ -227,16 +226,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       'StudentClassSubjectId',
       'ClassSubjectId',
       'StudentClassId',
-      'Active',
-      'ClassSubject/SubjectId',
-      'ClassSubject/ClassId',
-      'StudentClass/StudentId',
-      'StudentClass/RollNo',
-      'StudentClass/SectionId'
+      'Active'
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject", "StudentClass"]
+    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)", "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -287,12 +281,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       "SubjectComponentId",
       "FullMark",
       "PassMark",
-      "Active",
-      "ClassSubject/ClassId",
-      "ClassSubject/SubjectId"
+      "Active"
     ];
     list.PageName = "ClassSubjectMarkComponents";
-    list.lookupFields = ["ClassSubject"];
+    list.lookupFields = ["ClassSubject($select=ClassId,SubjectId)"];
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
@@ -349,12 +341,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       "ClassSubjectMarkComponentId",
       "Marks",
       "ExamStatus",
-      "Active",
-      "ClassSubjectMarkComponent/ClassSubjectId",
-      "ClassSubjectMarkComponent/SubjectComponentId",
+      "Active"
     ];
     list.PageName = "ExamStudentSubjectResults";
-    list.lookupFields = ["ClassSubjectMarkComponent"];
+    list.lookupFields = ["ClassSubjectMarkComponent($select=ClassSubjectId,SubjectComponentId)"];
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
     this.displayedColumns = [
@@ -464,9 +454,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   onBlur(element, event) {
     //debugger;
     var _colName = event.srcElement.name;
-    console.log("event", event);
+    //console.log("event", event);
     var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     row[0][_colName] = element[_colName];
+    element.Action=true;
   }
 
   UpdateAll() {
@@ -488,9 +479,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         row[0].Marks = row[0][prop];
         this.UpdateOrSave(row[0]);
       }
-
     }
-
   }
   GetMasterData() {
 
@@ -512,6 +501,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        })
         this.GetExams();
 
       });

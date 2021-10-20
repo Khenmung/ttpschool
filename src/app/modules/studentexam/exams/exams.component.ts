@@ -131,7 +131,7 @@ export class ExamsComponent implements OnInit {
     this.loading = true;
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
-      " and StartDate gt datetime'" + new Date(row.StartDate).toISOString() + "'"
+      " and StartDate gt " + this.datepipe.transform(row.StartDate,'yyyy-MM-dd')
 
 
     if (row.ExamId > 0)
@@ -215,6 +215,7 @@ export class ExamsComponent implements OnInit {
           let existing = data.value.filter(db => db.ExamNameId == e.MasterDataId);
           if (existing.length > 0) {
             existing[0].ExamName = this.ExamNames.filter(f=>f.MasterDataId == existing[0].ExamNameId)[0].MasterDataName; 
+            existing[0].Action=false;
             return existing[0];
           }
           else {
@@ -227,7 +228,7 @@ export class ExamsComponent implements OnInit {
               OrgId: 0,
               BatchId: 0,
               Active: 0,
-
+              Action:false
             }
           }
         })

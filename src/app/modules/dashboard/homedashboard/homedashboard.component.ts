@@ -149,8 +149,8 @@ export class HomeDashboardComponent implements OnInit {
           'StartDate': _currentBatch[0].StartDate,
           'EndDate': _currentBatch[0].EndDate,
         };
-        this.shareddata.ChangeCurrentBatchStartEnd(_currentBatchStartEnd);
-        this.shareddata.ChangeSelectedBatchStartEnd(_currentBatchStartEnd);
+        this.tokenStorage.saveCurrentBatchStartEnd(_currentBatchStartEnd)
+        this.tokenStorage.saveSelectedBatchStartEnd(_currentBatchStartEnd)
         this.CurrentBatchId = _currentBatch[0].BatchId;
       }
       if (this.SelectedBatchId == 0) {

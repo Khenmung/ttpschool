@@ -90,12 +90,9 @@ export class studentsubjectdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];  
-        });
-      }
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];  
+      });
 
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
@@ -138,9 +135,6 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
     list.fields = [
-
-      'Student/FirstName',
-      'Student/LastName',
       'StudentClassId',
       'RollNo',
       'SectionId',
@@ -149,7 +143,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student"];
+    list.lookupFields = ["Student($select=FirstName,LastName)"];
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((studentclassdb: any) => {
@@ -183,16 +177,12 @@ export class studentsubjectdashboardComponent implements OnInit {
     let list: List = new List();
 
     list.fields = [
-      'StudentClassSubjects/StudentClassSubjectId',
-      'StudentClassSubjects/StudentClassId',
-      'StudentClassSubjects/ClassSubjectId',
-      'StudentClassSubjects/Active',
       "ClassId",
       "SubjectId",
       "ClassSubjectId"
     ];
     list.PageName = "ClassSubjects";
-    list.lookupFields = ["StudentClassSubjects"];
+    list.lookupFields = ["StudentClassSubjects($select=ClassSubjectId,StudentClassId,StudentClassSubjectId,Active)"];
 
     list.filter = ["Active eq 1 and " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -320,19 +310,13 @@ export class studentsubjectdashboardComponent implements OnInit {
     let list: List = new List();
 
     list.fields = [
-      //'StudentClassSubjects/StudentClassSubjectId',
-      //'StudentClassSubjects/StudentClassId',
-      //'StudentClassSubjects/ClassSubjectId',
-      //'StudentClassSubjects/Active',
       "ClassSubjectId",
       "ClassId",
       "SubjectId",
-      "SubjectTypeId",
-      "SubjectType/SubjectTypeName",
-      "SubjectType/SelectHowMany"
+      "SubjectTypeId"
     ];
     list.PageName = "ClassSubjects";
-    list.lookupFields = ["SubjectType"];
+    list.lookupFields = ["SubjectType($select=SubjectTypeName,SelectHowMany)"];
 
     list.filter = ["Active eq 1 and " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -375,9 +359,6 @@ export class studentsubjectdashboardComponent implements OnInit {
     });
   }
   SelectAllInRow(element, event, colName) {
-    //element.Action = true;
-    //debugger;
-    //element.Active = event.checked == true ? 1 : 0;
     var columnexist = [];
     if (colName == 'Action') {
       for (var prop in element) {
@@ -442,8 +423,6 @@ export class studentsubjectdashboardComponent implements OnInit {
 
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
       " and StudentClassId eq " + row.StudentClassId
-    // " and Active eq " + row.Active +
-    //this.StandardFilter;
 
     if (row.StudentClassSubjectId > 0)
       checkFilterString += " and StudentClassSubjectId ne " + row.StudentClassSubjectId;
@@ -508,8 +487,6 @@ export class studentsubjectdashboardComponent implements OnInit {
             this.loading = false;
             this.alert.success("Data saved successfully", this.optionAutoClose);
           }
-
-          //this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
   update(row) {
@@ -547,14 +524,9 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-
-        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
-        //this.shareddata.ChangeBatch(this.Batches);
         this.GetClassSubjects();
         this.loading = false;
       });

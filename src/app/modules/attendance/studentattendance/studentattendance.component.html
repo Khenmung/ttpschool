@@ -22,34 +22,35 @@
             <mat-form-field appearance="outline">
                 <mat-label>Subject</mat-label>
                 <mat-select formControlName="searchClassSubjectId">
+                    <mat-option>--select subject--</mat-option>
                     <mat-option *ngFor="let item of FilteredClassSubjects" [value]="item.ClassSubjectId">{{item.ClassSubject}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <!-- <mat-form-field appearance="outline">
+             <mat-form-field appearance="outline">
                 <mat-label>Attendance Date</mat-label>
-                <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
+                <input [disabled]="true" formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
                 <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
                 <mat-datepicker #AttendanceDate></mat-datepicker>
-            </mat-form-field> -->
+            </mat-form-field> 
             <button [disabled]="loading" (click)="GetStudentAttendance()" class="mat-raised-button">
                 <mat-icon>search</mat-icon>
             </button>
         </form>
         <mat-table #table [dataSource]="dataSource">
             <ng-container matColumnDef="StudentRollNo">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Student-RollNo
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Student
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.StudentRollNo}}
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="AttendanceDate">
+            <!-- <ng-container matColumnDef="AttendanceDate">
                 <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: left;" *matCellDef="let element">
                     {{element.AttendanceDate | date:'dd/MM/yyyy'}}
                 </mat-cell>
-            </ng-container>
+            </ng-container> -->
             <ng-container matColumnDef="AttendanceStatus">
                 <mat-header-cell *matHeaderCellDef> Present&nbsp;
                     <mat-checkbox *ngIf="StudentAttendanceList.length>0" 
@@ -67,8 +68,8 @@
                 <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field [style.width.px]="150">
-                        <input matInput [maxlength]="250" autocomplete="Off" (change)="onChangeEvent(element,$event)" [value]="element.Remarks"
-                            [(ngModel)]="element.Remarks">
+                        <textarea matInput [maxlength]="250" autocomplete="Off" (change)="onChangeEvent(element,$event)" [value]="element.Remarks"
+                            [(ngModel)]="element.Remarks"></textarea>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -80,7 +81,7 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                     <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
-                        (click)="UpdateOrSave(element,0)">
+                        (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>

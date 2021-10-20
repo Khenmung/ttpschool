@@ -4,8 +4,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { _ } from 'ag-grid-community';
-import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { List } from 'src/app/shared/interface';
@@ -20,8 +18,15 @@ import { TableUtil } from '../../../shared/TableUtil';
 export class GetreportComponent implements OnInit {
 
   @ViewChild("table") tableRef: ElementRef;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false })
+  set paginator(value: MatPaginator) {
+    this.dataSource.paginator = value;
+  }
+
+  @ViewChild(MatSort, { static: false })
+  set sort(value: MatSort) {
+    this.dataSource.sort = value;
+  }
   BaseReportId = 0;
   ParentId = 0;
   Permission = '';
@@ -50,6 +55,7 @@ export class GetreportComponent implements OnInit {
 
   ReportConfigItemList = [];
   dataSource: MatTableDataSource<IReportConfigItem>;
+  filterKeyValue = [];
   allMasterData = [];
   PagePermission = '';
   FilterColumns = [];
@@ -116,6 +122,7 @@ export class GetreportComponent implements OnInit {
 
 
   PageLoad() {
+    //this.tokenstorage.get
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -365,11 +372,18 @@ export class GetreportComponent implements OnInit {
           // to get table name of parent report;
           _ParentId = SelectedReport[0].ParentId;
         }
-
+        var baseReportColumns = this.ReportNames.filter(f => f.ParentId == _ParentId && f.OrgId == 0);
         var _tableNames = this.AvailableReportNames.filter(m => m.ReportConfigItemId == _ParentId)[0].TableNames.split(',');
         //var _baseColumns = this.ReportNames.filter(f=>f.ParentId == _ParentId && f.OrgId ==0)
-        this.ColumnsOfSelectedReports = [...data.value];
+        this.ColumnsOfSelectedReports = data.value.map(m => {
+          m.TableNames = baseReportColumns.filter(f => f.ReportName == m.ReportName)[0].TableNames;
+          return m;
+        })
 
+        //console.log("the", this.ColumnsOfSelectedReports)
+
+
+        //console.log('baseReportColumns', baseReportColumns)
         var list = new List();
         list.PageName = _tableNames[0];
 
@@ -385,84 +399,134 @@ export class GetreportComponent implements OnInit {
           list.lookupFields.push(_tableNames[i])
         }
 
-        // filter whose tablenames column not contains 1
-        var fitleredNestedColumns = this.ColumnsOfSelectedReports.filter(f => f.TableNames != '1');
-        list.fields = fitleredNestedColumns.map(m => {
+        // filter whose tablenames column not contains something
+        var fitleredNotNestedColumns = this.ColumnsOfSelectedReports.filter(f => f.TableNames == '');
+        var filteredNestedColumns = this.ColumnsOfSelectedReports.filter(f => f.TableNames != '');
+
+        list.fields = fitleredNotNestedColumns.map(m => {
           return m.ReportName;
         });
 
-        console.log("");
+        //if filter contains nested column remove it
+        var nestedColumnFilterList = [];
+        filteredNestedColumns.forEach(f => {
+          var filterOnNestedcolumn = this.FilterCriteria.filter(g => g.includes(f.ReportName))
+          if (filterOnNestedcolumn.length > 0) {
+            nestedColumnFilterList.push(filterOnNestedcolumn[0]);
+            const indx = this.FilterCriteria.indexOf(filterOnNestedcolumn[0]);
+            this.FilterCriteria.splice(indx, 1);
+          }
+        })
+        //
 
         var filter = this.FilterCriteria.join(" and ")
         if (filter.length > 0)
           filter += " and ";
-        console.log('filter str', filter);
+        //console.log('filter str', filter);
 
         list.filter = [filter + "OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-
-        // this.FilterCriteria.forEach(f=>{
-        //   list.filter.push(f);
-        // })
 
         this.dataservice.get(list)
           .subscribe((data: any) => {
             var result = [...data.value];
-            console.log('retus', result);
+
             if (result.length == 0) {
               this.alert.info("No record found.", this.optionAutoClose);
             }
-
             //var whereDisplayNameNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.DisplayName.length > 0)
             var colTem = [];
-            var testval = '';
+            var formatedResult=[];
             this.ColumnsOfSelectedReports.forEach(c => {
               if (c.DisplayName == null || c.DisplayName.length == 0)
                 c.DisplayName = c.ReportName;
 
-              this.ReportConfigItemList = result.map(m => {
-                //testval = evaluate(m +".StudentClasses[0].RollNo")
-                m[c.DisplayName] = this.traverse_it(m, c.ReportName)
-                // if (m[c.ReportName] === undefined)
-                //   m[c.DisplayName] = this.getnestedData(m, c.ReportName)
-                // else
-                //   m[c.DisplayName] = m[c.ReportName];
+                formatedResult = result.map(m => {
+                if (m[c.ReportName] === undefined)
+                  m[c.DisplayName] = this.traverse(m, c.TableNames, '');
+                else
+                  m[c.DisplayName] = m[c.ReportName];
+
                 var coldata = { "col": c.DisplayName, "sequence": c.ColumnSequence };
-                //console.log("coldasta",coldata)
                 if (!this.ItemExists(colTem, c.DisplayName))
                   colTem.push(coldata)
                 return m;
               })
             })
+            
+            // var filterCount = this.filterKeyValue.length;
+            // //for (var filterCount = 0; filterCount < this.filterKeyValue.length; filterCount++) {
+            //   formatedResult = formatedResult.filter(f => {
+            //     //switch (this.filterKeyValue[filterCount].condition) {
+            //       //case "eq":
+            //         f[this.filterKeyValue[0].columnname] == this.filterKeyValue[0].value
+            //       //   break;
+            //       // case "gt":
+            //       //   f[this.filterKeyValue[filterCount].columnname] > this.filterKeyValue[filterCount].value
+            //       //   break;
+            //       // case "lt":
+            //       //   f[this.filterKeyValue[filterCount].columnname] < this.filterKeyValue[filterCount].value
+            //       //   break;
+            //       // case "ge":
+            //       //   f[this.filterKeyValue[filterCount].columnname] >= this.filterKeyValue[filterCount].value
+            //       //   break;
+            //       // case "le":
+            //       //   f[this.filterKeyValue[filterCount].columnname] <= this.filterKeyValue[filterCount].value
+            //       //   break;
+            //       // case "like":
+            //       //   f[this.filterKeyValue[filterCount].columnname].includes(this.filterKeyValue[filterCount].value)
+            //       //   break;
+            //     //}
+            //   })
+            //}
+            this.ReportConfigItemList =[...formatedResult];
             this.DisplayColumns = colTem.sort((a, b) => {
               return a.sequence - b.sequence;
             }).map(m => {
               return m.col
             });
 
+
             this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-
           })
+
         this.loading = false;
       });
   }
-  traverse_it(obj, colName) {
-    var result = '';
-    for (var prop in obj) {
-      if(Array.isArray(obj[prop])) {
-        for (var i = 0; i < obj[prop].length; i++)
-          this.traverse_it(obj[prop][i], colName);
-      }
-      else if(typeof obj[prop] === 'object') {
-               
-        this.traverse_it(obj[prop], colName);
-      }
-      else if (obj[colName] !== undefined) {
-        result = obj[colName];
-      }
+  FilterByNestedColumn() {
+    //this.filterKeyValue
+  }
+  traverse(model, path, def) {
+
+    path = path || '';
+    model = model || {};
+    def = typeof def === 'undefined' ? '' : def;
+    var parts = path.split('.');
+
+    if (parts.length == 1) {
+      return model[parts[0]];
     }
-    return result;
+    else if (parts.length == 2) {
+      var arraySplit = parts[0].split('[0]');
+      if (arraySplit.length > 1)
+        if (model[arraySplit[0]].length > 0)
+          return model[arraySplit[0]][0][parts[1]];
+        else
+          return "";
+      else
+        return model[parts[0]][parts[1]];
+    }
+    else if (parts.length == 3) {
+      var arraySplit = parts[0].split('[0]');
+      if (arraySplit.length > 1)
+        if (model[arraySplit[0]].length > 0)
+          return model[arraySplit[0]][0][parts[1]][parts[2]];
+        else
+          return "";
+      else
+        return model[parts[0]][parts[1]][parts[2]];
+    }
   }
 
   ItemExists(obj, colname) {
@@ -478,6 +542,11 @@ export class GetreportComponent implements OnInit {
     var filtertext = columnName + " " + condition + " '" + value + "'";
     this.FilterCriteria.push(filtertext);
 
+    //if the selected column is a nested column
+    var nestedcolumn = this.FilterColumns.filter(f => f.ReportName == columnName && f.TableNames.length > 0)
+    if (nestedcolumn.length > 0)
+      this.filterKeyValue.push({ "columnname": columnName, "condition": condition, "value": value })
+    //
   }
   RemoveSearchFilter() {
     debugger;

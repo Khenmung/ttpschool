@@ -180,7 +180,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     this.loading = true;
     let filterStr = '';
     if (this.searchForm.get("searchFeeTypeName").value.length != 0)
-      filterStr = " substringof('" + this.searchForm.get("searchFeeTypeName").value + "',FeeTypeName)";
+      filterStr = " contains(FeeTypeName,'" + this.searchForm.get("searchFeeTypeName").value + "')";
 
     let list: List = new List();
     list.fields = [

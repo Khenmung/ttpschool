@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -30,7 +31,7 @@ export class SchooltimetableComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   loading = false;
-  rowCount = 0;
+  rowCount = -1;
   DataToSave = 0;
   SelectedBatchId = 0;
   StoredForUpdate = [];
@@ -63,6 +64,7 @@ export class SchooltimetableComponent implements OnInit {
   displayedColumns: any[] = [];
   searchForm: FormGroup;
   constructor(
+    private datepipe: DatePipe,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -91,12 +93,10 @@ export class SchooltimetableComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-        });
-      }
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      });
+
 
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.GetMasterData();
@@ -109,6 +109,10 @@ export class SchooltimetableComponent implements OnInit {
     row.Active = value.checked ? 1 : 0;
     var updateActive = this.StoredForUpdate.filter(s => s.DayId == row.DayId);
     updateActive.forEach(u => u.Active = 1)
+  }
+  Save(row) {
+    this.rowCount = 0;
+    this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
 
@@ -150,9 +154,9 @@ export class SchooltimetableComponent implements OnInit {
 
           console.log('data', this.SchoolTimeTableData);
           if (this.SchoolTimeTableData.TimeTableId == 0) {
-            this.SchoolTimeTableData["CreatedDate"] = new Date();
+            this.SchoolTimeTableData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             this.SchoolTimeTableData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.SchoolTimeTableData["UpdatedDate"] = new Date();
+            this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             delete this.SchoolTimeTableData["UpdatedBy"];
             //console.log('exam slot', this.SchoolClassPeriodListData)
             this.insert(row);
@@ -160,7 +164,7 @@ export class SchooltimetableComponent implements OnInit {
           else {
             delete this.SchoolTimeTableData["CreatedDate"];
             delete this.SchoolTimeTableData["CreatedBy"];
-            this.SchoolTimeTableData["UpdatedDate"] = new Date();
+            this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
             this.SchoolTimeTableData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
@@ -177,8 +181,9 @@ export class SchooltimetableComponent implements OnInit {
           row.TimeTableId = data.TimeTableId;
           row.Action = false;
           this.loading = false;
-          this.rowCount++;
-          if (this.rowCount == this.DataToSave) {
+
+          if (this.rowCount == 0) {
+            this.rowCount = -1;
             this.loading = false;
             this.alert.success("Data saved successfully", this.optionAutoClose);
           }
@@ -191,9 +196,10 @@ export class SchooltimetableComponent implements OnInit {
       .subscribe(
         (data: any) => {
           //this.loading = false;
-          this.rowCount++;
+          //this.rowCount++;
           row.Action = false;
-          if (this.rowCount == this.DataToSave) {
+          if (this.rowCount == 0) {
+            this.rowCount = -1;
             this.loading = false;
             this.alert.success("Data saved successfully", this.optionAutoClose);
           }
@@ -300,9 +306,9 @@ export class SchooltimetableComponent implements OnInit {
           this.SchoolTimeTableList.push(forDisplay);
 
         })
-        console.log('displaycolumn', this.displayedColumns)
-        console.log('forDisplay', forDisplay)
-        console.log('StoredForUpdate', this.StoredForUpdate)
+        //console.log('displaycolumn', this.displayedColumns)
+        //console.log('forDisplay', forDisplay)
+        //console.log('SchoolTimeTableList', this.SchoolTimeTableList)
         //this.displayedColumns.push("Active");
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
@@ -333,14 +339,16 @@ export class SchooltimetableComponent implements OnInit {
       .subscribe((data: any) => {
         this.AllClassPeriods = data.value.map(m => {
           var _PeriodType = '';
-          if (m.PeriodTypeId != null)
+          if (m.PeriodTypeId != null && m.PeriodTypeId != 0)
             _PeriodType = this.PeriodTypes.filter(p => p.MasterDataId == m.PeriodTypeId)[0].MasterDataName;
 
           m.Period = this.Periods.filter(p => p.MasterDataId == m.PeriodId)[0].MasterDataName;
           m.PeriodType = _PeriodType;
           return m;
-        });
+        }).sort((a, b) => a.Sequence - b.Sequence);
+
         this.loading = false;
+        console.log("this.AllClassPeriods", this.AllClassPeriods);
       })
   }
   GetClassSubject() {
@@ -352,11 +360,10 @@ export class SchooltimetableComponent implements OnInit {
       "ClassSubjectId",
       "ClassId",
       "SubjectId",
-      "TeacherId",
-      "EmpEmployee/ShortName"
+      "TeacherId"
     ];
     list.PageName = "ClassSubjects";
-    list.lookupFields = ["EmpEmployee"];
+    list.lookupFields = ["Teacher($select=ShortName)"];
     list.filter = [filterStr];
     this.loading = true;
     this.dataservice.get(list)
@@ -370,8 +377,8 @@ export class SchooltimetableComponent implements OnInit {
           var _subject = '';
           if (objsubject.length > 0)
             _subject = objsubject[0].MasterDataName;
-          
-            var _shortName = cs.EmpEmployee.ShortName;
+
+          var _shortName = cs.Teacher.ShortName;
           _shortName = _shortName == null ? '' : ", " + _shortName;
 
           return {
@@ -439,8 +446,9 @@ export class SchooltimetableComponent implements OnInit {
       this.alert.error("Subject must be selected for periods", this.optionsNoAutoClose);
       return;
     }
-    var totalRows = _toUpdate.length;
-    for (var rowCount = 0; rowCount < totalRows; rowCount++) {
+    this.rowCount = _toUpdate.length;
+    for (var rowCount = 0; rowCount < _toUpdate.length; rowCount++) {
+      this.rowCount--;
       this.UpdateOrSave(_toUpdate[rowCount]);
     }
 
@@ -455,9 +463,10 @@ export class SchooltimetableComponent implements OnInit {
       return;
     }
 
-    var totalRows = _toUpdate.length;
-    for (var rowCount = 0; rowCount < totalRows; rowCount++) {
-      this.UpdateOrSave(_toUpdate[rowCount]);
+    this.rowCount = _toUpdate.length;
+    for (var i = 0; i < _toUpdate.length; i++) {
+      this.rowCount--;
+      this.UpdateOrSave(_toUpdate[i]);
     }
   }
   CheckAll(value) {
@@ -487,7 +496,11 @@ export class SchooltimetableComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Sequence"];
+    list.fields = [
+      "MasterDataId",
+      "MasterDataName",
+      "ParentId",
+      "Sequence"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";

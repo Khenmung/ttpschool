@@ -46,14 +46,12 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentStates.subscribe(c => (this.States = c));
     this.shareddata.CurrentPrimaryContact.subscribe(c => (this.PrimaryContact = c));
     this.shareddata.CurrentLocation.subscribe(c => (this.Location = c));
-    
-    this.shareddata.CurrentClasses.subscribe(c => (this.Classes = c));
-    if (this.Classes.length == 0) {
-      this.contentservice.GetClasses(this.loginDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
 
-      });
-    }
+    this.contentservice.GetClasses(this.loginDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+
+    });
+
     this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
     this.shareddata.CurrentUploadType.subscribe(c => (this.UploadTypes = c));
@@ -67,6 +65,9 @@ export class ExcelDataManagementComponent implements OnInit {
     })
     this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenservice);
     this.filterOrgId = globalconstants.getStandardFilter(this.loginDetail);
+
+  }
+  PageLoad() {
     if (this.UploadTypes.length == 0)
       this.GetMasterData();
     else
@@ -375,7 +376,7 @@ export class ExcelDataManagementComponent implements OnInit {
   GetStudents() {
 
     let list: List = new List();
-    list.fields = ["StudentId", "FirstName", "LastName","Active"];
+    list.fields = ["StudentId", "FirstName", "LastName", "Active"];
     list.PageName = "Students";
     list.filter = ["Active eq 1 and " + this.filterOrgId];
     //list.orderBy = "ParentId";

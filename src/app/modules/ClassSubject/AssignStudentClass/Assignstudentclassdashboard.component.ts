@@ -117,7 +117,6 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data:any)=>{
         this.Classes= [...data.value];
       })
-      this.shareddata.ChangeClasses(this.Classes);
       this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
@@ -267,14 +266,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       'ClassId',
       'RollNo',
       'SectionId',
-      'Active',
-      'Student/FirstName',
-      'Student/LastName',
-      'Student/Gender'
+      'Active'
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student"];
+    list.lookupFields = ["Student($select=FirstName,LastName,Gender)"];
     list.filter = [filterStr];
     this.StudentClassList = [];
     this.dataservice.get(list)
@@ -395,7 +391,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             delete this.StudentClassData["CreatedBy"];
             this.StudentClassData["UpdatedDate"] = new Date();
             this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update();
+            this.update(row);
           }
         }
       });
@@ -409,6 +405,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.StudentClassId = data.StudentClassId;
+          row.Action=false;
           if (this.RowsToUpdate > 1) {
             if (this.UpdatedRows == this.RowsToUpdate) {
               if (row.Promote == 1)
@@ -432,12 +429,13 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
         });
   }
-  update() {
+  update(row) {
 
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, this.StudentClassData.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action=false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -490,13 +488,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        //this.FeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEETYPE);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        //this.shareddata.ChangeFeeType(this.FeeTypes);
-        //this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeBatch(this.Batches);
-        //this.GetStudents();
         this.loading = false;
       });
   }

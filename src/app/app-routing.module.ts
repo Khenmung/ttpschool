@@ -30,6 +30,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/appconfigdata/appconfigdata.module').then(m => m.AppconfigdataModule)
   },
   {
+    path: 'common/uploaddownload',
+    loadChildren: () => import('./modules/generalreport/generalreport.module').then(m => m.GeneralreportModule)
+  },
+  {
     path: 'edu',
     loadChildren: () => import('./modules/student/student.module').then(m => m.StudentModule)
   },
@@ -56,11 +60,7 @@ const routes: Routes = [
   {
     path: 'edu/reports',
     loadChildren: () => import('./modules/schoolreports/reports.module').then(m => m.SchoolReportsModule)
-  },
-  {
-    path: 'reports',
-    loadChildren: () => import('./modules/generalreport/generalreport.module').then(m => m.GeneralreportModule)
-  },
+  },  
   {
     path: 'edu/attendance',
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)

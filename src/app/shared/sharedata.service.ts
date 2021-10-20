@@ -15,8 +15,8 @@ export class SharedataService {
   private MasterItemsource = new BehaviorSubject(this.items);
   private CurrentBatchIdSource = new BehaviorSubject(0);
   private BatchSource = new BehaviorSubject(this.items);
-  private StudentIdSource = new BehaviorSubject(this.StudentId);
-  private StudentClassIdSource = new BehaviorSubject(this.StudentClassId);
+  // private StudentIdSource = new BehaviorSubject(this.StudentId);
+  // private StudentClassIdSource = new BehaviorSubject(this.StudentClassId);
   private CountrySource = new BehaviorSubject(this.items);
   private GendersSource = new BehaviorSubject(this.items);
   private BloodgroupSource = new BehaviorSubject(this.items);
@@ -24,7 +24,7 @@ export class SharedataService {
   private ReligionSource = new BehaviorSubject(this.items);
   private StatesSource = new BehaviorSubject(this.items);
   private LocationSource = new BehaviorSubject(this.items);
-  private ClassesSource = new BehaviorSubject(this.items);
+  //private ClassesSource = new BehaviorSubject(this.items);
   private PrimaryContactSource = new BehaviorSubject(this.items);
   private SectionSource = new BehaviorSubject(this.items);
   private FeeTypeSource = new BehaviorSubject(this.items);
@@ -91,8 +91,8 @@ export class SharedataService {
   CurrentMasterData = this.MasterItemsource.asObservable();
   CurrentBatchId = this.CurrentBatchIdSource.asObservable();
   CurrentBatch = this.BatchSource.asObservable();
-  CurrentStudentId = this.StudentIdSource.asObservable();
-  CurrentStudentClassId = this.StudentClassIdSource.asObservable();
+  // CurrentStudentId = this.StudentIdSource.asObservable();
+  // CurrentStudentClassId = this.StudentClassIdSource.asObservable();
   CurrentCountry = this.CountrySource.asObservable();
   CurrentGenders = this.GendersSource.asObservable();
   CurrentBloodgroup = this.BloodgroupSource.asObservable();
@@ -100,7 +100,7 @@ export class SharedataService {
   CurrentReligion = this.ReligionSource.asObservable();
   CurrentStates = this.StatesSource.asObservable();
   CurrentLocation = this.LocationSource.asObservable();
-  CurrentClasses = this.ClassesSource.asObservable();
+  //CurrentClasses = this.ClassesSource.asObservable();
   CurrentStudentName = this.StudentNameSource.asObservable();
 
   constructor(
@@ -221,12 +221,12 @@ export class SharedataService {
   ChangeBatch(item) {
     this.BatchSource.next(item);
   }
-  ChangeStudentId(item) {
-    this.StudentIdSource.next(item);
-  }
-  ChangeStudentClassId(item) {
-    this.StudentClassIdSource.next(item);
-  }
+  // ChangeStudentId(item) {
+  //   this.StudentIdSource.next(item);
+  // }
+  // ChangeStudentClassId(item) {
+  //   this.StudentClassIdSource.next(item);
+  // }
   ChangeCountry(item) {
     this.CountrySource.next(item);
   }
@@ -248,9 +248,9 @@ export class SharedataService {
   ChangeLocation(item) {
     this.LocationSource.next(item);
   }
-  ChangeClasses(item) {
-    this.ClassesSource.next(item);
-  }
+  // ChangeClasses(item) {
+  //   this.ClassesSource.next(item);
+  // }
   // GetApplication() {
   //   let list: List = new List();
   //   list.fields = ["ApplicationId", "ApplicationName", "Active"];
