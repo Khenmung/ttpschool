@@ -107,8 +107,11 @@ export class StudentDocumentComponent implements OnInit {
     this.formdata.append("BatchId", this.SelectedBatchId.toString());
     this.formdata.append("fileOrPhoto", "0");
     this.formdata.append("folderName", "StudentDocument");
-    this.formdata.append("parentId", "-1");
-
+    this.formdata.append("ParentId", "-1");
+    this.formdata.append("description", "");
+    this.formdata.append("orgName", "");
+    this.formdata.append("PageId", "0");
+    
     if (this.Id != null || this.Id != 0)
       this.formdata.append("StudentId", "-1");
     this.formdata.append("StudentClassId", this.StudentClassId.toString());
@@ -124,7 +127,7 @@ export class StudentDocumentComponent implements OnInit {
       keepAfterRouteChange: true
     };
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
-    this.fileUploadService.postFile(this.formdata).subscribe(res => {
+    this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.alertMessage.success("File uploaded successfully.", options);
       this.Edit = false;
     });

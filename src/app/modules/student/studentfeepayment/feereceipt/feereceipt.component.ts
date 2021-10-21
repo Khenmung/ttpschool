@@ -299,7 +299,12 @@ export class FeereceiptComponent implements OnInit {
   GetMasterData() {
     this.loading = true;
     let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "Logic", "ParentId", "Description"];
+    list.fields = [
+    "MasterDataId", 
+    "MasterDataName", 
+    "Logic", 
+    "ParentId", 
+    "Description"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 and (MasterDataName eq 'Receipt Heading' or OrgId eq 1)"];
 
@@ -328,7 +333,9 @@ export class FeereceiptComponent implements OnInit {
     let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.ClassId;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "SectionId",
+    list.fields = [
+      "StudentClassId", 
+      "SectionId",
       "StudentId",
       "BatchId",
       "RollNo",

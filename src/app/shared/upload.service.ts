@@ -7,7 +7,7 @@ import { globalconstants } from './globalconstant';
 
 const httpOptions = {
   headers: new HttpHeaders({
-    'Content-Type': 'application/json'
+    'Content-Type': 'multipart/form-data'
   })
 };
 
@@ -16,7 +16,7 @@ const httpOptions = {
 })
 export class FileUploadService {
    API_URL = globalconstants.apiUrl + "/api/uploadimage";
-   API_URLs = globalconstants.apiUrl + "/api/uploadimages";
+   API_URLs = globalconstants.apiUrl + "/api/Image/uploadimages";
   constructor(private http: HttpClient) { }
 
   postFile(formData) : Observable<any> {
