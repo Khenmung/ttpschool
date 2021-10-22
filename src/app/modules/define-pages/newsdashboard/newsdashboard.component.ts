@@ -3,11 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-//import { MatSort } from '@angular/material/sort';
-import { INews, IPage, List } from '../../shared/interface';
-import { NaomitsuService } from '../../shared/databaseService';
-import { SharedataService } from '../../shared/sharedata.service';
-//import { SelectionModel } from '@angular/cdk/collections';
+import { IPage, List } from '../../../shared/interface';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { SharedataService } from '../../../shared/sharedata.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 @Component({
@@ -19,23 +17,17 @@ export class NewsdashboardComponent implements OnInit {
   PageTitle: string = "News & Events";
   ParentPages: [{ PageId, PageTitle }];
   PageDetail: IPage;
-  //SelectedData:PageDetail[] = [];
   DATA = [];
   AllData = [];
-  //columns: Array<any>;
   title: string;
   Id: number = 0;
-  query: string;//displayedColumns: Array<any>;
+  query: string;
   list: List;
 
   displayedColumns = [];// ['id', 'name', 'progress', 'color'];
   dataSource: MatTableDataSource<any>;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  //@ViewChild(MatSort) sort: MatSort;
-
-  //selection = new SelectionModel<IPage>(true, []);
-
   ngOnInit() {
     
     this.shareddata.CurrentNewsNEventId.subscribe(e => {

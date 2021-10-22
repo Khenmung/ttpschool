@@ -21,7 +21,7 @@ import { DefinePagesModule } from '../define-pages/define-pages.module';
     ReactiveFormsModule,
     MaterialModule,
     ControlModule,
-    DefinePagesModule
+    //DefinePagesModule
   ],
   exports:[GlobalAdminComponents]
 })

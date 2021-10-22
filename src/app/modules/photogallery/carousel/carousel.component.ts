@@ -55,7 +55,7 @@ export class CarouselComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FileId", "FileName", "Description", "UpdatedFileFolderName", "ParentId"];
     //list.lookupFields = ["Album"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ["Active eq 1 and FileOrPhoto eq 1 and (FileOrFolder eq 1 or ParentId eq " + this.selectedAlbumId+" or FileId eq " + this.selectedAlbumId+")"];
     list.orderBy = "UploadDate desc";
     this.loading=true;
@@ -103,7 +103,7 @@ export class CarouselComponent implements OnInit {
 
     let list: List = new List();
     list.fields = ["FileId", "FileName", "UpdatedFileFolderName", "FileOrFolder", "UploadDate", "ParentId", "Active"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ['Active eq 1 and FileOrFolder eq 1 and FileOrPhoto eq 1'];// + this.searchForm.get("FilesNPhoto").value];
     list.orderBy = "UploadDate desc";
     //list.limitTo =10;

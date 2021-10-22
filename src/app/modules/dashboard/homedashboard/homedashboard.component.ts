@@ -70,11 +70,11 @@ export class HomeDashboardComponent implements OnInit {
           this.loggedIn = false;
         else
           this.loggedIn = true;
-        this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
+        //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
         this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-        if (this.Batches.length == 0)
+        //if (this.Batches.length == 0)
           this.getBatches();
 
         this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });

@@ -65,10 +65,12 @@ export class StudentDocumentComponent implements OnInit {
     this.routeUrl.paramMap.subscribe(param => {
       this.Id = +param.get('id')
     })
-    this.routeUrl.queryParamMap.subscribe(param => {
-      this.StudentClassId = +param.get('scid');
+    // this.routeUrl.queryParamMap.subscribe(param => {
+    //   this.StudentClassId = +param.get('scid');
       
-    })
+    // })
+    debugger;
+    this.StudentClassId= this.tokenService.getStudentClassId();
     this.LoginUserDetail = this.tokenService.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(s=>this.SelectedBatchId=s);
     this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
@@ -101,21 +103,22 @@ export class StudentDocumentComponent implements OnInit {
       this.alertMessage.error('Please select document type!',this.optionsNoAutoClose);
       return;
     }
-
+debugger;
       let error: boolean = false;
     this.formdata = new FormData();
-    this.formdata.append("BatchId", this.SelectedBatchId.toString());
+    this.formdata.append("batchId", this.SelectedBatchId.toString());
     this.formdata.append("fileOrPhoto", "0");
-    this.formdata.append("folderName", "StudentDocument");
-    this.formdata.append("ParentId", "-1");
+    this.formdata.append("folderName", "StudentDocuments");
+    this.formdata.append("parentId", "-1");
     this.formdata.append("description", "");
-    this.formdata.append("orgName", "");
-    this.formdata.append("PageId", "0");
+    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("pageId", "0");
     
     if (this.Id != null || this.Id != 0)
-      this.formdata.append("StudentId", "-1");
-    this.formdata.append("StudentClassId", this.StudentClassId.toString());
-    this.formdata.append("DocTypeId", this.uploadForm.get("DocTypeId").value);
+      this.formdata.append("studentId", this.Id+"");
+    this.formdata.append("studentClassId", this.StudentClassId.toString());
+    this.formdata.append("docTypeId", this.uploadForm.get("DocTypeId").value);
 
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
     this.uploadImage();
@@ -141,7 +144,7 @@ export class StudentDocumentComponent implements OnInit {
       "UpdatedFileFolderName",
       "UploadDate",
       "DocTypeId"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = [this.FilterOrgnBatchId + " and Active eq 1 and StudentClassId eq " + this.StudentClassId];
     this.dataservice.get(list)
       .subscribe((data: any) => {

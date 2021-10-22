@@ -104,7 +104,7 @@ export class AddstudentComponent implements OnInit {
       keepAfterRouteChange: true
     };
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
-    this.fileUploadService.postFile(this.formdata).subscribe(res => {
+    this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.alertMessage.success("Files Uploaded successfully.", options);
       this.Edit = false;
     });

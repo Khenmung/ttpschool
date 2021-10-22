@@ -9,27 +9,22 @@ import { MaterialModule } from '../shared/material/material.module';
 import { RouterModule } from '@angular/router';
 import { RightComponent } from '../shared/components/right/right.component';
 import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.module';
-import { NewsdashboardComponent } from './newsdashboard/newsdashboard.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NestedmenuComponent } from './shared/components/nestedmenu/nestedmenu.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
-const sharedComponent = [
+const sharedHomeComponent = [
   HomeComponent,
   HeaderComponent,
   SidebarComponent,
   FooterComponent,
   AlertComponent,
   RightComponent,
-  NewsdashboardComponent,
-  //LandingpageComponent
-  //MultiLevelMenuComponent
 ]
 
 @NgModule({
   declarations: [
-    sharedComponent,
-    NestedmenuComponent
+    sharedHomeComponent
   ],
   imports: [
     CommonModule,
@@ -40,8 +35,7 @@ const sharedComponent = [
     ReactiveFormsModule
   ],
   exports: [
-    sharedComponent
+    sharedHomeComponent
   ]
-
 })
 export class SharedhomepageModule { }

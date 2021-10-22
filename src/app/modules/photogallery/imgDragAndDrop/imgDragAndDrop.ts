@@ -184,7 +184,7 @@ export class ImgDragAndDropComponent implements OnInit {
   getAlbums() {
     let list: List = new List();
     list.fields = ["FileId", "UpdatedFileFolderName"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ["Active eq 1 and FileOrFolder eq 1 and FileOrPhoto eq 1"];
     //debugger;
     this.naomitsuService.get(list)

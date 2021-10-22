@@ -88,7 +88,7 @@ export class AlbumsComponent implements OnInit {
 
     let list: List = new List();
     list.fields = ["FileId", "FileName", "UpdatedFileFolderName", "FileOrFolder", "UploadDate", "ParentId", "Active"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ['Active eq 1 and FileOrFolder eq 1'];// and FileOrPhoto eq ' + this.searchForm.get("FilesNPhoto").value];
     list.orderBy = "UploadDate desc";
     //list.limitTo =10;
@@ -145,7 +145,7 @@ export class AlbumsComponent implements OnInit {
     }
     let list: List = new List();
     list.fields = ["FileId", "FileName", "FileOrFolder", "Description", "ParentId", "UpdatedFileFolderName", "UploadDate"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ["Active eq 1" + folderSearch];
     list.orderBy = "UploadDate desc";
     this.loading = true;
@@ -200,7 +200,7 @@ export class AlbumsComponent implements OnInit {
             UploadDate: new Date()
           }
 
-          this.dataservice.postPatch('FilesNPhotoes', albumtoUpdate, value._elementRef.nativeElement.id, 'patch')
+          this.dataservice.postPatch('StorageFnPs', albumtoUpdate, value._elementRef.nativeElement.id, 'patch')
             .subscribe(res => {
               this.getFiles(album,"");
               this.alert.success("File/Folder deleted successfully.", this.options);
@@ -244,7 +244,7 @@ export class AlbumsComponent implements OnInit {
       return item.UpdatedFileFolderName == this.oldvalue
     })[0].FileId;
 
-    this.dataservice.postPatch('FilesNPhotoes', albumtoUpdate, selectedAlbumId, 'patch')
+    this.dataservice.postPatch('StorageFnPs', albumtoUpdate, selectedAlbumId, 'patch')
       .subscribe(res => {
         this.alert.success("File/Folder name updated!", this.options);
       });

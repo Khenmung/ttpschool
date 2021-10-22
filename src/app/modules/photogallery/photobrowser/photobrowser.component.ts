@@ -83,7 +83,7 @@ export class PhotobrowserComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
     list.fields = ["FileId", "FileName", "UpdatedFileFolderName", "UploadDate"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ['Active eq 1 and FileOrFolder eq 1 and FileOrPhoto eq 1'];
     list.orderBy = "UploadDate desc";
     //list.limitTo =10;
@@ -107,7 +107,7 @@ export class PhotobrowserComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FileId", "FileName", "Description", "UpdatedFileFolderName", "ParentId"];
     //list.lookupFields = ["Album"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ["Active eq 1 and FileOrPhoto eq 1 and ParentId ge " + minId];
     list.orderBy = "UploadDate desc";
     this.loading = true;
@@ -205,7 +205,7 @@ export class PhotobrowserComponent implements OnInit {
       return item.UpdatedFileFolderName == this.oldvalue
     })[0].FileId;
     //console.log('selectedAlbumId', selectedAlbumId);
-    this.dataservice.postPatch('FilesNPhotoes', albumtoUpdate, selectedAlbumId, 'patch')
+    this.dataservice.postPatch('StorageFnPs', albumtoUpdate, selectedAlbumId, 'patch')
       .subscribe(res => {
         //console.log(res);
       });

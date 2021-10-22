@@ -162,7 +162,7 @@ export class FiledragAndDropComponent implements OnInit {
   getAlbums() {
     let list: List = new List();
     list.fields = ["FileId", "UpdatedFileFolderName"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ["Active eq 1 and FileOrFolder eq 1 and FileOrPhoto eq 0"];
     this.naomitsuService.get(list)
       .subscribe((data: any) => {

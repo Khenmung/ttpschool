@@ -10,8 +10,12 @@ const routes: Routes = [
     //loadChildren:()=>import('./shared/components/landingpage/landingpage.module').then(c=>c.LandingpageModule)
   },
   {
-    path: 'home',
-    loadChildren: () => import('./modules/website.module').then(m => m.WebsiteModule)
+    path: 'web/photo',
+    loadChildren: () => import('./modules/photogallery/photogallery.module').then(m => m.PhotogalleryModule)
+  },
+  {
+    path: 'web/pages',
+    loadChildren: () => import('./modules/define-pages/define-pages.module').then(m => m.DefinePagesModule)
   },
   {
     path: 'dashboard',

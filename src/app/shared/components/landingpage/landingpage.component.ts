@@ -21,7 +21,7 @@ export class LandingpageComponent implements OnInit {
   getRandomDisplayPhotoes() {
     let list: List = new List();
     list.fields = ["FileId", "FileName", "ParentId"];
-    list.PageName = "FilesNPhotoes";
+    list.PageName = "StorageFnPs";
     list.filter = ['Active eq 1 and FileOrPhoto eq 0'];//  eq ' + this.searchForm.get("FilesNPhoto").value];
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
