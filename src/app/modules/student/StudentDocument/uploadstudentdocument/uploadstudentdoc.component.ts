@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -17,7 +17,7 @@ import { FileUploadService } from '../../../../shared/upload.service';
   styleUrls: ['./uploadstudentdoc.component.scss']
 })
 export class StudentDocumentComponent implements OnInit {
-  loading=false;
+  loading = false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -26,18 +26,19 @@ export class StudentDocumentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  FilterOrgnBatchId='';
-  FilterOrgIdOnly ='';
+  FilterOrgnBatchId = '';
+  FilterOrgIdOnly = '';
   formdata: FormData;
   selectedFile: any;
-  Id: number = 0;
+  StudentId: number = 0;
   StudentClassId: number = 0;
+  StudentDocuments=[];
   Edit: boolean;
-  SelectedBatchId=0;
+  SelectedBatchId = 0;
   allMasterData = [];
   DocumentTypes = [];
-  Batches =[];
-  LoginUserDetail=[];
+  Batches = [];
+  LoginUserDetail = [];
   uploadForm: FormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
@@ -54,36 +55,29 @@ export class StudentDocumentComponent implements OnInit {
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
-    private tokenService:TokenStorageService
-    ) { }
+    private tokenService: TokenStorageService
+  ) { }
 
   ngOnInit(): void {
     this.uploadForm = this.fb.group({
-      BatchId:[0],
-      DocTypeId: [0,Validators.required]
+      BatchId: [0],
+      DocTypeId: [0, Validators.required]
     })
-    this.routeUrl.paramMap.subscribe(param => {
-      this.Id = +param.get('id')
-    })
-    // this.routeUrl.queryParamMap.subscribe(param => {
-    //   this.StudentClassId = +param.get('scid');
-      
-    // })
+
     debugger;
-    this.StudentClassId= this.tokenService.getStudentClassId();
+
+    this.StudentId = this.tokenService.getStudentId();
+    this.StudentClassId = this.tokenService.getStudentClassId();
     this.LoginUserDetail = this.tokenService.getUserDetail();
-    //this.shareddata.CurrentSelectedBatchId.subscribe(s=>this.SelectedBatchId=s);
     this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
     this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
     this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-    //this.GetMasterData();
   }
   PageLoad() {
     this.GetMasterData();
 
   }
-  get f()
-  {
+  get f() {
     return this.uploadForm.controls;
   }
   uploadchange(files) {
@@ -93,18 +87,16 @@ export class StudentDocumentComponent implements OnInit {
   }
   uploadFile() {
 
-    if(this.selectedFile.length==0)
-    {
-      this.alertMessage.error('Please select a file!',this.optionsNoAutoClose);
+    if (this.selectedFile.length == 0) {
+      this.alertMessage.error('Please select a file!', this.optionsNoAutoClose);
       return;
     }
-    if(this.uploadForm.get("DocTypeId").value==0)
-    {
-      this.alertMessage.error('Please select document type!',this.optionsNoAutoClose);
+    if (this.uploadForm.get("DocTypeId").value == 0) {
+      this.alertMessage.error('Please select document type!', this.optionsNoAutoClose);
       return;
     }
-debugger;
-      let error: boolean = false;
+    debugger;
+    let error: boolean = false;
     this.formdata = new FormData();
     this.formdata.append("batchId", this.SelectedBatchId.toString());
     this.formdata.append("fileOrPhoto", "0");
@@ -114,12 +106,12 @@ debugger;
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
     this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
     this.formdata.append("pageId", "0");
-    
-    if (this.Id != null || this.Id != 0)
-      this.formdata.append("studentId", this.Id+"");
+
+    if (this.StudentId != null && this.StudentId != 0)
+      this.formdata.append("studentId", this.StudentId + "");
     this.formdata.append("studentClassId", this.StudentClassId.toString());
     this.formdata.append("docTypeId", this.uploadForm.get("DocTypeId").value);
-
+    //console.log('this.uploadForm.get("DocTypeId").value")',this.uploadForm.get("DocTypeId").value);
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
     this.uploadImage();
   }
@@ -137,7 +129,7 @@ debugger;
   }
   GetDocuments() {
     let list: List = new List();
-   
+    this.StudentDocuments =[];
     list.fields = [
       "FileId",
       "FileName",
@@ -149,36 +141,45 @@ debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.allMasterData = data.value.map(doc => {          
-            return {
-              FileId: doc.FileId,
-              UpdatedFileFolderName: doc.UpdatedFileFolderName,
-              UploadDate: doc.UploadDate,
-              DocType: this.DocumentTypes.filter(t => t.MasterDataId == doc.DocTypeId)[0].MasterDataName,
-              path: globalconstants.apiUrl + "/Image/StudentDocument/" + doc.FileName
+          var _doctypeobj;
+          var _doctypeName = "";
+
+          data.value.forEach(doc => {
+            _doctypeobj = this.DocumentTypes.filter(t => t.MasterDataId == doc.DocTypeId);
+            if (_doctypeobj.length > 0) {
+              _doctypeName = _doctypeobj[0].MasterDataName;
+              this.StudentDocuments.push({
+                FileId: doc.FileId,
+                UpdatedFileFolderName: doc.UpdatedFileFolderName,
+                UploadDate: doc.UploadDate,
+                DocType: _doctypeName,
+                path: globalconstants.apiUrl + "/Uploads/"+ this.LoginUserDetail[0]["org"] +"/StudentDocuments/" + doc.FileName
+              });
             }
           })
-          this.documentUploadSource = new MatTableDataSource<IUploadDoc>(this.allMasterData);
+          this.documentUploadSource = new MatTableDataSource<IUploadDoc>(this.StudentDocuments);
+          console.log("studentdocuments",this.StudentDocuments)
         }
       });
 
   }
-  pageview(path){
+  pageview(path) {
     window.open(path, "_blank");
     return;
   }
   GetMasterData() {
+    debugger;
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterItems";
     list.filter = ["(" + this.FilterOrgIdOnly + " or ParentId eq 0) and Active eq 1"];
- 
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.DOCUMENTTYPE);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.shareddata.CurrentBatch.subscribe(c=>(this.Batches=c));
+        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.GetDocuments();
       });
 

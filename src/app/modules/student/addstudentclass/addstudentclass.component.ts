@@ -35,7 +35,7 @@ export class AddstudentclassComponent implements OnInit {
   allMasterData = [];
   Students = [];
   Classes = [];
-  Batches = [];
+  //Batches = [];
   Sections = [];
   FeeType = [];
   studentclassForm: FormGroup;
@@ -89,8 +89,13 @@ export class AddstudentclassComponent implements OnInit {
      // }
 
 
-      this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
+      //this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
+      
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
+      if(this.FeeType.length==0)
+      {
+        this.nav.navigate(["/edu/home"]);
+      }
       this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
       //this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
       this.StudentId = this.tokenstorage.getStudentId();
@@ -113,7 +118,7 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
         this.aRoute.paramMap.subscribe(param => {

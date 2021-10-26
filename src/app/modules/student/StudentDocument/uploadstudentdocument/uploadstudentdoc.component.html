@@ -1,13 +1,13 @@
 <div class="divCls"><strong>Student Documents</strong></div>
 <br>
+<alert></alert>
 <div class="divCls" fxLayout="row wrap" fxLayoutGap="100px">
     <form [formGroup]="uploadForm" fxLayout="row" fxLayoutAlign="space-between center">
         <input #uploadfile type="file" (change)="uploadchange(uploadfile.files)" />
-        <div>
+        <div style="padding: 15px 15px 0px 15px;">
             <mat-form-field appearance="outline" fxFlex>
                 <mat-label>Document type</mat-label>
                 <mat-select formControlName="DocTypeId">
-                    <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of DocumentTypes" [value]="p.MasterDataId">
                         {{p.MasterDataName}}
                     </mat-option>

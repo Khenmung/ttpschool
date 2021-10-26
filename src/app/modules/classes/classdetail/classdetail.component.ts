@@ -90,6 +90,7 @@ export class ClassdetailComponent implements OnInit {
   }
 
   PageLoad() {
+  debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();

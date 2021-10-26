@@ -43,7 +43,7 @@ export class AddstudentComponent implements OnInit {
   Albums: any;
   errorMessage = '';
   formdata: FormData;
-  Id = 0;
+  StudentId = 0;
   loading = false;
   Classes = [];
   Country = [];
@@ -85,15 +85,25 @@ export class AddstudentComponent implements OnInit {
     }
   }
   uploadFile() {
+    debugger;
     let error: boolean = false;
+    this.loading = true;
     this.formdata = new FormData();
     this.formdata.append("description", "Passport photo of student");
     this.formdata.append("fileOrPhoto", "0");
     this.formdata.append("folderName", "StudentPhoto");
     this.formdata.append("parentId", "-1");
 
-    if (this.Id != null || this.Id != 0)
-      this.formdata.append("StudentId", this.Id.toString());
+    this.formdata.append("batchId", "0");
+    this.formdata.append("orgName", this.loginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.loginUserDetail[0]["orgId"]);
+    this.formdata.append("pageId", "0");
+
+    if (this.StudentId != null && this.StudentId != 0)
+      this.formdata.append("studentId", this.StudentId + "");
+    this.formdata.append("studentClassId", this.StudentClassId.toString());
+    this.formdata.append("docTypeId", "0");
+
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
     this.uploadImage();
   }
@@ -105,7 +115,9 @@ export class AddstudentComponent implements OnInit {
     };
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
+      this.loading = false;
       this.alertMessage.success("Files Uploaded successfully.", options);
+
       this.Edit = false;
     });
   }
@@ -122,69 +134,73 @@ export class AddstudentComponent implements OnInit {
     private tokenService: TokenStorageService,
 
   ) {
-    this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
     this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
-    this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
-    this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
-    this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
-    this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
-    this.shareddata.CurrentStates.subscribe(st => (this.States = st));
-    this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
-    this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
+    if (this.Genders.length == 0)
+      this.route.navigate(["/edu/home"]);
+    else {
+      this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
 
-    this.Id = this.tokenService.getStudentId();
-    this.StudentClassId = this.tokenService.getStudentClassId()
+      this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
+      this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
+      this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
+      this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
+      this.shareddata.CurrentStates.subscribe(st => (this.States = st));
+      this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
+      this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
 
-    this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
-    this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
-    this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
-    this.studentForm = this.fb.group({
-      ReasonForLeavingId: [0],
-      StudentId: [0],
-      FirstName: ['', [Validators.required]],
-      LastName: [''],
-      FatherName: ['', [Validators.required]],
-      FatherOccupation: ['', [Validators.required]],
-      MotherName: ['', [Validators.required]],
-      MotherOccupation: ['', [Validators.required]],
-      Gender: [0, [Validators.required]],
-      PresentAddress: ['', [Validators.required]],
-      PermanentAddress: ['', [Validators.required]],
-      City: [0],
-      Country: [0],
-      DOB: [new Date(), [Validators.required]],
-      Bloodgroup: [0],
-      Category: [0, [Validators.required]],
-      BankAccountNo: [''],
-      IFSCCode: [''],
-      MICRNo: [''],
-      AadharNo: [''],
-      Photo: [''],
-      Religion: [''],
-      ContactNo: [''],
-      WhatsAppNumber: [''],
-      FatherContactNo: [''],
-      MotherContactNo: [''],
-      PrimaryContactFatherOrMother: [0],
-      NameOfContactPerson: [''],
-      RelationWithContactPerson: [''],
-      ContactPersonContactNo: [''],
-      AlternateContact: [''],
-      EmailAddress: [''],
-      ClassAdmissionSought: [0],
-      LastSchoolPercentage: [''],
-      TransferFromSchool: [''],
-      TransferFromSchoolBoard: [''],
-      Remarks: [''],
-      Active: [1],
-      LocationId: [0]
-    });
+      this.StudentId = this.tokenService.getStudentId();
+      this.StudentClassId = this.tokenService.getStudentClassId()
 
+      this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
+      this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
+      this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
+      this.studentForm = this.fb.group({
+        ReasonForLeavingId: [0],
+        StudentId: [0],
+        FirstName: ['', [Validators.required]],
+        LastName: [''],
+        FatherName: ['', [Validators.required]],
+        FatherOccupation: ['', [Validators.required]],
+        MotherName: ['', [Validators.required]],
+        MotherOccupation: ['', [Validators.required]],
+        Gender: [0, [Validators.required]],
+        PresentAddress: ['', [Validators.required]],
+        PermanentAddress: ['', [Validators.required]],
+        City: [0],
+        Country: [0],
+        DOB: [new Date(), [Validators.required]],
+        Bloodgroup: [0],
+        Category: [0, [Validators.required]],
+        BankAccountNo: [''],
+        IFSCCode: [''],
+        MICRNo: [''],
+        AadharNo: [''],
+        Photo: [''],
+        Religion: [''],
+        ContactNo: [''],
+        WhatsAppNumber: [''],
+        FatherContactNo: [''],
+        MotherContactNo: [''],
+        PrimaryContactFatherOrMother: [0],
+        NameOfContactPerson: [''],
+        RelationWithContactPerson: [''],
+        ContactPersonContactNo: [''],
+        AlternateContact: [''],
+        EmailAddress: [''],
+        ClassAdmissionSought: [0],
+        LastSchoolPercentage: [''],
+        TransferFromSchool: [''],
+        TransferFromSchoolBoard: [''],
+        Remarks: [''],
+        Active: [1],
+        LocationId: [0]
+      });
+    }
   }
 
   ngOnInit(): void {
     this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.Id > 0)
+    if (this.StudentId > 0)
       this.GetStudent();
     this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
       this.Classes = [...data.value];
@@ -227,7 +243,7 @@ export class AddstudentComponent implements OnInit {
     }
   }
   back() {
-    this.route.navigate(['/admin/dashboardstudent']);
+    this.route.navigate(['/edu/home']);
   }
   deActivate(event) {
     if (!event.checked)
@@ -298,10 +314,6 @@ export class AddstudentComponent implements OnInit {
       Gender: this.studentForm.get("Gender").value,
       PermanentAddress: this.studentForm.get("PermanentAddress").value,
       PresentAddress: this.studentForm.get("PresentAddress").value,
-      //City: this.studentForm.get("City").value,
-      //Pincode: this.studentForm.get("Pincode").value,
-      //State: this.studentForm.get("State").value,
-      //Country: this.studentForm.get("Country").value,
       DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
       Bloodgroup: this.studentForm.get("Bloodgroup").value,
       Category: this.studentForm.get("Category").value,
@@ -330,7 +342,6 @@ export class AddstudentComponent implements OnInit {
       LocationId: this.studentForm.get("LocationId").value,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
     }
-    //console.log("datato save", this.studentData);
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else
@@ -373,63 +384,69 @@ export class AddstudentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
-    list.filter = ["StudentId eq " + this.Id];
+    list.lookupFields = ["StorageFnPs($select=FileName;$filter=StudentId eq " + this.StudentId + ")"]
+    list.filter = ["StudentId eq " + this.StudentId];
     //list.orderBy = "ParentId";
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.studentForm.patchValue({
-            StudentId: data.value[0].StudentId,
-            FirstName: data.value[0].FirstName,
-            LastName: data.value[0].LastName,
-            FatherName: data.value[0].FatherName,
-            MotherName: data.value[0].MotherName,
-            FatherOccupation: data.value[0].FatherOccupation,
-            MotherOccupation: data.value[0].MotherOccupation,
-            PresentAddress: data.value[0].PresentAddress,
-            PermanentAddress: data.value[0].PermanentAddress,
-            Gender: data.value[0].Gender,
-            Address: data.value[0].Address,
-            City: data.value[0].City,
-            Pincode: data.value[0].Pincode,
-            State: data.value[0].State,
-            Country: data.value[0].Country,
-            DOB: new Date(data.value[0].DOB),//this.formatdate.transform(data.value[0].DOB,'dd/MM/yyyy'),
-            Bloodgroup: data.value[0].Bloodgroup,
-            Category: data.value[0].Category,
-            BankAccountNo: data.value[0].BankAccountNo,
-            IFSCCode: data.value[0].IFSCCode,
-            MICRNo: data.value[0].MICRNo,
-            AadharNo: data.value[0].AadharNo,
-            Photo: data.value[0].Photo,
-            Religion: data.value[0].Religion,
-            ContactNo: data.value[0].ContactNo,
-            WhatsAppNumber: data.value[0].WhatsAppNumber,
-            FatherContactNo: data.value[0].FatherContactNo,
-            MotherContactNo: data.value[0].MotherContactNo,
-            PrimaryContactFatherOrMother: data.value[0].PrimaryContactFatherOrMother,
-            NameOfContactPerson: data.value[0].NameOfContactPerson,
-            RelationWithContactPerson: data.value[0].RelationWithContactPerson,
-            ContactPersonContactNo: data.value[0].ContactPersonContactNo,
-            AlternateContact: data.value[0].AlternateContact,
-            EmailAddress: data.value[0].EmailAddress,
-            LastSchoolPercentage: data.value[0].LastSchoolPercentage,
-            ClassAdmissionSought: data.value[0].ClassAdmissionSought,
-            TransferFromSchool: data.value[0].TransferFromSchool,
-            TransferFromSchoolBoard: data.value[0].TransferFromSchoolBoard,
-            Remarks: data.value[0].Remarks,
-            Active: data.value[0].Active,
-            LocationId: data.value[0].LocationId,
-            ReasonForLeavingId: data.value[0].ReasonForLeavingId
+          data.value.forEach(stud => {
 
+            this.studentForm.patchValue({
+              StudentId: stud.StudentId,
+              FirstName: stud.FirstName,
+              LastName: stud.LastName,
+              FatherName: stud.FatherName,
+              MotherName: stud.MotherName,
+              FatherOccupation: stud.FatherOccupation,
+              MotherOccupation: stud.MotherOccupation,
+              PresentAddress: stud.PresentAddress,
+              PermanentAddress: stud.PermanentAddress,
+              Gender: stud.Gender,
+              Address: stud.Address,
+              City: stud.City,
+              Pincode: stud.Pincode,
+              State: stud.State,
+              Country: stud.Country,
+              DOB: new Date(stud.DOB),//this.formatdate.transform(stud.DOB,'dd/MM/yyyy'),
+              Bloodgroup: stud.Bloodgroup,
+              Category: stud.Category,
+              BankAccountNo: stud.BankAccountNo,
+              IFSCCode: stud.IFSCCode,
+              MICRNo: stud.MICRNo,
+              AadharNo: stud.AadharNo,
+              Photo: stud.Photo,
+              Religion: stud.Religion,
+              ContactNo: stud.ContactNo,
+              WhatsAppNumber: stud.WhatsAppNumber,
+              FatherContactNo: stud.FatherContactNo,
+              MotherContactNo: stud.MotherContactNo,
+              PrimaryContactFatherOrMother: stud.PrimaryContactFatherOrMother,
+              NameOfContactPerson: stud.NameOfContactPerson,
+              RelationWithContactPerson: stud.RelationWithContactPerson,
+              ContactPersonContactNo: stud.ContactPersonContactNo,
+              AlternateContact: stud.AlternateContact,
+              EmailAddress: stud.EmailAddress,
+              LastSchoolPercentage: stud.LastSchoolPercentage,
+              ClassAdmissionSought: stud.ClassAdmissionSought,
+              TransferFromSchool: stud.TransferFromSchool,
+              TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
+              Remarks: stud.Remarks,
+              Active: stud.Active,
+              LocationId: stud.LocationId,
+              ReasonForLeavingId: stud.ReasonForLeavingId,
+              //PhotoPath:stud.StorageFnP.FileName
+            })
+
+            if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
+              this.displayContactPerson = true;
+            else
+              this.displayContactPerson = false;
+            if (stud.StorageFnPs.length > 0)
+              this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.loginUserDetail[0]["org"] +
+                "/StudentPhoto/" + stud.StorageFnPs[0].FileName;
           })
-          if (data.value[0].PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
-            this.displayContactPerson = true;
-          else
-            this.displayContactPerson = false;
-
-          this.imgURL = globalconstants.apiUrl + "/Image/StudentPhoto/" + data.value[0].Photo;
         }
         else {
           this.alert.error("No data found.", this.options);

@@ -4,7 +4,7 @@ import { NaomitsuService } from './databaseService';
 import { List } from './interface';
 
 @Injectable({
-  providedIn: 'any'
+  providedIn: 'root'
 })
 export class SharedataService {
   items = [];

@@ -77,8 +77,8 @@ export class HomeDashboardComponent implements OnInit {
         //if (this.Batches.length == 0)
           this.getBatches();
 
-        this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
-        this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
+        //this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
+        //this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       }
     }
   }
