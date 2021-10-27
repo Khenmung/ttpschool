@@ -94,6 +94,7 @@
                                 </mat-table>
                                 <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 15px;">
                                     <mat-form-field>
+                                        <mat-label>Offline receipt no.</mat-label>
                                         <input matInput [maxlength]="20"
                                             [(ngModel)]="OffLineReceiptNo" [value]="OffLineReceiptNo"
                                             autocomplete="Off">
@@ -112,9 +113,9 @@
                         </ng-template>
                         <app-feereceipt
                         [OffLineReceiptNo]="OffLineReceiptNo" 
-                        [StudentClassFees] ="StudentClassFees"
+                        [StudentClassFees]="StudentClassFees"
                         [StudentClass]="studentInfoTodisplay" 
-                        [BillDetail]="StudentBillList"></app-feereceipt>
+                        [BillDetail]="MonthlyDueDetail"></app-feereceipt>
                     </mat-tab>
                 </mat-tab-group>
             </div>

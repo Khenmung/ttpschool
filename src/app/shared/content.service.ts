@@ -68,15 +68,20 @@ export class ContentService {
     debugger;
     _sessionStartEnd = JSON.parse(this.tokenService.getSelectedBatchStartEnd());
 
-    var _Year = new Date(_sessionStartEnd["StartDate"]).getFullYear();
+    var _StartYear = new Date(_sessionStartEnd["StartDate"]).getFullYear();
+    var _EndYear = new Date(_sessionStartEnd["EndDate"]).getFullYear();
     var startMonth = new Date(_sessionStartEnd["StartDate"]).getMonth() + 1;
 
     for (var month = 0; month < 12; month++, startMonth++) {
       monthArray.push({
-        MonthName: Months[startMonth],
-        val: _Year + startMonth.toString().padStart(2, "0")
+        MonthName: Months[startMonth] + " " + _StartYear,
+        val: parseInt(_StartYear + startMonth.toString().padStart(2, "0"))
       })
-      startMonth = startMonth == 12 ? 1 : startMonth;
+      if(startMonth == 11)
+      {
+        startMonth = -1; 
+        _StartYear = _EndYear;
+      }
     }
 
     // this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {

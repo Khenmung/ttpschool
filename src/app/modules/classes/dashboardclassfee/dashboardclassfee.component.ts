@@ -84,7 +84,8 @@ export class DashboardclassfeeComponent implements OnInit {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
-    this.Months = this.GetSessionFormattedMonths();
+    //this.Months = this.GetSessionFormattedMonths();
+    this.Months = this.contentservice.GetSessionFormattedMonths();
     console.log(this.Months)
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
@@ -443,7 +444,7 @@ export class DashboardclassfeeComponent implements OnInit {
             this.alert.info("No record found!", this.optionAutoClose);
           }
         }
-
+        console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
         this.loading = false;

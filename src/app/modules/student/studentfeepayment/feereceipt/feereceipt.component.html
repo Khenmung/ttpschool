@@ -113,11 +113,11 @@
                         class="mat-raised-button">
                         <mat-icon>cancel</mat-icon>
                     </button>
-                    <button [disabled]="loading" matTooltip="done" *ngIf="editReceipt" (click)="done()"
+                    <button [disabled]="loading" matTooltip="done" (click)="done()"
                         class="mat-raised-button">
                         <mat-icon>checked</mat-icon>
                     </button>
-                    <button [disabled]="loading" matTooltip="print" *ngIf="!editReceipt" printSectionId="printSection"
+                    <button [disabled]="loading" matTooltip="print" printSectionId="printSection"
                         [useExistingCss]="true" ngxPrint class="mat-raised-button">
                         <mat-icon>print</mat-icon>
                     </button>

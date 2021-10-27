@@ -32,7 +32,7 @@ export class FeereceiptComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  LoginUserDetail=[];
+  LoginUserDetail = [];
   BillStatus = 0;
   CurrentBatchId = 0;
   ReceiptHeading = [];
@@ -77,7 +77,7 @@ export class FeereceiptComponent implements OnInit {
     private tokenservice: TokenStorageService,
     private alert: AlertService,
     private shareddata: SharedataService,
-    private contentservice:ContentService) { }
+    private contentservice: ContentService) { }
 
   ngOnInit(): void {
   }
@@ -113,12 +113,12 @@ export class FeereceiptComponent implements OnInit {
     this.loading = true;
     this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.LoginUserDetail = this.tokenservice.getUserDetail();
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data:any)=>{
-      this.Classes= [...data.value];
-    }) 
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+    })
     this.shareddata.CurrentBatch.subscribe(lo => (this.Batches = lo));
     this.shareddata.CurrentSection.subscribe(pr => (this.Sections = pr));
-    
+
     this.studentInfoTodisplay.StudentId = this.tokenservice.getStudentId();
     this.studentInfoTodisplay.StudentClassId = this.tokenservice.getStudentClassId();
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
@@ -127,17 +127,14 @@ export class FeereceiptComponent implements OnInit {
     this.shareddata.CurrentFeeNames.subscribe(b => (this.FeeNames = b));
     //debugger;
     this.GetMasterData();
-    setTimeout(() => {
-
-      this.GetBills();
-
-    }, 1000);
+    this.GetBills();
 
   }
 
   viewDetail(row) {
     //debugger;
     this.clickPaymentDetails = this.StudentFeePaymentList.filter(f => f.FeeReceiptId == row.StudentFeeReceiptId);
+    this.studentInfoTodisplay.StudentFeeReceiptId = row.StudentFeeReceiptId;
     this.studentInfoTodisplay.ReceiptNo = row.ReceiptNo;
     this.studentInfoTodisplay.OffLineReceiptNo = row.OffLineReceiptNo;
     this.TotalAmount = row.TotalAmount;
@@ -151,34 +148,41 @@ export class FeereceiptComponent implements OnInit {
     let receipt = {
       Active: 0
     }
-    this.dataservice.postPatch(this.StudentFeeReceiptListName, receipt, this.studentInfoTodisplay.ReceiptNo, 'patch')
+    this.dataservice.postPatch(this.StudentFeeReceiptListName, receipt, this.studentInfoTodisplay.StudentFeeReceiptId, 'patch')
       .subscribe(
         (data: any) => {
-          var IdCount = 0;
-          var uniqueGLAccountId = alasql("select DISTINCT GLAccountId from ?", [this.BillDetail]);
-          var toupdateLedger;
-          IdCount = uniqueGLAccountId.length;
-          uniqueGLAccountId.forEach(f => {
-            toupdateLedger = {
-              Active: 0,
-              //StudentEmployeeLedegerId: f.GLAccountId
-            }
-            IdCount--;
-            this.dataservice.postPatch('AccountingLedgerTrialBalances', toupdateLedger, f.GLAccountId, 'patch')
-              .subscribe(
-                (data: any) => {
-                  if (IdCount == 0) {
-                    this.loading = false;
-                    this.TotalAmount = 0;
-                    this.Balance = 0;
-                    this.alert.success("Receipt cancelled successfully.", this.optionAutoClose);
-                    this.CancelReceiptMode = false;
-                    this.BillDetail = [];
-                    this.dataSource = new MatTableDataSource<any>(this.BillDetail);
-                    //this.tabChanged.emit(0);
-                  }
-                })
-          })
+          this.loading = false;
+          this.TotalAmount = 0;
+          this.Balance = 0;
+          this.alert.success("Receipt cancelled successfully.", this.optionAutoClose);
+          this.CancelReceiptMode = false;
+          this.BillDetail = [];
+          this.dataSource = new MatTableDataSource<any>(this.BillDetail);
+          // var IdCount = 0;
+          // var uniqueGLAccountId = alasql("select DISTINCT GLAccountId from ?", [this.BillDetail]);
+          // var toupdateLedger;
+          // IdCount = uniqueGLAccountId.length;
+          // uniqueGLAccountId.forEach(f => {
+          //   toupdateLedger = {
+          //     Active: 0,
+          //     //StudentEmployeeLedegerId: f.GLAccountId
+          //   }
+          //   IdCount--;
+          //   this.dataservice.postPatch('AccountingLedgerTrialBalances', toupdateLedger, f.GLAccountId, 'patch')
+          //     .subscribe(
+          //       (data: any) => {
+          //         if (IdCount == 0) {
+          //           this.loading = false;
+          //           this.TotalAmount = 0;
+          //           this.Balance = 0;
+          //           this.alert.success("Receipt cancelled successfully.", this.optionAutoClose);
+          //           this.CancelReceiptMode = false;
+          //           this.BillDetail = [];
+          //           this.dataSource = new MatTableDataSource<any>(this.BillDetail);
+          //           //this.tabChanged.emit(0);
+          //         }
+          //       })
+          // })
         });
   }
   edit() {
@@ -189,79 +193,7 @@ export class FeereceiptComponent implements OnInit {
     this.CancelReceiptMode = false;
 
   }
-  GetStudentFeePaymentDetails(ReceiptNo) {
-    //debugger;
-    if (this.studentInfoTodisplay.StudentId == 0)
-      return;
-    let filterstring = '';
-    if (ReceiptNo == 0)
-      filterstring = 'ReceiptNo eq null';
-    else
-      filterstring = 'ReceiptNo eq ' + ReceiptNo;
-    filterstring += ' and Active eq 1';
 
-    let list: List = new List();
-    list.fields = [     
-      'PaymentId',
-      'ParentId',
-      'ClassFeeId',
-      'PaymentAmt',
-      'ReceiptNo',
-      'PaymentDate'];
-    list.PageName = "PaymentDetails";
-    list.lookupFields = ["StudentFeePayment($select=StudentFeeId,StudentClassId,StudentId,PaidAmt,BalanceAmt)",
-     "ClassFee($select=FeeNameId)", "StudentFeeReceipt($select=OfflineReceiptNo,TotalAmount)"];
-    list.filter = [filterstring];
-    list.orderBy = "PaymentId";
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        let res: any[];
-        if (data.value.length > 0) {
-          this.studentInfoTodisplay.ReceiptNo = ReceiptNo;
-          if (data.value[0].StudentFeeReceipt !== undefined)
-            this.studentInfoTodisplay.OfflineReceiptNo = data.value[0].StudentFeeReceipt.OfflineReceiptNo;
-          this.studentInfoTodisplay.ReceiptDate = data.value[0].PaymentDate
-          this.studentInfoTodisplay.PaidAmt = data.value[0].StudentFeePayment.PaidAmt;
-          this.studentInfoTodisplay.BalanceAmt = data.value[0].StudentFeePayment.BalanceAmt;
-          this.studentInfoTodisplay.ClassFeeId = data.value[0].ClassFeeId;
-          this.studentInfoTodisplay.ReceiptNo = data.value[0].ReceiptNo;
-          this.studentInfoTodisplay.PaymentDate = data.value[0].PaymentDate;
-          this.studentInfoTodisplay.TotalAmount = 0;
-          res = data.value.filter(st => st.StudentFeePayment.StudentClassId == this.studentInfoTodisplay.StudentClassId)
-            .map((item, indx) => {
-              this.studentInfoTodisplay.TotalAmount += +item.PaymentAmt;
-              return {
-                SlNo: indx + 1,
-                TotalAmount: 0,
-                OfflineReceiptNo: '',
-                StudentClassId: item.StudentFeePayment.StudentClassId,
-                FeeName: item.ClassFee == undefined ? '' : this.FeeNames.filter(fee => fee.MasterDataId == item.ClassFee.FeeNameId)[0].MasterDataName,
-                PaymentAmount: item.PaymentAmt,
-                PaymentId: item.PaymentId,
-                ParentId: item.ParentId,
-                ReceiptNo: item.ReceiptNo,
-                PaymentDate: item.PaymentDate,
-                ClassFeeId: item.ClassFeeId,
-                Action: ''
-              }
-            })
-          if (res.length > 0) {
-            this.NewReceipt = true;
-            this.ELEMENT_DATA = [...res];
-            this.PaymentIds = res.map(id => id.PaymentId);
-            this.dataSource = new MatTableDataSource<IStudentFeePaymentReceipt>(this.ELEMENT_DATA);
-          }
-          else {
-            this.NewReceipt = false;
-          }
-        }
-        else {
-          this.NewReceipt = false;
-        }
-      })
-  }
   GetBills() {
     this.loading = true;
     let list: List = new List();
@@ -287,7 +219,11 @@ export class FeereceiptComponent implements OnInit {
         this.StudentFeePaymentList = [];
         this.FeeReceipt.forEach(f => {
           f.AccountingVouchers.forEach(k => {
-            k.FeeName = this.StudentClassFees.filter(f => f.ClassFeeId == k.ClassFeeId)[0].FeeName
+            var feeObj = this.StudentClassFees.filter(f => f.ClassFeeId == k.ClassFeeId);
+            if (feeObj.length > 0)
+              k.FeeName = feeObj[0].FeeName
+            else
+              k.FeeName = '';
             this.StudentFeePaymentList.push(k)
           })
         })
@@ -300,11 +236,11 @@ export class FeereceiptComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
     list.fields = [
-    "MasterDataId", 
-    "MasterDataName", 
-    "Logic", 
-    "ParentId", 
-    "Description"];
+      "MasterDataId",
+      "MasterDataName",
+      "Logic",
+      "ParentId",
+      "Description"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 and (MasterDataName eq 'Receipt Heading' or OrgId eq 1)"];
 
@@ -314,7 +250,7 @@ export class FeereceiptComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.ReceiptHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.RECEIPTHEADING);
         this.ReceiptHeading.forEach(f => {
-          f.Logic = f.Logic!=null?JSON.parse("{"+f.Logic + "}"):''
+          f.Logic = f.Logic != null ? JSON.parse("{" + f.Logic + "}") : ''
         })
         this.loading = false;
       });
@@ -327,52 +263,6 @@ export class FeereceiptComponent implements OnInit {
     return this.allMasterData.filter((item, index) => {
       return item.ParentId == Id
     });
-  }
-  GetClassFee() {
-
-    let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.ClassId;
-
-    let list: List = new List();
-    list.fields = [
-      "StudentClassId", 
-      "SectionId",
-      "StudentId",
-      "BatchId",
-      "RollNo",
-      "ClassId",
-      "FeeTypeId"];
-
-    list.lookupFields = ["Student($select=FirstName,LastName)"];
-    list.PageName = "StudentClasses";
-    list.filter = [filterstr];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.studentInfoTodisplay.StudentClassId = data.value[0].StudentClassId;
-          this.studentInfoTodisplay.ClassId = data.value[0].ClassId;
-          this.studentInfoTodisplay.RollNo = data.value[0].RollNo;
-          //this.studentInfoTodisplay.ReceiptNo = data.value[0].FeeTypeId;
-          this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + " " + data.value[0].Student.LastName;
-          this.studentInfoTodisplay.Currentbatch = this.Batches.filter(b => {
-            return b.BatchId == this.SelectedBatchId
-          })[0].BatchName
-
-          this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
-            return cls.MasterDataId == data.value[0].SectionId
-          })[0].MasterDataName;
-          this.studentInfoTodisplay.StudentClassName = this.Classes.filter(cls => {
-            return cls.MasterDataId == this.studentInfoTodisplay.ClassId
-          })[0].ClassName;
-
-          this.GetStudentFeePaymentDetails(0);
-        }
-        else {
-          this.alert.error("No class defined for this student!", this.optionsNoAutoClose);
-
-        }
-      })
   }
 }
 export interface IStudentFeePaymentReceipt {
