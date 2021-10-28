@@ -9,8 +9,8 @@
                 <mat-form-field fxFlex appearance="outline">
                     <mat-label> Application</mat-label>
                     <mat-select formControlName="ApplicationId" (selectionChange)="FilterFeatures()">
-                        <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
-                            {{master.Description}}
+                        <mat-option *ngFor="let master of CustomerApplications" [value]="master.ApplicationId">
+                            {{master.ApplicationName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

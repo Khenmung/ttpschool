@@ -38,7 +38,7 @@ export class SidebarComponent implements OnInit {
   }
   GetMenuData() {
     //debugger;
-    let containAdmin = window.location.href.toLowerCase().indexOf('admin');
+    //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
     strFilter = "ParentId eq 0 and Active eq 1 and ApplicationId eq " + this.ApplicationId;
 

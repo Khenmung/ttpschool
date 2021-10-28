@@ -1,14 +1,14 @@
-import { DatePipe } from '@angular/common';
+//import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
+//import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -35,13 +35,14 @@ export class CustomerappsComponent implements OnInit {
   Currencies = [];
   CustomerAppsListName = "CustomerApps";
   CustomerAppsList = [];
-  ApplicationPricing =[];
+  ApplicationPricing = [];
   dataSource: MatTableDataSource<ICustomerApps>;
   allMasterData = [];
   PagePermission = '';
   CustomerAppsData = {
     CustomerAppsId: 0,
     ApplicationPriceId: 0,
+    ApplicationId: 0,
     LoginUserCount: 0,
     PersonOrItemCount: 0,
     Formula: '',
@@ -49,14 +50,14 @@ export class CustomerappsComponent implements OnInit {
     OrgId: 0,
     Active: 0,
   };
-  
+
   displayedColumns = [
     "ApplicationName",
     "PCPM",
     "MinCount",
     "MinPrice",
     "LoginUserCount",
-    "PersonOrItemCount",    
+    "PersonOrItemCount",
     "Formula",
     "AmountPerMonth",
     "Currency",
@@ -85,10 +86,12 @@ export class CustomerappsComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      //this.Applications = this.tokenstorage.getPermittedApplications();
+      //console.log("app this",this.Applications)
       this.GetMasterData();
       this.GetOrganizations();
       this.GetApplicationPricing();
@@ -105,11 +108,12 @@ export class CustomerappsComponent implements OnInit {
 
     this.CustomerAppsData.CustomerAppsId = row.CustomerAppsId;
     this.CustomerAppsData.ApplicationPriceId = row.ApplicationPriceId;
+    this.CustomerAppsData.ApplicationId = row.ApplicationId;
     this.CustomerAppsData.AmountPerMonth = row.AmountPerMonth;
     this.CustomerAppsData.Formula = row.Formula;
     this.CustomerAppsData.LoginUserCount = row.LoginUserCount;
     this.CustomerAppsData.PersonOrItemCount = row.PersonOrItemCount;
-    this.CustomerAppsData.Active = row.Active;    
+    this.CustomerAppsData.Active = row.Active;
     this.CustomerAppsData.OrgId = this.LoginUserDetail[0]["orgId"];
 
     console.log('data', this.CustomerAppsData);
@@ -147,6 +151,7 @@ export class CustomerappsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.Action=false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -164,26 +169,26 @@ export class CustomerappsComponent implements OnInit {
         this.Organizations = [...data.value];
       })
   }
-  GetApplicationPricing(){
-    
-      let list: List = new List();
-      list.fields = [
-        "ApplicationPriceId",
-        "MinCount",
-        "MinPrice",
-        "PCPM",
-        "ApplicationId",
-        "Description",
-        "CurrencyId",
-        "Active"
-        
-      ];
-      list.PageName = "ApplicationPrices";
-      list.filter = ["Active eq 1"];
-      this.dataservice.get(list)
-        .subscribe((data: any) => {
-          this.ApplicationPricing =[...data.value];
-        })
+  GetApplicationPricing() {
+
+    let list: List = new List();
+    list.fields = [
+      "ApplicationPriceId",
+      "MinCount",
+      "MinPrice",
+      "PCPM",
+      "ApplicationId",
+      "Description",
+      "CurrencyId",
+      "Active"
+
+    ];
+    list.PageName = "ApplicationPrices";
+    list.filter = ["Active eq 1"];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.ApplicationPricing = [...data.value];
+      })
   }
   GetCustomerApps() {
 
@@ -196,72 +201,73 @@ export class CustomerappsComponent implements OnInit {
     }
 
     this.loading = true;
-    
+
     var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
 
     if (_searchCustomerId > 0)
       filterstr += " and OrgId eq " + _searchCustomerId;
-    
+
     let list: List = new List();
     list.fields = [
       "CustomerAppsId",
       "ApplicationPriceId",
+      "ApplicationId",
       "LoginUserCount",
       "PersonOrItemCount",
       "Formula",
       "AmountPerMonth",
       "Active",
-      
+
     ];
     list.PageName = this.CustomerAppsListName;
     //list.lookupFields = [];
     list.filter = [filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var customerapp: ICustomerApps;
+        //var customerapp;
 
-        this.ApplicationPricing.forEach(p=>{
-          customerapp = {};  
-          var d =  data.value.filter(db=>db.ApplicationPriceId == p.ApplicationPriceId);
-            if(d.length>0)
-            {
-              
-              customerapp.AmountPerMonth = d[0].AmountPerMonth;
-              customerapp.CurrencyId = p.CurrencyId;
-              customerapp.CustomerAppsId = d[0].CustomerAppsId;
-              customerapp.ApplicationPriceId = d[0].ApplicationPriceId;
-              customerapp.Formula = d[0].Formula;
-              customerapp.LoginUserCount = d[0].LoginUserCount;
-              customerapp.PersonOrItemCount = d[0].PersonOrItemCount;
-              customerapp.MinCount = p.MinCount;
-              customerapp.MinPrice = p.MinPrice;
-              customerapp.PCPM = p.PCPM;
-              customerapp.Description = p.Description;
-              customerapp.ApplicationName = this.Applications.filter(a => a.MasterDataId == p.ApplicationId)[0].Description;
-              customerapp.Currency = this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName;
-    
-            }
-            else
-            {
-              customerapp.AmountPerMonth = 0;
-              customerapp.CurrencyId = p.CurrencyId;
-              customerapp.CustomerAppsId = 0;
-              customerapp.ApplicationPriceId = p.ApplicationPriceId;
-              customerapp.Formula = '';
-              customerapp.LoginUserCount = 0;
-              customerapp.PersonOrItemCount = 0;
-              customerapp.MinCount = p.MinCount;
-              customerapp.MinPrice = p.MinPrice;
-              customerapp.PCPM = p.PCPM;
-              customerapp.Description = p.Description;
-              customerapp.ApplicationName = this.Applications.filter(a => a.MasterDataId == p.ApplicationId)[0].Description;
-              customerapp.Currency = this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName;
-    
-            }
-            this.CustomerAppsList.push(customerapp)
-    
-          })
-        //console.log('this.CustomerAppsList',this.CustomerAppsList);
+        this.ApplicationPricing.forEach(p => {
+          //customerapp = {};  
+          var d = data.value.filter(db => db.ApplicationPriceId == p.ApplicationPriceId);
+          if (d.length > 0) {
+            this.CustomerAppsList.push({
+              "AmountPerMonth": d[0].AmountPerMonth,
+              "CurrencyId": p.CurrencyId,
+              "CustomerAppsId": d[0].CustomerAppsId,
+              "ApplicationPriceId": d[0].ApplicationPriceId,
+              "Formula": d[0].Formula,
+              "LoginUserCount": d[0].LoginUserCount,
+              "PersonOrItemCount": d[0].PersonOrItemCount,
+              "ApplicationId": d[0].ApplicationId,
+              "MinCount": p.MinCount,
+              "MinPrice": p.MinPrice,
+              "PCPM": p.PCPM,
+              "Description": p.Description,
+              "ApplicationName": this.Applications.filter(a => a.MasterDataId == p.ApplicationId)[0].Description,
+              "Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
+              "Active": d[0].Active
+            });
+          }
+          else {
+            this.CustomerAppsList.push({
+              "AmountPerMonth": 0,
+              "CurrencyId": p.CurrencyId,
+              "CustomerAppsId": 0,
+              "ApplicationPriceId": p.ApplicationPriceId,
+              "ApplicationId": p.ApplicationId,
+              "Formula": '',
+              "LoginUserCount": 0,
+              "PersonOrItemCount": 0,
+              "MinCount": p.MinCount,
+              "MinPrice": p.MinPrice,
+              "PCPM": p.PCPM,
+              "Description": p.Description,
+              "ApplicationName": this.Applications.filter(a => a.MasterDataId == p.ApplicationId)[0].Description,
+              "Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
+              "Active": 0
+            });
+          }
+        })
         this.dataSource = new MatTableDataSource<any>(this.CustomerAppsList);
         this.loading = false;
       })
@@ -271,9 +277,9 @@ export class CustomerappsComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
     var formula = element.Description;
-    Object.keys(element).forEach(prop=>{
-        if(formula.includes('['+ prop + ']') && prop !='Description')
-        formula = formula.replaceAll('['+ prop + ']',element[prop]);
+    Object.keys(element).forEach(prop => {
+      if (formula.includes('[' + prop + ']') && prop != 'Description')
+        formula = formula.replaceAll('[' + prop + ']', element[prop]);
     })
     element["AmountPerMonth"] = evaluate(formula);
   }
@@ -323,6 +329,7 @@ export class CustomerappsComponent implements OnInit {
 export interface ICustomerApps {
   CustomerAppsId?: number;
   ApplicationPriceId?: number;
+  ApplicationId: number;
   LoginUserCount?: number;
   PersonOrItemCount?: number;
   Formula?: string;
@@ -332,7 +339,7 @@ export interface ICustomerApps {
   MinPrice?: number,
   CurrencyId?: number,
   ApplicationName?: string;
-  Description?:string;
+  Description?: string;
   Currency?: string;
   OrgId?: number;
   Active?: number;

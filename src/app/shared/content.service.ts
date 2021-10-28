@@ -13,7 +13,7 @@ export class ContentService {
 
   url: any;
   constructor(
-    private tokenService:TokenStorageService,
+    private tokenService: TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
     private shareddata: SharedataService) { }
@@ -35,7 +35,7 @@ export class ContentService {
   GetClasses(orgId) {
     let list = new List();
     list.fields = ["*"];
-    list.filter =["Active eq 1 and OrgId eq " + orgId];
+    list.filter = ["Active eq 1 and OrgId eq " + orgId];
     list.PageName = "ClassMasters";
     return this.dataservice.get(list);
   }
@@ -77,30 +77,28 @@ export class ContentService {
         MonthName: Months[startMonth] + " " + _StartYear,
         val: parseInt(_StartYear + startMonth.toString().padStart(2, "0"))
       })
-      if(startMonth == 11)
-      {
-        startMonth = -1; 
+      if (startMonth == 11) {
+        startMonth = -1;
         _StartYear = _EndYear;
       }
     }
-
-    // this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
-    //   if (b.length != 0) {
-    //      = b
-
-    //     var _Year = _sessionStartEnd.StartDate.getFullYear();
-    //     var startMonth = _sessionStartEnd.StartDate.getMonth() + 1;
-
-    //     for (var month = 0; month < 12; month++, startMonth++) {
-    //       monthArray.push({
-    //         MonthName: Months[startMonth],
-    //         val: _Year + startMonth.toString().padStart(2, "0")
-    //       })
-    //       startMonth = startMonth == 12 ? 1 : startMonth;
-    //     }
-    //   }
-    // });
     return monthArray;
+  }
+  getDropDownData(obj, dropdowntype, appId) {
+    let Id = 0;
+    let Ids = obj.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase() && item.ApplicationId == appId;
+
+    })
+    if (Ids.length > 0) {
+      Id = Ids[0].MasterDataId;
+      return obj.filter((item, index) => {
+        return item.ParentId == Id
+      })
+    }
+    else
+      return [];
+
   }
   Getcontent(title: string, query: string) {
     //debugger

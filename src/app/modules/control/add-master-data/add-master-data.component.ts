@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 //import { row } from 'mathjs';
-import { SharedataService } from 'src/app/shared/sharedata.service';
+//import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -122,9 +122,9 @@ export class AddMasterDataComponent implements OnInit {
     //}
   }
   GetTopMasters() {
-
+debugger;
     var applicationFilter = '';
-    if (!this.SelectedApplicationName.toLowerCase().includes("admin")) {
+    if (!this.SelectedApplicationName.toLowerCase().includes("common")) {
       applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
     }
 
@@ -135,7 +135,7 @@ export class AddMasterDataComponent implements OnInit {
       "Logic", "Sequence", "ApplicationId",
       "Active", "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or OrgId eq 0)" + applicationFilter];
+    list.filter = ["(ParentId eq 0 or OrgId eq "+ this.OrgId + ")" + applicationFilter];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -247,6 +247,11 @@ export class AddMasterDataComponent implements OnInit {
       this.enableTopEdit = true;
     else
       this.enableTopEdit = false;
+    this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.searchForm.get("AppId").value && t.ParentId == 0)
+      || t.ParentId == this.searchForm.get("AppId").value);
+  }
+  FilterMaster(element){
+    debugger;
     this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.searchForm.get("AppId").value && t.ParentId == 0)
       || t.ParentId == this.searchForm.get("AppId").value);
   }
@@ -419,11 +424,11 @@ export class AddMasterDataComponent implements OnInit {
       }
     }
     else {
-      let duplicate = this.MasterData.filter(item => item.OrgId == this.UserDetails[0]["orgId"] &&
-        item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase() && item.MasterDataId != row.MasterDataId)
+      let duplicate = this.MasterData.filter(item => item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase() 
+      && item.MasterDataId != row.MasterDataId)
       if (duplicate.length > 0) {
         this.loading = false;
-        this.alert.error("Data already exists in this master", this.optionNoAutoClose);
+        this.alert.error("Data already exists!", this.optionNoAutoClose);
         return;
       }
     }

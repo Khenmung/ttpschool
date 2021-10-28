@@ -1,8 +1,7 @@
-import { EventEmitter, Output } from '@angular/core';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import alasql from 'alasql';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
@@ -21,6 +20,7 @@ export class FeereceiptComponent implements OnInit {
   @Input("StudentClass") studentInfoTodisplay: any;
   @Input("OffLineReceiptNo") OffLineReceiptNo: any;
   @Input("StudentClassFees") StudentClassFees: any;
+  @ViewChild(MatSort) sort: MatSort;
 
   loading = false;
   CancelReceiptMode = false;
@@ -229,6 +229,7 @@ export class FeereceiptComponent implements OnInit {
         })
 
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
+        this.dataReceiptSource.sort= this.sort;
         this.loading = false;
       })
   }

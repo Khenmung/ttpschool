@@ -13,18 +13,22 @@ mat-header-cell{
 .mat-column-SlNo{
     display: grid;
     place-items: center;
+    flex: 1 1 50px;
 }
 .mat-column-Amount,.mat-column-ReceiptNo{
     display: flex;
     justify-content: flex-end;
+    flex: 1 1 150px;
 }
 .mat-column-PaymentAmount,.mat-column-StudentReceiptId,.mat-column-OfflineReceiptNo,.mat-column-TotalAmount{
     display: grid;
     place-items: center end;
+    flex: 1 1 150px;
 }
 .mat-column-ReceiptDate , .mat-column-Action{
     display: grid;
     place-items: center;
+    flex: 1 1 150px;
 }
 .divCls{
     font-family: Arial, Helvetica, sans-serif;
@@ -41,8 +45,8 @@ div{
     margin-right: 15px;
 }
 .mat-row {
-    //border: 1px solid #e7e7e7;
-    //font-weight: bold;
     min-height: 43px !important;
-    //height: 20px !important;
+}
+.mat-table{
+    min-width: 350px;
 }

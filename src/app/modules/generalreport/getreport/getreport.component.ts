@@ -399,7 +399,7 @@ export class GetreportComponent implements OnInit {
           list.lookupFields.push(_tableNames[i])
         }
 
-        // filter whose tablenames column not contains something
+        // filter whose tablenames column are empty
         var fitleredNotNestedColumns = this.ColumnsOfSelectedReports.filter(f => f.TableNames == '');
         var filteredNestedColumns = this.ColumnsOfSelectedReports.filter(f => f.TableNames != '');
 

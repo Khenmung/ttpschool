@@ -82,7 +82,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/Accounting/accounting.module').then(m => m.AccountingModule)
   },  
   {
-    path: 'admin/globaladmin',
+    path: 'globaladmin',
     loadChildren: () => import('./modules/globaladmin/globaladmin.module').then(m => m.GlobaladminModule)
   },
   { path: '**', component: NotfoundComponent },
