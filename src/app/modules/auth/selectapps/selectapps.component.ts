@@ -278,7 +278,7 @@ export class SelectappsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.admin.CURRENCY);
+        this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.common.CURRENCY);
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         this.GetApplicationPricing();
         this.loading = false;

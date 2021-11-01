@@ -70,9 +70,14 @@ const routes: Routes = [
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
   {
-    path: 'employee',
-    loadChildren: () => import('./modules/EmployeeManagement/employee-management.module').then(m => m.EmployeeManagementModule)
+    path: 'employee/detail',
+    loadChildren: () => import('./modules/employeedetail/employeedetail.module').then(m => m.EmployeedetailModule)
   },
+  {
+    path: 'employee/sal',
+    loadChildren: () => import('./modules/employeesalary/employee-salary.module').then(m => m.EmployeeManagementModule)
+  },
+  
   {
     path: 'leave',
     loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)

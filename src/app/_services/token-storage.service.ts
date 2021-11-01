@@ -15,7 +15,7 @@ const CURRENTBATCHSTARTEND='CurrentBatchStartEnd';
 const SELECTEDBATCHSTARTEND='SelectedBatchStartEnd';
 const STUDENTID='StudentId';
 const STUDENTCLASSID='StudentClassId';
-
+const EMPLOYEEID ='employeeId';
 @Injectable({
   providedIn: 'root'
 })
@@ -87,6 +87,13 @@ export class TokenStorageService {
   public saveStudentId(token: string): void {
     localStorage.removeItem(STUDENTID);
     localStorage.setItem(STUDENTID, token);
+  }
+  public saveEmployeeId(token: string): void {
+    localStorage.removeItem(EMPLOYEEID);
+    localStorage.setItem(EMPLOYEEID, token);
+  }
+  public getEmployeeId(): number | null {
+    return +localStorage.getItem(EMPLOYEEID);
   }
   public getCurrentBatchStartEnd(): string|null {
     var batch=localStorage.getItem(CURRENTBATCHSTARTEND);

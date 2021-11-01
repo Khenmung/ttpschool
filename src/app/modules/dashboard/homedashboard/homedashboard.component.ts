@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,7 +13,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
   styleUrls: ['./homedashboard.component.scss']
 })
 export class HomeDashboardComponent implements OnInit {
-  loading: false;
+  loading= false;
   searchForm: FormGroup;
   NewsNEventPageId = 0;
   MenuData = [];
@@ -32,7 +33,9 @@ export class HomeDashboardComponent implements OnInit {
     private fb: FormBuilder,
     private route: Router,
     private aroute: ActivatedRoute,
-    private dataservice: NaomitsuService) { }
+    private dataservice: NaomitsuService,
+    private http: HttpClient
+    ) { }
 
   ngOnInit(): void {
     // var urlId = 0;
@@ -40,7 +43,7 @@ export class HomeDashboardComponent implements OnInit {
     //   urlId = +p.get('id');
     //   this.shareddata.ChangeApplicationId(urlId);
     // })
-
+    
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
       searchBatchId: [0]
@@ -52,6 +55,7 @@ export class HomeDashboardComponent implements OnInit {
     }
     else {
       debugger;
+      this.loading=true;
       this.userName = this.tokenStorage.getUser();
       var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
       if (PermittedApps.length == 0) {
@@ -162,6 +166,17 @@ export class HomeDashboardComponent implements OnInit {
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
       this.generateBatchIds(this.CurrentBatchId);
+      this.loading=false;
     });
+  }
+  sendmessage(){
+    var api="https://api.chat-api.com/instance358541/sendMessage?token=sfhfmzsd9temr6ca";
+    var data ={
+      "phone": "918974098031",
+    "body": "WhatsApp API on Chat API from TTP again"
+    }
+    this.http.post(api,data).subscribe((data:any)=>{
+      console.log("messagereturn",data);
+    });      
   }
 }

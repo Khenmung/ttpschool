@@ -401,10 +401,10 @@ export class ExcelDataManagementComponent implements OnInit {
         this.AllMasterData = [...data.value];
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

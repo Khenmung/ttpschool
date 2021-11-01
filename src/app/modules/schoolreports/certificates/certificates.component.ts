@@ -434,12 +434,12 @@ export class CertificatesComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.City = this.getDropDownData(globalconstants.MasterDefinitions.school.CITY);
-        this.State = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
-        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.school.COUNTRY);
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
-        this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
+        this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
+        this.State = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
+        this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
 
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);

@@ -12,7 +12,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { IEmployee } from '../../EmployeeManagement/employee-gradehistory/employee-gradehistory.component';
+import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-gradehistory.component';
 
 @Component({
   selector: 'app-leavepolicy',

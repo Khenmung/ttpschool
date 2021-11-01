@@ -6,8 +6,8 @@
             <mat-form-field appearance="outline" [style.width.pc]="25" style="margin-right:15px;">
                 <mat-label>Application</mat-label>
                 <mat-select formControlName="searchApplicationId">
-                    <mat-option *ngFor="let option of Applications" [value]="option.applicationId">
-                        {{option.applicationName}}
+                    <mat-option *ngFor="let option of Applications" [value]="option.MasterDataId">
+                        {{option.Description}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -108,9 +108,9 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <!-- <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                    <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
                         <mat-icon>add</mat-icon>
-                    </button> -->
+                    </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                     <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">

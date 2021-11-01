@@ -23,10 +23,10 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class EmployeeManagementRoutingModule { }
-export const EmployeeManageComponents=[
+export class EmployeeSalaryRoutingModule { }
+export const employeesalaryComponents=[
   EmpComponentsComponent,
   EmployeeGradehistoryComponent,
   EmployeeSalaryComponentComponent,
- EmpmanagementboardComponent
+  EmpmanagementboardComponent
 ]

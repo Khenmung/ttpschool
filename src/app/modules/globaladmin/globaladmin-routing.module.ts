@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { ApplicationfeatureComponent } from './applicationfeature/applicationfeature.component';
 import { ApplicationpriceComponent } from './applicationprice/applicationprice.component';
 import { CustomerappsComponent } from './customerapps/customerapps.component';
 import { CustomerinvoiceComponent } from './customerinvoice/customerinvoice.component';
@@ -29,7 +28,6 @@ export const GlobalAdminComponents = [
   CustomerappsComponent,
   CustomerinvoiceComponent,
   ApplicationpriceComponent,
-  ApplicationfeatureComponent,
   CustomerinvoicecomponentsComponent,
   GlobaladminboardComponent,
   ReportConfigItemComponent,

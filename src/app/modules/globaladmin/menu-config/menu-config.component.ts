@@ -10,6 +10,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { globalconstants } from 'src/app/shared/globalconstant';
 
 @Component({
   selector: 'app-menu-config',
@@ -31,7 +32,7 @@ export class MenuConfigComponent implements OnInit {
   oldvalue: any;
   AllData: any[] = [];
   ParentPages: [{ PageId, PageTitle }];
-  PageList =[];
+  PageList = [];
   PageDetail: IPage;
   dataSource: MatTableDataSource<IMenuConfig>;
   DATA: any[] = [];
@@ -76,7 +77,8 @@ export class MenuConfigComponent implements OnInit {
   searchForm: FormGroup;
   //selection = new SelectionModel<IPage>(true, []);
   Applications = [];
-  Permission='';
+  allMasterData = [];
+  Permission = '';
   ngOnInit() {
     debugger;
     this.searchForm = this.fb.group({
@@ -88,10 +90,10 @@ export class MenuConfigComponent implements OnInit {
 
     //this.GetParentPage(this.Id);
   }
-  PageLoad(){
+  PageLoad() {
     this.checklogin();
-    
-    
+
+
   }
   constructor(private dataservice: NaomitsuService,
     private fb: FormBuilder,
@@ -113,7 +115,41 @@ export class MenuConfigComponent implements OnInit {
       this.navigate.navigate(['/auth/login']);
     }
     this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-    this.Applications = this.tokenStorage.getPermittedApplications();
+    this.GetMasterData();
+  }
+  GetMasterData() {
+
+    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
+
+    let list: List = new List();
+
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
+    list.PageName = "MasterItems";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.allMasterData = [...data.value];
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+
+        this.loading = false;
+      });
+  }
+  getDropDownData(dropdowntype) {
+    let Id = 0;
+    let Ids = this.allMasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    })
+    if (Ids.length > 0) {
+      Id = Ids[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      })
+    }
+    else
+      return [];
+
   }
   getDetails(parentId) {
 
@@ -227,11 +263,41 @@ export class MenuConfigComponent implements OnInit {
   SaveAll() {
 
   }
-  AddData() {
+  AddNew() {
+    if(this.searchForm.get("searchApplicationId").value==0)
+    {
+      this.loading=false;
+      this.alert.error("Please select application.",this.optionsAutoClose);
+      return;
+    }
+    var newdata = {
+      PageId: 0,
+      PageTitle: "",
+      ParentId: 0,
+      label: "",
+      faIcon: "",
+      link: "",
+      IsTemplate: 0,
+      DisplayOrder: 0,
+      HasSubmenu: 0,
+      ParentPage: '',
+      ApplicationId:this.searchForm.get("searchApplicationId").value,
+      Active: 0,
+      UpdateDate: new Date(),
+      HomePage: 0,
+      Action: ""
+
+    }
+    this.PageList =[];
+    this.PageList.push(newdata);
+    this.dataSource = new MatTableDataSource<any>(this.PageList);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.loading = false;
 
   }
   UpdateOrSave(row) {
-    //debugger;
+    debugger;
 
     let ErrorMessage = '';
     // if (this.AppUsersForm.get("ContactNo").value == 0) {
@@ -240,7 +306,7 @@ export class MenuConfigComponent implements OnInit {
     if (row.PageTitle.length == 0) {
       ErrorMessage += "Page Title is required.<br>";
     }
-    if (row.Label.length == 0) {
+    if (row.label.length == 0) {
       ErrorMessage += "Label is required.<br>";
     }
 
@@ -295,7 +361,7 @@ export class MenuConfigComponent implements OnInit {
           this.MenuConfigData["UpdatedDate"] = new Date();
           this.MenuConfigData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
           this.update(row);
-        }     
+        }
 
       }
     })
@@ -327,8 +393,9 @@ export class MenuConfigComponent implements OnInit {
           this.alert.success("Data updated successfully", this.optionsAutoClose);
         });
   }
-  updateActive(element, event) {    
-    
+  
+  updateActive(element, event) {
+
     element.Action = true;
     element.Active = event.checked ? 1 : 0;
   }
@@ -339,7 +406,7 @@ export class MenuConfigComponent implements OnInit {
       this.alert.info("Please select application.", this.optionsAutoClose);
       return;
     }
-    this.loading=true;
+    this.loading = true;
     filterStr = "Active eq 1 and ApplicationId eq " + this.searchForm.get("searchApplicationId").value
 
     let list: List = new List();
@@ -349,15 +416,15 @@ export class MenuConfigComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.PageList = data.value.map(f=>{
-          f.Action=false;
+        this.PageList = data.value.map(f => {
+          f.Action = false;
           return f;
         })
         this.dataSource = new MatTableDataSource<any>(this.PageList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading=false;
-        console.log('data',this.PageList)
+        this.loading = false;
+        //console.log('data',this.PageList)
       });
 
   }

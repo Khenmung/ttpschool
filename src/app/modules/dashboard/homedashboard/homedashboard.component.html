@@ -2,7 +2,8 @@
     <mat-card-title></mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content style="min-height: 100vh;margin-top:-100px; display: flex;flex-direction: column; align-items:center;justify-content: center;">        
-            <form [formGroup]="searchForm">
+        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>    
+        <form [formGroup]="searchForm">
                 <mat-form-field [style.width.px]="250" appearance="outline">
                     <mat-select formControlName="searchApplicationId">
                         <mat-option *ngFor="let item of PermittedApplications" [value]="item.applicationId">
@@ -17,6 +18,7 @@
                 <button [disabled]="loading" class="mat-raised-button" (click)="ChangeApplication()">
                     <mat-icon>search</mat-icon>
                 </button>
-            </form>        
+            </form>   
+            <button class="mat-button-raised" (click)="sendmessage()"><mat-icon>add</mat-icon></button>     
     </mat-card-content>
 </mat-card>

@@ -39,7 +39,13 @@ export class ContentService {
     list.PageName = "ClassMasters";
     return this.dataservice.get(list);
   }
-
+  GetGrades(orgId) {
+    let list = new List();
+    list.fields = ["*"];
+    list.filter = ["Active eq 1 and OrgId eq " + orgId];
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    return this.dataservice.get(list);
+  }
   getMasterText(arr, itemId) {
     var filtered = arr.filter(f => f.MasterDataId == itemId);
     if (filtered.length > 0)

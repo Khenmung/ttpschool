@@ -55,7 +55,7 @@ export class StudentAttendanceComponent implements OnInit {
     searchClassId: [0],
     searchSectionId: [0],
     searchClassSubjectId: [0],
-    searchAttendanceDate: new Date()
+    searchAttendanceDate: [{value:new Date(),disabled: true }]
   });
   StudentClassSubjectId = 0;
   StudentAttendanceData = {

@@ -257,7 +257,7 @@ export class AddstudentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.loginUserDetail[0]["orgId"]+")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -265,11 +265,11 @@ export class AddstudentComponent implements OnInit {
         //console.log(data.value);
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.school.COUNTRY);
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
+        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);

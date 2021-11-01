@@ -173,13 +173,13 @@ export class DashboardstudentComponent implements OnInit {
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
 
-        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
+        this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
 
-        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
+        this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.shareddata.ChangeReligion(this.Religion);
 
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.shareddata.ChangeStates(this.States);
 
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
@@ -191,7 +191,7 @@ export class DashboardstudentComponent implements OnInit {
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.shareddata.ChangeGenders(this.Genders);
 
-        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
+        this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.shareddata.ChangeBloodgroup(this.Bloodgroup);
 
         this.LanguageSubjUpper = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTUPPERCLS);

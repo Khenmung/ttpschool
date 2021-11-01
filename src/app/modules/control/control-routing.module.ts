@@ -11,7 +11,6 @@ import { ControlhomeComponent } from './controlhome/controlhome.component';
 import { BatchdashboardComponent } from './batchdashboard/batchdashboard.component';
 import { AddMasterDataComponent } from './add-master-data/add-master-data.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { ApplicationfeatureComponent } from '../globaladmin/applicationfeature/applicationfeature.component';
 
 const routes: Routes = [
   {
@@ -22,7 +21,7 @@ const routes: Routes = [
       { path: 'roleuser', component: roleuseraddComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
-      { path: 'appfeature', component: ApplicationfeatureComponent },
+      //{ path: 'appfeature', component: ApplicationfeatureComponent },
       
     ]
   }

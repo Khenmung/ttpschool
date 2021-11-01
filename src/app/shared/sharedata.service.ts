@@ -15,8 +15,6 @@ export class SharedataService {
   private MasterItemsource = new BehaviorSubject(this.items);
   private CurrentBatchIdSource = new BehaviorSubject(0);
   private BatchSource = new BehaviorSubject(this.items);
-  // private StudentIdSource = new BehaviorSubject(this.StudentId);
-  // private StudentClassIdSource = new BehaviorSubject(this.StudentClassId);
   private CountrySource = new BehaviorSubject(this.items);
   private GendersSource = new BehaviorSubject(this.items);
   private BloodgroupSource = new BehaviorSubject(this.items);
@@ -24,7 +22,6 @@ export class SharedataService {
   private ReligionSource = new BehaviorSubject(this.items);
   private StatesSource = new BehaviorSubject(this.items);
   private LocationSource = new BehaviorSubject(this.items);
-  //private ClassesSource = new BehaviorSubject(this.items);
   private PrimaryContactSource = new BehaviorSubject(this.items);
   private SectionSource = new BehaviorSubject(this.items);
   private FeeTypeSource = new BehaviorSubject(this.items);
@@ -32,6 +29,7 @@ export class SharedataService {
   private LanguageSubjectLowerSource = new BehaviorSubject(this.items);
   private FeeNamesSource = new BehaviorSubject(this.items);
   private StudentNameSource = new BehaviorSubject('');
+  private EmployeeNameSource = new BehaviorSubject('');
   private UploadTypeSource = new BehaviorSubject(this.items);
   private PagesDataSource = new BehaviorSubject(this.items);
   private NewsNEventIdSource = new BehaviorSubject(-1);
@@ -102,7 +100,8 @@ export class SharedataService {
   CurrentLocation = this.LocationSource.asObservable();
   //CurrentClasses = this.ClassesSource.asObservable();
   CurrentStudentName = this.StudentNameSource.asObservable();
-
+  CurrentEmployeeName = this.EmployeeNameSource.asObservable();
+  
   constructor(
     private dataservice:NaomitsuService
   ) {
@@ -186,6 +185,10 @@ export class SharedataService {
   ChangeStudentName(item)
   {
     this.StudentNameSource.next(item);
+  }
+  ChangeEmployeeName(item)
+  {
+    this.EmployeeNameSource.next(item);
   }
   ChangeFeeNames(item)
   {

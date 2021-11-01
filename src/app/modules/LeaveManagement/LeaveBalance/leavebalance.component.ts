@@ -13,7 +13,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { IEmployee } from '../../EmployeeManagement/employee-gradehistory/employee-gradehistory.component';
+import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-gradehistory.component';
 
 @Component({
   selector: 'app-leavebalance',
@@ -360,12 +360,12 @@ export class LeaveBalanceComponent implements OnInit {
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
-        this.City = this.getDropDownData(globalconstants.MasterDefinitions.school.CITY);
-        this.Countries = this.getDropDownData(globalconstants.MasterDefinitions.school.COUNTRY);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.school.STATE);
-        this.BloodGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.BLOODGROUP);
-        this.Religions = this.getDropDownData(globalconstants.MasterDefinitions.school.RELIGION);
-        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.CATEGORY);
+        this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
+        this.Countries = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+        this.BloodGroups = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
+        this.Religions = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
         this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);;

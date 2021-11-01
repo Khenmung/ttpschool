@@ -99,8 +99,14 @@ export class globalconstants {
     public static MasterDefinitions =
         {
 
-            "admin": {
-                "CURRENCY": "currency"
+            "common": {
+                "CURRENCY": "currency",
+                "RELIGION": "religion",
+                "CITY": "city",
+                "STATE": "state",
+                "COUNTRY": "country",
+                "CATEGORY": "category",
+                "BLOODGROUP": "blood group",
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",
@@ -128,12 +134,7 @@ export class globalconstants {
                 "STUDENTGRADE": "student grade",
                 "RECEIPTHEADING": "receipt heading",
                 "SCHOOLGENDER": "school gender",
-                "RELIGION": "religion",
-                "CITY": "city",
-                "STATE": "state",
-                "COUNTRY": "country",
-                "CATEGORY": "category",
-                "BLOODGROUP": "blood group",
+            
                 "PRIMARYCONTACT": "primary contact",
                 "BATCH": "batch",
                 "SECTION": "section",
@@ -172,6 +173,7 @@ export class globalconstants {
                 "DESIGNATION": "designation",
                 "SALARYCOMPONENT": "salary component",
                 "GRADE": "grade",
+                "GENDER": "gender",
                 "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
             },
