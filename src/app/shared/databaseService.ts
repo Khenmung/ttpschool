@@ -55,6 +55,10 @@ export class NaomitsuService {
     if (list.hasOwnProperty('orderBy') && list.orderBy) {
       url += "&$orderby=" + list.orderBy.toString();
     }
+    // if (list.hasOwnProperty('apply') && list.orderBy) {
+    //   url += "&$apply=" + list.apply.toString();
+    // }
+    
     console.log("GetListItems URL: " + url);
 
     var req = {

@@ -30,10 +30,13 @@ export class TodayCollectionComponent implements OnInit {
   ELEMENT_DATA = [];
   GrandTotalAmount = 0;
   DisplayColumns = [
-    "SlNo",
-    "FeeName",
+    "Student",
+    "ClassName",
+    "ReceiptDate",
+    "ReceiptNo",
     "TotalAmount"
   ]
+  DateWiseCollection =[];
   LoginUserDetail = [];
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: FormGroup;
@@ -74,72 +77,39 @@ export class TodayCollectionComponent implements OnInit {
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
     let filterstring = '';
-    filterstring = "ReceiptNo ne null and Active eq 1 and PaymentDate ge datetime'" + this.formatdate.transform(fromDate, 'yyyy-MM-dd') + "' and PaymentDate le datetime'" + this.formatdate.transform(toDate.setDate(toDate.getDate() + 1), 'yyyy-MM-dd') + "'";
+    filterstring = "Active eq 1 and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') + 
+    " and ReceiptDate le " + this.formatdate.transform(toDate.setDate(toDate.getDate() + 1), 'yyyy-MM-dd') +
+    " and BatchId eq " + this.SelectedBatchId +
+    " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = [
-      'StudentFeePayment/StudentFeeId',
-      'StudentFeePayment/FeeNameId',
-      'PaymentAmt',
+      'ReceiptDate',
+      'ReceiptNo',
+      'TotalAmount'
     ];
-    list.PageName = "PaymentDetails";
-    list.lookupFields = ["StudentFeePayment"];
+    list.PageName = "StudentFeeReceipts";
+    list.lookupFields=["StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"]
     list.filter = [filterstring];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.GrandTotalAmount = 0;
-        if (data.value.length > 0) {
+        this.GrandTotalAmount = data.value.reduce((acc,current)=>acc + current.TotalAmount,0);
+        this.DateWiseCollection = data.value.map(d=>{
+          d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
+          d.ClassName = d.StudentClass.Class.ClassName
+          return d;
+        })
 
-          var result = [];
-
-          let ValidFeeNameIds = data.value.filter(f => {
-            return f.StudentFeePayment.FeeNameId != null
-          })
-
-          ValidFeeNameIds.forEach(element => {
-
-            let addedItem = result.filter(item => item.FeeNameId == element.FeeNameId);
-
-            if (addedItem.length == 0) {
-              result.push({
-                FeeNameId: element.StudentFeePayment.FeeNameId,
-                TotalAmount: element.PaymentAmt
-              })
-            }
-            else {
-              addedItem["TotalAmount"] += +element.PaymentAmt;
-            }
-
-          });
-          this.ELEMENT_DATA = result.map((item, indx) => {
-            this.GrandTotalAmount += +item.TotalAmount;
-            //debugger;
-            return {
-              SlNo: indx + 1,
-              FeeName: this.FeeNames.filter(f => f.MasterDataId == +item.FeeNameId)[0].MasterDataName,
-              TotalAmount: item.TotalAmount
-            }
-          })
-          //console.log('my result1', this.ELEMENT_DATA);
-        }
-        else {
-          this.ErrorMessage = "No record found!";
-          this.ELEMENT_DATA = [];
-        }
-
-        this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-
+        this.dataSource = new MatTableDataSource(this.DateWiseCollection)
       })
   }
   GetMasterData() {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " +  this.LoginUserDetail[0]["orgId"] + ")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

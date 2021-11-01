@@ -132,10 +132,10 @@ export class EmployeeComponent implements OnInit {
 
   ) {
 
-    this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
-    if (this.Genders.length == 0)
-      this.route.navigate(['/employee/']);
-    else {
+    // this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
+    // if (this.Genders.length == 0)
+    //   this.route.navigate(['/employee/']);
+    // else {
       this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
 
       //this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
@@ -187,22 +187,27 @@ export class EmployeeComponent implements OnInit {
         Active:[0],
         Remarks:[''],
         PresentAddress:[''],
-        PermenentAddress:[''],
+        PermanentAddress:[''],
         PresentAddressCityId:[0],
         PresentAddressStateId:[0],
         PresentAddressCountryId:[0],
         PermanentAddressCityId:[0],
         PermanentAddressStateId:[0],
-        PermanentAddressCountryId:[0]
+        PermanentAddressCountryId:[0],
+        PresentAddressPincode:[''],
+        PermanentAddressPincode:['']
       });
-    }
+    //}
   }
 
   ngOnInit(): void {
     this.loginUserDetail = this.tokenService.getUserDetail();
     this.EmployeeId = this.tokenService.getEmployeeId();
     if (this.EmployeeId > 0)
+    {
+      this.GetMasterData();
       this.GetEmployee();
+    } 
     else
       this.route.navigate(['/employee/']);
     // this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -278,17 +283,25 @@ export class EmployeeComponent implements OnInit {
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
         this.WorkNature = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
+        this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);
+        this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
+        
         
       });
 
   }
   getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
+    let Ids = this.allMasterData.filter((item, indx) => {
       return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
     });
+    if (Ids.length > 0) {
+      var Id = Ids[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      });
+    }
+    else
+      return [];
   }
   displayContact(event) {
     if (event.value == this.PrimaryContactOtherId) {
@@ -302,14 +315,13 @@ export class EmployeeComponent implements OnInit {
   SaveOrUpdate() {
     this.loading = true;
     this.EmployeeData = {
-      EmpEmployeeId: this.EmployeeForm.get("EmpEmployeeId").value,
+      EmpEmployeeId: this.EmployeeId,
       ShortName: this.EmployeeForm.get("ShortName").value,
       FirstName: this.EmployeeForm.get("FirstName").value,
       LastName: this.EmployeeForm.get("LastName").value,
       FatherName: this.EmployeeForm.get("FatherName").value,
       MotherName: this.EmployeeForm.get("MotherName").value,
       Gender: this.EmployeeForm.get("Gender").value,
-      Address: this.EmployeeForm.get("Address").value,
       DOB: this.EmployeeForm.get("DOB").value,
       DOJ: this.EmployeeForm.get("DOJ").value,
       Bloodgroup: this.EmployeeForm.get("Bloodgroup").value,
@@ -345,11 +357,13 @@ export class EmployeeComponent implements OnInit {
       PresentAddressStateId: this.EmployeeForm.get("PresentAddressStateId").value,
       PresentAddressCountryId: this.EmployeeForm.get("PresentAddressCountryId").value,
       PermanentAddressCityId: this.EmployeeForm.get("PermanentAddressCityId").value,
+      PresentAddressPincode: this.EmployeeForm.get("PresentAddressPincode").value,
+      PermanentAddressPincode: this.EmployeeForm.get("PermanentAddressPincode").value,
       PermanentAddressStateId: this.EmployeeForm.get("PermanentAddressStateId").value,
       PermanentAddressCountryId: this.EmployeeForm.get("PermanentAddressCountryId").value,
-      PermenentAddress: this.EmployeeForm.get("PermenentAddress").value
+      PermanentAddress: this.EmployeeForm.get("PermanentAddress").value
     }
-    if (this.EmployeeForm.get("EmployeeId").value == 0)
+    if (this.EmployeeId == 0)
       this.save();
     else
       this.update();
@@ -375,7 +389,7 @@ export class EmployeeComponent implements OnInit {
   update() {
     //console.log('Employee', this.EmployeeForm.value)
 
-    this.dataservice.postPatch('EmpEmployees', this.EmployeeData, +this.EmployeeForm.get("EmpEmployeeId").value, 'patch')
+    this.dataservice.postPatch('EmpEmployees', this.EmployeeData, this.EmployeeId, 'patch')
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
@@ -389,7 +403,7 @@ export class EmployeeComponent implements OnInit {
   }
   GetEmployee() {
     let list: List = new List();
-    list.fields = ["*"];//"EmployeeId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
+    list.fields = ["*"];
     list.PageName = "EmpEmployees";
     list.lookupFields = ["StorageFnPs($select=FileName;$filter=EmployeeId eq " + this.EmployeeId + ")"]
     list.filter = ["EmpEmployeeId eq " + this.EmployeeId];
@@ -399,8 +413,10 @@ export class EmployeeComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           data.value.forEach(stud => {
+
+            this.EmployeeId = stud.EmpEmployeeId;            
+            
             this.EmployeeForm.patchValue({
-              "EmpEmployeeId": stud.EmpEmployeeId,
               "ShortName": stud.ShortName,
               "FirstName": stud.FirstName,
               "LastName": stud.LastName,
@@ -445,6 +461,8 @@ export class EmployeeComponent implements OnInit {
               "PermanentAddressCityId": stud.PermanentAddressCityId,
               "PermanentAddressStateId": stud.PermanentAddressStateId,
               "PermanentAddressCountryId": stud.PermanentAddressCountryId,
+              "PresentAddressPincode":stud.PresentAddressPincode,
+              "PermanentAddressPincode":stud.PermanentAddressPincode
             });
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;

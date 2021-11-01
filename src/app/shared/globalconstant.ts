@@ -173,7 +173,7 @@ export class globalconstants {
                 "DESIGNATION": "designation",
                 "SALARYCOMPONENT": "salary component",
                 "GRADE": "grade",
-                "GENDER": "gender",
+                "GENDER": "employee gender",
                 "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
             },

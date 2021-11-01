@@ -526,7 +526,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
 
     list.fields = ["*"];
     list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["Employee/*"];
+    list.lookupFields = ["Employee($select=*)"];
     list.filter = ["IsCurrent eq 1 and Active eq 1" + searchfilter + orgIdSearchstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {

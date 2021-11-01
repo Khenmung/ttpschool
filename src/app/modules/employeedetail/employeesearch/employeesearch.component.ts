@@ -143,9 +143,7 @@ export class EmployeesearchComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
-        //console.log('this.SelectedBatchId',this.SelectedBatchId);
+
         this.SelectedBatchId = +this.token.getSelectedBatchId();
         this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
 
@@ -155,13 +153,7 @@ export class EmployeesearchComponent implements OnInit {
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
-        // this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        // this.shareddata.ChangeClasses(this.Classes);
-
-        //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        //this.shareddata.ChangeBatch(this.Batches);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c=>(this.SelectedBatchId=c));
 
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
@@ -229,7 +221,7 @@ export class EmployeesearchComponent implements OnInit {
     //debugger;
     this.generateDetail(element);
     //  this.route.navigate(['/admin/addEmployee/' + id], { queryParams: { scid: this.EmployeeClassId, bid: this.BatchId } });
-    this.route.navigate(['/employee/detail/info']);
+    this.route.navigate(['/employee/info']);
   }
   feepayment(element) {
     this.generateDetail(element);

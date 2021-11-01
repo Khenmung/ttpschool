@@ -115,7 +115,7 @@ export class CertificatesComponent implements OnInit {
     const styleEl = this.document.createElement('style');
     styleEl.innerText = strStyle;
     headEl.appendChild(styleEl);
-    console.log('dd', styleEl)
+    //console.log('dd', styleEl)
   }
   private _filter(name: string): IStudent[] {
 
@@ -281,9 +281,13 @@ export class CertificatesComponent implements OnInit {
       }
       else {
         //console.log('data.value',data.value)
-        //debugger;
+        debugger;
         data.value.forEach(d => {
-          var _studentClass = d.ClassId == null ? '' : this.Classes.filter(c => c.ClassId == d.ClassId)[0].ClassName;
+
+          var _studentClass = '';
+          var classObj = this.Classes.filter(c => c.ClassId == d.ClassId);
+          if (classObj.length > 0)
+            _studentClass = classObj[0].ClassName
           var _section = d.SectionId == null ? '' : this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName;
           var _gender = d.Student.Gender == null ? '' : this.Genders.filter(c => c.MasterDataId == d.Student.Gender)[0].MasterDataName;
           var _city = d.Student.City == null ? '' : this.City.filter(c => c.MasterDataId == d.Student.City)[0].MasterDataName;
@@ -295,7 +299,7 @@ export class CertificatesComponent implements OnInit {
           var _reason = d.Student.ReasonForLeavingId == null ? '' : this.ReasonForLeaving.filter(c => c.MasterDataId == d.Student.ReasonForLeavingId)[0].MasterDataName;
 
           this.StudentForVariables.push(
-            { name: "Today", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
+            { name: "ToDay", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
             { name: "StudentClass", val: _studentClass },
             { name: "Section", val: _section },
             { name: "RollNo", val: d.RollNo },
@@ -351,6 +355,7 @@ export class CertificatesComponent implements OnInit {
       this.alert.error("Certificate not defined!", this.optionAutoClose);
       return;
     }
+    console.log("_certificateBody",_certificateBody);
     _certificateBody.forEach(c => {
       this.StudentForVariables.forEach(s => {
         if (c.Description.includes('[' + s.name.trim() + ']'))
@@ -384,7 +389,7 @@ export class CertificatesComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.alert.info("Please select exam", this.optionAutoClose);
+      this.alert.info("Please select exam.", this.optionAutoClose);
       return;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
@@ -471,12 +476,12 @@ export class CertificatesComponent implements OnInit {
   GetCertificates() {
     //debugger;
     if (this.searchForm.get("searchCertificateTypeId").value == 0) {
-      this.alert.info("Please select certificate type!", this.optionsNoAutoClose);
+      this.alert.info("Please select certificate type!", this.optionAutoClose);
       return;
     }
     var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     if (_studentClassId == undefined) {
-      this.alert.info("Please select student!", this.optionsNoAutoClose);
+      this.alert.info("Please select student!", this.optionAutoClose);
       return;
     }
 
@@ -484,6 +489,7 @@ export class CertificatesComponent implements OnInit {
     this.GetStudents(_studentClassId)
 
   }
+
   GetExams() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -505,7 +511,9 @@ export class CertificatesComponent implements OnInit {
         })
       })
   }
-
+  UpdateStudentCertificates(){
+    console.log("hi")
+  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {

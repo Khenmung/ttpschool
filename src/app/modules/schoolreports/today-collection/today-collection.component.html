@@ -23,14 +23,23 @@
         </form>
 
         <mat-table #table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="SlNo">
-                <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+            
+            <ng-container matColumnDef="Student">
+                <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.Student}} </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="FeeName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Fee </mat-header-cell>
+            <ng-container matColumnDef="ClassName">
+                <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.ClassName}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ReceiptDate">
+                <mat-header-cell *matHeaderCellDef> Receipt Date </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.ReceiptDate|date:'dd-MM-yyyy'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ReceiptNo">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> ReceiptNo </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.FeeName}}
+                    {{element.ReceiptNo}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="TotalAmount">

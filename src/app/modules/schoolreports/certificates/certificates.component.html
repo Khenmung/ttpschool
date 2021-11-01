@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Exam Results</strong></div>
+        <div><strong>Issue Certificates</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -52,7 +52,7 @@
                 </div> -->
             </div>
             <br>
-            <button [disabled]="loading" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
+            <button (click)="UpdateStudentCertificates()" [disabled]="loading" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
                 ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
             </button>

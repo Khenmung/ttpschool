@@ -331,7 +331,7 @@ export class MenuConfigComponent implements OnInit {
       }
       else {
 
-        this.MenuConfigData.Active = 1;
+        this.MenuConfigData.Active = row.Active;
         this.MenuConfigData.PageId = row.PageId;
         this.MenuConfigData.PageTitle = row.PageTitle;
         this.MenuConfigData.label = row.label;

@@ -43,6 +43,7 @@ export class ReportboardComponent implements OnInit {
     this.navigateTab(this.selectedIndex);
   }
   navigateTab(indx) {
+    debugger;
     switch (indx) {
       case 0:
         this.examtimetable.PageLoad();
@@ -51,10 +52,10 @@ export class ReportboardComponent implements OnInit {
         this.results.PageLoad();
         break;
       case 2:
-        this.TodayCollection.PageLoad();
+        this.feecollection.PageLoad();
         break;
       case 3:
-        this.feecollection.PageLoad();
+        this.TodayCollection.PageLoad();
         break;
       case 4:
         this.certificate.PageLoad();

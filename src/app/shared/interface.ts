@@ -41,6 +41,7 @@ export class List {
     filter: string[];
     orderBy: string;
     groupby:string;
+    apply:string;
 
 }
 export interface PagesForMenu {

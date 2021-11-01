@@ -4,8 +4,8 @@ import { EmployeeDetailComponents, EmployeedetailRoutingModule } from './employe
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { EmployeesearchComponent } from './employeesearch/employeesearch.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [EmployeeDetailComponents],
@@ -15,6 +15,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    SharedModule,
     SharedhomepageModule,
     FlexLayoutModule
   ],

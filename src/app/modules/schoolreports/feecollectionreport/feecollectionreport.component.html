@@ -1,53 +1,46 @@
 <mat-card>
-    <mat-card-title>Student fee payment status report</mat-card-title>
+    <mat-card-title>Fee payment status report</mat-card-title>
     <mat-card-content>
         <br>
         <form [formGroup]="SearchForm">
             <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px">
-                <!-- <mat-form-field appearance="outline" [style.width.px]="270">
-                    <mat-label>Batch</mat-label>
-                    <mat-select formControlName="BatchId">
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Batches" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
+                <mat-form-field [style.width.px]="250">
+                    <mat-label>Name-class-section-roll no</mat-label>
+                    <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option.Name}}
                         </mat-option>
-                    </mat-select>
-                    <span class="text-danger" *ngIf="f.BatchId.touched && f.BatchId.hasError('required')">Please
-                        select seesion.</span>
-                </mat-form-field> -->
-                <mat-form-field appearance="outline" [style.width.px]="270">
-                    <mat-label>Fee</mat-label>
-                    <mat-select formControlName="FeeNameId">
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of FeeNames" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                    <span class="text-danger" *ngIf="f.FeeNameId.touched && f.FeeNameId.hasError('required')">Please
-                        select fee.</span>
+                    </mat-autocomplete>
                 </mat-form-field>
-                <mat-radio-group aria-label="Select an option" formControlName="PaidOrNotPaid">
-                    <mat-radio-button [checked]="true" value="0">
-                        Not paid</mat-radio-button>
-                    &nbsp;
-                    <mat-radio-button value="1"> Paid</mat-radio-button>
-                </mat-radio-group>
+                <mat-form-field appearance="outline">
+                    <mat-label>Class</mat-label>
+                    <mat-select formControlName="searchClassId">
+                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                            {{item.ClassName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Section</mat-label>
+                    <mat-select formControlName="searchSectionId">
+                        <mat-option value="0">--section--</mat-option>
+                        <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentReport()">
                     <mat-icon>search</mat-icon>
                 </button>
             </div>
         </form>
-        <div *ngIf="f.PaidOrNotPaid.value==1">
-            <div fxLayout="row" fxLayoutAlign="start center">
-                <span *ngIf="TotalPaidStudentCount>0">There are <b>{{TotalPaidStudentCount}}</b> student/s who have paid the
-                    selected fee.</span>
-                <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
-            </div>
+        <div>        
             <mat-table #table [dataSource]="dataSource" style="overflow: auto;">
-                <ng-container matColumnDef="SlNo">
+                <!-- <ng-container matColumnDef="SlNo">
                     <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="RollNo">
                     <mat-header-cell *matHeaderCellDef> Roll No. </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.RollNo}} </mat-cell>
@@ -64,12 +57,12 @@
                         {{element.ClassRollNoSection}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="PaymentDate">
-                    <mat-header-cell *matHeaderCellDef> Payment Date</mat-header-cell>
+                <ng-container matColumnDef="MonthName">
+                    <mat-header-cell *matHeaderCellDef> Paid Till </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.PaymentDate|date:'dd/MM/yyyy'}}
+                        {{element.MonthName}}
                     </mat-cell>
-                </ng-container>
+                </ng-container>               
                 <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center"
                     fxLayout="row">
@@ -78,44 +71,6 @@
             <mat-paginator #PaidPaginator [pageSizeOptions]="[10, 25, 100]">
             </mat-paginator>
         </div>
-        <div *ngIf="f.PaidOrNotPaid.value==0">
-            <div fxLayout="row" fxLayoutAlign="start center">
-                <span *ngIf="TotalUnPaidStudentCount>0">
-                    There are <b>{{TotalUnPaidStudentCount}}</b> student/s who have not paid the selected fee.
-                </span>
-                <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
-            </div>
-            <mat-table [dataSource]="UnpaidDataSource" matSort>
-                <ng-container matColumnDef="SlNo">
-                    <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Name">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Student </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.Name}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="RollNo">
-                    <mat-header-cell *matHeaderCellDef> RollNo </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.RollNo}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ClassRollNoSection">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ClassRollNoSection}}
-                    </mat-cell>
-                </ng-container>
 
-                <mat-header-row *matHeaderRowDef="UnpaidDisplayColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: UnpaidDisplayColumns;" fxLayoutAlign="space-between center"
-                    fxLayout="row">
-                </mat-row>
-            </mat-table>
-            <mat-paginator #UnPaidPaginator [pageSizeOptions]="[10, 25, 100]">
-            </mat-paginator>
-        </div>
     </mat-card-content>
 </mat-card>
