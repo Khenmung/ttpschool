@@ -7,7 +7,6 @@ import { ResultsComponent } from '../schoolreports/results/results.component';
 import { ReportboardComponent } from './reportboard/reportboard.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ExamtimetableComponent } from '../schoolreports/examtimetable/examtimetable.component';
-import { CertificatesComponent } from '../schoolreports/certificates/certificates.component';
 const routes: Routes = [{
   path: '', component: HomeComponent,
   children: [
@@ -30,6 +29,5 @@ export const SchoolReportsComponents = [
   ResultsComponent,
   ReportboardComponent,
   ExamtimetableComponent,
-  CertificatesComponent,
  
 ]

@@ -26,7 +26,7 @@ export class roleuserdashboardComponent implements OnInit {
   @ViewChild(roleuseraddComponent, { static: false }) roleuseradd: roleuseraddComponent;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  
+
   loading = false;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
@@ -143,7 +143,7 @@ export class roleuserdashboardComponent implements OnInit {
     }
     this.RoleUserList.push(newdata);
     this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
-    this.dataSource.paginator=this.paginator;
+    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -213,15 +213,14 @@ export class roleuserdashboardComponent implements OnInit {
   }
   GetRoleUser() {
 
-    var filterstr='';
-    if(this.searchForm.get("searchUserName").value!='')
-    filterstr = " and UserId eq '" + this.searchForm.get("searchUserName").value.Id + "'"
+    var filterstr = '';
+    if (this.searchForm.get("searchUserName").value != '')
+      filterstr = " and UserId eq '" + this.searchForm.get("searchUserName").value.Id + "'"
     this.loading = true;
     let list: List = new List();
     list.fields = [
       'RoleUserId',
       'UserId',
-      //'AppUser/UserName',
       'RoleId',
       'Active'];
 
@@ -231,22 +230,27 @@ export class roleuserdashboardComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        debugger;
         //  console.log('data.value', data.value);
         //var filteredUsers = data.value.filter(d => d.UserId == this.searchForm.get("searchUserName").value.ApplicationUserId)
         if (data.value.length > 0) {
 
           data.value.forEach(item => {
+            var _roleName = '';
+            var roleobj = this.Roles.filter(a => a.MasterDataId == item.RoleId);
+            if (roleobj.length > 0)
+              _roleName = roleobj[0].MasterDataName;
+
             var validuser = this.Users.filter(u => u.Id == item.UserId)
-            if(validuser.length>0)
-            this.RoleUserList.push({
-              RoleUserId: item.RoleUserId,
-              UserId: item.UserId,
-              User: validuser[0].UserName,
-              RoleId: item.RoleId,
-              Role: this.Roles.length == 0 ? '' : this.Roles.filter(a => a.MasterDataId == item.RoleId)[0].MasterDataName,
-              Active: item.Active
-            });
+            if (validuser.length > 0)
+              this.RoleUserList.push({
+                RoleUserId: item.RoleUserId,
+                UserId: item.UserId,
+                User: validuser[0].UserName,
+                RoleId: item.RoleId,
+                Role: _roleName,
+                Active: item.Active
+              });
           });
         }
         else {
@@ -271,7 +275,7 @@ export class roleuserdashboardComponent implements OnInit {
   updateActive(row, value) {
 
     row.Active = value.checked ? 1 : 0;
-    row.Action=true;
+    row.Action = true;
   }
   onBlur(row) {
     row.Action = true;

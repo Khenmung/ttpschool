@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -42,16 +41,16 @@ export class StudentDocumentComponent implements OnInit {
   uploadForm: FormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
-    "FileId",
+    //"FileId",
     "UpdatedFileFolderName",
     "DocType",
     "UploadDate",
     "Action"
   ]
   documentUploadSource: MatTableDataSource<IUploadDoc>;
-  constructor(private fileUploadService: FileUploadService,
+  constructor(
+    private fileUploadService: FileUploadService,
     private alertMessage: AlertService,
-    private routeUrl: ActivatedRoute,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
@@ -100,7 +99,7 @@ export class StudentDocumentComponent implements OnInit {
     this.formdata = new FormData();
     this.formdata.append("batchId", this.SelectedBatchId.toString());
     this.formdata.append("fileOrPhoto", "0");
-    this.formdata.append("folderName", "StudentDocuments");
+    this.formdata.append("folderName", "StudentDocuments/"+this.SelectedBatchId.toString());
     this.formdata.append("parentId", "-1");
     this.formdata.append("description", "");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
@@ -153,12 +152,12 @@ export class StudentDocumentComponent implements OnInit {
                 UpdatedFileFolderName: doc.UpdatedFileFolderName,
                 UploadDate: doc.UploadDate,
                 DocType: _doctypeName,
-                path: globalconstants.apiUrl + "/Uploads/"+ this.LoginUserDetail[0]["org"] +"/StudentDocuments/" + doc.FileName
+                path: globalconstants.apiUrl + "/Uploads/"+ this.LoginUserDetail[0]["org"] +"/StudentDocuments/"+this.SelectedBatchId.toString()+ "/" + doc.FileName
               });
             }
           })
           this.documentUploadSource = new MatTableDataSource<IUploadDoc>(this.StudentDocuments);
-          console.log("studentdocuments",this.StudentDocuments)
+          //console.log("studentdocuments",this.StudentDocuments)
         }
       });
 

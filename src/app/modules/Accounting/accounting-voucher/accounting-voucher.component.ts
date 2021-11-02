@@ -120,7 +120,7 @@ export class AccountingVoucherComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+      this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.VOUCHER);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       //this.GetMasterData();
       this.GetGLAccounts();

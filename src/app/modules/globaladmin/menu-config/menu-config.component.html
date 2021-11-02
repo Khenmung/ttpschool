@@ -16,6 +16,12 @@
             </button>
         </form>
         <mat-table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="PageId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Page Id </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                  {{element.PageId}}
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="PageTitle">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Page Title </mat-header-cell>
                 <mat-cell *matCellDef="let element">

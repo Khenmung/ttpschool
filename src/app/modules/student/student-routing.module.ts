@@ -8,6 +8,7 @@ import { DashboardstudentdocumentComponent } from './StudentDocument/dashboardst
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from './studentfeepayment/feereceipt/feereceipt.component';
 import { StudentDocumentComponent } from '../student/StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
+import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
 
 const routes: Routes = [
   {
@@ -35,5 +36,6 @@ export const StudentComponents = [
   DashboardstudentComponent,
   FeereceiptComponent,
   DashboardstudentdocumentComponent,
-  StudentDocumentComponent
+  StudentDocumentComponent,
+  GenerateCertificateComponent
 ]

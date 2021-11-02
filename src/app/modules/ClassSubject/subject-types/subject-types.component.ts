@@ -79,7 +79,7 @@ PageLoad() {
   if (this.LoginUserDetail == null)
     this.nav.navigate(['/auth/login']);
   else {
-    this.CurrentPagePermission = globalconstants.getPermission(this.LoginUserDetail,this.tokenstorage, globalconstants.Pages[0].SUBJECT.SUBJECTTYPES);
+    this.CurrentPagePermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.SUBJECTTYPES);
     this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
     this.GetSubjectTypes();
 //    this.GetMasterData();      

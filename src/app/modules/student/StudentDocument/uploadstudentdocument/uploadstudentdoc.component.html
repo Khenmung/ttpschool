@@ -25,10 +25,10 @@
 </div>
 <div fxLayout="row" fxLayoutAlign="space-between center" class="mat-elevation-z8">
     <mat-table [dataSource]="documentUploadSource" fxFlex>
-        <ng-container matColumnDef="FileId">
+        <!-- <ng-container matColumnDef="FileId">
             <mat-header-cell *matHeaderCellDef> Document Id</mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.FileId}} </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="UpdatedFileFolderName">
             <mat-header-cell *matHeaderCellDef> Document Name </mat-header-cell>
             <mat-cell *matCellDef="let element">

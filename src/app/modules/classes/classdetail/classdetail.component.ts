@@ -40,7 +40,7 @@ export class ClassdetailComponent implements OnInit {
   Durations = [];
   StudyArea = [];
   StudyMode = [];
-  
+  Permission='';
   ExamId = 0;
   ClassMasterData = {
     ClassId: 0,
@@ -91,12 +91,18 @@ export class ClassdetailComponent implements OnInit {
 
   PageLoad() {
   debugger;
-    this.loading = true;
+  this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)  
+  this.loading = true;
+    
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
-    else {
+    else if(this.Permission =='deny') {
+
+      //this.nav.navigate(['/edu'])
+    }
+    else{
       if (this.ClassMasters.length == 0) {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.ClassMasters = [...data.value];

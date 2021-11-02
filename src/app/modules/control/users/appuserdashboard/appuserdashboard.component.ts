@@ -1,8 +1,9 @@
 //import { DatePipe } from '@angular/common';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -75,7 +76,8 @@ export class AppuserdashboardComponent implements OnInit {
   UserId = 0;
   AppUsers = [];
   searchForm: FormGroup;
-  constructor(
+  constructor(    
+    private datepipe: DatePipe,
     private shareddata: SharedataService,
     private fb: FormBuilder,
     private route: Router,
@@ -179,6 +181,19 @@ export class AppuserdashboardComponent implements OnInit {
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     //this.route.navigate(['/auth/appuser']);
   }
+//   GetOrganization(){
+//     let list: List = new List();
+//     list.fields = ["OrganizationId,OrganizationName"];
+
+//     list.PageName = "Organizations";
+//     list.filter = ["Active eq 1 and " + this.filterwithOrg];
+//     //this.RoleUserList = [];
+
+//     this.dataservice.get(list)
+//       .subscribe((data: any) => {
+//         this.Organizations=[...data.value];
+//   })
+// }
   GetUsers() {
 
     //console.log(this.LoginUserDetail);
@@ -197,19 +212,18 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         //  console.log('data.value', data.value);
-        if (data.value.length > 0) {
-          this.Users = [...data.value];
+        if (data.length > 0) {
+          this.Users = [...data];
         }
         this.loading = false;
-
       })
   }
   GetAppUsers() {
-    //debugger;
+    debugger;
     this.loading = true;
     let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
-    if (this.searchForm.get("searchUserName").value.Id > 0) {
-      filterStr += " and Id eq " + this.searchForm.get("searchUserName").value.Id;
+    if (this.searchForm.get("searchUserName").value != "") {
+      filterStr += " and Id eq '" + this.searchForm.get("searchUserName").value.Id + "'";
     }
 
     let list: List = new List();
@@ -224,35 +238,21 @@ export class AppuserdashboardComponent implements OnInit {
       "Active",
      ];
     list.PageName = "AuthManagement";
-    list.lookupFields = ["Org($select=OrganizationName)"];
+    //list.lookupFields = ["Org($select=OrganizationName)"];
     list.filter = ["Active eq 1" + filterStr];
 
-    this.dataservice.get(list)
+    this.authservice.get(list)
       .subscribe((data: any) => {
-        if (data.value.length > 0) {
-          // var _department;
-          // var _departmentName = '';
-          // var _location;
-          // var _locationName = '';
-          this.AppUsers = data.value.map(u => {
-            // _department = '';
-            // _departmentName = '';
-            // _location = '';
-            // _department = this.Departments.filter(o => o.MasterDataId == u.DepartmentId);
-            // if (_department.length > 0)
-            //   _departmentName = _department[0].MasterDataName
-
-            // _location = this.Locations.filter(o => o.MasterDataId == u.LocationId);
-            // if (_location.length > 0)
-            //   _locationName = _location[0].MasterDataName;
-
+        debugger;
+        if (data.length > 0) {
+        
+          this.AppUsers = data.map(u => {
             return {
               "Id": u.Id,
               "UserName": u.UserName,
-              "EmailAddress": u.EmailAddress,
-              "ContactNo": u.ContactNo,
+              "EmailAddress": u.Email,
+              "ContactNo": u.PhoneNumber,
               "OrgId": u.OrgId,
-              "OrgName": u.Org.OrganizationName,
               "ValidFrom": u.ValidFrom,
               "ValidTo": u.ValidTo,
               "Active": u.Active              
@@ -261,12 +261,19 @@ export class AppuserdashboardComponent implements OnInit {
         }
         else
           this.alert.error("No user found matching search criteria!", this.optionsAutoClose);
-        const rows = [];
-        this.AppUsers.forEach(element => rows.push(element, { detailRow: true, element }));
-        this.datasource = new MatTableDataSource<IAppUser>(rows);
+        //const rows = [];
+        
+        //this.AppUsers.forEach(element => rows.push(element, { detailRow: true, element }));
+        
+        console.log("users",this.AppUsers)
+        this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
         this.loading = false;
       });
 
+  }
+  updateActive(row,value){
+    row.Active = value.checked?1:0;
+    row.Action=true;
   }
   UpdateOrSave(row) {
     //debugger;
@@ -278,7 +285,7 @@ export class AppuserdashboardComponent implements OnInit {
     if (row.UserName.length == 0) {
       ErrorMessage += "User name is required.<br>";
     }
-    if (row.Email.length == 0) {
+    if (row.EmailAddress.length == 0) {
       ErrorMessage += "Please email is required.<br>";
     }
 
@@ -296,22 +303,22 @@ export class AppuserdashboardComponent implements OnInit {
     list.fields = ["Id"];
     list.PageName = "AuthManagement";
     list.filter = ["Active eq 1 and " + duplicatecheck]
-    this.dataservice.get(list).subscribe((data: any) => {
-      if (data.value.length > 0) {
+    this.authservice.get(list).subscribe((data: any) => {
+      if (data.length > 0) {
         this.alert.error("User name already exists.", this.optionsAutoClose);
         return;
       }
       else {
-        this.AppUsersData.Active = 1;
+        this.AppUsersData.Active = row.Active;
         this.AppUsersData.Id = row.Id;
         this.AppUsersData.UserName = row.UserName;
-        this.AppUsersData.Email = row.Email;
-        this.AppUsersData.PhoneNumber = row.PhoneNumber;
+        this.AppUsersData.Email = row.EmailAddress;
+        this.AppUsersData.PhoneNumber = row.ContactNo;
         this.AppUsersData.ValidFrom = row.ValidFrom;
         this.AppUsersData.ValidTo = row.ValidTo;
         this.AppUsersData.OrgId = this.LoginDetail[0]["orgId"];
         this.AppUsersData.CreatedBy = this.LoginDetail[0]["userId"];
-        if (row.Id == 0)
+        if (row.Id == '')
           this.insert(row);
         else {
           this.update();
@@ -326,7 +333,7 @@ export class AppuserdashboardComponent implements OnInit {
   insert(row) {
 
     //debugger;
-    this.dataservice.postPatch('AuthManagement/Register', this.AppUsersData, 0, 'post')
+    this.authservice.register(this.AppUsersData)
       .subscribe(
         (data: any) => {
 
@@ -340,7 +347,7 @@ export class AppuserdashboardComponent implements OnInit {
   }
   update() {
 
-    this.dataservice.postPatch('AuthManagement', this.AppUsersData, this.AppUsersData.Id, 'patch')
+    this.authservice.edit(this.AppUsersData, this.AppUsersData.Id)
       .subscribe(
         (data: any) => {
           this.loading = false;

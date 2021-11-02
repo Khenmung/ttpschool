@@ -6,7 +6,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
-import { SelectionModel } from '@angular/cdk/collections';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -60,6 +59,7 @@ export class MenuConfigComponent implements OnInit {
     "HomePage": 0
   }
   DisplayColumns = [
+    "PageId",
     "PageTitle",
     "ParentId",
     "label",
@@ -419,7 +419,8 @@ export class MenuConfigComponent implements OnInit {
         this.PageList = data.value.map(f => {
           f.Action = false;
           return f;
-        })
+        }).sort((a,b)=>a.DisplayOrder - b.DisplayOrder);
+
         this.dataSource = new MatTableDataSource<any>(this.PageList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

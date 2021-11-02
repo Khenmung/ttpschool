@@ -38,6 +38,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   CheckPermission = '';
   StandardFilterWithBatchId = '';
   loading = false;
+  Permission = '';
   Classes = [];
   Subjects = [];
   Sections = [];
@@ -114,20 +115,27 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER);
+      if (this.Permission == 'deny') {
+       
+        //this.nav.navigate(['/edu']);
+
+      }
+      else {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];          
+          this.Classes = [...data.value];
         })
 
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.CheckPermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
-      //console.log(this.CheckPermission);
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        //this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+        //console.log(this.CheckPermission);
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
-      this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+        this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
 
-      this.GetMasterData();
-
+        this.GetMasterData();
+      }
     }
   }
 
@@ -140,7 +148,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     //   this.classSubjectAdd.PageLoad();
     // }, 50);
   }
-  
+
   GetClassTeacher() {
     let filterStr = this.StandardFilterWithBatchId;//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;
@@ -339,7 +347,7 @@ export class ClassmasterdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.TeacherClassMappingId = data.TeacherClassMappingId;
-          row.Action =false;
+          row.Action = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
@@ -349,7 +357,7 @@ export class ClassmasterdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          row.Action =false;
+          row.Action = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -371,7 +379,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName","LastName)"]
+    list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
     list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
     //list.orderBy = "ParentId";
     this.Teachers = [];

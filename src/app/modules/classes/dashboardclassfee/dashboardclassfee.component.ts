@@ -40,8 +40,7 @@ export class DashboardclassfeeComponent implements OnInit {
   Classes = [];
   Batches = [];
   Locations = [];
-  //Months = [];
-  //Years = [];
+  Permission = '';
   DataToSaveInLoop = [];
   ClassStatuses = [];
   ELEMENT_DATA: Element[] = [];
@@ -84,33 +83,37 @@ export class DashboardclassfeeComponent implements OnInit {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
-    //this.Months = this.GetSessionFormattedMonths();
+    this.Permission = globalconstants.getPermission(this.token, globalconstants.Pages.edu.CLASSCOURSE.FEE);
     this.Months = this.contentservice.GetSessionFormattedMonths();
-    console.log(this.Months)
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
-
-    this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
-    this.SelectedBatchId = +this.token.getSelectedBatchId();
-    if (this.SelectedBatchId == 0) {
-      //this.alert.error("Current batch not defined in master!", this.options);
-      this.route.navigate(['/admin']);
-      this.loading = false;
+    else if (this.Permission == 'deny') {
+      console.log('access denied to Fee');
+      //this.alert.error('access denied!',this.optionAutoClose);  
+      //this.route.navigate(['/edu'])
     }
     else {
-      this.searchForm.patchValue({ Batch: this.SelectedBatchId });
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-          if (this.FeeNames.length == 0)
-            this.GetMasterData();
-          this.loading = false;
+      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.SelectedBatchId = +this.token.getSelectedBatchId();
+      if (this.SelectedBatchId == 0) {
+        //this.alert.error("Current batch not defined in master!", this.options);
+        this.route.navigate(['/admin']);
+        this.loading = false;
+      }
+      else {
+        this.searchForm.patchValue({ Batch: this.SelectedBatchId });
+        if (this.Classes.length == 0) {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+            this.Classes = [...data.value];
+            if (this.FeeNames.length == 0)
+              this.GetMasterData();
+            this.loading = false;
 
-        })
+          })
+        }
       }
     }
   }
-
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   displayedColumns = [
     'SlNo',
@@ -444,7 +447,7 @@ export class DashboardclassfeeComponent implements OnInit {
             this.alert.info("No record found!", this.optionAutoClose);
           }
         }
-        console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
+        console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
         this.loading = false;

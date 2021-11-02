@@ -121,8 +121,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      this.PagePermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
-      this.PromotePermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.STUDENTPROMOTE);
+      this.PagePermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.ASSIGNSTUDENTCLASS);
+      this.PromotePermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTPROMOTE);
       this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
       //console.log('selected batchid', this.SelectedBatchId);
       //console.log('current batchid', this.CurrentBatchId)
@@ -237,7 +237,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
-    this.PagePermission = globalconstants.getPermission(this.LoginUserDetail, this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
+    this.PagePermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     // if (this.searchForm.get("searchStudentName").value.StudentId == 0 && this.searchForm.get("searchClassId").value == 0) {

@@ -27,75 +27,89 @@ export class globalconstants {
                     'examsubjectmark': 'examsubjectmark',
                     'studentactivity': 'studentactivity'
                 },
-                'timetable':{
-                    'classperiod':'classperiod',
-                    'timetable':'timetable',
+                'timetable': {
+                    'classperiod': 'classperiod',
+                    'timetable': 'timetable',
                 },
-                'attendance':{
-                    'studentattendance':'studentattendance'
+                'attendance': {
+                    'studentattendance': 'studentattendance'
                 },
-                'student':{
-                    'detail':'detail',
-                    'feepayment':'feepayment'
+                'student': {
+                    'detail': 'detail',
+                    'feepayment': 'feepayment'
                 },
-                'reportconfiguration':{},
-                'exceldataupload':{
-                    'uploadstudent':'uploadstudent',
-                    'uploadteacher':'uploadteacher',
+                'reportconfiguration': {},
+                'exceldataupload': {
+                    'uploadstudent': 'uploadstudent',
+                    'uploadteacher': 'uploadteacher',
                 },
-                'report':{
-                    'studentreport':'studentreport',
-                    'teacherreport':'teacherreport',
+                'report': {
+                    'studentreport': 'studentreport',
+                    'teacherreport': 'teacherreport',
                 }
             },
-            'employee':{
-                
+            'employee': {
+
             }
         };
-    public static Pages = [
+    public static Pages =
         {
-            'AUTH': {
-                'CHANGEPASSWORD': 'change password',
-                'LOGIN': 'login',
-                'REGISTER': 'register'
+            "common": {
+                'AUTH': {
+                    'CHANGEPASSWORD': 'change password',
+                    'LOGIN': 'login',
+                    'REGISTER': 'register'
 
+                },
+                "CONTROL": {
+                    "BATCHDASHBOARD": 'batch dashboard',
+                    'APPLICATIONFEATUREPERMISSION': 'Role Feature Permission',
+                    'ROLEUSER': 'role user',
+                    'USERS': 'users',
+                    'MASTERS': 'masters'
+                }
             },
-            "CONTROL": {
-                "BATCHDASHBOARD": 'batch dashboard',
-                'APPLICATIONFEATUREPERMISSION': 'application feature permission',
-                'ROLEUSER': 'role user',
-                'USERS': 'users',
-                'MASTERS': 'masters'
-            },
-            'EXAMS': {
-                'EXAMS': 'exams',
-                'EXAMSLOT': 'exam slot',
-                'EXAMSTUDENTSUBJECTRESULT': 'exam student subject result',
-                'SLOTNCLASSSUBJECT': 'slot n class subject',
+            "edu": {
+                "CLASSCOURSE": {
+                    'DETAIL': 'classdetail',
+                    'FEE': 'fee',
+                    'FEETYPE': 'fee type',
+                    'PREREQUISITE': 'pre-requisite',
+                    'CLASSMASTER': 'class master'
+                },
+                'EXAMS': {
+                    'EXAMS': 'exams',
+                    'EXAMSLOT': 'exam slot',
+                    'EXAMSTUDENTSUBJECTRESULT': 'exam student subject result',
+                    'SLOTNCLASSSUBJECT': 'slot n class subject',
 
-            },
-            'SUBJECT': {
-                'CLASSSUBJECTMAPPING': 'class subject mapping',
-                'SUBJECTMARKCOMPONENT': 'subject mark component',
-                'ASSIGNSTUDENTCLASS': 'assign student class',
-                'STUDENTSUBJECT': 'student subject',
-                'SUBJECTTYPES': 'subject types',
-                'STUDENTPROMOTE': 'promote student'
+                },
+                'SUBJECT': {
+                    'CLASSSUBJECTMAPPING': 'class subject mapping',
+                    'SUBJECTMARKCOMPONENT': 'subject mark component',
+                    'ASSIGNSTUDENTCLASS': 'assign student class',
+                    'STUDENTSUBJECT': 'student subject',
+                    'SUBJECTTYPES': 'subject types',
+                    'STUDENTPROMOTE': 'promote student'
 
+                },
+                'FEES': {
+                    'CLASSFEE': 'class fee',
+                    'EXCELDATAUPLOAD': 'excel data upload',
+                    'SINGLEFEERECEIPT': 'single fee receipt',
+                    'FEECOLLECTIONREPORT': 'fee collection report',
+                    'TODAYCOLLECTIONREPORT': 'today collection report',
+                    'SINGLESTUDENT': 'single student',
+                    'SINGLESTUDENTCLASS': 'single student class',
+                    'SINGLESTUDENTDOCUMENT': 'single student document',
+                    'SINGLEFEEPAYMENT': 'single student fee payment'
+                }
             },
-            'FEES': {
-                'CLASSFEE': 'class fee',
-                'EXCELDATAUPLOAD': 'excel data upload',
-                'SINGLEFEERECEIPT': 'single fee receipt',
-                'FEECOLLECTIONREPORT': 'fee collection report',
-                'TODAYCOLLECTIONREPORT': 'today collection report',
-                'SINGLESTUDENT': 'single student',
-                'SINGLESTUDENTCLASS': 'single student class',
-                'SINGLESTUDENTDOCUMENT': 'single student document',
-                'SINGLEFEEPAYMENT': 'single student fee payment'
+            "accounting": {
+                "VOUCHER": "voucher"
             }
         }
-    ]
+
     public static MasterDefinitions =
         {
 
@@ -134,7 +148,7 @@ export class globalconstants {
                 "STUDENTGRADE": "student grade",
                 "RECEIPTHEADING": "receipt heading",
                 "SCHOOLGENDER": "school gender",
-            
+
                 "PRIMARYCONTACT": "primary contact",
                 "BATCH": "batch",
                 "SECTION": "section",
@@ -277,7 +291,7 @@ export class globalconstants {
         { 'type': 'rwd', 'val': 1 },
         { 'type': 'rw', 'val': 2 },
         { 'type': 'read', 'val': 3 },
-        { 'type': 'denied', 'val': 4 }
+        { 'type': 'deny', 'val': 4 }
     ];
     //public static 
     constructor(
@@ -323,15 +337,17 @@ export class globalconstants {
 
     }
 
-    public static getPermission(token, tokenservice: TokenStorageService, feature: any) {
+    public static getPermission(tokenservice: TokenStorageService, feature: any) {
         var checkBatchIdNSelectedId = 0;
+        var loginUserDetail = tokenservice.getUserDetail();
         checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();
+
         //shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(t => checkBatchIdNSelectedId = t);
         //user is viewing old data
         if (checkBatchIdNSelectedId == 1 && feature.toLowerCase().indexOf('promote') == -1)
             return 'read';
         else {
-            var _permission = token[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
+            var _permission = loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
             if (_permission.length > 0)
                 return _permission[0].permission;
             else

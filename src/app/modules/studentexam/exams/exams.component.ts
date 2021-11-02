@@ -75,7 +75,7 @@ export class ExamsComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       var feature = globalconstants.AppAndMenuAndFeatures.edu.examination.exam;     
-      this.Permission= globalconstants.getPermission(this.LoginUserDetail,this.tokenstorage,feature);
+      this.Permission= globalconstants.getPermission(this.tokenstorage,feature);
       if(this.Permission=='')
         this.nav.navigate(['/auth/login']);
         

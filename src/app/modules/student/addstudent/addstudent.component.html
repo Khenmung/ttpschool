@@ -3,8 +3,8 @@
     <mat-card-subtitle>{{StudentName}}</mat-card-subtitle>
     <mat-card-content>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <alert></alert>
-        <div style="margin:5px">            
+        <div style="margin:5px">   
+            <alert></alert>         
             <form [formGroup]="studentForm">
                 <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
                     class="demo-tab-group">
@@ -296,7 +296,7 @@
                     </mat-tab>
                     <mat-tab>
                         <ng-template mat-tab-label>
-                            <mat-icon>note_add</mat-icon>Additional info.
+                            <mat-icon>note_add</mat-icon>Additional Info. & Save 
                         </ng-template>
                         <div style="padding:15px 15px 10px 15px;"><strong>Additional Info.</strong></div>
                         <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
@@ -367,15 +367,22 @@
                     </mat-tab>
                     <mat-tab *ngIf="StudentClassId>0">
                         <ng-template mat-tab-label>
+                            <mat-icon>approval</mat-icon>Generate Certificate
+                        </ng-template>
+                        <app-generatecertificate></app-generatecertificate>
+                    </mat-tab>
+                    <mat-tab *ngIf="StudentClassId>0">
+                        <ng-template mat-tab-label>
                             <mat-icon>file_present</mat-icon>Documents
                         </ng-template>
                         <upload-student-document></upload-student-document>
                     </mat-tab>
+                    
                 </mat-tab-group>
             </form>
         </div>
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-actions style="padding-left: 15px;">
         <button [disabled]="loading" (click)="back()" class="mat-raised-button">
             <mat-icon>arrow_back</mat-icon>
         </button>

@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+//import { startWith, map } from 'rxjs/operators';
 import { IStudent } from 'src/app/modules/ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
@@ -16,11 +16,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 
 @Component({
-  selector: 'app-certificates',
-  templateUrl: './certificates.component.html',
-  styleUrls: ['./certificates.component.scss']
+  selector: 'app-generatecertificate',
+  templateUrl: './generatecertificate.component.html',
+  styleUrls: ['./generatecertificate.component.scss']
 })
-export class CertificatesComponent implements OnInit {
+export class GenerateCertificateComponent implements OnInit {
   loading = false;
   LoginUserDetail = [];
   optionsNoAutoClose = {
@@ -67,6 +67,7 @@ export class CertificatesComponent implements OnInit {
   allMasterData = [];
   filteredOptions: Observable<IStudent[]>;
   ExamId = 0;
+  StudentClassId =0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     ExamId: 0,
@@ -99,15 +100,14 @@ export class CertificatesComponent implements OnInit {
     //this.loadTheme();
     //debugger;
     this.searchForm = this.fb.group({
-      searchStudentName: [0],
       searchCertificateTypeId: [0]
     });
-    this.filteredOptions = this.searchForm.get("searchStudentName").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.Students.slice())
-      );
+    // this.filteredOptions = this.searchForm.get("searchStudentName").valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => typeof value === 'string' ? value : value.Name),
+    //     map(Name => Name ? this._filter(Name) : this.Students.slice())
+    //   );
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
   }
   loadTheme(strStyle: string) {
@@ -130,6 +130,7 @@ export class CertificatesComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.StudentClassId =  this.tokenstorage.getStudentClassId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
@@ -355,7 +356,7 @@ export class CertificatesComponent implements OnInit {
       this.alert.error("Certificate not defined!", this.optionAutoClose);
       return;
     }
-    console.log("_certificateBody",_certificateBody);
+    //console.log("_certificateBody",_certificateBody);
     _certificateBody.forEach(c => {
       this.StudentForVariables.forEach(s => {
         if (c.Description.includes('[' + s.name.trim() + ']'))
@@ -479,14 +480,14 @@ export class CertificatesComponent implements OnInit {
       this.alert.info("Please select certificate type!", this.optionAutoClose);
       return;
     }
-    var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
-    if (_studentClassId == undefined) {
-      this.alert.info("Please select student!", this.optionAutoClose);
-      return;
-    }
+    // var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    // if (_studentClassId == undefined) {
+    //   this.alert.info("Please select student!", this.optionAutoClose);
+    //   return;
+    // }
 
     this.loading = true;
-    this.GetStudents(_studentClassId)
+    this.GetStudents(this.StudentClassId);
 
   }
 

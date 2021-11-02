@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field [style.width.px]="250" appearance="outline">
+                <!-- <mat-form-field [style.width.px]="250" appearance="outline">
                     <mat-label>student</mat-label>
                     <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -15,7 +15,7 @@
                             {{option.Name}}
                         </mat-option>
                     </mat-autocomplete>
-                </mat-form-field>
+                </mat-form-field> -->
                 <mat-form-field appearance="outline">
                     <mat-label>Certificates</mat-label>
                     <mat-select formControlName="searchCertificateTypeId" #cerId>
@@ -44,18 +44,15 @@
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-                </mat-table>
-                <!-- <div fxLayout="column" *ngIf="cerId.length>0" fxLayoutAlign="space-around center">
-                    <div *ngFor="let item of CertificateElements;let i=index">
-                        <span [innerHTML]="item.Description"></span>
-                    </div>
-                </div> -->
+                </mat-table>              
             </div>
             <br>
+            <div fxLayout="row" fxLayoutAlign="center center">
             <button (click)="UpdateStudentCertificates()" [disabled]="loading" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
                 ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
             </button>
+        </div>
         </div>
     </div>
 </div>

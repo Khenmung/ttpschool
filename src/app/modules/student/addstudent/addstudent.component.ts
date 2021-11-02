@@ -1,6 +1,6 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { AlertService } from '../../../shared/components/alert/alert.service';
@@ -15,6 +15,7 @@ import { StudentDocumentComponent } from '../StudentDocument/uploadstudentdocume
 import { SharedataService } from '../../../shared/sharedata.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { GenerateCertificateComponent } from '../generatecertificate/generatecertificate.component';
 
 @Component({
   selector: 'app-addstudent',
@@ -26,6 +27,7 @@ export class AddstudentComponent implements OnInit {
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
   @ViewChild(StudentDocumentComponent) studentDocument: StudentDocumentComponent;
+  @ViewChild(GenerateCertificateComponent) gencertificate: GenerateCertificateComponent;
   Edit = false;
   options = {
     autoClose: true,
@@ -238,6 +240,9 @@ export class AddstudentComponent implements OnInit {
         this.studentClass.PageLoad();
         break;
       case 5:
+        this.gencertificate.PageLoad();
+        break;
+      case 6:
         this.studentDocument.PageLoad();
         break;
     }
@@ -257,7 +262,7 @@ export class AddstudentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.loginUserDetail[0]["orgId"]+")"];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.loginUserDetail[0]["orgId"] + ")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -32,7 +33,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   FeeTypeList: IFeeType[] = [];
   filteredOptions: Observable<IFeeType[]>;
   dataSource: MatTableDataSource<IFeeType>;
-  //allMasterData = [];
+  Permission = '';
   SelectedBatchId = 0;
   FeeTypeData = {
     FeeTypeId: 0,
@@ -72,10 +73,16 @@ export class SchoolFeeTypesComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE);
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.loading = false;
+    else if (this.Permission == 'deny') {
+      //this.nav.navigate(['/edu']);
+    }
+    else {
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.loading = false;
+    }
   }
   AddNew() {
     var newdata = {

@@ -30,6 +30,7 @@ export class ClassprerequisiteComponent implements OnInit {
   };
   PrerequisiteListName = 'ClassPrerequisites';
   Applications = [];
+  Permission='';
   loading = false;
   SelectedBatchId = 0;
   PrerequisiteList: IPrerequisite[] = [];
@@ -79,7 +80,12 @@ export class ClassprerequisiteComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      if (this.ClassMasters.length == 0) {
+      this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE);
+      if(this.Permission =='deny')
+      {
+        //this.nav.navigate(['/edu']);
+      }
+      else if (this.ClassMasters.length == 0) {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.ClassMasters = [...data.value];
           this.loading = false;

@@ -10,7 +10,6 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { DialogService } from 'src/app/shared/dialog.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -63,14 +62,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     private dialog: DialogService) { }
 
   ngOnInit(): void {
-    // this.UserDetails = this.tokenStorage.getUserDetail();
-    // if(this.UserDetails==null)
-    // {
-    //   this.alert.error('Please login to be able to add masters!',this.optionAutoClose);
-    //   this.route.navigate(['auth/login']);
-    // }
-    // this.GetTopMasters();
   }
+
   currentPermission = '';
   enableAddNew = false;
   enableTopEdit = false;
@@ -101,9 +94,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
       this.route.navigate(['auth/login']);
     }
-    this.currentPermission = globalconstants.getPermission(this.UserDetails, this.tokenStorage, globalconstants.Pages[0].CONTROL.APPLICATIONFEATUREPERMISSION);
-    //console.log('this.currentPermission', this.currentPermission)
-    //this.Applications = this.tokenStorage.getPermittedApplications();
+    this.currentPermission = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
     this.Permissions = globalconstants.PERMISSIONTYPES;
     this.GetTopMasters();
     this.GetFeatures();
@@ -302,7 +293,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
             this.ApplicationRoleList.push(b);
           })
         });
-        console.log('applist', this.ApplicationRoleList)
+    //    console.log('applist', this.ApplicationRoleList)
         this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
         this.datasource.sort = this.sort;
         this.datasource.paginator = this.paginator;

@@ -74,7 +74,9 @@ ngOnInit(): void {
   callRefershToken(payload){
     return this.http.post(this.AUTH_API + "/api/AuthManagement/RefreshToken",payload);
   }
-  //GetUsers(payload){
+  edit(payload,userId){
+    return this.http.patch(this.AUTH_API + "/api/AuthManagement/" + userId,payload);
+  }
   get<returnType>(list: List): Observable<returnType> {
 
       var url;

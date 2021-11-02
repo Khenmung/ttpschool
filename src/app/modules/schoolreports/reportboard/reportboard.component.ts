@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CertificatesComponent } from '../certificates/certificates.component';
 import { ExamtimetableComponent } from '../examtimetable/examtimetable.component';
 import { FeecollectionreportComponent } from '../feecollectionreport/feecollectionreport.component';
 import { ResultsComponent } from '../results/results.component';
@@ -16,7 +15,6 @@ export class ReportboardComponent implements OnInit {
   @ViewChild(TodayCollectionComponent) TodayCollection: TodayCollectionComponent;
   @ViewChild(ResultsComponent) results: ResultsComponent;
   @ViewChild(ExamtimetableComponent) examtimetable: ExamtimetableComponent;
-  @ViewChild(CertificatesComponent) certificate: CertificatesComponent;
 
 
   selectedIndex = 0;
@@ -56,9 +54,6 @@ export class ReportboardComponent implements OnInit {
         break;
       case 3:
         this.TodayCollection.PageLoad();
-        break;
-      case 4:
-        this.certificate.PageLoad();
         break;
       // case 4:
       //   this.activity.PageLoad();
