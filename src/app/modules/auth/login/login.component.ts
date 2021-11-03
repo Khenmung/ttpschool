@@ -252,7 +252,7 @@ export class LoginComponent implements OnInit {
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
-    //list.lookupFields=["ApplicationFeature"]
+    list.lookupFields=["ApplicationFeature($select=faIcon)"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
 
     this.dataservice.get(list)
@@ -287,7 +287,8 @@ export class LoginComponent implements OnInit {
                   'permission': _permission,
                   'applicationName': _applicationName,
                   'applicationId': appsfeatures[0].ApplicationId,
-                  'appShortName': _appShortName
+                  'appShortName': _appShortName,
+                  'faIcon':item.ApplicationFeature.faIcon
                 });
               }
             }

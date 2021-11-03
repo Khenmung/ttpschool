@@ -35,7 +35,6 @@ export class ClassmasterdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  CheckPermission = '';
   StandardFilterWithBatchId = '';
   loading = false;
   Permission = '';
@@ -88,6 +87,7 @@ export class ClassmasterdashboardComponent implements OnInit {
       searchTeacherId: [0],
       searchClassId: [0]
     });
+    this.PageLoad();
     //        this.GetTeachers();
   }
   private _filter(name: string): ITeachers[] {
@@ -115,9 +115,13 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER);
+
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+
       if (this.Permission == 'deny') {
-       
+
         //this.nav.navigate(['/edu']);
 
       }

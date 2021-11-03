@@ -105,13 +105,13 @@
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
                 <div *ngIf="ELEMENT_DATA.length>0">
-                    <button [disabled]="loading" mat-mini-fab (click)="SaveAll()">
+                    <button [disabled]="loading || Permission =='read'" mat-mini-fab (click)="SaveAll()">
                         <mat-icon>all_out</mat-icon>
                     </button>
                 </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button [disabled]="loading || !element.Action" mat-mini-fab (click)="Save(element)">
+                <button [disabled]="loading || !element.Action || Permission =='read'" mat-mini-fab (click)="Save(element)">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-cell>

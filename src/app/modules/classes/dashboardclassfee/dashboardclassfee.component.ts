@@ -40,7 +40,7 @@ export class DashboardclassfeeComponent implements OnInit {
   Classes = [];
   Batches = [];
   Locations = [];
-  Permission = '';
+  Permission = 'deny';
   DataToSaveInLoop = [];
   ClassStatuses = [];
   ELEMENT_DATA: Element[] = [];
@@ -78,38 +78,47 @@ export class DashboardclassfeeComponent implements OnInit {
       FeeNameId: [0],
 
     });
+    this.PageLoad();
   }
   PageLoad() {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
-    this.Permission = globalconstants.getPermission(this.token, globalconstants.Pages.edu.CLASSCOURSE.FEE);
-    this.Months = this.contentservice.GetSessionFormattedMonths();
+
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
-    else if (this.Permission == 'deny') {
-      console.log('access denied to Fee');
-      //this.alert.error('access denied!',this.optionAutoClose);  
-      //this.route.navigate(['/edu'])
-    }
     else {
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
-      this.SelectedBatchId = +this.token.getSelectedBatchId();
-      if (this.SelectedBatchId == 0) {
-        //this.alert.error("Current batch not defined in master!", this.options);
-        this.route.navigate(['/admin']);
-        this.loading = false;
+
+      var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.CLASSCOURSE.FEE);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+
+      this.Months = this.contentservice.GetSessionFormattedMonths();
+
+      if (this.Permission == 'deny') {
+        console.log('access denied to Fee');
+        //this.alert.error('access denied!',this.optionAutoClose);  
+        //this.route.navigate(['/edu'])
       }
       else {
-        this.searchForm.patchValue({ Batch: this.SelectedBatchId });
-        if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.Classes = [...data.value];
-            if (this.FeeNames.length == 0)
-              this.GetMasterData();
-            this.loading = false;
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+        this.SelectedBatchId = +this.token.getSelectedBatchId();
+        if (this.SelectedBatchId == 0) {
+          //this.alert.error("Current batch not defined in master!", this.options);
+          this.route.navigate(['/admin']);
+          this.loading = false;
+        }
+        else {
+          this.searchForm.patchValue({ Batch: this.SelectedBatchId });
+          if (this.Classes.length == 0) {
+            this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+              this.Classes = [...data.value];
+              if (this.FeeNames.length == 0)
+                this.GetMasterData();
+              this.loading = false;
 
-          })
+            })
+          }
         }
       }
     }

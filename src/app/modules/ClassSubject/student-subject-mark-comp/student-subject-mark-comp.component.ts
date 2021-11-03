@@ -24,6 +24,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   };
 
   loading = false;
+  Permission = '';
   LoginUserDetail = [];
   StandardFilter = '';
   CurrentBatch = '';
@@ -63,15 +64,21 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.LoginUserDetail = this.token.getUserDetail();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
-
-    this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-    this.searchForm = this.fb.group({
-      SubjectId: [0],
-      ClassId: [0]
-    });
-    //debugger;
-    //this.GetClassFee();
-
+    else {
+      var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.SUBJECT.SUBJECTMARKCOMPONENT);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+      if (this.Permission != 'deny') {
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.searchForm = this.fb.group({
+          SubjectId: [0],
+          ClassId: [0]
+        });
+        //debugger;
+        //this.GetClassFee();
+        this.PageLoad();
+      }
+    }
   }
   PageLoad() {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
@@ -95,9 +102,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   UpdateSelectedBatchId(value) {
     this.SelectedBatchId = value;
   }
-  onBlur(element)
-  {    
-    element.Action =element.PassMark<1000 && element.FullMark<1000?true:false;
+  onBlur(element) {
+    element.Action = element.PassMark < 1000 && element.FullMark < 1000 ? true : false;
   }
   UpdateOrSave(row) {
     //debugger;
@@ -283,7 +289,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       "PassMark",
       "BatchId",
       "OrgId",
-      "Active"     
+      "Active"
     ];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)"];

@@ -118,13 +118,13 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading" matTooltip="new item" class="mat-raised-button" (click)="addnew()"
+                    <button [disabled]="loading || Permission=='read'" matTooltip="new item" class="mat-raised-button" (click)="addnew()"
                         fxFlex="10">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || CheckPermission=='read' || !element.Action" matTooltip="save"
+                    <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
                         mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>

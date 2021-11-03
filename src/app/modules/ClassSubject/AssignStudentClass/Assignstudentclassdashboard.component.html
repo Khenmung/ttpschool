@@ -111,7 +111,7 @@
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                 <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="PromoteToNextClass(element,$event)" [checked]="element.Active==1?true:false">
                     </mat-checkbox> -->
-                <button [disabled]="loading || !element.Action || PagePermission=='read'" matTooltip="save" mat-mini-fab
+                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
                     (click)="UpdateOrSave(element)">
                     <mat-icon>save</mat-icon>
                 </button>&nbsp;

@@ -30,7 +30,7 @@ export class ClassprerequisiteComponent implements OnInit {
   };
   PrerequisiteListName = 'ClassPrerequisites';
   Applications = [];
-  Permission='';
+  Permission = '';
   loading = false;
   SelectedBatchId = 0;
   PrerequisiteList: IPrerequisite[] = [];
@@ -80,9 +80,12 @@ export class ClassprerequisiteComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE);
-      if(this.Permission =='deny')
-      {
+
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+
+      if (this.Permission == 'deny') {
         //this.nav.navigate(['/edu']);
       }
       else if (this.ClassMasters.length == 0) {
@@ -97,9 +100,8 @@ export class ClassprerequisiteComponent implements OnInit {
   }
   AddNew() {
 
-    if(this.searchForm.get("searchClassId").value==0)
-    {
-      this.alert.info("Please select class.",this.optionAutoClose);
+    if (this.searchForm.get("searchClassId").value == 0) {
+      this.alert.info("Please select class.", this.optionAutoClose);
       return;
     }
 
@@ -138,10 +140,9 @@ export class ClassprerequisiteComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
-    var _searchClassId =  this.searchForm.get("searchClassId").value;
-    if(_searchClassId ==0)
-    {
-      this.alert.info("Class must be selected.",this.optionAutoClose);
+    var _searchClassId = this.searchForm.get("searchClassId").value;
+    if (_searchClassId == 0) {
+      this.alert.info("Class must be selected.", this.optionAutoClose);
       return;
     }
 

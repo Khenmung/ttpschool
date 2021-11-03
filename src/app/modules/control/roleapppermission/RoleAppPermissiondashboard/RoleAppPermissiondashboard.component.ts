@@ -24,6 +24,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   MasterData = [];
   Roles = [];
   Permissions = [];
+  Permission = 'deny';
   ApplicationRoleList = [];
   TopMasters = [];
   DefinedMaster = [];
@@ -94,10 +95,17 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
       this.route.navigate(['auth/login']);
     }
-    this.currentPermission = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
-    this.Permissions = globalconstants.PERMISSIONTYPES;
-    this.GetTopMasters();
-    this.GetFeatures();
+    else {
+
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+      if (this.Permission != 'deny') {
+        this.Permissions = globalconstants.PERMISSIONTYPES;
+        this.GetTopMasters();
+        this.GetFeatures();
+      }
+    }
   }
   GetCustomerApps() {
     debugger;
@@ -144,7 +152,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.Applications = data.value.filter(t => t.ParentId == applicationId);
           this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
           this.GetCustomerApps();
-          
+
         }
       });
   }
@@ -293,7 +301,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
             this.ApplicationRoleList.push(b);
           })
         });
-    //    console.log('applist', this.ApplicationRoleList)
+        //    console.log('applist', this.ApplicationRoleList)
         this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
         this.datasource.sort = this.sort;
         this.datasource.paginator = this.paginator;

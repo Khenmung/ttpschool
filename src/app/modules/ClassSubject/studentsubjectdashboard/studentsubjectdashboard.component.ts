@@ -79,7 +79,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
   ngOnInit(): void {
 
-
+    this.PageLoad();
   }
   PageLoad() {
     //debugger;

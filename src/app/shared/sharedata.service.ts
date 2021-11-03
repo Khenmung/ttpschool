@@ -51,6 +51,9 @@ export class SharedataService {
   private CurrentBatchStartEndSource = new BehaviorSubject(this.items);  
   private CustomerPlanSource = new BehaviorSubject(this.items);  
   private UserInfoSource = new BehaviorSubject(this.items);  
+  private PermissionAtParentSource = new BehaviorSubject('');  
+
+  CurrentPermissionAtParent = this.PermissionAtParentSource.asObservable(); 
 
   CurrentUserInfo = this.UserInfoSource.asObservable(); 
 
@@ -108,6 +111,9 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangePermissionAtParent(item){
+    this.PermissionAtParentSource.next(item);
   }
   ChangeUserInfo(item){
     this.UserInfoSource.next(item);

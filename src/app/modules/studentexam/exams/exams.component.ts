@@ -34,7 +34,7 @@ export class ExamsComponent implements OnInit {
   Batches = [];
   dataSource: MatTableDataSource<IExams>;
   allMasterData = [];
-  Permission='';
+  Permission = 'deny';
   ExamId = 0;
   ExamsData = {
     ExamId: 0,
@@ -74,11 +74,15 @@ export class ExamsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var feature = globalconstants.AppAndMenuAndFeatures.edu.examination.exam;     
-      this.Permission= globalconstants.getPermission(this.tokenstorage,feature);
-      if(this.Permission=='')
+      var feature = globalconstants.AppAndMenuAndFeatures.edu.examination.exam;
+
+      var perObj = globalconstants.getPermission(this.tokenstorage, feature);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].Permission;
+      }
+      if (this.Permission == 'deny')
         this.nav.navigate(['/auth/login']);
-        
+
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
@@ -96,7 +100,7 @@ export class ExamsComponent implements OnInit {
     let toadd = {
       ExamId: 0,
       ExamNameId: 0,
-      ExamName:'',
+      ExamName: '',
       StartDate: new Date(),
       EndDate: new Date(),
       BatchId: 0,
@@ -131,7 +135,7 @@ export class ExamsComponent implements OnInit {
     this.loading = true;
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
-      " and StartDate gt " + this.datepipe.transform(row.StartDate,'yyyy-MM-dd')
+      " and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd')
 
 
     if (row.ExamId > 0)
@@ -214,8 +218,8 @@ export class ExamsComponent implements OnInit {
         this.Exams = this.ExamNames.map(e => {
           let existing = data.value.filter(db => db.ExamNameId == e.MasterDataId);
           if (existing.length > 0) {
-            existing[0].ExamName = this.ExamNames.filter(f=>f.MasterDataId == existing[0].ExamNameId)[0].MasterDataName; 
-            existing[0].Action=false;
+            existing[0].ExamName = this.ExamNames.filter(f => f.MasterDataId == existing[0].ExamNameId)[0].MasterDataName;
+            existing[0].Action = false;
             return existing[0];
           }
           else {
@@ -228,12 +232,12 @@ export class ExamsComponent implements OnInit {
               OrgId: 0,
               BatchId: 0,
               Active: 0,
-              Action:false
+              Action: false
             }
           }
         })
         //console.log('this', this.Exams)
-        this.Exams.sort((a,b)=>{
+        this.Exams.sort((a, b) => {
           return this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
         this.dataSource = new MatTableDataSource<IExams>(this.Exams);
@@ -241,9 +245,9 @@ export class ExamsComponent implements OnInit {
       })
   }
   private getTime(date?: Date) {
-    var std= new Date(date);
+    var std = new Date(date);
     return std != null ? std.getTime() : 0;
-}
+  }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -283,7 +287,7 @@ export class ExamsComponent implements OnInit {
 export interface IExams {
   ExamId: number;
   ExamNameId: number;
-  ExamName:string;
+  ExamName: string;
   StartDate: Date;
   EndDate: Date;
   OrgId: number;

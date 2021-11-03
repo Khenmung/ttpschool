@@ -30,7 +30,7 @@
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Description
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
                                 [value]="element.Description" [(ngModel)]="element.Description">
                         </mat-form-field>
@@ -40,9 +40,9 @@
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Discount Formula
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field [style.width.pc]="50">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [value]="element.Formula" [(ngModel)]="element.Formula">
+                        <mat-form-field [style.width.pc]="50" appearance="outline">
+                            <textarea matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                                [value]="element.Formula" [(ngModel)]="element.Formula"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -57,12 +57,12 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
                             (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>

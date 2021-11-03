@@ -70,13 +70,13 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button *ngIf="ApplicationRoleList.length>0" [disabled]="currentPermission=='read' || loading"
+                    <button *ngIf="ApplicationRoleList.length>0" [disabled]="Permission=='read' || loading"
                         matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
                         <mat-icon *ngIf="!loading">all_out</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="!element.Action || currentPermission=='read' || loading" matTooltip="view/edit"
+                    <button [disabled]="!element.Action || Permission=='read' || loading" matTooltip="view/edit"
                         mat-mini-fab (click)="Save(element)">
                         <mat-icon *ngIf="!loading">save</mat-icon>
                     </button>

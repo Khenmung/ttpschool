@@ -33,7 +33,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   FeeTypeList: IFeeType[] = [];
   filteredOptions: Observable<IFeeType[]>;
   dataSource: MatTableDataSource<IFeeType>;
-  Permission = '';
+  Permission = 'deny';
   SelectedBatchId = 0;
   FeeTypeData = {
     FeeTypeId: 0,
@@ -68,20 +68,26 @@ export class SchoolFeeTypesComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchFeeTypeName: ['']
     });
+    this.PageLoad();
   }
 
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE);
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
-    else if (this.Permission == 'deny') {
-      //this.nav.navigate(['/edu']);
-    }
     else {
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.loading = false;
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+
+      if (this.Permission == 'deny') {
+        //this.nav.navigate(['/edu']);
+      }
+      else {
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.loading = false;
+      }
     }
   }
   AddNew() {

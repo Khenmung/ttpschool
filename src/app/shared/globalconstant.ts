@@ -71,6 +71,7 @@ export class globalconstants {
             },
             "edu": {
                 "CLASSCOURSE": {
+                    'CLASSCOURSE': 'class-course',
                     'DETAIL': 'classdetail',
                     'FEE': 'fee',
                     'FEETYPE': 'fee type',
@@ -85,11 +86,12 @@ export class globalconstants {
 
                 },
                 'SUBJECT': {
-                    'CLASSSUBJECTMAPPING': 'class subject mapping',
-                    'SUBJECTMARKCOMPONENT': 'subject mark component',
-                    'ASSIGNSTUDENTCLASS': 'assign student class',
+                    'SUBJECT':'subject',
+                    'SUBJECTDETAIL':'subject detail',
                     'STUDENTSUBJECT': 'student subject',
-                    'SUBJECTTYPES': 'subject types',
+                    'SUBJECTMARKCOMPONENT': 'subject mark component',
+                    'CLASSSTUDENT': 'class student',
+                    'SUBJECTTYPE': 'subject type',
                     'STUDENTPROMOTE': 'promote student'
 
                 },
@@ -349,9 +351,9 @@ export class globalconstants {
         else {
             var _permission = loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
             if (_permission.length > 0)
-                return _permission[0].permission;
+                return [_permission[0]];
             else
-                return 'deny';
+                return [];
         }
     }
 }

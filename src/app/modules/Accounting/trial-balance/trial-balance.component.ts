@@ -37,7 +37,7 @@ export class TrialBalanceComponent implements OnInit {
     StartDate: new Date(),
     EndDate: new Date()
   }
-  CheckPermission = '';
+  Permission = '';
   StandardFilterWithBatchId = '';
   loading = false;
   GLAccounts = [];
@@ -121,15 +121,23 @@ export class TrialBalanceComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      //this.GetMasterData();
-      this.GetGLAccounts();
-      this.GetAccountingPeriod();
 
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+      if (perObj.length > 0) {
+       
+        this.Permission = perObj[0].Permission;
+
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        //this.GetMasterData();
+        this.GetGLAccounts();
+        this.GetAccountingPeriod();
+      }
     }
   }
-
+  updateDebitCredit(row,event){
+    row.Active= event.checked?1:0;
+    row.Action=true;
+  }
   addnew() {
     var newdata = {
       AccountingVoucherId: 0,
@@ -382,9 +390,9 @@ export interface ITrialBalance {
   GeneralLedger: string;
   AccountGroupId: number;
   AccountNatureId: number;
-  DebitCreditId:number;
-  Balance:number;
-  DepartmentId:number;
+  DebitCreditId: number;
+  Balance: number;
+  DepartmentId: number;
   Active: number;
   Action: boolean
 }

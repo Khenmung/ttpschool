@@ -25,7 +25,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   RowsToUpdate = 0;
   UpdatedRows = 0;
-  PagePermission = '';
+  Permission = '';
   PromotePermission = '';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
@@ -96,6 +96,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       searchClassId: [0],
       searchGenderId: [0],
     });
+    this.PageLoad();
   }
   private _filter(name: string): IStudent[] {
 
@@ -114,15 +115,22 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data:any)=>{
-        this.Classes= [...data.value];
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
       })
       this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      this.PagePermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.ASSIGNSTUDENTCLASS);
-      this.PromotePermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTPROMOTE);
+      
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
+      if(perObj.length>0)
+      this.Permission =perObj[0].Permission;
+      
+      perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTPROMOTE);
+      if(perObj.length>0)
+      this.PromotePermission = perObj[0].Permission;
+      
       this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
       //console.log('selected batchid', this.SelectedBatchId);
       //console.log('current batchid', this.CurrentBatchId)
@@ -138,7 +146,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         ];
       //console.log('log', this.CheckPermission)
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      
+
       //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       //this.shareddata.CurrentSelectedBatchId.subscribe(a => this.SelectedBatchId = a);
       this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
@@ -221,7 +229,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   }
   GetFeeTypes() {
-    this.loading=true;
+    this.loading = true;
     var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
@@ -232,12 +240,16 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeTypes);
-        this.loading=false;
+        this.loading = false;
       })
   }
   GetStudentClasses() {
+    
     //debugger;
-    this.PagePermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
+    // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
+    // if (perObj.length > 0)
+    //   this.Permission = perObj[0].Permission;
+
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     // if (this.searchForm.get("searchStudentName").value.StudentId == 0 && this.searchForm.get("searchClassId").value == 0) {
@@ -286,7 +298,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           var _feetype = ''
           if (feetype.length > 0)
             _feetype = feetype[0].FeeTypeName;
-            
+
           this.StudentClassList.push({
             StudentClassId: s.StudentClassId,
             ClassId: s.ClassId,
@@ -405,7 +417,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.StudentClassId = data.StudentClassId;
-          row.Action=false;
+          row.Action = false;
           if (this.RowsToUpdate > 1) {
             if (this.UpdatedRows == this.RowsToUpdate) {
               if (row.Promote == 1)
@@ -435,7 +447,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          row.Action=false;
+          row.Action = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -466,7 +478,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.Students = data.value.map(student => {
             return {
               StudentId: student.StudentId,
-              Name: student.StudentId + '-' + student.FirstName+ '-' + student.LastName
+              Name: student.StudentId + '-' + student.FirstName + '-' + student.LastName
             }
           })
         }

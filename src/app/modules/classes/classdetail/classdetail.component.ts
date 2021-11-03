@@ -40,7 +40,7 @@ export class ClassdetailComponent implements OnInit {
   Durations = [];
   StudyArea = [];
   StudyMode = [];
-  Permission='';
+  Permission = 'deny';
   ExamId = 0;
   ClassMasterData = {
     ClassId: 0,
@@ -90,29 +90,37 @@ export class ClassdetailComponent implements OnInit {
   }
 
   PageLoad() {
-  debugger;
-  this.Permission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)  
-  this.loading = true;
-    
+
+    debugger;
+    this.loading = true;
+
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
-    else if(this.Permission =='deny') {
-
-      //this.nav.navigate(['/edu'])
-    }
-    else{
-      if (this.ClassMasters.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.ClassMasters = [...data.value];
-        })
+    else {
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].Permission;
       }
-      this.GetMasterData();
+
+      if (this.Permission == 'deny') {
+
+        //this.nav.navigate(['/edu'])
+      }
+      else {
+        if (this.ClassMasters.length == 0) {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+            this.ClassMasters = [...data.value];
+          })
+        }
+        this.GetMasterData();
+      }
     }
   }
+
   AddNew() {
-    
+
     var newdata = {
       ClassId: 0,
       ClassName: '',
@@ -186,7 +194,7 @@ export class ClassdetailComponent implements OnInit {
 
           this.ClassMasterData.Active = row.Active;
           //console.log('exam slot', this.ClassMasterData)
-            
+
           if (this.ClassMasterData.ClassId == 0) {
             this.ClassMasterData["CreatedDate"] = new Date();
             this.ClassMasterData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

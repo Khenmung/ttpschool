@@ -36,7 +36,7 @@ export class AccountingVoucherComponent implements OnInit {
     StartDate: new Date(),
     EndDate: new Date()
   }
-  CheckPermission = '';
+  Permission = '';
   StandardFilterWithBatchId = '';
   loading = false;
   GLAccounts = [];
@@ -120,9 +120,12 @@ export class AccountingVoucherComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.VOUCHER);
+      
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.VOUCHER);
+      if(perObj.length>0)
+      this.Permission = perObj[0].Permission;
+
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      //this.GetMasterData();
       this.GetGLAccounts();
       this.GetAccountingPeriod();
       

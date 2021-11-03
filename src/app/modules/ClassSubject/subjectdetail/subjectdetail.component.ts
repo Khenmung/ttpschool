@@ -30,8 +30,8 @@ export class SubjectDetailComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  ClassSubjectListName ="ClassSubjects";
-  CheckPermission = '';
+  ClassSubjectListName = "ClassSubjects";
+  Permission = '';
   StandardFilterWithBatchId = '';
   loading = false;
   WorkAccounts = [];
@@ -54,14 +54,14 @@ export class SubjectDetailComponent implements OnInit {
     searchClassId: [0],
   });
   ClassSubjectId = 0;
-  
+
   ClassSubjectData = {
     ClassSubjectId: 0,
     ClassId: 0,
-    Credits:0,
+    Credits: 0,
     OrgId: 0,
     BatchId: 0,
-    TeacherId:0,
+    TeacherId: 0,
     SubjectId: 0,
     SubjectTypeId: 0,
     Active: 1
@@ -89,6 +89,7 @@ export class SubjectDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -99,9 +100,11 @@ export class SubjectDetailComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
 
-
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.SUBJECTDETAIL);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
       //console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
@@ -233,7 +236,7 @@ export class SubjectDetailComponent implements OnInit {
             SubjectId: item.SubjectId,
             SubjectTypeId: item.SubjectTypeId,
             ClassId: item.ClassId,
-            Credits:item.Credits,
+            Credits: item.Credits,
             TeacherId: item.TeacherId,
             SelectHowMany: item.SubjectType.SelectHowMany,
             Active: item.Active
@@ -344,15 +347,13 @@ export class SubjectDetailComponent implements OnInit {
       this.loading = false;
       return;
     }
-    if (row.Credits > 100)
-    {
+    if (row.Credits > 100) {
       this.alert.error("Credits can not be greater than 100.", this.optionsNoAutoClose);
       this.loading = false;
       return;
     }
-    console.log("row.TeacherId",row.TeacherId);
-    if (row.TeacherId ==0)
-    {
+    console.log("row.TeacherId", row.TeacherId);
+    if (row.TeacherId == 0) {
       this.alert.error("Please select teacher for the subject.", this.optionsNoAutoClose);
       this.loading = false;
       return;
@@ -389,8 +390,8 @@ export class SubjectDetailComponent implements OnInit {
           this.ClassSubjectData.Credits = row.Credits;
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
-          this.ClassSubjectData.TeacherId = row.TeacherId;          
-          this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];          
+          this.ClassSubjectData.TeacherId = row.TeacherId;
+          this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {
             this.ClassSubjectData["CreatedDate"] = new Date();
@@ -413,13 +414,13 @@ export class SubjectDetailComponent implements OnInit {
 
   insert(row) {
 
-    console.log('this.ClassSubjectData',this.ClassSubjectData)
+    console.log('this.ClassSubjectData', this.ClassSubjectData)
     //debugger;
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, 0, 'post')
       .subscribe(
         (data: any) => {
           this.loading = false;
-          row.Action =false;
+          row.Action = false;
           row.ClassSubjectId = data.ClassSubjectId;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
@@ -430,7 +431,7 @@ export class SubjectDetailComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          row.Action =false;
+          row.Action = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -469,7 +470,7 @@ export class SubjectDetailComponent implements OnInit {
 
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName","LastName)"]
+    list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
     list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
     //list.orderBy = "ParentId";
     this.Teachers = [];
