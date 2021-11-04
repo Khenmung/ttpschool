@@ -33,7 +33,10 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                            <mat-form-field [style.width.px]="200">
-                               <textarea matInput [value]="element.Activity"  [(ngModel)]="element.Activity"></textarea>
+                               <textarea matInput 
+                               (blur)="onBlur(element)"
+                               [value]="element.Activity"  
+                               [(ngModel)]="element.Activity"></textarea>
                            </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -42,7 +45,9 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                            <mat-form-field [style.width.px]="120">
-                            <input [value]="element.ActivityDate" [(ngModel)]="element.ActivityDate" matInput [matDatepicker]="ActivityDate" autocomplete="off">
+                            <input [value]="element.ActivityDate" (dateChange)="onBlur(element)"
+                            [(ngModel)]="element.ActivityDate" matInput 
+                            [matDatepicker]="ActivityDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="ActivityDate"></mat-datepicker-toggle>
                             <mat-datepicker #ActivityDate></mat-datepicker>
                         </mat-form-field>
@@ -53,7 +58,7 @@
                     <mat-header-cell *matHeaderCellDef>Active
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
                             [checked]="element.Active==1?true:false">
                         </mat-checkbox>
                     </mat-cell>
@@ -65,7 +70,7 @@
                         </button> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

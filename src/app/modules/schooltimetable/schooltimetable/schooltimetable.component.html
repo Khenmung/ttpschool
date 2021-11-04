@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Time Table</strong></div>
+        <div><strong>Class Time Table</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -37,7 +37,7 @@
                     <mat-header-cell style="justify-content: center;" *matHeaderCellDef>
                         {{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}
                         <div *ngIf="SchoolTimeTableList.length>0" fxLayoutAlign="center center">
-                            <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
                                 matTooltip="save all" mat-mini-fab (click)="SaveAll()">
                                 <mat-icon>all_out</mat-icon>
                             </button>
@@ -54,7 +54,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </span>
-                        <button *ngIf="disCol=='Action'" [disabled]="loading || !element['Action'] || PagePermission=='read'"
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || !element['Action'] || Permission=='read'"
                             matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
                             <mat-icon>save</mat-icon>
                         </button>

@@ -51,7 +51,7 @@
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
                         <div *ngIf="ExamStudentSubjectResult.length>0" fxLayoutAlign="center center">
-                            <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
                                 matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
                                 <mat-icon>all_out</mat-icon>
                             </button>
@@ -59,11 +59,11 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element ">
                         <mat-form-field *ngIf="disCol !='StudentClassSubject' && disCol !='Action'">
-                            <input matInput (blur)="onBlur(element,$event)" [attr.name]="disCol"
+                            <input matInput type="number" (blur)="onBlur(element,$event)" [attr.name]="disCol"
                                 [value]="element[disCol]" [(ngModel)]="element[disCol]">
                         </mat-form-field>
                         <button *ngIf="disCol=='Action'"
-                            [disabled]="loading || PagePermission=='read' || !element.Action" matTooltip="save"
+                            [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
                             mat-mini-fab (click)="SaveRow(element)">
                             <mat-icon>save</mat-icon>
                         </button>

@@ -8,9 +8,18 @@
         <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
             <mat-form-field fxFlex appearance="outline">
                 <mat-label> Application</mat-label>
-                <mat-select formControlName="ApplicationId" (selectionChange)="FilterFeatures()">
+                <mat-select formControlName="ApplicationId" (selectionChange)="GetTopMenu()">
                     <mat-option *ngFor="let master of CustomerApplications" [value]="master.ApplicationId">
                         {{master.ApplicationName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex appearance="outline">
+                <mat-label>Top Feature</mat-label>
+                <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
+                    <mat-option [value]="0">select</mat-option>
+                    <mat-option *ngFor="let feature of TopMenu" [value]="feature.PageId">
+                        {{feature.label}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -21,16 +30,7 @@
                         {{role.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
-            <mat-form-field fxFlex appearance="outline">
-                <mat-label>Feature</mat-label>
-                <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
-                    <mat-option [value]="0">select</mat-option>
-                    <mat-option *ngFor="let feature of FilteredFeatures" [value]="feature.PageId">
-                        {{feature.PageTitle}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            </mat-form-field>            
             <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
                 (click)="GetApplicationFeatureRole()" fxFlex="10">
                 <mat-icon>search</mat-icon>
@@ -60,7 +60,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef>
+                <mat-header-cell *matHeaderCellDef>Active
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"

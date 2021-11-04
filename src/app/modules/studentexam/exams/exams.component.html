@@ -8,9 +8,9 @@
         <div style="width: 100%;">
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="ExamName">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Exam Name
+                    <mat-header-cell *matHeaderCellDef>Exam Name
                     </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         {{element.ExamName}}
                     </mat-cell>
                 </ng-container>

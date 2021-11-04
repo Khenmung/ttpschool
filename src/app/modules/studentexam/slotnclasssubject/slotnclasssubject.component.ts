@@ -28,6 +28,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Permission = 'deny';
   StandardFilterWithBatchId = '';
   loading = false;
   DataToUpdateCount = -1;
@@ -53,7 +54,6 @@ export class SlotnclasssubjectComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
-    //    'Slot',
     'ClassSubject',
     'Active',
     'Action'
@@ -78,6 +78,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       searchClassId: [0],
       searchSubjectId: [0],
     });
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -88,20 +89,24 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+      if (this.Permission != 'deny') {
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
-      this.GetMasterData();
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      })
-
+        this.GetMasterData();
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        })
+      }
     }
   }
 
   updateActive(row, value) {
     row.Active = row.Active == 1 ? 0 : 1;
-    row.Action=true;
+    row.Action = true;
   }
   delete(element) {
     let toupdate = {
@@ -209,8 +214,8 @@ export class SlotnclasssubjectComponent implements OnInit {
           }
         });
   }
-  onBlur(element){
-    element.Action=true;
+  onBlur(element) {
+    element.Action = true;
   }
   GetClassSubject() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];

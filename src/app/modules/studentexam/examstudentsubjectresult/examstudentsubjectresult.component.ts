@@ -1,14 +1,12 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -47,7 +45,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   StudentSubjects = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
-  PagePermission ='';
+  Permission = 'deny';
   ExamId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
@@ -81,7 +79,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       searchSectionId: [''],
       searchSubjectId: [0],
     });
-
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -93,9 +91,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
 
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.GetMasterData();
-
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+      if (this.Permission != 'deny') {
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.GetMasterData();
+      }
     }
   }
   // GetCurrentBatchIDnAssign() {
@@ -359,7 +361,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
         });
         var forDisplay;
-        if (filteredStudentSubjects.length==0 || filteredStudentSubjects[0].Components.length == 0) {
+        if (filteredStudentSubjects.length == 0 || filteredStudentSubjects[0].Components.length == 0) {
           this.loading = false;
           this.alert.info("Student Subject/Subject components not defined for this class subject!", this.optionAutoClose);
           this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>([]);
@@ -457,7 +459,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     //console.log("event", event);
     var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     row[0][_colName] = element[_colName];
-    element.Action=true;
+    element.Action = true;
   }
 
   UpdateAll() {

@@ -14,7 +14,13 @@
                             {{item.ExamName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>                
+                </mat-form-field>          
+                <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-label>Exam Date</mat-label>
+                    <input formControlName="searchExamDate" matInput [matDatepicker]="ExamDate" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="ExamDate"></mat-datepicker-toggle>
+                    <mat-datepicker #ExamDate></mat-datepicker>
+                </mat-form-field>      
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetExamSlots()">
                     <mat-icon>search</mat-icon>
                 </button>

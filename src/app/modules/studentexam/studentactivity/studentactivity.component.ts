@@ -29,13 +29,14 @@ export class StudentactivityComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Permission = '';
   StandardFilter = '';
   loading = false;
   StudentActivityList: IStudentActivity[] = [];
   SelectedBatchId = 0;
   Classes = [];
   Batches = [];
-  Sections=[];
+  Sections = [];
   Students: IStudent[] = [];
   filteredOptions: Observable<IStudent[]>;
   dataSource: MatTableDataSource<IStudentActivity>;
@@ -82,7 +83,7 @@ export class StudentactivityComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
-    //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
+    this.PageLoad();
   }
   private _filter(name: string): IStudent[] {
 
@@ -100,24 +101,25 @@ export class StudentactivityComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.STUDENTACTIVITY)
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].Permission;
+      }
+      if (this.Permission != 'deny') {
 
-      this.GetMasterData();
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-  
-        });
-  
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetMasterData();
+        if (this.Classes.length == 0) {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+            this.Classes = [...data.value];
+
+          });
+
+        }
+      }
     }
   }
-  }
-  updateActive(row, value) {
-    //if(!row.Action)
-    //row.Action = !row.Action;
-    row.Active = row.Active == 1 ? 0 : 1;
-  }
+
   delete(element) {
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
@@ -184,7 +186,7 @@ export class StudentactivityComponent implements OnInit {
       });
   }
   loadingFalse() {
-      this.loading = false;   
+    this.loading = false;
   }
   insert(row) {
 
@@ -257,9 +259,10 @@ export class StudentactivityComponent implements OnInit {
             Remark: '',
             ActivityDate: new Date(),
             Active: 0,
-            Action: true
+            Action: false
           })
         }
+        console.log('studentactivity',this.StudentActivityList)
         this.dataSource = new MatTableDataSource<IStudentActivity>(this.StudentActivityList);
         this.loadingFalse();
       });
@@ -286,6 +289,13 @@ export class StudentactivityComponent implements OnInit {
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetStudents();
       });
+  }
+  onBlur(row) {
+    row.Action = true;
+  }
+  UpdateActive(row, event) {
+    row.Active = event.checked ? 1 : 0;
+    row.Action = true;
   }
   getDropDownData(dropdowntype) {
     let Id = 0;
@@ -329,9 +339,9 @@ export class StudentactivityComponent implements OnInit {
             var _className = '';
             if (_classNameobj.length > 0)
               _className = _classNameobj[0].ClassName;
-            var _Section = this.Sections.filter(f=>f.MasterDataId == student.SectionId)[0].MasterDataName;
+            var _Section = this.Sections.filter(f => f.MasterDataId == student.SectionId)[0].MasterDataName;
             var _RollNo = student.RollNo;
-            var _name = student.Student.FirstName + " " +student.Student.LastName;
+            var _name = student.Student.FirstName + " " + student.Student.LastName;
             var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
               StudentClassId: student.StudentClassId,

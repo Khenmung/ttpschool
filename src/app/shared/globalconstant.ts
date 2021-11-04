@@ -78,33 +78,40 @@ export class globalconstants {
                     'PREREQUISITE': 'pre-requisite',
                     'CLASSMASTER': 'class master'
                 },
-                'EXAMS': {
-                    'EXAMS': 'exams',
+                'EXAM': {
+                    'EXAM': 'Exam',
                     'EXAMSLOT': 'exam slot',
-                    'EXAMSTUDENTSUBJECTRESULT': 'exam student subject result',
+                    'EXAMSTUDENTSUBJECTRESULT': 'Exam Result Entry',
                     'SLOTNCLASSSUBJECT': 'slot n class subject',
-
+                    'STUDENTACTIVITY': 'student activity'
                 },
                 'SUBJECT': {
-                    'SUBJECT':'subject',
-                    'SUBJECTDETAIL':'subject detail',
+                    'SUBJECT': 'subject',
+                    'SUBJECTDETAIL': 'subject detail',
                     'STUDENTSUBJECT': 'student subject',
                     'SUBJECTMARKCOMPONENT': 'subject mark component',
                     'CLASSSTUDENT': 'class student',
                     'SUBJECTTYPE': 'subject type',
                     'STUDENTPROMOTE': 'promote student'
-
                 },
-                'FEES': {
-                    'CLASSFEE': 'class fee',
-                    'EXCELDATAUPLOAD': 'excel data upload',
-                    'SINGLEFEERECEIPT': 'single fee receipt',
-                    'FEECOLLECTIONREPORT': 'fee collection report',
-                    'TODAYCOLLECTIONREPORT': 'today collection report',
-                    'SINGLESTUDENT': 'single student',
-                    'SINGLESTUDENTCLASS': 'single student class',
-                    'SINGLESTUDENTDOCUMENT': 'single student document',
-                    'SINGLEFEEPAYMENT': 'single student fee payment'
+                'TIMETABLE': {
+                    'TIMETABLE': 'time table',
+                    'CLASSPERIOD': 'class period',
+                    'CLASSTIMETABLE': 'class time table'
+                },
+                'ATTENDANCE': {
+                    'ATTENDANCE': 'attendance',
+                    'STUDENTATTENDANCE': 'student attendance',
+                    'TEACHERATTENDANCE': 'employee attendance'
+                },
+                'REPORT': {
+                    'REPORT': 'report',
+                    'EXAMTIMETABLE': 'exam time table',
+                    'EXAMRESULT': 'exam result',
+                    'FEECOLLECTION': 'fee collection',
+                    'DATEWISECOLLECTION': 'date wise collection',
+
+
                 }
             },
             "accounting": {

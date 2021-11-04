@@ -29,3 +29,6 @@ mat-card{
 .mat-column-DisplayOrder,.mat-column-HasSubmenu,.mat-column-IsTemplate,.mat-column-HomePage{
   flex:0 0 80px;
 }
+mat-cell:first-of-type{
+  padding-left: 0px;
+}

@@ -3,11 +3,20 @@
         </div>
         <alert></alert>
         <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline" [style.width.pc]="25" style="margin-right:15px;">
+            <mat-form-field appearance="outline" [style.width.px]="200" style="margin-right:15px;">
                 <mat-label>Application</mat-label>
-                <mat-select formControlName="searchApplicationId">
+                <mat-select formControlName="searchApplicationId" (selectionChange)="GetTopMenu()">
                     <mat-option *ngFor="let option of Applications" [value]="option.MasterDataId">
                         {{option.Description}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200" style="margin-right:15px;">
+                <mat-label>Parent Menu</mat-label>
+                <mat-select formControlName="searchTopMenuId">
+                    <mat-option>--select parent menu--</mat-option>
+                    <mat-option *ngFor="let option of TopMenu" [value]="option.PageId">
+                        {{option.label}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -16,27 +25,12 @@
             </button>
         </form>
         <mat-table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="PageId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Page Id </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                  {{element.PageId}}
-                </mat-cell>
-            </ng-container>
             <ng-container matColumnDef="PageTitle">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Page Title </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline" [style.width.px]="120">
                         <input matInput (blur)='onBlur(element)'
                             [(ngModel)]="element.PageTitle" [value]="element.PageTitle" autocomplete="Off">
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ParentId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Parent Page </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline" [style.width.px]="120">
-                        <input matInput (blur)='onBlur(element)'
-                            [(ngModel)]="element.ParentId" [value]="element.ParentId" autocomplete="Off">
                     </mat-form-field>
                 </mat-cell>
             </ng-container>

@@ -29,6 +29,7 @@ export class MenuConfigComponent implements OnInit {
   loading = false;
   SelectedAppId = 0;
   oldvalue: any;
+  TopMenu = [];
   AllData: any[] = [];
   ParentPages: [{ PageId, PageTitle }];
   PageList = [];
@@ -59,9 +60,7 @@ export class MenuConfigComponent implements OnInit {
     "HomePage": 0
   }
   DisplayColumns = [
-    "PageId",
     "PageTitle",
-    "ParentId",
     "label",
     "link",
     "faIcon",
@@ -82,7 +81,8 @@ export class MenuConfigComponent implements OnInit {
   ngOnInit() {
     debugger;
     this.searchForm = this.fb.group({
-      searchApplicationId: [0]
+      searchApplicationId: [0],
+      searchTopMenuId: [0]
     })
     this.route.paramMap.subscribe(params => {
       this.Id = +params.get("parentid");
@@ -117,13 +117,26 @@ export class MenuConfigComponent implements OnInit {
     this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
     this.GetMasterData();
   }
+  GetTopMenu() {
+    let list: List = new List();
+    list.fields = ["PageId,PageTitle,label,ApplicationId,ParentId,DisplayOrder"];
+    list.PageName = "Pages";
+    list.filter = ["Active eq 1 and ParentId eq 0 and ApplicationId eq " + this.searchForm.get("searchApplicationId").value];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.TopMenu = [...data.value].sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+      })
+
+    console.log("topmenu", this.TopMenu)
+  }
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence", "ApplicationId"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -264,10 +277,9 @@ export class MenuConfigComponent implements OnInit {
 
   }
   AddNew() {
-    if(this.searchForm.get("searchApplicationId").value==0)
-    {
-      this.loading=false;
-      this.alert.error("Please select application.",this.optionsAutoClose);
+    if (this.searchForm.get("searchApplicationId").value == 0) {
+      this.loading = false;
+      this.alert.error("Please select application.", this.optionsAutoClose);
       return;
     }
     var newdata = {
@@ -281,14 +293,14 @@ export class MenuConfigComponent implements OnInit {
       DisplayOrder: 0,
       HasSubmenu: 0,
       ParentPage: '',
-      ApplicationId:this.searchForm.get("searchApplicationId").value,
+      ApplicationId: this.searchForm.get("searchApplicationId").value,
       Active: 0,
       UpdateDate: new Date(),
       HomePage: 0,
       Action: ""
 
     }
-    this.PageList =[];
+    this.PageList = [];
     this.PageList.push(newdata);
     this.dataSource = new MatTableDataSource<any>(this.PageList);
     this.dataSource.paginator = this.paginator;
@@ -314,7 +326,10 @@ export class MenuConfigComponent implements OnInit {
       this.alert.error(ErrorMessage, this.optionsNoAutoClose);
       return;
     }
-
+    var _ParentId = 0;
+    if (this.searchForm.get("searchTopMenuId").value > 0) {
+      _ParentId = this.searchForm.get("searchTopMenuId").value;
+    }
     var duplicatecheck = "ApplicationId eq " + this.SelectedAppId + " and PageTitle eq '" + row.PageTitle + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"]
 
     if (row.PageId > 0)
@@ -342,7 +357,7 @@ export class MenuConfigComponent implements OnInit {
 
         this.MenuConfigData.ApplicationId = row.ApplicationId;
         this.MenuConfigData.DisplayOrder = row.DisplayOrder;
-        this.MenuConfigData.ParentId = row.ParentId;
+        this.MenuConfigData.ParentId = _ParentId;
         this.MenuConfigData.IsTemplate = row.IsTemplate;
         this.MenuConfigData.HomePage = row.HomePage;
         this.MenuConfigData.HasSubmenu = row.HasSubmenu;
@@ -393,7 +408,7 @@ export class MenuConfigComponent implements OnInit {
           this.alert.success("Data updated successfully", this.optionsAutoClose);
         });
   }
-  
+
   updateActive(element, event) {
 
     element.Action = true;
@@ -408,7 +423,11 @@ export class MenuConfigComponent implements OnInit {
     }
     this.loading = true;
     filterStr = "Active eq 1 and ApplicationId eq " + this.searchForm.get("searchApplicationId").value
+    var _ParentId = 0;
+    if (this.searchForm.get("searchTopMenuId").value > 0)
+      _ParentId = this.searchForm.get("searchTopMenuId").value
 
+    filterStr += " and ParentId eq " + _ParentId;
     let list: List = new List();
     list.fields = ["*"];
     list.PageName = "Pages";
@@ -419,7 +438,7 @@ export class MenuConfigComponent implements OnInit {
         this.PageList = data.value.map(f => {
           f.Action = false;
           return f;
-        }).sort((a,b)=>a.DisplayOrder - b.DisplayOrder);
+        }).sort((a, b) => a.DisplayOrder - b.DisplayOrder);
 
         this.dataSource = new MatTableDataSource<any>(this.PageList);
         this.dataSource.paginator = this.paginator;

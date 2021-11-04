@@ -76,9 +76,9 @@ export class ExamslotComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchExamId: [0],
-
+      searchExamDate: [new Date()]
     });
-
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -244,9 +244,10 @@ export class ExamslotComponent implements OnInit {
       })
   }
   GetExamSlots() {
-    //debugger;
+    debugger;
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
+    this.ExamSlots = [];
     if (this.searchForm.get("searchExamId").value == 0) {
 
       this.alert.error("Please select exam", this.optionAutoClose);
@@ -254,6 +255,24 @@ export class ExamslotComponent implements OnInit {
     }
     else
       filterstr = ' and ExamId eq ' + this.searchForm.get("searchExamId").value;
+
+    var dateObj = this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value);
+    var _startDate = new Date(dateObj[0].StartDate);
+    var _endDate = new Date(dateObj[0].EndDate);
+    _startDate.setHours(0, 0, 0, 0);
+    _endDate.setHours(0, 0, 0, 0);
+    var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
+
+    if (!_filterExamDate != null) {
+
+      filterstr += " and ExamDate eq " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
+
+      if (_filterExamDate.getTime() < new Date(_startDate).getTime() || _filterExamDate.getTime() > new Date(_endDate).getTime()) {
+        this.alert.error("Date should be between exam start date and end date.", this.optionsNoAutoClose);
+        return;
+      }
+    }
+
 
     this.loading = true;
     let list: List = new List();
@@ -271,11 +290,17 @@ export class ExamslotComponent implements OnInit {
     this.ExamSlots = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var _startDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].StartDate);
-        var _endDate = new Date(this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value)[0].EndDate);
-        var _examDate = _startDate;
+
+
+
+        var _examDate = new Date(_startDate);
         var day = '';
-        //var dtstring;
+
+        if (_filterExamDate != null) {
+          _examDate = _filterExamDate;
+          _endDate = new Date(_filterExamDate.getFullYear(), _filterExamDate.getMonth(), _filterExamDate.getDate() + 1);
+        }
+
         while (_examDate < _endDate) {
           day = this.weekday[_examDate.getDay()];
           //dtstring =new Date(_examDate);

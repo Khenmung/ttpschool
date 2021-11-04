@@ -22,6 +22,8 @@ export class StudentAttendanceComponent implements OnInit {
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   edited = false;
+  EnableSave = true;
+  Permission = 'deny';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
@@ -55,7 +57,7 @@ export class StudentAttendanceComponent implements OnInit {
     searchClassId: [0],
     searchSectionId: [0],
     searchClassSubjectId: [0],
-    searchAttendanceDate: [{value:new Date(),disabled: true }]
+    searchAttendanceDate: [new Date()]
   });
   StudentClassSubjectId = 0;
   StudentAttendanceData = {
@@ -95,14 +97,18 @@ export class StudentAttendanceComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.GetMasterData();
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      })
-      this.GetClassSubject();
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+      if (this.Permission != 'deny') {
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetMasterData();
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        })
+        this.GetClassSubject();
+      }
     }
 
   }
@@ -127,7 +133,10 @@ export class StudentAttendanceComponent implements OnInit {
   }
 
   GetStudentAttendance() {
-    //debugger;
+    debugger;
+    //this.StudentAttendanceList=[];
+    //this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //' and StudentClassId eq ' + this.StudentClassId;
     if (this.searchForm.get("searchClassId").value == 0) {
@@ -144,6 +153,22 @@ export class StudentAttendanceComponent implements OnInit {
       this.alert.error("Please select either section or subject.", this.optionAutoClose);
       return;
     }
+
+    this.loading = true;
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
+    _AttendanceDate.setHours(0, 0, 0, 0);
+    if (_AttendanceDate.getTime() > today.getTime()) {
+      this.loading=false;
+      this.alert.error("Attendance date cannot be greater than today's date.",this.optionAutoClose);
+      return;
+    }
+    if (_AttendanceDate.getTime() != today.getTime()) {
+      this.EnableSave = false;
+    }
+
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
     }
@@ -176,9 +201,6 @@ export class StudentAttendanceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((studentclass: any) => {
 
-        var _class = '';
-        var _section = '';
-        var _ClassRollNoSection = '';
         if (studentclass.value.length == 0) {
           this.loading = false;
           this.alert.error("No student exist in this class/section!", this.optionsNoAutoClose);
@@ -209,7 +231,7 @@ export class StudentAttendanceComponent implements OnInit {
           "BatchId"
         ];
         list.PageName = "Attendances";
-        list.lookupFields = ["StudentClass"];
+        //list.lookupFields = ["StudentClass"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
           " and AttendanceDate eq " + date + "" + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
@@ -304,7 +326,7 @@ export class StudentAttendanceComponent implements OnInit {
     let list: List = new List();
     list.fields = ["AttendanceId"];
     list.PageName = "Attendances";
-    list.filter = [checkFilterString + " and " +this.StandardFilter];
+    list.filter = [checkFilterString + " and " + this.StandardFilter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

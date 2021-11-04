@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-card-title>Attendance</mat-card-title>
+    <mat-card-title>Student Attendance</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <alert></alert>
@@ -75,12 +75,12 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading" *ngIf="StudentAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                    <button [disabled]="loading || !EnableSave" *ngIf="StudentAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
                         <mat-icon>all_out</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
+                    <button [disabled]="loading || !element.Action || Permission=='read' || !EnableSave" matTooltip="view/edit" mat-mini-fab
                         (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>

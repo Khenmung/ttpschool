@@ -49,7 +49,7 @@ export class SchooltimetableComponent implements OnInit {
   SchoolTimeTableList = [];
   dataSource: MatTableDataSource<any[]>;
   allMasterData = [];
-  PagePermission = '';
+  Permission = '';
   SchoolTimeTableData = {
     TimeTableId: 0,
     DayId: 0,
@@ -83,6 +83,7 @@ export class SchooltimetableComponent implements OnInit {
       searchSectionId: [0]
     });
     this.dataSource = new MatTableDataSource<any[]>([]);
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -93,14 +94,17 @@ export class SchooltimetableComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.CLASSTIMETABLE)
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+      if (this.Permission != 'deny') {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
 
-
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.GetMasterData();
-
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.GetMasterData();
+      }
     }
   }
   updateActive(row, value) {

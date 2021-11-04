@@ -4,7 +4,7 @@
     <mat-card-content>
         <alert></alert>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <form [formGroup]="searchForm">
+        <!-- <form [formGroup]="searchForm">
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="searchClassId">
@@ -28,24 +28,18 @@
             <button [disabled]="loading" (click)="GetStudentAttendance()" class="mat-raised-button">
                 <mat-icon>search</mat-icon>
             </button>
-        </form>
+        </form> -->
         <mat-table #table [dataSource]="dataSource">
-            <ng-container matColumnDef="StudentRollNo">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Student-RollNo
+            <ng-container matColumnDef="TeacherName">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Teacher
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.StudentRollNo}}
+                    {{element.TeacherName}}
                 </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="AttendanceDate">
-                <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
-                <mat-cell style="display: flex;justify-content: left;" *matCellDef="let element">
-                    {{element.AttendanceDate | date:'dd/MM/yyyy'}}
-                </mat-cell>
-            </ng-container>
+            </ng-container>            
             <ng-container matColumnDef="AttendanceStatus">
                 <mat-header-cell *matHeaderCellDef> Present&nbsp;
-                    <mat-checkbox *ngIf="StudentAttendanceList.length>0" 
+                    <mat-checkbox *ngIf="TeacherAttendanceList.length>0" 
                         matTooltip="check/uncheck all" mat-mini-fab 
                         (click)="$event.stopPropagation()" (change)="checkall($event)">
                     </mat-checkbox>
@@ -67,13 +61,13 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading" *ngIf="StudentAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                    <button [disabled]="loading" *ngIf="TeacherAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
                         <mat-icon>all_out</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                     <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
-                        (click)="UpdateOrSave(element)">
+                        (click)="UpdateOrSave(element,0)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>

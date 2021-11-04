@@ -106,7 +106,7 @@ export class LoginComponent implements OnInit {
 
         const decodedUser = this.jwtHelper.decodeToken(data.token);
         this.userInfo = JSON.parse(JSON.stringify(decodedUser));
-        
+
         localStorage.setItem('orgId', decodedUser.sid);
         localStorage.setItem('userId', decodedUser.Id);
         //  localStorage.setItem('userInfo',decodedUser);
@@ -157,8 +157,7 @@ export class LoginComponent implements OnInit {
             this.alert.info("User's Organization not active!, Please contact your administrator!", this.optionsNoAutoClose);
           }
         }
-        else
-        {
+        else {
           //if no roleuser data present redirect to select apps.
           this.route.navigate(["/auth/apps"]);
         }
@@ -205,6 +204,7 @@ export class LoginComponent implements OnInit {
           __organization = UserRole[0].Org.OrganizationName;
 
         this.UserDetail = [{
+          employeeId:this.userInfo["nameid"],
           userId: this.userInfo["Id"],
           userName: this.userInfo["email"],
           email: this.userInfo["email"],
@@ -228,7 +228,7 @@ export class LoginComponent implements OnInit {
               return false;
           })
         }]
-        
+
         //login detail is save even though roles are not defined.
         //so that user can continue their settings.
         this.tokenStorage.saveUserdetail(this.UserDetail);
@@ -252,47 +252,42 @@ export class LoginComponent implements OnInit {
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
-    list.lookupFields=["ApplicationFeature($select=faIcon)"]
+    list.lookupFields = ["ApplicationFeature($select=PageTitle,label,link,faIcon,ApplicationId,ParentId)"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          var _applicationFeature = '';
           var _applicationName = '';
           var _appShortName = '';
-          this.UserDetail[0]["applicationRolePermission"] =[];
+          this.UserDetail[0]["applicationRolePermission"] = [];
           data.value.forEach(item => {
-            _applicationFeature = '';
             _applicationName = '';
             _appShortName = '';
-            if (this.ApplicationFeatures.length > 0 && item.ApplicationFeatureId != null) {
-              var appsfeatures = this.ApplicationFeatures.filter(a => a.PageId == item.ApplicationFeatureId);
-              if (appsfeatures.length > 0) {
-                _applicationFeature = appsfeatures[0].PageTitle;
-                _applicationName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].Description;
-                _appShortName = this.Applications.filter(f => f.MasterDataId == appsfeatures[0].ApplicationId)[0].MasterDataName
+            _applicationName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].Description;
+            _appShortName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].MasterDataName
 
-                var _permission = '';
-                if (item.PermissionId != null)
-                  _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
-                debugger;
-                
-                this.UserDetail[0]["applicationRolePermission"].push({
-                  'applicationFeatureId': item.ApplicationFeatureId,
-                  'applicationFeature': _applicationFeature,
-                  'roleId': item.RoleId,
-                  'permissionId': item.PermissionId,
-                  'permission': _permission,
-                  'applicationName': _applicationName,
-                  'applicationId': appsfeatures[0].ApplicationId,
-                  'appShortName': _appShortName,
-                  'faIcon':item.ApplicationFeature.faIcon
-                });
-              }
-            }
-          })
+            var _permission = '';
+            if (item.PermissionId != null)
+              _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
+            debugger;
+
+            this.UserDetail[0]["applicationRolePermission"].push({
+              'applicationFeatureId': item.ApplicationFeatureId,
+              'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,
+              'roleId': item.RoleId,
+              'permissionId': item.PermissionId,
+              'permission': _permission,
+              'applicationName': _applicationName,
+              'applicationId': item.ApplicationFeature.ApplicationId,
+              'appShortName': _appShortName,
+              'faIcon': item.ApplicationFeature.faIcon,
+              'label': item.ApplicationFeature.label,
+              'link': item.ApplicationFeature.link
+            });
+
+          });
           this.tokenStorage.saveUserdetail(this.UserDetail);
           this.isLoginFailed = false;
           this.isLoggedIn = true;

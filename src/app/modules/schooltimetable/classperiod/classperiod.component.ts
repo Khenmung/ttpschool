@@ -1,9 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -45,7 +44,7 @@ export class ClassperiodComponent implements OnInit {
   SchoolClassPeriodList = [];
   dataSource: MatTableDataSource<ISchoolClassPeriod>;
   allMasterData = [];
-  PagePermission = '';
+  Permission = '';
   SchoolClassPeriodData = {
     SchoolClassPeriodId: 0,
     ClassId: 0,
@@ -76,7 +75,7 @@ export class ClassperiodComponent implements OnInit {
       searchClassId: [0],
       searchClassIdApplyAll: [0]
     });
-
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -87,6 +86,13 @@ export class ClassperiodComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      var perObj= globalconstants.getPermission(this.tokenstorage,globalconstants.Pages.edu.TIMETABLE.CLASSPERIOD);
+      if(perObj.length>0)
+      this.Permission =perObj[0].Permission;
+      if(this.Permission !='deny')
+      {
+
+      
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
@@ -95,6 +101,7 @@ export class ClassperiodComponent implements OnInit {
       this.GetMasterData();
       this.GetAllClassPeriods();
     }
+  }
   }
   updateActive(row, value) {
 
@@ -203,7 +210,7 @@ export class ClassperiodComponent implements OnInit {
             this.loading = false;
             this.alert.success("Data saved successfully", this.optionAutoClose);
           }
-          //this.alert.success("Data saved successfully.", this.optionAutoClose);
+          
         });
   }
   update(row) {

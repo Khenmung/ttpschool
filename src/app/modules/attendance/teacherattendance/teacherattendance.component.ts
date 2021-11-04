@@ -43,6 +43,7 @@ export class TeacherAttendanceComponent implements OnInit {
   SelectedBatchId = 0;
   Batches = [];
   AttendanceStatus = [];
+  Permission ='deny';
   TeacherAttendanceList: ITeacherAttendance[] = [];
   dataSource: MatTableDataSource<ITeacherAttendance>;
   allMasterData = [];
@@ -62,7 +63,6 @@ export class TeacherAttendanceComponent implements OnInit {
   };
   displayedColumns = [
     'TeacherName',
-    'AttendanceDate',
     'AttendanceStatus',
     'Remarks',
     'Action'
@@ -83,18 +83,20 @@ export class TeacherAttendanceComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    
+
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b=>this.SelectedBatchId=b);
-
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.GetMasterData();
-
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
+      if (perObj.length > 0)
+        this.Permission = perObj[0].Permission;
+      if (this.Permission != 'deny') {
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetMasterData();
+      }
     }
-
+    this.GetTeacherAttendance();
   }
   PageLoad() {
 
@@ -106,10 +108,10 @@ export class TeacherAttendanceComponent implements OnInit {
       }
       else
         record.AttendanceStatus = 0;
-      record.Action = !record.Action;
+      record.Action = true;
     })
   }
-  
+
   GetTeacherAttendance() {
     //debugger;
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -122,8 +124,8 @@ export class TeacherAttendanceComponent implements OnInit {
 
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName","LastName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    list.lookupFields = ["Employee($select=EmpEmployeeId,FirstName,LastName,ShortName)"]
+    list.filter = [orgIdSearchstr + " and Active eq 1 and (ManagerId eq " + this.LoginUserDetail[0]["employeeId"] + "' or ReportingTo eq " + this.LoginUserDetail[0]["employeeId"]+")"];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)
@@ -131,21 +133,19 @@ export class TeacherAttendanceComponent implements OnInit {
         data.value.filter(f => {
           this.Teachers.push({
             TeacherId: f.Employee.EmpEmployeeId,
-            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName+ " (" + f.Employee.ShortName +")"
           })
         })
 
-
-
-
-        var date = this.datepipe.transform(this.searchForm.get("searchAttendanceDate").value, 'yyyy-MM-dd');
-        var fromDate = new Date(date);
-        if (fromDate > new Date()) {
+        var attendancedate = new Date(this.searchForm.get("searchAttendanceDate").value);
+        attendancedate.setHours(0,0,0,0);
+        var today = new Date(attendancedate);
+        today.setHours(0,0,0,0);
+        if (attendancedate.getTime() > today.getTime()) {
           this.alert.error("Attendance date cannot be greater than today's date", this.optionAutoClose);
           return;
         }
-        //var toDate = fromDate.setDate(fromDate.getDate() + 1);
-        //console.log('date',this.datepipe.transform(toDate,'dd/MM/yyyy'));
+
         list = new List();
         list.fields = [
           "AttendanceId",
@@ -157,10 +157,9 @@ export class TeacherAttendanceComponent implements OnInit {
           "BatchId"
         ];
         list.PageName = "Attendances";
-        list.lookupFields = ["EmpEmployee"];
+        //list.lookupFields = ["EmpEmployee"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          " and AttendanceDate eq datetime'" + date + "'"]; //+ //"'" + //"T00:00:00.000Z'" +
-        //" and AttendanceDate le datetime'" + this.datepipe.transform(toDate, 'yyyy-MM-dd')  + "'" //+  "T00:00:00.000Z'"];
+          " and AttendanceDate eq " + this.datepipe.transform(attendancedate,'yyyy-MM-dd')];
 
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
@@ -196,7 +195,7 @@ export class TeacherAttendanceComponent implements OnInit {
       });
   }
   clear() {
-   
+
   }
   UpdateActive(element, event) {
     element.Action = true;
@@ -208,7 +207,7 @@ export class TeacherAttendanceComponent implements OnInit {
     if (row.Remarks.length > 0)
       row.Action = true;
   }
-  
+
   saveall() {
     var toUpdateAttendance = this.TeacherAttendanceList.filter(f => f.Action);
     this.NoOfRecordToUpdate = toUpdateAttendance.length;

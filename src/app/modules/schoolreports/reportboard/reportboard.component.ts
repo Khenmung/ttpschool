@@ -1,4 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { globalconstants } from 'src/app/shared/globalconstant';
+import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ExamtimetableComponent } from '../examtimetable/examtimetable.component';
 import { FeecollectionreportComponent } from '../feecollectionreport/feecollectionreport.component';
 import { ResultsComponent } from '../results/results.component';
@@ -9,58 +12,104 @@ import { TodayCollectionComponent } from '../today-collection/today-collection.c
   templateUrl: './reportboard.component.html',
   styleUrls: ['./reportboard.component.scss']
 })
-export class ReportboardComponent implements OnInit {
+export class ReportboardComponent implements AfterViewInit {
 
-  @ViewChild(FeecollectionreportComponent) feecollection: FeecollectionreportComponent;
-  @ViewChild(TodayCollectionComponent) TodayCollection: TodayCollectionComponent;
-  @ViewChild(ResultsComponent) results: ResultsComponent;
-  @ViewChild(ExamtimetableComponent) examtimetable: ExamtimetableComponent;
+  components = [
+    ExamtimetableComponent,
+    ResultsComponent,
+    FeecollectionreportComponent,
+    TodayCollectionComponent
+  ];
 
+  tabNames = [];
 
-  selectedIndex = 0;
-  constructor() { }
+  Permissions =
+    {
+      ParentPermission: '',
+      ExamTimeTablePermission: '',
+      ExamResultPermission: '',
+      FeeCollectionPermission: '',
+      DatewisePermission: ''
+    };
 
-  ngOnInit(): void {
-    setTimeout(() => {
-      this.examtimetable.PageLoad();
-    }, 20);
+  @ViewChild('container', { read: ViewContainerRef, static: false })
+  public viewContainer: ViewContainerRef;
 
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private tokenStorage: TokenStorageService,
+    private shareddata: SharedataService,
+    private componentFactoryResolver: ComponentFactoryResolver) {
   }
-  tabChanged(tabChangeEvent: number) {
-    this.selectedIndex = tabChangeEvent;
-    this.navigateTab(this.selectedIndex);
-    //   console.log('tab selected: ' + tabChangeEvent);
-  }
-  public nextStep() {
-    this.selectedIndex += 1;
-    this.navigateTab(this.selectedIndex);
-  }
 
-  public previousStep() {
-    this.selectedIndex -= 1;
-    this.navigateTab(this.selectedIndex);
-  }
-  navigateTab(indx) {
-    debugger;
-    switch (indx) {
-      case 0:
-        this.examtimetable.PageLoad();
-        break;
-      case 1:
-        this.results.PageLoad();
-        break;
-      case 2:
-        this.feecollection.PageLoad();
-        break;
-      case 3:
-        this.TodayCollection.PageLoad();
-        break;
-      // case 4:
-      //   this.activity.PageLoad();
-      //   brea                                                                                                                                                        k;
-      default:
-        this.results.PageLoad();
-        break;
+  public ngAfterViewInit(): void {
+
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.REPORT)
+    if (perObj.length > 0) {
+      this.Permissions.ParentPermission = perObj[0].Permission;
+
     }
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.EXAMTIMETABLE)
+    if (perObj.length > 0) {
+      if (perObj[0].Permission == 'deny') {
+        var comindx = this.components.indexOf(ExamtimetableComponent);
+        this.components.splice(comindx, 1);
+      }
+      else
+        this.tabNames.push({ 'label': perObj[0].label, 'faIcon': perObj[0].faIcon });
+    }
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.EXAMRESULT)
+    if (perObj.length > 0) {
+      if (perObj[0].Permission == 'deny') {
+        var comindx = this.components.indexOf(ResultsComponent);
+        this.components.splice(comindx, 1);
+      }
+      else
+        this.tabNames.push({ 'label': perObj[0].label, 'faIcon': perObj[0].faIcon });
+    }
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.FEECOLLECTION)
+    if (perObj.length > 0) {
+      if (perObj[0].Permission == 'deny') {
+        var comindx = this.components.indexOf(FeecollectionreportComponent);
+        this.components.splice(comindx, 1);
+      }
+      else
+        this.tabNames.push({ 'label': perObj[0].label, 'faIcon': perObj[0].faIcon });
+    }
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.DATEWISECOLLECTION)
+    if (perObj.length > 0) {
+      if (perObj[0].Permission == 'deny') {
+        var comindx = this.components.indexOf(TodayCollectionComponent);
+        this.components.splice(comindx, 1);
+      }
+      else
+        this.tabNames.push({ 'label': perObj[0].label, 'faIcon': perObj[0].faIcon });
+    }
+
+    this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
+
+    if (this.Permissions.ParentPermission != 'deny') {
+      this.renderComponent(0);
+      this.cdr.detectChanges();
+    }
+  }
+
+  public tabChange(index: number) {
+    //    console.log("index", index)
+    setTimeout(() => {
+      this.renderComponent(index);
+    }, 550);
+
+  }
+  selectedIndex = 0;
+
+
+  private renderComponent(index: number): any {
+    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
+    this.viewContainer.createComponent(factory);
+    //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
 }
