@@ -53,14 +53,16 @@ export class GetreportComponent implements OnInit {
   ReportNames = [];
   ReportConfigItemListName = "ReportConfigItems";
 
+  SelectedApplicationId = 0;
   ReportConfigItemList = [];
   dataSource: MatTableDataSource<IReportConfigItem>;
   filterKeyValue = [];
-  allMasterData = [];
+  AllMasterData = [];
   PagePermission = '';
   FilterColumns = [];
   FilterConditions = [];
   FilterCriteria = [];
+  DropdownData =[];
   ReportConfigItemData = {
     ReportConfigItemId: 0,
     ReportName: '',
@@ -89,13 +91,10 @@ export class GetreportComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchApplicationId: [0],
       searchReportName: [0],
       searchFilterColumn: [0],
       searchCondition: [''],
-      searchCriteria: [''],
-      //searchConditionText:['']
-
+      searchCriteria: ['']
     });
     this.FilterConditions = [
       { "text": "equal", "val": "eq" },
@@ -107,7 +106,8 @@ export class GetreportComponent implements OnInit {
     ];
     this.dataSource = new MatTableDataSource([]);
     this.Applications = this.tokenstorage.getPermittedApplications();
-
+    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.PageLoad();
   }
 
   applyFilter(filterValue) {
@@ -141,12 +141,8 @@ export class GetreportComponent implements OnInit {
 
     //debugger;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
-    var ApplicationId = this.searchForm.get("searchApplicationId").value;
     var MyReportNameId = this.searchForm.get("searchReportName").value;
-    if (ApplicationId == 0) {
-      this.alert.error("Please select application name", this.optionAutoClose);
-      return;
-    }
+
     if (AvailableReportId == 0) {
       this.alert.error("Please select available report name", this.optionAutoClose);
       return;
@@ -232,6 +228,25 @@ export class GetreportComponent implements OnInit {
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
+  GetMasterData() {
+
+    var orgIdSearchstr = ' and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
+
+    let list: List = new List();
+
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
+    list.PageName = "MasterItems";
+    list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.AllMasterData = [...data.value];       
+
+        this.loading = false;
+      });
+  }
+  
   ReSequence(editedrow) {
     //debugger;
     var diff = 0;
@@ -309,20 +324,20 @@ export class GetreportComponent implements OnInit {
       "UserId",
       "Active"]
     list.PageName = this.ReportConfigItemListName;
-    list.filter = ["Active eq 1 and (ParentId eq " + this.BaseReportId +
+    list.filter = ["Active eq 1 and ApplicationId eq "+ this.SelectedApplicationId +" and (ParentId eq " + this.BaseReportId +
       " or OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ReportNames = [...data.value];
+        this.GetMyReportNames();
         this.loading = false;
       });
   }
   GetMyReportNames() {
     debugger;
     this.ReportConfigItemList = [];
-    this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
-      && a.ParentId == this.BaseReportId);
+    this.AvailableReportNames = this.ReportNames.filter(a => a.ParentId == this.BaseReportId);
 
     this.AvailableReportNames.forEach(r => {
       var temp = this.ReportNames.filter(p => p.ParentId == r.ReportConfigItemId && p.OrgId != 0)
@@ -335,6 +350,11 @@ export class GetreportComponent implements OnInit {
   }
   GetFilterColumn() {
     this.FilterColumns = this.ReportNames.filter(f => f.ParentId == this.searchForm.get("searchReportName").value);
+  }
+  FillDropDown(){
+    var _ParentId =0;
+    
+    this.DropdownData = this.AllMasterData.filter(f=>f.ParentId == _ParentId);
   }
   getSelectedReportColumn() {
 
@@ -380,10 +400,6 @@ export class GetreportComponent implements OnInit {
           return m;
         })
 
-        //console.log("the", this.ColumnsOfSelectedReports)
-
-
-        //console.log('baseReportColumns', baseReportColumns)
         var list = new List();
         list.PageName = _tableNames[0];
 
@@ -435,12 +451,12 @@ export class GetreportComponent implements OnInit {
             }
             //var whereDisplayNameNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.DisplayName.length > 0)
             var colTem = [];
-            var formatedResult=[];
+            var formatedResult = [];
             this.ColumnsOfSelectedReports.forEach(c => {
               if (c.DisplayName == null || c.DisplayName.length == 0)
                 c.DisplayName = c.ReportName;
 
-                formatedResult = result.map(m => {
+              formatedResult = result.map(m => {
                 if (m[c.ReportName] === undefined)
                   m[c.DisplayName] = this.traverse(m, c.TableNames, '');
                 else
@@ -452,7 +468,7 @@ export class GetreportComponent implements OnInit {
                 return m;
               })
             })
-            
+
             // var filterCount = this.filterKeyValue.length;
             // //for (var filterCount = 0; filterCount < this.filterKeyValue.length; filterCount++) {
             //   formatedResult = formatedResult.filter(f => {
@@ -478,7 +494,7 @@ export class GetreportComponent implements OnInit {
             //     //}
             //   })
             //}
-            this.ReportConfigItemList =[...formatedResult];
+            this.ReportConfigItemList = [...formatedResult];
             this.DisplayColumns = colTem.sort((a, b) => {
               return a.sequence - b.sequence;
             }).map(m => {
@@ -561,22 +577,7 @@ export class GetreportComponent implements OnInit {
     const datatoExport: Partial<any>[] = [...this.ReportConfigItemList];
     TableUtil.exportArrayToExcel(datatoExport, this.ReportName);
   }
-  getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
-
-  }
-
+  
 }
 export interface IReportConfigItem {
   ReportConfigItemId: number;
