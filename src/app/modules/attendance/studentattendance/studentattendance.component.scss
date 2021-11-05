@@ -6,3 +6,9 @@ mat-card{
 mat-form-field,button{
     margin-right: 15px;
 }
+mat-cell:first-of-type{
+    padding-left: 0px;
+}
+.mat-column-AttendanceStatus{
+    justify-content: center;
+}

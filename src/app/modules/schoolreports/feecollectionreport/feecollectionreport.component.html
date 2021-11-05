@@ -1,76 +1,65 @@
-<mat-card>
-    <mat-card-title>Fee payment status report</mat-card-title>
-    <mat-card-content>
-        <br>
-        <form [formGroup]="SearchForm">
-            <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px">
-                <mat-form-field [style.width.px]="250">
-                    <mat-label>Name-class-section-roll no</mat-label>
-                    <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                            {{option.Name}}
-                        </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Class</mat-label>
-                    <mat-select formControlName="searchClassId">
-                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
-                            {{item.ClassName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Section</mat-label>
-                    <mat-select formControlName="searchSectionId">
-                        <mat-option value="0">--section--</mat-option>
-                        <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentReport()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </div>
-        </form>
-        <div>        
-            <mat-table #table [dataSource]="dataSource" style="overflow: auto;">
-                <!-- <ng-container matColumnDef="SlNo">
-                    <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
-                </ng-container> -->
-                <ng-container matColumnDef="RollNo">
-                    <mat-header-cell *matHeaderCellDef> Roll No. </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.RollNo}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Name">
-                    <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.Name}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ClassRollNoSection">
-                    <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ClassRollNoSection}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="MonthName">
-                    <mat-header-cell *matHeaderCellDef> Paid Till </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.MonthName}}
-                    </mat-cell>
-                </ng-container>               
-                <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center"
-                    fxLayout="row">
-                </mat-row>
-            </mat-table>
-            <mat-paginator #PaidPaginator [pageSizeOptions]="[10, 25, 100]">
-            </mat-paginator>
-        </div>
-
-    </mat-card-content>
-</mat-card>
+<div style="padding: 15px;"><strong>Fee Payment Status</strong></div>
+<form [formGroup]="SearchForm">
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px">
+        <mat-form-field [style.width.px]="250">
+            <mat-label>Name-class-section-roll no</mat-label>
+            <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option.Name}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Class</mat-label>
+            <mat-select formControlName="searchClassId">
+                <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                    {{item.ClassName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Section</mat-label>
+            <mat-select formControlName="searchSectionId">
+                <mat-option value="0">--section--</mat-option>
+                <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                    {{item.MasterDataName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentReport()">
+            <mat-icon>search</mat-icon>
+        </button>
+    </div>
+</form>
+<div>
+    <mat-table #table [dataSource]="dataSource" style="overflow: auto;" matSort>
+        <ng-container matColumnDef="RollNo">
+            <mat-header-cell *matHeaderCellDef> Roll No. </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.RollNo}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Student </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.Name}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="ClassRollNoSection">
+            <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.ClassRollNoSection}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="MonthName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Paid Till </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.MonthName}}
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
+        </mat-row>
+    </mat-table>
+    <mat-paginator #PaidPaginator [pageSizeOptions]="[10, 25, 100]">
+    </mat-paginator>
+</div>

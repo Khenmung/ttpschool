@@ -103,7 +103,7 @@ export class StudentactivityComponent implements OnInit {
     else {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.STUDENTACTIVITY)
       if (perObj.length > 0) {
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
 

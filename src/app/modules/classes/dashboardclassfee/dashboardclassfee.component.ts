@@ -91,7 +91,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
       var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.CLASSCOURSE.FEE);
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
 
       this.Months = this.contentservice.GetSessionFormattedMonths();
 

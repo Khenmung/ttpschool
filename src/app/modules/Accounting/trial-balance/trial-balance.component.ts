@@ -125,7 +125,7 @@ export class TrialBalanceComponent implements OnInit {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
       if (perObj.length > 0) {
        
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         //this.GetMasterData();

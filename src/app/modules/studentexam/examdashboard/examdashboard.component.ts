@@ -55,14 +55,14 @@ export class ExamdashboardComponent implements AfterViewInit {
     debugger;
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAM)
     if (perObj.length > 0) {
-      this.Permissions.ParentPermission = perObj[0].Permission;
+      this.Permissions.ParentPermission = perObj[0].permission;
 
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAM)
     var comindx = this.components.indexOf(ExamsComponent);
     if (perObj.length > 0) {
-      if (perObj[0].Permission == 'deny') {
+      if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }
@@ -79,7 +79,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAMSLOT)
     var comindx = this.components.indexOf(ExamslotComponent);
     if (perObj.length > 0) {
-      if (perObj[0].Permission == 'deny') {
+      if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }
@@ -96,7 +96,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT)
     var comindx = this.components.indexOf(SlotnclasssubjectComponent);
     if (perObj.length > 0) {
-      if (perObj[0].Permission == 'deny') {
+      if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }
@@ -112,7 +112,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
     var comindx = this.components.indexOf(ExamstudentsubjectresultComponent);
     if (perObj.length > 0) {
-      if (perObj[0].Permission == 'deny') {
+      if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }
@@ -129,7 +129,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.STUDENTACTIVITY)
     var comindx = this.components.indexOf(StudentactivityComponent);
     if (perObj.length > 0) {
-      if (perObj[0].Permission == 'deny') {
+      if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }

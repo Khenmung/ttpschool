@@ -104,7 +104,7 @@ export class SubjectDetailComponent implements OnInit {
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.SUBJECTDETAIL);
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
       //console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);

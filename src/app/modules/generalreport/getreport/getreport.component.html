@@ -1,76 +1,63 @@
 <div style="max-height: inherit;">
     <div style="padding:15px 15px 10px 15px;">
-        <!-- <div><strong>Reports</strong></div> -->
+        <div><strong>Download Data</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div style="padding: 15px" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
-                <div fxLayout="column" fxLayoutGap="15px" fxLayoutAlign="space-around center">
-                    <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
-                        <mat-form-field appearance="outline" style="margin-right:15px;">
-                            <mat-label>Application</mat-label>
-                            <mat-select formControlName="searchApplicationId" (selectionChange)="GetMyReportNames()">
-                                <mat-option *ngFor="let option of Applications" [value]="option.applicationId">
-                                    {{option.applicationName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>My Report Name</mat-label>
-                            <mat-select formControlName="searchReportName" (selectionChange)="GetFilterColumn()">
-                                <mat-option *ngFor="let item of MyAppReportNames" [value]="item.ReportConfigItemId">
-                                    {{item.ReportName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
-                        <mat-form-field appearance="outline">
-                            <mat-label>Filter fields</mat-label>
-                            <mat-select formControlName="searchFilterColumn">
-                                <mat-option>--field--</mat-option>
-                                <mat-option *ngFor="let item of FilterColumns" [value]="item.ReportName">
-                                    {{item.ReportName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>Condition</mat-label>
-                            <mat-select formControlName="searchCondition">
-                                <mat-option>--select condition--</mat-option>
-                                <mat-option *ngFor="let item of FilterConditions" [value]="item.val">
-                                    {{item.text}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-form-field appearance="outline">
-                            <mat-label>Condition value</mat-label>
-                            <input matInput formControlName="searchCriteria" autocomplete="Off">
-                        </mat-form-field>
-                        <div fxLayout="column" fxLayoutGap="15px" fxLayoutAlign="space-around center">
-                            <button [disabled]="loading" matTooltip="add search filter" class="mat-raised-button"
-                                (click)="AddSearchFilter()">
-                                <mat-icon>chevron_right</mat-icon>
-                            </button>
-                            <button [disabled]="loading" matTooltip="add search filter" class="mat-raised-button"
-                                (click)="RemoveSearchFilter()">
-                                <mat-icon>chevron_left</mat-icon>
-                            </button>
-                        </div>
-                        <mat-selection-list [(ngModel)]="searchConditionText" 
-                        [ngModelOptions]="{standalone: true}"
-                        (selectionChange)="onNgModelChange($event)">
-                            <mat-list-option *ngFor="let item of FilterCriteria">
-                                {{item}}
-                            </mat-list-option>
-                        </mat-selection-list>
-                        <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
-                            (click)="getSelectedReportColumn()">
-                            <mat-icon>search</mat-icon>
+                <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
+                    <mat-form-field appearance="outline">
+                        <mat-label>My Report Name</mat-label>
+                        <mat-select formControlName="searchReportName" (selectionChange)="GetFilterColumn()">
+                            <mat-option *ngFor="let item of MyAppReportNames" [value]="item.ReportConfigItemId">
+                                {{item.ReportName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Filter fields</mat-label>
+                        <mat-select formControlName="searchFilterColumn">
+                            <mat-option>--field--</mat-option>
+                            <mat-option *ngFor="let item of FilterColumns" [value]="item.ReportName">
+                                {{item.ReportName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Condition</mat-label>
+                        <mat-select formControlName="searchCondition">
+                            <mat-option>--select condition--</mat-option>
+                            <mat-option *ngFor="let item of FilterConditions" [value]="item.val">
+                                {{item.text}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Condition value</mat-label>
+                        <input matInput formControlName="searchCriteria" autocomplete="Off">
+                    </mat-form-field>
+                    <div fxLayout="column" fxLayoutGap="15px" fxLayoutAlign="space-around center">
+                        <button [disabled]="loading" matTooltip="add search filter" class="mat-raised-button"
+                            (click)="AddSearchFilter()">
+                            <mat-icon>chevron_right</mat-icon>
+                        </button>
+                        <button [disabled]="loading" matTooltip="add search filter" class="mat-raised-button"
+                            (click)="RemoveSearchFilter()">
+                            <mat-icon>chevron_left</mat-icon>
                         </button>
                     </div>
+                    <mat-selection-list [(ngModel)]="searchConditionText" [ngModelOptions]="{standalone: true}"
+                        (selectionChange)="onNgModelChange($event)">
+                        <mat-list-option *ngFor="let item of FilterCriteria">
+                            {{item}}
+                        </mat-list-option>
+                    </mat-selection-list>
+                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                        (click)="getSelectedReportColumn()">
+                        <mat-icon>search</mat-icon>
+                    </button>
                 </div>
             </form>
             <mat-table #table [dataSource]="dataSource" matSort>

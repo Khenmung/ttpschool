@@ -1,34 +1,18 @@
-<mat-card>
-    <mat-card-title>Attendance</mat-card-title>
-    <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content>
-        <alert></alert>
+<!-- <div></div> -->
+<div style="padding: 15px;"><strong>Employee Attendance</strong></div>
+<alert></alert>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <!-- <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
-                <mat-label>Class</mat-label>
-                <mat-select formControlName="searchClassId">
-                    <mat-option *ngFor="let item of Classes" [value]="item.MasterDataId">{{item.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Section</mat-label>
-                <mat-select formControlName="searchSectionId">
-                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">{{item.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+        <form [formGroup]="searchForm">            
             <mat-form-field appearance="outline">
                 <mat-label>Attendance Date</mat-label>
                 <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
                 <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
                 <mat-datepicker #AttendanceDate></mat-datepicker>
             </mat-form-field>
-            <button [disabled]="loading" (click)="GetStudentAttendance()" class="mat-raised-button">
+            <button [disabled]="loading" (click)="GetEmployeeAttendance()" class="mat-raised-button">
                 <mat-icon>search</mat-icon>
             </button>
-        </form> -->
+        </form>
         <mat-table #table [dataSource]="dataSource">
             <ng-container matColumnDef="TeacherName">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Teacher
@@ -61,12 +45,12 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading" *ngIf="TeacherAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                    <button [disabled]="loading || !EnableSave || Permission=='read'" *ngIf="TeacherAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
                         <mat-icon>all_out</mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
+                    <button [disabled]="loading || !element.Action || !EnableSave || Permission=='read'" matTooltip="save" mat-mini-fab
                         (click)="UpdateOrSave(element,0)">
                         <mat-icon>save</mat-icon>
                     </button>
@@ -75,5 +59,4 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
-    </mat-card-content>
-</mat-card>
+    

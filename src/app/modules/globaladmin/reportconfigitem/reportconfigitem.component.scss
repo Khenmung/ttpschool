@@ -16,3 +16,6 @@ mat-form-field,button{
 .mat-column-Active{
     justify-content: center;
 }
+mat-cell:first-of-type{
+    padding-left: 0px;
+}

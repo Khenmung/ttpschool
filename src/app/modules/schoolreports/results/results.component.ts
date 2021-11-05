@@ -55,7 +55,7 @@ export class ResultsComponent implements OnInit {
   StudentSubjects = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
-
+  Permission = 'deny';
   ExamId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
@@ -92,7 +92,7 @@ export class ResultsComponent implements OnInit {
       searchSectionId: [''],
       searchSubjectId: [0],
     });
-
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -103,13 +103,20 @@ export class ResultsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.REPORT.EXAMRESULT);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      console.log('this.Permission', this.Permission)
+      if (this.Permission != 'deny') {
+
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-      
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.GetMasterData();
 
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.GetMasterData();
+      }
     }
   }
   clear() { }
@@ -129,8 +136,8 @@ export class ResultsComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)", 
-    "StudentClass($select=StudentId,RollNo,SectionId)"]
+    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)",
+      "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {

@@ -125,11 +125,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
       if(perObj.length>0)
-      this.Permission =perObj[0].Permission;
+      this.Permission =perObj[0].permission;
       
       perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTPROMOTE);
       if(perObj.length>0)
-      this.PromotePermission = perObj[0].Permission;
+      this.PromotePermission = perObj[0].permission;
       
       this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
       //console.log('selected batchid', this.SelectedBatchId);
@@ -248,7 +248,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     //debugger;
     // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
     // if (perObj.length > 0)
-    //   this.Permission = perObj[0].Permission;
+    //   this.Permission = perObj[0].permission;
 
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 

@@ -54,34 +54,34 @@ export class ClassboardComponent implements AfterViewInit {
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSCOURSE)
     if (perObj.length > 0) {
-      this.Permissions.ParentPermission = perObj[0].Permission;
+      this.Permissions.ParentPermission = perObj[0].permission;
       //this.tabNames
     }
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)
     if (perObj.length > 0) {
       this.tabNames[0].faIcon = perObj[0].faIcon;
-      this.Permissions.ClassDetailPermission = perObj[0].Permission;
+      this.Permissions.ClassDetailPermission = perObj[0].permission;
     }
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEE)
     if (perObj.length > 0) {
-      this.Permissions.FeePermission = perObj[0].Permission;
+      this.Permissions.FeePermission = perObj[0].permission;
       this.tabNames[1].faIcon = perObj[0].faIcon;
     }
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
     if (perObj.length > 0) {
-      this.Permissions.PreRequisitePermission = perObj[0].Permission;
+      this.Permissions.PreRequisitePermission = perObj[0].permission;
       this.tabNames[2].faIcon = perObj[0].faIcon;
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER)
     if (perObj.length > 0) {
-      this.Permissions.ClassMasterPermission = perObj[0].Permission;
+      this.Permissions.ClassMasterPermission = perObj[0].permission;
       this.tabNames[3].faIcon = perObj[0].faIcon;
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE)
     if (perObj.length > 0) {
-      this.Permissions.FeeTypePermission = perObj[0].Permission;
+      this.Permissions.FeeTypePermission = perObj[0].permission;
       this.tabNames[4].faIcon = perObj[0].faIcon;
     }
 

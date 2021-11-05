@@ -96,7 +96,7 @@ export class SchooltimetableComponent implements OnInit {
     else {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.CLASSTIMETABLE)
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];

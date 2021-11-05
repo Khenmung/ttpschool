@@ -21,13 +21,13 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
   styleUrls: ['./feecollectionreport.component.scss']
 })
 export class FeecollectionreportComponent implements OnInit {
-  @ViewChild('PaidPaginator') PaidPaginator: MatPaginator;
-  @ViewChild('UnPaidPaginator') UnPaidPaginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   loading = false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Permission = 'deny';
   LoginUserDetail = [];
   TotalPaidStudentCount = 0;
   TotalUnPaidStudentCount = 0;
@@ -37,7 +37,7 @@ export class FeecollectionreportComponent implements OnInit {
   Classes = [];
   Batches = [];
   Sections = [];
-  Months=[];
+  Months = [];
   ELEMENT_DATA = [];
   StudentDetail = [];
   TotalAmount = 0;
@@ -48,7 +48,7 @@ export class FeecollectionreportComponent implements OnInit {
     "ClassRollNoSection",
     "RollNo",
     "MonthName",
-    
+
 
   ]
   UnpaidDisplayColumns = [
@@ -81,29 +81,37 @@ export class FeecollectionreportComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-      this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.shareddata.CurrentFeeNames.subscribe(c => (this.FeeNames = c));
-      this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-      this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
+      var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.REPORT.FEEPAYMENTSTATUS);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      console.log('this.Permission', this.Permission)
+      if (this.Permission != 'deny') {
+        this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+        this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.shareddata.CurrentFeeNames.subscribe(c => (this.FeeNames = c));
+        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
 
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
 
 
-      this.SearchForm = this.fb.group({
-        searchStudentName: [0],
-        searchClassId: [0],
-        searchSectionId: [0]
-      })
+        this.SearchForm = this.fb.group({
+          searchStudentName: [0],
+          searchClassId: [0],
+          searchSectionId: [0]
+        })
 
-      this.filteredOptions = this.SearchForm.get("searchStudentName").valueChanges
-        .pipe(
-          startWith(''),
-          map(value => typeof value === 'string' ? value : value.Name),
-          map(Name => Name ? this._filter(Name) : this.Students.slice())
-        );
+        this.filteredOptions = this.SearchForm.get("searchStudentName").valueChanges
+          .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.Name),
+            map(Name => Name ? this._filter(Name) : this.Students.slice())
+          );
+      }
+      this.PageLoad();
     }
   }
   private _filter(name: string): IStudent[] {
@@ -155,33 +163,33 @@ export class FeecollectionreportComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         //this.TotalAmount = 0;
-        var result=[];
+        var result = [];
         if (data.value.length > 0) {
           //this.TotalStudentCount = data.value.length;
           result = data.value.map((item, indx) => {
-           
+
             return {
               Name: item.StudentClass.Student.FirstName + " " + item.StudentClass.Student.LastName,
               ClassRollNoSection: this.Classes.filter(c => c.ClassId == item.StudentClass.ClassId)[0].ClassName + ' - ' + this.Sections.filter(s => s.MasterDataId == item.StudentClass.SectionId)[0].MasterDataName,
               RollNo: item.StudentClass.RollNo,
-              Month:item.Month
+              Month: item.Month
             }
           });
           debugger;
-          this.ELEMENT_DATA = alasql("select Name,ClassRollNoSection,RollNo,MAX(Month) month from ? group by Name,ClassRollNoSection,RollNo",[result]);
-          this.ELEMENT_DATA.forEach(f=>{
-           
-            var monthobj = this.Months.filter(m=>m.val===f.month);
-            if(monthobj.length>0)
-            f.MonthName = monthobj[0].MonthName;
-            
+          this.ELEMENT_DATA = alasql("select Name,ClassRollNoSection,RollNo,MAX(Month) month from ? group by Name,ClassRollNoSection,RollNo", [result]);
+          this.ELEMENT_DATA.forEach(f => {
+
+            var monthobj = this.Months.filter(m => m.val === f.month);
+            if (monthobj.length > 0)
+              f.MonthName = monthobj[0].MonthName;
+
           })
-          this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a,b)=>a.month - b.month)
+          this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a, b) => a.month - b.month)
           //console.log(this.ELEMENT_DATA)
           //this.ELEMENT_DATA = Math.max.apply(null, result.map(function(o) { return o; }))
           this.TotalPaidStudentCount = this.ELEMENT_DATA.length;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
-          this.dataSource.paginator = this.PaidPaginator;
+          this.dataSource.paginator = this.paginator;
         }
       })
   }
@@ -216,7 +224,6 @@ export class FeecollectionreportComponent implements OnInit {
           });
           this.TotalUnPaidStudentCount = this.StudentDetail.length;
           this.UnpaidDataSource = new MatTableDataSource<INotPaidStudent>(this.StudentDetail);
-          this.UnpaidDataSource.paginator = this.UnPaidPaginator;
         }
       });
   }
@@ -278,8 +285,8 @@ export class FeecollectionreportComponent implements OnInit {
             var _className = '';
             if (_classNameobj.length > 0)
               _className = _classNameobj[0].ClassName;
- 
-              var _Section = '';
+
+            var _Section = '';
             var _sectionobj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
@@ -304,8 +311,8 @@ export interface ITodayReceipt {
   "ClassRollNoSection": string,
   "RollNo": number,
   "PaymentDate": number,
-  "Month":number,
-  "MonthName":string
+  "Month": number,
+  "MonthName": string
 }
 export interface INotPaidStudent {
   "SlNo": number,

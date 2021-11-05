@@ -118,7 +118,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER);
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
 
       if (this.Permission == 'deny') {
 

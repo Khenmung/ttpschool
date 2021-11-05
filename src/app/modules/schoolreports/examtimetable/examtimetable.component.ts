@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
@@ -44,7 +44,7 @@ export class ExamtimetableComponent implements OnInit {
   ClassSubjectList = [];
   dataSource: MatTableDataSource<[]>;
   allMasterData = [];
-
+  Permission = 'deny';
   ExamId = 0;
   SlotNClassSubjectData = {
     SlotClassSubjectId: 0,
@@ -74,22 +74,31 @@ export class ExamtimetableComponent implements OnInit {
       searchExamId: [0],
       searchClassId: [0]
     });
+    this.PageLoad();
   }
 
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    console.log('loginuserdetail',this.LoginUserDetail)
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.REPORT.EXAMTIMETABLE);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      console.log('this.Permission',this.Permission)
+      if (this.Permission != 'deny') {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
 
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
-      this.GetMasterData();
+        this.GetMasterData();
+      }
     }
   }
 

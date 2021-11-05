@@ -108,10 +108,13 @@ export class globalconstants {
                     'REPORT': 'report',
                     'EXAMTIMETABLE': 'exam time table',
                     'EXAMRESULT': 'exam result',
-                    'FEECOLLECTION': 'fee collection',
+                    'FEEPAYMENTSTATUS': 'Fee Payment Status',
                     'DATEWISECOLLECTION': 'date wise collection',
-
-
+                },
+                'DATA': {
+                    'DATA': 'data',
+                    'DOWNLOAD': 'download data',
+                    'UPLOAD': 'upload data',
                 }
             },
             "accounting": {

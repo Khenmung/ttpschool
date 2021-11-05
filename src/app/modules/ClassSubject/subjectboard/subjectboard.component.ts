@@ -55,37 +55,37 @@ export class SubjectBoardComponent implements AfterViewInit {
     //this.Permissions.ParentPermission = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.sub)
     // perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECT)
     // if (perObj.length > 0) {
-    //   this.Permissions.ParentPermission = perObj[0].Permission;
+    //   this.Permissions.ParentPermission = perObj[0].permission;
     //  // this.tabNames[1].faIcon = perObj[0].faIcon;
     // }
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)
     if (perObj.length > 0) {
-      this.Permissions.SubjectTypePermission = perObj[0].Permission;
+      this.Permissions.SubjectTypePermission = perObj[0].permission;
       this.tabNames[0].faIcon = perObj[0].faIcon;
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTDETAIL)
     if (perObj.length > 0) {
-      this.Permissions.SubjectDetailPermission = perObj[0].Permission;
+      this.Permissions.SubjectDetailPermission = perObj[0].permission;
       this.tabNames[1].faIcon = perObj[0].faIcon;
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
     if (perObj.length > 0) {
-      this.Permissions.SubjectMarkComponentPermission = perObj[0].Permission;
+      this.Permissions.SubjectMarkComponentPermission = perObj[0].permission;
       this.tabNames[2].faIcon = perObj[0].faIcon;
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE)
     if (perObj.length > 0) {
-      this.Permissions.ClassStudentPermission = perObj[0].Permission;
+      this.Permissions.ClassStudentPermission = perObj[0].permission;
       this.tabNames[3].faIcon = perObj[0].faIcon;
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER)
     if (perObj.length > 0) {
-      this.Permissions.StudentSubjectPermission = perObj[0].Permission;
+      this.Permissions.StudentSubjectPermission = perObj[0].permission;
       this.tabNames[4].faIcon = perObj[0].faIcon;
     }
 

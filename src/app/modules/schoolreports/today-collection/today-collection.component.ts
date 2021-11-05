@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -36,7 +36,8 @@ export class TodayCollectionComponent implements OnInit {
     "ReceiptNo",
     "TotalAmount"
   ]
-  DateWiseCollection =[];
+  Permission = 'deny';
+  DateWiseCollection = [];
   LoginUserDetail = [];
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: FormGroup;
@@ -62,13 +63,16 @@ export class TodayCollectionComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.DATEWISECOLLECTION);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      if (this.Permission != 'deny') {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
-      
-
-      this.GetMasterData();
+        this.GetMasterData();
+      }
     }
   }
   GetStudentFeePaymentDetails() {
@@ -77,10 +81,10 @@ export class TodayCollectionComponent implements OnInit {
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
     let filterstring = '';
-    filterstring = "Active eq 1 and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') + 
-    " and ReceiptDate le " + this.formatdate.transform(toDate.setDate(toDate.getDate() + 1), 'yyyy-MM-dd') +
-    " and BatchId eq " + this.SelectedBatchId +
-    " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    filterstring = "Active eq 1 and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
+      " and ReceiptDate le " + this.formatdate.transform(toDate.setDate(toDate.getDate() + 1), 'yyyy-MM-dd') +
+      " and BatchId eq " + this.SelectedBatchId +
+      " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = [
@@ -89,14 +93,14 @@ export class TodayCollectionComponent implements OnInit {
       'TotalAmount'
     ];
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields=["StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"]
+    list.lookupFields = ["StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"]
     list.filter = [filterstring];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.GrandTotalAmount = data.value.reduce((acc,current)=>acc + current.TotalAmount,0);
-        this.DateWiseCollection = data.value.map(d=>{
+        this.GrandTotalAmount = data.value.reduce((acc, current) => acc + current.TotalAmount, 0);
+        this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
           return d;
@@ -109,7 +113,7 @@ export class TodayCollectionComponent implements OnInit {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " +  this.LoginUserDetail[0]["orgId"] + ")"];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

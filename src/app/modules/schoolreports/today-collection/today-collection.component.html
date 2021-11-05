@@ -1,67 +1,65 @@
-<mat-card>
-    <mat-card-title>Date wise collection</mat-card-title>
-    <mat-card-content>
-        <br>
-        <form [formGroup]="SearchForm">
-            <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="30px">
-                <mat-form-field appearance="outline" [style.width.px]="270">
-                    <mat-label>From Date</mat-label>
-                    <input formControlName="FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
-                    <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
-                    <mat-datepicker #FromDate></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="270">
-                    <mat-label>To Date</mat-label>
-                    <input formControlName="ToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
-                    <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
-                    <mat-datepicker #ToDate></mat-datepicker>
-                </mat-form-field>
-                <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentDetails()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </div>
-        </form>
+<div style="padding:15px">
+    <strong>Date wise collection</strong>
+</div>
 
-        <mat-table #table [dataSource]="dataSource" matSort>
-            
-            <ng-container matColumnDef="Student">
-                <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.Student}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ClassName">
-                <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.ClassName}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ReceiptDate">
-                <mat-header-cell *matHeaderCellDef> Receipt Date </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.ReceiptDate|date:'dd-MM-yyyy'}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ReceiptNo">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> ReceiptNo </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.ReceiptNo}}
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="TotalAmount">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Amount &#x20b9;</mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.TotalAmount}}
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
-            </mat-row>
-        </mat-table>
-        <div fxLayout="column" fxLayoutAlign="end center">
-            <span *ngIf="GrandTotalAmount>0" style="padding: 30px;"><strong>Total &#x20b9;</strong>:
-                {{GrandTotalAmount}}
-            </span>
-            
-            <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
-        </div>
-        <hr style="color:lightgrey;width:50%">
-           
-        <mat-paginator [pageSizeOptions]="[10,25,100]">
-        </mat-paginator>
-    </mat-card-content>
-</mat-card>
+<form [formGroup]="SearchForm">
+    <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="30px">
+        <mat-form-field appearance="outline" [style.width.px]="270">
+            <mat-label>From Date</mat-label>
+            <input formControlName="FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
+            <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
+            <mat-datepicker #FromDate></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" [style.width.px]="270">
+            <mat-label>To Date</mat-label>
+            <input formControlName="ToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
+            <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
+            <mat-datepicker #ToDate></mat-datepicker>
+        </mat-form-field>
+        <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentDetails()">
+            <mat-icon>search</mat-icon>
+        </button>
+    </div>
+</form>
+
+<mat-table #table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="Student">
+        <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.Student}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ClassName">
+        <mat-header-cell *matHeaderCellDef> Class </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.ClassName}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ReceiptDate">
+        <mat-header-cell *matHeaderCellDef> Receipt Date </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.ReceiptDate|date:'dd-MM-yyyy'}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ReceiptNo">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> ReceiptNo </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.ReceiptNo}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="TotalAmount">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Amount &#x20b9;</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.TotalAmount}}
+        </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
+    </mat-row>
+</mat-table>
+<div fxLayout="column" fxLayoutAlign="end center">
+    <span *ngIf="GrandTotalAmount>0" style="padding: 30px;"><strong>Total &#x20b9;</strong>:
+        {{GrandTotalAmount}}
+    </span>
+
+    <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
+</div>
+<hr style="color:lightgrey;width:50%">
+
+<mat-paginator [pageSizeOptions]="[10,25,100]">
+</mat-paginator>

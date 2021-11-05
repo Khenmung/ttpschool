@@ -93,7 +93,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();

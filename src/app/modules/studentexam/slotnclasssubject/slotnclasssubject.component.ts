@@ -91,7 +91,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT);
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);

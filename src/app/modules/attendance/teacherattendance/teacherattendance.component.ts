@@ -32,6 +32,7 @@ export class TeacherAttendanceComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  EnableSave = true;
   SaveAll = false;
   NoOfRecordToUpdate = 0;
   StudentDetailToDisplay = '';
@@ -43,7 +44,7 @@ export class TeacherAttendanceComponent implements OnInit {
   SelectedBatchId = 0;
   Batches = [];
   AttendanceStatus = [];
-  Permission ='deny';
+  Permission = 'deny';
   TeacherAttendanceList: ITeacherAttendance[] = [];
   dataSource: MatTableDataSource<ITeacherAttendance>;
   allMasterData = [];
@@ -89,14 +90,14 @@ export class TeacherAttendanceComponent implements OnInit {
     else {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
       }
     }
-    this.GetTeacherAttendance();
+    //this.GetEmployeeAttendance();
   }
   PageLoad() {
 
@@ -112,8 +113,27 @@ export class TeacherAttendanceComponent implements OnInit {
     })
   }
 
-  GetTeacherAttendance() {
+  GetEmployeeAttendance() {
     //debugger;
+
+    var _attendanceDate = this.searchForm.get("searchAttendanceDate").value;
+    if (_attendanceDate == null) {
+      this.alert.error("Please select attendance date.", this.optionAutoClose);
+      return;
+    }
+ 
+    var attendancedate = new Date(this.searchForm.get("searchAttendanceDate").value);
+    attendancedate.setHours(0, 0, 0, 0);
+    var today = new Date(attendancedate);
+    today.setHours(0, 0, 0, 0);
+    if (attendancedate.getTime() > today.getTime()) {
+      this.alert.error("Attendance date cannot be greater than today's date", this.optionAutoClose);
+      return;
+    }
+    else if (_attendanceDate.getTime() != today.getTime()) {
+      this.EnableSave = false;
+    }
+
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     var _workAccountId = 0;
@@ -125,7 +145,7 @@ export class TeacherAttendanceComponent implements OnInit {
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($select=EmpEmployeeId,FirstName,LastName,ShortName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and (ManagerId eq " + this.LoginUserDetail[0]["employeeId"] + "' or ReportingTo eq " + this.LoginUserDetail[0]["employeeId"]+")"];
+    list.filter = [orgIdSearchstr + " and Active eq 1 and (ManagerId eq " + this.LoginUserDetail[0]["employeeId"] + " or ReportingTo eq " + this.LoginUserDetail[0]["employeeId"] + ")"];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)
@@ -133,18 +153,10 @@ export class TeacherAttendanceComponent implements OnInit {
         data.value.filter(f => {
           this.Teachers.push({
             TeacherId: f.Employee.EmpEmployeeId,
-            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName+ " (" + f.Employee.ShortName +")"
+            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName + " (" + f.Employee.ShortName + ")"
           })
         })
 
-        var attendancedate = new Date(this.searchForm.get("searchAttendanceDate").value);
-        attendancedate.setHours(0,0,0,0);
-        var today = new Date(attendancedate);
-        today.setHours(0,0,0,0);
-        if (attendancedate.getTime() > today.getTime()) {
-          this.alert.error("Attendance date cannot be greater than today's date", this.optionAutoClose);
-          return;
-        }
 
         list = new List();
         list.fields = [
@@ -159,7 +171,7 @@ export class TeacherAttendanceComponent implements OnInit {
         list.PageName = "Attendances";
         //list.lookupFields = ["EmpEmployee"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          " and AttendanceDate eq " + this.datepipe.transform(attendancedate,'yyyy-MM-dd')];
+          " and AttendanceDate eq " + this.datepipe.transform(attendancedate, 'yyyy-MM-dd')];
 
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
@@ -218,8 +230,8 @@ export class TeacherAttendanceComponent implements OnInit {
   UpdateOrSave(row, indx) {
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and TeacherId eq " + row.TeacherId +
-      " and AttendanceDate eq datetime'" + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') + "' " +
-      this.StandardFilter;
+      " and AttendanceDate eq " + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') +
+      " and " + this.StandardFilter;
 
     if (row.AttendanceId > 0)
       checkFilterString += " and AttendanceId ne " + row.AttendanceId;

@@ -99,7 +99,7 @@ export class StudentAttendanceComponent implements OnInit {
     else {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
@@ -404,7 +404,7 @@ export class StudentAttendanceComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId];
+    list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

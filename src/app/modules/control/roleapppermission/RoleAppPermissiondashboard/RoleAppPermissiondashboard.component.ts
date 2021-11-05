@@ -101,7 +101,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
 
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
       if (perObj.length > 0)
-        this.Permission = perObj[0].Permission;
+        this.Permission = perObj[0].permission;
         console.log("permision",this.Permission)
       //if (this.Permission != 'deny') {
         this.Permissions = globalconstants.PERMISSIONTYPES;

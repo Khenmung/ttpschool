@@ -42,14 +42,14 @@ export class AttendanceboardComponent implements AfterViewInit {
   
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENDANCE)
       if (perObj.length > 0) {
-        this.Permissions.ParentPermission = perObj[0].Permission;
+        this.Permissions.ParentPermission = perObj[0].permission;
   
       }
   
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       var comindx = this.components.indexOf(StudentAttendanceComponent);
       if (perObj.length > 0) {
-        if (perObj[0].Permission == 'deny') {
+        if (perObj[0].permission == 'deny') {
           this.components.splice(comindx, 1);
           this.tabNames.splice(comindx, 1);
         }
@@ -66,7 +66,7 @@ export class AttendanceboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
       var comindx = this.components.indexOf(TeacherAttendanceComponent);
       if (perObj.length > 0) {
-        if (perObj[0].Permission == 'deny') {
+        if (perObj[0].permission == 'deny') {
           this.components.splice(comindx, 1);
           this.tabNames.splice(comindx, 1);
         }

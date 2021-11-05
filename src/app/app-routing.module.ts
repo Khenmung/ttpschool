@@ -34,7 +34,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/appconfigdata/appconfigdata.module').then(m => m.AppconfigdataModule)
   },
   {
-    path: 'common/uploaddownload',
+    path: 'edu/uploaddownload',
     loadChildren: () => import('./modules/generalreport/generalreport.module').then(m => m.GeneralreportModule)
   },
   {
