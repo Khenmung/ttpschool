@@ -90,6 +90,7 @@ export class HomeDashboardComponent implements OnInit {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     this.tokenStorage.saveSelectedAppId(SelectedAppId);
     var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
+    
     this.route.navigate(['/', selectedApp[0].appShortName])
 
   }

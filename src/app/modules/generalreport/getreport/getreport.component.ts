@@ -493,7 +493,7 @@ export class GetreportComponent implements OnInit {
             //       //   break;
             //     //}
             //   })
-            //}
+            
             this.ReportConfigItemList = [...formatedResult];
             this.DisplayColumns = colTem.sort((a, b) => {
               return a.sequence - b.sequence;

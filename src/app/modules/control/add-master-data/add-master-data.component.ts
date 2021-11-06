@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-//import { row } from 'mathjs';
-//import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -34,8 +32,11 @@ export class AddMasterDataComponent implements OnInit {
   oldvalue = '';
   selectedData = '';
   OrgId = 0;
+  Permission = '';
+  ApplicationDropdownVisible = false;
   datasource: MatTableDataSource<IMaster>;
   SelectedApplicationId = 0;
+  DataToSaveCount = -1;
   SelectedApplicationName = '';
   ApplicationDataStatus = [];
   SchoolDataStatus = [];
@@ -48,32 +49,6 @@ export class AddMasterDataComponent implements OnInit {
     "Active"
   ];
   UserDetails = [];
-
-  constructor(
-    private fb: FormBuilder,
-    private route: Router,
-    private tokenStorage: TokenStorageService,
-    private dataservice: NaomitsuService,
-    private alert: AlertService,
-    private dialog: DialogService) { }
-
-  ngOnInit(): void {
-    this.searchForm = this.fb.group(
-      {
-        ParentId: [0],
-        AppId: [0],
-        OrgId: [0]
-      })
-
-    // this.UserDetails = this.tokenStorage.getUserDetail();
-    // if(this.UserDetails==null)
-    // {
-    //   this.alert.error('Please login to be able to add masters!',this.optionAutoClose);
-    //   this.route.navigate(['auth/login']);
-    // }
-    // this.GetTopMasters();
-  }
-
   enableAddNew = false;
   enableTopEdit = false;
   loading: boolean = false;
@@ -88,9 +63,40 @@ export class AddMasterDataComponent implements OnInit {
   };
   searchForm: FormGroup;
 
-  PageLoad() {
+  constructor(
+    private fb: FormBuilder,
+    private route: Router,
+    private tokenStorage: TokenStorageService,
+    private dataservice: NaomitsuService,
+    private alert: AlertService,
+    private dialog: DialogService) { }
 
-    //debugger;
+  ngOnInit(): void {
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+
+    this.PermittedApplications = this.tokenStorage.getPermittedApplications();
+    this.SelectedApplicationName = '';
+    var apps = this.PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
+    if (apps.length > 0) {
+      this.SelectedApplicationName = apps[0].applicationName;
+    }
+
+    // if (this.SelectedApplicationName.toLowerCase() == 'globaladmin')
+    //   this.searchForm = this.fb.group(
+    //     {
+    //       ParentId: [0],
+    //       AppId: [0],
+    //       OrgId: [0]
+    //     })
+    // else
+      this.searchForm = this.fb.group(
+        {
+          ParentId: [0]
+        })
+    this.PageLoad();
+  }
+
+  PageLoad() {
 
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails.length == 0) {
@@ -98,36 +104,38 @@ export class AddMasterDataComponent implements OnInit {
       this.route.navigate(['auth/login']);
     }
     this.loading = true;
-    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-    this.PermittedApplications = this.tokenStorage.getPermittedApplications();
-    this.SelectedApplicationName = '';
-    var apps = this.PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
 
-    if (apps.length == 0) {
+
+    if (this.UserDetails == null) {
       this.alert.error('Application selected is not valid!', this.optionAutoClose);
       this.route.navigate(['/dashboard']);
     }
-    else if (apps.length > 0) {
-      this.SelectedApplicationName = apps[0].applicationName;
+    else {
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.MASTERS)
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      if (this.Permission != 'deny') {
+
+        this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
+        this.OrgId = this.UserDetails[0]["orgId"];
+        this.searchForm.patchValue({ "OrgId": this.OrgId });
+        if (this.UserDetails[0]["org"].toLowerCase() != "ttp")
+          this.searchForm.controls['OrgId'].disable();
+
+        this.GetTopMasters();
+        this.GetOrganizations();
+      }
     }
-
-    this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
-    this.OrgId = this.UserDetails[0]["orgId"];
-    this.searchForm.patchValue({ "OrgId": this.OrgId });
-    if (this.UserDetails[0]["org"].toLowerCase() != "ttp")
-      this.searchForm.controls['OrgId'].disable();
-
-    this.GetTopMasters();
-    this.GetOrganizations();
-    //}
   }
   GetTopMasters() {
-debugger;
+    debugger;
     var applicationFilter = '';
-    if (!this.SelectedApplicationName.toLowerCase().includes("common")) {
-      applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
-    }
-
+    // if (!this.SelectedApplicationName.toLowerCase().includes("globaladmin")) {
+    //   this.ApplicationDropdownVisible = true;
+    //   applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
+    // }
+    applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
     let list: List = new List();
     list.fields = [
       "MasterDataId", "ParentId",
@@ -135,7 +143,7 @@ debugger;
       "Logic", "Sequence", "ApplicationId",
       "Active", "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or OrgId eq "+ this.OrgId + ")" + applicationFilter];
+    list.filter = ["(ParentId eq 0 or OrgId eq " + this.OrgId + ")" + applicationFilter];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -149,7 +157,9 @@ debugger;
 
           let schoolData = globalconstants.MasterDefinitions.school;
           this.SchoolDataStatus = this.getSettingStatus(schoolData);
-          this.TopMasters = [];
+          //this.TopMasters = [];
+          this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
+          || t.ParentId == this.SelectedApplicationId);
           this.loading = false;
 
         }
@@ -196,7 +206,10 @@ debugger;
   }
   SaveAll() {
     var ToUpdate = this.MasterData.filter(f => f.Action);
+    this.DataToSaveCount = ToUpdate.length;
+
     ToUpdate.forEach(s => {
+      this.DataToSaveCount--;
       this.UpdateOrSave(s);
     });
   }
@@ -247,13 +260,13 @@ debugger;
       this.enableTopEdit = true;
     else
       this.enableTopEdit = false;
-    this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.searchForm.get("AppId").value && t.ParentId == 0)
-      || t.ParentId == this.searchForm.get("AppId").value);
+    this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
+      || t.ParentId == this.SelectedApplicationId);
   }
-  FilterMaster(element){
+  FilterMaster() {
     debugger;
-    this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.searchForm.get("AppId").value && t.ParentId == 0)
-      || t.ParentId == this.searchForm.get("AppId").value);
+    this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
+      || t.ParentId == this.SelectedApplicationId);
   }
   EditTopMaster() {
     //debugger;
@@ -310,7 +323,7 @@ debugger;
       "ParentId": this.searchForm.get("ParentId").value,
       "OrgId": 0,
       "Active": 1,
-      "ApplicationId": this.searchForm.get("AppId").value,
+      "ApplicationId": this.SelectedApplicationId,
       "Action": false
     }
     if (this.searchForm.get("ParentId").value == 0) {
@@ -325,8 +338,13 @@ debugger;
     this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
   }
   GetSearchMaster() {
+    this.loading = true;
     this.enableTopEdit = false;
     this.enableAddNew = true;
+    this.MasterData = [];
+    this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
+    // this.datasource.paginator = this.paginator;
+    // this.datasource.sort = this.sort;
 
     if (this.SelectedApplicationName.toLowerCase().includes("admin"))
       this.OrgId = this.searchForm.get("OrgId").value;
@@ -355,16 +373,21 @@ debugger;
             "Action": false
           }
         })
+        if (this.MasterData.length == 0) {
+          this.alert.error("No record found.", this.optionAutoClose);
+
+        }
         this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
-
+        this.loading = false;
       });
 
   }
   updateActive(row, value) {
     //console.log('clicked',value);
     //debugger;
+    this.loading=true;
     let message = value.checked == true ? "activated" : "deactivated";
     this.dialog.openConfirmDialog("Are you sure you want to " + message + " " + row.MasterDataName + "?")
       .afterClosed().subscribe(res => {
@@ -392,6 +415,7 @@ debugger;
 
           this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
             .subscribe(res => {
+              this.loading=false;
               this.alert.success("Master data " + message + " successfully.", this.optionAutoClose);
             });
         }
@@ -404,6 +428,11 @@ debugger;
   getoldvalue(value: string, row) {
     this.oldvalue = row.MasterDataName;
     //  console.log('old value', this.oldvalue);
+  }
+  SaveRow(row)
+  {
+    this.DataToSaveCount=0;
+    this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
 
@@ -424,8 +453,8 @@ debugger;
       }
     }
     else {
-      let duplicate = this.MasterData.filter(item => item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase() 
-      && item.MasterDataId != row.MasterDataId)
+      let duplicate = this.MasterData.filter(item => item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
+        && item.MasterDataId != row.MasterDataId)
       if (duplicate.length > 0) {
         this.loading = false;
         this.alert.error("Data already exists!", this.optionNoAutoClose);
@@ -440,19 +469,17 @@ debugger;
       Logic: row.Logic,
       Sequence: row.Sequence,
       ParentId: this.enableTopEdit ? 0 : this.searchForm.get("ParentId").value,
-      ApplicationId: this.searchForm.get("AppId").value,
+      ApplicationId: this.SelectedApplicationId,
       Active: 1
     }
 
-
     let selectedMasterDataId = 0;
-    //mastertoUpdate.MasterDataId = newlyAddedRow[0].Id;
     if (row.MasterDataId == 0) {
 
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
-      mastertoUpdate["ApplicationId"] = this.searchForm.get("AppId").value;
-      console.log('data to update',mastertoUpdate);
+      mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
+      //console.log('data to update',mastertoUpdate);
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {
@@ -460,19 +487,24 @@ debugger;
             row.Action = false;
             if (this.searchForm.get("ParentId").value == 0)
               this.searchForm.patchValue({ ParentId: res["MasterDataId"] });
-            this.loading = false;
-            this.alert.success("Master data added!", this.optionAutoClose);
+
+            if (this.DataToSaveCount == 0) {
+              this.loading = false;
+              this.DataToSaveCount = -1;
+              this.alert.success("Master data added!", this.optionAutoClose);
+            }
           }
         }, error => console.log('insert error', error));
     }
     else {
-      //selectedMasterDataId = newlyAddedRow[0].Id;
       this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
         .subscribe(res => {
-          this.loading = false;
           row.Action = false;
-          this.alert.success("Master data updated!", this.optionAutoClose);
-
+          if (this.DataToSaveCount == 0) {
+            this.loading = false;
+            this.DataToSaveCount = -1;
+            this.alert.success("Master data updated!", this.optionAutoClose);
+          }
         });
     }
     this.enableTopEdit = false;

@@ -1,18 +1,19 @@
 <div fxLayout="column" fxLayoutAlign="center space-between">
+    <div style="padding: 15px;font-weight: bold;">Essential Data</div>
     <div>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <br>
         <form [formGroup]="searchForm">
             <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
-                <mat-form-field fxFlex appearance="outline">
+                <!-- <mat-form-field fxFlex appearance="outline" [hidden]="SelectedApplicationName!='globaladmin'">
                     <mat-label>Application</mat-label>
                     <mat-select formControlName="AppId" fxFlex (selectionChange)="FilterMaster($event)">
                         <mat-option *ngFor="let app of PermittedApplications" [value]="app.applicationId">
                             {{app.applicationName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <mat-form-field fxFlex appearance="outline">
                     <mat-label>Master Name</mat-label>
                     <mat-select formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
@@ -21,14 +22,14 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field fxFlex appearance="outline">
+                <!-- <mat-form-field fxFlex appearance="outline" [hidden]="SelectedApplicationName!='globaladmin'">
                     <mat-label>Organization</mat-label>
                     <mat-select formControlName="OrgId" fxFlex>
                         <mat-option *ngFor="let master of Organizations" [value]="master.OrganizationId">
                             {{master.OrganizationName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetSearchMaster()"
                     fxFlex="10">
                     <mat-icon>search</mat-icon>
@@ -82,7 +83,7 @@
                             *ngIf="enableAddNew" class="mat-raised-button" (click)="AddData()" fxFlex="10">
                             <mat-icon>add</mat-icon>
                         </button>
-                        <button [disabled]="loading" matTooltip="save all" class="mat-raised-button" (click)="SaveAll()"
+                        <button [disabled]="loading || Permission=='read'" matTooltip="save all" class="mat-raised-button" (click)="SaveAll()"
                             fxFlex="10">
                             <mat-icon>all_out</mat-icon>
                         </button>
@@ -91,8 +92,8 @@
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                             [checked]="element.Active">
                         </mat-checkbox>&nbsp;
-                        <button [disabled]="loading || !element.Action" matTooltip="view/edit" mat-mini-fab
-                            (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="view/edit" mat-mini-fab
+                            (click)="SaveRow(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

@@ -39,6 +39,7 @@ export class AppuserdashboardComponent implements OnInit {
     keepAfterRouteChange: true
   };
   loading = false;
+  Permission = '';
   Users: IUser[] = [];
   filteredOptions: Observable<IUser[]>;
   filterwithOrg = '';
@@ -76,7 +77,7 @@ export class AppuserdashboardComponent implements OnInit {
   UserId = 0;
   AppUsers = [];
   searchForm: FormGroup;
-  constructor(    
+  constructor(
     private datepipe: DatePipe,
     private shareddata: SharedataService,
     private fb: FormBuilder,
@@ -95,7 +96,7 @@ export class AppuserdashboardComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.UserName),
         map(UserName => UserName ? this._filter(UserName) : this.Users.slice())
       );
-
+    this.PageLoad();
   }
   private _filter(name: string): IUser[] {
 
@@ -113,9 +114,13 @@ export class AppuserdashboardComponent implements OnInit {
     this.LoginDetail = this.tokenStorage.getUserDetail();
     if (this.LoginDetail == null || this.LoginDetail.length == 0)
       this.route.navigate(['/auth/login']);
-
-    this.filterwithOrg = globalconstants.getStandardFilter(this.LoginDetail);
-    this.GetMasterData();
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
+    if (perObj.length > 0)
+      this.Permission = perObj[0].permission;
+    if (this.Permission != 'deny') {
+      this.filterwithOrg = globalconstants.getStandardFilter(this.LoginDetail);
+      this.GetMasterData();
+    }
 
   }
 
@@ -181,19 +186,19 @@ export class AppuserdashboardComponent implements OnInit {
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     //this.route.navigate(['/auth/appuser']);
   }
-//   GetOrganization(){
-//     let list: List = new List();
-//     list.fields = ["OrganizationId,OrganizationName"];
+  //   GetOrganization(){
+  //     let list: List = new List();
+  //     list.fields = ["OrganizationId,OrganizationName"];
 
-//     list.PageName = "Organizations";
-//     list.filter = ["Active eq 1 and " + this.filterwithOrg];
-//     //this.RoleUserList = [];
+  //     list.PageName = "Organizations";
+  //     list.filter = ["Active eq 1 and " + this.filterwithOrg];
+  //     //this.RoleUserList = [];
 
-//     this.dataservice.get(list)
-//       .subscribe((data: any) => {
-//         this.Organizations=[...data.value];
-//   })
-// }
+  //     this.dataservice.get(list)
+  //       .subscribe((data: any) => {
+  //         this.Organizations=[...data.value];
+  //   })
+  // }
   GetUsers() {
 
     //console.log(this.LoginUserDetail);
@@ -236,7 +241,7 @@ export class AppuserdashboardComponent implements OnInit {
       "ValidFrom",
       "ValidTo",
       "Active",
-     ];
+    ];
     list.PageName = "AuthManagement";
     //list.lookupFields = ["Org($select=OrganizationName)"];
     list.filter = ["Active eq 1" + filterStr];
@@ -245,7 +250,7 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.length > 0) {
-        
+
           this.AppUsers = data.map(u => {
             return {
               "Id": u.Id,
@@ -255,25 +260,25 @@ export class AppuserdashboardComponent implements OnInit {
               "OrgId": u.OrgId,
               "ValidFrom": u.ValidFrom,
               "ValidTo": u.ValidTo,
-              "Active": u.Active              
+              "Active": u.Active
             }
           });
         }
         else
           this.alert.error("No user found matching search criteria!", this.optionsAutoClose);
         //const rows = [];
-        
+
         //this.AppUsers.forEach(element => rows.push(element, { detailRow: true, element }));
-        
-        console.log("users",this.AppUsers)
+
+        console.log("users", this.AppUsers)
         this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
         this.loading = false;
       });
 
   }
-  updateActive(row,value){
-    row.Active = value.checked?1:0;
-    row.Action=true;
+  updateActive(row, value) {
+    row.Active = value.checked ? 1 : 0;
+    row.Action = true;
   }
   UpdateOrSave(row) {
     //debugger;

@@ -62,11 +62,12 @@ export class globalconstants {
 
                 },
                 "CONTROL": {
-                    "BATCHDASHBOARD": 'batch dashboard',
+                    'CONTROL':'control',
+                    "BATCHDASHBOARD": 'batch',
                     'APPLICATIONFEATUREPERMISSION': 'Role Feature Permission',
                     'ROLEUSER': 'role user',
                     'USERS': 'users',
-                    'MASTERS': 'masters'
+                    'MASTERS': 'Essential Data'
                 }
             },
             "edu": {

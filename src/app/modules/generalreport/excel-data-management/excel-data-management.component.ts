@@ -65,7 +65,7 @@ export class ExcelDataManagementComponent implements OnInit {
     })
     this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenservice);
     this.filterOrgId = globalconstants.getStandardFilter(this.loginDetail);
-
+    this.PageLoad();
   }
   PageLoad() {
     if (this.UploadTypes.length == 0)

@@ -54,6 +54,7 @@ export class roleuserdashboardComponent implements OnInit {
   searchForm = this.fb.group({
     searchUserName: [''],
   });
+  Permission='';
   SelectedBatchId = 0;
   filterOrgIdNBatchId = '';
   RoleUserId = 0;
@@ -90,7 +91,7 @@ export class roleuserdashboardComponent implements OnInit {
       );
     //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-
+    this.PageLoad();
   }
   private _filter(name: string): IUser[] {
 
@@ -111,7 +112,12 @@ export class roleuserdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     }
     else {
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission != 'deny') {
       this.GetMasterData();
+      }
     }
 
   }

@@ -29,6 +29,7 @@ export class BatchdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Permission='';
   StandardFilter = '';
   loading = false;
   SelectedBatchId = 0;
@@ -36,18 +37,11 @@ export class BatchdashboardComponent implements OnInit {
   BatchList: IBatches[] = [];
   dataSource: MatTableDataSource<IBatches>;
   allMasterData = [];
-  // searchForm = this.fb.group({
-  //   searchBatchId: [0],
-  //   searchSubjectId: [0],
-  //   //searchSubjectTypeId: [0],
-  //   searchClassId: [0],
-  // });
-  //ClassSubjectId = 0;
   BatchData = {
     BatchId: 0,
     BatchName: '',
-    StartDate:Date,
-    EndDate:Date,
+    StartDate: Date,
+    EndDate: Date,
     OrgId: 0,
     CurrentBatch: 0,
     Active: 1
@@ -71,8 +65,7 @@ export class BatchdashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-
+    this.PageLoad();
   }
   PageLoad() {
     this.loading = true;
@@ -81,14 +74,20 @@ export class BatchdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.BATCHDASHBOARD)
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      if (this.Permission != 'deny') {
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
 
-      this.GetBatches();
+        this.GetBatches();
+      }
     }
   }
 
-  onBlur(row){
-    row.Action=true;
+  onBlur(row) {
+    row.Action = true;
   }
   GetBatches() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -129,8 +128,8 @@ export class BatchdashboardComponent implements OnInit {
       BatchId: 0,
       BatchName: 'new batch name',
       CurrentBatch: 0,
-      StartDate:new Date(),
-      EndDate:new Date(),
+      StartDate: new Date(),
+      EndDate: new Date(),
       OrgId: +this.LoginUserDetail[0]["orgId"],
       Active: 1
     }
@@ -141,7 +140,7 @@ export class BatchdashboardComponent implements OnInit {
 
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
-    
+
   }
   delete(element) {
     let toupdate = {
@@ -150,7 +149,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
       .subscribe(
         (data: any) => {
-          // this.GetApplicationRoles();
+
           this.alert.success("Data deleted successfully.", this.optionAutoClose);
 
         });
@@ -169,7 +168,7 @@ export class BatchdashboardComponent implements OnInit {
         return;
       }
     }
-    this.loading=true;
+    this.loading = true;
     var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
     let checkFilterString = "BatchName eq '" + row.BatchName + "' and " + StandardFilter;
 
@@ -186,7 +185,7 @@ export class BatchdashboardComponent implements OnInit {
         if (data.value.length > 0) {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
           row.Ative = 0;
-          this.loading=false;
+          this.loading = false;
           return;
         }
         else {
@@ -222,9 +221,9 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.postPatch('Batches', this.BatchData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading=false;
+          this.loading = false;
           row.BatchId = data.BatchId;
-          row.Action=false;
+          row.Action = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
@@ -233,8 +232,8 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.postPatch('Batches', this.BatchData, this.BatchData.BatchId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading=false;
-          row.Action=false;
+          this.loading = false;
+          row.Action = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
@@ -248,8 +247,8 @@ export class BatchdashboardComponent implements OnInit {
 export interface IBatches {
   BatchId: number;
   BatchName: string;
-  StartDate:Date;
-  EndDate:Date;
+  StartDate: Date;
+  EndDate: Date;
   CurrentBatch: number;
   OrgId: number;
   Active;

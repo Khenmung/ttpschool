@@ -65,6 +65,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     private dialog: DialogService) { }
 
   ngOnInit(): void {
+    this.PageLoad();
   }
 
   currentPermission = '';
@@ -102,12 +103,11 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-        console.log("permision",this.Permission)
-      //if (this.Permission != 'deny') {
+      if (this.Permission != 'deny') {
         this.Permissions = globalconstants.PERMISSIONTYPES;
         this.GetTopMasters();
         this.GetFeatures();
-      //}
+      }
     }
   }
   GetCustomerApps() {
