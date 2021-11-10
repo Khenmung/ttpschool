@@ -178,7 +178,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   PageLoad() {
     this.shareddata.CurrentFeeNames.subscribe(fy => (this.FeeNames = fy));
     if (this.FeeNames.length == 0) {
-      this.nav.navigate(["/edu/home"]);
+      this.nav.navigate(["/edu"]);
     }
     else {
       debugger;
@@ -247,7 +247,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   GetStudentClass() {
     debugger;
     if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0)
-      this.nav.navigate(["/edu/home"]);
+      this.nav.navigate(["/edu"]);
     else {
 
       let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
@@ -311,7 +311,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   GetStudentFeePayment() {
     //debugger;
     if (this.studentInfoTodisplay.StudentId == 0) {
-      this.nav.navigate(["/edu/home"]);
+      this.nav.navigate(["/edu"]);
     }
     else {
 

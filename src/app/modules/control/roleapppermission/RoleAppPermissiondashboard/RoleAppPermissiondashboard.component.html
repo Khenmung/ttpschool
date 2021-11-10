@@ -6,19 +6,19 @@
     <alert></alert>
     <form [formGroup]="searchForm">
         <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px">
-            <mat-form-field fxFlex appearance="outline">
+            <!-- <mat-form-field fxFlex appearance="outline">
                 <mat-label> Application</mat-label>
                 <mat-select formControlName="ApplicationId" (selectionChange)="GetTopMenu()">
                     <mat-option *ngFor="let master of CustomerApplications" [value]="master.ApplicationId">
                         {{master.ApplicationName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
             <mat-form-field fxFlex appearance="outline">
                 <mat-label>Top Feature</mat-label>
                 <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
                     <mat-option [value]="0">select</mat-option>
-                    <mat-option *ngFor="let feature of TopMenu" [value]="feature.PageId">
+                    <mat-option *ngFor="let feature of Features" [value]="feature.PageId">
                         {{feature.label}}
                     </mat-option>
                 </mat-select>

@@ -16,6 +16,7 @@ const SELECTEDBATCHSTARTEND='SelectedBatchStartEnd';
 const STUDENTID='StudentId';
 const STUDENTCLASSID='StudentClassId';
 const EMPLOYEEID ='employeeId';
+const ROLEFILTER ='rolefilter';
 @Injectable({
   providedIn: 'root'
 })
@@ -80,6 +81,10 @@ export class TokenStorageService {
     localStorage.removeItem(CHECKBATCHID);
     localStorage.setItem(CHECKBATCHID, token);
   }
+  public saveRoleFilter(token: string): void {
+    localStorage.removeItem(ROLEFILTER);
+    localStorage.setItem(ROLEFILTER, token);
+  }
   public saveStudentClassId(token: string): void {
     localStorage.removeItem(STUDENTCLASSID);
     localStorage.setItem(STUDENTCLASSID, token);
@@ -103,6 +108,14 @@ export class TokenStorageService {
     return "";
     
   }
+  public getRoleFilter(): string|null {
+    var _rolefilter=localStorage.getItem(ROLEFILTER);
+    if (_rolefilter) {
+      return JSON.parse(JSON.stringify(_rolefilter));
+    }
+    return "";    
+  }
+  
   public getSelectedBatchStartEnd(): string|null {
     var batch=localStorage.getItem(SELECTEDBATCHSTARTEND);
     if (batch) {

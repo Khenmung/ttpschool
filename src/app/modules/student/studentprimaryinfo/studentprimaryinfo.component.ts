@@ -11,23 +11,21 @@ import { FileUploadService } from '../../../shared/upload.service';
 import { AddstudentclassComponent } from '../addstudentclass/addstudentclass.component';
 import { AddstudentfeepaymentComponent } from '../studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from '../studentfeepayment/feereceipt/feereceipt.component';
-import { StudentDocumentComponent } from '../StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { GenerateCertificateComponent } from '../generatecertificate/generatecertificate.component';
 
 @Component({
-  selector: 'app-addstudent',
-  templateUrl: './addstudent.component.html',
-  styleUrls: ['./addstudent.component.scss']
+  selector: 'app-studentprimaryinfo',
+  templateUrl: './studentprimaryinfo.component.html',
+  styleUrls: ['./studentprimaryinfo.component.scss']
 })
-export class AddstudentComponent implements OnInit {
+export class studentprimaryinfoComponent implements OnInit {
   @ViewChild(AddstudentclassComponent) studentClass: AddstudentclassComponent;
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
-  @ViewChild(StudentDocumentComponent) studentDocument: StudentDocumentComponent;
-  @ViewChild(GenerateCertificateComponent) gencertificate: GenerateCertificateComponent;
+  // @ViewChild(StudentDocumentComponent) studentDocument: StudentDocumentComponent;
+  // @ViewChild(GenerateCertificateComponent) gencertificate: GenerateCertificateComponent;
   Edit = false;
   options = {
     autoClose: true,
@@ -138,7 +136,7 @@ export class AddstudentComponent implements OnInit {
   ) {
     this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
     if (this.Genders.length == 0)
-      this.route.navigate(["/edu/home"]);
+      this.route.navigate(["/edu"]);
     else {
       this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
 
@@ -239,16 +237,11 @@ export class AddstudentComponent implements OnInit {
       case 4:
         this.studentClass.PageLoad();
         break;
-      case 5:
-        this.gencertificate.PageLoad();
-        break;
-      case 6:
-        this.studentDocument.PageLoad();
-        break;
+      
     }
   }
   back() {
-    this.route.navigate(['/edu/home']);
+    this.route.navigate(['/edu']);
   }
   deActivate(event) {
     if (!event.checked)
@@ -386,6 +379,7 @@ export class AddstudentComponent implements OnInit {
     return new Date(dateToAdjust.getTime() - offsetMs);
   }
   GetStudent() {
+    debugger;
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
@@ -409,11 +403,10 @@ export class AddstudentComponent implements OnInit {
               PresentAddress: stud.PresentAddress,
               PermanentAddress: stud.PermanentAddress,
               Gender: stud.Gender,
-              Address: stud.Address,
-              City: stud.City,
-              Pincode: stud.Pincode,
-              State: stud.State,
-              Country: stud.Country,
+              //City: stud.City,
+              //Pincode: stud.Pincode,
+              //State: stud.State,
+              //Country: stud.Country,
               DOB: new Date(stud.DOB),//this.formatdate.transform(stud.DOB,'dd/MM/yyyy'),
               Bloodgroup: stud.Bloodgroup,
               Category: stud.Category,

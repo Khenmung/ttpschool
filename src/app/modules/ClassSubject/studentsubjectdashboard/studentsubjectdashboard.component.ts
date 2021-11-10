@@ -57,6 +57,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   StudentClassSubjectId = 0;
   StudentSubjectData = {
     StudentClassSubjectId: 0,
+    SubjectId:0,
     StudentClassId: 0,
     ClassSubjectId: 0,
     BatchId: 0,
@@ -182,11 +183,11 @@ export class studentsubjectdashboardComponent implements OnInit {
       "ClassSubjectId"
     ];
     list.PageName = "ClassSubjects";
-    list.lookupFields = ["StudentClassSubjects($select=ClassSubjectId,StudentClassId,StudentClassSubjectId,Active)"];
+    list.lookupFields = ["StudentClassSubjects($select=ClassSubjectId,SubjectId,StudentClassId,StudentClassSubjectId,Active)"];
 
     list.filter = ["Active eq 1 and " + orgIdSearchstr];
     //list.orderBy = "ParentId";
-
+debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.forEach(m => {
@@ -288,7 +289,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       "SubjectTypeId": clssubject.SubjectTypeId,
       "SubjectType": clssubject.SubjectTypeName,
       "SelectHowMany": clssubject.SelectHowMany,
-      //_subjectName: alreadyenteredsubject,
+      "SubjectId":clssubject.SubjectId,
       "Subject": _subjectName,
       "ClassSubjectId": clssubject.ClassSubjectId,
       "ClassId": clssubject.ClassId,
@@ -451,6 +452,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.StudentSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentSubjectData.BatchId = this.SelectedBatchId;
           this.StudentSubjectData.StudentClassId = row.StudentClassId;
+          this.StudentSubjectData.SubjectId = row.SubjectId;
           this.StudentSubjectData.ClassSubjectId = row.ClassSubjectId;
           //console.log('data', this.StudentSubjectData);
           if (this.StudentSubjectData.StudentClassSubjectId == 0) {

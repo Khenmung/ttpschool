@@ -42,6 +42,7 @@ export class SubjectDetailComponent implements OnInit {
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   CheckBatchIDForEdit = 1;
+  DataCountToSave = -1;
   Batches = [];
   //WorkAccounts = [];
   ClassSubjectList: IClassSubject[] = [];
@@ -194,7 +195,7 @@ export class SubjectDetailComponent implements OnInit {
       filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
       this.loading = false;
-      this.alert.error("Please select class/stream", this.optionAutoClose);
+      this.alert.error("Please select class/course", this.optionAutoClose);
       return;
     }
     // if (this.searchForm.get("searchSubjectId").value != 0)
@@ -336,8 +337,17 @@ export class SubjectDetailComponent implements OnInit {
     row.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == row.SubjectTypeId)[0].SelectHowMany;
     row.Action = true;
   }
-  UpdateOrSave(row) {
+  SaveAll() {
+    this.DataCountToSave = this.ClassSubjectList.length;
+    var toUpdate = this.ClassSubjectList.filter(f => f.Action);
+    toUpdate.forEach(row => {
+      this.DataCountToSave--;
+      this.UpdateOrSave(row);
+    })
+  }
 
+  UpdateOrSave(row) {
+    this.DataCountToSave = 0;
     //debugger;
     this.loading = true;
 
@@ -419,10 +429,14 @@ export class SubjectDetailComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+
           row.Action = false;
           row.ClassSubjectId = data.ClassSubjectId;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          if (this.DataCountToSave == 0) {
+            this.loading = false;
+            this.DataCountToSave = -1;
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
+          }
         });
   }
   update(row) {
@@ -430,9 +444,12 @@ export class SubjectDetailComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, this.ClassSubjectData.ClassSubjectId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          if (this.DataCountToSave == 0) {
+            this.loading = false;
+            this.DataCountToSave = -1;
+            this.alert.success("Data updated successfully.", this.optionAutoClose);
+          }
         });
   }
   isNumeric(str: number) {

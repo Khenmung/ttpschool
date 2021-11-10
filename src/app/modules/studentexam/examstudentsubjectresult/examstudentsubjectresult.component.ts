@@ -49,6 +49,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   ExamId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
+    StudentClassId:0,
     ExamId: 0,
     StudentClassSubjectId: 0,
     ClassSubjectMarkComponentId: 0,
@@ -159,6 +160,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
           this.ExamStudentSubjectResultData.ExamStudentSubjectResultId = row.ExamStudentSubjectResultId;
           this.ExamStudentSubjectResultData.ExamId = this.searchForm.get("searchExamId").value;
+          this.ExamStudentSubjectResultData.StudentClassId = row.StudentClassId;
           this.ExamStudentSubjectResultData.Active = row.Active;
           this.ExamStudentSubjectResultData.StudentClassSubjectId = row.StudentClassSubjectId;
           this.ExamStudentSubjectResultData.ClassSubjectMarkComponentId = row.ClassSubjectMarkComponentId;
@@ -257,6 +259,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           return {
             StudentClassSubjectId: s.StudentClassSubjectId,
             ClassSubjectId: s.ClassSubjectId,
+            StudentClassId:s.StudentClassId,
             StudentClassSubject: s.StudentClass.RollNo + ' - ' + _class + ' - ' + _section + ' - ' + _subject,
             SubjectId: s.ClassSubject.SubjectId,
             ClassId: s.ClassSubject.ClassId,
@@ -339,6 +342,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     list.fields = [
       "ExamStudentSubjectResultId",
       "ExamId",
+      "StudentClassId",
       "StudentClassSubjectId",
       "ClassSubjectMarkComponentId",
       "Marks",
@@ -385,6 +389,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
                 ExamId: existing[0].ExamStudentResultId,
                 ClassSubjectId: ss.ClassSubjectId,
+                StudentClassId:existing[0].StudentClassId,
                 StudentClassSubjectId: existing[0].StudentClassSubjectId,
                 StudentClassSubject: ss.StudentClassSubject,
                 ClassSubjectMarkComponentId: existing[0].ClassSubjectMarkComponentId,
@@ -410,6 +415,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 ExamId: this.searchForm.get("searchExamId").value,
                 StudentClassSubjectId: ss.StudentClassSubjectId,
                 ClassSubjectId: ss.ClassSubjectId,
+                StudentClassId:ss.StudentClassId,
                 StudentClassSubject: ss.StudentClassSubject,
                 ClassSubjectMarkComponentId: component.ClassSubjectMarkComponentId,
                 SubjectMarkComponent: _componentName,

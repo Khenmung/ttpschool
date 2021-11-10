@@ -1,14 +1,13 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Organization Users</strong></div>
+        <div><strong>User</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div #container [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;" fxLayout="row wrap">
         <div style="height:350px;width: 100%;">
             <form [formGroup]="searchForm">
-
-                <mat-form-field class="example-full-width" [style.width.px]="250">
+                <mat-form-field class="example-full-width" appearance="outline" [style.width.px]="250">
                     <mat-label>Name</mat-label>
                     <input type="text" matInput formControlName="searchUserName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">

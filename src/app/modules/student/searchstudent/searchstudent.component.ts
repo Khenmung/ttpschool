@@ -17,11 +17,11 @@ import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
-  selector: 'app-dashboardstudent',
-  templateUrl: './dashboardstudent.component.html',
-  styleUrls: ['./dashboardstudent.component.scss']
+  selector: 'app-searchstudent',
+  templateUrl: './searchstudent.component.html',
+  styleUrls: ['./searchstudent.component.scss']
 })
-export class DashboardstudentComponent implements OnInit {
+export class searchstudentComponent implements OnInit {
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -60,6 +60,7 @@ export class DashboardstudentComponent implements OnInit {
   SelectedBatchId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
+  StudentId = 0;
   studentSearchForm: FormGroup;
   filteredStudents: Observable<IStudent[]>;
   filteredFathers: Observable<IStudent[]>;
@@ -236,9 +237,14 @@ export class DashboardstudentComponent implements OnInit {
     this.route.navigate(['/edu/addstudentcls/' + id]);
   }
   view(element) {
-    //debugger;
+    debugger;
     this.generateDetail(element);
-    //  this.route.navigate(['/admin/addstudent/' + id], { queryParams: { scid: this.StudentClassId, bid: this.BatchId } });
+    this.StudentClassId =element.StudentClasses[0].StudentClassId;
+    this.StudentId =element.StudentId;
+
+    this.token.saveStudentClassId(this.StudentClassId+"");
+    this.token.saveStudentId(this.StudentId+"");
+
     this.route.navigate(['/edu/addstudent/' + element.StudentId]);
   }
   feepayment(element) {

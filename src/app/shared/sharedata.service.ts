@@ -46,7 +46,8 @@ export class SharedataService {
   private SelectedNCurrentBatchIdEqualSource = new BehaviorSubject(0);
   private PreviousBatchIdOfSelecteBatchIdSource = new BehaviorSubject(0);
   private NextBatchIdOfSelecteBatchIdSource = new BehaviorSubject(0);  
-  //private ApplicationIdSource = new BehaviorSubject(0);  
+  private StudentClassIdSource = new BehaviorSubject(0);  
+  private StudentIdSource = new BehaviorSubject(0);  
   private SelectedBatchStartEndSource = new BehaviorSubject(this.items);  
   private CurrentBatchStartEndSource = new BehaviorSubject(this.items);  
   private CustomerPlanSource = new BehaviorSubject(this.items);  
@@ -92,8 +93,8 @@ export class SharedataService {
   CurrentMasterData = this.MasterItemsource.asObservable();
   CurrentBatchId = this.CurrentBatchIdSource.asObservable();
   CurrentBatch = this.BatchSource.asObservable();
-  // CurrentStudentId = this.StudentIdSource.asObservable();
-  // CurrentStudentClassId = this.StudentClassIdSource.asObservable();
+  CurrentStudentId = this.StudentIdSource.asObservable();
+  CurrentStudentClassId = this.StudentClassIdSource.asObservable();
   CurrentCountry = this.CountrySource.asObservable();
   CurrentGenders = this.GendersSource.asObservable();
   CurrentBloodgroup = this.BloodgroupSource.asObservable();
@@ -230,12 +231,12 @@ export class SharedataService {
   ChangeBatch(item) {
     this.BatchSource.next(item);
   }
-  // ChangeStudentId(item) {
-  //   this.StudentIdSource.next(item);
-  // }
-  // ChangeStudentClassId(item) {
-  //   this.StudentClassIdSource.next(item);
-  // }
+  ChangeStudentId(item) {
+    this.StudentIdSource.next(item);
+  }
+  ChangeStudentClassId(item) {
+    this.StudentClassIdSource.next(item);
+  }
   ChangeCountry(item) {
     this.CountrySource.next(item);
   }

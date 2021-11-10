@@ -1,24 +1,26 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { StudenthomeComponent } from './studenthome/studenthome.component';
-import { AddstudentComponent } from './addstudent/addstudent.component';
+import { studentprimaryinfoComponent } from './studentprimaryinfo/studentprimaryinfo.component';
 import { AddstudentclassComponent } from './addstudentclass/addstudentclass.component';
-import { DashboardstudentComponent } from './dashboardstudent/dashboardstudent.component';
+import { searchstudentComponent } from './searchstudent/searchstudent.component';
 import { DashboardstudentdocumentComponent } from './StudentDocument/dashboardstudentdocument/dashboardstudentdocument.component';
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from './studentfeepayment/feereceipt/feereceipt.component';
 import { StudentDocumentComponent } from '../student/StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
 import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
+import { StudentattendancereportComponent } from './studentattendancereport/studentattendancereport.component';
+import { StudentboardComponent } from './studentboard/studentboard.component';
+import { StudentprogressreportComponent } from './studentprogressreport/studentprogressreport.component';
 
 const routes: Routes = [
   {
     path: '', component: StudenthomeComponent,
     children: [
-      { path: 'home', component: DashboardstudentComponent },
-      { path: 'addstudent/:id', component: AddstudentComponent },
-      { path: 'addstudent', component: AddstudentComponent },
-      { path: 'feepayment', component: AddstudentfeepaymentComponent }
-      
+      { path: '', component: searchstudentComponent },
+      { path: 'addstudent/:id', component: StudentboardComponent },
+      { path: 'addstudent', component: StudentboardComponent },
+      { path: 'feepayment', component: AddstudentfeepaymentComponent }      
     ]
   }
 ];
@@ -30,12 +32,15 @@ const routes: Routes = [
 export class StudentRoutingModule { }
 export const StudentComponents = [
   StudenthomeComponent,
-  AddstudentComponent,
+  studentprimaryinfoComponent,
   AddstudentclassComponent,
   AddstudentfeepaymentComponent,
-  DashboardstudentComponent,
+  searchstudentComponent,
   FeereceiptComponent,
   DashboardstudentdocumentComponent,
   StudentDocumentComponent,
-  GenerateCertificateComponent
+  GenerateCertificateComponent,
+  StudentattendancereportComponent,
+  StudentboardComponent,
+  StudentprogressreportComponent
 ]

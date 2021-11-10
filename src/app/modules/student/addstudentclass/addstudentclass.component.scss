@@ -22,3 +22,6 @@ button{
     padding: 5px;
     outline: none;
   }
+  ::ng-deep .mat-figure{
+    justify-content: left !important;
+  }

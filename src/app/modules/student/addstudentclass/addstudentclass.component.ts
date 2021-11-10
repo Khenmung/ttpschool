@@ -76,6 +76,7 @@ export class AddstudentclassComponent implements OnInit {
       AdmissionDate: [new Date(), [Validators.required]],
       Active: [1],
     });
+    this.PageLoad();
   }
   PageLoad() {
     //debugger;
@@ -94,7 +95,7 @@ export class AddstudentclassComponent implements OnInit {
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
       if(this.FeeType.length==0)
       {
-        this.nav.navigate(["/edu/home"]);
+        this.nav.navigate(["/edu"]);
       }
       this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
       //this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
@@ -187,7 +188,8 @@ export class AddstudentclassComponent implements OnInit {
     //   studentId = this.Id;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "BatchId", "FeeTypeId", "AdmissionDate", "Remarks", "Active"];
+    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "BatchId", "FeeTypeId",
+     "AdmissionDate", "Remarks", "Active"];
     list.PageName = "StudentClasses";
     list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
 

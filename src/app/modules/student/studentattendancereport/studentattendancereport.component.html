@@ -1,0 +1,68 @@
+<div style="padding: 15px;"><strong>Student Attendance</strong></div>
+<alert></alert>
+<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<!-- <form [formGroup]="searchForm">
+    <mat-form-field appearance="outline">
+        <mat-label>Class</mat-label>
+        <mat-select formControlName="searchClassId" (selectionChange)="bindClassSubject()">
+            <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Section</mat-label>
+        <mat-select formControlName="searchSectionId">
+            <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">{{item.MasterDataName}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Subject</mat-label>
+        <mat-select formControlName="searchClassSubjectId">
+            <mat-option>--select subject--</mat-option>
+            <mat-option *ngFor="let item of FilteredClassSubjects" [value]="item.ClassSubjectId">{{item.ClassSubject}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>Attendance Date</mat-label>
+        <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
+        <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
+        <mat-datepicker #AttendanceDate></mat-datepicker>
+    </mat-form-field>
+    <button [disabled]="loading" (click)="GetStudentAttendance()" class="mat-raised-button">
+        <mat-icon>search</mat-icon>
+    </button>
+</form> -->
+<mat-table #table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="StudentRollNo">
+        <mat-header-cell style="display: flex;" *matHeaderCellDef>Student
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.StudentRollNo}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AttendanceDate">
+        <mat-header-cell style="display: flex;" *matHeaderCellDef mat-sort-header>Date
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.AttendanceDate| date:'dd/MM/yyyy'}}
+        </mat-cell>
+    </ng-container>    
+    <ng-container matColumnDef="AttendanceStatus">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Status    
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.AttendanceStatus==1?'Present':'Absent'}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Remarks">
+        <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.Remarks}}
+        </mat-cell>
+    </ng-container>   
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+</mat-table>
+<mat-paginator [pageSizeOptions]="[10,20,50]"></mat-paginator>

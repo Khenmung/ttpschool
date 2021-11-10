@@ -8,9 +8,10 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxPrintModule } from 'ngx-print';
+import { StudentprogressreportComponent } from './studentprogressreport/studentprogressreport.component';
 
 @NgModule({
-  declarations: [StudentComponents],
+  declarations: [StudentComponents, StudentprogressreportComponent],
   imports: [
     CommonModule,
     StudentRoutingModule,
@@ -21,6 +22,7 @@ import { NgxPrintModule } from 'ngx-print';
     SharedhomepageModule,
     FlexLayoutModule,
     NgxPrintModule,
-  ]
+  ],
+  exports:[StudentComponents]
 })
 export class StudentModule { }

@@ -91,12 +91,12 @@ export class SubjectBoardComponent implements AfterViewInit {
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
 
-    console.log("this.Permissions.ParentPermission", this.Permissions.ParentPermission);
-    console.log("this.Permissions.SubjectTypePermission", this.Permissions.SubjectTypePermission);
-    console.log("this.Permissions.SubjectDetailPermission", this.Permissions.SubjectDetailPermission);
-    console.log("this.Permissions.SubjectMarkComponentPermission", this.Permissions.SubjectMarkComponentPermission);
-    console.log("this.Permissions.ClassStudentPermission", this.Permissions.ClassStudentPermission);
-    console.log("this.Permissions.StudentSubjectPermission", this.Permissions.StudentSubjectPermission);
+    // console.log("this.Permissions.ParentPermission", this.Permissions.ParentPermission);
+    // console.log("this.Permissions.SubjectTypePermission", this.Permissions.SubjectTypePermission);
+    // console.log("this.Permissions.SubjectDetailPermission", this.Permissions.SubjectDetailPermission);
+    // console.log("this.Permissions.SubjectMarkComponentPermission", this.Permissions.SubjectMarkComponentPermission);
+    // console.log("this.Permissions.ClassStudentPermission", this.Permissions.ClassStudentPermission);
+    // console.log("this.Permissions.StudentSubjectPermission", this.Permissions.StudentSubjectPermission);
     if (this.Permissions.SubjectTypePermission == 'deny') {
       var comindx = this.components.indexOf(SubjectTypesComponent);
       this.components.splice(comindx, 1);

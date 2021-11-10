@@ -1,6 +1,7 @@
 //import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
 import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
+import { List } from "./interface";
 import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
@@ -62,15 +63,25 @@ export class globalconstants {
 
                 },
                 "CONTROL": {
-                    'CONTROL':'control',
+                    'CONTROL': 'control',
                     "BATCHDASHBOARD": 'batch',
                     'APPLICATIONFEATUREPERMISSION': 'Role Feature Permission',
                     'ROLEUSER': 'role user',
-                    'USERS': 'users',
+                    'USERS': 'user',
                     'MASTERS': 'Essential Data'
                 }
             },
             "edu": {
+                'STUDENT': {
+                    'STUDENT': 'student',
+                    'SEARCHSTUDENT': 'search student',
+                    'STUDENTDETAIL': 'student detail',
+                    'STUDENTCLASS': 'student class',
+                    'GENERATECERTIFICATE': 'generate certificate',
+                    'DOCUMENT': 'documents',
+                    'ATTENDANCEREPORT': 'student attendance',
+                    'PROGRESSREPORT': 'progress report',
+                },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
                     'DETAIL': 'classdetail',
@@ -367,4 +378,56 @@ export class globalconstants {
                 return [];
         }
     }
+    GetApplicationRolesPermission(tokenservice: TokenStorageService, Applications: any[]) {
+
+        let list: List = new List();
+        list.fields = [
+            'ApplicationFeatureId',
+            'RoleId',
+            'PermissionId'
+        ];
+        var _UserDetail = [];
+        var _RoleFilter = tokenservice.getRoleFilter();
+        list.PageName = "ApplicationFeatureRolesPerms";
+        list.lookupFields = ["ApplicationFeature($select=PageTitle,label,link,faIcon,ApplicationId,ParentId)"]
+        list.filter = ["Active eq 1 " + _RoleFilter];
+
+        this.dataservice.get(list)
+            .subscribe((data: any) => {
+                //debugger;
+                if (data.value.length > 0) {
+                    var _applicationName = '';
+                    var _appShortName = '';
+                    _UserDetail["applicationRolePermission"] = [];
+                    data.value.forEach(item => {
+                        _applicationName = '';
+                        _appShortName = '';
+                        _applicationName = Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].Description;
+                        _appShortName = Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].MasterDataName
+
+                        var _permission = '';
+                        if (item.PermissionId != null)
+                            _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
+                        debugger;
+
+                        _UserDetail[0]["applicationRolePermission"].push({
+                            'applicationFeatureId': item.ApplicationFeatureId,
+                            'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,
+                            'roleId': item.RoleId,
+                            'permissionId': item.PermissionId,
+                            'permission': _permission,
+                            'applicationName': _applicationName,
+                            'applicationId': item.ApplicationFeature.ApplicationId,
+                            'appShortName': _appShortName,
+                            'faIcon': item.ApplicationFeature.faIcon,
+                            'label': item.ApplicationFeature.label,
+                            'link': item.ApplicationFeature.link
+                        });
+
+                    });
+                    //tokenservice.saveUserdetail(this.UserDetail);
+                }
+            })
+    }
+
 }

@@ -241,17 +241,9 @@ export class EmployeeComponent implements OnInit {
     this.navigateTab(this.selectedIndex);
   }
   navigateTab(indx) {
-    // switch (indx) {
-    //   case 4:
-    //     this.EmployeeClass.PageLoad();
-    //     break;
-    //   case 5:
-    //     this.EmployeeDocument.PageLoad();
-    //     break;
-    // }
   }
   back() {
-    this.route.navigate(['/edu/home']);
+    this.route.navigate(['/employee']);
   }
   deActivate(event) {
     if (!event.checked)

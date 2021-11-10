@@ -44,7 +44,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     OrgId: 0,
     Active: 0
   };
-
+  SelectedApplicationId=0;
   ApplicationDataStatus = [];
   SchoolDataStatus = [];
   DisplayColumns = [
@@ -65,6 +65,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     private dialog: DialogService) { }
 
   ngOnInit(): void {
+    
     this.PageLoad();
   }
 
@@ -85,7 +86,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   CustomerApplications = [];
   searchForm = this.fb.group(
     {
-      ApplicationId: [0],
+      //ApplicationId: [0],
       ApplicationFeatureId: [0],
       RoleId: [0],
       //PermissionId: [0]
@@ -104,6 +105,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
+        this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
         this.GetTopMasters();
         this.GetFeatures();
@@ -160,7 +162,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       });
   }
   GetTopMenu() {
-    this.TopMenu = this.Features.filter(f=>f.ApplicationId == this.searchForm.get("ApplicationId").value 
+    this.TopMenu = this.Features.filter(f=>f.ApplicationId == this.SelectedApplicationId 
     && f.ParentId ==0 )
     this.TopMenu = this.TopMenu.sort((a,b)=>a.DisplayOrder -b.DisplayOrder);
    }
@@ -208,7 +210,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       "DisplayOrder"
     ];
     list.PageName = "Pages";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId];
     this.Features = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -218,24 +220,24 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         else
           this.Features = [];
         this.loading = false;
-        console.log("features", this.Features)
+        //console.log("features", this.Features)
       })
   }
   FilterFeatures() {
     //debugger;
-    this.FilteredFeatures = this.Features.filter(f => f.ApplicationId == this.searchForm.get("ApplicationId").value);
+    this.FilteredFeatures = this.Features.filter(f => f.ApplicationId == this.SelectedApplicationId);
 
   }
   GetApplicationFeatureRole() {
     //debugger;
 
     var rolefilter = '';
-    if (this.searchForm.get("ApplicationId").value == 0) {
+    if (this.SelectedApplicationId == 0) {
       this.alert.error("Please select Application", this.optionAutoClose);
       return;
     }
     // else
-    //   rolefilter += " and ApplicationFeature/ApplicationId eq " + this.searchForm.get("ApplicationId").value;
+    //   rolefilter += " and ApplicationFeature/ApplicationId eq " + this.SelectedApplicationId;
     
     var _ParentId =0;
     if (this.searchForm.get("ApplicationFeatureId").value > 0) {
@@ -269,7 +271,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         var ResultedPermittedFeatures = [];
         var _roleId = this.searchForm.get("RoleId").value;
         var roleFilteredAssigned = data.value.filter(db => db.RoleId == _roleId);
-        var filteredFeature = this.Features.filter(f => f.ApplicationId == this.searchForm.get("ApplicationId").value && f.ParentId == _ParentId);
+        var filteredFeature = this.Features.filter(f => f.ApplicationId == this.SelectedApplicationId && f.ParentId == _ParentId);
 
         filteredFeature.forEach(p => {
           var existing = roleFilteredAssigned.filter(r => r.ApplicationFeatureId == p.PageId);

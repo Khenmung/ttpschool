@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
+import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../../shared/components/alert/alert.service';
@@ -31,7 +33,7 @@ export class StudentDocumentComponent implements OnInit {
   selectedFile: any;
   StudentId: number = 0;
   StudentClassId: number = 0;
-  StudentDocuments=[];
+  StudentDocuments = [];
   Edit: boolean;
   SelectedBatchId = 0;
   allMasterData = [];
@@ -54,7 +56,9 @@ export class StudentDocumentComponent implements OnInit {
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
-    private tokenService: TokenStorageService
+    private nav: Router,
+    private tokenService: TokenStorageService,
+
   ) { }
 
   ngOnInit(): void {
@@ -62,15 +66,20 @@ export class StudentDocumentComponent implements OnInit {
       BatchId: [0],
       DocTypeId: [0, Validators.required]
     })
-
-    debugger;
-
-    this.StudentId = this.tokenService.getStudentId();
+debugger;
     this.StudentClassId = this.tokenService.getStudentClassId();
-    this.LoginUserDetail = this.tokenService.getUserDetail();
-    this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
-    this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
-    this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+    
+    if (this.StudentClassId == 0) {
+      this.nav.navigate(['/edu']);
+    }
+    else {
+      this.StudentId = this.tokenService.getStudentId();
+      this.LoginUserDetail = this.tokenService.getUserDetail();
+      this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+      this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
+      this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.PageLoad();
+    }
   }
   PageLoad() {
     this.GetMasterData();
@@ -99,7 +108,7 @@ export class StudentDocumentComponent implements OnInit {
     this.formdata = new FormData();
     this.formdata.append("batchId", this.SelectedBatchId.toString());
     this.formdata.append("fileOrPhoto", "0");
-    this.formdata.append("folderName", "StudentDocuments/"+this.SelectedBatchId.toString());
+    this.formdata.append("folderName", "StudentDocuments/" + this.SelectedBatchId.toString());
     this.formdata.append("parentId", "-1");
     this.formdata.append("description", "");
     this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
@@ -128,7 +137,7 @@ export class StudentDocumentComponent implements OnInit {
   }
   GetDocuments() {
     let list: List = new List();
-    this.StudentDocuments =[];
+    this.StudentDocuments = [];
     list.fields = [
       "FileId",
       "FileName",
@@ -152,7 +161,7 @@ export class StudentDocumentComponent implements OnInit {
                 UpdatedFileFolderName: doc.UpdatedFileFolderName,
                 UploadDate: doc.UploadDate,
                 DocType: _doctypeName,
-                path: globalconstants.apiUrl + "/Uploads/"+ this.LoginUserDetail[0]["org"] +"/StudentDocuments/"+this.SelectedBatchId.toString()+ "/" + doc.FileName
+                path: globalconstants.apiUrl + "/Uploads/" + this.LoginUserDetail[0]["org"] + "/StudentDocuments/" + this.SelectedBatchId.toString() + "/" + doc.FileName
               });
             }
           })

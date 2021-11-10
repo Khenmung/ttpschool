@@ -108,7 +108,7 @@
                                     </mat-form-field>
                                 </mat-grid-tile>
                                 <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field appearance="outline">
+                                    <mat-form-field appearance="outline" fxFlex>
                                         <mat-label>DOB</mat-label>
                                         <input formControlName="DOB" matInput [matDatepicker]="DOB" autocomplete="off">
                                         <mat-datepicker-toggle matSuffix [for]="DOB"></mat-datepicker-toggle>
@@ -116,7 +116,7 @@
                                     </mat-form-field>
                                 </mat-grid-tile>
                                 <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field appearance="outline">
+                                    <mat-form-field appearance="outline" fxFlex>
                                         <mat-label>DOJ</mat-label>
                                         <input formControlName="DOJ" matInput [matDatepicker]="DOJ" autocomplete="off">
                                         <mat-datepicker-toggle matSuffix [for]="DOJ"></mat-datepicker-toggle>
@@ -175,25 +175,25 @@
                         </ng-template>
                         <div style="padding:15px 15px 10px 15px;"><strong>Contact</strong></div>
                         <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>employee's Contact no.</mat-label>
                                 <input formControlName="ContactNo" autocomplete="Off" matInput [maxlength]="10">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Alternate Contact No.</mat-label>
                                 <input formControlName="AlternateContactNo" autocomplete="Off" matInput
                                     [maxlength]="12">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Emergency Contact No.</mat-label>
                                 <input formControlName="EmergencyContactNo" autocomplete="Off" matInput
                                     [maxlength]="12">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>WhatsApp No.</mat-label>
                                 <input formControlName="WhatsappNo" autocomplete="Off" matInput [maxlength]="12">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Email Address</mat-label>
                                 <input type="email" formControlName="EmailAddress" autocomplete="Off" matInput
                                     [maxlength]="30">
@@ -304,15 +304,15 @@
                         </ng-template>
                         <div style="padding:15px 15px 10px 15px;"><strong>Bank Account</strong></div>
                         <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Account no.</mat-label>
                                 <input formControlName="BankAccountNo" autocomplete="Off" matInput [maxlength]="20">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>IFSC</mat-label>
                                 <input formControlName="IFSCcode" autocomplete="Off" matInput [maxlength]="10">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>MICR No.</mat-label>
                                 <input formControlName="MICRNo" autocomplete="Off" matInput [maxlength]="20">
                             </mat-form-field>
@@ -334,19 +334,19 @@
                         </ng-template>
                         <div style="padding:15px 15px 10px 15px;"><strong>Identity</strong></div>
                         <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>PAN</mat-label>
                                 <input formControlName="PAN" autocomplete="Off" matInput [maxlength]="12">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Passport No.</mat-label>
                                 <input formControlName="PassportNo" autocomplete="Off" matInput [maxlength]="12">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>PF Account No.</mat-label>
                                 <input formControlName="PFAccountNo" autocomplete="Off" matInput [maxlength]="20">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Aadhaar No</mat-label>
                                 <input formControlName="AadharNo" autocomplete="Off" matInput [maxlength]="12">
                             </mat-form-field>
@@ -368,8 +368,8 @@
                         </ng-template>
                         <div style="padding:15px 15px 10px 15px;"><strong>Identity</strong></div>
 
-                        <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
-                            <mat-form-field appearance="outline">
+                        <div class="content" fxLayout="row wrap" fxLayoutGap="130px">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Employment Type</mat-label>
                                 <mat-select formControlName="EmploymentTypeId">
                                     <mat-option value="0">---</mat-option>
@@ -378,7 +378,7 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Employment Status</mat-label>
                                 <mat-select formControlName="EmploymentStatusId">
                                     <mat-option value="0">---</mat-option>
@@ -388,7 +388,7 @@
                                 </mat-select>
                             </mat-form-field>
                             <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                <mat-form-field appearance="outline" [style.width.px]="270">
+                                <mat-form-field appearance="outline" fxFlex>
                                     <mat-label>Confirmation Date</mat-label>
                                     <input formControlName="ConfirmationDate" matInput [matDatepicker]="picker"
                                         autocomplete="off">
@@ -396,16 +396,16 @@
                                     <mat-datepicker #picker></mat-datepicker>
                                 </mat-form-field>
                             </mat-grid-tile>
-                            <mat-form-field appearance="outline" [style.width.px]="150">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Notice Period days</mat-label>
                                 <input type="number" formControlName="NoticePeriodDays" autocomplete="Off" matInput
                                     [max]="1000">
                             </mat-form-field>
-                            <mat-form-field appearance="outline" [style.width.px]="150">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Probation Period days</mat-label>
                                 <input formControlName="ProbationPeriodDays" autocomplete="Off" matInput [max]="1000">
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Marital Status</mat-label>
                                 <mat-select formControlName="MaritalStatusId">
                                     <mat-option value="0">---</mat-option>
@@ -414,14 +414,14 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                            <mat-form-field appearance="outline" [style.width.px]="270">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Married Date</mat-label>
                                 <input formControlName="MarriedDate" matInput [matDatepicker]="MarriedDate"
                                     autocomplete="off">
                                 <mat-datepicker-toggle matSuffix [for]="MarriedDate"></mat-datepicker-toggle>
                                 <mat-datepicker #MarriedDate></mat-datepicker>
                             </mat-form-field>
-                            <mat-form-field appearance="outline">
+                            <mat-form-field appearance="outline" fxFlex>
                                 <mat-label>Work Nature</mat-label>
                                 <mat-select formControlName="NatureId">
                                     <mat-option value="0">---</mat-option>
