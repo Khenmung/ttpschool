@@ -31,7 +31,7 @@ export class GenerateCertificateComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-
+  Permission = '';
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   StandardFilterWithBatchId = '';
@@ -67,7 +67,7 @@ export class GenerateCertificateComponent implements OnInit {
   allMasterData = [];
   filteredOptions: Observable<IStudent[]>;
   ExamId = 0;
-  StudentClassId =0;
+  StudentClassId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     ExamId: 0,
@@ -102,13 +102,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchCertificateTypeId: [0]
     });
-    // this.filteredOptions = this.searchForm.get("searchStudentName").valueChanges
-    //   .pipe(
-    //     startWith(''),
-    //     map(value => typeof value === 'string' ? value : value.Name),
-    //     map(Name => Name ? this._filter(Name) : this.Students.slice())
-    //   );
-    //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
+    this.PageLoad();
   }
   loadTheme(strStyle: string) {
     const headEl = this.document.getElementsByTagName("head")[0];
@@ -130,20 +124,31 @@ export class GenerateCertificateComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.StudentClassId =  this.tokenstorage.getStudentClassId();
+    this.StudentClassId = this.tokenstorage.getStudentClassId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.StudentClassId = +this.tokenstorage.getStudentClassId();
 
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.GENERATECERTIFICATE);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
 
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.GetMasterData();
+      if (this.StudentClassId == 0) {
+        this.alert.info("Please define class for this student.", this.optionAutoClose);
+        this.nav.navigate(['/edu']);
+      }
+      if (this.Permission != 'deny') {
 
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.GetMasterData();
+      }
     }
   }
 
@@ -512,7 +517,7 @@ export class GenerateCertificateComponent implements OnInit {
         })
       })
   }
-  UpdateStudentCertificates(){
+  UpdateStudentCertificates() {
     console.log("hi")
   }
   getDropDownData(dropdowntype) {

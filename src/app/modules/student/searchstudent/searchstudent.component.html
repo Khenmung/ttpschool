@@ -5,7 +5,7 @@
         <alert></alert>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
-            
+
             <mat-form-field appearance="outline" [style.width.px]="350">
                 <mat-label>Student</mat-label>
                 <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
@@ -47,6 +47,18 @@
         <br>
         <div class="example-container mat-elevation-z8">
             <mat-table #table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button [disabled]="loading" matTooltip="Details" mat-mini-fab (click)="view(element)">
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+                        &nbsp;
+                        <button [disabled]="loading" matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
+                            <mat-icon>payments</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="StudentId" [style.width.px]="30">
                     <mat-header-cell *matHeaderCellDef>Id</mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.StudentId}} </mat-cell>
@@ -89,18 +101,7 @@
                         </mat-checkbox> -->
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading" matTooltip="Details" mat-mini-fab (click)="view(element)">
-                            <mat-icon>pageview</mat-icon>
-                        </button>
-                        &nbsp;
-                        <button [disabled]="loading" matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
-                            <mat-icon>payments</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
+
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"
                     [ngClass]="{ 'highlight': row.ReasonForLeaving.toLowerCase() == 'admitted and left' }">

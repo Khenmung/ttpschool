@@ -126,8 +126,14 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
-
+    //debugger;   
+    if(row.Marks>1000)
+    {
+      this.loading=false;
+      this.alert.error("Marks cannot be greater than 1000.",this.optionAutoClose);
+      return;
+    }
+   
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +

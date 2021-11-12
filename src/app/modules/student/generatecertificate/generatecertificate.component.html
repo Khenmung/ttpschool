@@ -48,7 +48,7 @@
             </div>
             <br>
             <div fxLayout="row" fxLayoutAlign="center center">
-            <button (click)="UpdateStudentCertificates()" [disabled]="loading" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
+            <button (click)="UpdateStudentCertificates()" [disabled]="loading || Permission=='read'" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
                 ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
             </button>

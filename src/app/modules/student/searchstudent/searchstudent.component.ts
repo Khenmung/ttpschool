@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup} from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -79,7 +79,7 @@ export class searchstudentComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
-    
+
     this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
     this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
     this.studentSearchForm = this.fb.group({
@@ -106,15 +106,15 @@ export class searchstudentComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.MotherName),
         map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
       );
-    
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
-    
+
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+    });
+
 
     this.GetMasterData();
     this.GetFeeTypes();
-    this.GetStudents();
+    //this.GetStudents();
   }
   private _filter(name: string): IStudent[] {
 
@@ -212,7 +212,7 @@ export class searchstudentComponent implements OnInit {
 
         this.loading = false;
         this.getSelectedBatchStudentIDRollNo();
-
+        this.GetStudents();
 
       });
 
@@ -239,11 +239,12 @@ export class searchstudentComponent implements OnInit {
   view(element) {
     debugger;
     this.generateDetail(element);
-    this.StudentClassId =element.StudentClasses[0].StudentClassId;
-    this.StudentId =element.StudentId;
+    if (element.StudentClasses.length > 0)
+      this.StudentClassId = element.StudentClasses[0].StudentClassId;
+    this.StudentId = element.StudentId;
 
-    this.token.saveStudentClassId(this.StudentClassId+"");
-    this.token.saveStudentId(this.StudentId+"");
+    this.token.saveStudentClassId(this.StudentClassId + "");
+    this.token.saveStudentId(this.StudentId + "");
 
     this.route.navigate(['/edu/addstudent/' + element.StudentId]);
   }
@@ -261,7 +262,10 @@ export class searchstudentComponent implements OnInit {
       if (objcls.length > 0)
         _clsName = objcls[0].ClassName
 
-      var _sectionName = this.Sections.filter(f => f.MasterDataId == studentclass[0].SectionId)[0].MasterDataName;
+      var _sectionName = '';
+      var sectionObj = this.Sections.filter(f => f.MasterDataId == studentclass[0].SectionId)
+      if (sectionObj.length > 0)
+        _sectionName = sectionObj[0].MasterDataName;
       this.StudentClassId = studentclass[0].StudentClassId
       StudentName += "\n " + _clsName + "-" + _sectionName;
     }
@@ -338,7 +342,7 @@ export class searchstudentComponent implements OnInit {
       checkFilterString += " and MotherName eq '" + this.studentSearchForm.get("MotherName").value.MotherName + "'"
 
     let list: List = new List();
-    list.fields = ["StudentId",    
+    list.fields = ["StudentId",
       "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
@@ -390,40 +394,52 @@ export class searchstudentComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
     list.fields = [
-      'StudentClassId',
       'StudentId',
-      'ClassId',
-      'RollNo',
-      'SectionId'   
+      'FirstName',
+      'LastName',
+      'FatherName',
+      'MotherName',
+      'ContactNo',
+      'FatherContactNo',
+      'MotherContactNo'
     ];
 
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName,FatherName,MotherName,ContactNo,FatherContactNo,MotherContactNo)"]
+    list.PageName = "Students";
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,RollNo,SectionId)"]
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
+            var _RollNo = '';
+            var _name = '';
             var _className = '';
-            if (_classNameobj.length > 0)
-              _className = _classNameobj[0].ClassName;
-            var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId)
             var _section = '';
-            if (_SectionObj.length > 0)
-              _section = _SectionObj[0].MasterDataName;
-            var _RollNo = student.RollNo;
-            var _name = student.Student.FirstName + " " + student.Student.LastName;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.Student.ContactNo;
+            var _studentClassId = 0;
+            if (student.StudentClasses.length > 0) {
+              _studentClassId = student.StudentClasses[0].StudentClassId;
+              var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
+
+              if (_classNameobj.length > 0)
+                _className = _classNameobj[0].ClassName;
+              var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
+
+              if (_SectionObj.length > 0)
+                _section = _SectionObj[0].MasterDataName;
+              _RollNo = student.StudentClasses[0].RollNo;
+            }
+
+            _name = student.FirstName + " " + student.LastName;
+            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
             return {
-              StudentClassId: student.StudentClassId,
+              StudentClassId: _studentClassId,
               StudentId: student.StudentId,
               Name: _fullDescription,
-              FatherName: student.Student.FatherName + "-" + student.Student.FatherContactNo,
-              MotherName: student.Student.MotherName + "-" + student.Student.MotherContactNo,
+              FatherName: student.FatherName + "-" + student.FatherContactNo,
+              MotherName: student.MotherName + "-" + student.MotherContactNo,
             }
           })
         }

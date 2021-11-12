@@ -10,6 +10,7 @@ import { AlertService } from '../../../shared/components/alert/alert.service';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-excel-data-management',
@@ -18,6 +19,7 @@ import { ContentService } from 'src/app/shared/content.service';
 })
 export class ExcelDataManagementComponent implements OnInit {
   constructor(
+    private datepipe: DatePipe,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
@@ -89,7 +91,7 @@ export class ExcelDataManagementComponent implements OnInit {
   StudentList = [];
   StudentClassList = [];
   displayedColumns: any[];
-  ELEMENT_DATA: any[];
+  ELEMENT_DATA = [];
   dataSource: MatTableDataSource<any>;
   uploadForm: FormGroup;
   AllMasterData: any[];
@@ -127,14 +129,21 @@ export class ExcelDataManagementComponent implements OnInit {
       this.displayedColumns = ["StudentId", "Class", "Section", "RollNo"];
     else if (this.Uploadtype.toLowerCase().includes(this.STUDENTDATA))
       this.displayedColumns = [
-        "Name",
+        "FirstName",
+        "LastName",
         "FatherName",
-        "FatherOccupation",
         "MotherName",
-        "MotherOccupation",
         "Gender",
-        "PresentAddress",
         "PermanentAddress",
+        "PresentAddress",
+        "WhatsAppNumber",
+        "PermanentAddressCityId",
+        "PermanentAddressPincode",
+        "PermanentAddressStateId",
+        "PermanentAddressCountryId",
+        "PresentAddressCityId",
+        "PresentAddressStateId",
+        "PresentAddressCountryId",
         "DOB",
         "Bloodgroup",
         "Category",
@@ -142,22 +151,36 @@ export class ExcelDataManagementComponent implements OnInit {
         "IFSCCode",
         "MICRNo",
         "AadharNo",
+        "Photo",
         "Religion",
         "ContactNo",
-        "WhatsAppNumber",
-        "FatherContactNo",
-        "MotherContactNo",
-        "PrimaryContactFatherOrMother",
-        "NameOfContactPerson",
-        "RelationWithContactPerson",
-        "ContactPersonContactNo",
         "AlternateContact",
         "EmailAddress",
         "ClassAdmissionSought",
         "LastSchoolPercentage",
         "TransferFromSchool",
         "TransferFromSchoolBoard",
-        "Remarks"];
+        "Remarks",
+        "FatherOccupation",
+        "FatherContactNo",
+        "MotherContactNo",
+        "MotherOccupation",
+        "PrimaryContactFatherOrMother",
+        "NameOfContactPerson",
+        "RelationWithContactPerson",
+        "ContactPersonContactNo",
+        "Active",
+        "StudentDeclaration",
+        "ParentDeclaration",
+        "LocationId",
+        "ReasonForLeavingId",
+        "OrgId",
+        "CreatedDate",
+        "CreatedBy",
+        "UpdatedDate",
+        "UpdatedBy",
+        "BatchId"
+      ];
     //  this.readExcel();
     //    this.uploadedFile(event);
   }
@@ -192,6 +215,7 @@ export class ExcelDataManagementComponent implements OnInit {
 
   }
   ValidateStudentClassData() {
+    debugger;
     let slno: any = 0;
     this.ErrorMessage = '';
     this.ELEMENT_DATA = this.jsonData.map((element, indx) => {
@@ -233,15 +257,18 @@ export class ExcelDataManagementComponent implements OnInit {
 
       }
     });
+    console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
   }
   ValidateStudentData() {
     let slno: any = 0;
+    debugger;
     this.ErrorMessage = '';
-    this.ELEMENT_DATA = this.jsonData.map((element, indx) => {
+    this.jsonData.forEach((element, indx) => {
       slno = parseInt(indx) + 1;
       //let checkProperty = [];
       this.displayedColumns.forEach(d => {
-        if (d == "DOB") {
+        
+        if (d == "DOB" || d=="CreatedDate" || d=="UpdatedDate") {
           element[d] = new Date(element[d]);
         }
 
@@ -249,46 +276,34 @@ export class ExcelDataManagementComponent implements OnInit {
           this.ErrorMessage += d + " is required at row " + slno + ".<br>";
       })
 
-      let GenderFilter = this.Genders.filter(g => g.MasterDataName.toLowerCase() == element.Gender.toLowerCase());
-      if (GenderFilter.length > 0)
-        element.Gender = GenderFilter[0].MasterDataId;
-      else
+      let GenderFilter = this.Genders.filter(g => g.MasterDataId == element.Gender);
+      if (GenderFilter.length == 0)
         this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
 
-      let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase());
-      if (BloodgroupFilter.length > 0)
-        element.Bloodgroup = BloodgroupFilter[0].MasterDataId;
-      else
+      let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataId == element.Bloodgroup);
+      if (BloodgroupFilter.length == 0)
         this.ErrorMessage += "Invalid Bloodgroup at row " + slno + ":" + element.Bloodgroup + "<br>";
 
-      let Categoryfilter = this.Category.filter(g => g.MasterDataName.toLowerCase() == element.Category.toLowerCase());
-      if (Categoryfilter.length > 0)
-        element.Category = Categoryfilter[0].MasterDataId;
-      else
+      let Categoryfilter = this.Category.filter(g => g.MasterDataId == element.Category);
+      if (Categoryfilter.length == 0)
         this.ErrorMessage += "Invalid Category at row " + slno + ":" + element.Category + "<br>";
 
-      let ReligionFilter = this.Religion.filter(g => g.MasterDataName.toLowerCase() == element.Religion.toLowerCase());
-      if (ReligionFilter.length > 0)
-        element.Religion = ReligionFilter[0].MasterDataId;
-      else
+      let ReligionFilter = this.Religion.filter(g => g.MasterDataId == element.Religion);
+      if (ReligionFilter.length == 0)
         this.ErrorMessage += "Invalid Religion at row " + slno + ":" + element.Religion + "<br>";
 
-      let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName.toLowerCase() == element.PrimaryContactFatherOrMother.toLowerCase());
-      if (PrimaryContactFatherOrMotherFilter.length > 0)
-        element.PrimaryContactFatherOrMother = PrimaryContactFatherOrMotherFilter[0].MasterDataId;
-      else
+      let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataId == element.PrimaryContactFatherOrMother);
+      if (PrimaryContactFatherOrMotherFilter.length == 0)
         this.ErrorMessage += "Invalid PrimaryContactFatherOrMother at row " + slno + ":" + element.PrimaryContactFatherOrMother + "<br>";
 
-      let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.MasterDataName.toLowerCase() == element.ClassAdmissionSought.toLowerCase());
-      if (ClassAdmissionSoughtFilter.length > 0)
-        element.ClassAdmissionSought = ClassAdmissionSoughtFilter[0].MasterDataId;
-      else
+      let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.ClassId == element.ClassAdmissionSought);
+      if (ClassAdmissionSoughtFilter.length == 0)
         this.ErrorMessage += "Invalid ClassAdmissionSought at row " + slno + ":" + element.ClassAdmissionSought + "<br>";
 
-      return {
-        element
-      }
+      this.ELEMENT_DATA.push(element);
+
     });
+    console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
   }
   readAsCSV() {
     this.csvData = XLSX.utils.sheet_to_csv(this.worksheet);
@@ -297,12 +312,14 @@ export class ExcelDataManagementComponent implements OnInit {
   }
   readAsJson() {
     try {
+      debugger;
       let datalength = this.ELEMENT_DATA.length;
       if (this.ErrorMessage.length == 0) {
-        this.ELEMENT_DATA.forEach((element, indx) => {
-          this.studentData = [];
-          element["Active"] = 1;
-          if (this.Uploadtype.toLowerCase().includes(this.CLASSROLLNOMAPPING)) {
+
+        if (this.Uploadtype.toLowerCase().includes(this.CLASSROLLNOMAPPING)) {
+          this.ELEMENT_DATA.forEach((element, indx) => {
+            this.studentData = [];
+            element["Active"] = 1;
             if (element.StudentClassId > 0) {
               element.UpdatedDate = new Date();
               element.UpdatedBy = this.loginDetail[0]["userId"];
@@ -315,13 +332,14 @@ export class ExcelDataManagementComponent implements OnInit {
               this.studentData.push({ element });
               this.saveStudentClass();
             }
-          }
-          else if (this.Uploadtype.toLowerCase().includes(this.STUDENTDATA)) {
-            this.save();
-          }
-          if (datalength == indx + 1)
-            this.alert.success("Data saved successfully.", this.options);
-        });
+          });
+        }
+        else if (this.Uploadtype.toLowerCase().includes(this.STUDENTDATA)) {
+          this.save();
+        }
+        // if (datalength == indx + 1)
+        //   this.alert.success("Data saved successfully.", this.options);
+
       }
     }
     catch (ex) {
@@ -340,10 +358,67 @@ export class ExcelDataManagementComponent implements OnInit {
   }
 
   save() {
-
-    this.dataservice.postPatch('Students', this.studentData[0].col, 0, 'post')
+    var toInsert = [];
+    debugger;
+    this.ELEMENT_DATA.forEach(row => {
+      toInsert.push({
+        "AadharNo": row["AadharNo"],
+        "Active": +row["Active"],
+        "AlternateContact": row["AlternateContact"],
+        "BankAccountNo": row["BankAccountNo"],
+        "Bloodgroup": +row["Bloodgroup"],
+        "Category": +row["Category"],
+        "ClassAdmissionSought": +row["ClassAdmissionSought"],
+        "ContactNo": row["ContactNo"],
+        "ContactPersonContactNo": row["ContactPersonContactNo"],
+        "DOB": this.datepipe.transform(row["DOB"], 'yyyy/MM/dd'),
+        "EmailAddress": row["EmailAddress"],
+        "FatherContactNo": row["FatherContactNo"],
+        "FatherName": row["FatherName"],
+        "FatherOccupation": row["FatherOccupation"],
+        "FirstName": row["FirstName"],
+        "Gender": +row["Gender"],
+        "IFSCCode": row["IFSCCode"],
+        "LastName": row["LastName"],
+        "LastSchoolPercentage": row["LastSchoolPercentage"],
+        "LocationId": +row["LocationId"],
+        "MICRNo": row["MICRNo"],
+        "MotherContactNo": row["MotherContactNo"],
+        "MotherName": row["MotherName"],
+        "MotherOccupation": row["MotherOccupation"],
+        "NameOfContactPerson": row["NameOfContactPerson"],
+        "OrgId": +row["OrgId"],
+        "ParentDeclaration": +row["ParentDeclaration"],
+        "PermanentAddress": row["PermanentAddress"],
+        "PermanentAddressCityId": +row["PermanentAddressCityId"],
+        "PermanentAddressCountryId": +row["PermanentAddressCountryId"],
+        "PermanentAddressPincode": row["PermanentAddressPincode"],
+        "PermanentAddressStateId": +row["PermanentAddressStateId"],
+        "Photo": row["Photo"],
+        "PresentAddress": row["PresentAddress"],
+        "PresentAddressCityId": +row["PresentAddressCityId"],
+        "PresentAddressCountryId": +row["PresentAddressCountryId"],
+        "PresentAddressStateId": +row["PresentAddressStateId"],
+        "PrimaryContactFatherOrMother": +row["PrimaryContactFatherOrMother"],
+        "ReasonForLeavingId": +row["ReasonForLeavingId"],
+        "RelationWithContactPerson": row["RelationWithContactPerson"],
+        "Religion": +row["Religion"],
+        "StudentDeclaration": +row["StudentDeclaration"],
+        "TransferFromSchool": row["TransferFromSchool"],
+        "TransferFromSchoolBoard": row["TransferFromSchoolBoard"],
+        "UpdatedBy": row["UpdatedBy"],
+        "UpdatedDate": this.datepipe.transform(row["UpdatedDate"], 'yyyy/MM/dd'),
+        "CreatedBy": row["CreatedBy"],
+        "CreatedDate": this.datepipe.transform(row["CreatedDate"], 'yyyy/MM/dd'),
+        "WhatsAppNumber": row["WhatsAppNumber"],
+        "BatchId": +row["BatchId"]
+      });
+    });
+    //console.log("toInsert", toInsert)
+    this.dataservice.postPatch('Students', toInsert, 0, 'post')
       .subscribe((result: any) => {
-
+          this.loading=false;
+          this.alert.error("Data uploaded successfully.",this.options.autoClose);
       }, error => console.log(error))
   }
   updateStudentClass() {

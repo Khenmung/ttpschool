@@ -30,7 +30,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
-    path: 'common/config',
+    path: 'edu/config',
     loadChildren: () => import('./modules/appconfigdata/appconfigdata.module').then(m => m.AppconfigdataModule)
   },
   {

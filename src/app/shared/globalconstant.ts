@@ -172,7 +172,6 @@ export class globalconstants {
                 "STUDENTGRADE": "student grade",
                 "RECEIPTHEADING": "receipt heading",
                 "SCHOOLGENDER": "school gender",
-
                 "PRIMARYCONTACT": "primary contact",
                 "BATCH": "batch",
                 "SECTION": "section",

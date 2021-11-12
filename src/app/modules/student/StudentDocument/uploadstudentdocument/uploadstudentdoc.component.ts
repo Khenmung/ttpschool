@@ -27,6 +27,7 @@ export class StudentDocumentComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Permission = '';
   FilterOrgnBatchId = '';
   FilterOrgIdOnly = '';
   formdata: FormData;
@@ -66,19 +67,24 @@ export class StudentDocumentComponent implements OnInit {
       BatchId: [0],
       DocTypeId: [0, Validators.required]
     })
-debugger;
+    debugger;
     this.StudentClassId = this.tokenService.getStudentClassId();
-    
+
     if (this.StudentClassId == 0) {
       this.nav.navigate(['/edu']);
     }
     else {
-      this.StudentId = this.tokenService.getStudentId();
-      this.LoginUserDetail = this.tokenService.getUserDetail();
-      this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
-      this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
-      this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.PageLoad();
+      var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.DOCUMENT);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission != 'deny') {
+        this.StudentId = this.tokenService.getStudentId();
+        this.LoginUserDetail = this.tokenService.getUserDetail();
+        this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+        this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
+        this.FilterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.PageLoad();
+      }
     }
   }
   PageLoad() {

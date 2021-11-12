@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Subject Student</strong></div>
+        <div><strong>Student Subject</strong></div>
     </div>
     <alert></alert>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
@@ -37,7 +37,7 @@
                     <mat-checkbox fxLayoutAlign="center center" matTooltip="select all" *ngIf="disCol=='Action'"
                         (click)="$event.stopPropagation()" (change)="SelectAll($event)">
                     </mat-checkbox>
-                    <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'"
+                    <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
                         matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
                         <mat-icon>all_out</mat-icon>
                     </button>
@@ -49,7 +49,7 @@
                     [checked]="element[disCol]==1?true:false">
                 </mat-checkbox>
                 <div fxLayout="column" fxLayoutAlign="center end">
-                    <button *ngIf="disCol=='Action'" [disabled]="loading || PagePermission=='read'" matTooltip="save"
+                    <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'" matTooltip="save"
                         mat-mini-fab (click)="SaveRow(element)">
                         <mat-icon>save</mat-icon>
                     </button>
