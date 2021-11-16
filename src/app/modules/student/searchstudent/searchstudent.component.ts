@@ -280,6 +280,8 @@ export class searchstudentComponent implements OnInit {
   }
   new() {
     //var url = this.route.url;
+    this.token.saveStudentId("0");
+    this.token.saveStudentClassId("0");
     this.route.navigate(['/edu/addstudent']);
   }
   ExportTOExcel() {
