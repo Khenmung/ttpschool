@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, ViewChild, ViewContainerRef } from '@angular/core';
+import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -39,12 +40,13 @@ export class StudentboardComponent implements AfterViewInit {
         DataDownloadPermission: '',
         DataUploadPermission: ''
       };
-  
+      LoginUserDetail =[];
     @ViewChild('container', { read: ViewContainerRef, static: false })
     public viewContainer: ViewContainerRef;
   
     constructor(
       private cdr: ChangeDetectorRef,
+      private contentservice: ContentService,
       private tokenStorage: TokenStorageService,
       private shareddata: SharedataService,
       private componentFactoryResolver: ComponentFactoryResolver) {
@@ -52,6 +54,8 @@ export class StudentboardComponent implements AfterViewInit {
   
     public ngAfterViewInit(): void {
       debugger
+      this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+      this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENT)
       if (perObj.length > 0) {
         this.Permissions.ParentPermission = perObj[0].permission;  

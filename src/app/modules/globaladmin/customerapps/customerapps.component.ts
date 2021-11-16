@@ -81,6 +81,7 @@ export class CustomerappsComponent implements OnInit {
       searchCustomerId: [0]
     });
     this.dataSource = new MatTableDataSource<ICustomerApps>([]);
+    this.PageLoad();
   }
 
   PageLoad() {

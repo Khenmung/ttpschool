@@ -150,7 +150,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
       this.StudentId = this.tokenService.getStudentId();
       this.StudentClassId = this.tokenService.getStudentClassId()
-
+        console.log("this.StudentClassId",this.StudentClassId)
       this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
       this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
       this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))

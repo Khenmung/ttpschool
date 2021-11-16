@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit {
       this.isLoggedIn = true;
       this.route.navigate(['/dashboard']);
     }
-    this.GetApplicationFeatures();
+    //this.GetApplicationFeatures();
     // this.shareddata.GetApplication().subscribe((data: any) => {
     //   this.Applications = [...data.value];
     // });
@@ -169,7 +169,7 @@ export class LoginComponent implements OnInit {
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq 0 or OrgId eq " + UserRole[0].OrgId + ")"];
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq 0 or OrgId eq " + localStorage.getItem("orgId") + ")"];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -181,13 +181,13 @@ export class LoginComponent implements OnInit {
         // this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ORGANIZATION);
         // this.shareddata.ChangeOrganization(this.Organizations);
 
-        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
-        this.shareddata.ChangeDepartment(this.Departments);
+        // this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
+        // this.shareddata.ChangeDepartment(this.Departments);
 
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
 
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        this.shareddata.ChangeLocation(this.Locations);
+        // this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
+        // this.shareddata.ChangeLocation(this.Locations);
 
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
         this.shareddata.ChangeRoles(this.Roles);

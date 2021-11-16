@@ -7,6 +7,7 @@
     <mat-card-content>
         <div style="padding: 15px;" fxLayout="row wrap" fxLayoutGap="100px">
             <div style="width: 100%;">
+                <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
                 <alert></alert>
                 <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
                     <mat-tab>
@@ -48,7 +49,7 @@
                                         <mat-header-cell *matHeaderCellDef>Select </mat-header-cell>
                                         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center"
                                             fxLayout="row">
-                                            <mat-checkbox [disabled]="loading || element.Balance==0" mat-mini-fab
+                                            <mat-checkbox [disabled]="loading || element.Balance==0 || Permission=='read'" mat-mini-fab
                                                 (change)="SelectRow(element,$event)" [checked]="element.Action">
                                             </mat-checkbox>
                                         </mat-cell>
@@ -99,7 +100,7 @@
                                             [(ngModel)]="OffLineReceiptNo" [value]="OffLineReceiptNo"
                                             autocomplete="Off">
                                     </mat-form-field>                             
-                                    <button [disabled]="loading || calculateTotal()==0" matTooltip="pay" mat-mini-fab
+                                    <button [disabled]="loading || calculateTotal()==0 || Permission=='read'" matTooltip="pay" mat-mini-fab
                                         (click)="billpayment()">
                                         <mat-icon>payments</mat-icon>
                                     </button>

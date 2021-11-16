@@ -17,9 +17,8 @@
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
-                        <mat-label>Filter fields</mat-label>
+                        <mat-label>Search by</mat-label>
                         <mat-select formControlName="searchFilterColumn">
-                            <mat-option>--field--</mat-option>
                             <mat-option *ngFor="let item of FilterColumns" [value]="item.ReportName">
                                 {{item.ReportName}}
                             </mat-option>
@@ -34,8 +33,9 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
+                    
                     <mat-form-field appearance="outline">
-                        <mat-label>Condition value</mat-label>
+                        <mat-label>search value</mat-label>
                         <input matInput formControlName="searchCriteria" autocomplete="Off">
                     </mat-form-field>
                     <div fxLayout="column" fxLayoutGap="15px" fxLayoutAlign="space-around center">
@@ -48,9 +48,10 @@
                             <mat-icon>chevron_left</mat-icon>
                         </button>
                     </div>
-                    <mat-selection-list [(ngModel)]="searchConditionText" [ngModelOptions]="{standalone: true}"
-                        (selectionChange)="onNgModelChange($event)">
-                        <mat-list-option *ngFor="let item of FilterCriteria">
+                    <!-- (selectionChange)="onSelection($event, shoes.selectedOptions.selected)" -->
+                    <mat-selection-list #searchval [(ngModel)]="searchConditionText" [ngModelOptions]="{standalone: true}"
+                        (selectionChange)="onNgModelChange(searchval.selectedOptions.selected)">
+                        <mat-list-option *ngFor="let item of FilterCriteria" [value]="item">
                             {{item}}
                         </mat-list-option>
                     </mat-selection-list>

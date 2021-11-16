@@ -41,9 +41,9 @@
 
     <mat-table #table [dataSource]="dataSource" matSort>
 
-        <ng-container matColumnDef="SlNo">
-            <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+        <ng-container matColumnDef="ClassFeeId">
+            <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.ClassFeeId}} </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="FeeNameId" hidden>

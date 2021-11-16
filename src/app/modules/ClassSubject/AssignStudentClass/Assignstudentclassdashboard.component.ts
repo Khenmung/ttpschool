@@ -23,8 +23,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
-  RowsToUpdate = 0;
-  UpdatedRows = 0;
+  RowsToUpdate = -1;
+  //RowsT = 0;
   Permission = '';
   PromotePermission = '';
   LoginUserDetail: any[] = [];
@@ -122,15 +122,15 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-      
+
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
-      if(perObj.length>0)
-      this.Permission =perObj[0].permission;
-      
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+
       perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.STUDENTPROMOTE);
-      if(perObj.length>0)
-      this.PromotePermission = perObj[0].permission;
-      
+      if (perObj.length > 0)
+        this.PromotePermission = perObj[0].permission;
+
       this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
       //console.log('selected batchid', this.SelectedBatchId);
       //console.log('current batchid', this.CurrentBatchId)
@@ -169,7 +169,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     var _rowstoupdate = this.StudentClassList.filter(f => f.Promote == 1);
     this.RowsToUpdate = _rowstoupdate.length;
     _rowstoupdate.forEach(s => {
-      this.UpdatedRows++;
+      this.RowsToUpdate--;
       s.StudentClassId = 0;
       delete s.SectionId;
       s.RollNo = '';
@@ -244,7 +244,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       })
   }
   GetStudentClasses() {
-    
+
     //debugger;
     // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
     // if (perObj.length > 0)
@@ -352,6 +352,18 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
         });
   }
+  SaveAll() {
+    var _toUpdate = this.StudentClassList.filter(f => f.Action);
+    this.RowsToUpdate = _toUpdate.length;
+    _toUpdate.forEach(e=>{
+      this.RowsToUpdate--;
+      this.UpdateOrSave(e);
+    })
+  }
+  SaveRow(row){
+    this.RowsToUpdate=0;
+    this.UpdateOrSave(row);
+  }
   UpdateOrSave(row) {
 
     //debugger;
@@ -372,7 +384,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -418,25 +430,16 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.loading = false;
           row.StudentClassId = data.StudentClassId;
           row.Action = false;
-          if (this.RowsToUpdate > 1) {
-            if (this.UpdatedRows == this.RowsToUpdate) {
-              if (row.Promote == 1)
-                this.alert.success(this.RowsToUpdate + " Student/s promoted to next class without section and roll no.", this.optionsNoAutoClose);
-              else
-                this.alert.success("Data saved successfully.", this.optionAutoClose);
-              this.RowsToUpdate = 0;
-              this.UpdatedRows = 0;
-            }
+          if (row.Promote == 1)
             this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
-          }
-          else {
-            if (row.Promote == 1) {
-              this.alert.success("Student is promoted to next class without section and roll no.", this.optionsNoAutoClose);
-              this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
-            }
 
+          if (this.RowsToUpdate == 0) {
+            if (row.Promote == 1) {
+              this.alert.success("Student/s is promoted to next class without section and roll no.", this.optionsNoAutoClose);
+            }
             else
               this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.RowsToUpdate = -1;
           }
 
         });
@@ -446,9 +449,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, this.StudentClassData.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          if (this.RowsToUpdate == 0) {
+            this.loading = false;
+            this.alert.success("Data updated successfully.", this.optionAutoClose);
+          }
         });
   }
   isNumeric(str: number) {

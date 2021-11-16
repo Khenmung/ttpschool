@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -45,13 +46,14 @@ export class ClassboardComponent implements AfterViewInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private contentservice:ContentService,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private componentFactoryResolver: ComponentFactoryResolver) {
   }
 
   public ngAfterViewInit(): void {
-
+    this.contentservice.GetApplicationRoleUser(this.tokenStorage.getUserDetail());
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSCOURSE)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;

@@ -72,6 +72,7 @@ export class ApplicationpriceComponent implements OnInit {
       searchApplicationId: [0]
     });
     this.dataSource = new MatTableDataSource<IApplicationPrice>([]);
+    this.PageLoad();
   }
 
   PageLoad() {

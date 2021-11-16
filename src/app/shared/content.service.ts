@@ -9,8 +9,12 @@ import { TokenStorageService } from '../_services/token-storage.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ContentService {
-
+export class ContentService implements OnInit {
+  RoleFilter = '';
+  Roles = [];
+  allMasterData = [];
+  Applications = [];
+  UserDetail = [];
   url: any;
   constructor(
     private tokenService: TokenStorageService,
@@ -18,7 +22,8 @@ export class ContentService {
     private dataservice: NaomitsuService,
     private shareddata: SharedataService) { }
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    //debugger;
+    //this.UserDetail = this.tokenService.getUserDetail();
   }
   AddUpdateContent(pagecontent: any) {
     ////debugger  
@@ -90,15 +95,30 @@ export class ContentService {
     }
     return monthArray;
   }
-  getDropDownData(obj, dropdowntype, appId) {
-    let Id = 0;
-    let Ids = obj.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase() && item.ApplicationId == appId;
+  // getDropDownData(obj, dropdowntype, appId) {
+  //   let Id = 0;
+  //   let Ids = obj.filter((item, indx) => {
+  //     return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase() && item.ApplicationId == appId;
 
+  //   })
+  //   if (Ids.length > 0) {
+  //     Id = Ids[0].MasterDataId;
+  //     return obj.filter((item, index) => {
+  //       return item.ParentId == Id
+  //     })
+  //   }
+  //   else
+  //     return [];
+
+  // }
+  getDropDownData(dropdowntype) {
+    let Id = 0;
+    let Ids = this.allMasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
     })
     if (Ids.length > 0) {
       Id = Ids[0].MasterDataId;
-      return obj.filter((item, index) => {
+      return this.allMasterData.filter((item, index) => {
         return item.ParentId == Id
       })
     }
@@ -150,4 +170,137 @@ export class ContentService {
     //this.url = '/odata/Pages/(' + key +')';  
     return this.http.patch(this.url, body, httpOptions)
   }
+  GetApplicationRoleUser(userdetail) {
+    this.UserDetail =[...userdetail];
+    let list: List = new List();
+    list.fields = [
+      'UserId',
+      'RoleId',
+      'OrgId',
+      'Active'
+    ];
+
+    list.PageName = "RoleUsers";
+    list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
+
+    list.filter = ["Active eq 1 and UserId eq '" + userdetail[0]["userId"] + "'"];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        //console.log("data", data)
+        if (data.value.length > 0) {
+          if (data.value[0].Org.Active == 1)
+            this.GetMasterData(data.value);
+          else {
+            console.log("User's Organization not active!, Please contact your administrator!");
+          }
+        }
+      })
+  }
+
+  private GetMasterData(UserRole) {
+    //debugger;
+    let list: List = new List();
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
+    list.PageName = "MasterItems";
+    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq 0 or OrgId eq " + localStorage.getItem("orgId") + ")"];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //console.log(data.value);
+        //this.shareddata.ChangeMasterData(data.value);
+        this.allMasterData = [...data.value];
+
+        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
+  
+        this.RoleFilter = ' and (RoleId eq 0';
+        var __organization = '';
+        if (UserRole[0].OrgId != null)
+          __organization = UserRole[0].Org.OrganizationName;
+
+        this.UserDetail[0]["RoleUsers"] =
+          UserRole.map(roleuser => {
+            if (roleuser.Active == 1 && roleuser.RoleId != null) {
+              this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
+              var _role = '';
+              if (this.Roles.length > 0 && roleuser.RoleId != null)
+                _role = this.Roles.filter(a => a.MasterDataId == roleuser.RoleId)[0].MasterDataName;
+              return {
+                roleId: roleuser.RoleId,
+                role: _role,
+              }
+            }
+            else
+              return false;
+          })
+
+
+        //login detail is save even though roles are not defined.
+        //so that user can continue their settings.
+        this.tokenService.saveUserdetail(this.UserDetail);
+        if (this.RoleFilter.length > 0)
+          this.RoleFilter += ')';
+        this.tokenService.saveCheckEqualBatchId
+        this.GetApplicationRolesPermission();
+      }, error => {
+        this.tokenService.signOut();
+      });
+  }
+
+  private GetApplicationRolesPermission() {
+
+    let list: List = new List();
+    list.fields = [
+      'ApplicationFeatureId',
+      'RoleId',
+      'PermissionId'
+    ];
+
+    list.PageName = "ApplicationFeatureRolesPerms";
+    list.lookupFields = ["ApplicationFeature($select=PageTitle,label,link,faIcon,ApplicationId,ParentId)"]
+    list.filter = ["Active eq 1 " + this.RoleFilter];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        if (data.value.length > 0) {
+          var _applicationName = '';
+          var _appShortName = '';
+          this.UserDetail[0]["applicationRolePermission"] = [];
+          data.value.forEach(item => {
+            _applicationName = '';
+            _appShortName = '';
+            _applicationName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].Description;
+            _appShortName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].MasterDataName
+
+            var _permission = '';
+            if (item.PermissionId != null)
+              _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
+            debugger;
+
+            this.UserDetail[0]["applicationRolePermission"].push({
+              'applicationFeatureId': item.ApplicationFeatureId,
+              'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,
+              'roleId': item.RoleId,
+              'permissionId': item.PermissionId,
+              'permission': _permission,
+              'applicationName': _applicationName,
+              'applicationId': item.ApplicationFeature.ApplicationId,
+              'appShortName': _appShortName,
+              'faIcon': item.ApplicationFeature.faIcon,
+              'label': item.ApplicationFeature.label,
+              'link': item.ApplicationFeature.link
+            });
+
+          });
+          this.tokenService.saveUserdetail(this.UserDetail);
+        }
+      })
+  }
+
 }

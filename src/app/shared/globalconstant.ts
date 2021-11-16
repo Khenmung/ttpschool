@@ -55,6 +55,16 @@ export class globalconstants {
         };
     public static Pages =
         {
+            "globaladmin":{
+                "GLOBALADMIN":"globaladmin",
+                "APPLICATIONPRICE":'application price',
+                "CUSTOMERINVOICE":'customer invoice',
+                "CUSTOMERAPPS":'customer apps',
+                "MASTERDATA":'master data',
+                "CUSTOMERINVOICECOMPONENT":'invoice components',
+                "REPORTCONIG":'report config',
+                "MENUCONFIG":'features'
+            },
             "common": {
                 'AUTH': {
                     'CHANGEPASSWORD': 'change password',
@@ -81,6 +91,8 @@ export class globalconstants {
                     'DOCUMENT': 'documents',
                     'ATTENDANCEREPORT': 'student attendance',
                     'PROGRESSREPORT': 'progress report',
+                    'FEEPAYMENT': 'fee payment',
+                    'FEERECEIPT': 'fee receipt',
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',

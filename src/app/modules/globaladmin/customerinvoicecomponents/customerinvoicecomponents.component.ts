@@ -73,6 +73,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
       searchApplicationId: [0]
     });
     this.dataSource = new MatTableDataSource<ICustomerInvoiceComponent>([]);
+    this.PageLoad();
   }
 
   PageLoad() {

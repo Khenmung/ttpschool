@@ -135,7 +135,7 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetStudentFeePaymentReport() {
-    //debugger;
+    debugger;
 
     if (this.SearchForm.get("searchStudentName").value == 0 && this.SearchForm.get("searchClassId").value == 0) {
       this.alert.error('Please select either student or class!', this.options.autoClose);
@@ -144,9 +144,10 @@ export class FeecollectionreportComponent implements OnInit {
 
     this.ErrorMessage = '';
     let filterstring = '';
-
+    
     filterstring = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-
+    if (this.SearchForm.get("searchStudentName").value.StudentClassId>0)
+    filterstring += " and StudentClassId eq " + this.SearchForm.get("searchStudentName").value.StudentClassId;
     let list: List = new List();
     list.fields = [
       'StudentClassId',
@@ -156,21 +157,30 @@ export class FeecollectionreportComponent implements OnInit {
     list.PageName = "AccountingLedgerTrialBalances";
     list.lookupFields = ["StudentClass($select=ClassId,RollNo,SectionId,StudentClassId;$expand=Student($select=FirstName,LastName))"];
     list.filter = [filterstring];
-    //list.apply ="groupby((StudentClassId),topcount(1,Month))"
-    //list.orderBy = "PaymentId";
-
+    this.ELEMENT_DATA =[];
+    this.dataSource= new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //this.TotalAmount = 0;
         var result = [];
         if (data.value.length > 0) {
           //this.TotalStudentCount = data.value.length;
+          var _className = '';
+          var _sectionName = '';
+
           result = data.value.map((item, indx) => {
+            _className = '';
+            _sectionName = '';
+            var clsobj = this.Classes.filter(c => c.ClassId == item.StudentClass.ClassId)
+            if (clsobj.length > 0)
+              _className = clsobj[0].ClassName
+            var sectionObj = this.Sections.filter(s => s.MasterDataId == item.StudentClass.SectionId)
+            if (sectionObj.length > 0)
+              _sectionName = sectionObj[0].MasterDataName
 
             return {
               Name: item.StudentClass.Student.FirstName + " " + item.StudentClass.Student.LastName,
-              ClassRollNoSection: this.Classes.filter(c => c.ClassId == item.StudentClass.ClassId)[0].ClassName + ' - ' + this.Sections.filter(s => s.MasterDataId == item.StudentClass.SectionId)[0].MasterDataName,
+              ClassRollNoSection: _className + ' - ' + _sectionName,
               RollNo: item.StudentClass.RollNo,
               Month: item.Month
             }
@@ -185,9 +195,15 @@ export class FeecollectionreportComponent implements OnInit {
 
           })
           this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a, b) => a.month - b.month)
-          //console.log(this.ELEMENT_DATA)
-          //this.ELEMENT_DATA = Math.max.apply(null, result.map(function(o) { return o; }))
+          this.loading=false;
           this.TotalPaidStudentCount = this.ELEMENT_DATA.length;
+          this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
+          this.dataSource.paginator = this.paginator;
+        }
+        else
+        {
+          this.alert.info("No record found.",this.options.autoClose);
+          this.loading=false;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }

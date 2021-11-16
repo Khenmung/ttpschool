@@ -1,5 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatSelectionList } from '@angular/material/list';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -16,7 +17,8 @@ import { TableUtil } from '../../../shared/TableUtil';
   styleUrls: ['./getreport.component.scss']
 })
 export class GetreportComponent implements OnInit {
-
+ 
+  @ViewChild('searchval') selectionList: MatSelectionList;
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator, { static: false })
   set paginator(value: MatPaginator) {
@@ -27,6 +29,14 @@ export class GetreportComponent implements OnInit {
   set sort(value: MatSort) {
     this.dataSource.sort = value;
   }
+
+  private searchedItems: Array<any> = [];
+  private key: string = '';
+  private prop: string = '';
+  private childrenPropName: string = '';
+
+  NestedColumnSearch = false;
+  SearchDropdownValue = [];
   BaseReportId = 0;
   ParentId = 0;
   Permission = '';
@@ -56,13 +66,15 @@ export class GetreportComponent implements OnInit {
   SelectedApplicationId = 0;
   ReportConfigItemList = [];
   dataSource: MatTableDataSource<IReportConfigItem>;
+  NestedfilterKeyValue = [];
   filterKeyValue = [];
   AllMasterData = [];
   PagePermission = '';
   FilterColumns = [];
   FilterConditions = [];
+
   FilterCriteria = [];
-  DropdownData =[];
+  DropdownData = [];
   ReportConfigItemData = {
     ReportConfigItemId: 0,
     ReportName: '',
@@ -79,6 +91,7 @@ export class GetreportComponent implements OnInit {
   ApplicationName = '';
   searchForm: FormGroup;
   constructor(
+    private cdr: ChangeDetectorRef,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -108,6 +121,7 @@ export class GetreportComponent implements OnInit {
     this.Applications = this.tokenstorage.getPermittedApplications();
     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
     this.PageLoad();
+    //this.cdr.detectChanges();
   }
 
   applyFilter(filterValue) {
@@ -241,12 +255,12 @@ export class GetreportComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.AllMasterData = [...data.value];       
+        this.AllMasterData = [...data.value];
 
         this.loading = false;
       });
   }
-  
+
   ReSequence(editedrow) {
     //debugger;
     var diff = 0;
@@ -324,7 +338,7 @@ export class GetreportComponent implements OnInit {
       "UserId",
       "Active"]
     list.PageName = this.ReportConfigItemListName;
-    list.filter = ["Active eq 1 and ApplicationId eq "+ this.SelectedApplicationId +" and (ParentId eq " + this.BaseReportId +
+    list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId + " and (ParentId eq " + this.BaseReportId +
       " or OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
 
     this.dataservice.get(list)
@@ -351,10 +365,10 @@ export class GetreportComponent implements OnInit {
   GetFilterColumn() {
     this.FilterColumns = this.ReportNames.filter(f => f.ParentId == this.searchForm.get("searchReportName").value);
   }
-  FillDropDown(){
-    var _ParentId =0;
-    
-    this.DropdownData = this.AllMasterData.filter(f=>f.ParentId == _ParentId);
+  FillDropDown() {
+    var _ParentId = 0;
+
+    this.DropdownData = this.AllMasterData.filter(f => f.ParentId == _ParentId);
   }
   getSelectedReportColumn() {
 
@@ -365,7 +379,7 @@ export class GetreportComponent implements OnInit {
       this.alert.error("Please select report name", this.optionAutoClose);
       return;
     }
-
+    this.loading = true;
     let list: List = new List();
     list.fields = [
       "ReportConfigItemId",
@@ -381,6 +395,9 @@ export class GetreportComponent implements OnInit {
       "Active"]
     list.PageName = this.ReportConfigItemListName;
     list.filter = ["Active eq 1 and ParentId eq " + MyReportNameId];
+    this.searchedItems = [];
+    this.ReportConfigItemList = [];
+    this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -446,9 +463,6 @@ export class GetreportComponent implements OnInit {
           .subscribe((data: any) => {
             var result = [...data.value];
 
-            if (result.length == 0) {
-              this.alert.info("No record found.", this.optionAutoClose);
-            }
             //var whereDisplayNameNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.DisplayName.length > 0)
             var colTem = [];
             var formatedResult = [];
@@ -456,7 +470,7 @@ export class GetreportComponent implements OnInit {
               if (c.DisplayName == null || c.DisplayName.length == 0)
                 c.DisplayName = c.ReportName;
 
-              formatedResult = result.map(m => {
+                formatedResult = result.map(m => {
                 if (m[c.ReportName] === undefined)
                   m[c.DisplayName] = this.traverse(m, c.TableNames, '');
                 else
@@ -468,40 +482,28 @@ export class GetreportComponent implements OnInit {
                 return m;
               })
             })
+            debugger;
+            this.searchedItems=[];
+            this.NestedfilterKeyValue.forEach(search => {
+              this.searchRecursive(formatedResult, search);
+            })
+            if(this.NestedfilterKeyValue.length==0)
+            {
+              this.searchedItems = formatedResult;
+            }
 
-            // var filterCount = this.filterKeyValue.length;
-            // //for (var filterCount = 0; filterCount < this.filterKeyValue.length; filterCount++) {
-            //   formatedResult = formatedResult.filter(f => {
-            //     //switch (this.filterKeyValue[filterCount].condition) {
-            //       //case "eq":
-            //         f[this.filterKeyValue[0].columnname] == this.filterKeyValue[0].value
-            //       //   break;
-            //       // case "gt":
-            //       //   f[this.filterKeyValue[filterCount].columnname] > this.filterKeyValue[filterCount].value
-            //       //   break;
-            //       // case "lt":
-            //       //   f[this.filterKeyValue[filterCount].columnname] < this.filterKeyValue[filterCount].value
-            //       //   break;
-            //       // case "ge":
-            //       //   f[this.filterKeyValue[filterCount].columnname] >= this.filterKeyValue[filterCount].value
-            //       //   break;
-            //       // case "le":
-            //       //   f[this.filterKeyValue[filterCount].columnname] <= this.filterKeyValue[filterCount].value
-            //       //   break;
-            //       // case "like":
-            //       //   f[this.filterKeyValue[filterCount].columnname].includes(this.filterKeyValue[filterCount].value)
-            //       //   break;
-            //     //}
-            //   })
-            
-            this.ReportConfigItemList = [...formatedResult];
+            this.NestedfilterKeyValue = [];
+            this.ReportConfigItemList = this.searchedItems;
             this.DisplayColumns = colTem.sort((a, b) => {
               return a.sequence - b.sequence;
             }).map(m => {
               return m.col
             });
 
-
+            if (this.ReportConfigItemList.length == 0) {
+              this.alert.info("No record matching search criteria found!", this.optionAutoClose);
+              this.loading = false;
+            }
             this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -510,9 +512,91 @@ export class GetreportComponent implements OnInit {
         this.loading = false;
       });
   }
-  FilterByNestedColumn() {
-    //this.filterKeyValue
+  searchRecursive(arr, searchcondition) {
+    let lowerCaseName = '';
+    searchcondition.value = searchcondition.value.toLowerCase()
+    if (arr[searchcondition.columnname]) {
+      lowerCaseName = arr[searchcondition.columnname].toLowerCase();
+
+      if (this.checkcondition(searchcondition.condition, lowerCaseName, searchcondition.value)) {
+        this.searchedItems.push(arr);
+      }
+    }
+    else {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i][searchcondition.columnname]) {
+          lowerCaseName = arr[i][searchcondition.columnname].toLowerCase();
+          if (this.checkcondition(searchcondition.condition, lowerCaseName, searchcondition.value)) {
+            this.searchedItems.push(arr[i]);
+          }
+        }
+        else {
+          Object.keys(arr[i]).some(item => {
+            if (Array.isArray(arr[i][item]) && arr[i][item].length > 0)
+              this.searchRecursive(arr[i][item], searchcondition);
+          })
+        }
+      }
+    }
+    return this.searchedItems;
   }
+  checkcondition(condition, firstval, secondval) {
+    switch (condition) {
+      case "eq":
+        return firstval == secondval;
+        break;
+      case "lt":
+        return firstval < secondval;
+        break;
+      case "gt":
+        return firstval > secondval;
+        break;
+      case "le":
+        return firstval <= secondval;
+        break;
+      case "ge":
+        return firstval >= secondval;;
+        break;
+      case "like":
+        return firstval.includes(secondval);
+        break;
+      default:
+        return firstval == secondval;
+
+    }
+  }
+RemoveSearchFilter() {
+    var selected: string[] = this.selectionList.selectedOptions.selected.map(s => s.value)
+    var diff = this.FilterCriteria.filter(el => !selected.includes(el))
+    this.FilterCriteria = diff
+  }
+  // searchRecursive(arr, ColumnName, searchvalue) {
+  //   let lowerCaseName = '';
+  //   searchvalue = searchvalue.toLowerCase()
+  //   if (arr[ColumnName]) {
+  //     lowerCaseName = arr[ColumnName].toLowerCase();
+  //     if (lowerCaseName == searchvalue) {
+  //       this.searchedItems.push(arr);
+  //     }
+  //   }
+  //   else {
+  //     for (var i = 0; i < arr.length; i++) {
+  //       if (arr[i][ColumnName]) {
+  //         lowerCaseName = arr[i][ColumnName].toLowerCase();
+  //         if (lowerCaseName == searchvalue) {
+  //           this.searchedItems.push(arr[i]);
+  //         }
+  //       }
+  //       else {
+  //         Object.keys(arr[i]).some(item => {
+  //           if (Array.isArray(arr[i][item]) && arr[i][item].length > 0)
+  //             this.searchRecursive(arr[i][item], ColumnName, searchvalue);
+  //         })
+  //       }
+  //     }
+  //   }
+  //   return this.searchedItems;
+  // }
   traverse(model, path, def) {
 
     path = path || '';
@@ -550,24 +634,59 @@ export class GetreportComponent implements OnInit {
       return el.col === colname;
     });
   }
+  checkIfNestedColumnSearch(columnName) {
+    var nestedcolumn = this.FilterColumns.filter(f => f.ReportName == columnName && f.TableNames.length > 0)
+    if (nestedcolumn.length > 0) {
+      {
+        switch (columnName) {
+          case "":
+            this.SearchDropdownValue = this.getDropDownData('');
+        }
+
+        this.NestedColumnSearch = true;
+      }
+    }
+    else
+      this.NestedColumnSearch = false;
+
+  }
+  getDropDownData(dropdowntype) {
+    let Id = 0;
+    let Ids = this.AllMasterData.filter((item, indx) => {
+      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    })
+    if (Ids.length > 0) {
+      Id = Ids[0].MasterDataId;
+      return this.AllMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      })
+    }
+    else
+      return [];
+
+  }
   AddSearchFilter() {
     var columnName = this.searchForm.get("searchFilterColumn").value;
     var condition = this.searchForm.get("searchCondition").value;
     var value = this.searchForm.get("searchCriteria").value;
 
-    var filtertext = columnName + " " + condition + " '" + value + "'";
-    this.FilterCriteria.push(filtertext);
+    var filtertext = '';
 
     //if the selected column is a nested column
     var nestedcolumn = this.FilterColumns.filter(f => f.ReportName == columnName && f.TableNames.length > 0)
-    if (nestedcolumn.length > 0)
+    if (nestedcolumn.length > 0) {
+      filtertext = columnName + " " + condition + " " + value;
+      this.NestedfilterKeyValue.push({ "columnname": columnName, "condition": condition, "value": value })
+    }
+    else {
       this.filterKeyValue.push({ "columnname": columnName, "condition": condition, "value": value })
-    //
+      filtertext = columnName + " " + condition + " '" + value + "'";
+
+    }
+    this.FilterCriteria.push(filtertext);
+
   }
-  RemoveSearchFilter() {
-    debugger;
-    console.log('dd', this.searchCondition1);
-  }
+
   onNgModelChange(event) {
     debugger;
     this.searchCondition1 = event.option[0].value;
@@ -577,7 +696,7 @@ export class GetreportComponent implements OnInit {
     const datatoExport: Partial<any>[] = [...this.ReportConfigItemList];
     TableUtil.exportArrayToExcel(datatoExport, this.ReportName);
   }
-  
+
 }
 export interface IReportConfigItem {
   ReportConfigItemId: number;

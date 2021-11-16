@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { AddMasterDataComponent } from '../../control/add-master-data/add-master-data.component';
 import { MenuConfigComponent } from '../menu-config/menu-config.component';
 import { ApplicationpriceComponent } from '../applicationprice/applicationprice.component';
@@ -6,65 +6,136 @@ import { CustomerappsComponent } from '../customerapps/customerapps.component';
 import { CustomerinvoiceComponent } from '../customerinvoice/customerinvoice.component';
 import { CustomerinvoicecomponentsComponent } from '../customerinvoicecomponents/customerinvoicecomponents.component';
 import { ReportConfigItemComponent } from '../reportconfigitem/reportconfigitem.component';
+import { globalconstants } from 'src/app/shared/globalconstant';
+import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-globaladminboard',
   templateUrl: './globaladminboard.component.html',
   styleUrls: ['./globaladminboard.component.scss']
 })
-export class GlobaladminboardComponent implements OnInit {
-  @ViewChild(ApplicationpriceComponent) prices: ApplicationpriceComponent;
-  @ViewChild(CustomerinvoiceComponent) customerinvoice: CustomerinvoiceComponent;
-  @ViewChild(CustomerappsComponent) Customerapps: CustomerappsComponent;
-  @ViewChild(AddMasterDataComponent) masters: AddMasterDataComponent;
-  @ViewChild(CustomerinvoicecomponentsComponent) customerinvoicecomponents: CustomerinvoicecomponentsComponent;
-  @ViewChild(ReportConfigItemComponent) reportconfigdata: ReportConfigItemComponent;
-  @ViewChild(MenuConfigComponent) menuconfig: MenuConfigComponent;
-  selectedIndex = 0;
-  constructor() { }
+export class GlobaladminboardComponent implements AfterViewInit {
+  
+  components = [
+    ApplicationpriceComponent,
+    CustomerinvoiceComponent,
+    CustomerappsComponent,
+    AddMasterDataComponent,
+    CustomerinvoicecomponentsComponent,
+    ReportConfigItemComponent,
+    MenuConfigComponent
+  ];
 
-  ngOnInit(): void {
-    debugger;
-    setTimeout(() => {
-      this.menuconfig.PageLoad();
-    }, 100);
+  tabNames = [
+    { 'label': '1Exam Time Table', 'faIcon': '' },
+    { 'label': '1Exam Result', 'faIcon': '' },
+    { 'label': '1Fee Payment Status', 'faIcon': '' },
+    { 'label': '1Date Wise Collection', 'faIcon': '' },
+    { 'label': '1Date Wise Collection', 'faIcon': '' },
+    { 'label': '1Date Wise Collection', 'faIcon': '' },
+    { 'label': '1Date Wise Collection', 'faIcon': '' },
+  ];
 
+  Permissions =
+    {
+      ParentPermission: '',
+      ApplicationPricePermission: '',
+      CustomerInvoicePermission: '',
+      CustomerAppsPermission: '',
+      MasterDataPermission: '',
+      CustomerInvoiceComponentsPermission: '',
+      ReportConfigPermission: '',
+      MenuConfigPermission: ''
+    };
+
+  @ViewChild('container', { read: ViewContainerRef, static: false })
+  public viewContainer: ViewContainerRef;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private tokenStorage: TokenStorageService,
+    private shareddata: SharedataService,
+    private componentFactoryResolver: ComponentFactoryResolver) {
   }
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    //this.masterSettingData.PageLoad();
-  }
-  tabChanged(event) {
-    //debugger;
-    //console.log(event);
-    switch (event) {
-      case 0:
-        this.menuconfig.PageLoad();
-        break;
-      case 1:
-        this.prices.PageLoad();
-        break;
-      case 2:
-        this.Customerapps.PageLoad();
-        break;
-      case 3:
-        this.customerinvoicecomponents.PageLoad();
-        break;
-      case 4:
-        this.customerinvoice.PageLoad();
-        break;
-      case 5:
-        this.masters.PageLoad();
-        break;
-      case 6:
-        this.reportconfigdata.PageLoad();
-        break;
 
-      //      default:
-      //   this.masterSettingData.PageLoad();
-      //   break;
+  public ngAfterViewInit(): void {
+    debugger
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.GLOBALADMIN)
+    if (perObj.length > 0) {
+      this.Permissions.ParentPermission = perObj[0].permission;
+
     }
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.APPLICATIONPRICE)
+    var comindx = this.components.indexOf(ApplicationpriceComponent);
+    this.GetComponents(perObj,comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERAPPS)
+    var comindx = this.components.indexOf(CustomerappsComponent);
+    this.GetComponents(perObj,comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERINVOICE)
+    var comindx = this.components.indexOf(CustomerinvoiceComponent);
+    this.GetComponents(perObj,comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERINVOICECOMPONENT)
+    var comindx = this.components.indexOf(CustomerinvoicecomponentsComponent);
+    this.GetComponents(perObj,comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.MASTERDATA)
+    var comindx = this.components.indexOf(AddMasterDataComponent);
+    this.GetComponents(perObj,comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.REPORTCONIG)
+    var comindx = this.components.indexOf(ReportConfigItemComponent);
+    this.GetComponents(perObj,comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.MENUCONFIG)
+    var comindx = this.components.indexOf(MenuConfigComponent);
+    this.GetComponents(perObj,comindx)
+
+    this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
+    if(1){ //(this.Permissions.ParentPermission != 'deny') {
+      this.renderComponent(0);
+      this.cdr.detectChanges();
+    }
+  }
+  GetComponents(perObj,comindx)
+  {
+    
+    //if (perObj.length > 0) {
+    if(1) 
+    {
+      if (false)//perObj[0].permission == 'deny') {
+      {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      else {
+        this.tabNames[comindx].faIcon = perObj[0].faIcon;
+        this.tabNames[comindx].label = perObj[0].label;
+      }
+    }
+    else {
+      this.components.splice(comindx, 1);
+      this.tabNames.splice(comindx, 1);
+    }
+  }
+  public tabChange(index: number) {
+    //    console.log("index", index)
+    setTimeout(() => {
+      this.renderComponent(index);
+    }, 550);
+
+  }
+  selectedIndex = 0;
+
+
+  private renderComponent(index: number): any {
+    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
+    this.viewContainer.createComponent(factory);
+    //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
 }
 

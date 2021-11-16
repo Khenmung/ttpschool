@@ -1,4 +1,5 @@
 <div style="padding: 15px;"><strong>Fee Payment Status</strong></div>
+<alert></alert>
 <form [formGroup]="SearchForm">
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px">
         <mat-form-field [style.width.px]="250">
@@ -13,6 +14,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Class</mat-label>
             <mat-select formControlName="searchClassId">
+                <mat-option>--class--</mat-option>
                 <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
                     {{item.ClassName}}
                 </mat-option>

@@ -125,7 +125,8 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   displayedColumns = [
-    'SlNo',
+    //'SlNo',
+    'ClassFeeId',
     'FeeName',
     'Amount',
     'PaymentOrder',

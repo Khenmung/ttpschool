@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -21,6 +22,10 @@ import { List } from '../../../shared/interface';
 export class TodayCollectionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  options = {
+    autoClose: true,
+    keepAfterRouteChange: true
+  };
   loading = false;
   allMasterData = [];
   FeeNames = [];
@@ -50,15 +55,19 @@ export class TodayCollectionComponent implements OnInit {
     private dataservice: NaomitsuService,
     private formatdate: DatePipe,
     private fb: FormBuilder,
-    private nav: Router) { }
+    private nav: Router,
+    private alert: AlertService,
+    ) { }
 
   ngOnInit(): void {
     this.SearchForm = this.fb.group({
       FromDate: [new Date(), Validators.required],
       ToDate: [new Date(), Validators.required],
     })
+    this.PageLoad();
   }
   PageLoad() {
+    debugger;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -76,13 +85,14 @@ export class TodayCollectionComponent implements OnInit {
     }
   }
   GetStudentFeePaymentDetails() {
-    //debugger;
+    debugger;
     this.ErrorMessage = '';
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
     let filterstring = '';
+    this.loading=true;
     filterstring = "Active eq 1 and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
-      " and ReceiptDate le " + this.formatdate.transform(toDate.setDate(toDate.getDate() + 1), 'yyyy-MM-dd') +
+      " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd') +
       " and BatchId eq " + this.SelectedBatchId +
       " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
@@ -105,8 +115,14 @@ export class TodayCollectionComponent implements OnInit {
           d.ClassName = d.StudentClass.Class.ClassName
           return d;
         })
+        if(this.DateWiseCollection.length==0)
+        {
+      
+          this.alert.info("No collection found.",this.options);
 
+        }
         this.dataSource = new MatTableDataSource(this.DateWiseCollection)
+        this.loading=false;
       })
   }
   GetMasterData() {

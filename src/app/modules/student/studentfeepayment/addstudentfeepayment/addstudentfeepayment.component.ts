@@ -33,6 +33,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   AccountingLedgerTrialBalanceListName = 'AccountingLedgerTrialBalances';
   AccountingVoucherListName = 'AccountingVouchers';
   FeeReceiptListName = 'StudentFeeReceipts';
+  Permission = 'deny';
   selectedIndex = 0;
   loading = false;
   Balance = 0;
@@ -56,7 +57,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   SelectedBatchId = 0;
   NoOfBillItems = 0;
   studentInfoTodisplay = {
-    StudentFeeReceiptId:0,
+    StudentFeeReceiptId: 0,
     BatchId: 0,
     StudentFeeType: '',
     StudentName: '',
@@ -176,34 +177,43 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.PageLoad();
   }
   PageLoad() {
+
     this.shareddata.CurrentFeeNames.subscribe(fy => (this.FeeNames = fy));
     if (this.FeeNames.length == 0) {
       this.nav.navigate(["/edu"]);
     }
     else {
+
       debugger;
-      this.MonthlyDueDetail = [];
-      this.billdataSource = new MatTableDataSource<any>(this.MonthlyDueDetail);
-      this.Months = this.contentservice.GetSessionFormattedMonths();
-      this.loginUserDetail = this.tokenstorage.getUserDetail();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.loading = true;
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      if (this.Permission != 'deny') {
+        this.MonthlyDueDetail = [];
+        this.billdataSource = new MatTableDataSource<any>(this.MonthlyDueDetail);
+        this.Months = this.contentservice.GetSessionFormattedMonths();
+        this.loginUserDetail = this.tokenstorage.getUserDetail();
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
-      //this.shareddata.CurrentStudentId.subscribe(fy => (this.studentInfoTodisplay.StudentId = fy));
-      this.studentInfoTodisplay.StudentId = this.tokenstorage.getStudentId()
-      //this.shareddata.CurrentStudentClassId.subscribe(fy => (this.studentInfoTodisplay.StudentClassId = fy));
-      this.studentInfoTodisplay.StudentClassId = this.tokenstorage.getStudentClassId();
-      this.shareddata.CurrentStudentName.subscribe(fy => (this.StudentName = fy));
+        //this.shareddata.CurrentStudentId.subscribe(fy => (this.studentInfoTodisplay.StudentId = fy));
+        this.studentInfoTodisplay.StudentId = this.tokenstorage.getStudentId()
+        //this.shareddata.CurrentStudentClassId.subscribe(fy => (this.studentInfoTodisplay.StudentClassId = fy));
+        this.studentInfoTodisplay.StudentClassId = this.tokenstorage.getStudentClassId();
+        this.shareddata.CurrentStudentName.subscribe(fy => (this.StudentName = fy));
 
 
-      this.shareddata.CurrentBatch.subscribe(fy => (this.Batches = fy));
-      this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
-      this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
-      this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
-      this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-        this.GetMasterData();
-      });
-      this.GetStudentClass();
+        this.shareddata.CurrentBatch.subscribe(fy => (this.Batches = fy));
+        this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
+        this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
+        this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
+        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+          this.GetMasterData();
+        });
+        this.GetStudentClass();
+      }
     }
   }
   public calculateTotal() {
@@ -251,7 +261,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     else {
 
       let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
-
+      this.loading = true;
       let list: List = new List();
       list.fields = [
         "StudentClassId",
@@ -271,40 +281,50 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
       this.dataservice.get(list)
         .subscribe((data: any) => {
-          //debugger;
+          debugger;
           if (data.value.length > 0) {
-            //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
-            this.studentInfoTodisplay.ClassId = data.value[0].ClassId
-            this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
-            this.studentInfoTodisplay.FeeType = data.value[0].FeeType.FeeTypeName;
-            this.studentInfoTodisplay.Formula = data.value[0].FeeType.Formula;
-            this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + " " + data.value[0].Student.LastName;
+            if (data.value[0].FeeType == undefined) {
+              this.alert.error("Fee Type not yet defined.", this.optionAutoClose);
+              this.loading = false;
+            }
+            else {
+              //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
+              this.studentInfoTodisplay.ClassId = data.value[0].ClassId
+              this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
+              this.studentInfoTodisplay.FeeType = data.value[0].FeeType.FeeTypeName;
+              this.studentInfoTodisplay.Formula = data.value[0].FeeType.Formula;
+              this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + " " + data.value[0].Student.LastName;
 
-            this.studentInfoTodisplay.SectionName = this.Sections.filter(cls => {
-              return cls.MasterDataId == data.value[0].SectionId
-            })[0].MasterDataName;
+              var _sectionName = '';
 
-            var clsObj = this.Classes.filter(cls => {
-              return cls.MasterDataId == this.studentInfoTodisplay.ClassId
-            })
-            if (clsObj.length > 0)
-              this.studentInfoTodisplay.StudentClassName = clsObj[0].ClassName;
+              var obj = this.Sections.filter(cls => cls.MasterDataId == data.value[0].SectionId)
+              if (obj.length > 0)
+                _sectionName = obj[0].MasterDataName;
+              this.studentInfoTodisplay.SectionName = _sectionName;
+
+              var clsObj = this.Classes.filter(cls => {
+                return cls.MasterDataId == this.studentInfoTodisplay.ClassId
+              })
+              if (clsObj.length > 0)
+                this.studentInfoTodisplay.StudentClassName = clsObj[0].ClassName;
 
 
-            var feeObj = this.FeeTypes.filter(f => {
-              return f.FeeTypeId == this.studentInfoTodisplay.FeeTypeId
-            })
-            if (feeObj.length > 0)
-              this.studentInfoTodisplay.StudentFeeType = feeObj[0].FeeTypeName;
+              var feeObj = this.FeeTypes.filter(f => {
+                return f.FeeTypeId == this.studentInfoTodisplay.FeeTypeId
+              })
+              if (feeObj.length > 0)
+                this.studentInfoTodisplay.StudentFeeType = feeObj[0].FeeTypeName;
 
-            this.studentInfoTodisplay.Formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
-            this.VariableObjList.push(this.studentInfoTodisplay);
-            this.GetStudentFeePayment();
+              this.studentInfoTodisplay.Formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
+              this.VariableObjList.push(this.studentInfoTodisplay);
+              this.GetStudentFeePayment();
+            }
           }
           else {
             this.alert.error("No class defined for this student!", this.optionsNoAutoClose);
 
           }
+
         })
     }
   }
@@ -449,9 +469,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
         }
 
         this.StudentLedgerList.sort((a, b) => a.PaymentOrder - b.PaymentOrder);
-        console.log("this.StudentLedgerList",this.StudentLedgerList)
+        console.log("this.StudentLedgerList", this.StudentLedgerList)
         this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
-
+        this.loading = false;
       })
   }
   ApplyVariables(formula) {
@@ -649,28 +669,31 @@ export class AddstudentfeepaymentComponent implements OnInit {
       var monthPaydetail = this.MonthlyDueDetail.filter(f => f.Month == selectedMonthrow.Month)
 
       monthPaydetail.forEach((paydetail) => {
-
-        this.AccountingVoucherData.AccountingVoucherId = 0;
-        this.AccountingVoucherData.Month = paydetail.Month;
-        this.AccountingVoucherData.ClassFeeId = paydetail.ClassFeeId;
-        this.AccountingVoucherData.Amount = paydetail.Amount;
-        this.AccountingVoucherData.DebitCreditId = 0;
-        this.AccountingVoucherData.FeeReceiptId = 0;
-        this.AccountingVoucherData.GLAccountId = selectedMonthrow.StudentEmployeeLedegerId;
         paydetail.GLAccountId = selectedMonthrow.StudentEmployeeLedegerId;
-        this.AccountingVoucherData.ShortText = 'student fee payment';
-        this.AccountingVoucherData.Active = 1;
-        this.AccountingVoucherData.OrgId = this.loginUserDetail[0]["orgId"];
-        this.AccountingVoucherData["CreatedDate"] = new Date();
-        this.AccountingVoucherData["CreatedBy"] = this.loginUserDetail[0]["userId"];
-        this.FeePayment.AccountingVoucher.push(this.AccountingVoucherData);
-
-      })
+        this.FeePayment.AccountingVoucher.push(
+          {
+            "AccountingVoucherId": 0,
+            "Month": paydetail.Month,
+            "ClassFeeId": paydetail.ClassFeeId,
+            "Amount": paydetail.Amount,
+            "DebitCreditId": 0,
+            "FeeReceiptId": 0,
+            "GLAccountId": selectedMonthrow.StudentEmployeeLedegerId,
+            "ShortText": 'student fee payment',
+            "Active": 1,
+            "OrgId": this.loginUserDetail[0]["orgId"],
+            "CreatedDate": this.datepipe.transform(new Date(),'yyyy-MM-dd'),
+            "DocDate": this.datepipe.transform(new Date(),'yyyy-MM-dd'),
+            "PostingDate": this.datepipe.transform(new Date(),'yyyy-MM-dd'),
+            "CreatedBy": this.loginUserDetail[0]["userId"],
+          });
+      });
     })
     //console.log("this.FeePayment", this.FeePayment);
     this.dataservice.postPatch(this.FeeReceiptListName, this.FeePayment, 0, 'post')
       .subscribe((data: any) => {
-        this.StudentReceiptData.StudentFeeReceiptId =data.StudentFeeReceiptId;
+        this.StudentReceiptData.StudentFeeReceiptId = data.StudentFeeReceiptId;
+        this.loading = false;
         this.alert.success("Payment done successfully!", this.optionAutoClose);
       })
   }

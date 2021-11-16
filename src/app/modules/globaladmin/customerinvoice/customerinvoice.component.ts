@@ -92,10 +92,11 @@ export class CustomerinvoiceComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchOrgId: [0],
-      searchYearMonth:[0]
+      searchYearMonth: [0]
     });
     this.CustomerAppDataSource = new MatTableDataSource<ICustomerAppsDisplay>([]);
     this.CustomerInvoiceDataSource = new MatTableDataSource<ICustomerInvoice>([]);
+    this.PageLoad();
   }
 
   PageLoad() {
@@ -217,7 +218,7 @@ export class CustomerinvoiceComponent implements OnInit {
       "CustomerId",
       "InvoiceComponentId",
       "Formula",
-      "Active"      
+      "Active"
     ];
 
     list.PageName = this.InvoiceComponentListName;
@@ -271,7 +272,7 @@ export class CustomerinvoiceComponent implements OnInit {
       "TotalAmount",
       "DueDate",
       "PaymentStatusId",
-      "Active"     
+      "Active"
     ];
 
     list.PageName = this.CustomerInvoiceListName;
@@ -285,8 +286,8 @@ export class CustomerinvoiceComponent implements OnInit {
         var _SelectedCustomerApps = this.CustomerApps.filter(c => c.CustomerAppsId == _searchCustomerId);
         this.CurrentCustomerApps = [..._SelectedCustomerApps];
         if (data.value.length > 0) {
-          this.CustomerInvoiceList = data.value.map(db=>{
-            db.CustomerName =this.Organizations.filter(f=>f.OrganizationId == _searchCustomerId)[0].OrganizationName;
+          this.CustomerInvoiceList = data.value.map(db => {
+            db.CustomerName = this.Organizations.filter(f => f.OrganizationId == _searchCustomerId)[0].OrganizationName;
             return db;
           });
         }
@@ -308,7 +309,7 @@ export class CustomerinvoiceComponent implements OnInit {
           this.CustomerInvoiceList.push({
             "CustomerInvoiceId": 0,
             "CustomerId": _searchCustomerId,
-            "CustomerName":this.Organizations.filter(f=>f.OrganizationId == _searchCustomerId)[0].OrganizationName,
+            "CustomerName": this.Organizations.filter(f => f.OrganizationId == _searchCustomerId)[0].OrganizationName,
             "DueForMonth": +_searchYearMonth,
             "InvoiceDate": new Date(),
             "TotalAmount": _TotalAmount,
@@ -318,7 +319,7 @@ export class CustomerinvoiceComponent implements OnInit {
             "Action": false
           })
         }
-        console.log('Organizations',this.Organizations)
+        console.log('Organizations', this.Organizations)
         this.CustomerInvoiceDataSource = new MatTableDataSource<any>(this.CustomerInvoiceList);
         this.loading = false;
       })

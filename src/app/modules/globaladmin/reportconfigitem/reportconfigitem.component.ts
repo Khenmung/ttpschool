@@ -82,7 +82,7 @@ export class ReportConfigItemComponent implements OnInit {
       searchReportName: [0]
     });
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
-
+    this.PageLoad();
   }
 
   PageLoad() {

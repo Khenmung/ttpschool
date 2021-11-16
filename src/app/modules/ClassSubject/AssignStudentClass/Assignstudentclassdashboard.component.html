@@ -103,20 +103,22 @@
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
                 <button
+                    [disabled]="loading || StudentClassList.length==0 || Permission=='read'"
+                    matTooltip="promote" mat-mini-fab (click)="SaveAll()">
+                    <mat-icon>all_out</mat-icon>
+                </button>
+                <button
                     [disabled]="loading || StudentClassList.length==0 || PromotePermission=='read' || checkBatchIdNSelectedIdEqual==0"
                     matTooltip="promote" mat-mini-fab (click)="PromoteAll()">
                     <mat-icon>loupe</mat-icon>
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                <!-- <mat-checkbox (click)="$event.stopPropagation()" (change)="PromoteToNextClass(element,$event)" [checked]="element.Active==1?true:false">
-                    </mat-checkbox> -->
                 <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
-                    (click)="UpdateOrSave(element)">
+                    (click)="SaveRow(element)">
                     <mat-icon>save</mat-icon>
-                </button>&nbsp;
-                <button
-                    [disabled]="loading|| PromotePermission=='read'|| PromotePermission=='deny' || checkBatchIdNSelectedIdEqual==0"
+                </button>
+                <button [disabled]="loading|| PromotePermission=='read'|| PromotePermission=='deny' || checkBatchIdNSelectedIdEqual==0"
                     matTooltip="promote" mat-mini-fab (click)="PromoteRow(element)">
                     <mat-icon>loupe</mat-icon>
                 </button>

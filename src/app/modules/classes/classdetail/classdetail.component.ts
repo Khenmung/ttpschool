@@ -238,13 +238,13 @@ export class ClassdetailComponent implements OnInit {
         });
   }
   GetClassMasters() {
-    //debugger;
+    debugger;
 
     this.loading = true;
     let filterStr = 'BatchId eq ' + this.SelectedBatchId
     var _searchClassName = this.searchForm.get("searchClassName").value;
-    if (_searchClassName.length > 0) {
-      filterStr += ' and substringof(' + _searchClassName + ',ClassName)'
+    if (_searchClassName > 0) {
+      filterStr += ' and ClassId eq ' + _searchClassName;
     }
     let list: List = new List();
     list.fields = [

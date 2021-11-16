@@ -87,7 +87,7 @@ export class MenuConfigComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.Id = +params.get("parentid");
     })
-
+    this.PageLoad();
     //this.GetParentPage(this.Id);
   }
   PageLoad() {
