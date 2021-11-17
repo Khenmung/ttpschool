@@ -86,13 +86,6 @@ export class StudentprogressreportComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //debugger;
-    // this.searchForm = this.fb.group({
-    //   searchExamId: [0],
-    //   searchClassId: [0],
-    //   searchSectionId: [''],
-    //   searchSubjectId: [0],
-    // });
     this.PageLoad();
   }
 
@@ -118,11 +111,33 @@ export class StudentprogressreportComponent implements OnInit {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
       }
-      
+
     }
   }
-  clear() { }
-  GetStudentSubjects() {
+  GetStudentSubject() {
+
+    let filterStr = 'Active eq 1 and StudentClassId eq ' + this.StudentClassId;
+
+    let list: List = new List();
+    list.fields = [
+      "ClassSubjectId",
+      "StudentClassId",
+      "Active",
+      "SubjectId"     
+    ];
+    list.PageName = "StudentClassSubjects";
+    list.filter = [filterStr];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.StudentSubjects = data.value.map(ss => {
+          ss.Subject = this.Subjects.filter(s => s.MasterDataId == ss.SubjectId)[0].MasterDataName;
+          return ss;
+        })
+        this.GetStudentSubjectResults();
+      })
+  }
+  GetStudentSubjectResults() {
     debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -152,8 +167,6 @@ export class StudentprogressreportComponent implements OnInit {
         var _subject = '';
         var _section = '';
         var _Mark = '';
-        var _ExamStatus = '';
-        var _ExamId = 0;
         this.ExamStudentSubjectResult = data.value.map(s => {
           _class = '';
           _subject = '';
@@ -174,11 +187,6 @@ export class StudentprogressreportComponent implements OnInit {
           if (examobj.length > 0)
             _ExamName = examobj[0].ExamName;
 
-          // if (s.ExamStudentSubjectResults.length > 0) {
-          //   _Mark = s.ExamStudentSubjectResults[0].Marks;
-          //   _ExamStatus = s.ExamStudentSubjectResults[0].ExamStatus;
-          //   s.ExamStudentSubjectResults[0].ExamId;
-          // }
           return {
             StudentClassSubjectId: s.StudentClassSubjectId,
             ClassSubjectId: s.StudentClassSubject.ClassSubjectId,
@@ -194,6 +202,25 @@ export class StudentprogressreportComponent implements OnInit {
             ExamName: _ExamName
           }
         })
+        var progressreport = [];
+
+        this.StudentSubjects.forEach(ss => {
+          progressreport["Subject"] = ss.Subject;
+          progressreport["SubjectId"] = ss.SubjectId;
+
+        })
+        this.Exams.forEach(e => {
+          progressreport[e.ExamName] = '';
+        })
+
+        var reportrow ={};
+
+        this.ExamStudentSubjectResult.filter(r => {
+          reportrow = progressreport.filter(p=>p.SubjectId=r.SubjectId);
+          reportrow[r.ExamName] =r.Marks;
+
+        });
+
         console.log("shd", this.ExamStudentSubjectResult);
 
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
@@ -202,26 +229,26 @@ export class StudentprogressreportComponent implements OnInit {
         this.loading = false;
       });
   }
-  GetStudents(classId) {
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1';
-    if (classId != undefined)
-      filterstr += ' and ClassId eq ' + classId
+  // GetStudents(classId) {
+  //   //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+  //   var filterstr = 'Active eq 1';
+  //   if (classId != undefined)
+  //     filterstr += ' and ClassId eq ' + classId
 
-    let list: List = new List();
-    list.fields = [
-      "StudentClassId",
-      "ClassId",
-      "StudentId"
-    ];
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"];
-    list.filter = [filterstr + orgIdSearchstr];
+  //   let list: List = new List();
+  //   list.fields = [
+  //     "StudentClassId",
+  //     "ClassId",
+  //     "StudentId"
+  //   ];
+  //   list.PageName = "StudentClasses";
+  //   list.lookupFields = ["Student($select=FirstName,LastName)"];
+  //   list.filter = [filterstr + orgIdSearchstr];
 
-    return this.dataservice.get(list);
+  //   return this.dataservice.get(list);
 
-  }
+  // }
 
   GetMasterData() {
 
@@ -247,8 +274,6 @@ export class StudentprogressreportComponent implements OnInit {
         this.shareddata.ChangeBatch(this.Batches);
         //this.GetCurrentBatchIDnAssign();
         this.GetExams();
-
-
       });
   }
   GetExams() {
@@ -270,7 +295,8 @@ export class StudentprogressreportComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.GetStudentSubjects();
+        this.GetStudentSubject();
+
       })
   }
 
@@ -294,6 +320,8 @@ export class StudentprogressreportComponent implements OnInit {
 export interface IExamStudentSubjectResult {
   ExamStudentSubjectResultId: number;
   ExamId: number;
+  ExamName:string;
+  SubjectId: number;
   StudentClassSubjectId: number;
   Student: string;
   ClassSubjectMarkComponentId: number;

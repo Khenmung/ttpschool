@@ -49,7 +49,7 @@
                     [checked]="element[disCol]==1?true:false">
                 </mat-checkbox>
                 <div fxLayout="column" fxLayoutAlign="center end">
-                    <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'" matTooltip="save"
+                    <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
                         mat-mini-fab (click)="SaveRow(element)">
                         <mat-icon>save</mat-icon>
                     </button>

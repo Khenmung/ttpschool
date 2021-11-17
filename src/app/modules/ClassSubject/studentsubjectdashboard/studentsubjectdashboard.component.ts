@@ -19,6 +19,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class studentsubjectdashboardComponent implements OnInit {
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
+  StudentDetail:any ={};
   rowCount = 0;
   edited = false;
   LoginUserDetail: any[] = [];
@@ -225,67 +226,70 @@ export class studentsubjectdashboardComponent implements OnInit {
         console.log("this.StudentClassSubjects", this.StudentClassSubjects);
 
         //////////////
-        var _studentDetail: any = {};
+        //var _studentDetail: any = {};
         this.StoreForUpdate = [];
         if (ParamstudentClassExisting.length > 0) {
           //for all student in student class table for the selected class.
+          this.displayedColumns = ["Student"];
+          console.log("ClassSubjectList",this.ClassSubjectList)
           ParamstudentClassExisting.forEach(cs => {
             //var _filteredStudentClassSubjectlist = this.StudentClassSubjects.filter(c => c.StudentClassId == cs.StudentClassId);
-            _studentDetail = {
+            this.StudentDetail = {
               // StudentClassSubjectId: cs.StudentClassSubjectId,
               StudentClassId: cs.StudentClassId,
               Student: cs.Student,
               RollNo: cs.RollNo,
+              Action:false
             }
-            this.displayedColumns = ["Student"];
-            this.StudentClassSubjects.forEach(clssubject => {
 
-              var subjectTypes = this.ClassSubjectList.filter(c => c.ClassSubjectId == clssubject.ClassSubjectId);
-              if (subjectTypes.length > 0) {
-                clssubject.SubjectTypeId = subjectTypes[0].SubjectTypeId;
-                clssubject.SubjectType = subjectTypes[0].SubjectTypeName;
-                clssubject.SelectHowMany = subjectTypes[0].SelectHowMany;
-                this.formatData(clssubject, _studentDetail);
+            var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClassId);
+            var specificclasssubjects = this.ClassSubjectList.filter(f=>f.ClassId == this.searchForm.get("searchClassId").value)
+            specificclasssubjects.forEach(subjectTypes => {
+
+              var clssubject = takensubjects.filter(c => c.ClassSubjectId == subjectTypes.ClassSubjectId)
+              if (clssubject.length > 0) {
+                clssubject[0].SubjectId =subjectTypes.SubjectId;
+                clssubject[0].SubjectTypeId = subjectTypes.SubjectTypeId;
+                clssubject[0].SubjectType = subjectTypes.SubjectTypeName;
+                clssubject[0].SelectHowMany = subjectTypes.SelectHowMany;
+                this.formatData(clssubject[0]);
               }
               else {
-                clssubject.StudentClassSubjectId = 0;
-                clssubject.StudentClassId = cs.StudentClassId;
-                clssubject.SubjectTypeId = subjectTypes[0].SubjectTypeId;
-                clssubject.SubjectType = subjectTypes[0].SubjectTypeName;
-                clssubject.SelectHowMany = subjectTypes[0].SelectHowMany;
-                this.formatData(clssubject, _studentDetail);
+                //debugger;
+                var newsubjects = JSON.parse(JSON.stringify(this.StudentClassSubjects[0]));
+                newsubjects["StudentClassSubjectId"] = 0;
+                newsubjects["ClassSubjectId"] = subjectTypes.ClassSubjectId;                
+                newsubjects["StudentClassId"] = cs.StudentClassId;
+                newsubjects["SubjectId"] = subjectTypes.SubjectId;
+                newsubjects["SubjectTypeId"] = subjectTypes.SubjectTypeId;
+                newsubjects["SubjectType"] = subjectTypes.SubjectTypeName;
+                newsubjects["SelectHowMany"] = subjectTypes.SelectHowMany;
+                newsubjects.Active=0;
+                this.formatData(newsubjects);
               }
-            });
 
+            })
+            // takensubjects.forEach(clssubject => {
 
-            // if (_filteredStudentClassSubjectlist.length > 0) {
-            //   //loop through student assigned subjects.
-            //   _filteredStudentClassSubjectlist.forEach(clssubject => {
-            //     var subjectTypes = this.ClassSubjectList.filter(c => c.ClassSubjectId == clssubject.ClassSubjectId);
-
+            //   var subjectTypes = this.ClassSubjectList.filter(c => c.ClassSubjectId == clssubject.ClassSubjectId);
+            //   if (subjectTypes.length > 0) {
             //     clssubject.SubjectTypeId = subjectTypes[0].SubjectTypeId;
             //     clssubject.SubjectType = subjectTypes[0].SubjectTypeName;
             //     clssubject.SelectHowMany = subjectTypes[0].SelectHowMany;
-
             //     this.formatData(clssubject, _studentDetail);
+            //   }
+            //   else {
+            //     clssubject.StudentClassSubjectId = 0;
+            //     clssubject.StudentClassId = cs.StudentClassId;
+            //     clssubject.SubjectTypeId = subjectTypes[0].SubjectTypeId;
+            //     clssubject.SubjectType = subjectTypes[0].SubjectTypeName;
+            //     clssubject.SelectHowMany = subjectTypes[0].SelectHowMany;
+            //     this.formatData(clssubject, _studentDetail);
+            //   }
+            // });
 
-            //   })
-            // }
-            // else {
-            //   //var filterClassSubject = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
-            //   debugger;
-            //   var subjectTypes = this.ClassSubjectList.filter(c => c.ClassSubjectId == cs.ClassSubjectId);
-            //   subjectTypes.forEach(clssubjlist => {
-            //     clssubjlist.StudentClassSubjectId = 0;
-            //     clssubjlist.StudentClassId = cs.StudentClassId;
-            //     clssubjlist.SubjectTypeId = subjectTypes[0].SubjectTypeId;
-            //     clssubjlist.SubjectType = subjectTypes[0].SubjectTypeName;
-            //     clssubjlist.SelectHowMany = subjectTypes[0].SelectHowMany;
-            //     this.formatData(clssubjlist, _studentDetail);
-            //   })
-            // }
-            //console.log('this.StoreForUpdate',this.StoreForUpdate);
-            this.StudentSubjectList.push(_studentDetail);
+
+            this.StudentSubjectList.push(this.StudentDetail);
           })
 
           this.displayedColumns.push("Action");
@@ -300,7 +304,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.alert.info("No student found for the selected class " + _clsName, this.optionAutoClose);
           this.loading = false;
         }
-        console.log('this.StudentSubjectList',this.StudentSubjectList)
+        console.log('this.StudentSubjectList', this.StudentSubjectList)
         if (this.StudentSubjectList.length > 0) {
 
           this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
@@ -315,12 +319,12 @@ export class studentsubjectdashboardComponent implements OnInit {
         /////////////
       })
   }
-  formatData(clssubject, pstudentDetail) {
+  formatData(clssubject) {
     var _subjectName = '';
     var topush = {};
     var subjectTypes = [];
 
-    topush = pstudentDetail;
+    topush = this.StudentDetail;
 
     _subjectName = this.Subjects.filter(s => s.MasterDataId == clssubject.SubjectId)[0].MasterDataName;
     if (this.displayedColumns.indexOf(_subjectName) == -1)
@@ -328,9 +332,9 @@ export class studentsubjectdashboardComponent implements OnInit {
 
     topush = {
       "StudentClassSubjectId": clssubject.StudentClassSubjectId,
-      "StudentClassId": pstudentDetail.StudentClassId,
-      "Student": pstudentDetail.Student,
-      "RollNo": pstudentDetail.RollNo,
+      "StudentClassId": this.StudentDetail["StudentClassId"],
+      "Student": this.StudentDetail["Student"],
+      "RollNo": this.StudentDetail["RollNo"],
       "SubjectTypeId": clssubject.SubjectTypeId,
       "SubjectType": clssubject.SubjectTypeName,
       "SelectHowMany": clssubject.SelectHowMany,
@@ -342,10 +346,10 @@ export class studentsubjectdashboardComponent implements OnInit {
       "Action": false,
       "Active": clssubject.Active,
     }
-    pstudentDetail[_subjectName] = clssubject.Active;
+    this.StudentDetail[_subjectName] = clssubject.Active;
     topush[_subjectName] = clssubject.Active;
     this.StoreForUpdate.push(topush)
-
+    //console.log('topush',topush)
   }
   GetClassSubjects() {
 
@@ -405,6 +409,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     });
   }
   SelectAllInRow(element, event, colName) {
+    debugger;
     var columnexist = [];
     if (colName == 'Action') {
       for (var prop in element) {
@@ -415,6 +420,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         else if (columnexist.length > 0 && !event.checked && prop != 'Student' && prop != 'Action') {
           element[prop] = 0;
         }
+        element.Action=true;
       }
     }
     else {
@@ -466,7 +472,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         });
   }
   UpdateOrSave(row) {
-debugger;
+    debugger;
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
       " and StudentClassId eq " + row.StudentClassId
 

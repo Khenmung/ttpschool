@@ -281,8 +281,7 @@ export class ContentService implements OnInit {
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
-            debugger;
-
+          
             this.UserDetail[0]["applicationRolePermission"].push({
               'applicationFeatureId': item.ApplicationFeatureId,
               'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,

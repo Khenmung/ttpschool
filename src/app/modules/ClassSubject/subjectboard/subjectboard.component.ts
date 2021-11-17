@@ -7,6 +7,8 @@ import { SubjectTypesComponent } from '../subject-types/subject-types.component'
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { ContentService } from 'src/app/shared/content.service';
+import { ClassdetailComponent } from '../../classes/classdetail/classdetail.component';
 
 @Component({
   selector: 'app-subjectboard',
@@ -26,7 +28,7 @@ export class SubjectBoardComponent implements AfterViewInit {
   tabNames = [
     { "label": "Subject Type", "faIcon": '' },
     { "label": "Subject Detail", "faIcon": '' },
-    { "label": "Subject Mark Component", "faIcon": '' },    
+    { "label": "Subject Mark Component", "faIcon": '' },
     { "label": "Student Subject", "faIcon": '' },
     { "label": "Class Student", "faIcon": '' }
   ];
@@ -46,78 +48,44 @@ export class SubjectBoardComponent implements AfterViewInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private componentFactoryResolver: ComponentFactoryResolver) {
   }
 
   public ngAfterViewInit(): void {
-    //this.Permissions.ParentPermission = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.sub)
-    // perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECT)
-    // if (perObj.length > 0) {
-    //   this.Permissions.ParentPermission = perObj[0].permission;
-    //  // this.tabNames[1].faIcon = perObj[0].faIcon;
-    // }
 
-    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)
-    if (perObj.length > 0) {
-      this.Permissions.SubjectTypePermission = perObj[0].permission;
-      this.tabNames[0].faIcon = perObj[0].faIcon;
-    }
+    debugger;
+    var loginUserDetail = this.tokenStorage.getUserDetail();
+    this.contentservice.GetApplicationRoleUser(loginUserDetail);
+
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECT)
+    if(perObj.length>0)
+    this.Permissions.ParentPermission = perObj[0].permission;
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTTYPE)
+    var comindx = this.components.indexOf(SubjectTypesComponent);
+    this.GetComponents(perObj, comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTDETAIL)
-    if (perObj.length > 0) {
-      this.Permissions.SubjectDetailPermission = perObj[0].permission;
-      this.tabNames[1].faIcon = perObj[0].faIcon;
-    }
+    comindx = this.components.indexOf(SubjectDetailComponent);
+    this.GetComponents(perObj, comindx)
+   
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTMARKCOMPONENT)
+    comindx = this.components.indexOf(StudentSubjectMarkCompComponent);
+    this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
-    if (perObj.length > 0) {
-      this.Permissions.SubjectMarkComponentPermission = perObj[0].permission;
-      this.tabNames[2].faIcon = perObj[0].faIcon;
-    }
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT)
+    comindx = this.components.indexOf(AssignStudentclassdashboardComponent);
+    this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE)
-    if (perObj.length > 0) {
-      this.Permissions.ClassStudentPermission = perObj[0].permission;
-      this.tabNames[3].faIcon = perObj[0].faIcon;
-    }
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT)
+    comindx = this.components.indexOf(studentsubjectdashboardComponent);
+    this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER)
-    if (perObj.length > 0) {
-      this.Permissions.StudentSubjectPermission = perObj[0].permission;
-      this.tabNames[4].faIcon = perObj[0].faIcon;
-    }
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-
-    // console.log("this.Permissions.ParentPermission", this.Permissions.ParentPermission);
-    // console.log("this.Permissions.SubjectTypePermission", this.Permissions.SubjectTypePermission);
-    // console.log("this.Permissions.SubjectDetailPermission", this.Permissions.SubjectDetailPermission);
-    // console.log("this.Permissions.SubjectMarkComponentPermission", this.Permissions.SubjectMarkComponentPermission);
-    // console.log("this.Permissions.ClassStudentPermission", this.Permissions.ClassStudentPermission);
-    // console.log("this.Permissions.StudentSubjectPermission", this.Permissions.StudentSubjectPermission);
-    if (this.Permissions.SubjectTypePermission == 'deny') {
-      var comindx = this.components.indexOf(SubjectTypesComponent);
-      this.components.splice(comindx, 1);
-    }
-    if (this.Permissions.SubjectDetailPermission == 'deny') {
-      var comindx = this.components.indexOf(SubjectDetailComponent);
-      this.components.splice(comindx, 1);
-    }
-    if (this.Permissions.SubjectMarkComponentPermission == 'deny') {
-      var comindx = this.components.indexOf(StudentSubjectMarkCompComponent);
-      this.components.splice(comindx, 1);
-    }
-    if (this.Permissions.ClassStudentPermission == 'deny') {
-      var comindx = this.components.indexOf(AssignStudentclassdashboardComponent);
-      this.components.splice(comindx, 1);
-    }
-    if (this.Permissions.StudentSubjectPermission == 'deny') {
-      var comindx = this.components.indexOf(studentsubjectdashboardComponent);
-      this.components.splice(comindx, 1);
-    }
-
 
     if (this.Permissions.ParentPermission != 'deny') {
       this.renderComponent(0);
@@ -139,6 +107,22 @@ export class SubjectBoardComponent implements AfterViewInit {
     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
     this.viewContainer.createComponent(factory);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
+  }
+  GetComponents(perObj, comindx) {
+    if (perObj.length > 0) {
+      if (perObj[0].permission == 'deny') {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      else {
+        this.tabNames[comindx].faIcon = perObj[0].faIcon;
+        this.tabNames[comindx].label = perObj[0].label;
+      }
+    }
+    else {
+      this.components.splice(comindx, 1);
+      this.tabNames.splice(comindx, 1);
+    }
   }
 }
 

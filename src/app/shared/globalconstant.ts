@@ -63,7 +63,7 @@ export class globalconstants {
                 "MASTERDATA":'master data',
                 "CUSTOMERINVOICECOMPONENT":'invoice components',
                 "REPORTCONIG":'report config',
-                "MENUCONFIG":'features'
+                "MENUCONFIG":'menu config'
             },
             "common": {
                 'AUTH': {
@@ -96,7 +96,7 @@ export class globalconstants {
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
-                    'DETAIL': 'classdetail',
+                    'CLASSDETAIL': 'classdetail',
                     'FEE': 'fee',
                     'FEETYPE': 'fee type',
                     'PREREQUISITE': 'pre-requisite',
@@ -110,8 +110,8 @@ export class globalconstants {
                     'STUDENTACTIVITY': 'student activity'
                 },
                 'SUBJECT': {
-                    'SUBJECT': 'subject',
-                    'SUBJECTDETAIL': 'subject detail',
+                    'SUBJECT': 'class subject',
+                    'SUBJECTDETAIL': 'class subject detail',
                     'STUDENTSUBJECT': 'student subject',
                     'SUBJECTMARKCOMPONENT': 'subject mark component',
                     'CLASSSTUDENT': 'class student',

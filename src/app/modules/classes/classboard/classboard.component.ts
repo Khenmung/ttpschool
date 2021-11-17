@@ -59,7 +59,7 @@ export class ClassboardComponent implements AfterViewInit {
       this.Permissions.ParentPermission = perObj[0].permission;
       //this.tabNames
     }
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
     if (perObj.length > 0) {
       this.tabNames[0].faIcon = perObj[0].faIcon;
       this.Permissions.ClassDetailPermission = perObj[0].permission;

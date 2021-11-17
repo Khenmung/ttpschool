@@ -42,6 +42,7 @@ export class AddMasterDataComponent implements OnInit {
   SchoolDataStatus = [];
   StudentVariableNames = [];
   DisplayColumns = [
+    "MasterDataId",
     "MasterDataName",
     "Description",
     "Logic",
@@ -445,7 +446,8 @@ export class AddMasterDataComponent implements OnInit {
     }
     if (this.searchForm.get("ParentId").value == 0 || this.enableTopEdit) {
       let duplicate = this.TopMasters.filter(item => item.OrgId == this.UserDetails[0]["orgId"]
-        && item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase())
+        && item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
+        && item.ApplicationId == row.ApplicationId)
       if (duplicate.length > 0) {
         this.loading = false;
         this.alert.error("Data already exists in this master", this.optionNoAutoClose);
@@ -454,7 +456,7 @@ export class AddMasterDataComponent implements OnInit {
     }
     else {
       let duplicate = this.MasterData.filter(item => item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
-        && item.MasterDataId != row.MasterDataId)
+        && item.MasterDataId != row.MasterDataId && item.ApplicationId == row.ApplicationId)
       if (duplicate.length > 0) {
         this.loading = false;
         this.alert.error("Data already exists!", this.optionNoAutoClose);

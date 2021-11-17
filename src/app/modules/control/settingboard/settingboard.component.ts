@@ -57,88 +57,23 @@ export class settingboardComponent implements AfterViewInit {
   
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.MASTERS)
       var comindx = this.components.indexOf(AddMasterDataComponent);
-      if (perObj.length > 0) {
-        if (perObj[0].permission == 'deny') {
-          this.components.splice(comindx, 1);
-          this.tabNames.splice(comindx, 1);
-        }
-        else {
-          this.tabNames[comindx].faIcon = perObj[0].faIcon;
-          this.tabNames[comindx].label = perObj[0].label;
-        }
-      }
-      else {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
-  
+      this.GetComponents(perObj,comindx);
+
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.BATCHDASHBOARD)
       var comindx = this.components.indexOf(BatchdashboardComponent);
-      if (perObj.length > 0) {
-        if (perObj[0].permission == 'deny') {
-          this.components.splice(comindx, 1);
-          this.tabNames.splice(comindx, 1);
-        }
-        else {
-          this.tabNames[comindx].faIcon = perObj[0].faIcon;
-          this.tabNames[comindx].label = perObj[0].label;
-        }
-      }
-      else {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
+      this.GetComponents(perObj,comindx);
   
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.USERS)
       var comindx = this.components.indexOf(AppuserdashboardComponent);
-      if (perObj.length > 0) {
-        if (perObj[0].permission == 'deny') {
-          this.components.splice(comindx, 1);
-          this.tabNames.splice(comindx, 1);
-        }
-        else {
-          this.tabNames[comindx].faIcon = perObj[0].faIcon;
-          this.tabNames[comindx].label = perObj[0].label;
-        }
-      }
-      else {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
+      this.GetComponents(perObj,comindx);
 
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.ROLEUSER)
       var comindx = this.components.indexOf(roleuserdashboardComponent);
-      if (perObj.length > 0) {
-        if (perObj[0].permission == 'deny') {
-          this.components.splice(comindx, 1);
-          this.tabNames.splice(comindx, 1);
-        }
-        else {
-          this.tabNames[comindx].faIcon = perObj[0].faIcon;
-          this.tabNames[comindx].label = perObj[0].label;
-        }
-      }
-      else {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
+      this.GetComponents(perObj,comindx);
 
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION)
       var comindx = this.components.indexOf(RoleAppPermissiondashboardComponent);
-      if (perObj.length > 0) {
-        if (perObj[0].permission == 'deny') {
-          this.components.splice(comindx, 1);
-          this.tabNames.splice(comindx, 1);
-        }
-        else {
-          this.tabNames[comindx].faIcon = perObj[0].faIcon;
-          this.tabNames[comindx].label = perObj[0].label;
-        }
-      }
-      else {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
+      this.GetComponents(perObj,comindx);
       
       this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
       if (this.Permissions.ParentPermission != 'deny') {
@@ -159,6 +94,22 @@ export class settingboardComponent implements AfterViewInit {
     private renderComponent(index: number): any {
       const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
       this.viewContainer.createComponent(factory);
+    }
+    GetComponents(perObj,comindx){     
+      if (perObj.length > 0) {
+        if (perObj[0].permission == 'deny') {
+          this.components.splice(comindx, 1);
+          this.tabNames.splice(comindx, 1);
+        }
+        else {
+          this.tabNames[comindx].faIcon = perObj[0].faIcon;
+          this.tabNames[comindx].label = perObj[0].label;
+        }
+      }
+      else {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
     }
   }
   

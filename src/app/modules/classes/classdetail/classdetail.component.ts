@@ -99,7 +99,7 @@ export class ClassdetailComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.DETAIL)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

@@ -262,7 +262,7 @@ export class StudentactivityComponent implements OnInit {
             Action: false
           })
         }
-        console.log('studentactivity',this.StudentActivityList)
+        console.log('studentactivity', this.StudentActivityList)
         this.dataSource = new MatTableDataSource<IStudentActivity>(this.StudentActivityList);
         this.loadingFalse();
       });
@@ -339,7 +339,10 @@ export class StudentactivityComponent implements OnInit {
             var _className = '';
             if (_classNameobj.length > 0)
               _className = _classNameobj[0].ClassName;
-            var _Section = this.Sections.filter(f => f.MasterDataId == student.SectionId)[0].MasterDataName;
+            var _Section = '';
+            var sectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
+            if (sectionObj.length > 0)
+              _Section = sectionObj[0].MasterDataName;
             var _RollNo = student.RollNo;
             var _name = student.Student.FirstName + " " + student.Student.LastName;
             var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;

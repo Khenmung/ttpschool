@@ -40,6 +40,12 @@
         <div>
             <mat-divider></mat-divider>
             <mat-table [dataSource]="datasource" matSort>
+                <ng-container matColumnDef="MasterDataId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.MasterDataId}}
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="MasterDataName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
