@@ -451,7 +451,8 @@ export class studentsubjectdashboardComponent implements OnInit {
           Active: element[prop],
           StudentClassSubjectId: row[0].StudentClassSubjectId,
           StudentClassId: row[0].StudentClassId,
-          ClassSubjectId: row[0].ClassSubjectId
+          ClassSubjectId: row[0].ClassSubjectId,
+          SubjectId: row[0].SubjectId
         }
         //console.log('data to update',data)
         if (row.length > 0)

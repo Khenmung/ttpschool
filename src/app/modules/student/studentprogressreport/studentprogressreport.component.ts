@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -67,11 +68,8 @@ export class StudentprogressreportComponent implements OnInit {
     BatchId: 0,
     Active: 0
   };
-  displayedColumns = [
-    "Subject",
-    "ClassSubjectMarkComponentId",
-    "Mark",
-    "ExamName"
+  DisplayColumns = [
+    "Subject"
   ];
   searchForm: FormGroup;
   constructor(
@@ -123,7 +121,7 @@ export class StudentprogressreportComponent implements OnInit {
       "ClassSubjectId",
       "StudentClassId",
       "Active",
-      "SubjectId"     
+      "SubjectId"
     ];
     list.PageName = "StudentClassSubjects";
     list.filter = [filterStr];
@@ -202,28 +200,44 @@ export class StudentprogressreportComponent implements OnInit {
             ExamName: _ExamName
           }
         })
+        var marksum = alasql("select SubjectId,Subject,ExamName,sum(Mark) Mark from ? group by SubjectId,Subject,ExamName", [this.ExamStudentSubjectResult])
+
         var progressreport = [];
-
-        this.StudentSubjects.forEach(ss => {
-          progressreport["Subject"] = ss.Subject;
-          progressreport["SubjectId"] = ss.SubjectId;
-
-        })
+        var examEolumns = [];
         this.Exams.forEach(e => {
-          progressreport[e.ExamName] = '';
+          examEolumns.push(e.ExamName)
         })
 
-        var reportrow ={};
+        //progressreport.push(JSON.parse(columns));
 
-        this.ExamStudentSubjectResult.filter(r => {
-          reportrow = progressreport.filter(p=>p.SubjectId=r.SubjectId);
-          reportrow[r.ExamName] =r.Marks;
+        this.StudentSubjects.forEach((ss) => {
+          progressreport.push({
+            "Subject": ss.Subject,
+            "SubjectId": ss.SubjectId
+          });
+        })
+        progressreport.forEach((subject) => {
+          examEolumns.forEach(exam => {
+            //subject["'"+exam + "'"] = ''
+            subject[exam] = ''
+            if (this.DisplayColumns.indexOf(exam) == -1)
+              this.DisplayColumns.push(exam)
+          })
+        })
 
-        });
+        progressreport.forEach(report => {
 
-        console.log("shd", this.ExamStudentSubjectResult);
+          var current = marksum.filter(c => c.SubjectId == report.SubjectId);
+          current.forEach(exam => {
+            // report["'"+exam.ExamName+ "'"] = exam.Mark
+            report[exam.ExamName] = exam.Mark
+          })
 
-        this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
+        })
+
+        //console.log("shd", progressreport);
+
+        this.dataSource = new MatTableDataSource<any>(progressreport);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.loading = false;
@@ -285,7 +299,7 @@ export class StudentprogressreportComponent implements OnInit {
     list.fields = ["ExamId", "ExamNameId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
+    list.orderBy = "EndDate desc";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -320,7 +334,7 @@ export class StudentprogressreportComponent implements OnInit {
 export interface IExamStudentSubjectResult {
   ExamStudentSubjectResultId: number;
   ExamId: number;
-  ExamName:string;
+  ExamName: string;
   SubjectId: number;
   StudentClassSubjectId: number;
   Student: string;
@@ -328,7 +342,7 @@ export interface IExamStudentSubjectResult {
   SubjectMarkComponent: string;
   FullMark: number;
   PassMark: number;
-  Marks: number;
+  Mark: number;
   ExamStatus: number;
   Active: number;
   Action: boolean;

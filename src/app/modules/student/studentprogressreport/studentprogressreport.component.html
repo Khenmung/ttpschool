@@ -7,25 +7,17 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
                        
-            <mat-table #table [dataSource]="dataSource" matSort>                
-                <ng-container matColumnDef="Subject">
-                    <mat-header-cell *matHeaderCellDef> Subject </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.Subject}} </mat-cell>
+            <mat-table #table [dataSource]="dataSource" matSort>
+                <ng-container *ngFor="let disCol of DisplayColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{disCol}}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">                    
+                        {{element[disCol]}}
+                    </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ClassSubjectMarkComponentId">
-                    <mat-header-cell *matHeaderCellDef> ClassSubjectMarkComponentId </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.ClassSubjectMarkComponentId}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Mark">
-                    <mat-header-cell *matHeaderCellDef> Mark </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.Mark}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ExamName">
-                    <mat-header-cell *matHeaderCellDef> ExamName </mat-header-cell>
-                    <mat-cell *matCellDef="let element"> {{element.ExamName}} </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>                
+
+                <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: DisplayColumns;" class="element-row"></mat-row>
             </mat-table>
             <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
         </div>

@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -25,6 +26,7 @@ export class StudentattendancereportComponent implements OnInit {
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
+  AttendanceStatusSum=[];
   edited = false;
   EnableSave = true;
   Permission = 'deny';
@@ -75,12 +77,12 @@ export class StudentattendancereportComponent implements OnInit {
     OrgId: 0
   };
   displayedColumns = [
-    'StudentRollNo',
     'AttendanceDate',
     'AttendanceStatus',
     'Remarks'
   ];
-
+  TotoalPresent=0;
+  TotalAbsent=0;
   constructor(
     private fb: FormBuilder,
     private contentservice: ContentService,
@@ -173,6 +175,7 @@ export class StudentattendancereportComponent implements OnInit {
             StudentRollNo: att.StudentClass.Student.FirstName + " " + att.StudentClass.Student.LastName 
           });
         });
+        this.AttendanceStatusSum=alasql("select AttendanceStatus, sum(AttendanceStatus) Total from ? group by AttendanceStatus",[this.StudentAttendanceList])
         this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
