@@ -6,7 +6,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AddstudentclassComponent } from '../addstudentclass/addstudentclass.component';
 import { GenerateCertificateComponent } from '../generatecertificate/generatecertificate.component';
 import { StudentattendancereportComponent } from '../studentattendancereport/studentattendancereport.component';
-import { StudentDocumentComponent } from '../StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
+import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudentdoc.component';
 import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimaryinfo.component';
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
 

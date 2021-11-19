@@ -4,10 +4,9 @@ import { StudenthomeComponent } from './studenthome/studenthome.component';
 import { studentprimaryinfoComponent } from './studentprimaryinfo/studentprimaryinfo.component';
 import { AddstudentclassComponent } from './addstudentclass/addstudentclass.component';
 import { searchstudentComponent } from './searchstudent/searchstudent.component';
-import { DashboardstudentdocumentComponent } from './StudentDocument/dashboardstudentdocument/dashboardstudentdocument.component';
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from './studentfeepayment/feereceipt/feereceipt.component';
-import { StudentDocumentComponent } from '../student/StudentDocument/uploadstudentdocument/uploadstudentdoc.component';
+import { StudentDocumentComponent } from '../student/uploadstudentdocument/uploadstudentdoc.component';
 import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
 import { StudentattendancereportComponent } from './studentattendancereport/studentattendancereport.component';
 import { StudentboardComponent } from './studentboard/studentboard.component';
@@ -37,7 +36,6 @@ export const StudentComponents = [
   AddstudentfeepaymentComponent,
   searchstudentComponent,
   FeereceiptComponent,
-  DashboardstudentdocumentComponent,
   StudentDocumentComponent,
   GenerateCertificateComponent,
   StudentattendancereportComponent,

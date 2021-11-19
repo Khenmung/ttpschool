@@ -81,6 +81,18 @@ export class globalconstants {
                     'MASTERS': 'Essential Data'
                 }
             },
+            "emp":{
+                    "employee":{
+                        "EMPLOYEEDETAIL":"employee detail",
+                        "SALARY":"salary",
+                        "DOCUMENT":"employee document",
+                        "EDUCATIONHISTORY":"education history",
+                        "WORKHISTORY":"work history",
+                        "EMPLOYEESKILL":"employee skill",
+                        "FAMILY":"family",
+                        "ATTENDANCE":"attendance"
+                    }
+            },
             "edu": {
                 'STUDENT': {
                     'STUDENT': 'student',
@@ -225,6 +237,9 @@ export class globalconstants {
                 "GENDER": "employee gender",
                 "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
+                "DOCUMENT": "employee document",
+                "FAMILYRELATIONSHIP": "family relationship",
+                "EMPLOYEESKILL": "employee skill"
             },
             "StudentVariableName": [
                 "Today",

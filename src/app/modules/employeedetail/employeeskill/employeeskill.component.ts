@@ -11,13 +11,14 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { IFamily } from '../family/family.component';
 
 @Component({
-  selector: 'app-family',
-  templateUrl: './family.component.html',
-  styleUrls: ['./family.component.scss']
+  selector: 'app-employeeskill',
+  templateUrl: './employeeskill.component.html',
+  styleUrls: ['./employeeskill.component.scss']
 })
-export class FamilyComponent implements OnInit {
+export class EmployeeskillComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -29,35 +30,29 @@ export class FamilyComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  EmployeeFamilyListName = 'EmployeeFamilies';
+  EmployeeSkillsListName = 'EmpEmployeeSkills';
   Applications = [];
   loading = false;
   SelectedBatchId = 0;
-  EmployeeFamilyList: IFamily[] = [];
-  filteredOptions: Observable<IFamily[]>;
-  dataSource: MatTableDataSource<IFamily>;
+  EmployeeSkillsList: ISkill[] = [];
+  filteredOptions: Observable<ISkill[]>;
+  dataSource: MatTableDataSource<ISkill>;
   allMasterData = [];
-  EmployeeFamilys = [];
-  FamilyRelationship=[];
-  Genders=[];
+  EmployeeSkills = [];
   Permission = 'deny';
   EmployeeId = 0;
-  EmployeeFamilyData = {
-    EmployeeFamilyId: 0,
+  EmployeeSkillsData = {
+    EmpEmployeeSkillId: 0,
+    SkillId: 0,
     EmployeeId: 0,
-    FamilyRelationShipId: 0,
-    FullName: '',
-    Age: 0,
-    Gender: 0,
-    OrgId: 0,
-    Active: 0
+    Active: 0,
+    ExperienceInMonths: 0,
+    OrgId:0
   };
   displayedColumns = [
-    "EmployeeFamilyId",
-    "FullName",
-    "Age",
-    "Gender",
-    "FamilyRelationShipId",
+    "EmpEmployeeSkillId",
+    "SkillId",
+    "ExperienceInMonths",
     "Active",
     "Action"
   ];
@@ -92,7 +87,7 @@ export class FamilyComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.FAMILY)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYEESKILL)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -102,11 +97,7 @@ export class FamilyComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-        if (this.EmployeeFamilys.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.EmployeeFamilys = [...data.value];
-          })
-        }
+
         this.GetMasterData();
       }
     }
@@ -115,18 +106,16 @@ export class FamilyComponent implements OnInit {
   AddNew() {
 
     var newdata = {
-      EmployeeFamilyId: 0,
+      EmpEmployeeSkillId: 0,
+      SkillId: 0,
       EmployeeId: 0,
-      FamilyRelationShipId: 0,
-      FullName: '',
-      Age: 0,
-      Gender: 0,
+      ExperienceInMonths: 0,
       Active: 0,
-      Action: true
+      Action: false
     };
-    this.EmployeeFamilyList = [];
-    this.EmployeeFamilyList.push(newdata);
-    this.dataSource = new MatTableDataSource<IFamily>(this.EmployeeFamilyList);
+    this.EmployeeSkillsList = [];
+    this.EmployeeSkillsList.push(newdata);
+    this.dataSource = new MatTableDataSource<ISkill>(this.EmployeeSkillsList);
   }
   onBlur(element) {
     element.Action = true;
@@ -151,13 +140,13 @@ export class FamilyComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "FamilyRelationShipId eq " + row.FamilyRelationShipId
+    let checkFilterString = "SkillId eq " + row.SkillId + " and EmployeeId eq " + this.EmployeeId
 
-    if (row.EmployeeFamilyId > 0)
-      checkFilterString += " and EmployeeFamilyId ne " + row.EmployeeFamilyId;
+    if (row.EmpEmployeeSkillId > 0)
+      checkFilterString += " and EmpEmployeeSkillId ne " + row.EmpEmployeeSkillId;
     let list: List = new List();
-    list.fields = ["EmployeeFamilyId"];
-    list.PageName = this.EmployeeFamilyListName;
+    list.fields = ["EmpEmployeeSkillId"];
+    list.PageName = this.EmployeeSkillsListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -169,28 +158,26 @@ export class FamilyComponent implements OnInit {
         }
         else {
 
-          this.EmployeeFamilyData.EmployeeFamilyId = row.EmployeeFamilyId;
-          this.EmployeeFamilyData.Active = row.Active;
-          this.EmployeeFamilyData.Age = row.Age;
-          this.EmployeeFamilyData.EmployeeId = this.EmployeeId;
-          this.EmployeeFamilyData.FamilyRelationShipId = row.FamilyRelationShipId;
-          this.EmployeeFamilyData.FullName = row.FullName;
-          this.EmployeeFamilyData.Gender = row.Gender;
-          this.EmployeeFamilyData.OrgId = this.LoginUserDetail[0]["orgId"];
-                    
-          if (this.EmployeeFamilyData.EmployeeFamilyId == 0) {
-            //this.EmployeeFamilyData["CreatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
-            //this.EmployeeFamilyData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            //this.EmployeeFamilyData["UpdatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
-            delete this.EmployeeFamilyData["UpdatedBy"];
-            console.log('this.EmployeeFamilyData',this.EmployeeFamilyData)
+          this.EmployeeSkillsData.EmpEmployeeSkillId = row.EmpEmployeeSkillId;
+          this.EmployeeSkillsData.Active = row.Active;
+          this.EmployeeSkillsData.SkillId = row.SkillId;
+          this.EmployeeSkillsData.EmployeeId = this.EmployeeId;
+          this.EmployeeSkillsData.ExperienceInMonths = row.ExperienceInMonths;
+          this.EmployeeSkillsData.OrgId = this.LoginUserDetail[0]["orgId"];
+
+          if (this.EmployeeSkillsData.EmpEmployeeSkillId == 0) {
+            this.EmployeeSkillsData["CreatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
+            this.EmployeeSkillsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EmployeeSkillsData["UpdatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
+            delete this.EmployeeSkillsData["UpdatedBy"];
+            console.log('this.EmployeeSkillsData', this.EmployeeSkillsData)
             this.insert(row);
           }
           else {
-            delete this.EmployeeFamilyData["CreatedDate"];
-            delete this.EmployeeFamilyData["CreatedBy"];
-            this.EmployeeFamilyData["UpdatedDate"] = new Date();
-            this.EmployeeFamilyData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.EmployeeSkillsData["CreatedDate"];
+            delete this.EmployeeSkillsData["CreatedBy"];
+            this.EmployeeSkillsData["UpdatedDate"] = new Date();
+            this.EmployeeSkillsData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
         }
@@ -202,10 +189,10 @@ export class FamilyComponent implements OnInit {
   insert(row) {
 
     //debugger;
-    this.dataservice.postPatch(this.EmployeeFamilyListName, this.EmployeeFamilyData, 0, 'post')
+    this.dataservice.postPatch(this.EmployeeSkillsListName, this.EmployeeSkillsData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.EmployeeFamilyId = data.EmployeeFamilyId;
+          row.EmpEmployeeSkillId = data.EmpEmployeeSkillId;
           row.Action = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
           this.loadingFalse()
@@ -213,7 +200,7 @@ export class FamilyComponent implements OnInit {
   }
   update(row) {
 
-    this.dataservice.postPatch(this.EmployeeFamilyListName, this.EmployeeFamilyData, this.EmployeeFamilyData.EmployeeFamilyId, 'patch')
+    this.dataservice.postPatch(this.EmployeeSkillsListName, this.EmployeeSkillsData, this.EmployeeSkillsData.EmpEmployeeSkillId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -221,28 +208,25 @@ export class FamilyComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  GetEmployeeFamilys() {
+  GetEmployeeSkills() {
     debugger;
 
     this.loading = true;
-    let filterStr = 'BatchId eq ' + this.SelectedBatchId
-    var _searchClassName = this.searchForm.get("searchClassName").value;
-    if (_searchClassName > 0) {
-      filterStr += ' and ClassId eq ' + _searchClassName;
-    }
+    let filterStr = 'EmployeeId eq ' + this.EmployeeId
+    
     let list: List = new List();
     list.fields = ["*"];
 
-    list.PageName = this.EmployeeFamilyListName;
+    list.PageName = this.EmployeeSkillsListName;
     list.filter = [filterStr];
-    this.EmployeeFamilyList = [];
+    this.EmployeeSkillsList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.EmployeeFamilyList = [...data.value];
+          this.EmployeeSkillsList = [...data.value];
         }
-        this.dataSource = new MatTableDataSource<IFamily>(this.EmployeeFamilyList);
+        this.dataSource = new MatTableDataSource<ISkill>(this.EmployeeSkillsList);
         this.loadingFalse();
       });
 
@@ -260,9 +244,9 @@ export class FamilyComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
-
+        //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
+        this.EmployeeSkills = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEESKILL);
+        this.GetEmployeeSkills();
         this.loading = false;
       });
   }
@@ -282,16 +266,11 @@ export class FamilyComponent implements OnInit {
 
   }
 }
-export interface IFamily {
-  EmployeeFamilyId: number;
+export interface ISkill {
+  EmpEmployeeSkillId: number;
+  SkillId: number;
   EmployeeId: number;
-  FamilyRelationShipId: number;
-  FullName: string;
-  Age: number;
-  Gender: number;
+  Active: number;
+  ExperienceInMonths: number;
   Action: boolean;
-}
-export interface IApplication {
-  ApplicationId: number;
-  ApplicationName: string;
 }

@@ -70,6 +70,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
   },
   {
+    path: 'emp/attendance',
+    loadChildren: () => import('./modules/attendance/attendance.module').then(m => m.AttendanceModule)
+  },
+  {
     path: 'employee',
     loadChildren: () => import('./modules/employeedetail/employeedetail.module').then(m => m.EmployeedetailModule)
   },

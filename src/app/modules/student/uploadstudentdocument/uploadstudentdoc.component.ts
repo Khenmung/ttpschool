@@ -3,14 +3,13 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
-import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AlertService } from '../../../../shared/components/alert/alert.service';
-import { NaomitsuService } from '../../../../shared/databaseService';
-import { globalconstants } from '../../../../shared/globalconstant';
-import { List } from '../../../../shared/interface';
-import { FileUploadService } from '../../../../shared/upload.service';
+import { AlertService } from '../../../shared/components/alert/alert.service';
+import { NaomitsuService } from '../../../shared/databaseService';
+import { globalconstants } from '../../../shared/globalconstant';
+import { List } from '../../../shared/interface';
+import { FileUploadService } from '../../../shared/upload.service';
 
 @Component({
   selector: 'upload-student-document',

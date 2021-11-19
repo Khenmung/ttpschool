@@ -1,68 +1,44 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Employee Family</strong></div>
+        <div><strong>Employee Skill</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
-            
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="EmployeeFamilyId">
+                <ng-container matColumnDef="EmpEmployeeSkillId">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                   {{element.EmployeeFamilyId}}
-                        
+                        {{element.EmpEmployeeSkillId}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="FullName">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Full Name
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="150">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [value]="element.FullName" [(ngModel)]="element.FullName">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Gender">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Gender
+                <ng-container matColumnDef="SkillId">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Skill
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="100">
-                            <mat-select (selectionChange)="onBlur(element)" [value]="element.Gender"
-                                [(ngModel)]="element.Gender">
-                                <mat-option *ngFor="let item of Genders" [value]="item.MasterDataId">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.SkillId"
+                                [(ngModel)]="element.SkillId">
+                                <mat-option *ngFor="let item of EmployeeSkills" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="FamilyRelationShipId">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Family Relationship
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="100">
-                            <mat-select (selectionChange)="onBlur(element)" [value]="element.FamilyRelationShipId"
-                                [(ngModel)]="element.FamilyRelationShipId">
-                                <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Age">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Age
+
+                <ng-container matColumnDef="ExperienceInMonths">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Experience (months)
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="150">
                             <input type="number" matInput (blur)="onBlur(element)" autocomplete="Off" [max]="80"
-                                [value]="element.Age" [(ngModel)]="element.Age">
+                                [value]="element.ExperienceInMonths" [(ngModel)]="element.ExperienceInMonths">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                
+
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>Active
                     </mat-header-cell>
@@ -86,7 +62,8 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row">
+                </mat-row>
             </mat-table>
         </div>
 
