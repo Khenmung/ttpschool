@@ -67,10 +67,7 @@ export class FamilyComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
 
@@ -102,11 +99,6 @@ export class FamilyComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-        if (this.EmployeeFamilys.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.EmployeeFamilys = [...data.value];
-          })
-        }
         this.GetMasterData();
       }
     }
@@ -179,9 +171,9 @@ export class FamilyComponent implements OnInit {
           this.EmployeeFamilyData.OrgId = this.LoginUserDetail[0]["orgId"];
                     
           if (this.EmployeeFamilyData.EmployeeFamilyId == 0) {
-            //this.EmployeeFamilyData["CreatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
-            //this.EmployeeFamilyData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            //this.EmployeeFamilyData["UpdatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
+            this.EmployeeFamilyData["CreatedDate"] = new Date();
+            this.EmployeeFamilyData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EmployeeFamilyData["UpdatedDate"] = new Date();
             delete this.EmployeeFamilyData["UpdatedBy"];
             console.log('this.EmployeeFamilyData',this.EmployeeFamilyData)
             this.insert(row);
@@ -225,11 +217,7 @@ export class FamilyComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'BatchId eq ' + this.SelectedBatchId
-    var _searchClassName = this.searchForm.get("searchClassName").value;
-    if (_searchClassName > 0) {
-      filterStr += ' and ClassId eq ' + _searchClassName;
-    }
+    let filterStr = 'EmployeeId eq ' + this.EmployeeId;
     let list: List = new List();
     list.fields = ["*"];
 
@@ -262,7 +250,7 @@ export class FamilyComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
-
+        this.GetEmployeeFamilys();
         this.loading = false;
       });
   }

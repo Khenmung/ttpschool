@@ -9,7 +9,7 @@
             
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="EmployeeFamilyId">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
+                    <mat-header-cell *matHeaderCellDef>Id
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                    {{element.EmployeeFamilyId}}
@@ -17,20 +17,20 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FullName">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Full Name
+                    <mat-header-cell *matHeaderCellDef>Full Name
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="150">
+                        <mat-form-field appearance="outline" [style.width.px]="200">
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
                                 [value]="element.FullName" [(ngModel)]="element.FullName">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Gender">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Gender
+                    <mat-header-cell *matHeaderCellDef>Gender
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="100">
+                        <mat-form-field appearance="outline" [style.width.px]="150">
                             <mat-select (selectionChange)="onBlur(element)" [value]="element.Gender"
                                 [(ngModel)]="element.Gender">
                                 <mat-option *ngFor="let item of Genders" [value]="item.MasterDataId">
@@ -40,10 +40,10 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FamilyRelationShipId">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Family Relationship
+                    <mat-header-cell *matHeaderCellDef>Family Relationship
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="100">
+                        <mat-form-field appearance="outline" [style.width.px]="150">
                             <mat-select (selectionChange)="onBlur(element)" [value]="element.FamilyRelationShipId"
                                 [(ngModel)]="element.FamilyRelationShipId">
                                 <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
@@ -53,7 +53,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Age">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Age
+                    <mat-header-cell *matHeaderCellDef>Age
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="150">
@@ -74,12 +74,12 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
                             (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>

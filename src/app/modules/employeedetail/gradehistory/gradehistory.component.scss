@@ -1,0 +1,19 @@
+.mat-form-field,button{
+    margin-right: 15px;
+}
+.mat-column-EmployeeGradeHistoryId{
+    flex: 0 0 60px;
+    justify-content: center;
+}
+.mat-column-Active,.mat-column-Action{
+    justify-content: center;
+    flex: 0 0 100px;
+}
+.mat-column-EmpGradeId,.mat-column-DesignationId,.mat-column-JobTitleId,
+.mat-column-DepartmentId,.mat-column-DesignationId,.mat-column-WorkAccountId,
+.mat-column-ManagerName,.mat-column-ReportingTo,.mat-column-Remaks,.mat-column-FromDate,.mat-column-ToDate{
+    flex: 0 0 150px;
+}
+mat-cell:first-of-type{
+    padding-left: 0px;
+}

@@ -8,6 +8,7 @@ import { EmployeeComponent } from '../employee/employee.component';
 import { EmployeedocumentsComponent } from '../employeedocuments/employeedocuments.component';
 import { EmployeeskillComponent } from '../employeeskill/employeeskill.component';
 import { FamilyComponent } from '../family/family.component';
+import { GradehistoryComponent } from '../gradehistory/gradehistory.component';
 import { WorkhistoryComponent } from '../workhistory/workhistory.component';
 
 @Component({
@@ -22,7 +23,8 @@ export class EmployeeboardComponent implements AfterViewInit {
     FamilyComponent,
     EducationhistoryComponent,
     WorkhistoryComponent,
-    EmployeeskillComponent
+    EmployeeskillComponent,
+    GradehistoryComponent
   ];
 
   tabNames = [
@@ -31,7 +33,8 @@ export class EmployeeboardComponent implements AfterViewInit {
     { "label": "Family", "faIcon": '' },
     { "label": "Education History", "faIcon": '' },
     { "label": "Work History", "faIcon": '' },
-    { "label": "Employee Skill", "faIcon": '' }
+    { "label": "Employee Skill", "faIcon": '' },
+    { "label": "Employement History", "faIcon": '' }
   ];
   //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
@@ -56,7 +59,7 @@ export class EmployeeboardComponent implements AfterViewInit {
     debugger
     this.LoginUserDetail =  this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENT)
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYEE)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;  
     }
@@ -66,7 +69,8 @@ export class EmployeeboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.emp.employee.FAMILY)
     this.GenerateComponent(globalconstants.Pages.emp.employee.WORKHISTORY)
     this.GenerateComponent(globalconstants.Pages.emp.employee.DOCUMENT)
-    this.GenerateComponent(globalconstants.Pages.emp.employee.ATTENDANCE)
+    this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYEESKILL)
+    this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYMENTHISTORY)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -110,6 +114,9 @@ export class EmployeeboardComponent implements AfterViewInit {
         break;
       case "work history":
         comindx =this.components.indexOf(WorkhistoryComponent);
+        break;
+      case "employment history":
+        comindx =this.components.indexOf(GradehistoryComponent);
         break;
     } 
     

@@ -83,6 +83,7 @@ export class globalconstants {
             },
             "emp":{
                     "employee":{
+                        "EMPLOYEE":"employee",
                         "EMPLOYEEDETAIL":"employee detail",
                         "SALARY":"salary",
                         "DOCUMENT":"employee document",
@@ -90,7 +91,8 @@ export class globalconstants {
                         "WORKHISTORY":"work history",
                         "EMPLOYEESKILL":"employee skill",
                         "FAMILY":"family",
-                        "ATTENDANCE":"attendance"
+                        "ATTENDANCE":"attendance",
+                        "EMPLOYMENTHISTORY":"employment history"
                     }
             },
             "edu": {
@@ -232,6 +234,7 @@ export class globalconstants {
                 "WORKACCOUNT": "work account",
                 "JOBTITLE": "job title",
                 "DESIGNATION": "designation",
+                "DEPARTMENT": "department",
                 "SALARYCOMPONENT": "salary component",
                 "GRADE": "grade",
                 "GENDER": "employee gender",

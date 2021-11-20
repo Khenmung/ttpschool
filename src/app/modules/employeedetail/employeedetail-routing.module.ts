@@ -8,6 +8,7 @@ import { EmployeedocumentsComponent } from './employeedocuments/employeedocument
 import { EmployeesearchComponent } from './employeesearch/employeesearch.component';
 import { EmployeeskillComponent } from './employeeskill/employeeskill.component';
 import { FamilyComponent } from './family/family.component';
+import { GradehistoryComponent } from './gradehistory/gradehistory.component';
 import { WorkhistoryComponent } from './workhistory/workhistory.component';
 
 const routes: Routes = [
@@ -33,5 +34,6 @@ export const EmployeeDetailComponents = [
   EducationhistoryComponent,
   FamilyComponent,
   EmployeesearchComponent,
-  EmployeeskillComponent
+  EmployeeskillComponent,
+  GradehistoryComponent
 ]
