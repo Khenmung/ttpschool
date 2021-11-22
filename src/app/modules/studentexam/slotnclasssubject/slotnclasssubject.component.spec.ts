@@ -8,8 +8,9 @@ describe('SlotnclasssubjectComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SlotnclasssubjectComponent ]
-    })
+    declarations: [SlotnclasssubjectComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

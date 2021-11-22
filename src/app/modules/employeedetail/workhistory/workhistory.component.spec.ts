@@ -8,8 +8,9 @@ describe('WorkhistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WorkhistoryComponent ]
-    })
+    declarations: [WorkhistoryComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

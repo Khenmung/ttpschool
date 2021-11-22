@@ -8,8 +8,9 @@ describe('ContactdashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ContactdashboardComponent ]
-    })
+    declarations: [ContactdashboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

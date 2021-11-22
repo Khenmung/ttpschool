@@ -8,8 +8,9 @@ describe('NewsdashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NewsdashboardComponent ]
-    })
+    declarations: [NewsdashboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

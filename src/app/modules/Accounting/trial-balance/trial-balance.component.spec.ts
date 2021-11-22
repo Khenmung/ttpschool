@@ -8,8 +8,9 @@ describe('TrialBalanceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TrialBalanceComponent ]
-    })
+    declarations: [TrialBalanceComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

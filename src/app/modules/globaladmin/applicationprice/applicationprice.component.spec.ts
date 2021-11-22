@@ -8,8 +8,9 @@ describe('ApplicationpriceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ApplicationpriceComponent ]
-    })
+    declarations: [ApplicationpriceComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

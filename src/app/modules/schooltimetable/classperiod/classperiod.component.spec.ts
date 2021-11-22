@@ -8,8 +8,9 @@ describe('ClassperiodComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClassperiodComponent ]
-    })
+    declarations: [ClassperiodComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

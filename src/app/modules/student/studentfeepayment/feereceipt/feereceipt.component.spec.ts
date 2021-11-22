@@ -8,8 +8,9 @@ describe('FeereceiptComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FeereceiptComponent ]
-    })
+    declarations: [FeereceiptComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

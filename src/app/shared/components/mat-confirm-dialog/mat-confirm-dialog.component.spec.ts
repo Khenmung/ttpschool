@@ -8,8 +8,9 @@ describe('MatConfirmDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MatConfirmDialogComponent ]
-    })
+    declarations: [MatConfirmDialogComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

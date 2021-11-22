@@ -8,8 +8,9 @@ describe('VariableConfigComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ VariableConfigComponent ]
-    })
+    declarations: [VariableConfigComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

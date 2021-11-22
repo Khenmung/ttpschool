@@ -8,8 +8,9 @@ describe('EmployeeLeaveComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmployeeLeaveComponent ]
-    })
+    declarations: [EmployeeLeaveComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

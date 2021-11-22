@@ -8,8 +8,9 @@ describe('FamilyComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FamilyComponent ]
-    })
+    declarations: [FamilyComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

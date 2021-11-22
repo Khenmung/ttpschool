@@ -8,8 +8,9 @@ describe('ExamslotComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ExamslotComponent ]
-    })
+    declarations: [ExamslotComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

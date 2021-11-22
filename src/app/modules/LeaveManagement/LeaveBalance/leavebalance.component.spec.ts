@@ -8,8 +8,9 @@ describe('GradeLeaveComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LeaveBalanceComponent ]
-    })
+    declarations: [LeaveBalanceComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

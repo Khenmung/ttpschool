@@ -8,8 +8,9 @@ describe('AccountingVoucherComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AccountingVoucherComponent ]
-    })
+    declarations: [AccountingVoucherComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

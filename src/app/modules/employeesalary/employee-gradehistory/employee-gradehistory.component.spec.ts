@@ -8,8 +8,9 @@ describe('EmployeeSalaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmployeeGradehistoryComponent ]
-    })
+    declarations: [EmployeeGradehistoryComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

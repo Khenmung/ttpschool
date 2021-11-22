@@ -8,8 +8,9 @@ describe('UserconfigreportnameComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserconfigreportnameComponent ]
-    })
+    declarations: [UserconfigreportnameComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

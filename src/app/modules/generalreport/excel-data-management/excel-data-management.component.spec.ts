@@ -8,8 +8,9 @@ describe('ExcelDataManagementComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ExcelDataManagementComponent ]
-    })
+    declarations: [ExcelDataManagementComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

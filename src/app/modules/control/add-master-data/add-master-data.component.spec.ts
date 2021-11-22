@@ -8,8 +8,9 @@ describe('AddMasterDataComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AddMasterDataComponent ]
-    })
+    declarations: [AddMasterDataComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

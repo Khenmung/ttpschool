@@ -8,8 +8,9 @@ describe('LeavepolicyComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LeavepolicyComponent ]
-    })
+    declarations: [LeavepolicyComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

@@ -8,8 +8,9 @@ describe('LeaveboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ LeaveboardComponent ]
-    })
+    declarations: [LeaveboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

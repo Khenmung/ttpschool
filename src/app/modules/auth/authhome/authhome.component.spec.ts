@@ -8,8 +8,9 @@ describe('AuthHomeComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AuthHomeComponent ]
-    })
+    declarations: [AuthHomeComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

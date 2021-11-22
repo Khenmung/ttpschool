@@ -8,8 +8,9 @@ describe('MiscboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MiscboardComponent ]
-    })
+    declarations: [MiscboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

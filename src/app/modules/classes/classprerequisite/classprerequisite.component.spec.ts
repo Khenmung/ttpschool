@@ -8,8 +8,9 @@ describe('ClassprerequisiteComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClassprerequisiteComponent ]
-    })
+    declarations: [ClassprerequisiteComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

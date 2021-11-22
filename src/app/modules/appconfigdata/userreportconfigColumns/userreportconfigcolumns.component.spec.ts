@@ -8,8 +8,9 @@ describe('UserreportconfigComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserReportConfigColumnsComponent ]
-    })
+    declarations: [UserReportConfigColumnsComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

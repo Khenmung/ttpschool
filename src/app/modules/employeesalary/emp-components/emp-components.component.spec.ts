@@ -8,8 +8,9 @@ describe('GradeComponentsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmpComponentsComponent ]
-    })
+    declarations: [EmpComponentsComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

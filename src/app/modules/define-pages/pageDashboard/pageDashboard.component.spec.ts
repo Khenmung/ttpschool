@@ -8,8 +8,9 @@ describe('PagecontentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ pageDashboardComponent ]
-    })
+    declarations: [pageDashboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

@@ -8,8 +8,9 @@ describe('EmployeeboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmployeeboardComponent ]
-    })
+    declarations: [EmployeeboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

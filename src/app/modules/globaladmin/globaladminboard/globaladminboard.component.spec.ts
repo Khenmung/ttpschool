@@ -8,8 +8,9 @@ describe('GlobaladminboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GlobaladminboardComponent ]
-    })
+    declarations: [GlobaladminboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

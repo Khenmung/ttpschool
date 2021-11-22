@@ -8,8 +8,9 @@ describe('MultiLevelMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MultiLevelMenuComponent ]
-    })
+    declarations: [MultiLevelMenuComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

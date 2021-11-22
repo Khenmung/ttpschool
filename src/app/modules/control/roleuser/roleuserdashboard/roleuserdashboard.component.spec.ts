@@ -8,8 +8,9 @@ describe('ApproleuserdashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ roleuserdashboardComponent ]
-    })
+    declarations: [roleuserdashboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

@@ -8,8 +8,9 @@ describe('EmpmanagementboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EmpmanagementboardComponent ]
-    })
+    declarations: [EmpmanagementboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

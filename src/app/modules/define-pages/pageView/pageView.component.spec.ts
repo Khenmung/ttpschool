@@ -8,8 +8,9 @@ describe('DetailspostComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ pageViewComponent ]
-    })
+    declarations: [pageViewComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

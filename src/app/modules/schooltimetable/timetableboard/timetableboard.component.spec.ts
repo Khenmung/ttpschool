@@ -8,8 +8,9 @@ describe('TimetableboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TimetableboardComponent ]
-    })
+    declarations: [TimetableboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

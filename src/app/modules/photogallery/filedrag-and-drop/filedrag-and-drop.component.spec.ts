@@ -8,8 +8,9 @@ describe('FiledragAndDropComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FiledragAndDropComponent ]
-    })
+    declarations: [FiledragAndDropComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

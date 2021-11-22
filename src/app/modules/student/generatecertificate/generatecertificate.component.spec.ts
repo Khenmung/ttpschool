@@ -8,8 +8,9 @@ describe('IssueCertificateComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ GenerateCertificateComponent ]
-    })
+    declarations: [GenerateCertificateComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

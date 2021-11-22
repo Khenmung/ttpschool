@@ -8,8 +8,9 @@ describe('CustomerinvoicecomponentsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CustomerinvoicecomponentsComponent ]
-    })
+    declarations: [CustomerinvoicecomponentsComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

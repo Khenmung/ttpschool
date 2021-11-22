@@ -8,8 +8,9 @@ describe('StudentSubjectMarkCompComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StudentSubjectMarkCompComponent ]
-    })
+    declarations: [StudentSubjectMarkCompComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

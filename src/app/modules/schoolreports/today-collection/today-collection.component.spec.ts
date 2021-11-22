@@ -8,8 +8,9 @@ describe('TodayCollectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TodayCollectionComponent ]
-    })
+    declarations: [TodayCollectionComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

@@ -8,8 +8,9 @@ describe('AlbumsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AlbumsComponent ]
-    })
+    declarations: [AlbumsComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

@@ -8,8 +8,9 @@ describe('SchooltimetableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SchooltimetableComponent ]
-    })
+    declarations: [SchooltimetableComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

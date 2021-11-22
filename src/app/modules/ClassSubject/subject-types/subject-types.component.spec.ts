@@ -8,8 +8,9 @@ describe('SubjectTypesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SubjectTypesComponent ]
-    })
+    declarations: [SubjectTypesComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

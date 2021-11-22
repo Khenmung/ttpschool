@@ -8,8 +8,9 @@ describe('ApproleuseraddComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ roleuseraddComponent ]
-    })
+    declarations: [roleuseraddComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

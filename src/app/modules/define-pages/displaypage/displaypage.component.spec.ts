@@ -8,8 +8,9 @@ describe('DisplaypageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DisplaypageComponent ]
-    })
+    declarations: [DisplaypageComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

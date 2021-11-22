@@ -8,8 +8,9 @@ describe('BatchdashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ BatchdashboardComponent ]
-    })
+    declarations: [BatchdashboardComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

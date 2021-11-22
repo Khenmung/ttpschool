@@ -8,8 +8,9 @@ describe('FeecollectionreportComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FeecollectionreportComponent ]
-    })
+    declarations: [FeecollectionreportComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

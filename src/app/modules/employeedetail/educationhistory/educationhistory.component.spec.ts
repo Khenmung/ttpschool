@@ -8,8 +8,9 @@ describe('EducationhistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EducationhistoryComponent ]
-    })
+    declarations: [EducationhistoryComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

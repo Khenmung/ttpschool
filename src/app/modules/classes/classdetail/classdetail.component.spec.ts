@@ -8,8 +8,9 @@ describe('ClassdetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClassdetailComponent ]
-    })
+    declarations: [ClassdetailComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

@@ -8,8 +8,9 @@ describe('PhotobrowserComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PhotobrowserComponent ]
-    })
+    declarations: [PhotobrowserComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

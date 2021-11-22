@@ -8,8 +8,9 @@ describe('StudentprogressreportComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StudentprogressreportComponent ]
-    })
+    declarations: [StudentprogressreportComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 

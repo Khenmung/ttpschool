@@ -8,8 +8,9 @@ describe('NestedmenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NestedmenuComponent ]
-    })
+    declarations: [NestedmenuComponent],
+    teardown: { destroyAfterEach: false }
+})
     .compileComponents();
   });
 
