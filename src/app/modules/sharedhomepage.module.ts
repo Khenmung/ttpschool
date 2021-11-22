@@ -10,7 +10,6 @@ import { RouterModule } from '@angular/router';
 import { RightComponent } from '../shared/components/right/right.component';
 import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { NestedmenuComponent } from './shared/components/nestedmenu/nestedmenu.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const sharedHomeComponent = [

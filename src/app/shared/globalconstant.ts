@@ -184,6 +184,7 @@ export class globalconstants {
                 "PAYMENTSTATUS": "payment status"
             },
             "school": {
+                "RESTRICTION": "information restriction",
                 "REPORTNAMES": "edu report name",
                 "DURATION": "duration",
                 "STUDYAREA": "study area",

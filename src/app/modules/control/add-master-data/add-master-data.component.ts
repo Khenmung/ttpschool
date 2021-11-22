@@ -19,6 +19,7 @@ import { List } from '../../../shared/interface';
 export class AddMasterDataComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  Parent='';
   topMaster = 0;
   MasterData = [];
   FeeNames = [];
@@ -255,15 +256,16 @@ export class AddMasterDataComponent implements OnInit {
     //debugger;
     element.Action = true;
   }
-  enable(elment) {
+  enable(element) {
     debugger;
-    if (elment.value > 0)
+    if (element.value > 0)
       this.enableTopEdit = true;
     else
       this.enableTopEdit = false;
     this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
       || t.ParentId == this.SelectedApplicationId);
-  }
+    
+    }
   FilterMaster() {
     debugger;
     this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
@@ -343,6 +345,7 @@ export class AddMasterDataComponent implements OnInit {
     this.enableTopEdit = false;
     this.enableAddNew = true;
     this.MasterData = [];
+    this.Parent ='';
     this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
     // this.datasource.paginator = this.paginator;
     // this.datasource.sort = this.sort;
@@ -378,6 +381,8 @@ export class AddMasterDataComponent implements OnInit {
           this.alert.error("No record found.", this.optionAutoClose);
 
         }
+        this.Parent = this.TopMasters.filter(f=>f.MasterDataId == this.searchForm.get("ParentId").value)[0].MasterDataName;
+        console.log("parent",this.Parent)
         this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;

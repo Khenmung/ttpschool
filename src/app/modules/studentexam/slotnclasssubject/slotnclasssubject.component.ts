@@ -413,19 +413,21 @@ export class SlotnclasssubjectComponent implements OnInit {
             else {
               var clssubject = this.ClassSubjectList.filter(cs => cs.SubjectId == this.searchForm.get("searchSubjectId").value &&
                 this.searchForm.get("searchClassId").value.indexOf(cs.ClassId) > -1)
-              var _classSubjectId = clssubject[0].ClassSubjectId;
+              if (clssubject.length > 0) {
+                var _classSubjectId = clssubject[0].ClassSubjectId;
 
-              this.SlotNClassSubjects.push({
-                SlotClassSubjectId: 0,
-                SlotId: this.searchForm.get("searchSlotId").value,
-                Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
-                ClassSubjectId: clssubject[0].ClassSubjectId,
-                ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == _classSubjectId)[0].ClassSubject,
-                SubjectId: clssubject[0].SubjectId,
-                ClassId: clssubject[0].ClassId,
-                Active: 0,
-                Action: false
-              });
+                this.SlotNClassSubjects.push({
+                  SlotClassSubjectId: 0,
+                  SlotId: this.searchForm.get("searchSlotId").value,
+                  Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
+                  ClassSubjectId: clssubject[0].ClassSubjectId,
+                  ClassSubject: this.ClassSubjectList.filter(f => f.ClassSubjectId == _classSubjectId)[0].ClassSubject,
+                  SubjectId: clssubject[0].SubjectId,
+                  ClassId: clssubject[0].ClassId,
+                  Active: 0,
+                  Action: false
+                });
+              }
             }
           }
         }
