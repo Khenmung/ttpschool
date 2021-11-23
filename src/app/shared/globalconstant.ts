@@ -79,6 +79,12 @@ export class globalconstants {
                     'ROLEUSER': 'role user',
                     'USERS': 'user',
                     'MASTERS': 'Essential Data'
+                },
+                "misc":{
+                    "MISC":"misc",
+                    "CALENDAR":"calendar",
+                    "NEWS":"news",
+                    "EVENT":"event"
                 }
             },
             "emp":{

@@ -30,7 +30,8 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="200">
                             <mat-label>End Date</mat-label>
-                            <input [value]="element.EndDate" [(ngModel)]="element.EndDate" matInput [matDatepicker]="EndDate" autocomplete="off">
+                            <input [value]="element.EndDate" [(ngModel)]="element.EndDate" 
+                            matInput [matDatepicker]="EndDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="EndDate"></mat-datepicker-toggle>
                             <mat-datepicker #EndDate></mat-datepicker>
                         </mat-form-field>

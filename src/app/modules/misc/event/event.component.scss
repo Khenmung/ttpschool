@@ -1,0 +1,15 @@
+
+.mat-column-Id,.mat-column-Active,.mat-column-Action{
+    flex:1 0 70px;
+    justify-content: center;
+}
+.mat-column-EventName,.mat-column-Venue,.mat-column-EventStartDate,.mat-column-EventEndDate{
+    flex:1 0 150px;
+}
+.mat-column-Description{
+    flex:1 0 200px;
+}
+table {
+    width: 100%;
+    table-layout: fixed;
+  }

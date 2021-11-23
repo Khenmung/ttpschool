@@ -5,6 +5,11 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { MiscComponents, MiscRoutingModule } from './misc-routing.module';
 import { MiscboardComponent } from './miscboard/miscboard.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/shared/material/material.module';
+import { SharedhomepageModule } from '../sharedhomepage.module';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 FullCalendarModule.registerPlugins([ 
@@ -16,8 +21,14 @@ FullCalendarModule.registerPlugins([
   declarations: [MiscComponents, MiscboardComponent],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    SharedhomepageModule,
+    SharedModule,
     MiscRoutingModule,
-    FullCalendarModule
+    FullCalendarModule,
+    NgbModule
   ],
   exports:[MiscComponents]
 })
