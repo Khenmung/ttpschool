@@ -232,10 +232,18 @@ export class ExamslotComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        var _examName='';
+        var _startDate,_endDate =null; 
         this.Exams = data.value.map(e => {
+          _examName='';
+          var examobj= this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if(examobj.length>0)
+          {
+            _examName = examobj[0].MasterDataName + " (" + this.datepipe.transform(e.StartDate,'dd/MM/yyyy') + " - " + this.datepipe.transform(e.EndDate,'dd/MM/yyyy') + ")";
+          }
           return {
             ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName,
+            ExamName: _examName,
             StartDate: e.StartDate,
             EndDate: e.EndDate
           }
@@ -262,7 +270,8 @@ export class ExamslotComponent implements OnInit {
     _startDate.setHours(0, 0, 0, 0);
     _endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
-
+    _filterExamDate.setHours(0,0,0,0);
+    
     if (!_filterExamDate != null) {
 
       filterstr += " and ExamDate eq " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');

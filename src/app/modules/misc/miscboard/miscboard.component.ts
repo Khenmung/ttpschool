@@ -6,6 +6,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { EventComponent } from '../event/event.component';
+import { HolidayComponent } from '../holiday/holiday.component';
 
 @Component({
   selector: 'app-miscboard',
@@ -16,10 +17,12 @@ export class MiscboardComponent implements AfterViewInit {
 
   components = [
     CalendarComponent,
-    EventComponent
+    EventComponent,
+    HolidayComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
   ];
@@ -52,7 +55,7 @@ export class MiscboardComponent implements AfterViewInit {
     }
     
     this.GenerateComponent(globalconstants.Pages.common.misc.CALENDAR)
-    // this.GenerateComponent(globalconstants.Pages.common.misc.NEWS)
+    this.GenerateComponent(globalconstants.Pages.common.misc.HOLIDAY)
     this.GenerateComponent(globalconstants.Pages.common.misc.EVENT)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
@@ -86,6 +89,9 @@ export class MiscboardComponent implements AfterViewInit {
         break;
       case "event":
         comindx =this.components.indexOf(EventComponent);
+        break;     
+      case "holiday":
+        comindx =this.components.indexOf(HolidayComponent);
         break;     
     } 
     

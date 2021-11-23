@@ -84,7 +84,8 @@ export class globalconstants {
                     "MISC":"misc",
                     "CALENDAR":"calendar",
                     "NEWS":"news",
-                    "EVENT":"event"
+                    "EVENT":"event",
+                    "HOLIDAY":"holiday"
                 }
             },
             "emp":{
@@ -177,6 +178,7 @@ export class globalconstants {
                 "COUNTRY": "country",
                 "CATEGORY": "category",
                 "BLOODGROUP": "blood group",
+                "HOLIDAYLIST": "holiday type",
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",
