@@ -350,7 +350,12 @@ export class SubjectDetailComponent implements OnInit {
     this.DataCountToSave = 0;
     //debugger;
     this.loading = true;
-
+    if(row.SubjectTypeId==0)
+    {
+      this.alert.error("Please select subject type.", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
     var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
     if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
       this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
@@ -362,7 +367,7 @@ export class SubjectDetailComponent implements OnInit {
       this.loading = false;
       return;
     }
-    console.log("row.TeacherId", row.TeacherId);
+    //console.log("row.TeacherId", row.TeacherId);
     if (row.TeacherId == 0) {
       this.alert.error("Please select teacher for the subject.", this.optionsNoAutoClose);
       this.loading = false;

@@ -9,7 +9,10 @@ button {
 mat-cell:first-of-type {
     padding-left: 0px;
 }
-
-.mat-column-Active {
+.mat-column-StartDate,.mat-column-EndDate{
+    flex:0 0 130px;
+}
+.mat-column-Active,.mat-column-ReleaseResult {
     justify-content: center;
+    flex:0 0 70px;
 }

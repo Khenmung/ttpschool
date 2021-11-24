@@ -37,22 +37,33 @@
                 </button>
             </form>
             <p>Record will be displayed if it is defined in class subject module.</p>
-            <div fxLayout="row" *ngFor="let row of ClassWiseSubjectDisplay;let topindx=index">
-
-                <div style="padding: 15px 15px 0px 15px;" *ngFor="let cell of row|keyvalue">
-                    <div style="display: block;justify-content: center;" *ngIf="cell.key!='ClassId'">
-                        {{cell.key=='ClassName'?cell.value:cell.key}}
-                        <mat-checkbox matTooltip="select all in row"
-                            *ngIf="cell.key !='ClassName'" (click)="$event.stopPropagation()"
-                            (change)="SelectAllInRow(row,$event,cell.value)" [checked]="cell.value==1?true:false">
+            <!-- <div *ngIf="ClassWiseSubjectDisplay.length>0"
+                style="display:flex;padding-bottom: 10px;justify-content: end;width: 60%;">
+                <button [disabled]="loading || Permission=='read'" matTooltip="save" mat-mini-fab (click)="SaveAll()">
+                    <mat-icon>all_out</mat-icon>
+                </button>
+            </div> -->
+            <mat-divider></mat-divider>
+            <div style="place-items: center;border-bottom:1px solid lightgray;" fxLayout="row"
+                *ngFor="let row of ClassWiseSubjectDisplay; let indx=index;">
+                <div style="min-width: 130px;">{{row['ClassName']}}</div>
+                <div style="min-width: 900px;max-width: 900px; display:flex; flex-direction: row;padding: 10px 0px 5px 0px">
+                    <div *ngFor="let cell of row|keyvalue">
+                        <mat-checkbox matTooltip="select {{cell.key}}"
+                            *ngIf="cell.key!='ClassName' && cell.key!='Action' && cell.key!='Selected'"
+                            (click)="$event.stopPropagation()"                            
+                            (change)="updateActive(row,$event,cell.key)"
+                            [checked]="cell.value===1">
+                            <div style="padding-right: 25px;">{{cell.key}}</div>
                         </mat-checkbox>
                     </div>
                 </div>
-                <button [disabled]="loading || Permission=='read' || !row.Action" matTooltip="save"
-                        mat-mini-fab (click)="SaveRow(row)">
-                        <mat-icon>save</mat-icon>
-                    </button>
-                <mat-divider></mat-divider>
+
+                <button [disabled]="loading || Permission=='read' || !row.Action" matTooltip="save" mat-mini-fab
+                    (click)="SaveRow(row)">
+                    <mat-icon>save</mat-icon>
+                </button>
+
 
             </div>
         </div>

@@ -17,7 +17,7 @@
                 <ng-container matColumnDef="StartDate">
                     <mat-header-cell *matHeaderCellDef> Start Date </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="200">
+                        <mat-form-field appearance="outline" [style.width.px]="130">
                             <mat-label>Start Date</mat-label>
                             <input [(ngModel)]="element.StartDate" [value]="element.StartDate" matInput [matDatepicker]="StartDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="StartDate"></mat-datepicker-toggle>
@@ -28,13 +28,28 @@
                 <ng-container matColumnDef="EndDate">
                     <mat-header-cell *matHeaderCellDef> End Date </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="200">
+                        <mat-form-field appearance="outline" [style.width.px]="130">
                             <mat-label>End Date</mat-label>
                             <input [value]="element.EndDate" [(ngModel)]="element.EndDate" 
                             matInput [matDatepicker]="EndDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="EndDate"></mat-datepicker-toggle>
                             <mat-datepicker #EndDate></mat-datepicker>
                         </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ReleaseResult">
+                    <mat-header-cell *matHeaderCellDef> Release Result </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateRelease(element,$event)"
+                            [checked]="element.ReleaseResult==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ReleaseDate">
+                    <mat-header-cell *matHeaderCellDef>ReleaseDate
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ReleaseDate|date:'dd/MM/yyyy'}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">

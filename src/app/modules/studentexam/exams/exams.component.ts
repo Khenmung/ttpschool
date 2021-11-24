@@ -41,6 +41,8 @@ export class ExamsComponent implements OnInit {
     ExamNameId: 0,
     StartDate: Date,
     EndDate: Date,
+    ReleaseResult: 0,
+    ReleaseDate: null,
     OrgId: 0,
     BatchId: 0,
     Active: 1
@@ -49,6 +51,8 @@ export class ExamsComponent implements OnInit {
     'ExamName',
     'StartDate',
     'EndDate',
+    'ReleaseResult',
+    'ReleaseDate',
     'Active',
     'Action'
   ];
@@ -103,6 +107,8 @@ export class ExamsComponent implements OnInit {
       ExamName: '',
       StartDate: new Date(),
       EndDate: new Date(),
+      ReleaseResult: 0,
+      ReleaseDate: null,
       BatchId: 0,
       OrgId: 0,
       Active: 0,
@@ -113,9 +119,13 @@ export class ExamsComponent implements OnInit {
     this.dataSource = new MatTableDataSource<IExams>(this.Exams);
 
   }
+  updateRelease(row, value) {
+    row.Action = true;
+    row.ReleaseResult = value.checked ? 1 : 0;
+  }
   updateActive(row, value) {
     row.Action = true;
-    row.Active = row.Active == 1 ? 0 : 1;
+    row.Active = value.checked? 1 : 0;
   }
   delete(element) {
     let toupdate = {
@@ -159,6 +169,8 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.ExamNameId = row.ExamNameId;
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
+          this.ExamsData.ReleaseResult = row.ReleaseResult;
+          this.ExamsData.ReleaseDate = row.ReleaseDate;          
           this.ExamsData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ExamsData.BatchId = this.SelectedBatchId;
           //console.log('data', this.ClassSubjectData);
@@ -207,7 +219,8 @@ export class ExamsComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate", "OrgId", "BatchId", "Active"];
+    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate",
+                    "ReleaseResult","ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -229,6 +242,8 @@ export class ExamsComponent implements OnInit {
               ExamName: e.MasterDataName,
               StartDate: new Date(),
               EndDate: new Date(),
+              ReleaseResult:0,
+              ReleaseDate:null,
               OrgId: 0,
               BatchId: 0,
               Active: 0,
@@ -290,6 +305,8 @@ export interface IExams {
   ExamName: string;
   StartDate: Date;
   EndDate: Date;
+  ReleaseResult: number;
+  ReleaseDate: Date;
   OrgId: number;
   BatchId: number;
   Active: number;

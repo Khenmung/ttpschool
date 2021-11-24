@@ -303,7 +303,10 @@ export class ResultsComponent implements OnInit {
                 }
               }
             })
-
+            if(this.ExamStudentSubjectResult.length==0)
+            {
+              this.alert.info("No Result found for this class/section.")
+            }
             this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
             this.dataSource.sort = this.sort;
             this.dataSource.paginator = this.paginator;
@@ -346,7 +349,7 @@ export class ResultsComponent implements OnInit {
 
     list.fields = ["ExamId", "ExamNameId"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and ReleaseResult eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
