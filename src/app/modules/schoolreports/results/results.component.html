@@ -43,10 +43,10 @@
             <mat-table #table [dataSource]="dataSource" matSort>                
             
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{disCol!='Action'?disCol:''}}                      
+                    <mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'justify-content':'center'}">{{disCol!='Action'?disCol:''}}                      
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element ">                        
-                        {{element[disCol]}}                                      
+                    <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':disCol!='Student'?'center':'start'}">                        
+                       {{element[disCol]}}                                    
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -49,7 +49,7 @@
             <mat-table #table [dataSource]="dataSource">          
                 
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef>{{disCol}}                      
+                    <mat-header-cell *matHeaderCellDef>                      
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" [innerHTML]="element[disCol]">                        
                                                              

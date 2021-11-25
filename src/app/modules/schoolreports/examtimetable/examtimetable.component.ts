@@ -80,7 +80,7 @@ export class ExamtimetableComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    console.log('loginuserdetail',this.LoginUserDetail)
+    console.log('loginuserdetail', this.LoginUserDetail)
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -88,16 +88,17 @@ export class ExamtimetableComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-      console.log('this.Permission',this.Permission)
+      console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
+          this.GetMasterData();
         });
 
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
-        this.GetMasterData();
+
       }
     }
   }
@@ -125,8 +126,15 @@ export class ExamtimetableComponent implements OnInit {
         //debugger;
         //  console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
-          var _class = this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName;
-          var _subject = this.Subjects.filter(c => c.MasterDataId == item.SubjectId)[0].MasterDataName;
+          var _class = '';
+          var clsObj = this.Classes.filter(c => c.ClassId == item.ClassId);
+          if (clsObj.length > 0)
+            _class = clsObj[0].ClassName
+          var _subject = '';
+          var subjObj = this.Subjects.filter(c => c.MasterDataId == item.SubjectId);
+          if (subjObj.length > 0)
+            _subject = subjObj[0].MasterDataName;
+
           return {
             ClassSubjectId: item.ClassSubjectId,
             ClassSubject: _class + " - " + _subject,
@@ -180,9 +188,9 @@ export class ExamtimetableComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var filteredExams = data.value.filter(d => d.ExamId == this.searchForm.get("searchExamId").value)
+        //var filteredExams = data.value.filter(d => d.ExamId == this.searchForm.get("searchExamId").value)
 
-        this.ExamSlots = filteredExams.map(s => {
+        this.ExamSlots = data.value.map(s => {
 
           let exams = this.ExamNames.filter(e => e.MasterDataId == s.Exam.ExamNameId);
           var _slotName = this.SlotNames.filter(e => e.MasterDataId == s.SlotNameId)[0].MasterDataName;
@@ -194,10 +202,13 @@ export class ExamtimetableComponent implements OnInit {
           return {
             SlotId: s.ExamSlotId,
             SlotName: _slotName + " - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - " + s.StartTime + " - " + s.EndTime,
-            ExamName: _examname
+            ExamName: _examname,
+            ExamDate: s.ExamDate,
+            StartTime: s.StartTime,
+            EndTime: s.EndTime
           }
         })
-        this.GetClassSubject();
+
 
       })
   }
@@ -219,7 +230,7 @@ export class ExamtimetableComponent implements OnInit {
       "Active"];
     list.PageName = "SlotAndClassSubjects";
     list.lookupFields = ["ClassSubject($select=ClassSubjectId,SubjectId,ClassId)",
-      "Slot($select=SlotNameId,ExamId,ExamDate,StartTime,EndTime)"];
+      "Slot($filter=Active eq 1;$select=SlotNameId,ExamId,ExamDate,StartTime,EndTime)"];
     list.filter = [filterstr + orgIdSearchstr];
 
     this.dataservice.get(list)
@@ -231,67 +242,90 @@ export class ExamtimetableComponent implements OnInit {
         else
           filteredData = data.value.filter(d => d.Slot.ExamId == this.searchForm.get("searchExamId").value);
 
-        var dateTable = [];
         this.SlotNClassSubjects = [];
         this.displayedColumns = [];
         var _EachExamDate = alasql("select distinct Slot->ExamDate as ExamDate from ? ", [filteredData]);
-        var filteredEachExamDate = [];
-        //debugger;
+        var filteredOneSlotSubjects = [];
+
+        debugger;
 
         //preparing data for each exam date
+        //var timeTableRow = {};
+        var SubjectRow = {};
         _EachExamDate.forEach(edate => {
+          var RowsForOneExamDate = [];
 
-          dateTable = [];
-          var _examDate = this.datepipe.transform(edate.ExamDate, 'dd/MM/yyyy');
+          var header = {};
+          var SlotRow = {};
+          var _examDate = new Date(edate.ExamDate);
+          //_examDate.setHours(0,0,0,0);
+          var day = this.weekday[_examDate.getDay()]
+          var _dateHeader = this.datepipe.transform(_examDate, 'dd/MM/yyyy') + " - " + day;
+          var timeTableRow = [];
+          //this.SlotNClassSubjects.push(timeTableRow);
 
-          //filtering only for one exam date
-          filteredEachExamDate = filteredData.filter(f => this.datepipe.transform(f.Slot.ExamDate, 'dd/MM/yyyy') == this.datepipe.transform(edate.ExamDate, 'dd/MM/yyyy'));
-          var day = this.weekday[new Date(edate.ExamDate).getDay()]
-          var _dateHeader = "<b>" + _examDate + " - " + day + "</b>";
-          filteredEachExamDate.forEach(f => {
-            var _subject = this.Subjects.filter(s => s.MasterDataId == f.ClassSubject.SubjectId)[0].MasterDataName;
-            var _class = this.Classes.filter(s => s.MasterDataId == f.ClassSubject.ClassId);
-            var _className = '';
-            var _classSequence = '';
-            if (_class.length > 0) {
-              _classSequence = _class[0].Sequence;
-              _className = _class[0].MasterDataName;
-            }
-
-            var _slotName = this.SlotNames.filter(s => s.MasterDataId == f.Slot.SlotNameId)[0].MasterDataName;
-            var _slotColumn = _slotName + " (" + f.Slot.StartTime + "-" + f.Slot.EndTime + ")";
-            var _classSubject = _className + " " + _subject;
-
-            if (!this.displayedColumns.includes(_slotColumn)) {
-              this.displayedColumns.push(_slotColumn);
-              dateTable[_slotColumn] = '';
-            }
-            var emptyrowForThisCol = dateTable.filter(d => d[_slotColumn] == '' || d[_slotColumn] == null);
-            if (emptyrowForThisCol.length > 0)
-              emptyrowForThisCol[0][_slotColumn] = _classSubject;
+          var examDateSlot = this.ExamSlots.filter(f => new Date(f.ExamDate).getTime() === new Date(_examDate).getTime());
+          //timeTableRow = {};
+          SubjectRow = {};
+          examDateSlot.forEach((slot, index) => {
+            var oneSlotClasslist = [];
+            if (index == 0)
+              header["Slot0"] = _dateHeader;
             else
-              dateTable.push({
-                ExamDate: _examDate,
-                [_slotColumn]: _classSubject,
-                Sequence: _classSequence
+              header["Slot" + index] = '';            
+              SlotRow["Slot" + index] = slot.SlotName;
+
+            if (this.displayedColumns.indexOf("Slot" + index) == -1)
+              this.displayedColumns.push("Slot" + index);
+
+            //filtering only for one slot in one exam date
+            filteredOneSlotSubjects = filteredData.filter(f => f.SlotId == slot.SlotId
+              && this.datepipe.transform(f.Slot.ExamDate, 'dd/MM/yyyy') == this.datepipe.transform(edate.ExamDate, 'dd/MM/yyyy'));
+            //timeTableRow["ExamDate"]["slot" + index]["ClassSubject"] = [];
+
+            var distinctClasses = alasql("select distinct ClassSubject->ClassId as ClassId from ? ", [filteredOneSlotSubjects]);
+            oneSlotClasslist = distinctClasses.map(d => {
+              var _classobj = this.Classes.filter(s => s.ClassId == d.ClassId);
+              var _className = '';
+              var _classSequence = '';
+              if (_classobj.length > 0) {
+                _classSequence = _classobj[0].Sequence;
+                _className = _classobj[0].ClassName;
+              }
+              //timeTableRow.push({ "ClassName": _className })
+              return { ["Slot" + index]: slot.SlotName, "ClassName": _className, "ClassId": d.ClassId, "Sequence": _classSequence, "Subjects": '' }
+            });
+
+            //console.log("distinctClasses", classIdlist);
+            filteredOneSlotSubjects.forEach(f => {
+              var _subject = this.Subjects.filter(s => s.MasterDataId == f.ClassSubject.SubjectId)[0].MasterDataName;
+              var classobj = oneSlotClasslist.filter(c => c.ClassId == f.ClassSubject.ClassId)
+              if (classobj.length > 0)
+                classobj[0].Subjects += classobj[0].Subjects.length == 0 ? classobj[0].ClassName + " - " + _subject : ", " + _subject
+            })
+            if (timeTableRow.length == 0) {
+              oneSlotClasslist.forEach((r) => {
+                timeTableRow.push({ ["Slot" + index]: r.Subjects })
               })
+            }
+            else{
+              oneSlotClasslist.forEach((r, inx) => {
+                timeTableRow[inx]["Slot" + index]= r.Subjects;
+              })
+            }
+            console.log("timeTableRow", timeTableRow)
           })
 
-          //sort class wise.
-          dateTable.sort((a, b) => a.Sequence - b.Sequence);
+          this.SlotNClassSubjects.push(header);
+          this.SlotNClassSubjects.push(SlotRow);
+          RowsForOneExamDate.push(...timeTableRow);
 
-          //preparing date header
-          var row = JSON.parse(JSON.stringify(dateTable[0]));
-          this.displayedColumns.forEach((c, index) => {
-            row[c] = index == 0 ? _dateHeader : '';
+          RowsForOneExamDate.forEach(row => {
+            this.SlotNClassSubjects.push(row);
           })
+          //this.SlotNClassSubjects.push(...timeTableRow);
 
-          //inserting date header
-          dateTable.splice(0, 0, row);
-
-          //merging arrays;
-          this.SlotNClassSubjects = [...this.SlotNClassSubjects, ...dateTable];
-
+          console.log("SlotNClassSubjects", this.SlotNClassSubjects)
         })
         this.dataSource = new MatTableDataSource<any>(this.SlotNClassSubjects);
         this.loading = false;
@@ -318,7 +352,8 @@ export class ExamtimetableComponent implements OnInit {
 
         this.shareddata.ChangeBatch(this.Batches);
         this.GetExams();
-        //this.GetExamSlots();
+        this.GetExamSlots();
+        this.GetClassSubject();
       });
   }
   getDropDownData(dropdowntype) {

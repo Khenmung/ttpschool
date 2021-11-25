@@ -255,7 +255,7 @@ export class ResultsComponent implements OnInit {
             filteredStudentSubjects.forEach(f => {
               var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
               if (stud.length > 0)
-                f.Student = stud[0].Student.FirstName + "-" + stud[0].Student.LastName + "-" + f.Student;
+                f.Student = f.Student + "-" + stud[0].Student.FirstName + "-" + stud[0].Student.LastName;
             })
 
             var filteredIndividualStud = alasql("select distinct Student from ? ", [filteredStudentSubjects]);

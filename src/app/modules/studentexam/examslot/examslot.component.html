@@ -29,6 +29,14 @@
                 </button> -->
             </form>
             <mat-table #table [dataSource]="dataSource">
+                
+                <ng-container matColumnDef="ExamSlotId">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                        {{element.ExamSlotId}}
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="ExamName">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Exam
                     </mat-header-cell>

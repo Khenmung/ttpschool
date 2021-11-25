@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./examstudentsubjectresult.component.scss']
 })
 export class ExamstudentsubjectresultComponent implements OnInit {
-
+  ResultReleased=0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -101,12 +101,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       }
     }
   }
-  // GetCurrentBatchIDnAssign() {
-  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-  //   if (CurrentBatches.length > 0) {
-  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
-  //   }
-  // }
+  GetResultReleased(source){
+      this.ResultReleased = this.Exams.filter(e=>e.ExamId == source.value)[0].ReleaseResult;
+  }
   updateActive(row, value) {
     //if(!row.Action)
     row.Action = !row.Action;
@@ -528,7 +525,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId"];
+    list.fields = ["ExamId", "ExamNameId","ReleaseResult"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -538,7 +535,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.Exams = data.value.map(e => {
           return {
             ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
+            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName,
+            ReleaseResult:e.ReleaseResult
           }
         })
         this.GetStudentSubjects();

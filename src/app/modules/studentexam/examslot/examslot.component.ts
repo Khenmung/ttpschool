@@ -53,6 +53,7 @@ export class ExamslotComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
+    'ExamSlotId',
     'ExamDate',
     'SlotName',
     'StartTime',
