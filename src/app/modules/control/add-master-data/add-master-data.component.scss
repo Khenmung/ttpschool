@@ -47,16 +47,25 @@ button {
     //   margin : 5px;
     outline: none;
 }
-
+mat-cell:first-of-type{
+    padding-left: 0px;
+}
 mat-form-field {
     margin-right: 5px;
 }
-.mat-column-Name,.mat-column-Description,.mat-column-Logic {
-    flex:1 1 250px;
+.mat-table{
+    min-width:960px;
 }
-.mat-column-Sequence,.mat-column-Active,.mat-column-Id {
+.mat-column-MasterDataName,.mat-column-Description,.mat-column-Logic {
+    flex:1 0 250px;
+}
+.mat-column-Active{
     justify-content: center;
-    flex:1 1 50px;
+    flex:1 0 140px;
+}
+.mat-column-Sequence,.mat-column-MasterDataId {
+    justify-content: center;
+    flex:1 0 70px;
 }
 
 // mat-cell:first-of-type{

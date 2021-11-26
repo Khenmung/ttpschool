@@ -48,6 +48,7 @@ export class ExamslotComponent implements OnInit {
     StartTime: String,
     EndTime: String,
     ExamDate: Date,
+    Sequence:0,
     OrgId: 0,
     BatchId: 0,
     Active: 1
@@ -58,6 +59,7 @@ export class ExamslotComponent implements OnInit {
     'SlotName',
     'StartTime',
     'EndTime',
+    'Sequence',
     'Active',
     'Action'
   ];
@@ -94,6 +96,12 @@ export class ExamslotComponent implements OnInit {
       this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
       this.GetMasterData();
     }
+  }
+  AssignExamDate(selected) {
+    var startdate = this.Exams.filter(f => f.ExamId == selected.value)[0].StartDate;
+    console.log("value", selected.value)
+
+    this.searchForm.patchValue({ "searchExamDate": startdate });
   }
   updateActive(row, value) {
     row.Action = true;
@@ -170,6 +178,7 @@ export class ExamslotComponent implements OnInit {
           this.ExamSlotsData.ExamDate = row.ExamDate;
           this.ExamSlotsData.StartTime = row.StartTime;
           this.ExamSlotsData.EndTime = row.EndTime;
+          this.ExamSlotsData.Sequence = row.Sequence;
           this.ExamSlotsData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ExamSlotsData.BatchId = this.SelectedBatchId;
           //console.log('data', this.ClassSubjectData);
@@ -233,14 +242,13 @@ export class ExamslotComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var _examName='';
-        var _startDate,_endDate =null; 
+        var _examName = '';
+        var _startDate, _endDate = null;
         this.Exams = data.value.map(e => {
-          _examName='';
-          var examobj= this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
-          if(examobj.length>0)
-          {
-            _examName = examobj[0].MasterDataName + " (" + this.datepipe.transform(e.StartDate,'dd/MM/yyyy') + " - " + this.datepipe.transform(e.EndDate,'dd/MM/yyyy') + ")";
+          _examName = '';
+          var examobj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (examobj.length > 0) {
+            _examName = examobj[0].MasterDataName + " (" + this.datepipe.transform(e.StartDate, 'dd/MM/yyyy') + " - " + this.datepipe.transform(e.EndDate, 'dd/MM/yyyy') + ")";
           }
           return {
             ExamId: e.ExamId,
@@ -271,8 +279,8 @@ export class ExamslotComponent implements OnInit {
     _startDate.setHours(0, 0, 0, 0);
     _endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
-    _filterExamDate.setHours(0,0,0,0);
-    
+    _filterExamDate.setHours(0, 0, 0, 0);
+
     if (!_filterExamDate != null) {
 
       filterstr += " and ExamDate eq " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
@@ -291,6 +299,7 @@ export class ExamslotComponent implements OnInit {
       "ExamDate",
       "StartTime",
       "EndTime",
+      "Sequence",
       "OrgId",
       "BatchId",
       "Active"];
@@ -335,6 +344,7 @@ export class ExamslotComponent implements OnInit {
                 WeekDay: day,
                 StartTime: '',
                 EndTime: '',
+                Sequence:0,
                 OrgId: 0,
                 BatchId: 0,
                 Active: 0,
@@ -397,6 +407,7 @@ export interface IExamSlots {
   WeekDay: string;
   StartTime: string;
   EndTime: string;
+  Sequence: number;
   OrgId: number;
   BatchId: number;
   Active: number;

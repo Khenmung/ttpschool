@@ -180,11 +180,12 @@ export class ExamtimetableComponent implements OnInit {
       "SlotNameId",
       "ExamDate",
       "StartTime",
+      "Sequence",
       "EndTime"];
     list.PageName = "ExamSlots";
     list.lookupFields = ["Exam($select=ExamNameId)"];
     list.filter = ["Active eq 1 " + orgIdSearchstr + filterstr];
-    //list.orderBy = "ParentId";
+    list.orderBy = "ExamId,Sequence";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -201,7 +202,7 @@ export class ExamtimetableComponent implements OnInit {
             _examname = exams[0].MasterDataName;
           return {
             SlotId: s.ExamSlotId,
-            SlotName: _slotName + " - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - " + s.StartTime + " - " + s.EndTime,
+            SlotName: _slotName + " - (" + s.StartTime + " - " + s.EndTime + ")",
             ExamName: _examname,
             ExamDate: s.ExamDate,
             StartTime: s.StartTime,
@@ -244,7 +245,7 @@ export class ExamtimetableComponent implements OnInit {
 
         this.SlotNClassSubjects = [];
         this.displayedColumns = [];
-        var _EachExamDate = alasql("select distinct Slot->ExamDate as ExamDate from ? ", [filteredData]);
+        var _EachExamDate = alasql("select distinct Slot->ExamDate as ExamDate from ? order by Slot->ExamDate", [filteredData]);
         var filteredOneSlotSubjects = [];
 
         debugger;
@@ -260,7 +261,7 @@ export class ExamtimetableComponent implements OnInit {
           var _examDate = new Date(edate.ExamDate);
           //_examDate.setHours(0,0,0,0);
           var day = this.weekday[_examDate.getDay()]
-          var _dateHeader = this.datepipe.transform(_examDate, 'dd/MM/yyyy') + " - " + day;
+          var _dateHeader = "<b>"+this.datepipe.transform(_examDate, 'dd/MM/yyyy') + " - " + day + "</b>";
           var timeTableRow = [];
           //this.SlotNClassSubjects.push(timeTableRow);
 
@@ -272,8 +273,8 @@ export class ExamtimetableComponent implements OnInit {
             if (index == 0)
               header["Slot0"] = _dateHeader;
             else
-              header["Slot" + index] = '';            
-              SlotRow["Slot" + index] = slot.SlotName;
+              header["Slot" + index] = '';
+            SlotRow["Slot" + index] = "<b>"+slot.SlotName + "</b>";
 
             if (this.displayedColumns.indexOf("Slot" + index) == -1)
               this.displayedColumns.push("Slot" + index);
@@ -308,9 +309,13 @@ export class ExamtimetableComponent implements OnInit {
                 timeTableRow.push({ ["Slot" + index]: r.Subjects })
               })
             }
-            else{
+            else {
+              var existingrow = timeTableRow.length;
               oneSlotClasslist.forEach((r, inx) => {
-                timeTableRow[inx]["Slot" + index]= r.Subjects;
+                if (existingrow <= inx)
+                  timeTableRow.push({ ["Slot" + index]: r.Subjects })
+                else
+                  timeTableRow[inx]["Slot" + index] = r.Subjects;
               })
             }
             console.log("timeTableRow", timeTableRow)

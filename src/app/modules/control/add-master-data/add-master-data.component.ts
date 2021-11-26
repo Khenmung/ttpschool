@@ -137,7 +137,7 @@ export class AddMasterDataComponent implements OnInit {
     //   this.ApplicationDropdownVisible = true;
     //   applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
     // }
-    applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
+    applicationFilter = "ApplicationId eq " + this.SelectedApplicationId
     let list: List = new List();
     list.fields = [
       "MasterDataId", "ParentId",
@@ -145,7 +145,7 @@ export class AddMasterDataComponent implements OnInit {
       "Logic", "Sequence", "ApplicationId",
       "Active", "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or OrgId eq " + this.OrgId + ")" + applicationFilter];
+    list.filter = ["(ParentId eq 0 and "+ applicationFilter +") or (OrgId eq " + this.OrgId + " and "+ applicationFilter +")"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {

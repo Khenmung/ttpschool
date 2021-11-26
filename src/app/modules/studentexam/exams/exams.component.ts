@@ -48,11 +48,12 @@ export class ExamsComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
+    'ExamId',
     'ExamName',
     'StartDate',
     'EndDate',
-    'ReleaseResult',
     'ReleaseDate',
+    'ReleaseResult',    
     'Active',
     'Action'
   ];

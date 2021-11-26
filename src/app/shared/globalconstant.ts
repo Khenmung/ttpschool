@@ -225,7 +225,9 @@ export class globalconstants {
                 "EXAMSTATUS": "exam status",
                 "SUBJECT": "subject",
                 "SUBJECTTYPE": "subject type",
-                "ATTENDANCESTATUS": "attendance status"
+                "ATTENDANCESTATUS": "attendance status",
+                "ROLLNOGENERATION": "Roll No Generation",
+
             },
             "leave": {
                 "REPORTNAMES": "leave report name",

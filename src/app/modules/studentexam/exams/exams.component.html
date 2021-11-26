@@ -7,6 +7,13 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="ExamId">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: left;">Id
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ExamId}}
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="ExamName">
                     <mat-header-cell *matHeaderCellDef>Exam Name
                     </mat-header-cell>

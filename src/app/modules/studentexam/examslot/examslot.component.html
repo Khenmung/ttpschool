@@ -9,7 +9,7 @@
             <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline">
                     <mat-label>Exam</mat-label>
-                    <mat-select formControlName="searchExamId">
+                    <mat-select formControlName="searchExamId" (selectionChange)="AssignExamDate($event)">
                         <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
                             {{item.ExamName}}
                         </mat-option>
@@ -36,7 +36,7 @@
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                         {{element.ExamSlotId}}
                     </mat-cell>
-                </ng-container>
+                </ng-container>localhost
                 <ng-container matColumnDef="ExamName">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Exam
                     </mat-header-cell>
@@ -77,6 +77,19 @@
                             <input [value]="element.EndTime"
                             (blur)="onBlur(element)"
                             [(ngModel)]="element.EndTime" matInput
+                               autocomplete="off">                            
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Sequence">
+                    <mat-header-cell *matHeaderCellDef>Sequence
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="legacy" [style.width.px]="100">
+                            <mat-label>sequence</mat-label>
+                            <input [value]="element.Sequence"
+                            (blur)="onBlur(element)"
+                            [(ngModel)]="element.Sequence" matInput
                                autocomplete="off">                            
                         </mat-form-field>
                     </mat-cell>

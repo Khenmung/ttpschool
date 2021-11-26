@@ -298,7 +298,7 @@ export class StudentprogressreportComponent implements OnInit {
 
     list.fields = ["ExamId", "ExamNameId"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and ReleaseResult eq 1 " + orgIdSearchstr];
     list.orderBy = "EndDate desc";
 
     this.dataservice.get(list)

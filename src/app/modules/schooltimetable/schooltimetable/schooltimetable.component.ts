@@ -263,57 +263,60 @@ export class SchooltimetableComponent implements OnInit {
         // iterate through class periods
 
         //console.log('this.WeekDays',this.WeekDays);
-        this.WeekDays.forEach(p => {
-          forDisplay = [];
-          forDisplay["Day"] = p.MasterDataName;
-          forDisplay["DayId"] = p.MasterDataId;
+        var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
+        if (filterPeriods.length == 0) {
+          this.alert.info("Period not yet defined for this class.", this.optionsNoAutoClose);
+          
+        }
+        else {
+          this.WeekDays.forEach(p => {
+            forDisplay = [];
+            forDisplay["Day"] = p.MasterDataName;
+            forDisplay["DayId"] = p.MasterDataId;
 
-          var forSelectedClsPeriods;
-          var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
+            var forSelectedClsPeriods;
 
-          forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
 
-          forSelectedClsPeriods.forEach(c => {
-            var _period = c.PeriodType.includes('Free Time') ? 'f_' + c.Period : c.Period;
+            forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
 
-            if (!this.displayedColumns.includes(_period))
-              this.displayedColumns.push(_period);
+            forSelectedClsPeriods.forEach(c => {
+              var _period = c.PeriodType.includes('Free Time') ? 'f_' + c.Period : c.Period;
 
-            var existing = dbTimeTable.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId && d.DayId == p.MasterDataId)
-            if (existing.length > 0) {
-              existing[0].Period = _period;
-              existing[0].Action = false;
-              this.StoredForUpdate.push(existing[0]);
-              forDisplay[c.Period] = existing[0].ClassSubjectId;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
-              forDisplay["Active"] = existing[0].Active;
-            }
-            else {
-              forDisplay[c.Period] = 0;
+              if (!this.displayedColumns.includes(_period))
+                this.displayedColumns.push(_period);
 
-              this.StoredForUpdate.push({
-                "TimeTableId": 0,
-                "DayId": p.MasterDataId,
-                "Day": p.MasterDataName,
-                "ClassId": c.ClassId,
-                "SectionId": this.searchForm.get("searchSectionId").value,
-                "SchoolClassPeriodId": c.SchoolClassPeriodId,
-                "ClassSubjectId": 0,
-                "Period": _period,
-                "Active": 0,
-                "Action": false
-              })
-            }
+              var existing = dbTimeTable.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId && d.DayId == p.MasterDataId)
+              if (existing.length > 0) {
+                existing[0].Period = _period;
+                existing[0].Action = false;
+                this.StoredForUpdate.push(existing[0]);
+                forDisplay[c.Period] = existing[0].ClassSubjectId;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
+                forDisplay["Active"] = existing[0].Active;
+              }
+              else {
+                forDisplay[c.Period] = 0;
+
+                this.StoredForUpdate.push({
+                  "TimeTableId": 0,
+                  "DayId": p.MasterDataId,
+                  "Day": p.MasterDataName,
+                  "ClassId": c.ClassId,
+                  "SectionId": this.searchForm.get("searchSectionId").value,
+                  "SchoolClassPeriodId": c.SchoolClassPeriodId,
+                  "ClassSubjectId": 0,
+                  "Period": _period,
+                  "Active": 0,
+                  "Action": false
+                })
+              }
+
+            })
+            forDisplay["Action"] = false;
+            //forDisplay["Active"] = 0;
+            this.SchoolTimeTableList.push(forDisplay);
 
           })
-          forDisplay["Action"] = false;
-          //forDisplay["Active"] = 0;
-          this.SchoolTimeTableList.push(forDisplay);
-
-        })
-        //console.log('displaycolumn', this.displayedColumns)
-        //console.log('forDisplay', forDisplay)
-        //console.log('SchoolTimeTableList', this.SchoolTimeTableList)
-        //this.displayedColumns.push("Active");
+        }
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
         this.loading = false;

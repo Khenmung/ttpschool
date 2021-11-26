@@ -37,12 +37,12 @@
                 <div fxFlex>&nbsp;</div>
             </div>
         </form>
-        <div>
+        <div style="overflow: auto;">
             <mat-divider></mat-divider>
             <mat-table [dataSource]="datasource" matSort>
                 <ng-container matColumnDef="MasterDataId">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-cell *matCellDef="let element" [style.width.px]="25">
                         {{element.MasterDataId}}
                     </mat-cell>
                 </ng-container>
@@ -50,7 +50,10 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.px]="250">
-                            <input [disabled]="Parent=='Information Restriction'" matInput 
+                            <input [disabled]="Parent=='Information Restriction' 
+                                            || Parent=='Period Type'
+                                            || Parent=='Roll No Generation'" 
+                            matInput 
                             [value]="element.MasterDataName" [(ngModel)]="element.MasterDataName"
                                 autocomplete="Off" placeholder="" (blur)="onBlur(element)" [minlength]="1"
                                 [maxlength]="50">
