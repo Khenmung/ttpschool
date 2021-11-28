@@ -95,7 +95,7 @@ export class StudentprogressreportComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.REPORT.EXAMRESULT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.VERIFYRESULT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

@@ -44,10 +44,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   RollNoGeneration=[];
+  ClassPromotion =[];
   Genders = [];
   Classes = [];
   FeeTypes = [];
   Sections = [];
+  StudentGrades =[];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   PreviousBatchId = 0;
@@ -633,7 +635,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.RollNoGeneration = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLLNOGENERATION);
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.ChangeBatch(this.Batches);
+        this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+        this.ClassPromotion = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSPROMOTION);
+        
+        //this.shareddata.ChangeBatch(this.Batches);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f=>f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
         this.loading = false;
       });

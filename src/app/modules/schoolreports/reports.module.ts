@@ -12,11 +12,13 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MatTableModule } from '@angular/material/table';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
 import { NgxPrintModule } from 'ngx-print';
+import { ResultComponent } from './result/result.component';
 
 
 @NgModule({
   declarations: [
-    SchoolReportsComponents
+    SchoolReportsComponents,
+    ResultComponent
   ],
   imports: [
     CommonModule,

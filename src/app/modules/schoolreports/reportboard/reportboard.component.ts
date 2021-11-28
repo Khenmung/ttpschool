@@ -4,7 +4,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ExamtimetableComponent } from '../examtimetable/examtimetable.component';
 import { FeecollectionreportComponent } from '../feecollectionreport/feecollectionreport.component';
-import { ResultsComponent } from '../results/results.component';
+import { ResultComponent } from '../result/result.component';
 import { TodayCollectionComponent } from '../today-collection/today-collection.component';
 
 @Component({
@@ -16,7 +16,7 @@ export class ReportboardComponent implements AfterViewInit {
 
   components = [
     ExamtimetableComponent,
-    ResultsComponent,
+    ResultComponent,
     FeecollectionreportComponent,
     TodayCollectionComponent
   ];
@@ -72,8 +72,8 @@ export class ReportboardComponent implements AfterViewInit {
       this.tabNames.splice(comindx, 1);
     }
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.EXAMRESULT)
-    var comindx = this.components.indexOf(ResultsComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.RESULT)
+    var comindx = this.components.indexOf(ResultComponent);
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);

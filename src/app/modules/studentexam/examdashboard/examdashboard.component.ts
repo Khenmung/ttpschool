@@ -6,6 +6,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ExamsComponent } from '../exams/exams.component';
 import { ExamslotComponent } from '../examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from '../examstudentsubjectresult/examstudentsubjectresult.component';
+import { VerifyResultsComponent } from '../verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubject.component';
 import { StudentactivityComponent } from '../studentactivity/studentactivity.component';
 
@@ -22,10 +23,12 @@ export class ExamdashboardComponent implements AfterViewInit {
     ExamslotComponent,
     SlotnclasssubjectComponent,
     ExamstudentsubjectresultComponent,
+    VerifyResultsComponent,
     StudentactivityComponent
   ];
  
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -64,6 +67,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMSLOT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT)
+    this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTACTIVITY)
     
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
@@ -103,6 +107,9 @@ export class ExamdashboardComponent implements AfterViewInit {
         break;
       case "slot n class subject":
         comindx =this.components.indexOf(SlotnclasssubjectComponent);
+        break;
+        case "verify result":
+        comindx =this.components.indexOf(VerifyResultsComponent);
         break;
       case "student activity":
         comindx =this.components.indexOf(StudentactivityComponent);

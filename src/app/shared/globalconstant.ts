@@ -128,6 +128,7 @@ export class globalconstants {
                     'EXAMSLOT': 'exam slot',
                     'EXAMSTUDENTSUBJECTRESULT': 'Exam Result Entry',
                     'SLOTNCLASSSUBJECT': 'slot n class subject',
+                    'VERIFYRESULT': 'verify result',
                     'STUDENTACTIVITY': 'student activity'
                 },
                 'SUBJECT': {
@@ -151,8 +152,8 @@ export class globalconstants {
                 },
                 'REPORT': {
                     'REPORT': 'report',
-                    'EXAMTIMETABLE': 'exam time table',
-                    'EXAMRESULT': 'exam result',
+                    'EXAMTIMETABLE': 'exam time table',                    
+                    'RESULT': 'result',
                     'FEEPAYMENTSTATUS': 'Fee Payment Status',
                     'DATEWISECOLLECTION': 'date wise collection',
                 },
@@ -227,6 +228,7 @@ export class globalconstants {
                 "SUBJECTTYPE": "subject type",
                 "ATTENDANCESTATUS": "attendance status",
                 "ROLLNOGENERATION": "Roll No Generation",
+                "CLASSPROMOTION": "class promotion"
 
             },
             "leave": {

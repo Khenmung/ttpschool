@@ -52,7 +52,8 @@
                         <mat-form-field [style.width.px]="250">
                             <input [disabled]="Parent=='Information Restriction' 
                                             || Parent=='Period Type'
-                                            || Parent=='Roll No Generation'" 
+                                            || Parent=='Roll No Generation' 
+                                            || Parent=='Class Promotion'" 
                             matInput 
                             [value]="element.MasterDataName" [(ngModel)]="element.MasterDataName"
                                 autocomplete="Off" placeholder="" (blur)="onBlur(element)" [minlength]="1"

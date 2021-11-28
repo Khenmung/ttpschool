@@ -6,6 +6,7 @@ import { ExamhomeComponent } from './examhome/examhome.component';
 import { ExamsComponent } from './exams/exams.component';
 import { ExamslotComponent } from './examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult/examstudentsubjectresult.component';
+import { VerifyResultsComponent } from './verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
 import { StudentactivityComponent } from './studentactivity/studentactivity.component';
 const routes: Routes = [
@@ -34,5 +35,6 @@ export const studentexamComponents = [
   ExamstudentsubjectresultComponent,
   SlotnclasssubjectComponent,
   StudentactivityComponent,
-  ExamhomeComponent
+  ExamhomeComponent,
+  VerifyResultsComponent
 ]
