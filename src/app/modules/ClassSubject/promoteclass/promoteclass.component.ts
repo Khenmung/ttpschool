@@ -1,10 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import alasql from 'alasql';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
@@ -15,17 +12,22 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-AssignStudentclassdashboard',
-  templateUrl: './Assignstudentclassdashboard.component.html',
-  styleUrls: ['./Assignstudentclassdashboard.component.scss']
+  selector: 'app-promoteclass',
+  templateUrl: './promoteclass.component.html',
+  styleUrls: ['./promoteclass.component.scss']
 })
-export class AssignStudentclassdashboardComponent implements OnInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild("table") mattable;
+export class PromoteclassComponent implements OnInit {
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatSort) sort: MatSort;
+  // @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
+  Conditions = [
+    { text: 'and above', val: 'and above' },
+    { text: 'and below', val: 'and below' }
+  ];
   RowsToUpdate = -1;
-  //RowsT = 0;
+  ClassGradeCondition = [];
+  searchConditionText = '';
   RollNoGenerationSortBy = '';
   SearchSectionId = 0;
   Permission = '';
@@ -43,13 +45,13 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   };
   StandardFilter = '';
   loading = false;
-  RollNoGeneration=[];
-//  ClassPromotion =[];
+  RollNoGeneration = [];
+  ClassPromotion = [];
   Genders = [];
   Classes = [];
   FeeTypes = [];
   Sections = [];
-  StudentGrades =[];
+  StudentGrades = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   PreviousBatchId = 0;
@@ -74,11 +76,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    'StudentName',
-    'SectionId',
-    'RollNo',
-    'FeeTypeId',
-    'Promote',
+    'Class',
+    'Grade',
+    'Condition',
     'Action'
   ];
   Students: IStudent[] = [];
@@ -96,10 +96,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      //searchStudentName: [0],
-      searchSectionId: [0],
       searchClassId: [0],
-      // searchGenderId: [0],
+      searchCondition: [''],
+      searchGradeId: ['']
     });
     this.PageLoad();
   }
@@ -131,6 +130,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
+
+      perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.PROMOTESTUDENT);
+      if (perObj.length > 0)
+        this.PromotePermission = perObj[0].permission;
 
       this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
       //console.log('selected batchid', this.SelectedBatchId);
@@ -166,128 +169,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       }
     }
   }
-  GenerateRollNo() {
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    // if (this.searchForm.get("searchStudentName").value.StudentId == 0 && this.searchForm.get("searchClassId").value == 0) {
-    //   this.alert.error("Please select class/stream", this.optionAutoClose);
-    //   return;
-    // }
-    this.loading = true;
-    if (this.searchForm.get("searchClassId").value > 0)
-      filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
-
-    if (this.searchForm.get("searchSectionId").value > 0)
-      filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
-    if (filterStr.length == 0) {
-      this.loading = false;
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
-      return;
-    }
-
-    let list: List = new List();
-    list.fields = [
-      'StudentClassId',
-      'StudentId',
-      'FeeTypeId',
-      'ClassId',
-      'RollNo',
-      'SectionId',
-      'Active'
-    ];
-
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=*)"];
-    list.filter = [filterStr];
-    this.StudentClassList = [];
-    this.dataservice.get(list)
-      .subscribe((StudentClassesdb: any) => {
-        var result;
-        result = [...StudentClassesdb.value];
-        var StudentClassRollNoGenList = [];
-        result.forEach(stud => {
-          var feetype = this.FeeTypes.filter(t => t.FeeTypeId == stud.FeeTypeId);
-          var _feetype = ''
-          if (feetype.length > 0)
-            _feetype = feetype[0].FeeTypeName;
-            
-
-          StudentClassRollNoGenList.push({
-            StudentClassId: stud.StudentClassId,
-            ClassId: stud.ClassId,
-            StudentId: stud.StudentId,
-            StudentName: stud.Student.FirstName + " " + stud.Student.LastName,
-            ClassName: this.Classes.filter(c => c.ClassId == stud.ClassId)[0].ClassName,
-            FeeTypeId: stud.FeeTypeId,
-            FeeType: _feetype,
-            SectionId: stud.SectionId,
-            Section: stud.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == stud.SectionId)[0].MasterDataName : '',
-            RollNo: stud.RollNo,
-            Active: stud.Active,
-            FirstName: stud.Student.FirstName,
-            LastName: stud.Student.LastName,
-            FatherName: stud.Student.FatherName,
-            MotherName: stud.Student.MotherName,
-            FatherOccupation: stud.Student.FatherOccupation,
-            MotherOccupation: stud.Student.MotherOccupation,
-            PresentAddress: stud.Student.PresentAddress,
-            PermanentAddress: stud.Student.PermanentAddress,
-            Gender: stud.Student.Gender,
-            DOB: new Date(stud.Student.DOB),//this.formatdate.transform(stud.Student.DOB,'dd/MM/yyyy'),
-            Bloodgroup: stud.Student.Bloodgroup,
-            Category: stud.Student.Category,
-            BankAccountNo: stud.Student.BankAccountNo,
-            IFSCCode: stud.Student.IFSCCode,
-            MICRNo: stud.Student.MICRNo,
-            AadharNo: stud.Student.AadharNo,
-            Photo: stud.Student.Photo,
-            Religion: stud.Student.Religion,
-            ContactNo: stud.Student.ContactNo,
-            WhatsAppNumber: stud.Student.WhatsAppNumber,
-            FatherContactNo: stud.Student.FatherContactNo,
-            MotherContactNo: stud.Student.MotherContactNo,
-            PrimaryContactFatherOrMother: stud.Student.PrimaryContactFatherOrMother,
-            NameOfContactPerson: stud.Student.NameOfContactPerson,
-            RelationWithContactPerson: stud.Student.RelationWithContactPerson,
-            ContactPersonContactNo: stud.Student.ContactPersonContactNo,
-            AlternateContact: stud.Student.AlternateContact,
-            EmailAddress: stud.Student.EmailAddress,
-            LastSchoolPercentage: stud.Student.LastSchoolPercentage,
-            ClassAdmissionSought: stud.Student.ClassAdmissionSought,
-            TransferFromSchool: stud.Student.TransferFromSchool,
-            TransferFromSchoolBoard: stud.Student.TransferFromSchoolBoard,
-            Promote: 0,
-            Action: true
-          });
-
-        })
-        //var orderbyArr = this.RollNoGenerationSortBy.split(',');
-        if (StudentClassRollNoGenList.length == 0)
-          this.alert.info("No record found!", this.optionAutoClose);
-        else {
-          this.RollNoGenerationSortBy = 'Gender,StudentName';
-          var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " + 
-                                  this.RollNoGenerationSortBy;
-            
-          this.StudentClassList = alasql(orderbystatement, [StudentClassRollNoGenList]);
-          this.StudentClassList.forEach((student, index) => {
-            student.RollNo = (index + 1) + "";
-          });
-          
-          this.alert.info("New Roll Nos. has been generated. Please confirm and save it all.",this.optionsNoAutoClose);
-
-          this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-          this.loading = false;
-        }
-      })
-  }
-  sortMultiple(a, b) {
-
-  }
   PromoteAll() {
     var _rowstoupdate = this.StudentClassList.filter(f => f.Promote == 1);
     this.RowsToUpdate = _rowstoupdate.length;
@@ -442,8 +324,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         if (this.StudentClassList.length == 0)
           this.alert.info("No record found!", this.optionAutoClose);
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+
         this.loading = false;
 
       })
@@ -613,13 +494,43 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.loading = false;
       })
   }
+  onNgModelChange(selected) {
+
+  }
+  addCondition() {
+    var _className = 'All';
+    var classobj = this.Classes.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
+    if (classobj.length > 0)
+      _className = classobj[0].ClassName;
+    var _gradeName = 'All';
+    var gradeobj = this.StudentGrades.filter(f => f.MasterDataId == this.searchForm.get("searchGradeId").value);
+    if (gradeobj.length > 0)
+      _gradeName = gradeobj[0].MasterDataName;
+
+    var newItem = {
+      "Condition": this.searchForm.get("searchCondition").value,
+      "ClassId": this.searchForm.get("searchClassId").value,
+      "GradeId": this.searchForm.get("searchGradeId").value,
+      Class: _className,
+      Grade: _gradeName
+    };
+    var indx = this.ClassGradeCondition.indexOf(newItem);
+    if (indx == -1) {
+      this.ClassGradeCondition.push(newItem)
+    }
+    else {
+      this.alert.info("Item already exists.", this.optionsNoAutoClose);
+    }
+    this.dataSource = new MatTableDataSource(this.ClassGradeCondition);
+  }
+
   GetMasterData() {
 
     var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName","Logic","Description", "ParentId"];
+    list.fields = ["MasterDataId", "MasterDataName", "Logic", "Description", "ParentId"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -632,10 +543,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        //this.ClassPromotion = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSPROMOTION);
-        
+        this.ClassPromotion = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSPROMOTION);
+
         //this.shareddata.ChangeBatch(this.Batches);
-        this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f=>f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
+        this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
         this.loading = false;
       });
   }

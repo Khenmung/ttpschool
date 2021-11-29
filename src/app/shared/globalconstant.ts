@@ -138,7 +138,7 @@ export class globalconstants {
                     'SUBJECTMARKCOMPONENT': 'subject mark component',
                     'CLASSSTUDENT': 'class student',
                     'SUBJECTTYPE': 'subject type',
-                    'STUDENTPROMOTE': 'promote student'
+                    'PROMOTESTUDENT': 'promote student'
                 },
                 'TIMETABLE': {
                     'TIMETABLE': 'time table',

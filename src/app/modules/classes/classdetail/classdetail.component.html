@@ -30,6 +30,16 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="Sequence">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Sequence
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="100">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                                [value]="element.Sequence" [(ngModel)]="element.Sequence">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="DurationId">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Duration
                     </mat-header-cell>

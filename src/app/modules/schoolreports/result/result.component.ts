@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -72,6 +73,7 @@ export class ResultComponent implements OnInit {
   displayedColumns = [
     "Student",
     "TotalMarks",
+    "Percent",
     "Rank",
     "Grade",
     
@@ -235,7 +237,10 @@ export class ResultComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-
+        var classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
+        if (classMarks.length > 0)
+          this.ClassFullMark = alasql("select ClassId,sum(FullMark) as FullMark from ? group by ClassId", [classMarks]);
+          
         this.ExamStudentResult = data.value.map(d => {
           var _section = '';
           var _sectionObj = this.Sections.filter(s => s.SectionId == d.StudentClass.SectionId);
@@ -251,6 +256,7 @@ export class ResultComponent implements OnInit {
           d.RollNo = d.StudentClass.RollNo
           d.Student = d.StudentClass.RollNo + "-"+ d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName
           d.Grade = this.StudentGrades.filter(f=>f.MasterDataId == d.Grade)[0].MasterDataName;
+          d.Percent =  (d.TotalMarks / this.ClassFullMark[0].FullMark)*100;
           return d;
 
         })
@@ -292,6 +298,7 @@ export class ResultComponent implements OnInit {
         this.GetStudentSubjects();
       });
   }
+  
   GetExams() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;

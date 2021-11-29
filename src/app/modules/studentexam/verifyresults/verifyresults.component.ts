@@ -305,7 +305,7 @@ export class VerifyResultsComponent implements OnInit {
 
               for (var i = 0; i < this.StudentGrades.length; i++) {
                 var formula = this.StudentGrades[i].Logic.replaceAll("[TotalMark]", r.Total).replaceAll("[FullMark]",this.ClassFullMark[0].FullMark);
-                console.log('formula ', formula, evaluate(formula));
+                //console.log('formula ', formula, evaluate(formula));
                 if (evaluate(formula)) {
                   r.Division = this.StudentGrades[i].MasterDataName;
                   break;

@@ -23,17 +23,13 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            
             <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentClasses()">
                 <mat-icon>search</mat-icon>
             </button>
         </div>
         <div style="padding:15px;border:1px solid lightgray">
-            <span style="padding: 15px;">{{RollNoGenerationSortBy}}</span>
-            <button [disabled]="loading || StudentClassList.length==0 || PromotePermission=='read' || checkBatchIdNSelectedIdEqual==0"
-                class="mat-raised-button" matTooltip="to next class or session"
-                (click)="PromoteAll()">
-                <mat-icon>loupe</mat-icon>
-            </button>
+            <span style="padding: 15px;">{{RollNoGenerationSortBy}}</span>            
             <button matTooltip="generate roll no"
                 [disabled]="loading || StudentClassList.length==0 || Permission=='read'" class="mat-raised-button"
                 (click)="GenerateRollNo()">

@@ -52,12 +52,14 @@ export class ClassdetailComponent implements OnInit {
     EndDate: Date,
     StudyAreaId: 0,
     StudyModeId: 0,
+    Sequence:0,
     BatchId: 0,
     OrgId: 0,
     Active: 0
   };
   displayedColumns = [
     "ClassName",
+    "Sequence",
     "DurationId",
     "MinStudent",
     "MaxStudent",
@@ -124,6 +126,7 @@ export class ClassdetailComponent implements OnInit {
     var newdata = {
       ClassId: 0,
       ClassName: '',
+      Sequence:0,
       DurationId: 0,
       MinStudent: 0,
       MaxStudent: 0,
@@ -182,6 +185,7 @@ export class ClassdetailComponent implements OnInit {
 
           this.ClassMasterData.ClassId = row.ClassId;
           this.ClassMasterData.ClassName = row.ClassName;
+          this.ClassMasterData.Sequence = row.Sequence;
           this.ClassMasterData.DurationId = row.DurationId;
           this.ClassMasterData.StartDate = row.StartDate;
           this.ClassMasterData.EndDate = row.EndDate;
@@ -250,6 +254,7 @@ export class ClassdetailComponent implements OnInit {
     list.fields = [
       "ClassId",
       "ClassName",
+      "Sequence",
       "DurationId",
       "MinStudent",
       "MaxStudent",
@@ -321,6 +326,7 @@ export interface IClassMaster {
   EndDate: Date;
   StudyAreaId: number;
   StudyModeId: number;
+  Sequence:number;
   BatchId: number;
   Active: number;
   Action: boolean;

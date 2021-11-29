@@ -9,10 +9,11 @@ import { SharedModule } from 'src/app/shared/shared.module';
 //import { MultiLevelMenuModule } from '../dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { PromoteclassComponent } from './promoteclass/promoteclass.component';
 
 
 @NgModule({
-  declarations: [StudentSubjectComponents],
+  declarations: [StudentSubjectComponents, PromoteclassComponent],
   imports: [
     CommonModule,
     SharedhomepageModule,

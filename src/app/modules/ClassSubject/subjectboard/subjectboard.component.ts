@@ -9,6 +9,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { ClassdetailComponent } from '../../classes/classdetail/classdetail.component';
+import { PromoteclassComponent } from '../promoteclass/promoteclass.component';
 
 @Component({
   selector: 'app-subjectboard',
@@ -22,7 +23,8 @@ export class SubjectBoardComponent implements AfterViewInit {
     SubjectDetailComponent,
     StudentSubjectMarkCompComponent,
     studentsubjectdashboardComponent,
-    AssignStudentclassdashboardComponent
+    AssignStudentclassdashboardComponent,
+    PromoteclassComponent
   ];
 
   tabNames = [
@@ -30,7 +32,8 @@ export class SubjectBoardComponent implements AfterViewInit {
     { "label": "Subject Detail", "faIcon": '' },
     { "label": "Subject Mark Component", "faIcon": '' },
     { "label": "Student Subject", "faIcon": '' },
-    { "label": "Class Student", "faIcon": '' }
+    { "label": "example", "faIcon": '' },
+    { "label": "example", "faIcon": '' }
   ];
   //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
@@ -40,7 +43,8 @@ export class SubjectBoardComponent implements AfterViewInit {
       SubjectDetailPermission: '',
       SubjectMarkComponentPermission: '',
       ClassStudentPermission: '',
-      StudentSubjectPermission: ''
+      StudentSubjectPermission: '',
+      PromoteStudent: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -82,6 +86,10 @@ export class SubjectBoardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.STUDENTSUBJECT)
     comindx = this.components.indexOf(studentsubjectdashboardComponent);
+    this.GetComponents(perObj, comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.PROMOTESTUDENT)
+    comindx = this.components.indexOf(PromoteclassComponent);
     this.GetComponents(perObj, comindx)
 
 

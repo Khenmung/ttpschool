@@ -177,7 +177,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.PageLoad();
   }
   PageLoad() {
-
+debugger;
     this.shareddata.CurrentFeeNames.subscribe(fy => (this.FeeNames = fy));
     if (this.FeeNames.length == 0) {
       this.nav.navigate(["/edu"]);
@@ -480,9 +480,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
       Object.keys(m).forEach(f => {
         if (filledVar.includes(f)) {
           if (isNaN(m[f]))
-            filledVar = filledVar.replaceAll(f, "'" + m[f] + "'");
+            filledVar = filledVar.replaceAll("["+f+ "]", "'" + m[f] + "'");
           else
-            filledVar = filledVar.replaceAll(f, m[f]);
+            filledVar = filledVar.replaceAll("["+f+ "]", m[f]);
         }
       });
     })

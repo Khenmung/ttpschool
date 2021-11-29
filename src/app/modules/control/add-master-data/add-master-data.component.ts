@@ -19,7 +19,7 @@ import { List } from '../../../shared/interface';
 export class AddMasterDataComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  Parent='';
+  Parent = '';
   topMaster = 0;
   MasterData = [];
   FeeNames = [];
@@ -91,10 +91,10 @@ export class AddMasterDataComponent implements OnInit {
     //       OrgId: [0]
     //     })
     // else
-      this.searchForm = this.fb.group(
-        {
-          ParentId: [0]
-        })
+    this.searchForm = this.fb.group(
+      {
+        ParentId: [0]
+      })
     this.PageLoad();
   }
 
@@ -145,7 +145,7 @@ export class AddMasterDataComponent implements OnInit {
       "Logic", "Sequence", "ApplicationId",
       "Active", "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 and "+ applicationFilter +") or (OrgId eq " + this.OrgId + " and "+ applicationFilter +")"];
+    list.filter = ["(ParentId eq 0 and " + applicationFilter + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -161,7 +161,7 @@ export class AddMasterDataComponent implements OnInit {
           this.SchoolDataStatus = this.getSettingStatus(schoolData);
           //this.TopMasters = [];
           this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
-          || t.ParentId == this.SelectedApplicationId);
+            || t.ParentId == this.SelectedApplicationId);
           this.loading = false;
 
         }
@@ -264,8 +264,8 @@ export class AddMasterDataComponent implements OnInit {
       this.enableTopEdit = false;
     this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
       || t.ParentId == this.SelectedApplicationId);
-    
-    }
+
+  }
   FilterMaster() {
     debugger;
     this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
@@ -345,7 +345,7 @@ export class AddMasterDataComponent implements OnInit {
     this.enableTopEdit = false;
     this.enableAddNew = true;
     this.MasterData = [];
-    this.Parent ='';
+    this.Parent = '';
     this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
     // this.datasource.paginator = this.paginator;
     // this.datasource.sort = this.sort;
@@ -381,8 +381,8 @@ export class AddMasterDataComponent implements OnInit {
           this.alert.error("No record found.", this.optionAutoClose);
 
         }
-        this.Parent = this.TopMasters.filter(f=>f.MasterDataId == this.searchForm.get("ParentId").value)[0].MasterDataName;
-        console.log("parent",this.Parent)
+        this.Parent = this.TopMasters.filter(f => f.MasterDataId == this.searchForm.get("ParentId").value)[0].MasterDataName;
+        console.log("parent", this.Parent)
         this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
@@ -393,7 +393,7 @@ export class AddMasterDataComponent implements OnInit {
   updateActive(row, value) {
     //console.log('clicked',value);
     //debugger;
-    this.loading=true;
+    this.loading = true;
     let message = value.checked == true ? "activated" : "deactivated";
     this.dialog.openConfirmDialog("Are you sure you want to " + message + " " + row.MasterDataName + "?")
       .afterClosed().subscribe(res => {
@@ -421,7 +421,7 @@ export class AddMasterDataComponent implements OnInit {
 
           this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
             .subscribe(res => {
-              this.loading=false;
+              this.loading = false;
               this.alert.success("Master data " + message + " successfully.", this.optionAutoClose);
             });
         }
@@ -435,14 +435,13 @@ export class AddMasterDataComponent implements OnInit {
     this.oldvalue = row.MasterDataName;
     //  console.log('old value', this.oldvalue);
   }
-  SaveRow(row)
-  {
-    this.DataToSaveCount=0;
+  SaveRow(row) {
+    this.DataToSaveCount = 0;
     this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     this.loading = true;
     if (row.MasterDataName.length == 0 || row.MasterDataName.length > 50) {
       this.loading = false;
@@ -468,7 +467,16 @@ export class AddMasterDataComponent implements OnInit {
         return;
       }
     }
-
+    
+    var parent = this.TopMasters.filter(f => f.MasterDataId == this.searchForm.get("ParentId").value)
+    if (parent.length > 0) {
+      if (parent[0].MasterDataName.toLowerCase() == "student grade") {
+        if (row.Sequence == 0) {
+          this.alert.error("Sequence is mandatory for Student Grade");
+          return;
+        }
+      }
+    }
     let mastertoUpdate = {
       MasterDataId: row.MasterDataId,
       MasterDataName: row.MasterDataName,
