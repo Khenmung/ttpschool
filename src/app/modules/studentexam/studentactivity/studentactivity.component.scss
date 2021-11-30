@@ -7,3 +7,14 @@ button{
 mat-cell:first-of-type {
     padding-left: 0px;
 }
+.mat-column-ActivityDate,.mat-column-Student,.mat-column-Category,.mat-column-SubCategory{
+    flex:1 1 130px;
+}
+.mat-column-Action,.mat-column-Active
+{
+    justify-content: center;
+    flex:0 0 100px;
+}
+.mat-column-Activity{
+    flex:1 0 400px;
+}

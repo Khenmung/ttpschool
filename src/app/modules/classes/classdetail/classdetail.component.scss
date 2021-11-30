@@ -8,7 +8,9 @@ mat-form-field{
 .mat-column-StartDate,.mat-column-EndDate{
     flex: 1 1 130px;
 }
-.mat-column-Sequence,.mat-column-MaxStudent,.mat-column-MinStudent,.mat-column-Active,.mat-column-StudyAreaId,.mat-column-StudyModeId,.mat-column-DurationId{
+.mat-column-Sequence,.mat-column-MaxStudent,.mat-column-MinStudent,
+.mat-column-Action,.mat-column-Active,.mat-column-StudyAreaId,
+.mat-column-StudyModeId,.mat-column-DurationId{
     justify-content: center;
     flex: 1 1 100px;
     //margin-right: 10px;

@@ -25,7 +25,7 @@
 
 <mat-table #table [dataSource]="dataSource" matSort>
 
-    <ng-container matColumnDef="Student">
+    <!-- <ng-container matColumnDef="Student">
         <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.Student}} </mat-cell>
     </ng-container>
@@ -41,6 +41,12 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> ReceiptNo </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.ReceiptNo}}
+        </mat-cell>
+    </ng-container> -->
+    <ng-container matColumnDef="PaymentType">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Type </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.PaymentType}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="TotalAmount">

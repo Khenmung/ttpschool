@@ -228,7 +228,10 @@ export class globalconstants {
                 "SUBJECTTYPE": "subject type",
                 "ATTENDANCESTATUS": "attendance status",
                 "ROLLNOGENERATION": "Roll No Generation",
-                "CLASSPROMOTION": "class promotion"
+                "CLASSPROMOTION": "class promotion",
+                "FEEPAYMENTTYPE": "fee payment type",
+                "ACTIVITYCATEGORY": "activity category",
+                "ACTIVITYSUBCATEGORY": "activity sub category"
 
             },
             "leave": {

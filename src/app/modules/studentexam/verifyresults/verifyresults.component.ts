@@ -235,7 +235,7 @@ export class VerifyResultsComponent implements OnInit {
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
     this.displayedColumns = [
-      'Student',
+      'Student'
     ];
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {

@@ -1,19 +1,9 @@
-<div class="divCls"><strong>Fee Receipt</strong></div>
-<br>
+<!-- <div class="divCls"><strong>Fee Receipts</strong></div> -->
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-<div fxLayout="row" fxLayoutAlign="space-around start">
-    <div style="width: 100%;">
-        <!-- <div style="width:100%;padding:20px" fxLayoutAlign="center center" fxLayout="row" fxLayoutGap="20px">
-            <mat-form-field appearance="outline">
-                <mat-label>Receipt no.</mat-label>
-                <input matInput #receiptno [(ngModel)]="studentInfoTodisplay.ReceiptNo" autocomplete="off">
-            </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button"
-                (click)="GetStudentFeePaymentDetails(receiptno.value)">
-                <mat-icon>search</mat-icon>
-            </button>
-        </div> -->
-        <div>
+<div style="display: flex;flex-direction: row;align-items: start;">
+    <div fxLayout="column" fxLayoutAlign="space-around start">
+        <div style="padding: 5px;"><b>Receipts</b></div>
+        <div style="border:1px solid lightgray;">
             <mat-table [dataSource]="dataReceiptSource" matSort>
                 <ng-container matColumnDef="TotalAmount">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
@@ -27,13 +17,14 @@
                 </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
-                    <mat-cell *matCellDef="let element"><a style="cursor:pointer; color: blue;" (click)="viewDetail(element)">
+                    <mat-cell *matCellDef="let element"><a style="cursor:pointer; color: blue;"
+                            (click)="viewDetail(element)">
                             {{element.Active==0?'Canceled':'Active'}}</a></mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="ReceiptNo">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Receipt No. </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                            {{element.ReceiptNo}}</mat-cell>
+                        {{element.ReceiptNo}}</mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="ReceiptDisplayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: ReceiptDisplayedColumns;" class="element-row">
@@ -41,8 +32,9 @@
             </mat-table>
         </div>
     </div>
-    <div style="width: 100%;">
-        <div class="divCls" fxLayoutGap="100px" id="printSection">
+    <div style="display: flex; flex-direction: column; width: 100%;">
+        <div style="padding: 5px;"><b>Print/Cancel Receipt</b></div>
+        <div style="border:1px solid lightgray;" class="divCls" fxLayoutGap="100px" id="printSection">
             <div fxLayout="column" fxLayoutAlign="space-around center">
                 <div *ngFor="let item of ReceiptHeading;let i=index">
                     <span [ngStyle]="item.Logic" [innerHTML]="item.Description"></span>
@@ -107,7 +99,8 @@
             </div>
         </div>
         <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
-            <div fxLayout="row" fxLayoutAlign="space-around center" *ngIf="studentInfoTodisplay.ReceiptNo>0 && BillStatus==1">
+            <div fxLayout="row" fxLayoutAlign="space-around center"
+                *ngIf="studentInfoTodisplay.ReceiptNo>0 && BillStatus==1">
                 <div>
                     <button [disabled]="loading" matTooltip="cancel receipt" *ngIf="!CancelReceiptMode" (click)="edit()"
                         class="mat-raised-button">

@@ -41,7 +41,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
   TotalAmount = 0;
   exceptionColumns: boolean;
   //isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
+  PaymentTypes=[];
   OffLineReceiptNo = '';
+  PaymentTypeId =0;
   expandedElement: any;
   CurrentRow: any = {};
   FeePayable = true;
@@ -110,6 +112,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     TotalAmount: 0,
     Balance: 0,
     ReceiptNo: 0,
+    PaymentTypeId:0,
     OffLineReceiptNo: '',
     ReceiptDate: new Date(),
     Discount: 0,
@@ -240,6 +243,7 @@ debugger;
         this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
         this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
         this.AccountGroup = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
+        this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
 
         //this.GetClassFee(this.studentInfoTodisplay.ClassId);
         // this.GetStudentClass();
@@ -350,7 +354,7 @@ debugger;
         "Active"]
       list.PageName = this.LedgerListName;
       //list.lookupFields = ["StudentClass", "PaymentDetails"];
-      list.filter = ['StudentClassId eq ' + this.studentInfoTodisplay.StudentClassId];
+      list.filter = ['Active eq 1 and StudentClassId eq ' + this.studentInfoTodisplay.StudentClassId];
       //list.orderBy = "ParentId";
 
       this.dataservice.get(list)
@@ -634,6 +638,7 @@ debugger;
     this.studentInfoTodisplay.ReceiptNo = this.StudentReceiptData.ReceiptNo;
     this.StudentReceiptData.StudentFeeReceiptId = 0;
     this.StudentReceiptData.TotalAmount = +this.TotalAmount;
+    this.StudentReceiptData.PaymentTypeId = +this.PaymentTypeId;
     this.StudentReceiptData.BatchId = this.SelectedBatchId;
     this.StudentReceiptData.OrgId = this.loginUserDetail[0]["orgId"];
     this.StudentReceiptData.StudentClassId = this.studentInfoTodisplay.StudentClassId;
@@ -694,7 +699,10 @@ debugger;
       .subscribe((data: any) => {
         this.StudentReceiptData.StudentFeeReceiptId = data.StudentFeeReceiptId;
         this.loading = false;
+        this.MonthlyDueDetail =[];
+        this.billdataSource = new MatTableDataSource([]);
         this.alert.success("Payment done successfully!", this.optionAutoClose);
+        this.tabChanged(1);
       })
   }
   update() {

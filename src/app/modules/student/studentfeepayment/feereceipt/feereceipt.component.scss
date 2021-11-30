@@ -15,19 +15,22 @@ mat-header-cell{
     place-items: center;
     flex: 1 1 50px;
 }
-.mat-column-Amount,.mat-column-ReceiptNo{
+.mat-column-Amount{
     display: flex;
     justify-content: flex-end;
     flex: 1 1 150px;
 }
-.mat-column-PaymentAmount,.mat-column-StudentReceiptId,.mat-column-OfflineReceiptNo,.mat-column-TotalAmount{
-    display: grid;
-    place-items: center end;
+.mat-column-ReceiptNo{
+    flex: 1 1 100px;
+}
+.mat-column-PaymentAmount,.mat-column-OfflineReceiptNo,.mat-column-TotalAmount{
+    display:flex;
+    justify-content: center;
     flex: 1 1 150px;
 }
-.mat-column-ReceiptDate , .mat-column-Action{
-    display: grid;
-    place-items: center;
+.mat-column-ReceiptDate,.mat-column-Active, .mat-column-Action{
+    display: flex;
+    justify-content: center;
     flex: 1 1 150px;
 }
 .divCls{

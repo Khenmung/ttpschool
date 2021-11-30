@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
@@ -34,11 +35,13 @@ export class TodayCollectionComponent implements OnInit {
   Sections = [];
   ELEMENT_DATA = [];
   GrandTotalAmount = 0;
+  PaymentTypes=[];
   DisplayColumns = [
-    "Student",
-    "ClassName",
-    "ReceiptDate",
-    "ReceiptNo",
+    //"Student",
+    //"ClassName",
+    //"ReceiptDate",
+    //"ReceiptNo",
+    "PaymentType",
     "TotalAmount"
   ]
   Permission = 'deny';
@@ -100,7 +103,8 @@ export class TodayCollectionComponent implements OnInit {
     list.fields = [
       'ReceiptDate',
       'ReceiptNo',
-      'TotalAmount'
+      'TotalAmount',
+      'PaymentTypeId'
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = ["StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"]
@@ -113,15 +117,15 @@ export class TodayCollectionComponent implements OnInit {
         this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
+          d.PaymentType = this.PaymentTypes.filter(p=>p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;          
           return d;
         })
+        var result = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType",[this.DateWiseCollection]);
+         
         if(this.DateWiseCollection.length==0)
-        {
-      
           this.alert.info("No collection found.",this.options);
-
-        }
-        this.dataSource = new MatTableDataSource(this.DateWiseCollection)
+        console.log("result",result)
+        this.dataSource = new MatTableDataSource(result)
         this.loading=false;
       })
   }
@@ -137,6 +141,7 @@ export class TodayCollectionComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
 

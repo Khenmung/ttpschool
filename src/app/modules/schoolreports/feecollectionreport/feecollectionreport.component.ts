@@ -187,6 +187,7 @@ export class FeecollectionreportComponent implements OnInit {
           });
           debugger;
           this.ELEMENT_DATA = alasql("select Name,ClassRollNoSection,RollNo,MAX(Month) month from ? group by Name,ClassRollNoSection,RollNo", [result]);
+          console.log("elementdata",result)
           this.ELEMENT_DATA.forEach(f => {
 
             var monthobj = this.Months.filter(m => m.val === f.month);

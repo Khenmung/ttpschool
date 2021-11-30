@@ -34,6 +34,8 @@ export class StudentactivityComponent implements OnInit {
   loading = false;
   StudentActivityList: IStudentActivity[] = [];
   SelectedBatchId = 0;
+  Categories = [];
+  SubCategories = [];
   Classes = [];
   Batches = [];
   Sections = [];
@@ -48,12 +50,16 @@ export class StudentactivityComponent implements OnInit {
     StudentClassId: 0,
     Activity: '',
     ActivityDate: Date,
+    CategoryId:0,
+    SubCategoryId:0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
   };
   displayedColumns = [
     'Student',
+    'CategoryId',
+    'SubCategoryId',
     'Activity',
     'ActivityDate',
     'Active',
@@ -162,17 +168,20 @@ export class StudentactivityComponent implements OnInit {
           this.StudentActivityData.StudentActivityId = row.StudentActivityId;
           this.StudentActivityData.StudentClassId = row.StudentClassId;
           this.StudentActivityData.Active = row.Active;
+          this.StudentActivityData.CategoryId = row.CategoryId
+          this.StudentActivityData.SubCategoryId = row.SubCategoryId;
           this.StudentActivityData.Activity = row.Activity;
           this.StudentActivityData.ActivityDate = row.ActivityDate;
           this.StudentActivityData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentActivityData.BatchId = this.SelectedBatchId;
           //console.log('data', this.ClassSubjectData);
+          console.log('StudentActivityData', this.StudentActivityData)
           if (this.StudentActivityData.StudentActivityId == 0) {
             this.StudentActivityData["CreatedDate"] = new Date();
             this.StudentActivityData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.StudentActivityData["UpdatedDate"] = new Date();
             delete this.StudentActivityData["UpdatedBy"];
-            //console.log('exam slot', this.SlotNClassSubjectData)
+            
             this.insert(row);
           }
           else {
@@ -222,6 +231,8 @@ export class StudentactivityComponent implements OnInit {
     list.fields = [
       'StudentActivityId',
       'StudentClassId',
+      'CategoryId',
+      'SubCategoryId',
       'Activity',
       'ActivityDate',
       'Remarks',
@@ -242,6 +253,8 @@ export class StudentactivityComponent implements OnInit {
               Student: this.searchForm.get("searchStudentName").value.Name,
               StudentClassId: item.StudentClassId,
               Activity: item.Activity,
+              CategoryId: item.CategoryId,
+              SubCategoryId: item.SubCategoryId,
               ActivityDate: item.ActivityDate,
               Remark: '',
               Active: item.Active,
@@ -256,13 +269,15 @@ export class StudentactivityComponent implements OnInit {
             StudentId: this.searchForm.get("searchStudentName").value.StudentClassId,
             StudentClassId: this.searchForm.get("searchStudentName").value.StudentClassId,
             Activity: '',
+            CategoryId: 0,
+            SubCategoryId: 0,
             Remark: '',
             ActivityDate: new Date(),
             Active: 0,
             Action: false
           })
         }
-        console.log('studentactivity', this.StudentActivityList)
+        //console.log('studentactivity', this.StudentActivityList)
         this.dataSource = new MatTableDataSource<IStudentActivity>(this.StudentActivityList);
         this.loadingFalse();
       });
@@ -284,7 +299,8 @@ export class StudentactivityComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
+        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYCATEGORY);
+        this.SubCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYSUBCATEGORY);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetStudents();
@@ -365,6 +381,8 @@ export interface IStudentActivity {
   Student: string;
   Activity: string;
   ActivityDate: Date;
+  CategoryId:number;
+  SubCategoryId:number;
   Remark: string;
   Active: number;
   Action: boolean;

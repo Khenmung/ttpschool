@@ -104,9 +104,9 @@ export class FeereceiptComponent implements OnInit {
     'Amount'
   ];
   ReceiptDisplayedColumns = [
-    'ReceiptDate',
-    'TotalAmount',
     'ReceiptNo',
+    'ReceiptDate',
+    'TotalAmount',    
     'Active'
   ]
   PageLoad() {
@@ -125,7 +125,7 @@ export class FeereceiptComponent implements OnInit {
     this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
     this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
     this.shareddata.CurrentFeeNames.subscribe(b => (this.FeeNames = b));
-    //debugger;
+    debugger;
     this.GetMasterData();
     this.GetBills();
 
@@ -230,7 +230,11 @@ export class FeereceiptComponent implements OnInit {
 
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
         this.dataReceiptSource.sort= this.sort;
+        var latestReceipt = this.FeeReceipt.sort((a,b)=>b.ReceiptNo - a.ReceiptNo)[0]; 
+        this.viewDetail(latestReceipt);
+        
         this.loading = false;
+
       })
   }
   GetMasterData() {
