@@ -23,10 +23,13 @@ mat-card{
 // mat-form-field,button{
 //   margin-right: 15px;
 // }
-.mat-column-PageTitle,.mat-column-label,.mat-column-ParentId,.mat-column-link,.mat-column-faIcon{
-  flex:0 0 120px;
+.mat-column-faIcon{
+  flex:0 0 130px;
 }
-.mat-column-DisplayOrder,.mat-column-HasSubmenu,.mat-column-IsTemplate,.mat-column-HomePage{
+.mat-column-PageTitle,.mat-column-label,.mat-column-ParentId,.mat-column-link{
+  flex:0 0 200px;
+}
+.mat-column-PageId,.mat-column-DisplayOrder,.mat-column-HasSubmenu,.mat-column-IsTemplate,.mat-column-HomePage{
   flex:0 0 80px;
 }
 mat-cell:first-of-type{

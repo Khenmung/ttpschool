@@ -353,42 +353,53 @@ export class AddMasterDataComponent implements OnInit {
     if (this.SelectedApplicationName.toLowerCase().includes("admin"))
       this.OrgId = this.searchForm.get("OrgId").value;
 
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName",
-      "Description", "Logic", "ApplicationId",
-      "Sequence", "ParentId", "OrgId", "Active"];
-    list.PageName = "MasterItems";
-    list.filter = ["ParentId eq " + this.searchForm.get("ParentId").value + " and OrgId eq " + this.OrgId];
+    var _searchParentId = 0;
+    if (this.searchForm.get("ParentId").value == 0) {
+      this.loading=false;
+      this.alert.info("Please select master type", this.optionAutoClose);      
+    }
+    else {
+      _searchParentId = this.searchForm.get("ParentId").value;
+      let list: List = new List();
+      list.fields = ["MasterDataId", "MasterDataName",
+        "Description", "Logic", "ApplicationId",
+        "Sequence", "ParentId", "OrgId", "Active"];
+      list.PageName = "MasterItems";
+      list.filter = ["ParentId eq " + _searchParentId + " and OrgId eq " + this.OrgId];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.MasterData = data.value.map(item => {
-          return {
-            "MasterDataId": item.MasterDataId,
-            "MasterDataName": item.MasterDataName,
-            "Description": item.Description,
-            "Logic": item.Logic,
-            "Sequence": item.Sequence,
-            "OldSequence": item.Sequence,
-            "ParentId": item.ParentId,
-            "ApplicationId": item.ApplicationId,
-            "OrgId": item.OrgId,
-            "Active": item.Active == 1 ? true : false,
-            "Action": false
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          this.MasterData = data.value.map(item => {
+            return {
+              "MasterDataId": item.MasterDataId,
+              "MasterDataName": item.MasterDataName,
+              "Description": item.Description,
+              "Logic": item.Logic,
+              "Sequence": item.Sequence,
+              "OldSequence": item.Sequence,
+              "ParentId": item.ParentId,
+              "ApplicationId": item.ApplicationId,
+              "OrgId": item.OrgId,
+              "Active": item.Active == 1 ? true : false,
+              "Action": false
+            }
+          })
+          if (this.MasterData.length == 0) {
+            this.alert.error("No record found.", this.optionAutoClose);
+
           }
-        })
-        if (this.MasterData.length == 0) {
-          this.alert.error("No record found.", this.optionAutoClose);
+          if (_searchParentId > 0)
+            this.Parent = this.TopMasters.filter(f => f.MasterDataId == _searchParentId)[0].MasterDataName;
+          else
+            this.Parent = this.TopMasters.filter(f => f.ParentId == _searchParentId)[0].MasterDataName;
 
-        }
-        this.Parent = this.TopMasters.filter(f => f.MasterDataId == this.searchForm.get("ParentId").value)[0].MasterDataName;
-        console.log("parent", this.Parent)
-        this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
-        this.datasource.paginator = this.paginator;
-        this.datasource.sort = this.sort;
-        this.loading = false;
-      });
-
+          //console.log("parent", this.Parent)
+          this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
+          this.datasource.paginator = this.paginator;
+          this.datasource.sort = this.sort;
+          this.loading = false;
+        });
+    }
   }
   updateActive(row, value) {
     //console.log('clicked',value);
@@ -467,7 +478,7 @@ export class AddMasterDataComponent implements OnInit {
         return;
       }
     }
-    
+
     var parent = this.TopMasters.filter(f => f.MasterDataId == this.searchForm.get("ParentId").value)
     if (parent.length > 0) {
       if (parent[0].MasterDataName.toLowerCase() == "student grade") {

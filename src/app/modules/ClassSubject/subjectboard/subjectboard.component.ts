@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, ViewChild, ViewContainerRef } from '@angular/core';
-import { SubjectDetailComponent } from '../subjectdetail/subjectdetail.component';
+import { ClassSubjectDetailComponent } from '../classsubjectdetail/classsubjectdetail.component';
 import { StudentSubjectMarkCompComponent } from '../student-subject-mark-comp/student-subject-mark-comp.component';
 import { AssignStudentclassdashboardComponent } from '../AssignStudentClass/Assignstudentclassdashboard.component';
 import { studentsubjectdashboardComponent } from '../studentsubjectdashboard/studentsubjectdashboard.component';
@@ -20,7 +20,7 @@ export class SubjectBoardComponent implements AfterViewInit {
 
   components = [
     SubjectTypesComponent,
-    SubjectDetailComponent,
+    ClassSubjectDetailComponent,
     StudentSubjectMarkCompComponent,
     studentsubjectdashboardComponent,
     AssignStudentclassdashboardComponent,
@@ -72,8 +72,8 @@ export class SubjectBoardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(SubjectTypesComponent);
     this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTDETAIL)
-    comindx = this.components.indexOf(SubjectDetailComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL)
+    comindx = this.components.indexOf(ClassSubjectDetailComponent);
     this.GetComponents(perObj, comindx)
    
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTMARKCOMPONENT)

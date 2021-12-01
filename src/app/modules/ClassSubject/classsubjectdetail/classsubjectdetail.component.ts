@@ -11,11 +11,11 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-subjectdetail',
-  templateUrl: './subjectdetail.component.html',
-  styleUrls: ['./subjectdetail.component.scss']
+  selector: 'app-classsubjectdetail',
+  templateUrl: './classsubjectdetail.component.html',
+  styleUrls: ['./classsubjectdetail.component.scss']
 })
-export class SubjectDetailComponent implements OnInit {
+export class ClassSubjectDetailComponent implements OnInit {
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
@@ -103,7 +103,7 @@ export class SubjectDetailComponent implements OnInit {
 
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.SUBJECTDETAIL);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       //console.log(this.CheckPermission);

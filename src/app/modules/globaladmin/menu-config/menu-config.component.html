@@ -25,10 +25,16 @@
             </button>
         </form>
         <mat-table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="PageId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.PageId}}
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="PageTitle">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Page Title </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline" [style.width.px]="120">
+                    <mat-form-field appearance="outline" [style.width.px]="200">
                         <input matInput (blur)='onBlur(element)'
                             [(ngModel)]="element.PageTitle" [value]="element.PageTitle" autocomplete="Off">
                     </mat-form-field>
@@ -37,7 +43,7 @@
             <ng-container matColumnDef="link">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> link </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline" [style.width.px]="120">
+                    <mat-form-field appearance="outline" [style.width.px]="200">
                         <input matInput (blur)='onBlur(element)' [(ngModel)]="element.link"
                             [value]="element.link" autocomplete="Off">
                     </mat-form-field>
@@ -46,7 +52,7 @@
             <ng-container matColumnDef="label">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> label </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline" [style.width.px]="120">
+                    <mat-form-field appearance="outline" [style.width.px]="200">
                         <input matInput (blur)='onBlur(element)' [(ngModel)]="element.label"
                             [value]="element.label" autocomplete="Off">
                     </mat-form-field>
@@ -55,7 +61,7 @@
             <ng-container matColumnDef="faIcon">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> faIcon </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline" [style.width.px]="120">
+                    <mat-form-field appearance="outline" [style.width.px]="100">
                         <input matInput (blur)='onBlur(element)' [(ngModel)]="element.faIcon"
                             [value]="element.faIcon" autocomplete="Off">
                     </mat-form-field>

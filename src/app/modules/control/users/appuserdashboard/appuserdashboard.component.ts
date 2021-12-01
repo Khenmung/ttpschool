@@ -138,7 +138,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.APPLICATION);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);

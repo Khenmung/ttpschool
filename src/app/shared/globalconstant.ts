@@ -114,6 +114,7 @@ export class globalconstants {
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',
                     'FEERECEIPT': 'fee receipt',
+                    'STUDENTACTIVITY': 'student activity'
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
@@ -129,11 +130,11 @@ export class globalconstants {
                     'EXAMSTUDENTSUBJECTRESULT': 'Exam Result Entry',
                     'SLOTNCLASSSUBJECT': 'slot n class subject',
                     'VERIFYRESULT': 'verify result',
-                    'STUDENTACTIVITY': 'student activity'
+                    
                 },
                 'SUBJECT': {
                     'SUBJECT': 'class subject',
-                    'SUBJECTDETAIL': 'class subject detail',
+                    'CLASSSUBJECTDETAIL': 'class subject detail',
                     'STUDENTSUBJECT': 'student subject',
                     'SUBJECTMARKCOMPONENT': 'subject mark component',
                     'CLASSSTUDENT': 'class student',
@@ -188,7 +189,7 @@ export class globalconstants {
                 "DEPARTMENT": "department",
                 "TTPAPP": "application",
                 "bang": "application",
-                "ROLE": "role",
+                //"ROLE": "role",
                 "INVOICECOMPONENT": "invoice component",
                 "PAYMENTSTATUS": "payment status"
             },
@@ -231,7 +232,8 @@ export class globalconstants {
                 "CLASSPROMOTION": "class promotion",
                 "FEEPAYMENTTYPE": "fee payment type",
                 "ACTIVITYCATEGORY": "activity category",
-                "ACTIVITYSUBCATEGORY": "activity sub category"
+                "ACTIVITYSUBCATEGORY": "activity sub category",
+                "ROLE": "role"
 
             },
             "leave": {

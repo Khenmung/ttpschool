@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
@@ -31,15 +32,19 @@ export class AttendanceboardComponent implements AfterViewInit {
   
     @ViewChild('container', { read: ViewContainerRef, static: false })
     public viewContainer: ViewContainerRef;
-  
+    LoginUserDetail=[];
     constructor(
       private cdr: ChangeDetectorRef,
       private tokenStorage: TokenStorageService,
+      private contentservice: ContentService,
       private componentFactoryResolver: ComponentFactoryResolver) {
     }
   
     public ngAfterViewInit(): void {
   
+      this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+      this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENDANCE)
       if (perObj.length > 0) {
         this.Permissions.ParentPermission = perObj[0].permission;

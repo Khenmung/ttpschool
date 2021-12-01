@@ -45,6 +45,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     BatchId: 0
   };
   displayedColumns = [
+    'FeeTypeId',
     'FeeTypeName',
     'Description',
     'Formula',

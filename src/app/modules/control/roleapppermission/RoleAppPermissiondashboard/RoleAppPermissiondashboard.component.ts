@@ -155,7 +155,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.MasterData = [...data.value];
           var applicationId = data.value.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
           this.Applications = data.value.filter(t => t.ParentId == applicationId);
-          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
+          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
           this.GetCustomerApps();
 
         }

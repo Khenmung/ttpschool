@@ -4,78 +4,87 @@
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
-    <div style="padding: 15px;" fxLayout="column" fxLayoutAlign="center center">
-        <div style="width: 100%;">
-            <form [formGroup]="searchForm">
-                <mat-form-field [style.width.pc]="25" appearance="outline">
-                    <mat-label>Fee type</mat-label>
-                    <input matInput formControlName="searchFeeTypeName" autocomplete="Off">
-                </mat-form-field>
-                <button [disabled]="loading" class="mat-raised-button" (click)="GetFeeTypes()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </form>
-            <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="FeeTypeName">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Fee type
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [value]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Description">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Description
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [value]="element.Description" [(ngModel)]="element.Description">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Formula">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Discount Formula
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field [style.width.pc]="50" appearance="outline">
-                            <textarea matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [value]="element.Formula" [(ngModel)]="element.Formula"></textarea>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>Active
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                            [checked]="element.Active==1?true:false">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
-                            (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-            </mat-table>
-        </div>
-        <div style="width:100%;background-color: lightgray;font-size: medium;padding: 10px;"> Below variables can be applied in the
+    <div style="width:100%;padding: 15px;" fxLayout="column">
+        <form [formGroup]="searchForm">
+            <mat-form-field [style.width.pc]="25" appearance="outline">
+                <mat-label>Fee type</mat-label>
+                <input matInput formControlName="searchFeeTypeName" autocomplete="Off">
+            </mat-form-field>
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetFeeTypes()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </form>
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="FeeTypeId">
+                <mat-header-cell *matHeaderCellDef>Id
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FeeTypeId}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FeeTypeName">
+                <mat-header-cell *matHeaderCellDef>Fee type
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                            [value]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Description">
+                <mat-header-cell *matHeaderCellDef>Description
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                            [value]="element.Description" [(ngModel)]="element.Description">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Formula">
+                <mat-header-cell *matHeaderCellDef>Discount Formula
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field [style.width.pc]="50" appearance="outline">
+                        <textarea matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                            [value]="element.Formula" [(ngModel)]="element.Formula"></textarea>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef>Active
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                        [checked]="element.Active==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
+                        (click)="AddNew()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                        (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+        <div style="width:100%;background-color: lightgray;font-size: medium;padding: 10px;"> Below variables can be
+            applied
+            in the
             formula.
         </div>
         <div>StudentName, FeeName, Month*, MonthName, ClassName, SectionName, Amount</div>
-        <div>* Month format: Year + month. Eg. 'Month' for the month of Jan 2021 is 202100, for Feb 2021 is 202101 and so on..</div>
+        <div>* Month format: Year + month. Eg. 'Month' for the month of Jan 2021 is 202100, for Feb 2021 is 202101 and
+            so
+            on..</div>
     </div>
-</div>

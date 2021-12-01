@@ -8,7 +8,6 @@ import { ExamslotComponent } from '../examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from '../examstudentsubjectresult/examstudentsubjectresult.component';
 import { VerifyResultsComponent } from '../verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubject.component';
-import { StudentactivityComponent } from '../studentactivity/studentactivity.component';
 
 @Component({
   selector: 'app-examdashboard',
@@ -24,7 +23,6 @@ export class ExamdashboardComponent implements AfterViewInit {
     SlotnclasssubjectComponent,
     ExamstudentsubjectresultComponent,
     VerifyResultsComponent,
-    StudentactivityComponent
   ];
  
   tabNames = [
@@ -33,7 +31,6 @@ export class ExamdashboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
-    { "label": "khat peuhpeuh", "faIcon": '' }
   ];
   //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
@@ -68,7 +65,6 @@ export class ExamdashboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULT)
-    this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTACTIVITY)
     
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -110,9 +106,6 @@ export class ExamdashboardComponent implements AfterViewInit {
         break;
         case "verify result":
         comindx =this.components.indexOf(VerifyResultsComponent);
-        break;
-      case "student activity":
-        comindx =this.components.indexOf(StudentactivityComponent);
         break;
       default:
         comindx =this.components.indexOf(ExamsComponent);

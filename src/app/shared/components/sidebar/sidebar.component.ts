@@ -12,6 +12,7 @@ import { SharedataService } from '../../sharedata.service';
 })
 export class SidebarComponent implements OnInit {
   //@Output() openLeftMenu1:new EventEmitter();
+  loginUserDetail = [];
   sideMenu = [];
   collapse = false;
   ApplicationId = 0;
@@ -25,6 +26,7 @@ export class SidebarComponent implements OnInit {
     // this.ar.params.subscribe(param=>{
     //   this.ApplicationId = param["id"];
     // })
+    this.loginUserDetail = this.tokenStorage.getUserDetail();
     this.ApplicationId = +this.tokenStorage.getSelectedAPPId();
     if (this.ApplicationId == 0)
       this.route.navigate(['/dashboard']);
@@ -37,7 +39,7 @@ export class SidebarComponent implements OnInit {
     this.collapse = !this.collapse;
   }
   GetMenuData() {
-    //debugger;
+    debugger;
     //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
     strFilter = "ParentId eq 0 and Active eq 1 and ApplicationId eq " + this.ApplicationId;
@@ -45,6 +47,7 @@ export class SidebarComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       "PageId"
+      , "PageTitle"
       , "label"
       , "faIcon"
       , "link"
@@ -52,26 +55,32 @@ export class SidebarComponent implements OnInit {
       , "HasSubmenu"
       , "UpdateDate"
     ];
-    
+
     list.PageName = "Pages";
     list.orderBy = "DisplayOrder";
     list.filter = [strFilter];
-    
+    var permission;
     this.dataservice.get(list).subscribe((data: any) => {
-      this.sideMenu = [...data.value];
+      //this.sideMenu = [...data.value];
+      data.value.forEach(m => {
+        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.PageTitle.toLowerCase().trim())
+        if (permission.length > 0 && permission[0].permission !='deny') {
+          this.sideMenu.push(m);
+        }
+      })
+
       let NewsNEvents = this.sideMenu.filter(item => {
         return item.label.toUpperCase() == 'NEWS N EVENTS'
       })
       if (NewsNEvents.length > 0) {
         this.shareddata.ChangeNewsNEventId(NewsNEvents[0].PageId);
       }
-      
-      var appName =location.pathname.split('/')[1];
-      if(appName.length>0)
-      {
-        
-      
-      this.shareddata.ChangePageData(this.sideMenu);
+
+      var appName = location.pathname.split('/')[1];
+      if (appName.length > 0) {
+
+
+        this.shareddata.ChangePageData(this.sideMenu);
       }
     });
 

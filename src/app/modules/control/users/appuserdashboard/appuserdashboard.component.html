@@ -33,7 +33,7 @@
                 <ng-container matColumnDef="UserName">
                     <mat-header-cell *matHeaderCellDef> User </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <input matInput [value]="element.UserName" [(ngModel)]="element.UserName" autocomplete="Off"
                                 [maxlength]="30">
                         </mat-form-field>
@@ -48,7 +48,7 @@
                 <ng-container matColumnDef="ContactNo">
                     <mat-header-cell *matHeaderCellDef> Contact No. </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field>
+                        <mat-form-field appearance="outline">
                             <input matInput [value]="element.ContactNo" [(ngModel)]="element.ContactNo"
                                 autocomplete="Off" [maxlength]="20">
                         </mat-form-field>
@@ -57,7 +57,7 @@
                 <ng-container matColumnDef="ValidFrom">
                     <mat-header-cell *matHeaderCellDef> Valid From </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="110">
+                        <mat-form-field appearance="outline">
                             <input matInput [value]="element.ValidFrom" [matDatepicker]="ValidFrom"
                                 [(ngModel)]="element.ValidFrom" autocomplete="Off">
                             <mat-datepicker-toggle matSuffix [for]="ValidFrom"></mat-datepicker-toggle>
@@ -68,7 +68,7 @@
                 <ng-container matColumnDef="ValidTo">
                     <mat-header-cell *matHeaderCellDef> Valid To </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.px]="110">
+                        <mat-form-field appearance="outline">
                             <input matInput [value]="element.ValidTo" [matDatepicker]="ValidTo"
                                 [(ngModel)]="element.ValidTo" autocomplete="Off">
                             <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
@@ -76,7 +76,6 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell *matCellDef="let element">

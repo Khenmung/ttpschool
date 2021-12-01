@@ -1,8 +1,9 @@
 // .Container{
 //  box-shadow: 5px 10px grey;
 // }
-mat-form-field{
-    margin-right: 20px;
+.mat-form-field{
+    margin-right: 10px;
+    width: 99%;
 }
 button{
     padding:5px;
@@ -17,14 +18,12 @@ button{
 // .mat-column-UserName{
 //     flex:0 0 20%;
 // }
-// .mat-column-ValidFrom{
-//     flex:0 0 15%;
-// }
-// .mat-column-ValidTo{
-//     flex:0 0 15%;
-// }
-.mat-column-Active,.mat-column-UserName,.mat-column-EmailAddress,.mat-column-ContactNo,.mat-column-ValidFrom,.mat-column-ValidTo{
-    display: grid;
-    place-items: center start;
-    margin-right: 15px;
+.mat-column-ValidFrom,.mat-column-ValidTo{
+    flex:0 0 130px;
 }
+.mat-column-UserName,.mat-column-EmailAddress{
+    flex:0 0 250px;
+}
+// .mat-column-Active,.mat-column-UserName,.mat-column-EmailAddress,.mat-column-ContactNo,.mat-column-ValidFrom,.mat-column-ValidTo{
+//     margin-right: 15px;
+// }

@@ -4,7 +4,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -29,6 +28,7 @@ export class StudentactivityComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  StudentClassId=0;
   Permission = '';
   StandardFilter = '';
   loading = false;
@@ -80,15 +80,16 @@ export class StudentactivityComponent implements OnInit {
 
   ngOnInit(): void {
     //debugger;
-    this.searchForm = this.fb.group({
-      searchStudentName: [0]
-    });
-    this.filteredOptions = this.searchForm.get("searchStudentName").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.Students.slice())
-      );
+    // this.searchForm = this.fb.group({
+    //   searchStudentName: [0]
+    // });
+    // this.filteredOptions = this.searchForm.get("searchStudentName").valueChanges
+    //   .pipe(
+    //     startWith(''),
+    //     map(value => typeof value === 'string' ? value : value.Name),
+    //     map(Name => Name ? this._filter(Name) : this.Students.slice())
+    //   );
+    this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.PageLoad();
   }
   private _filter(name: string): IStudent[] {
@@ -107,7 +108,7 @@ export class StudentactivityComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.STUDENTACTIVITY)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.STUDENTACTIVITY)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -120,8 +121,9 @@ export class StudentactivityComponent implements OnInit {
             this.Classes = [...data.value];
 
           });
-
+            
         }
+       this.GetStudentActivity();
       }
     }
   }
@@ -175,7 +177,7 @@ export class StudentactivityComponent implements OnInit {
           this.StudentActivityData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentActivityData.BatchId = this.SelectedBatchId;
           //console.log('data', this.ClassSubjectData);
-          console.log('StudentActivityData', this.StudentActivityData)
+          //console.log('StudentActivityData', this.StudentActivityData)
           if (this.StudentActivityData.StudentActivityId == 0) {
             this.StudentActivityData["CreatedDate"] = new Date();
             this.StudentActivityData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -225,7 +227,7 @@ export class StudentactivityComponent implements OnInit {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    filterStr += ' and StudentClassId eq ' + this.searchForm.get("searchStudentName").value.StudentClassId
+    filterStr += ' and StudentClassId eq ' + this.StudentClassId
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
@@ -240,6 +242,7 @@ export class StudentactivityComponent implements OnInit {
     ];
 
     list.PageName = "StudentActivities";
+    list.lookupFields = ["StudentClass($select=RollNo;$expand=Student($select=FirstName,LastName))"];
     list.filter = [filterStr];
     this.StudentActivityList = [];
     this.dataservice.get(list)
@@ -250,7 +253,7 @@ export class StudentactivityComponent implements OnInit {
           this.StudentActivityList = data.value.map(item => {
             return {
               StudentActivityId: item.StudentActivityId,
-              Student: this.searchForm.get("searchStudentName").value.Name,
+              Student: item.StudentClass.Student.FirstName + " " +  item.StudentClass.Student.LastName, 
               StudentClassId: item.StudentClassId,
               Activity: item.Activity,
               CategoryId: item.CategoryId,
@@ -262,21 +265,21 @@ export class StudentactivityComponent implements OnInit {
             }
           })
         }
-        else {
-          this.StudentActivityList.push({
-            StudentActivityId: 0,
-            Student: this.searchForm.get("searchStudentName").value.Name,
-            StudentId: this.searchForm.get("searchStudentName").value.StudentClassId,
-            StudentClassId: this.searchForm.get("searchStudentName").value.StudentClassId,
-            Activity: '',
-            CategoryId: 0,
-            SubCategoryId: 0,
-            Remark: '',
-            ActivityDate: new Date(),
-            Active: 0,
-            Action: false
-          })
-        }
+        // else {
+        //   this.StudentActivityList.push({
+        //     StudentActivityId: 0,
+        //     Student: this.searchForm.get("searchStudentName").value.Name,
+        //     StudentId: this.searchForm.get("searchStudentName").value.StudentClassId,
+        //     StudentClassId: this.searchForm.get("searchStudentName").value.StudentClassId,
+        //     Activity: '',
+        //     CategoryId: 0,
+        //     SubCategoryId: 0,
+        //     Remark: '',
+        //     ActivityDate: new Date(),
+        //     Active: 0,
+        //     Action: false
+        //   })
+        // }
         //console.log('studentactivity', this.StudentActivityList)
         this.dataSource = new MatTableDataSource<IStudentActivity>(this.StudentActivityList);
         this.loadingFalse();
@@ -351,17 +354,17 @@ export class StudentactivityComponent implements OnInit {
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
-            var _className = '';
-            if (_classNameobj.length > 0)
-              _className = _classNameobj[0].ClassName;
-            var _Section = '';
-            var sectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
-            if (sectionObj.length > 0)
-              _Section = sectionObj[0].MasterDataName;
-            var _RollNo = student.RollNo;
+            // var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
+            // var _className = '';
+            // if (_classNameobj.length > 0)
+            //   _className = _classNameobj[0].ClassName;
+            // var _Section = '';
+            // var sectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
+            // if (sectionObj.length > 0)
+            //   _Section = sectionObj[0].MasterDataName;
+            // var _RollNo = student.RollNo;
             var _name = student.Student.FirstName + " " + student.Student.LastName;
-            var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
+            var _fullDescription = _name; //+ " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
               StudentClassId: student.StudentClassId,
               StudentId: student.StudentId,

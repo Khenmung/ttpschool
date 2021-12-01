@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AssignStudentclassdashboardComponent } from './AssignStudentClass/Assignstudentclassdashboard.component';
-import { SubjectDetailComponent } from './subjectdetail/subjectdetail.component';
+import { ClassSubjectDetailComponent } from './classsubjectdetail/classsubjectdetail.component';
 import { StudentSubjectMarkCompComponent } from './student-subject-mark-comp/student-subject-mark-comp.component';
 import { studentsubjectdashboardComponent } from './studentsubjectdashboard/studentsubjectdashboard.component';
 import { SubjectTypesComponent } from './subject-types/subject-types.component';
@@ -30,7 +30,7 @@ const routes: Routes = [
 })
 export class StudentSubjectRoutingModule { }
 export const StudentSubjectComponents=[
-  SubjectDetailComponent,
+  ClassSubjectDetailComponent,
   studentsubjectdashboardComponent,
   SubjectTypesComponent,
   StudentSubjectMarkCompComponent, 

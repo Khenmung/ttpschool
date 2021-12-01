@@ -4,9 +4,9 @@
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
-    <div style="padding: 15px;" fxLayout="row wrap">
+    <div style="padding: 15px;">
         <div style="width: 100%;">
-            <form [formGroup]="searchForm">
+            <!-- <form [formGroup]="searchForm">
                <mat-form-field [style.width.pc]="50">
                     <mat-label>Name-class-section-roll no</mat-label>
                     <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
@@ -19,20 +19,20 @@
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentActivity()">
                     <mat-icon>search</mat-icon>
                 </button>                
-            </form>
+            </form> -->
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="Student">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Student
+                    <mat-header-cell *matHeaderCellDef>Student
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.Student}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Activity">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Activity
+                    <mat-header-cell *matHeaderCellDef>Activity
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           <mat-form-field [style.width.px]="400" appearance="outline">
+                    <mat-cell *matCellDef="let element" [ngClass]="'w-400'">
+                           <mat-form-field appearance="outline">
                                <textarea matInput 
                                (blur)="onBlur(element)"
                                [value]="element.Activity"  
@@ -41,10 +41,10 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="CategoryId">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Category
+                    <mat-header-cell *matHeaderCellDef>Category
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           <mat-form-field [style.width.px]="150" appearance="outline">
+                    <mat-cell *matCellDef="let element" [ngClass]="'w-150'">
+                           <mat-form-field appearance="outline">
                                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.CategoryId" [value]="element.CategoryId">
                                    <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
                                </mat-select>
@@ -52,10 +52,10 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="SubCategoryId">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Sub Category
+                    <mat-header-cell *matHeaderCellDef>Sub Category
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           <mat-form-field [style.width.px]="150" appearance="outline">                               
+                    <mat-cell *matCellDef="let element" [ngClass]="'w-150'">
+                           <mat-form-field appearance="outline">                               
                                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.SubCategoryId" [value]="element.SubCategoryId">
                                 <mat-option [value]="0">--sub category--</mat-option>
                                 <mat-option *ngFor="let item of SubCategories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
@@ -66,8 +66,8 @@
                 <ng-container matColumnDef="ActivityDate">
                     <mat-header-cell *matHeaderCellDef>Date
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           <mat-form-field [style.width.px]="130" appearance="outline">
+                    <mat-cell *matCellDef="let element" [ngClass]="'w-150'">
+                           <mat-form-field appearance="outline">
                             <input [value]="element.ActivityDate" (dateChange)="onBlur(element)"
                             [(ngModel)]="element.ActivityDate" matInput 
                             [matDatepicker]="ActivityDate" autocomplete="off">

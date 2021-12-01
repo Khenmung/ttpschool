@@ -332,7 +332,7 @@ export class searchstudentComponent implements OnInit {
       })
   }
   GetStudent() {
-    //debugger;
+    debugger;
 
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
@@ -349,7 +349,7 @@ export class searchstudentComponent implements OnInit {
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
       "ReasonForLeavingId"];
-    list.lookupFields = ["StudentClasses($select=StudentClassId,BatchId,ClassId,RollNo)"];
+    list.lookupFields = ["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId+";$select=StudentClassId,BatchId,ClassId,RollNo)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";
@@ -360,7 +360,7 @@ export class searchstudentComponent implements OnInit {
         if (data.value.length > 0) {
           var formattedData = data.value.filter(sc => {
             let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
-            sc.StudentClasses = sc.StudentClasses.filter(c => c.BatchId == this.SelectedBatchId)
+            //sc.StudentClasses = sc.StudentClasses.filter(c => c.BatchId == this.SelectedBatchId)
             sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
             return sc;
           });
@@ -370,7 +370,7 @@ export class searchstudentComponent implements OnInit {
               item.ClassName = '';
             else {
               var clsobj = this.Classes.filter(cls => {
-                return cls.MasterDataId == item.StudentClasses[0].ClassId
+                return cls.ClassId == item.StudentClasses[0].ClassId
               })
               if (clsobj.length > 0)
                 item.ClassName = clsobj[0].ClassName;
@@ -386,6 +386,7 @@ export class searchstudentComponent implements OnInit {
           this.ELEMENT_DATA = [];
           this.alert.info("No student found!", this.options);
         }
+        console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

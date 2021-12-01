@@ -216,7 +216,7 @@ export class ContentService implements OnInit {
 
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
 
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
   
         this.RoleFilter = ' and (RoleId eq 0';
         var __organization = '';
@@ -297,6 +297,7 @@ export class ContentService implements OnInit {
             });
 
           });
+          console.log("this.UserDetail",this.UserDetail);
           this.tokenService.saveUserdetail(this.UserDetail);
         }
       })

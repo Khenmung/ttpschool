@@ -60,6 +60,7 @@ export class MenuConfigComponent implements OnInit {
     "HomePage": 0
   }
   DisplayColumns = [
+    "PageId",
     "PageTitle",
     "label",
     "link",
@@ -423,7 +424,7 @@ export class MenuConfigComponent implements OnInit {
       return;
     }
     this.loading = true;
-    filterStr = "Active eq 1 and ApplicationId eq " + this.searchForm.get("searchApplicationId").value
+    filterStr = "ApplicationId eq " + this.searchForm.get("searchApplicationId").value
     var _ParentId = 0;
     if (this.searchForm.get("searchTopMenuId").value > 0)
       _ParentId = this.searchForm.get("searchTopMenuId").value

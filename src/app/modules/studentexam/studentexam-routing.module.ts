@@ -8,7 +8,6 @@ import { ExamslotComponent } from './examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult/examstudentsubjectresult.component';
 import { VerifyResultsComponent } from './verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
-import { StudentactivityComponent } from './studentactivity/studentactivity.component';
 const routes: Routes = [
   {
     path: '', component: HomeComponent,
@@ -17,7 +16,6 @@ const routes: Routes = [
       { path: 'slot', component: ExamslotComponent },
       { path: 'slotsubject', component: SlotnclasssubjectComponent },
       { path: 'subjectresult', component: ExamstudentsubjectresultComponent },
-      { path: 'activity', component: StudentactivityComponent },        
 
     ]
   }
@@ -34,7 +32,6 @@ export const studentexamComponents = [
   ExamdashboardComponent,
   ExamstudentsubjectresultComponent,
   SlotnclasssubjectComponent,
-  StudentactivityComponent,
   ExamhomeComponent,
   VerifyResultsComponent
 ]

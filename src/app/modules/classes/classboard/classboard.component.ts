@@ -90,12 +90,12 @@ export class ClassboardComponent implements AfterViewInit {
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
 
-    console.log("this.Permissions.ParentPermission", this.Permissions.ParentPermission);
-    console.log("this.Permissions.ClassDetailPermission", this.Permissions.ClassDetailPermission);
-    console.log("this.Permissions.FeePermission", this.Permissions.FeePermission);
-    console.log("this.Permissions.PreRequisitePermission", this.Permissions.PreRequisitePermission);
-    console.log("this.Permissions.FeeTypePermission", this.Permissions.FeeTypePermission);
-    console.log("this.Permissions.ClassMasterPermission", this.Permissions.ClassMasterPermission);
+    // console.log("this.Permissions.ParentPermission", this.Permissions.ParentPermission);
+    // console.log("this.Permissions.ClassDetailPermission", this.Permissions.ClassDetailPermission);
+    // console.log("this.Permissions.FeePermission", this.Permissions.FeePermission);
+    // console.log("this.Permissions.PreRequisitePermission", this.Permissions.PreRequisitePermission);
+    // console.log("this.Permissions.FeeTypePermission", this.Permissions.FeeTypePermission);
+    // console.log("this.Permissions.ClassMasterPermission", this.Permissions.ClassMasterPermission);
     if (this.Permissions.ClassDetailPermission == 'deny') {
       var comindx = this.components.indexOf(ClassdetailComponent);
       this.components.splice(comindx, 1);

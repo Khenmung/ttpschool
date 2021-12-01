@@ -11,6 +11,7 @@ import { GenerateCertificateComponent } from './generatecertificate/generatecert
 import { StudentattendancereportComponent } from './studentattendancereport/studentattendancereport.component';
 import { StudentboardComponent } from './studentboard/studentboard.component';
 import { StudentprogressreportComponent } from './studentprogressreport/studentprogressreport.component';
+import { StudentactivityComponent } from './studentactivity/studentactivity.component';
 
 const routes: Routes = [
   {
@@ -40,5 +41,6 @@ export const StudentComponents = [
   GenerateCertificateComponent,
   StudentattendancereportComponent,
   StudentboardComponent,
-  StudentprogressreportComponent
+  StudentprogressreportComponent,
+  StudentactivityComponent
 ]

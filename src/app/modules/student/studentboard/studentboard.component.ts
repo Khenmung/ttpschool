@@ -9,6 +9,7 @@ import { StudentattendancereportComponent } from '../studentattendancereport/stu
 import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudentdoc.component';
 import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimaryinfo.component';
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
+import { StudentactivityComponent } from '../studentactivity/studentactivity.component';
 
 @Component({
   selector: 'app-studentboard',
@@ -22,10 +23,12 @@ export class StudentboardComponent implements AfterViewInit {
       StudentDocumentComponent,
       GenerateCertificateComponent,
       StudentattendancereportComponent,
-      StudentprogressreportComponent
+      StudentprogressreportComponent,
+      StudentactivityComponent
     ];
   
     tabNames = [
+      { "label": "khat peuhpeuh", "faIcon": '' },
       { "label": "khat peuhpeuh", "faIcon": '' },
       { "label": "khat peuhpeuh", "faIcon": '' },
       { "label": "khat peuhpeuh", "faIcon": '' },
@@ -67,6 +70,7 @@ export class StudentboardComponent implements AfterViewInit {
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.DOCUMENT)
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT)
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
+      this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTACTIVITY)
 
       this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
       if (this.Permissions.ParentPermission != 'deny') {
@@ -112,6 +116,9 @@ export class StudentboardComponent implements AfterViewInit {
         case "progress report":
           comindx =this.components.indexOf(StudentprogressreportComponent);
           break;
+          case "student activity":
+          comindx =this.components.indexOf(StudentactivityComponent);
+          break;  
       } 
       
       if (perObj.length > 0) {

@@ -58,6 +58,7 @@ export class ClassdetailComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
+    "ClassId",
     "ClassName",
     "Sequence",
     "DurationId",

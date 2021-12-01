@@ -189,7 +189,7 @@ export class LoginComponent implements OnInit {
         // this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         // this.shareddata.ChangeLocation(this.Locations);
 
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
         this.shareddata.ChangeRoles(this.Roles);
 
         this.RoleFilter = ' and (RoleId eq 0';

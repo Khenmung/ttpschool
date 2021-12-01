@@ -167,7 +167,7 @@ export class roleuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ROLE);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
 
