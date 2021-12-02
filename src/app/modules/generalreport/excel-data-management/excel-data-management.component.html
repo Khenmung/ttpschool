@@ -30,6 +30,7 @@
     <span style="color:red" [innerHTML]="ErrorMessage">
     </span>
     <div *ngFor="let item of jsonData" fxLayout="row" fxLayoutAlign="space-between center">
+        <div>{{item.StudentId}}</div>
         <div>{{item.Name}}</div>
         <div>{{item.FatherName}}</div>
         <div>{{item.FatherOccupation}}</div>
