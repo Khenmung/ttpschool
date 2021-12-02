@@ -83,6 +83,7 @@ export class searchstudentComponent implements OnInit {
     this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
     this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
     this.studentSearchForm = this.fb.group({
+      searchStudentId:[''],
       searchStudentName: [''],
       FatherName: [''],
       MotherName: ['']
@@ -336,6 +337,8 @@ export class searchstudentComponent implements OnInit {
 
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
+    if (this.studentSearchForm.get("searchStudentId").value > 0)
+      checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentId").value;
     if (studentName != undefined && studentName.trim().length > 0)
       checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentName").value.StudentId;
     if (this.studentSearchForm.get("FatherName").value.FatherName != undefined)

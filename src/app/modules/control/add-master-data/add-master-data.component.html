@@ -53,7 +53,8 @@
                             <input [disabled]="Parent=='Information Restriction' 
                                             || Parent=='Period Type'
                                             || Parent=='Roll No Generation' 
-                                            || Parent=='Class Promotion'" 
+                                            || Parent=='Class Promotion'
+                                            || element.MasterDataName=='Cash'" 
                             matInput 
                             [value]="element.MasterDataName" [(ngModel)]="element.MasterDataName"
                                 autocomplete="Off" placeholder="" (blur)="onBlur(element)" [minlength]="1"

@@ -162,6 +162,12 @@ export class globalconstants {
                     'DATA': 'data',
                     'DOWNLOAD': 'download data',
                     'UPLOAD': 'upload data',
+                },
+                'REPORTCONFIGURATION': {
+                    'REPORTCONFIGURATION': 'report configuration',
+                    'REPORTNAME': 'report name',
+                    'REPORTCOLUMN': 'report column',
+                    'VARIABLECONFIG': 'variable config',
                 }
             },
             "accounting": {

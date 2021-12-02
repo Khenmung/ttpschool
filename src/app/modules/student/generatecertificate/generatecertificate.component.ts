@@ -242,10 +242,10 @@ export class GenerateCertificateComponent implements OnInit {
         "FatherName,MotherName,Gender,PermanentAddress," +
         "PresentAddress," +
         "WhatsAppNumber," +
-        "City," +
-        "Pincode," +
-        "State," +
-        "Country," +
+        //"City," +
+        //"Pincode," +
+        //"State," +
+        //"Country," +
         "DOB," +
         "Bloodgroup," +
         "Category," +
@@ -296,9 +296,9 @@ export class GenerateCertificateComponent implements OnInit {
             _studentClass = classObj[0].ClassName
           var _section = d.SectionId == null ? '' : this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName;
           var _gender = d.Student.Gender == null ? '' : this.Genders.filter(c => c.MasterDataId == d.Student.Gender)[0].MasterDataName;
-          var _city = d.Student.City == null ? '' : this.City.filter(c => c.MasterDataId == d.Student.City)[0].MasterDataName;
-          var _state = d.Student.State == null ? '' : this.State.filter(c => c.MasterDataId == d.Student.State)[0].MasterDataName;
-          var _country = d.Student.Country == null ? '' : this.Country.filter(c => c.MasterDataId == d.Student.Country)[0].MasterDataName;
+          // var _city = d.Student.City == null ? '' : this.City.filter(c => c.MasterDataId == d.Student.City)[0].MasterDataName;
+          // var _state = d.Student.State == null ? '' : this.State.filter(c => c.MasterDataId == d.Student.State)[0].MasterDataName;
+          // var _country = d.Student.Country == null ? '' : this.Country.filter(c => c.MasterDataId == d.Student.Country)[0].MasterDataName;
           var _bloodgroup = d.Student.Bloodgroup == null ? '' : this.BloodGroup.filter(c => c.MasterDataId == d.Student.Bloodgroup)[0].MasterDataName;
           var _category = d.Student.Category == null ? '' : this.Category.filter(c => c.MasterDataId == d.Student.Category)[0].MasterDataName;
           var _religion = d.Student.Religion == null ? '' : this.Religion.filter(c => c.MasterDataId == d.Student.Religion)[0].MasterDataName;
@@ -317,9 +317,9 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "PermanentAddress", val: d.Student.PermanentAddress },
             { name: "PresentAddress", val: d.Student.PresentAddress },
             { name: "WhatsAppNumber", val: d.Student.WhatsAppNumber },
-            { name: "City", val: _city },
-            { name: "State", val: _state },
-            { name: "Country", val: _country },
+            // { name: "City", val: _city },
+            // { name: "State", val: _state },
+            // { name: "Country", val: _country },
             { name: "PinCode", val: d.Student.Pincode },
             { name: "DOB", val: this.datepipe.transform(d.Student.DOB, 'dd/MM/yyyy') },
             { name: "BloodGroup", val: _bloodgroup },
@@ -445,9 +445,9 @@ export class GenerateCertificateComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
-        this.State = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
-        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+        // this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
+        // this.State = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+        // this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);

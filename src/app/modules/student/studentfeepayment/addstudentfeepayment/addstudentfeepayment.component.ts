@@ -244,7 +244,7 @@ debugger;
         this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
         this.AccountGroup = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
         this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
-
+        this.PaymentTypeId = this.PaymentTypes.filter(p=>p.MasterDataName.toLowerCase()=="cash")[0].MasterDataId;
         //this.GetClassFee(this.studentInfoTodisplay.ClassId);
         // this.GetStudentClass();
       });

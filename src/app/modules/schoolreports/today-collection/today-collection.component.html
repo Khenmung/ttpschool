@@ -25,7 +25,7 @@
 
 <mat-table #table [dataSource]="dataSource" matSort>
 
-    <!-- <ng-container matColumnDef="Student">
+    <ng-container matColumnDef="Student">
         <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.Student}} </mat-cell>
     </ng-container>
@@ -42,7 +42,7 @@
         <mat-cell *matCellDef="let element">
             {{element.ReceiptNo}}
         </mat-cell>
-    </ng-container> -->
+    </ng-container>
     <ng-container matColumnDef="PaymentType">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Type </mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -59,12 +59,21 @@
     <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
     </mat-row>
 </mat-table>
-<div fxLayout="column" fxLayoutAlign="end center">
-    <span *ngIf="GrandTotalAmount>0" style="padding: 30px;"><strong>Total &#x20b9;</strong>:
-        {{GrandTotalAmount}}
-    </span>
+<div style="margin-top: 5px; border: 1px solid lightgray;">
+    <div *ngFor="let item of GroupByPaymentType"
+        style="padding: 15px 15px 7px 20px; width:600px; display: flex;flex-direction: row;justify-content: center;align-items: center;">
 
-    <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
+        <div style="width:100%;">{{item.PaymentType}}</div>
+        <div style="width:100%;align-items:flex-end;">&#x20b9; {{item.TotalAmount}}</div>
+
+    </div>
+    <mat-divider></mat-divider>
+    <div fxLayout="row" fxLayoutAlign="end center" style="padding: 15px 15px 7px 20px; width:600px;">
+        <div *ngIf="GrandTotalAmount>0" style="width:100%;"><strong>Total</strong></div>
+        <div style="width:100%;align-items: flex-end;">&#x20b9; {{GrandTotalAmount}}</div>        
+        <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
+    </div>
+    
 </div>
 <hr style="color:lightgrey;width:50%">
 

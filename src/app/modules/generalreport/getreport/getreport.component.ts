@@ -523,9 +523,10 @@ export class GetreportComponent implements OnInit {
       }
     }
     else {
+      debugger;
       for (var i = 0; i < arr.length; i++) {
         if (arr[i][searchcondition.columnname]) {
-          lowerCaseName = arr[i][searchcondition.columnname].toLowerCase();
+          lowerCaseName = arr[i][searchcondition.columnname].toString().toLowerCase();
           if (this.checkcondition(searchcondition.condition, lowerCaseName, searchcondition.value)) {
             this.searchedItems.push(arr[i]);
           }
@@ -674,7 +675,7 @@ RemoveSearchFilter() {
 
     //if the selected column is a nested column
     var nestedcolumn = this.FilterColumns.filter(f => f.ReportName == columnName && f.TableNames.length > 0)
-    if (nestedcolumn.length > 0) {
+    if (nestedcolumn.length > 0 || columnName.substr(columnName.length-2)=='Id') {
       filtertext = columnName + " " + condition + " " + value;
       this.NestedfilterKeyValue.push({ "columnname": columnName, "condition": condition, "value": value })
     }

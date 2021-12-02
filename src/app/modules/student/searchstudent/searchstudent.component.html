@@ -15,10 +15,10 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <!-- <mat-form-field appearance="outline">
-                <mat-label>Admission Id</mat-label>
-                <input formControlName="StudentId" autocomplete="Off" matInput [maxlength]="5">
-            </mat-form-field> -->
+            <mat-form-field appearance="outline">
+                <mat-label>Id</mat-label>
+                <input formControlName="searchStudentId" autocomplete="Off" matInput [maxlength]="10">
+            </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="250">
                 <mat-label>Father</mat-label>
                 <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">

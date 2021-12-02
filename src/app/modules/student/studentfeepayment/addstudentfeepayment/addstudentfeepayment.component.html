@@ -68,13 +68,13 @@
                                         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                                     </ng-container>
                                     <ng-container matColumnDef="FeeName">
-                                        <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                                        <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Fee </mat-header-cell>
                                         <mat-cell *matCellDef="let element"> {{element.FeeName}} </mat-cell>
                                         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                                     </ng-container>
                                     <ng-container matColumnDef="Amount">
-                                        <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
-                                        <mat-cell *matCellDef="let element">
+                                        <mat-header-cell *matHeaderCellDef style="justify-content: end;"> Amount </mat-header-cell>
+                                        <mat-cell *matCellDef="let element" style="justify-content: end;">
                                             <mat-form-field>
                                                 <input style="text-align: right" [disabled]="element.FeeName!='Admission'" matInput type="number" max="100000"
                                                     [(ngModel)]="element.Amount" [value]="element.Amount"

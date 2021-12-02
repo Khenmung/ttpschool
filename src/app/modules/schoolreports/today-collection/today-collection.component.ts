@@ -33,14 +33,15 @@ export class TodayCollectionComponent implements OnInit {
   Classes = [];
   Batches = [];
   Sections = [];
+  GroupByPaymentType=[];
   ELEMENT_DATA = [];
   GrandTotalAmount = 0;
   PaymentTypes=[];
   DisplayColumns = [
-    //"Student",
-    //"ClassName",
-    //"ReceiptDate",
-    //"ReceiptNo",
+    "ReceiptDate",
+    "Student",
+    "ClassName",    
+    "ReceiptNo",
     "PaymentType",
     "TotalAmount"
   ]
@@ -120,12 +121,14 @@ export class TodayCollectionComponent implements OnInit {
           d.PaymentType = this.PaymentTypes.filter(p=>p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;          
           return d;
         })
-        var result = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType",[this.DateWiseCollection]);
-         
+        var groupbyPaymentType = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType",[this.DateWiseCollection]);
+         this.GroupByPaymentType = [...groupbyPaymentType]; 
         if(this.DateWiseCollection.length==0)
           this.alert.info("No collection found.",this.options);
-        console.log("result",result)
-        this.dataSource = new MatTableDataSource(result)
+        //console.log("result",result)
+        this.dataSource = new MatTableDataSource(this.DateWiseCollection)
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort =  this.sort;
         this.loading=false;
       })
   }

@@ -16,10 +16,10 @@ import { TodayCollectionComponent } from '../today-collection/today-collection.c
 export class ReportboardComponent implements AfterViewInit {
 
   components = [
-    ExamtimetableComponent,
-    ResultComponent,
+    TodayCollectionComponent,
     FeecollectionreportComponent,
-    TodayCollectionComponent
+    ResultComponent,
+    ExamtimetableComponent
   ];
 
   tabNames = [
