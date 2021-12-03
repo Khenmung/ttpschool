@@ -20,14 +20,7 @@
                     <mat-icon>search</mat-icon>
                 </button>                
             </form> -->
-            <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="Student">
-                    <mat-header-cell *matHeaderCellDef>Student
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.Student}}
-                    </mat-cell>
-                </ng-container>
+            <mat-table #table [dataSource]="dataSource">               
                 <ng-container matColumnDef="Activity">
                     <mat-header-cell *matHeaderCellDef>Activity
                     </mat-header-cell>
@@ -45,7 +38,9 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" [ngClass]="'w-150'">
                            <mat-form-field appearance="outline">
-                               <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.CategoryId" [value]="element.CategoryId">
+                               <mat-select (selectionChange)="onBlur(element)" 
+                               [(ngModel)]="element.CategoryId" 
+                               [value]="element.CategoryId">
                                    <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
                                </mat-select>
                            </mat-form-field>

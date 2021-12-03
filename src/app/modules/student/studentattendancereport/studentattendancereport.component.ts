@@ -161,7 +161,7 @@ export class StudentattendancereportComponent implements OnInit {
     list.lookupFields = ["StudentClass($select=RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and StudentClassId eq " + this.StudentClassId + " and BatchId eq " + this.SelectedBatchId];
-
+    
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
         attendance.value.forEach(att => {
