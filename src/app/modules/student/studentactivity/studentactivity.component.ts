@@ -57,7 +57,6 @@ export class StudentactivityComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
-    'Student',
     'CategoryId',
     'SubCategoryId',
     'Activity',
@@ -253,7 +252,7 @@ export class StudentactivityComponent implements OnInit {
           this.StudentActivityList = data.value.map(item => {
             return {
               StudentActivityId: item.StudentActivityId,
-              Student: item.StudentClass.Student.FirstName + " " +  item.StudentClass.Student.LastName, 
+              //Student: item.StudentClass.Student.FirstName + " " +  item.StudentClass.Student.LastName, 
               StudentClassId: item.StudentClassId,
               Activity: item.Activity,
               CategoryId: item.CategoryId,

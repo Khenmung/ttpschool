@@ -3,11 +3,6 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { ExamsComponent } from '../../studentexam/exams/exams.component';
-import { ExamslotComponent } from '../../studentexam/examslot/examslot.component';
-import { ExamstudentsubjectresultComponent } from '../../studentexam/examstudentsubjectresult/examstudentsubjectresult.component';
-import { SlotnclasssubjectComponent } from '../../studentexam/slotnclasssubject/slotnclasssubject.component';
-import { VerifyResultsComponent } from '../../studentexam/verifyresults/verifyresults.component';
 import { UserconfigreportnameComponent } from '../userconfigreportname/userconfigreportname.component';
 import { UserReportConfigColumnsComponent } from '../userreportconfigColumns/userreportconfigcolumns.component';
 import { VariableConfigComponent } from '../variable-config/variable-config.component';
@@ -53,7 +48,7 @@ public ngAfterViewInit(): void {
   debugger
   this.LoginUserDetail =  this.tokenStorage.getUserDetail();
   this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-  var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORTCONFIGURATION)
+  var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORTCONFIGURATION.REPORTCONFIGURATION)
   if (perObj.length > 0) {
     this.Permissions.ParentPermission = perObj[0].permission;  
   }

@@ -1,4 +1,5 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatSelectionList } from '@angular/material/list';
 import { MatPaginator } from '@angular/material/paginator';
@@ -6,7 +7,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { TableUtil } from '../../../shared/TableUtil';
@@ -17,7 +20,7 @@ import { TableUtil } from '../../../shared/TableUtil';
   styleUrls: ['./getreport.component.scss']
 })
 export class GetreportComponent implements OnInit {
- 
+
   @ViewChild('searchval') selectionList: MatSelectionList;
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator, { static: false })
@@ -31,10 +34,7 @@ export class GetreportComponent implements OnInit {
   }
 
   private searchedItems: Array<any> = [];
-  private key: string = '';
-  private prop: string = '';
-  private childrenPropName: string = '';
-
+  SelectedReport = '';
   NestedColumnSearch = false;
   SearchDropdownValue = [];
   BaseReportId = 0;
@@ -61,6 +61,11 @@ export class GetreportComponent implements OnInit {
   MyAppReportNames = [];
   Applications = [];
   ReportNames = [];
+  Classes = [];
+  Sections = [];
+  Students = [];
+  ActivityCategory = [];
+  SelectedBatchId = 0;
   ReportConfigItemListName = "ReportConfigItems";
 
   SelectedApplicationId = 0;
@@ -90,8 +95,10 @@ export class GetreportComponent implements OnInit {
   };
   ApplicationName = '';
   searchForm: FormGroup;
+
   constructor(
-    private cdr: ChangeDetectorRef,
+    private contentservice: ContentService,
+    private datepipe: DatePipe,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -120,6 +127,7 @@ export class GetreportComponent implements OnInit {
     this.dataSource = new MatTableDataSource([]);
     this.Applications = this.tokenstorage.getPermittedApplications();
     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    
     this.PageLoad();
     //this.cdr.detectChanges();
   }
@@ -143,6 +151,7 @@ export class GetreportComponent implements OnInit {
     this.ApplicationName = this.LoginUserDetail[0]["org"];
 
     this.GetBaseReportId();
+    this.GetMasterData();
   }
   updateActive(row, value) {
     debugger;
@@ -242,6 +251,12 @@ export class GetreportComponent implements OnInit {
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
+  IfStudentActivityMethods() {
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+    })
+    this.GetStudents();
+  }
   GetMasterData() {
 
     var orgIdSearchstr = ' and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
@@ -256,7 +271,8 @@ export class GetreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllMasterData = [...data.value];
-
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYCATEGORY);
         this.loading = false;
       });
   }
@@ -363,7 +379,18 @@ export class GetreportComponent implements OnInit {
     })
   }
   GetFilterColumn() {
+    debugger;
     this.FilterColumns = this.ReportNames.filter(f => f.ParentId == this.searchForm.get("searchReportName").value);
+    var selectedObj = this.MyAppReportNames.filter(f => f.ReportConfigItemId == this.searchForm.get("searchReportName").value);
+
+    if (selectedObj.length > 0) {
+      this.SelectedReport = selectedObj[0].ReportName;
+      switch (this.SelectedReport) {
+        case "Student Activity":
+          this.IfStudentActivityMethods();
+          break;
+      }
+    }
   }
   FillDropDown() {
     var _ParentId = 0;
@@ -413,7 +440,9 @@ export class GetreportComponent implements OnInit {
         var _tableNames = this.AvailableReportNames.filter(m => m.ReportConfigItemId == _ParentId)[0].TableNames.split(',');
         //var _baseColumns = this.ReportNames.filter(f=>f.ParentId == _ParentId && f.OrgId ==0)
         this.ColumnsOfSelectedReports = data.value.map(m => {
-          m.TableNames = baseReportColumns.filter(f => f.ReportName == m.ReportName)[0].TableNames;
+          var obj = baseReportColumns.filter(f => f.ReportName == m.ReportName);
+          if (obj.length > 0)
+            m.TableNames = obj[0].TableNames;
           return m;
         })
 
@@ -462,7 +491,7 @@ export class GetreportComponent implements OnInit {
         this.dataservice.get(list)
           .subscribe((data: any) => {
             var result = [...data.value];
-
+          debugger;
             //var whereDisplayNameNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.DisplayName.length > 0)
             var colTem = [];
             var formatedResult = [];
@@ -470,25 +499,33 @@ export class GetreportComponent implements OnInit {
               if (c.DisplayName == null || c.DisplayName.length == 0)
                 c.DisplayName = c.ReportName;
 
-                formatedResult = result.map(m => {
-                if (m[c.ReportName] === undefined)
-                  m[c.DisplayName] = this.traverse(m, c.TableNames, '');
-                else
-                  m[c.DisplayName] = m[c.ReportName];
+              formatedResult = result.map(m => {
+                if (m[c.ReportName] === undefined) {
+                   var nestedvalue = this.traverse(m, c.TableNames, '');
+                   m[c.DisplayName] =this.ReportwiseSetDropDownValue(c.ReportName,nestedvalue);
+                }
+                else {
+                  if (c.ReportName.indexOf('Date') > -1)
+                    m[c.DisplayName] = this.datepipe.transform(m[c.ReportName], 'dd/MM/yyyy');
+                  else if (c.ReportName.indexOf('Id') > -1) {
+                    m[c.DisplayName] = this.ReportwiseSetDropDownValue(c.ReportName,m[c.ReportName]);
+                  }
+                  else {
+                    m[c.DisplayName] = m[c.ReportName];
 
+                  }
+                }
                 var coldata = { "col": c.DisplayName, "sequence": c.ColumnSequence };
                 if (!this.ItemExists(colTem, c.DisplayName))
                   colTem.push(coldata)
                 return m;
               })
             })
-            debugger;
-            this.searchedItems=[];
+            this.searchedItems = [];
             this.NestedfilterKeyValue.forEach(search => {
               this.searchRecursive(formatedResult, search);
             })
-            if(this.NestedfilterKeyValue.length==0)
-            {
+            if (this.NestedfilterKeyValue.length == 0) {
               this.searchedItems = formatedResult;
             }
 
@@ -502,15 +539,47 @@ export class GetreportComponent implements OnInit {
 
             if (this.ReportConfigItemList.length == 0) {
               this.alert.info("No record matching search criteria found!", this.optionAutoClose);
-              this.loading = false;
             }
             this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
+            this.loading = false;
           })
 
-        this.loading = false;
+
       });
+  }
+  ReportwiseSetDropDownValue(colName,IdValue) {
+    var returnvalue = '';
+    debugger;
+    switch (this.SelectedReport) {
+      case "Student Activity":
+        switch (colName) {
+          case "StudentId":
+            var obj = this.Students.filter(s => s.StudentId == IdValue)
+            if (obj.length > 0)
+              returnvalue = obj[0].Name;
+            break;
+          case "ClassId":
+            var obj = this.Classes.filter(s => s.ClassId == IdValue)
+            if (obj.length > 0)
+              returnvalue = obj[0].ClassName;
+            break;
+          case "CategoryId":
+            var obj = this.ActivityCategory.filter(s => s.MasterDataId == IdValue)
+            if (obj.length > 0)
+              returnvalue = obj[0].MasterDataName;
+            break;
+          default:
+            returnvalue = IdValue;
+            break;
+        }
+        break;
+      default:
+        returnvalue = IdValue;
+        break;
+    }
+    return returnvalue;
   }
   searchRecursive(arr, searchcondition) {
     let lowerCaseName = '';
@@ -566,38 +635,12 @@ export class GetreportComponent implements OnInit {
 
     }
   }
-RemoveSearchFilter() {
+  RemoveSearchFilter() {
     var selected: string[] = this.selectionList.selectedOptions.selected.map(s => s.value)
     var diff = this.FilterCriteria.filter(el => !selected.includes(el))
     this.FilterCriteria = diff
   }
-  // searchRecursive(arr, ColumnName, searchvalue) {
-  //   let lowerCaseName = '';
-  //   searchvalue = searchvalue.toLowerCase()
-  //   if (arr[ColumnName]) {
-  //     lowerCaseName = arr[ColumnName].toLowerCase();
-  //     if (lowerCaseName == searchvalue) {
-  //       this.searchedItems.push(arr);
-  //     }
-  //   }
-  //   else {
-  //     for (var i = 0; i < arr.length; i++) {
-  //       if (arr[i][ColumnName]) {
-  //         lowerCaseName = arr[i][ColumnName].toLowerCase();
-  //         if (lowerCaseName == searchvalue) {
-  //           this.searchedItems.push(arr[i]);
-  //         }
-  //       }
-  //       else {
-  //         Object.keys(arr[i]).some(item => {
-  //           if (Array.isArray(arr[i][item]) && arr[i][item].length > 0)
-  //             this.searchRecursive(arr[i][item], ColumnName, searchvalue);
-  //         })
-  //       }
-  //     }
-  //   }
-  //   return this.searchedItems;
-  // }
+
   traverse(model, path, def) {
 
     path = path || '';
@@ -666,6 +709,62 @@ RemoveSearchFilter() {
       return [];
 
   }
+  GetStudents() {
+    this.loading = true;
+    let list: List = new List();
+    list.fields = [
+      'StudentId',
+      'FirstName',
+      'LastName',
+      'FatherName',
+      'MotherName',
+      'ContactNo',
+      'FatherContactNo',
+      'MotherContactNo'
+    ];
+
+    list.PageName = "Students";
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,RollNo,SectionId)"]
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        //  console.log('data.value', data.value);
+        if (data.value.length > 0) {
+          this.Students = data.value.map(student => {
+            var _RollNo = '';
+            var _name = '';
+            var _className = '';
+            var _section = '';
+            var _studentClassId = 0;
+            if (student.StudentClasses.length > 0) {
+              _studentClassId = student.StudentClasses[0].StudentClassId;
+              var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
+
+              if (_classNameobj.length > 0)
+                _className = _classNameobj[0].ClassName;
+              var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
+
+              if (_SectionObj.length > 0)
+                _section = _SectionObj[0].MasterDataName;
+              _RollNo = student.StudentClasses[0].RollNo;
+            }
+
+            _name = student.FirstName + " " + student.LastName;
+            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+            return {
+              StudentClassId: _studentClassId,
+              StudentId: student.StudentId,
+              Name: _fullDescription,
+              FatherName: student.FatherName + "-" + student.FatherContactNo,
+              MotherName: student.MotherName + "-" + student.MotherContactNo,
+            }
+          })
+        }
+        this.loading = false;
+      })
+  }
   AddSearchFilter() {
     var columnName = this.searchForm.get("searchFilterColumn").value;
     var condition = this.searchForm.get("searchCondition").value;
@@ -675,7 +774,7 @@ RemoveSearchFilter() {
 
     //if the selected column is a nested column
     var nestedcolumn = this.FilterColumns.filter(f => f.ReportName == columnName && f.TableNames.length > 0)
-    if (nestedcolumn.length > 0 || columnName.substr(columnName.length-2)=='Id') {
+    if (nestedcolumn.length > 0 || columnName.substr(columnName.length - 2) == 'Id') {
       filtertext = columnName + " " + condition + " " + value;
       this.NestedfilterKeyValue.push({ "columnname": columnName, "condition": condition, "value": value })
     }

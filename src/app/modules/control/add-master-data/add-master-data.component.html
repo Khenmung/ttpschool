@@ -15,9 +15,18 @@
                     </mat-select>
                 </mat-form-field> -->
                 <mat-form-field fxFlex appearance="outline">
-                    <mat-label>Master Name</mat-label>
-                    <mat-select #ParentId formControlName="ParentId" fxFlex (selectionChange)="enable($event)">
+                    <mat-label>Master</mat-label>
+                    <mat-select #ParentId formControlName="ParentId" fxFlex (selectionChange)="GetSubMasters($event)">
                         <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
+                            {{master.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field fxFlex appearance="outline">
+                    <mat-label>Sub Master</mat-label>
+                    <mat-select #ParentId formControlName="SubId" fxFlex>
+                        <mat-option [value]="0">--sub master--</mat-option>
+                        <mat-option *ngFor="let master of SubMasters" [value]="master.MasterDataId">
                             {{master.MasterDataName}}
                         </mat-option>
                     </mat-select>

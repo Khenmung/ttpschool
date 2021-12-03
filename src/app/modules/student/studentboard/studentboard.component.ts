@@ -43,6 +43,7 @@ export class StudentboardComponent implements AfterViewInit {
         DataDownloadPermission: '',
         DataUploadPermission: ''
       };
+      StudentName='';
       LoginUserDetail =[];
     @ViewChild('container', { read: ViewContainerRef, static: false })
     public viewContainer: ViewContainerRef;
@@ -56,7 +57,8 @@ export class StudentboardComponent implements AfterViewInit {
     }
   
     public ngAfterViewInit(): void {
-      debugger
+      //debugger
+      this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
       this.LoginUserDetail =  this.tokenStorage.getUserDetail();
       this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
       var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.STUDENT.STUDENT)

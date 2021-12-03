@@ -20,8 +20,9 @@ export class AddMasterDataComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   Parent = '';
-  topMaster = 0;
+  //topMaster = 0;
   MasterData = [];
+  SubMasters = [];
   FeeNames = [];
   Classes = [];
   Batches = [];
@@ -50,9 +51,9 @@ export class AddMasterDataComponent implements OnInit {
     "Sequence",
     "Active"
   ];
+  SearchParentId = 0;
   UserDetails = [];
   enableAddNew = false;
-  enableTopEdit = false;
   loading: boolean = false;
   error: string = '';
   optionAutoClose = {
@@ -93,7 +94,8 @@ export class AddMasterDataComponent implements OnInit {
     // else
     this.searchForm = this.fb.group(
       {
-        ParentId: [0]
+        ParentId: [0],
+        SubId: [0]
       })
     this.PageLoad();
   }
@@ -125,19 +127,18 @@ export class AddMasterDataComponent implements OnInit {
         if (this.UserDetails[0]["org"].toLowerCase() != "ttp")
           this.searchForm.controls['OrgId'].disable();
 
-        this.GetTopMasters();
+        this.GetMasters(0, 0).subscribe((data: any) => {
+          this.TopMasters = [...data.value];
+          this.loading=false;
+        });
         this.GetOrganizations();
       }
     }
   }
-  GetTopMasters() {
+  GetMasters(ParentId, OrgId) {
     debugger;
     var applicationFilter = '';
-    // if (!this.SelectedApplicationName.toLowerCase().includes("globaladmin")) {
-    //   this.ApplicationDropdownVisible = true;
-    //   applicationFilter = " and ApplicationId eq " + this.SelectedApplicationId
-    // }
-    applicationFilter = "ApplicationId eq " + this.SelectedApplicationId
+    applicationFilter = "OrgId eq " + OrgId + " and ApplicationId eq " + this.SelectedApplicationId
     let list: List = new List();
     list.fields = [
       "MasterDataId", "ParentId",
@@ -145,30 +146,30 @@ export class AddMasterDataComponent implements OnInit {
       "Logic", "Sequence", "ApplicationId",
       "Active", "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 and " + applicationFilter + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
+    list.filter = ["ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        if (data.value.length > 0) {
+    return this.dataservice.get(list)
+    // .subscribe((data: any) => {
+    //   if (data.value.length > 0) {
 
-          this.DefinedMaster = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
-          let applicationData = globalconstants.MasterDefinitions.ttpapps;
+    //     this.TopMasters = [...data.value];//.filter(m=>m.OrgId == this.UserDetails[0]["orgId"]);
+    //     // let applicationData = globalconstants.MasterDefinitions.ttpapps;
 
-          delete applicationData.TTPAPP;
-          this.ApplicationDataStatus = this.getSettingStatus(applicationData);
+    //     // delete applicationData.TTPAPP;
+    //     // this.ApplicationDataStatus = this.getSettingStatus(applicationData);
 
-          let schoolData = globalconstants.MasterDefinitions.school;
-          this.SchoolDataStatus = this.getSettingStatus(schoolData);
-          //this.TopMasters = [];
-          this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
-            || t.ParentId == this.SelectedApplicationId);
-          this.loading = false;
+    //     // let schoolData = globalconstants.MasterDefinitions.school;
+    //     // this.SchoolDataStatus = this.getSettingStatus(schoolData);
+    //     //this.TopMasters = [];
+    //     // this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
+    //     //   || t.ParentId == this.SelectedApplicationId);
+    //     this.loading = false;
 
-        }
-      });
+    //   }
+    //});
   }
   GetOrganizations() {
-
+    this.loading=true;
     let list: List = new List();
     list.fields = ["OrganizationId", "OrganizationName"];
     list.PageName = "Organizations";
@@ -177,6 +178,7 @@ export class AddMasterDataComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.Organizations = [...data.value];
+        this.loading=false;
       });
   }
   getSettingStatus(data) {
@@ -256,14 +258,19 @@ export class AddMasterDataComponent implements OnInit {
     //debugger;
     element.Action = true;
   }
-  enable(element) {
+  GetSubMasters(element) {
     debugger;
-    if (element.value > 0)
-      this.enableTopEdit = true;
-    else
-      this.enableTopEdit = false;
-    this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
-      || t.ParentId == this.SelectedApplicationId);
+    // if (element.value > 0)
+    //   this.enableTopEdit = true;
+    // else
+    //   this.enableTopEdit = false;
+    this.loading = true;
+    this.GetMasters(element.value, this.UserDetails[0]["orgId"]).subscribe((data: any) => {
+      this.SubMasters = [...data.value];
+      this.loading = false;
+    })
+    // this.TopMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
+    //   || t.ParentId == this.SelectedApplicationId);
 
   }
   FilterMaster() {
@@ -298,23 +305,31 @@ export class AddMasterDataComponent implements OnInit {
       this.datasource.sort = this.sort;
     }
   }
-  NewTopMaster() {
-    this.enableTopEdit = false;
-    this.topMaster = 1;
-    this.searchForm.patchValue({ ParentId: 0 });
-    //console.log('searchvalue', this.searchForm.get("ParentId").value)
-    this.AddData();
-    this.GetTopMasters();
-    this.topMaster = 0;
-  }
+  // NewTopMaster() {
+  //   this.enableTopEdit = false;
+  //   this.topMaster = 1;
+  //   this.searchForm.patchValue({ ParentId: 0 });
+  //   //console.log('searchvalue', this.searchForm.get("ParentId").value)
+  //   this.AddData();
+  //   this.GetTopMasters();
+  //   this.topMaster = 0;
+  // }
   AddData() {
     //debugger;
-    this.enableTopEdit = false;
 
-    if (this.searchForm.get("ParentId").value == 0 && this.topMaster == 0) {
-      this.alert.error("Please select master name to add items to", this.optionAutoClose);
+    if (this.searchForm.get("ParentId").value == 0) {
+      this.alert.info("Please select master name to add items to", this.optionAutoClose);
       return;
     }
+    else if (this.SubMasters.length > 0 && this.searchForm.get("SubId").value == 0) {
+      this.alert.info("Please select submaster.", this.optionAutoClose);
+      return;
+    }
+    var _ParentId = 0;
+    if (this.searchForm.get("SubId").value > 0)
+      _ParentId = this.searchForm.get("SubId").value;
+    else
+      _ParentId = this.searchForm.get("ParentId").value;
 
     let newrow = {
       "MasterDataId": 0,
@@ -323,83 +338,70 @@ export class AddMasterDataComponent implements OnInit {
       "Description": "",
       "Logic": "",
       "Sequence": 0,
-      "ParentId": this.searchForm.get("ParentId").value,
+      "ParentId": _ParentId,
       "OrgId": 0,
       "Active": 1,
       "ApplicationId": this.SelectedApplicationId,
       "Action": false
     }
-    if (this.searchForm.get("ParentId").value == 0) {
-      this.MasterData = [];
+    //if add new button is clicked more than once.
+    let alreadyadded = this.MasterData.filter(item => item.MasterDataName == "");
+    if (alreadyadded.length == 0)
       this.MasterData.push(newrow);
-    }
-    else {
-      let alreadyadded = this.MasterData.filter(item => item.MasterDataName == "");
-      if (alreadyadded.length == 0)
-        this.MasterData.push(newrow);
-    }
+
     this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
   }
   GetSearchMaster() {
     this.loading = true;
-    this.enableTopEdit = false;
     this.enableAddNew = true;
     this.MasterData = [];
     this.Parent = '';
     this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
-    // this.datasource.paginator = this.paginator;
-    // this.datasource.sort = this.sort;
 
     if (this.SelectedApplicationName.toLowerCase().includes("admin"))
       this.OrgId = this.searchForm.get("OrgId").value;
 
-    var _searchParentId = 0;
+    //var _searchParentId = 0;
     if (this.searchForm.get("ParentId").value == 0) {
-      this.loading=false;
-      this.alert.info("Please select master type", this.optionAutoClose);      
+      this.loading = false;
+      this.alert.info("Please select master type", this.optionAutoClose);
     }
-    else {
-      _searchParentId = this.searchForm.get("ParentId").value;
-      let list: List = new List();
-      list.fields = ["MasterDataId", "MasterDataName",
-        "Description", "Logic", "ApplicationId",
-        "Sequence", "ParentId", "OrgId", "Active"];
-      list.PageName = "MasterItems";
-      list.filter = ["ParentId eq " + _searchParentId + " and OrgId eq " + this.OrgId];
+    else if (this.searchForm.get("SubId").value > 0)
+      this.SearchParentId = this.searchForm.get("SubId").value;
+    else
+      this.SearchParentId = this.searchForm.get("ParentId").value;
 
-      this.dataservice.get(list)
-        .subscribe((data: any) => {
-          this.MasterData = data.value.map(item => {
-            return {
-              "MasterDataId": item.MasterDataId,
-              "MasterDataName": item.MasterDataName,
-              "Description": item.Description,
-              "Logic": item.Logic,
-              "Sequence": item.Sequence,
-              "OldSequence": item.Sequence,
-              "ParentId": item.ParentId,
-              "ApplicationId": item.ApplicationId,
-              "OrgId": item.OrgId,
-              "Active": item.Active == 1 ? true : false,
-              "Action": false
-            }
-          })
-          if (this.MasterData.length == 0) {
-            this.alert.error("No record found.", this.optionAutoClose);
+    this.GetMasters(this.SearchParentId, this.UserDetails[0]["orgId"]).subscribe((data: any) => {
+      this.MasterData = data.value.map(item => {
+        return {
+          "MasterDataId": item.MasterDataId,
+          "MasterDataName": item.MasterDataName,
+          "Description": item.Description,
+          "Logic": item.Logic,
+          "Sequence": item.Sequence,
+          "OldSequence": item.Sequence,
+          "ParentId": item.ParentId,
+          "ApplicationId": item.ApplicationId,
+          "OrgId": item.OrgId,
+          "Active": item.Active == 1 ? true : false,
+          "Action": false
+        }
+      })
+      if (this.MasterData.length == 0) {
+        this.alert.error("No record found.", this.optionAutoClose);
 
-          }
-          if (_searchParentId > 0)
-            this.Parent = this.TopMasters.filter(f => f.MasterDataId == _searchParentId)[0].MasterDataName;
-          else
-            this.Parent = this.TopMasters.filter(f => f.ParentId == _searchParentId)[0].MasterDataName;
+      }
+      if (this.searchForm.get("SubId").value > 0)
+        this.Parent = this.SubMasters.filter(f => f.MasterDataId == this.SearchParentId)[0].MasterDataName;
+      else
+        this.Parent = this.TopMasters.filter(f => f.MasterDataId == this.SearchParentId)[0].MasterDataName;
 
-          //console.log("parent", this.Parent)
-          this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
-          this.datasource.paginator = this.paginator;
-          this.datasource.sort = this.sort;
-          this.loading = false;
-        });
-    }
+      //console.log("parent", this.Parent)
+      this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
+      this.datasource.paginator = this.paginator;
+      this.datasource.sort = this.sort;
+      this.loading = false;
+    });
   }
   updateActive(row, value) {
     //console.log('clicked',value);
@@ -459,7 +461,7 @@ export class AddMasterDataComponent implements OnInit {
       this.alert.error("Character should not be empty or greater than 50!", this.optionAutoClose);
       return;
     }
-    if (this.searchForm.get("ParentId").value == 0 || this.enableTopEdit) {
+    if (this.searchForm.get("ParentId").value == 0) {
       let duplicate = this.TopMasters.filter(item => item.OrgId == this.UserDetails[0]["orgId"]
         && item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
         && item.ApplicationId == row.ApplicationId)
@@ -494,12 +496,12 @@ export class AddMasterDataComponent implements OnInit {
       Description: row.Description,
       Logic: row.Logic,
       Sequence: row.Sequence,
-      ParentId: this.enableTopEdit ? 0 : this.searchForm.get("ParentId").value,
+      ParentId: this.SearchParentId,
       ApplicationId: this.SelectedApplicationId,
       Active: 1
     }
 
-    let selectedMasterDataId = 0;
+    //let selectedMasterDataId = 0;
     if (row.MasterDataId == 0) {
 
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
@@ -511,8 +513,8 @@ export class AddMasterDataComponent implements OnInit {
           if (res != undefined) {
             row.MasterDataId = res.MasterDataId;
             row.Action = false;
-            if (this.searchForm.get("ParentId").value == 0)
-              this.searchForm.patchValue({ ParentId: res["MasterDataId"] });
+            // if (this.searchForm.get("ParentId").value == 0)
+            //   this.searchForm.patchValue({ ParentId: res["MasterDataId"] });
 
             if (this.DataToSaveCount == 0) {
               this.loading = false;
@@ -533,7 +535,7 @@ export class AddMasterDataComponent implements OnInit {
           }
         });
     }
-    this.enableTopEdit = false;
+    
   }
   updateDescription(value, row) {
     //debugger;

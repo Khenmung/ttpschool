@@ -30,12 +30,12 @@ const routes: Routes = [
     loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
-    path: 'edu/config',
+    path: 'edu/reportconfig',
     loadChildren: () => import('./modules/appconfigdata/appconfigdata.module').then(m => m.AppconfigdataModule)
   },
   {
     path: 'edu/uploaddownload',
-    loadChildren: () => import('./modules/generalreport/generalreport.module').then(m => m.GeneralreportModule)
+    loadChildren: () => import('./modules/DataUploadDownload/generalreport.module').then(m=>m.GeneralreportModule)
   },
   {
     path: 'edu',

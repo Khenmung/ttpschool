@@ -5,17 +5,8 @@
         <alert></alert>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
-
-            <mat-form-field appearance="outline" [style.width.px]="350">
-                <mat-label>Student</mat-label>
-                <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                        {{option.Name}}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
+           
+            <mat-form-field appearance="outline" style="width: 100px;">
                 <mat-label>Id</mat-label>
                 <input formControlName="searchStudentId" autocomplete="Off" matInput [maxlength]="10">
             </mat-form-field>
@@ -34,6 +25,15 @@
                 <mat-autocomplete #autoM="matAutocomplete" [displayWith]="displayFnM">
                     <mat-option *ngFor="let option of filteredMothers | async" [value]="option">
                         {{option.MotherName}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="350">
+                <mat-label>Student</mat-label>
+                <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                        {{option.Name}}
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>

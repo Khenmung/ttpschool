@@ -65,6 +65,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     UserId: '',
     Active: 0
   };
+  SelectedApplicationId=0;
   ApplicationName = '';
   searchForm: FormGroup;
   constructor(
@@ -80,12 +81,14 @@ export class UserReportConfigColumnsComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchApplicationId: [0],
+      //searchApplicationId: [0],
       searchAvailableReportName: [0],
       searchReportName: [0]
     });
     //this.dataSource = new MatTableDataSource<IReportConfigItem>([]);
     this.Applications = this.tokenstorage.getPermittedApplications();
+    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+    this.PageLoad()
   }
 
   PageLoad() {
@@ -105,11 +108,11 @@ export class UserReportConfigColumnsComponent implements OnInit {
 
   addnew() {
     debugger;
-    var appId = this.searchForm.get("searchApplicationId").value;
-    if (appId == 0) {
-      this.alert.error("Please select application", this.optionAutoClose);
-      return;
-    }
+    // var appId = this.SelectedApplicationId;
+    // if (appId == 0) {
+    //   this.alert.error("Please select application", this.optionAutoClose);
+    //   return;
+    // }
 
     var newdata = {
       ReportConfigItemId: 0,
@@ -119,7 +122,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       Formula: '',
       ColumnSequence: 0,
       OldSequence:0,
-      ApplicationId: appId,
+      ApplicationId: this.SelectedApplicationId,
       TableNames: '',
       OrgId: 0,
       UserId: '',
@@ -150,12 +153,12 @@ export class UserReportConfigColumnsComponent implements OnInit {
 
     //debugger;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
-    var ApplicationId = this.searchForm.get("searchApplicationId").value;
+    //var ApplicationId = this.SelectedApplicationId;
     var MyReportNameId = this.searchForm.get("searchReportName").value;
-    if (ApplicationId == 0) {
-      this.alert.error("Please select application name", this.optionAutoClose);
-      return;
-    }
+    // if (ApplicationId == 0) {
+    //   this.alert.error("Please select application name", this.optionAutoClose);
+    //   return;
+    // }
     if (AvailableReportId == 0) {
       this.alert.error("Please select available report name", this.optionAutoClose);
       return;
@@ -297,7 +300,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    var ApplicationId = this.searchForm.get("searchApplicationId").value;
+    var ApplicationId = this.SelectedApplicationId;  //this.SelectedApplicationId;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     var MyReportNameId = this.searchForm.get("searchReportName").value;
 
@@ -315,7 +318,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     }
 
     this.loading = true;
-    filterstr += " and ApplicationId eq " + this.searchForm.get("searchApplicationId").value
+    filterstr += " and ApplicationId eq " + this.SelectedApplicationId;
     filterstr += " and ParentId eq " + MyReportNameId;
 
     let list: List = new List();
@@ -361,7 +364,8 @@ export class UserReportConfigColumnsComponent implements OnInit {
 
         this.ReportConfigItemList.sort((a,b)=>a.ColumnSequence - b.ColumnSequence);
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
-        
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loading = false;
       })
   }
@@ -411,19 +415,20 @@ export class UserReportConfigColumnsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ReportNames = [...data.value];
+        this.GetAvailableReportNames();
         this.loading = false;
       });
   }
   GetAvailableReportNames() {
     debugger;
     this.ReportConfigItemList = [];
-    this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
+    this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId
       && a.ParentId == this.BaseReportId);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
   }
   GetMyReportNames() {
     this.ReportConfigItemList = [];
-    this.AppReportNames = this.ReportNames.filter(a => a.ApplicationId == this.searchForm.get("searchApplicationId").value
+    this.AppReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId
       && a.ParentId == this.searchForm.get("searchAvailableReportName").value);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
     this.getAvailableReportColumn();
