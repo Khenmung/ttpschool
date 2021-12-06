@@ -52,7 +52,7 @@ export class searchstudentComponent implements OnInit {
   LanguageSubjUpper = [];
   LanguageSubjLower = [];
   FeeType = [];
-  FeeNames = [];
+  FeeDefinitions = [];
   Sections = [];
   UploadTypes = [];
   ReasonForLeaving = [];
@@ -202,8 +202,10 @@ export class searchstudentComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-        this.shareddata.ChangeFeeNames(this.FeeNames);
+        this.contentservice.GetFeeDefinitions(this.SelectedBatchId,this.LoginUserDetail[0]["orgId"]).subscribe((f:any)=>{
+          this.FeeDefinitions =[...f.value];
+          this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
+        });
 
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeSection(this.Sections);

@@ -21,17 +21,16 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   TopMenu =[];
-  topMaster = 0;
   MasterData = [];
   Roles = [];
   Permissions = [];
   Permission = 'deny';
   ApplicationRoleList = [];
-  TopMasters = [];
+  TopPageFeatures = [];
   DefinedMaster = [];
   NoOfRowsToUpdate = -1;
-  Features = [];
-  FilteredFeatures = [];
+  PageFeatures = [];
+  FilteredPageFeatures = [];
   oldvalue = '';
   selectedData = '';
   datasource: MatTableDataSource<IApplicationRolePermission>;
@@ -61,8 +60,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
-    private contentservice: ContentService,
-    private dialog: DialogService) { }
+    ) { }
 
   ngOnInit(): void {
     
@@ -108,7 +106,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
         this.GetTopMasters();
-        this.GetFeatures();
+        this.GetPageFeatures();
       }
     }
   }
@@ -157,12 +155,11 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.Applications = data.value.filter(t => t.ParentId == applicationId);
           this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
           this.GetCustomerApps();
-
         }
       });
   }
   GetTopMenu() {
-    this.TopMenu = this.Features.filter(f=>f.ApplicationId == this.SelectedApplicationId 
+    this.TopMenu = this.PageFeatures.filter(f=>f.ApplicationId == this.SelectedApplicationId 
     && f.ParentId ==0 )
     this.TopMenu = this.TopMenu.sort((a,b)=>a.DisplayOrder -b.DisplayOrder);
    }
@@ -197,7 +194,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     else
       this.enableTopEdit = false;
   }
-  GetFeatures() {
+  GetPageFeatures() {
     //debugger;
 
     let list: List = new List();
@@ -211,21 +208,22 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     ];
     list.PageName = "Pages";
     list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId];
-    this.Features = [];
+    this.PageFeatures = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.Features = [...data.value];
+          this.PageFeatures = [...data.value];
+          this.TopPageFeatures = this.PageFeatures.filter(f=>f.ParentId==0);
         }
         else
-          this.Features = [];
+          this.PageFeatures = [];
         this.loading = false;
-        //console.log("features", this.Features)
+        //console.log("PageFeatures", this.PageFeatures)
       })
   }
-  FilterFeatures() {
+  FilterPageFeatures() {
     //debugger;
-    this.FilteredFeatures = this.Features.filter(f => f.ApplicationId == this.SelectedApplicationId);
+    this.FilteredPageFeatures = this.PageFeatures.filter(f => f.ApplicationId == this.SelectedApplicationId);
 
   }
   GetApplicationFeatureRole() {
@@ -268,18 +266,18 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     this.ApplicationRoleList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var ResultedPermittedFeatures = [];
+        var ResultedPermittedPageFeatures = [];
         var _roleId = this.searchForm.get("RoleId").value;
         var roleFilteredAssigned = data.value.filter(db => db.RoleId == _roleId);
-        var filteredFeature = this.Features.filter(f => f.ApplicationId == this.SelectedApplicationId && f.ParentId == _ParentId);
-
+        var filteredFeature = this.PageFeatures.filter(f => f.ApplicationId == this.SelectedApplicationId && f.ParentId == _ParentId);
+debugger;
         filteredFeature.forEach(p => {
           var existing = roleFilteredAssigned.filter(r => r.ApplicationFeatureId == p.PageId);
           if (existing.length > 0)
-            ResultedPermittedFeatures.push({
+            ResultedPermittedPageFeatures.push({
               ApplicationFeatureRoleId: existing[0].ApplicationFeatureRoleId,
               ApplicationFeatureId: existing[0].ApplicationFeatureId,
-              FeatureName: p.label,// this.Features.filter(t => t.PageId == existing[0].ApplicationFeatureId)[0].Label,
+              FeatureName: p.label,// this.PageFeatures.filter(t => t.PageId == existing[0].ApplicationFeatureId)[0].Label,
               RoleId: existing[0].RoleId,
               Role: this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)[0].MasterDataName,
               PermissionId: existing[0].PermissionId,
@@ -289,10 +287,10 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
               Action: false
             })
           else
-            ResultedPermittedFeatures.push({
+            ResultedPermittedPageFeatures.push({
               ApplicationFeatureRoleId: 0,
               ApplicationFeatureId: p.PageId,
-              FeatureName: p.label,// this.Features.filter(t => t.PageId == p.PageId)[0].Label,
+              FeatureName: p.label,// this.PageFeatures.filter(t => t.PageId == p.PageId)[0].Label,
               RoleId: _roleId,
               DisplayOrder:p.DisplayOrder,
               Role: this.Roles.filter(ir => ir.MasterDataId == _roleId)[0].MasterDataName,
@@ -302,8 +300,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
               Action: false
             })
         })
-        //const parents = ResultedPermittedFeatures.filter(x => !x.ParentId);
-        this.ApplicationRoleList = ResultedPermittedFeatures.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+        //const parents = ResultedPermittedPageFeatures.filter(x => !x.ParentId);
+        this.ApplicationRoleList = ResultedPermittedPageFeatures.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
 
         if(this.ApplicationRoleList.length==0)
         {
@@ -348,7 +346,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     var newdata = {
       ApplicationFeatureRoleId: 0,
       ApplicationFeatureId: this.searchForm.get("ApplicationFeatureId").value,
-      FeatureName: this.Features.filter(t => t.PageId == this.searchForm.get("ApplicationFeatureId").value)[0].PageTitle,
+      FeatureName: this.PageFeatures.filter(t => t.PageId == this.searchForm.get("ApplicationFeatureId").value)[0].PageTitle,
       RoleId: 0,
       Role: '',
       PermissionId: 0,

@@ -6,6 +6,7 @@ import { ClassdetailComponent } from './classdetail/classdetail.component';
 import { ClassprerequisiteComponent } from './classprerequisite/classprerequisite.component';
 import { ClassmasterdashboardComponent } from './classsmastermapping/classmasterdashboard.component';
 import { DashboardclassfeeComponent } from './dashboardclassfee/dashboardclassfee.component';
+import { FeeDefinitionComponent } from './feedefinition/feedefinition.component';
 import { SchoolFeeTypesComponent } from './school-fee-types/school-fee-types.component';
 
 const routes: Routes = [
@@ -29,5 +30,6 @@ export const ClassesComponents = [
   ClassboardComponent,
   ClassprerequisiteComponent,
   ClassmasterdashboardComponent,
-  SchoolFeeTypesComponent
+  SchoolFeeTypesComponent,
+  FeeDefinitionComponent
 ]

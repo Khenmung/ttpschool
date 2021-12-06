@@ -24,7 +24,7 @@
                 <ng-container matColumnDef="Activity">
                     <mat-header-cell *matHeaderCellDef>Activity
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" [ngClass]="'w-400'">
+                    <mat-cell *matCellDef="let element">
                            <mat-form-field appearance="outline">
                                <textarea matInput 
                                (blur)="onBlur(element)"
@@ -36,9 +36,9 @@
                 <ng-container matColumnDef="CategoryId">
                     <mat-header-cell *matHeaderCellDef>Category
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" [ngClass]="'w-150'">
+                    <mat-cell *matCellDef="let element">
                            <mat-form-field appearance="outline">
-                               <mat-select (selectionChange)="onBlur(element)" 
+                               <mat-select (selectionChange)="CategoryChanged(element)" 
                                [(ngModel)]="element.CategoryId" 
                                [value]="element.CategoryId">
                                    <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
@@ -49,11 +49,11 @@
                 <ng-container matColumnDef="SubCategoryId">
                     <mat-header-cell *matHeaderCellDef>Sub Category
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" [ngClass]="'w-150'">
+                    <mat-cell *matCellDef="let element">
                            <mat-form-field appearance="outline">                               
                                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.SubCategoryId" [value]="element.SubCategoryId">
                                 <mat-option [value]="0">--sub category--</mat-option>
-                                <mat-option *ngFor="let item of SubCategories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                                <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
                                </mat-select>
                            </mat-form-field>
                     </mat-cell>
@@ -61,7 +61,7 @@
                 <ng-container matColumnDef="ActivityDate">
                     <mat-header-cell *matHeaderCellDef>Date
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" [ngClass]="'w-150'">
+                    <mat-cell *matCellDef="let element">
                            <mat-form-field appearance="outline">
                             <input [value]="element.ActivityDate" (dateChange)="onBlur(element)"
                             [(ngModel)]="element.ActivityDate" matInput 
@@ -72,9 +72,9 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>Active
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-cell *matCellDef="let element" style="justify-content: center;">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
                             [checked]="element.Active==1?true:false">
                         </mat-checkbox>
@@ -82,9 +82,9 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <!-- <button [disabled]="loading" *ngIf="SlotNClassSubjects.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
-                            <mat-icon>all_out</mat-icon>
-                        </button> -->
+                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
@@ -93,7 +93,7 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: start;"></mat-row>
             </mat-table>
         </div>
 

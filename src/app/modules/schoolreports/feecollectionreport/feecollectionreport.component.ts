@@ -32,8 +32,8 @@ export class FeecollectionreportComponent implements OnInit {
   TotalPaidStudentCount = 0;
   TotalUnPaidStudentCount = 0;
   allMasterData = [];
-  DropdownFeeNames = [];
-  FeeNames = [];
+  DropdownFeeDefinitions = [];
+  FeeDefinitions = [];
   Classes = [];
   Batches = [];
   Sections = [];
@@ -85,11 +85,11 @@ export class FeecollectionreportComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-      console.log('this.Permission', this.Permission)
+//      console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
         this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-        this.shareddata.CurrentFeeNames.subscribe(c => (this.FeeNames = c));
+        this.shareddata.CurrentFeeDefinitions.subscribe(c => (this.FeeDefinitions = c));
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
 
@@ -257,7 +257,7 @@ export class FeecollectionreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
+        //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
 
         //since only one current batch is accepted

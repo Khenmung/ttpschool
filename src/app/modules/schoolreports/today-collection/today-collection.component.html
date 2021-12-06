@@ -4,7 +4,7 @@
 <alert></alert>
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="SearchForm">
-    <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="30px">
+    <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
         <mat-form-field appearance="outline" [style.width.px]="270">
             <mat-label>From Date</mat-label>
             <input formControlName="FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
@@ -16,6 +16,12 @@
             <input formControlName="ToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
             <mat-datepicker #ToDate></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" [style.width.px]="270">
+            <mat-label>type</mat-label>
+            <mat-select formControlName="searchReportType">
+                <mat-option *ngFor="let item of ReportTypes" [value]="item">{{item}}</mat-option>
+            </mat-select>
         </mat-form-field>
         <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentDetails()">
             <mat-icon>search</mat-icon>
@@ -59,23 +65,33 @@
     <mat-row *matRowDef="let row; columns: DisplayColumns;" fxLayoutAlign="space-between center" fxLayout="row">
     </mat-row>
 </mat-table>
-<div style="margin-top: 5px; border: 1px solid lightgray;">
-    <div *ngFor="let item of GroupByPaymentType"
-        style="padding: 15px 15px 7px 20px; width:600px; display: flex;flex-direction: row;justify-content: center;align-items: center;">
+<mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+<div style="padding-top: 15px;display:flex; flex-direction: row;">
+    <div style="margin:10px 15px 20px 10px;padding-bottom: 15px; border: 1px solid lightgray;">
+        <div style="padding: 15px 20px 0px 20px;"><strong>Receipt Heads</strong></div>
+        <div *ngFor="let item of HeadsWiseCollection"
+            style="padding: 15px 15px 0px 20px; min-width:450px; display: flex;flex-direction: row;justify-content: center;align-items: center;">
 
-        <div style="width:100%;">{{item.PaymentType}}</div>
-        <div style="width:100%;align-items:flex-end;">&#x20b9; {{item.TotalAmount}}</div>
+            <div style="width:100%;">{{item.FeeCategory}}</div>
+            <div style="width:100%;align-items:flex-end;">&#x20b9; {{item.Amount}}</div>
 
+        </div>
     </div>
-    <mat-divider></mat-divider>
-    <div fxLayout="row" fxLayoutAlign="end center" style="padding: 15px 15px 7px 20px; width:600px;">
-        <div *ngIf="GrandTotalAmount>0" style="width:100%;"><strong>Total</strong></div>
-        <div style="width:100%;align-items: flex-end;">&#x20b9; {{GrandTotalAmount}}</div>        
-        <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
-    </div>
-    
+    <div style="margin:10px 20px 20px 10px;padding-bottom: 15px; border: 1px solid lightgray;">
+        <div style="padding: 15px 20px 0px 20px;"><strong>Receipt Type</strong></div>
+        <div *ngFor="let item of GroupByPaymentType"
+            style="padding: 15px 15px 0px 20px; min-width:450px; display: flex;flex-direction: row;justify-content: center;align-items: center;">
+            <div style="width:100%;">{{item.PaymentType}}</div>
+            <div style="width:100%;align-items:flex-end;">&#x20b9; {{item.TotalAmount}}</div>
+        </div>
+    </div>    
 </div>
-<hr style="color:lightgrey;width:50%">
+<mat-divider style="width: 100%;"></mat-divider>
+<div fxLayout="row" fxLayoutAlign="end center" style="padding: 15px 15px 0px 20px; width:600px;">
+    <div *ngIf="GrandTotalAmount>0" style="width:100%;"><strong>Total Collection</strong></div>
+    <div style="width:100%;align-items: flex-end;">&#x20b9; {{GrandTotalAmount}}</div>
+    <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
+</div>
 
-<mat-paginator [pageSizeOptions]="[10,25,100]">
-</mat-paginator>
+<hr style="color:lightgrey;">
+

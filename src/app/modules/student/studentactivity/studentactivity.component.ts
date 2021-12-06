@@ -28,7 +28,7 @@ export class StudentactivityComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StudentClassId=0;
+  StudentClassId = 0;
   Permission = '';
   StandardFilter = '';
   loading = false;
@@ -49,18 +49,20 @@ export class StudentactivityComponent implements OnInit {
     StudentActivityId: 0,
     StudentClassId: 0,
     Activity: '',
+    StudentId: 0,
     ActivityDate: Date,
-    CategoryId:0,
-    SubCategoryId:0,
+    CategoryId: 0,
+    SubCategoryId: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
   };
+  StudentActivityForUpdate =[];
   displayedColumns = [
     'CategoryId',
     'SubCategoryId',
-    'Activity',
     'ActivityDate',
+    'Activity',
     'Active',
     'Action'
   ];
@@ -120,9 +122,9 @@ export class StudentactivityComponent implements OnInit {
             this.Classes = [...data.value];
 
           });
-            
+
         }
-       this.GetStudentActivity();
+
       }
     }
   }
@@ -138,6 +140,25 @@ export class StudentactivityComponent implements OnInit {
           this.alert.success("Data deleted successfully.", this.optionAutoClose);
 
         });
+  }
+  AddNew() {
+    var newItem = {
+      StudentId: this.Students.filter(s => s.StudentClassId == this.StudentClassId)[0].StudentId,
+      Student: '',
+      StudentActivityId: 0,
+      StudentClassId: this.StudentClassId,
+      Activity: '',
+      CategoryId: 0,
+      SubCategoryId: 0,
+      SubCategories: [],
+      ActivityDate: new Date(),
+      Remark: '',
+      Active: 0,
+      Action: false
+    }
+    this.StudentActivityList = [];
+    this.StudentActivityList.push(newItem);
+    this.dataSource = new MatTableDataSource(this.StudentActivityList);
   }
   UpdateOrSave(row) {
 
@@ -165,32 +186,42 @@ export class StudentactivityComponent implements OnInit {
         else {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-
-          this.StudentActivityData.StudentActivityId = row.StudentActivityId;
-          this.StudentActivityData.StudentClassId = row.StudentClassId;
-          this.StudentActivityData.Active = row.Active;
-          this.StudentActivityData.CategoryId = row.CategoryId
-          this.StudentActivityData.SubCategoryId = row.SubCategoryId;
-          this.StudentActivityData.Activity = row.Activity;
-          this.StudentActivityData.ActivityDate = row.ActivityDate;
-          this.StudentActivityData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentActivityData.BatchId = this.SelectedBatchId;
-          //console.log('data', this.ClassSubjectData);
-          //console.log('StudentActivityData', this.StudentActivityData)
-          if (this.StudentActivityData.StudentActivityId == 0) {
-            this.StudentActivityData["CreatedDate"] = new Date();
-            this.StudentActivityData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.StudentActivityData["UpdatedDate"] = new Date();
-            delete this.StudentActivityData["UpdatedBy"];
+          this.StudentActivityForUpdate=[];;
+          //console.log("inserting-1",this.StudentActivityForUpdate);
+          this.StudentActivityForUpdate.push(
+            {
+              StudentActivityId: row.StudentActivityId,
+              StudentClassId: row.StudentClassId,
+              StudentId: row.StudentId,
+              Active: row.Active,
+              CategoryId: row.CategoryId,
+              SubCategoryId: row.SubCategoryId,
+              Activity: row.Activity,
+              ActivityDate: new Date(row.ActivityDate),
+              OrgId: this.LoginUserDetail[0]["orgId"],
+              BatchId: this.SelectedBatchId
+            });
+           
+          if (this.StudentActivityForUpdate[0].StudentActivityId == 0) {
+            this.StudentActivityForUpdate[0]["CreatedDate"] = new Date();
+            this.StudentActivityForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.StudentActivityForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.StudentActivityForUpdate[0]["UpdatedBy"];
+            delete this.StudentActivityForUpdate[0]["SubCategories"];
             
+            
+            //console.log("inserting1",this.StudentActivityForUpdate);
             this.insert(row);
           }
           else {
-            delete this.StudentActivityData["CreatedDate"];
-            delete this.StudentActivityData["CreatedBy"];
-            this.StudentActivityData["UpdatedDate"] = new Date();
-            this.StudentActivityData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row);
+            this.StudentActivityForUpdate[0]["CreatedDate"]=new Date(row.CreatedDate);
+            this.StudentActivityForUpdate[0]["CreatedBy"]=row.CreatedBy;
+            this.StudentActivityForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.StudentActivityForUpdate[0]["SubCategories"];            
+            delete this.StudentActivityForUpdate[0]["UpdatedBy"];
+            //this.StudentActivityForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.insert(row);
+            //this.update(row);
           }
         }
       });
@@ -199,9 +230,9 @@ export class StudentactivityComponent implements OnInit {
     this.loading = false;
   }
   insert(row) {
-
+    console.log("inserting",this.StudentActivityForUpdate);
     //debugger;
-    this.dataservice.postPatch('StudentActivities', this.StudentActivityData, 0, 'post')
+    this.dataservice.postPatch('StudentActivities', this.StudentActivityForUpdate, 0, 'post')
       .subscribe(
         (data: any) => {
           row.StudentActivityId = data.StudentActivityId;
@@ -211,8 +242,8 @@ export class StudentactivityComponent implements OnInit {
         });
   }
   update(row) {
-
-    this.dataservice.postPatch('StudentActivities', this.StudentActivityData, this.StudentActivityData.StudentActivityId, 'patch')
+    console.log("updating",this.StudentActivityForUpdate);
+    this.dataservice.postPatch('StudentActivities', this.StudentActivityForUpdate, this.StudentActivityForUpdate[0].StudentActivityId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -232,12 +263,15 @@ export class StudentactivityComponent implements OnInit {
     list.fields = [
       'StudentActivityId',
       'StudentClassId',
+      'StudentId',
       'CategoryId',
       'SubCategoryId',
       'Activity',
       'ActivityDate',
       'Remarks',
-      'Active'
+      'Active',
+      'CreatedDate',
+      'CreatedBy'
     ];
 
     list.PageName = "StudentActivities";
@@ -246,40 +280,30 @@ export class StudentactivityComponent implements OnInit {
     this.StudentActivityList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        debugger;
         //  console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.StudentActivityList = data.value.map(item => {
             return {
               StudentActivityId: item.StudentActivityId,
+              StudentId: item.StudentId,
               //Student: item.StudentClass.Student.FirstName + " " +  item.StudentClass.Student.LastName, 
               StudentClassId: item.StudentClassId,
               Activity: item.Activity,
               CategoryId: item.CategoryId,
               SubCategoryId: item.SubCategoryId,
+              SubCategories: this.allMasterData.filter(f => f.ParentId == item.CategoryId),
               ActivityDate: item.ActivityDate,
+              CreatedDate:item.CreatedDate,
+              CreatedBy:item.CreatedBy,
               Remark: '',
               Active: item.Active,
               Action: false
             }
           })
         }
-        // else {
-        //   this.StudentActivityList.push({
-        //     StudentActivityId: 0,
-        //     Student: this.searchForm.get("searchStudentName").value.Name,
-        //     StudentId: this.searchForm.get("searchStudentName").value.StudentClassId,
-        //     StudentClassId: this.searchForm.get("searchStudentName").value.StudentClassId,
-        //     Activity: '',
-        //     CategoryId: 0,
-        //     SubCategoryId: 0,
-        //     Remark: '',
-        //     ActivityDate: new Date(),
-        //     Active: 0,
-        //     Action: false
-        //   })
-        // }
-        //console.log('studentactivity', this.StudentActivityList)
+
+        console.log('studentactivity', this.StudentActivityList)
         this.dataSource = new MatTableDataSource<IStudentActivity>(this.StudentActivityList);
         this.loadingFalse();
       });
@@ -302,14 +326,27 @@ export class StudentactivityComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYCATEGORY);
-        this.SubCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYSUBCATEGORY);
+        //this.SubCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYSUBCATEGORY);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetStudents();
+        this.GetStudentActivity();
       });
   }
   onBlur(row) {
     row.Action = true;
+  }
+  CategoryChanged(row) {
+    debugger;
+    row.Action = true;
+    //row.SubCategories = this.Categories.filter(f=>f.MasterDataId == row.CategoryId);
+    var item = this.StudentActivityList.filter(f => f.StudentActivityId == row.StudentActivityId);
+    item[0].SubCategories = this.allMasterData.filter(f => f.ParentId == row.CategoryId);
+
+    //console.log("dat", this.StudentActivityList);
+    this.dataSource = new MatTableDataSource(this.StudentActivityList);
+
+
   }
   UpdateActive(row, event) {
     row.Active = event.checked ? 1 : 0;
@@ -383,8 +420,9 @@ export interface IStudentActivity {
   Student: string;
   Activity: string;
   ActivityDate: Date;
-  CategoryId:number;
-  SubCategoryId:number;
+  CategoryId: number;
+  SubCategories: any[],
+  SubCategoryId: number;
   Remark: string;
   Active: number;
   Action: boolean;

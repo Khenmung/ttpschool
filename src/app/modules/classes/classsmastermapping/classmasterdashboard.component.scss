@@ -4,10 +4,14 @@
 // }
 mat-form-field{
     margin-right:15px;
+    width: 99%;
 }
 button{
     margin-right:15px;
 }
-// .mat-column-ClassSubjectId{
-//     flex:0 0 5%;
-//  }
+.mat-column-Section,.mat-column-Active,.mat-column-Action{
+    flex:0 0 100px;
+ }
+ .mat-column-TeacherId{
+     flex: 0 0 300px;
+ }

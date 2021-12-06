@@ -86,7 +86,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   StudentName = '';
   loginUserDetail = [];
   Sections = [];
-  FeeNames = [];
+  FeeDefinitions = [];
   Classes = [];
   Batches = [];
   Locations = [];
@@ -181,8 +181,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   PageLoad() {
 debugger;
-    this.shareddata.CurrentFeeNames.subscribe(fy => (this.FeeNames = fy));
-    if (this.FeeNames.length == 0) {
+    this.shareddata.CurrentFeeDefinitions.subscribe(fy => (this.FeeDefinitions = fy));
+    if (this.FeeDefinitions.length == 0) {
       this.nav.navigate(["/edu"]);
     }
     else {
@@ -236,7 +236,14 @@ debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
+        this.shareddata.CurrentFeeDefinitions.subscribe((f:any) => {
+          this.FeeDefinitions = [...f];
+          if (this.FeeDefinitions.length == 0) {
+            this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.loginUserDetail[0]["orgId"]).subscribe((d: any) => {
+              this.FeeDefinitions = [...d.value];
+            })
+          }
+        })
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -381,16 +388,17 @@ debugger;
     let list: List = new List();
     list.fields = [
       "ClassFeeId",
-      "FeeNameId",
+      "FeeDefinitionId",
       "ClassId",
       "Amount",
       "BatchId",
       "Month",
       "Active",
       "LocationId",
-      "PaymentOrder"];
+      //"PaymentOrder"
+    ];
     list.PageName = "ClassFees";
-    list.orderBy = "PaymentOrder";
+    list.orderBy = "Month";
     list.filter = [filterstr];
 
     this.dataservice.get(list)
@@ -398,7 +406,7 @@ debugger;
         debugger;
         if (data.value.length > 0) {
           this.StudentClassFees = data.value.map(f => {
-            f.FeeName = this.FeeNames.filter(n => n.MasterDataId == f.FeeNameId)[0].MasterDataName;
+            f.FeeName = this.FeeDefinitions.filter(n => n.FeeDefinitionId == f.FeeDefinitionId)[0].FeeName;
             var _monthObj = this.Months.filter(m => m.val == f.Month)
             if (_monthObj.length > 0)
               f.MonthName = _monthObj[0].MonthName;
@@ -406,7 +414,7 @@ debugger;
               f.MonthName = '';
             return f;
           });
-          let itemcount = 0;
+          let itemcount = 1;
           this.StudentLedgerList = [];
           this.StudentClassFees.forEach((studentClassFee, indx) => {
             let existing = this.ExistingStudentLedgerList.filter(fromdb => fromdb.Month == studentClassFee.Month)
@@ -424,7 +432,7 @@ debugger;
                     AccountNatureId: exitem.AccountNatureId,
                     TotalDebit: exitem.TotalDebit,
                     TotalCredit: +exitem.TotalCredit,
-                    PaymentOrder: studentClassFee.PaymentOrder,
+                    //PaymentOrder: studentClassFee.PaymentOrder,
                     Balance: exitem.Balance,
                     MonthName: studentClassFee.MonthName,
                     BatchId: exitem.BatchId,
@@ -458,7 +466,7 @@ debugger;
                   AccountNatureId: 0,
                   TotalDebit: 0,
                   TotalCredit: +AmountAfterFormulaApplied,
-                  PaymentOrder: studentClassFee.PaymentOrder,
+                  //PaymentOrder: studentClassFee.PaymentOrder,
                   Balance: +AmountAfterFormulaApplied,
                   MonthName: studentClassFee.MonthName,
                   BatchId: studentClassFee.BatchId,
@@ -472,7 +480,7 @@ debugger;
           this.alert.warn("Fees not defined for this class", this.optionsNoAutoClose);
         }
 
-        this.StudentLedgerList.sort((a, b) => a.PaymentOrder - b.PaymentOrder);
+        this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
         console.log("this.StudentLedgerList", this.StudentLedgerList)
         this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
         this.loading = false;
@@ -495,12 +503,12 @@ debugger;
   SelectRow(row, event) {
     debugger;
     if (event.checked) {
-      var previousBalancePaymentOrderObj = this.StudentLedgerList.filter(f => f.PaymentOrder < row.PaymentOrder && +f.Balance > 0);
-      var paymentOrderSelected = [];
+      var previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < row.Month && +f.Balance > 0);
+      var MonthSelected = [];
       //checking if previous balance exist
-      if (previousBalancePaymentOrderObj.length > 0) {
-        paymentOrderSelected = this.MonthlyDueDetail.filter(f => f.PaymentOrder == previousBalancePaymentOrderObj[0].PaymentOrder)
-        if (paymentOrderSelected.length == 0)//means not selected yet
+      if (previousBalanceMonthObj.length > 0) {
+        MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == previousBalanceMonthObj[0].Month)
+        if (MonthSelected.length == 0)//means not selected yet
         {
           row.Action = false;
           this.alert.info("Previous balance must be cleared first.", this.optionsNoAutoClose);
@@ -511,9 +519,7 @@ debugger;
       var SelectedMonthFees = this.StudentClassFees.filter(f => f.Month == row.Month);
       //var newdata = [];
       if (row.StudentEmployeeLedegerId > 0) {
-        var previousLBId = 0;
-        previousLBId = this.FeeNames.filter(fee => fee.MasterDataName.toLowerCase().includes('previous balance'))[0].MasterDataId;
-        var balanceClassFeeId = this.StudentClassFees.filter(f => f.FeeNameId == previousLBId)[0].ClassFeeId;
+        
         this.NewDataCount++;
         this.MonthlyDueDetail.push({
           SlNo: this.NewDataCount,
@@ -528,7 +534,7 @@ debugger;
           ClassFeeId: SelectedMonthFees[0].ClassFeeId,//balanceClassFeeId,
           ShortText: '',
           Month: row.Month,
-          PaymentOrder: row.PaymentOrder,
+          //PaymentOrder: row.PaymentOrder,
           OrgId: this.loginUserDetail[0]["orgId"],
           SubOrgId: 0,
           Active: 1,
@@ -536,6 +542,7 @@ debugger;
         });
       }
       else {
+        debugger;
         var AmountAfterFormulaApplied = 0;
         SelectedMonthFees.forEach(f => {
           this.VariableObjList.push(f);
@@ -556,7 +563,7 @@ debugger;
             Month: row.Month,
             ClassFeeId: f.ClassFeeId,
             ShortText: '',
-            PaymentOrder: row.PaymentOrder,
+            //PaymentOrder: row.PaymentOrder,
             OrgId: this.loginUserDetail[0]["orgId"],
             SubOrgId: 0,
             Active: 1,
@@ -582,16 +589,16 @@ debugger;
   billpayment() {
     //debugger;
     var error = [];
-    var maxPaymentOrder = Math.max.apply(Math, this.MonthlyDueDetail.map(function (o) { return o.PaymentOrder; }));
+    var maxMonth = Math.max.apply(Math, this.MonthlyDueDetail.map(function (o) { return o.Month; }));
 
-    var previousBalancePaymentOrderObj = [];
+    var previousBalanceMonthObj = [];
 
-    previousBalancePaymentOrderObj = this.StudentLedgerList.filter(f => f.PaymentOrder < maxPaymentOrder && +f.Balance > 0);
-    var paymentOrderSelected = [];
-    if (previousBalancePaymentOrderObj.length > 0) {
-      previousBalancePaymentOrderObj.forEach(p => {
-        paymentOrderSelected = this.MonthlyDueDetail.filter(f => f.PaymentOrder == p.PaymentOrder)
-        if (paymentOrderSelected.length == 0)//means not selected yet
+    previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < maxMonth && +f.Balance > 0);
+    var MonthSelected = [];
+    if (previousBalanceMonthObj.length > 0) {
+      previousBalanceMonthObj.forEach(p => {
+        MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == p.Month)
+        if (MonthSelected.length == 0)//means not selected yet
           error.push(1);
       })
     }
@@ -669,7 +676,7 @@ debugger;
       this.StudentLedgerData.TotalDebit = monthAmount;
       this.StudentLedgerData.TotalCredit = selectedMonthrow.TotalCredit;
 
-      this.FeePayment.LedgerAccount.push(this.StudentLedgerData);
+      this.FeePayment.LedgerAccount.push(JSON.parse(JSON.stringify(this.StudentLedgerData)));
 
       var monthPaydetail = this.MonthlyDueDetail.filter(f => f.Month == selectedMonthrow.Month)
 
@@ -694,7 +701,7 @@ debugger;
           });
       });
     })
-    //console.log("this.FeePayment", this.FeePayment);
+    console.log("this.FeePayment", this.FeePayment);
     this.dataservice.postPatch(this.FeeReceiptListName, this.FeePayment, 0, 'post')
       .subscribe((data: any) => {
         this.StudentReceiptData.StudentFeeReceiptId = data.StudentFeeReceiptId;
@@ -793,7 +800,7 @@ export interface ILedger {
   TotalCredit: number;
   Balance: number;
   BatchId: number;
-  PaymentOrder: number;
+  //PaymentOrder: number;
   Action: boolean;
 }
 export interface IPaymentDetail {

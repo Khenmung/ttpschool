@@ -29,24 +29,28 @@ export class TodayCollectionComponent implements OnInit {
   };
   loading = false;
   allMasterData = [];
-  FeeNames = [];
+  FeeDefinitions = [];
+  ReportTypes = ["Receipt Nos.", "Receipt Heads"];
+  FeeCategories = [];
   Classes = [];
   Batches = [];
   Sections = [];
-  GroupByPaymentType=[];
+  GroupByPaymentType = [];
   ELEMENT_DATA = [];
   GrandTotalAmount = 0;
-  PaymentTypes=[];
+  PaymentTypes = [];
   DisplayColumns = [
     "ReceiptDate",
     "Student",
-    "ClassName",    
+    "ClassName",
     "ReceiptNo",
     "PaymentType",
     "TotalAmount"
   ]
+
   Permission = 'deny';
   DateWiseCollection = [];
+  HeadsWiseCollection = [];
   LoginUserDetail = [];
   dataSource: MatTableDataSource<ITodayReceipt>;
   SearchForm: FormGroup;
@@ -61,12 +65,13 @@ export class TodayCollectionComponent implements OnInit {
     private fb: FormBuilder,
     private nav: Router,
     private alert: AlertService,
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.SearchForm = this.fb.group({
       FromDate: [new Date(), Validators.required],
       ToDate: [new Date(), Validators.required],
+      searchReportType: ['', Validators.required],
     })
     this.PageLoad();
   }
@@ -94,7 +99,7 @@ export class TodayCollectionComponent implements OnInit {
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
     let filterstring = '';
-    this.loading=true;
+    this.loading = true;
     filterstring = "Active eq 1 and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
       " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd') +
       " and BatchId eq " + this.SelectedBatchId +
@@ -108,7 +113,10 @@ export class TodayCollectionComponent implements OnInit {
       'PaymentTypeId'
     ];
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"]
+    list.lookupFields = [
+      "AccountingVouchers($filter=Active eq 1;$select=FeeReceiptId,GLAccountId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
+
+    ]
     list.filter = [filterstring];
 
     this.dataservice.get(list)
@@ -118,18 +126,42 @@ export class TodayCollectionComponent implements OnInit {
         this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
-          d.PaymentType = this.PaymentTypes.filter(p=>p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;          
+          d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
           return d;
         })
-        var groupbyPaymentType = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType",[this.DateWiseCollection]);
-         this.GroupByPaymentType = [...groupbyPaymentType]; 
-        if(this.DateWiseCollection.length==0)
-          this.alert.info("No collection found.",this.options);
+        var groupbyPaymentType = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType", [this.DateWiseCollection]);
+
+        data.value.forEach(d => {
+          d.AccountingVouchers.forEach(v => {
+            var _feeCategoryName = '';
+            var _feeCategoryId = v.ClassFee.FeeDefinition.FeeCategoryId;
+            var objCategory = this.FeeCategories.filter(f => f.MasterDataId == _feeCategoryId)
+            if (objCategory.length > 0)
+              _feeCategoryName = objCategory[0].MasterDataName;
+            this.HeadsWiseCollection.push({
+              ClassFeeId: v.ClassFeeId,
+              Amount: v.Amount,
+              PaymentType: this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName,
+              Student: d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName,
+              ClassName: d.StudentClass.Class.ClassName,
+              FeeCategoryId: _feeCategoryId,
+              FeeCategory: _feeCategoryName
+            })
+          })
+          return d.AccountingVouchers;
+        })
+
+        this.HeadsWiseCollection = alasql("select FeeCategory,Sum(Amount) Amount from ? group by FeeCategory", [this.HeadsWiseCollection]);
+        console.log('this.HeadsWiseCollection', this.HeadsWiseCollection)
+
+        this.GroupByPaymentType = [...groupbyPaymentType];
+        if (this.DateWiseCollection.length == 0)
+          this.alert.info("No collection found.", this.options);
         //console.log("result",result)
         this.dataSource = new MatTableDataSource(this.DateWiseCollection)
         this.dataSource.paginator = this.paginator;
-        this.dataSource.sort =  this.sort;
-        this.loading=false;
+        this.dataSource.sort = this.sort;
+        this.loading = false;
       })
   }
   GetMasterData() {
@@ -142,9 +174,19 @@ export class TodayCollectionComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.FeeNames = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
+        this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
+          this.FeeDefinitions = [...f];
+          if (this.FeeDefinitions.length == 0) {
+            this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
+              this.FeeDefinitions = [...d.value];
+            })
+          }
+        })
+        //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
+        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
 

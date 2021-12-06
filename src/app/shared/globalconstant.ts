@@ -119,7 +119,8 @@ export class globalconstants {
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
                     'CLASSDETAIL': 'classdetail',
-                    'FEE': 'fee',
+                    'CLASSFEE': 'class fee',
+                    'FEEDEFINITION': 'fee definition',                
                     'FEETYPE': 'fee type',
                     'PREREQUISITE': 'pre-requisite',
                     'CLASSMASTER': 'class master'
@@ -237,9 +238,11 @@ export class globalconstants {
                 "ROLLNOGENERATION": "Roll No Generation",
                 "CLASSPROMOTION": "class promotion",
                 "FEEPAYMENTTYPE": "fee payment type",
+                "FEETYPE": "fee type",
                 "ACTIVITYCATEGORY": "activity category",
                 "ACTIVITYSUBCATEGORY": "activity sub category",
-                "ROLE": "role"
+                "ROLE": "role",
+                "FEECATEGORY": "fee category"
 
             },
             "leave": {

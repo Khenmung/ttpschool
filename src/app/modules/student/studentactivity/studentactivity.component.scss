@@ -8,22 +8,15 @@ button{
 mat-cell:first-of-type {
     padding-left: 0px;
 }
-// .mat-column-ActivityDate,
-//.mat-column-Student,
-.w-150{
-    width: 150px;
+
+.mat-column-ActivityDate, .mat-column-CategoryId,.mat-column-SubCategoryId{
+    flex:0 0 150px;
 }
-.w-400{
-    width: 400px;
+.mat-column-Action,.mat-column-Active
+{
+    justify-content: center;
+    flex:0 0 100px;
 }
-// .mat-column-Category,.mat-column-SubCategory{
-//     flex:0 0 150px;
-// }
-// .mat-column-Action,.mat-column-Active
-// {
-//     justify-content: center;
-//     flex:0 0 100px;
-// }
-// .mat-column-Activity{
-//     flex:0 0 400px;
-// }
+.mat-column-Activity{
+    flex:0 0 400px;
+}

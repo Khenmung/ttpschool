@@ -18,7 +18,7 @@
                 <mat-label>Top Feature</mat-label>
                 <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
                     <mat-option [value]="0">select</mat-option>
-                    <mat-option *ngFor="let feature of Features" [value]="feature.PageId">
+                    <mat-option *ngFor="let feature of TopPageFeatures" [value]="feature.PageId">
                         {{feature.label}}
                     </mat-option>
                 </mat-select>

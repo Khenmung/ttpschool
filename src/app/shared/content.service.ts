@@ -20,7 +20,8 @@ export class ContentService implements OnInit {
     private tokenService: TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
-    private shareddata: SharedataService) { }
+    private shareddata: SharedataService,
+  ) { }
   ngOnInit(): void {
     //debugger;
     //this.UserDetail = this.tokenService.getUserDetail();
@@ -42,6 +43,24 @@ export class ContentService implements OnInit {
     list.fields = ["*"];
     list.filter = ["Active eq 1 and OrgId eq " + orgId];
     list.PageName = "ClassMasters";
+    return this.dataservice.get(list);
+  }
+  GetFeeDefinitions(SelectedBatchId, orgId) {
+
+    let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;
+    let list: List = new List();
+    list.fields = [
+      "FeeDefinitionId",
+      "FeeName",
+      "Description",
+      "FeeCategoryId",
+      "OrgId",
+      "BatchId",
+      "Active"
+    ];
+
+    list.PageName = "FeeDefinitions";
+    list.filter = [filterStr];
     return this.dataservice.get(list);
   }
   GetGrades(orgId) {
@@ -171,7 +190,7 @@ export class ContentService implements OnInit {
     return this.http.patch(this.url, body, httpOptions)
   }
   GetApplicationRoleUser(userdetail) {
-    this.UserDetail =[...userdetail];
+    this.UserDetail = [...userdetail];
     let list: List = new List();
     list.fields = [
       'UserId',
@@ -217,7 +236,7 @@ export class ContentService implements OnInit {
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
 
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
-  
+
         this.RoleFilter = ' and (RoleId eq 0';
         var __organization = '';
         if (UserRole[0].OrgId != null)
@@ -281,7 +300,7 @@ export class ContentService implements OnInit {
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
-          
+
             this.UserDetail[0]["applicationRolePermission"].push({
               'applicationFeatureId': item.ApplicationFeatureId,
               'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,
@@ -297,7 +316,7 @@ export class ContentService implements OnInit {
             });
 
           });
-          console.log("this.UserDetail",this.UserDetail);
+          console.log("this.UserDetail", this.UserDetail);
           this.tokenService.saveUserdetail(this.UserDetail);
         }
       })

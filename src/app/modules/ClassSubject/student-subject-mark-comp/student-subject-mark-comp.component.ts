@@ -358,7 +358,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   updatePaymentOrder(row, value) {
     row.Action = true;
-    row.PaymentOrder = value;
+    //row.PaymentOrder = value;
   }
   enableAction(row, value) {
     row.Action = true;

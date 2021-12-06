@@ -40,7 +40,7 @@ export class FeereceiptComponent implements OnInit {
   Saved = false;
   PaymentIds = [];
   Sections = [];
-  FeeNames = [];
+  FeeDefinitions = [];
   Classes = [];
   Batches = [];
   Locations = [];
@@ -106,7 +106,7 @@ export class FeereceiptComponent implements OnInit {
   ReceiptDisplayedColumns = [
     'ReceiptNo',
     'ReceiptDate',
-    'TotalAmount',    
+    'TotalAmount',
     'Active'
   ]
   PageLoad() {
@@ -124,7 +124,7 @@ export class FeereceiptComponent implements OnInit {
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
     this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
-    this.shareddata.CurrentFeeNames.subscribe(b => (this.FeeNames = b));
+    this.shareddata.CurrentFeeDefinitions.subscribe(b => (this.FeeDefinitions = b));
     debugger;
     this.GetMasterData();
     this.GetBills();
@@ -229,10 +229,11 @@ export class FeereceiptComponent implements OnInit {
         })
 
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
-        this.dataReceiptSource.sort= this.sort;
-        var latestReceipt = this.FeeReceipt.sort((a,b)=>b.ReceiptNo - a.ReceiptNo)[0]; 
-        this.viewDetail(latestReceipt);
-        
+        this.dataReceiptSource.sort = this.sort;
+        var latestReceipt = this.FeeReceipt.sort((a, b) => b.ReceiptNo - a.ReceiptNo);
+        if (latestReceipt.length > 0)
+          this.viewDetail(latestReceipt[0]);
+
         this.loading = false;
 
       })

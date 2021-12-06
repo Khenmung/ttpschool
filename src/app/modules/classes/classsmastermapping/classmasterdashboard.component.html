@@ -5,13 +5,14 @@
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <alert></alert>
         <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
-                <mat-select formControlName="searchClassId">
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="searchClassId">                    
                     <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
                         {{item.ClassName}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field [style.width.pc]="25" appearance="outline">
+            <mat-form-field [style.width.px]="200" appearance="outline">
                 <mat-label>Teacher</mat-label>
                 <input type="text" matInput formControlName="searchTeacherId" [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -30,14 +31,13 @@
                 <mat-header-cell *matHeaderCellDef> Section </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.Section}}
-
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="TeacherId">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Teacher
                 </mat-header-cell>
-                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    <mat-form-field [style.width.pc]="25">
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field>
                         <mat-label>Teacher</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId">
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
@@ -49,7 +49,7 @@
             </ng-container>
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                         [checked]="element.Active==1?true:false">
                     </mat-checkbox>
@@ -58,9 +58,9 @@
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
-                        mat-mini-fab (click)="UpdateOrSave(element)">
+                <mat-cell *matCellDef="let element" style="display: flex;justify-content: center;">
+                    <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-mini-fab
+                        (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>

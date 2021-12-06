@@ -17,20 +17,20 @@
     <alert></alert>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" #Class style="width: 200px;">
             <mat-label>Class</mat-label>
-            <mat-select formControlName="ClassId" #Class>
+            <mat-select formControlName="ClassId">
                 <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
                     {{p.ClassName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" style="width: 200px;">
             <mat-label>Fee name</mat-label>
-            <mat-select formControlName="FeeNameId" #FeeName>
+            <mat-select formControlName="FeeDefinitionId" #FeeName>
                 <mat-option value="0">---</mat-option>
-                <mat-option *ngFor="let p of FeeNames" [value]="p.MasterDataId">
-                    {{p.MasterDataName}}
+                <mat-option *ngFor="let p of FeeDefinitions" [value]="p.FeeDefinitionId">
+                    {{p.FeeName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
@@ -45,13 +45,6 @@
             <mat-header-cell *matHeaderCellDef> Id </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.ClassFeeId}} </mat-cell>
         </ng-container>
-
-        <ng-container matColumnDef="FeeNameId" hidden>
-            <mat-header-cell *matHeaderCellDef> FeeID </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.FeeNameId}}
-            </mat-cell>
-        </ng-container>
         <ng-container matColumnDef="FeeName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Fee </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -61,24 +54,16 @@
         <ng-container matColumnDef="Amount">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Amount </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-form-field [style.width.px]="100">
+                <mat-form-field appearance="outline">
                     <input matInput type="number" (blur)='updateAmount(element,$event)' [(ngModel)]="element.Amount"
                         [value]="element.Amount" autocomplete="Off">
                 </mat-form-field>
             </mat-cell>
-        </ng-container>
-        <!-- <ng-container matColumnDef="Recurring">
-            <mat-header-cell *matHeaderCellDef>Recurring </mat-header-cell>
-            <mat-cell style="justify-content: center;" *matCellDef="let element">
-                <mat-checkbox [checked]="element.Recurring" (click)="$event.stopPropagation()"
-                    (change)="updateRecurring(element,$event)">
-                </mat-checkbox>
-            </mat-cell>
-        </ng-container> -->
+        </ng-container>      
         <ng-container matColumnDef="Month">
             <mat-header-cell *matHeaderCellDef>Month</mat-header-cell>
-            <mat-cell style="justify-content: center;" *matCellDef="let element">
-                <mat-form-field [style.width.px]="80">
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
                     <mat-select [(ngModel)]="element.Month" [value]="element.Month" (selectionChange)="onBlur(element)">
                         <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
                     </mat-select>
@@ -86,31 +71,22 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Active">
-            <mat-header-cell *matHeaderCellDef>Active </mat-header-cell>
-            <mat-cell style="justify-content: center;" *matCellDef="let element">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active </mat-header-cell>
+            <mat-cell *matCellDef="let element" style="justify-content: center;">
                 <mat-checkbox [checked]="element.Active" (click)="$event.stopPropagation()"
                     (change)="updateActive(element,$event)">
                 </mat-checkbox>
             </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="PaymentOrder">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Order </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <mat-form-field [style.width.px]="100">
-                    <input matInput type="number" (blur)='updatePaymentOrder(element,$event)'
-                        [(ngModel)]="element.PaymentOrder" [value]="element.PaymentOrder" autocomplete="Off">
-                </mat-form-field>
-            </mat-cell>
-        </ng-container>
+        </ng-container>       
         <ng-container matColumnDef="Action">
-            <mat-header-cell *matHeaderCellDef>
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;">
                 <div *ngIf="ELEMENT_DATA.length>0">
                     <button [disabled]="loading || Permission =='read'" mat-mini-fab (click)="SaveAll()">
                         <mat-icon>all_out</mat-icon>
                     </button>
                 </div>
             </mat-header-cell>
-            <mat-cell *matCellDef="let element">
+            <mat-cell *matCellDef="let element" style="justify-content: center;">
                 <button [disabled]="loading || !element.Action || Permission =='read'" mat-mini-fab (click)="Save(element)">
                     <mat-icon>save</mat-icon>
                 </button>

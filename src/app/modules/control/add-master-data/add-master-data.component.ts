@@ -23,7 +23,6 @@ export class AddMasterDataComponent implements OnInit {
   //topMaster = 0;
   MasterData = [];
   SubMasters = [];
-  FeeNames = [];
   Classes = [];
   Batches = [];
   PermittedApplications = [];

@@ -7,6 +7,7 @@ import { ClassdetailComponent } from '../classdetail/classdetail.component';
 import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
 import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
+import { FeeDefinitionComponent } from '../feedefinition/feedefinition.component';
 import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
 
 @Component({
@@ -20,6 +21,7 @@ export class ClassboardComponent implements AfterViewInit {
     DashboardclassfeeComponent,
     ClassprerequisiteComponent,
     ClassmasterdashboardComponent,
+    FeeDefinitionComponent,
     SchoolFeeTypesComponent
   ];
 
@@ -28,6 +30,7 @@ export class ClassboardComponent implements AfterViewInit {
     { "label": "Fee", "faIcon": '' },
     { "label": "Pre-requisite", "faIcon": '' },
     { "label": "Class Master", "faIcon": '' },
+    { "label": "Fee Type", "faIcon": '' },
     { "label": "Fee Type", "faIcon": '' }
   ];
 
@@ -38,7 +41,8 @@ export class ClassboardComponent implements AfterViewInit {
       FeePermission: '',
       PreRequisitePermission: '',
       ClassMasterPermission: '',
-      FeeTypePermission: ''
+      FeeTypePermission: '',
+      FeeDefinition: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -54,81 +58,57 @@ export class ClassboardComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.contentservice.GetApplicationRoleUser(this.tokenStorage.getUserDetail());
+    debugger;
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSCOURSE)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
       //this.tabNames
     }
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
-    if (perObj.length > 0) {
-      this.tabNames[0].faIcon = perObj[0].faIcon;
-      this.Permissions.ClassDetailPermission = perObj[0].permission;
-    }
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEE)
-    if (perObj.length > 0) {
-      this.Permissions.FeePermission = perObj[0].permission;
-      this.tabNames[1].faIcon = perObj[0].faIcon;
-    }
+    var comindx = this.components.indexOf(ClassdetailComponent);
+    this.GetComponents(perObj, comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE)
+    var comindx = this.components.indexOf(DashboardclassfeeComponent);
+    this.GetComponents(perObj, comindx)
+    
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
-    if (perObj.length > 0) {
-      this.Permissions.PreRequisitePermission = perObj[0].permission;
-      this.tabNames[2].faIcon = perObj[0].faIcon;
-    }
+    var comindx = this.components.indexOf(ClassprerequisiteComponent);
+    this.GetComponents(perObj, comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER)
-    if (perObj.length > 0) {
-      this.Permissions.ClassMasterPermission = perObj[0].permission;
-      this.tabNames[3].faIcon = perObj[0].faIcon;
-    }
+    var comindx = this.components.indexOf(ClassmasterdashboardComponent);
+    this.GetComponents(perObj, comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEETYPE)
-    if (perObj.length > 0) {
-      this.Permissions.FeeTypePermission = perObj[0].permission;
-      this.tabNames[4].faIcon = perObj[0].faIcon;
-    }
+    var comindx = this.components.indexOf(SchoolFeeTypesComponent);
+    this.GetComponents(perObj, comindx)
 
-
-    this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-
-    // console.log("this.Permissions.ParentPermission", this.Permissions.ParentPermission);
-    // console.log("this.Permissions.ClassDetailPermission", this.Permissions.ClassDetailPermission);
-    // console.log("this.Permissions.FeePermission", this.Permissions.FeePermission);
-    // console.log("this.Permissions.PreRequisitePermission", this.Permissions.PreRequisitePermission);
-    // console.log("this.Permissions.FeeTypePermission", this.Permissions.FeeTypePermission);
-    // console.log("this.Permissions.ClassMasterPermission", this.Permissions.ClassMasterPermission);
-    if (this.Permissions.ClassDetailPermission == 'deny') {
-      var comindx = this.components.indexOf(ClassdetailComponent);
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-    if (this.Permissions.ClassMasterPermission == 'deny') {
-      var comindx = this.components.indexOf(ClassmasterdashboardComponent);
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-    if (this.Permissions.FeePermission == 'deny') {
-      var comindx = this.components.indexOf(DashboardclassfeeComponent);
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-    if (this.Permissions.FeeTypePermission == 'deny') {
-      var comindx = this.components.indexOf(SchoolFeeTypesComponent);
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-    if (this.Permissions.PreRequisitePermission == 'deny') {
-      var comindx = this.components.indexOf(ClassprerequisiteComponent);
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-
-
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEEDEFINITION)
+    var comindx = this.components.indexOf(FeeDefinitionComponent);
+    this.GetComponents(perObj, comindx)
+  
     if (this.Permissions.ParentPermission != 'deny') {
       this.renderComponent(0);
       this.cdr.detectChanges();
     }
   }
-
+  GetComponents(perObj, comindx) {
+    if (perObj.length > 0) {
+      if (perObj[0].permission == 'deny') {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      else {
+        this.tabNames[comindx].faIcon = perObj[0].faIcon;
+        this.tabNames[comindx].label = perObj[0].label;
+      }
+    }
+    else {
+      this.components.splice(comindx, 1);
+      this.tabNames.splice(comindx, 1);
+    }
+  }
   public tabChange(index: number) {
     //    console.log("index", index)
     setTimeout(() => {

@@ -27,7 +27,7 @@ export class SharedataService {
   private FeeTypeSource = new BehaviorSubject(this.items);
   private LanguageSubjectUpperSource = new BehaviorSubject(this.items);
   private LanguageSubjectLowerSource = new BehaviorSubject(this.items);
-  private FeeNamesSource = new BehaviorSubject(this.items);
+  private FeeDefinitionsSource = new BehaviorSubject(this.items);
   private StudentNameSource = new BehaviorSubject('');
   private EmployeeNameSource = new BehaviorSubject('');
   private UploadTypeSource = new BehaviorSubject(this.items);
@@ -84,7 +84,7 @@ export class SharedataService {
   CurrentNewsNEventId = this.NewsNEventIdSource.asObservable();
   CurrentPagesData = this.PagesDataSource.asObservable();
   CurrentUploadType = this.UploadTypeSource.asObservable();  
-  CurrentFeeNames = this.FeeNamesSource.asObservable();  
+  CurrentFeeDefinitions = this.FeeDefinitionsSource.asObservable();  
   CurrentLanguageSubjectLower = this.LanguageSubjectLowerSource.asObservable();
   CurrentLanguageSubjectUpper = this.LanguageSubjectUpperSource.asObservable();
   CurrentFeeType = this.FeeTypeSource.asObservable();
@@ -197,9 +197,9 @@ export class SharedataService {
   {
     this.EmployeeNameSource.next(item);
   }
-  ChangeFeeNames(item)
+  ChangeFeeDefinition(item)
   {
-    this.FeeNamesSource.next(item);
+    this.FeeDefinitionsSource.next(item);
   }
   ChangeLanguageSubjectLower(item){
 
