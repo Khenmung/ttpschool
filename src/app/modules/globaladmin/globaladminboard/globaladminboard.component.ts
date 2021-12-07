@@ -9,6 +9,7 @@ import { ReportConfigItemComponent } from '../reportconfigitem/reportconfigitem.
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { PlansComponent } from '../plans/plans.component';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -18,13 +19,14 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class GlobaladminboardComponent implements AfterViewInit {
   
   components = [
-    ApplicationpriceComponent,
+    //ApplicationpriceComponent,
     CustomerinvoiceComponent,
     CustomerPlansComponent,
     AddMasterDataComponent,
     CustomerinvoicecomponentsComponent,
     ReportConfigItemComponent,
-    MenuConfigComponent
+    MenuConfigComponent,
+    PlansComponent
   ];
 
   tabNames = [
@@ -40,7 +42,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
   Permissions =
     {
       ParentPermission: '',
-      ApplicationPricePermission: '',
+      PlanPermission: '',
       CustomerInvoicePermission: '',
       CustomerAppsPermission: '',
       MasterDataPermission: '',
@@ -67,8 +69,8 @@ export class GlobaladminboardComponent implements AfterViewInit {
 
     }
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.APPLICATIONPRICE)
-    var comindx = this.components.indexOf(ApplicationpriceComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLAN)
+    var comindx = this.components.indexOf(PlansComponent);
     this.GetComponents(perObj,comindx)
     
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERAPPS)
