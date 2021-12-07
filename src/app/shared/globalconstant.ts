@@ -57,7 +57,8 @@ export class globalconstants {
         {
             "globaladmin":{
                 "GLOBALADMIN":"globaladmin",
-                "APPLICATIONPRICE":'application price',
+                //"APPLICATIONPRICE":'application price',
+                "PLAN":'plan',
                 "CUSTOMERINVOICE":'customer invoice',
                 "CUSTOMERAPPS":'customer apps',
                 "MASTERDATA":'master data',

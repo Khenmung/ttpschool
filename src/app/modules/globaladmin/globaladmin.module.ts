@@ -8,10 +8,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { ControlModule } from '../control/control.module';
 import { DefinePagesModule } from '../define-pages/define-pages.module';
+import { PlansComponent } from './plans/plans.component';
 
 
 @NgModule({
-  declarations: [GlobalAdminComponents],
+  declarations: [GlobalAdminComponents, PlansComponent],
   imports: [
     CommonModule,
     GlobaladminRoutingModule,
