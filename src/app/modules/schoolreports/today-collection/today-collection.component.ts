@@ -30,7 +30,6 @@ export class TodayCollectionComponent implements OnInit {
   loading = false;
   allMasterData = [];
   FeeDefinitions = [];
-  ReportTypes = ["Receipt Nos.", "Receipt Heads"];
   FeeCategories = [];
   Classes = [];
   Batches = [];

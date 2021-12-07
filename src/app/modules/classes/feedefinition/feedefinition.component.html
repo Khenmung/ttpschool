@@ -59,6 +59,15 @@
                             </mat-select>
                         </mat-form-field>
                     </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="AmountEditable">
+                    <mat-header-cell style="justify-content: center;" *matHeaderCellDef>Amount Editable
+                    </mat-header-cell>
+                    <mat-cell style="justify-content: center;" *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.AmountEditable==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
                 </ng-container>                               
                 <ng-container matColumnDef="Active">
                     <mat-header-cell style="justify-content: center;" *matHeaderCellDef>Active

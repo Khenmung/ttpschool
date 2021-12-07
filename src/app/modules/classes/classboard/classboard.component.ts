@@ -18,11 +18,11 @@ import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.co
 export class ClassboardComponent implements AfterViewInit {
   components = [
     ClassdetailComponent,
+    FeeDefinitionComponent,    
     DashboardclassfeeComponent,
-    ClassprerequisiteComponent,
+    SchoolFeeTypesComponent,
     ClassmasterdashboardComponent,
-    FeeDefinitionComponent,
-    SchoolFeeTypesComponent
+    ClassprerequisiteComponent
   ];
 
   tabNames = [

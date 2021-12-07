@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, 
 import { AddMasterDataComponent } from '../../control/add-master-data/add-master-data.component';
 import { MenuConfigComponent } from '../menu-config/menu-config.component';
 import { ApplicationpriceComponent } from '../applicationprice/applicationprice.component';
-import { CustomerappsComponent } from '../customerapps/customerapps.component';
+import { CustomerPlansComponent } from '../customerplans/customerplans.component';
 import { CustomerinvoiceComponent } from '../customerinvoice/customerinvoice.component';
 import { CustomerinvoicecomponentsComponent } from '../customerinvoicecomponents/customerinvoicecomponents.component';
 import { ReportConfigItemComponent } from '../reportconfigitem/reportconfigitem.component';
@@ -20,7 +20,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
   components = [
     ApplicationpriceComponent,
     CustomerinvoiceComponent,
-    CustomerappsComponent,
+    CustomerPlansComponent,
     AddMasterDataComponent,
     CustomerinvoicecomponentsComponent,
     ReportConfigItemComponent,
@@ -72,7 +72,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
     this.GetComponents(perObj,comindx)
     
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERAPPS)
-    var comindx = this.components.indexOf(CustomerappsComponent);
+    var comindx = this.components.indexOf(CustomerPlansComponent);
     this.GetComponents(perObj,comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERINVOICE)

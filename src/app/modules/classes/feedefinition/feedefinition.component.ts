@@ -48,6 +48,7 @@ export class FeeDefinitionComponent implements OnInit {
     FeeName: '',
     Description: '',
     FeeCategoryId: 0,
+    AmountEditable:0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
@@ -57,6 +58,7 @@ export class FeeDefinitionComponent implements OnInit {
     "FeeName",
     "Description",
     "FeeCategoryId",
+    "AmountEditable",
     "Active",
     "Action"
   ];
@@ -100,12 +102,7 @@ export class FeeDefinitionComponent implements OnInit {
       else {
         this.GetMasterData();
         this.GetFeeDefinitions();
-        // if (this.FeeDefinitions.length == 0) {
-        //   this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        //     this.FeeDefinitions = [...data.value];
-        //   })
-        // }
-
+     
       }
     }
   }
@@ -117,6 +114,7 @@ export class FeeDefinitionComponent implements OnInit {
       FeeName: '',
       Description: '',
       FeeCategoryId: 0,
+      AmountEditable:0,
       OrgId: 0,
       BatchId: 0,
       Active: 0,
@@ -187,6 +185,7 @@ export class FeeDefinitionComponent implements OnInit {
           this.FeeDefinitionData.FeeName = row.FeeName;
           this.FeeDefinitionData.Description = row.Description;
           this.FeeDefinitionData.FeeCategoryId = row.FeeCategoryId;
+          this.FeeDefinitionData.AmountEditable = row.AmountEditable;
           this.FeeDefinitionData.Active = row.Active;
           this.FeeDefinitionData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.FeeDefinitionData.BatchId = this.SelectedBatchId;
@@ -251,6 +250,7 @@ export class FeeDefinitionComponent implements OnInit {
       "FeeName",
       "Description",
       "FeeCategoryId",
+      "AmountEditable",
       "OrgId",
       "BatchId",
       "Active"
@@ -311,6 +311,7 @@ export interface IFeeDefinition {
   FeeName: string;
   Description: string;
   FeeCategoryId: number;
+  AmountEditable: number;
   OrgId: number;
   BatchId: number;
   Active: number;

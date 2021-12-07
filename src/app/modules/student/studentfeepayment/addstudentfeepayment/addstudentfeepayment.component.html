@@ -49,8 +49,10 @@
                                         <mat-header-cell *matHeaderCellDef>Select </mat-header-cell>
                                         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center"
                                             fxLayout="row">
-                                            <mat-checkbox [disabled]="loading || element.Balance==0 || Permission=='read'" mat-mini-fab
-                                                (change)="SelectRow(element,$event)" [checked]="element.Action">
+                                            <mat-checkbox
+                                                [disabled]="loading || element.Balance==0 || Permission=='read'"
+                                                mat-mini-fab (change)="SelectRow(element,$event)"
+                                                [checked]="element.Action">
                                             </mat-checkbox>
                                         </mat-cell>
                                     </ng-container>
@@ -68,20 +70,32 @@
                                         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                                     </ng-container>
                                     <ng-container matColumnDef="FeeName">
-                                        <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Fee </mat-header-cell>
-                                        <mat-cell *matCellDef="let element"> {{element.FeeName}} </mat-cell>
+                                        <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Fee
+                                        </mat-header-cell>
+                                        <mat-cell *matCellDef="let element">
+                                            {{element.FeeName}}
+                                            <div *ngIf="element.AmountEditable==1">
+                                                <mat-form-field>
+                                                    <input style="text-align: right" matInput
+                                                        [(ngModel)]="element.ShortText" [value]="element.ShortText"
+                                                        autocomplete="Off">
+                                                </mat-form-field>
+                                            </div>
+                                        </mat-cell>
                                         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                                     </ng-container>
                                     <ng-container matColumnDef="Amount">
-                                        <mat-header-cell *matHeaderCellDef style="justify-content: end;"> Amount </mat-header-cell>
+                                        <mat-header-cell *matHeaderCellDef style="justify-content: end;"> Amount
+                                        </mat-header-cell>
                                         <mat-cell *matCellDef="let element" style="justify-content: end;">
                                             <mat-form-field>
-                                                <input style="text-align: right" [disabled]="element.FeeName!='Admission'" matInput type="number" max="100000"
-                                                    [(ngModel)]="element.Amount" [value]="element.Amount"
-                                                    autocomplete="Off">
+                                                <input style="text-align: right" [disabled]="element.AmountEditable==0"
+                                                    matInput type="number" max="100000" [(ngModel)]="element.Amount"
+                                                    [value]="element.Amount" autocomplete="Off">
                                             </mat-form-field>
                                         </mat-cell>
-                                        <mat-footer-cell *matFooterCellDef fxLayout="row" fxLayoutAlign="space-between center">
+                                        <mat-footer-cell *matFooterCellDef fxLayout="row"
+                                            fxLayoutAlign="space-between center">
                                             <div>Balance: {{Balance}}
                                             </div>
                                             <div>Total: {{ calculateTotal() }}</div>
@@ -96,19 +110,18 @@
                                 <div fxLayout="row" fxLayoutAlign="space-between center" style="padding: 15px;">
                                     <mat-form-field>
                                         <mat-label>Offline receipt no.</mat-label>
-                                        <input matInput [maxlength]="20"
-                                            [(ngModel)]="OffLineReceiptNo" [value]="OffLineReceiptNo"
-                                            autocomplete="Off">
+                                        <input matInput [maxlength]="20" [(ngModel)]="OffLineReceiptNo"
+                                            [value]="OffLineReceiptNo" autocomplete="Off">
                                     </mat-form-field>
                                     <mat-form-field>
                                         <mat-label>Payment Type</mat-label>
                                         <mat-select [(ngModel)]="PaymentTypeId" [value]="PaymentTypeId">
-                                            <mat-option *ngFor="let item of PaymentTypes" 
-                                            [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                                            <mat-option *ngFor="let item of PaymentTypes" [value]="item.MasterDataId">
+                                                {{item.MasterDataName}}</mat-option>
                                         </mat-select>
-                                    </mat-form-field>                             
-                                    <button [disabled]="loading || calculateTotal()==0 || Permission=='read'" matTooltip="pay" mat-mini-fab
-                                        (click)="billpayment()">
+                                    </mat-form-field>
+                                    <button [disabled]="loading || calculateTotal()==0 || Permission=='read'"
+                                        matTooltip="pay" mat-mini-fab (click)="billpayment()">
                                         <mat-icon>payments</mat-icon>
                                     </button>
                                 </div>
@@ -119,11 +132,8 @@
                         <ng-template mat-tab-label>
                             <mat-icon>receipt</mat-icon>Receipt
                         </ng-template>
-                        <app-feereceipt
-                        [OffLineReceiptNo]="OffLineReceiptNo" 
-                        [StudentClassFees]="StudentClassFees"
-                        [StudentClass]="studentInfoTodisplay" 
-                        [BillDetail]="MonthlyDueDetail"></app-feereceipt>
+                        <app-feereceipt [OffLineReceiptNo]="OffLineReceiptNo" [StudentClassFees]="StudentClassFees"
+                            [StudentClass]="studentInfoTodisplay" [BillDetail]="MonthlyDueDetail"></app-feereceipt>
                     </mat-tab>
                 </mat-tab-group>
             </div>

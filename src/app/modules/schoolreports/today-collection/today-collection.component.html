@@ -5,23 +5,17 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="SearchForm">
     <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
-        <mat-form-field appearance="outline" [style.width.px]="270">
+        <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>From Date</mat-label>
             <input formControlName="FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
             <mat-datepicker #FromDate></mat-datepicker>
         </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="270">
+        <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>To Date</mat-label>
             <input formControlName="ToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
             <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
             <mat-datepicker #ToDate></mat-datepicker>
-        </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="270">
-            <mat-label>type</mat-label>
-            <mat-select formControlName="searchReportType">
-                <mat-option *ngFor="let item of ReportTypes" [value]="item">{{item}}</mat-option>
-            </mat-select>
         </mat-form-field>
         <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentDetails()">
             <mat-icon>search</mat-icon>

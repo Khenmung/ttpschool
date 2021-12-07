@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -18,6 +19,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
 })
 
 export class DashboardclassfeeComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
   optionsNoAutoClose = {
@@ -54,11 +56,9 @@ export class DashboardclassfeeComponent implements OnInit {
     ClassId: 0,
     Amount: 0,
     BatchId: 0,
-    Recurring: 0,
     Month: 0,
     OrgId: 0,
     Active: 0,
-    //PaymentOrder: 0,
     LocationId: 0
   };
   //matcher = new TouchedErrorStateMatcher();
@@ -73,10 +73,10 @@ export class DashboardclassfeeComponent implements OnInit {
 
   ngOnInit(): void {
 
-
     this.searchForm = this.fb.group({
       ClassId: [0],
-      FeeDefinitionId: [0],
+      searchMonth: [0],
+      //FeeDefinitionId: [0],
 
     });
     this.PageLoad();
@@ -111,7 +111,7 @@ export class DashboardclassfeeComponent implements OnInit {
         }
         else {
           this.searchForm.patchValue({ Batch: this.SelectedBatchId });
-          this.shareddata.CurrentFeeDefinitions.subscribe((f:any) => {
+          this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
             this.FeeDefinitions = [...f];
             if (this.FeeDefinitions.length == 0) {
               this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
@@ -140,7 +140,7 @@ export class DashboardclassfeeComponent implements OnInit {
     'Amount',
     //'PaymentOrder',
     //'Recurring',
-    'Month',
+    //'Month',
     'Active',
     'Action'];
   updateActive(row, value) {
@@ -234,25 +234,22 @@ export class DashboardclassfeeComponent implements OnInit {
     //debugger;
     if (row.Amount == 0) {
       row.Action = false;
+      this.loading=false;
       this.alert.error("Amount should be greater than zero.", this.optionsNoAutoClose);
       return;
     }
     else if (row.Amount > 100000) {
       row.Action = false;
+      this.loading=false;
       this.alert.error("Amount should be smaller than 100,000.", this.optionsNoAutoClose);
       return;
     }
-    else if (row.PaymentOrder > 99) {
-      row.Action = false;
-      this.alert.error("only two digits are allowed for payment order!", this.optionsNoAutoClose);
-      return;
-    }
-
+   
     this.loading = true;
     let checkFilterString = "1 eq 1 " +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
       " and ClassId eq " + row.ClassId +
-      " and Month eq " + row.Month +
+      " and Month eq " + this.searchForm.get("searchMonth").value +
       " and BatchId eq " + row.BatchId +
       " and LocationId eq " + row.LocationId
     if (row.ClassFeeId > 0)
@@ -275,10 +272,8 @@ export class DashboardclassfeeComponent implements OnInit {
           this.classFeeData.ClassFeeId = row.ClassFeeId;
           this.classFeeData.ClassId = row.ClassId;
           this.classFeeData.FeeDefinitionId = row.FeeDefinitionId;
-          //this.classFeeData.PaymentOrder = +row.PaymentOrder;
           this.classFeeData.LocationId = +row.LocationId;
-          this.classFeeData.Month = row.Month;
-          this.classFeeData.Recurring = 0;
+          this.classFeeData.Month = this.searchForm.get("searchMonth").value;
           this.classFeeData.OrgId = this.LoginUserDetail[0]["orgId"];
           console.log("dataclassfee", this.classFeeData);
           if (this.classFeeData.ClassFeeId == 0)
@@ -360,15 +355,19 @@ export class DashboardclassfeeComponent implements OnInit {
       return;
 
     }
+    if (this.searchForm.get("searchMonth").value == 0) {
+      this.alert.info("Please month year.", this.optionAutoClose);
+      return;
+    }
 
     this.loading = true;
     let filterstr = "";
-    if (this.searchForm.get("ClassId").value > 0)
-      filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
-    if (this.searchForm.get("FeeDefinitionId").value > 0)
-      filterstr += " and FeeDefinitionId eq " + this.searchForm.get("FeeDefinitionId").value;
+    //if (this.searchForm.get("ClassId").value > 0)
+    filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
+    // if (this.searchForm.get("FeeDefinitionId").value > 0)
+    //   filterstr += " and FeeDefinitionId eq " + this.searchForm.get("FeeDefinitionId").value;
     //if (this.searchForm.get("Batch").value > 0)
-    //filterstr += " and Batch eq " + this.SelectedBatchId;
+    filterstr += " and Month eq " + this.searchForm.get("searchMonth").value;
 
     let list: List = new List();
     list.fields = [
@@ -376,7 +375,6 @@ export class DashboardclassfeeComponent implements OnInit {
       "FeeDefinitionId",
       "ClassId",
       "Amount",
-      "Recurring",
       "Month",
       "BatchId",
       "Active",
@@ -392,80 +390,54 @@ export class DashboardclassfeeComponent implements OnInit {
         //debugger;
 
         if (data.value.length > 0) {
-
-
-          if (this.searchForm.get("FeeDefinitionId").value == 0) {
-            this.ELEMENT_DATA = this.FeeDefinitions.map((mainFeeName, indx) => {
-              let existing = data.value.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
-              if (existing.length > 0) {
-                existing[0].SlNo = indx + 1;
-                existing[0].FeeName = mainFeeName.FeeName;
-                existing[0].Action = false;
-                //existing[0].PaymentOrder = existing[0].PaymentOrder == null ? 0 : existing[0].PaymentOrder;
-                return existing[0];
-              }
-              else
-                return {
-                  "SlNo": indx + 1,
-                  "ClassFeeId": 0,
-                  "FeeDefinitionId": mainFeeName.FeeDefinitionId,
-                  "ClassId": this.searchForm.get("ClassId").value,
-                  "FeeName": mainFeeName.FeeName,
-                  "Amount": 0,
-                  "Recurring": 0,
-                  "Month": 0,
-                  "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
-                  "Active": 0,
-                  "LocationId": this.Locations[0].MasterDataId,
-                  "Action": false
-                }
-            })
-          }
-          else {
-            this.ELEMENT_DATA = data.value.map((item, indx) => {
-              return {
-                "SlNo": indx + 1,
-                "ClassFeeId": item.ClassFeeId,
-                "FeeDefinitionId": item.FeeDefinitionId,
-                "ClassId": item.ClassId,
-                "FeeName": this.FeeDefinitions.filter(cls => cls.FeeDefinitionId == item.FeeDefinitionId)[0].FeeName,
-                "Amount": item.Amount,
-                "Month": item.Month,
-                "Recurring": item.Recurring,
-                "BatchId": item.BatchId,
-                "Active": item.Active,
-                "LocationId": item.LocationId,
-                "Action": false
-              }
-            })
-          }
-        }
-        else { //no existing data
-          if (this.searchForm.get("FeeDefinitionId").value == 0) {
-            this.ELEMENT_DATA = this.FeeDefinitions.map((fee, indx) => {
+          this.ELEMENT_DATA = this.FeeDefinitions.map((mainFeeName, indx) => {
+            let existing = data.value.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
+            if (existing.length > 0) {
+              existing[0].SlNo = indx + 1;
+              existing[0].FeeName = mainFeeName.FeeName;
+              existing[0].Action = false;
+              //existing[0].PaymentOrder = existing[0].PaymentOrder == null ? 0 : existing[0].PaymentOrder;
+              return existing[0];
+            }
+            else
               return {
                 "SlNo": indx + 1,
                 "ClassFeeId": 0,
-                "FeeDefinitionId": fee.FeeDefinitionId,
+                "FeeDefinitionId": mainFeeName.FeeDefinitionId,
                 "ClassId": this.searchForm.get("ClassId").value,
-                "FeeName": fee.FeeName,
+                "FeeName": mainFeeName.FeeName,
                 "Amount": 0,
-                "Recurring": 0,
                 "Month": 0,
-                "BatchId": this.SelectedBatchId,
+                "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
                 "Active": 0,
                 "LocationId": this.Locations[0].MasterDataId,
                 "Action": false
               }
-            });
-          }
-          else {
-            this.ELEMENT_DATA = [];
-            this.alert.info("No record found!", this.optionAutoClose);
-          }
+          })
         }
-        console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
+        else { //no existing data
+          this.ELEMENT_DATA = this.FeeDefinitions.map((fee, indx) => {
+            return {
+              "SlNo": indx + 1,
+              "ClassFeeId": 0,
+              "FeeDefinitionId": fee.FeeDefinitionId,
+              "ClassId": this.searchForm.get("ClassId").value,
+              "FeeName": fee.FeeName,
+              "Amount": 0,
+              "Month": 0,
+              "BatchId": this.SelectedBatchId,
+              "Active": 0,
+              "LocationId": this.Locations[0].MasterDataId,
+              "Action": false
+            }
+          });
+
+        }
+        //this.ELEMENT_DATA = 
+        this.ELEMENT_DATA.sort((a,b)=>b.Active-a.Active);
+        //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
+        this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false;
       });
@@ -544,10 +516,8 @@ export interface Element {
   ClassId: number;
   Amount: any;
   Month: number;
-  Recurring: number;
   BatchId: number;
   Active: number;
-  //PaymentOrder: number;
   LocationId: number;
   Action: boolean;
 }

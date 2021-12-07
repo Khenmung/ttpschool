@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ApplicationpriceComponent } from './applicationprice/applicationprice.component';
-import { CustomerappsComponent } from './customerapps/customerapps.component';
+import { CustomerPlansComponent } from './customerplans/customerplans.component';
 import { CustomerinvoiceComponent } from './customerinvoice/customerinvoice.component';
 import { CustomerinvoicecomponentsComponent } from './customerinvoicecomponents/customerinvoicecomponents.component';
 import { GlobaladminboardComponent } from './globaladminboard/globaladminboard.component';
@@ -25,7 +25,7 @@ const routes: Routes = [
 export class GlobaladminRoutingModule { }
 export const GlobalAdminComponents = [
   CustomerinvoicecomponentsComponent,
-  CustomerappsComponent,
+  CustomerPlansComponent,
   CustomerinvoiceComponent,
   ApplicationpriceComponent,
   CustomerinvoicecomponentsComponent,

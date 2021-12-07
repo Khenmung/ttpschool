@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field appearance="outline" [style.width.pc]="30">
+                <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Exam</mat-label>
                     <mat-select formControlName="searchExamId">
                         <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
@@ -23,7 +23,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field> -->
-                <mat-form-field appearance="outline" [style.width.pc]="20">
+                <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassId" multiple>
                         <mat-option [value]="0">--class--</mat-option>

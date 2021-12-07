@@ -158,31 +158,7 @@ export class FeereceiptComponent implements OnInit {
           this.CancelReceiptMode = false;
           this.BillDetail = [];
           this.dataSource = new MatTableDataSource<any>(this.BillDetail);
-          // var IdCount = 0;
-          // var uniqueGLAccountId = alasql("select DISTINCT GLAccountId from ?", [this.BillDetail]);
-          // var toupdateLedger;
-          // IdCount = uniqueGLAccountId.length;
-          // uniqueGLAccountId.forEach(f => {
-          //   toupdateLedger = {
-          //     Active: 0,
-          //     //StudentEmployeeLedegerId: f.GLAccountId
-          //   }
-          //   IdCount--;
-          //   this.dataservice.postPatch('AccountingLedgerTrialBalances', toupdateLedger, f.GLAccountId, 'patch')
-          //     .subscribe(
-          //       (data: any) => {
-          //         if (IdCount == 0) {
-          //           this.loading = false;
-          //           this.TotalAmount = 0;
-          //           this.Balance = 0;
-          //           this.alert.success("Receipt cancelled successfully.", this.optionAutoClose);
-          //           this.CancelReceiptMode = false;
-          //           this.BillDetail = [];
-          //           this.dataSource = new MatTableDataSource<any>(this.BillDetail);
-          //           //this.tabChanged.emit(0);
-          //         }
-          //       })
-          // })
+          
         });
   }
   edit() {
@@ -210,7 +186,7 @@ export class FeereceiptComponent implements OnInit {
     ];
 
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["AccountingVouchers($select=AccountingVoucherId,GLAccountId,FeeReceiptId,Amount,ClassFeeId)"];
+    list.lookupFields = ["AccountingVouchers($select=AccountingVoucherId,ShortText,GLAccountId,FeeReceiptId,Amount,ClassFeeId)"];
     list.filter = ["StudentClassId eq " + this.studentInfoTodisplay.StudentClassId];
 
     this.dataservice.get(list)
@@ -219,11 +195,17 @@ export class FeereceiptComponent implements OnInit {
         this.StudentFeePaymentList = [];
         this.FeeReceipt.forEach(f => {
           f.AccountingVouchers.forEach(k => {
+            var _shortText ='';
+            if(k.ShortText.length>0)
+            {
+              _shortText = " (" + k.ShortText + ")"
+            }
             var feeObj = this.StudentClassFees.filter(f => f.ClassFeeId == k.ClassFeeId);
             if (feeObj.length > 0)
-              k.FeeName = feeObj[0].FeeName
+              k.FeeName = feeObj[0].FeeName + _shortText;
             else
               k.FeeName = '';
+
             this.StudentFeePaymentList.push(k)
           })
         })
