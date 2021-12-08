@@ -46,14 +46,20 @@ export class PlansComponent implements OnInit {
     PlanId: 0,
     Title: '',
     Description: '',
-    Price: 0,
+    Logic:'',
+    PCPM: 0,
+    MinPrice: 0,
+    MinCount: 0,
     Active: 0
   };
   displayedColumns = [
     "PlanId",
     "Title",
     "Description",
-    "Price",
+    "Logic",
+    "PCPM",
+    "MinPrice",
+    "MinCount",
     "Active",
     "Action"
   ];
@@ -108,7 +114,10 @@ export class PlansComponent implements OnInit {
       "PlanId": 0,
       "Title": '',
       "Description": '',
-      "Price": 0,
+      "Logic":'',
+      "PCPM":0,
+      "MinPrice":0,
+      "MinCount":0,
       "Active": 0,
       "Action": false
     };
@@ -170,9 +179,12 @@ export class PlansComponent implements OnInit {
           this.PlanData.PlanId = row.PlanId;
           this.PlanData.Title = row.Title;
           this.PlanData.Description = row.Description;
-          this.PlanData.Price = row.Price;
+          this.PlanData.Logic = row.Logic;
+          this.PlanData.PCPM = +row.PCPM;
+          this.PlanData.MinPrice = +row.MinPrice;
+          this.PlanData.MinCount = +row.MinCount;
           this.PlanData.Active = row.Active;
-                    
+          //console.log("plandata", this.PlanData)
           if (this.PlanData.PlanId == 0) {
             this.insert(row);
           }
@@ -220,7 +232,10 @@ export class PlansComponent implements OnInit {
       "PlanId",
       "Title",
       "Description",
-      "Price",     
+      "Logic",
+      "PCPM",
+      "MinCount",
+      "MinPrice",
       "Active"
     ];
 
@@ -231,7 +246,10 @@ export class PlansComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.PlanList = [...data.value];
+          this.PlanList = data.value.map(m=>{
+            m.Action=false;
+            return m;
+          });
         }
         this.dataSource = new MatTableDataSource<IPlan>(this.PlanList);
         this.dataSource.paginator = this.paginator;
@@ -278,7 +296,10 @@ export interface IPlan {
   PlanId: number;
   Title: string;
   Description: string;
-  Price: number;
+  Logic:string;
+  PCPM: number;
+  MinPrice: number;
+  MinCount: number;
   Active: number;
   Action: boolean;
 }

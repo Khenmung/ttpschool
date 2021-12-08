@@ -8,6 +8,8 @@ import { CustomerinvoicecomponentsComponent } from './customerinvoicecomponents/
 import { GlobaladminboardComponent } from './globaladminboard/globaladminboard.component';
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { ReportConfigItemComponent } from './reportconfigitem/reportconfigitem.component';
+import { PlansComponent } from './plans/plans.component';
+import { PlanFeatureComponent } from './planfeature/planfeature.component';
 
 const routes: Routes = [
   {
@@ -31,5 +33,7 @@ export const GlobalAdminComponents = [
   CustomerinvoicecomponentsComponent,
   GlobaladminboardComponent,
   ReportConfigItemComponent,
-  MenuConfigComponent
+  MenuConfigComponent,
+  PlansComponent,
+  PlanFeatureComponent
 ]

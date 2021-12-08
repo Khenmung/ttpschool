@@ -57,10 +57,11 @@ export class globalconstants {
         {
             "globaladmin":{
                 "GLOBALADMIN":"globaladmin",
-                //"APPLICATIONPRICE":'application price',
+                "ROLEFEATURE":'Role Feature Permission',
                 "PLAN":'plan',
+                "PLANFEATURE":'plan feature',
                 "CUSTOMERINVOICE":'customer invoice',
-                "CUSTOMERAPPS":'customer apps',
+                "CUSTOMERPLAN":'customer plan',
                 "MASTERDATA":'master data',
                 "CUSTOMERINVOICECOMPONENT":'invoice components',
                 "REPORTCONIG":'report config',

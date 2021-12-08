@@ -7,12 +7,11 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { ControlModule } from '../control/control.module';
-import { DefinePagesModule } from '../define-pages/define-pages.module';
-import { PlansComponent } from './plans/plans.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 @NgModule({
-  declarations: [GlobalAdminComponents, PlansComponent],
+  declarations: [GlobalAdminComponents],
   imports: [
     CommonModule,
     GlobaladminRoutingModule,
@@ -22,6 +21,8 @@ import { PlansComponent } from './plans/plans.component';
     ReactiveFormsModule,
     MaterialModule,
     ControlModule,
+    FlexLayoutModule
+
     //DefinePagesModule
   ],
   exports:[GlobalAdminComponents]

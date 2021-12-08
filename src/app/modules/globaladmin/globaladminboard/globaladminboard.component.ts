@@ -10,6 +10,9 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { PlansComponent } from '../plans/plans.component';
+import { RoleAppPermissiondashboardComponent } from '../../control/roleapppermission/RoleAppPermissiondashboard/RoleAppPermissiondashboard.component';
+import { ContentService } from 'src/app/shared/content.service';
+import { PlanFeatureComponent } from '../planfeature/planfeature.component';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -19,24 +22,27 @@ import { PlansComponent } from '../plans/plans.component';
 export class GlobaladminboardComponent implements AfterViewInit {
   
   components = [
-    //ApplicationpriceComponent,
-    CustomerinvoiceComponent,
+    PlansComponent,
+    PlanFeatureComponent,
     CustomerPlansComponent,
+    CustomerinvoiceComponent,    
     AddMasterDataComponent,
     CustomerinvoicecomponentsComponent,
     ReportConfigItemComponent,
     MenuConfigComponent,
-    PlansComponent
+    RoleAppPermissiondashboardComponent
   ];
-
+  LoginUserDetail=[];
   tabNames = [
-    { 'label': '1Exam Time Table', 'faIcon': '' },
-    { 'label': '1Exam Result', 'faIcon': '' },
-    { 'label': '1Fee Payment Status', 'faIcon': '' },
-    { 'label': '1Date Wise Collection', 'faIcon': '' },
-    { 'label': '1Date Wise Collection', 'faIcon': '' },
-    { 'label': '1Date Wise Collection', 'faIcon': '' },
-    { 'label': '1Date Wise Collection', 'faIcon': '' },
+    { 'label': 'customer', 'faIcon': '' },
+    { 'label': 'customer', 'faIcon': '' },
+    { 'label': 'add master', 'faIcon': '' },
+    { 'label': 'invoice component', 'faIcon': '' },
+    { 'label': 'report config', 'faIcon': '' },
+    { 'label': 'menu config', 'faIcon': '' },
+    { 'label': 'plans', 'faIcon': '' },
+    { 'label': 'plan feature', 'faIcon': '' },
+    { 'label': 'Role Permission', 'faIcon': '' },
   ];
 
   Permissions =
@@ -48,7 +54,8 @@ export class GlobaladminboardComponent implements AfterViewInit {
       MasterDataPermission: '',
       CustomerInvoiceComponentsPermission: '',
       ReportConfigPermission: '',
-      MenuConfigPermission: ''
+      MenuConfigPermission: '',
+      RoleFeaturePermission: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -58,11 +65,15 @@ export class GlobaladminboardComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
+    private contentservice: ContentService,
     private componentFactoryResolver: ComponentFactoryResolver) {
   }
 
   public ngAfterViewInit(): void {
     debugger
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+    
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.GLOBALADMIN)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
@@ -72,8 +83,16 @@ export class GlobaladminboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLAN)
     var comindx = this.components.indexOf(PlansComponent);
     this.GetComponents(perObj,comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLANFEATURE)
+    var comindx = this.components.indexOf(PlanFeatureComponent);
+    this.GetComponents(perObj,comindx)
     
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERAPPS)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ROLEFEATURE)
+    var comindx = this.components.indexOf(RoleAppPermissiondashboardComponent);
+    this.GetComponents(perObj,comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERPLAN)
     var comindx = this.components.indexOf(CustomerPlansComponent);
     this.GetComponents(perObj,comindx)
 
@@ -98,19 +117,14 @@ export class GlobaladminboardComponent implements AfterViewInit {
     this.GetComponents(perObj,comindx)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-    if(1){ //(this.Permissions.ParentPermission != 'deny') {
+    //if(1){ //(this.Permissions.ParentPermission != 'deny') {
       this.renderComponent(0);
       this.cdr.detectChanges();
-    }
+    //}
   }
-  GetComponents(perObj,comindx)
-  {
-    
-    //if (perObj.length > 0) {
-    if(1) 
-    {
-      if (false)//perObj[0].permission == 'deny') {
-      {
+  GetComponents(perObj, comindx) {
+    if (perObj.length > 0) {
+      if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }

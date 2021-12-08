@@ -51,8 +51,8 @@ export class settingboardComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     debugger
-    this.LoginUserDetail = this.tokenStorage.getUserDetail();
-    this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+    // this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    // this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
     var selectedApp = this.tokenStorage.getPermittedApplications().filter(f => f.applicationId == SelectedApplicationId);
     if (selectedApp.length > 0)

@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Detail</strong></div>
+        <div><strong>Plan</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -34,13 +34,43 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Price">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Fee Category
+                <ng-container matColumnDef="Logic">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Logic
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="255"
+                                [value]="element.Logic" [(ngModel)]="element.Logic">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="PCPM">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>PCPM
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline">
                             <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="5"
-                                [value]="element.Price" [(ngModel)]="element.Price">
+                                [value]="element.PCPM" [(ngModel)]="element.PCPM">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="MinCount">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Min Count
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="5"
+                                [value]="element.MinCount" [(ngModel)]="element.MinCount">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="MinPrice">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Min Price
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="5"
+                                [value]="element.MinPrice" [(ngModel)]="element.MinPrice">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>

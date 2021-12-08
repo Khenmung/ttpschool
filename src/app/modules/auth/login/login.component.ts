@@ -72,28 +72,6 @@ export class LoginComponent implements OnInit {
     //   this.Applications = [...data.value];
     // });
   }
-
-  // onSubmit(): void {
-
-  //   const { username, password } = this.form;
-
-  //   this.authService.login(username, password).subscribe(
-
-  //     data => {
-  //       //debugger;
-  //       //console.log("login data",data);
-  //       //this.tokenStorage.saveToken(data.Token);
-  //       //this.tokenStorage.saveRefreshToken(data.RefreshToken);
-  //       this.tokenStorage.saveUser(username);
-  //       this.GetApplicationRoleUser();
-  //       //this.GetMasterData();        
-  //     },
-  //     err => {
-  //       this.errorMessage = err.error.message;
-  //       this.isLoginFailed = true;
-  //     }
-  //   );
-  // }
   onSubmit(): void {
     const { username, password } = this.form;
 
@@ -109,6 +87,7 @@ export class LoginComponent implements OnInit {
 
         localStorage.setItem('orgId', decodedUser.sid);
         localStorage.setItem('userId', decodedUser.Id);
+        localStorage.setItem('planId', decodedUser.iss);
         //  localStorage.setItem('userInfo',decodedUser);
         this.isLoginFailed = false;
         this.isLoggedIn = true;
@@ -210,9 +189,7 @@ export class LoginComponent implements OnInit {
           email: this.userInfo["email"],
           orgId: UserRole[0].OrgId,
           org: __organization,
-          //validfrom: UserRole.ValidFrom,
-          //validto: UserRole.ValidTo,
-          //managerId: UserRole.ManagerId,
+          planId:localStorage.getItem("planId"),
           RoleUsers: UserRole.map(roleuser => {
             if (roleuser.Active == 1 && roleuser.RoleId != null) {
               this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId

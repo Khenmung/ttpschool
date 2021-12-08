@@ -16,23 +16,23 @@
             </mat-form-field> -->
             <mat-form-field fxFlex appearance="outline">
                 <mat-label>Top Feature</mat-label>
-                <mat-select formControlName="ApplicationFeatureId" fxFlex (selectionChange)="enable($event)">
+                <mat-select formControlName="PlanFeatureId" (selectionChange)="enable($event)">
                     <mat-option [value]="0">select</mat-option>
-                    <mat-option *ngFor="let feature of TopPageFeatures" [value]="feature.PageId">
+                    <mat-option *ngFor="let feature of TopPageFeatures" [value]="feature.PlanFeatureId">
                         {{feature.label}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
             <mat-form-field fxFlex appearance="outline">
                 <mat-label>Role</mat-label>
-                <mat-select formControlName="RoleId" fxFlex (selectionChange)="enable($event)">
+                <mat-select formControlName="RoleId" (selectionChange)="enable($event)">
                     <mat-option *ngFor="let role of Roles" [value]="role.MasterDataId">
                         {{role.MasterDataName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>            
             <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
-                (click)="GetApplicationFeatureRole()" fxFlex="10">
+                (click)="GetApplicationFeatureRole()">
                 <mat-icon>search</mat-icon>
             </button>
             <div fxFlex>&nbsp;</div>

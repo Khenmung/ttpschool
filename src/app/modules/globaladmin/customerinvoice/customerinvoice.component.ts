@@ -29,8 +29,8 @@ export class CustomerinvoiceComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   loading = false;
-  CustomerApps = [];
-  CurrentCustomerApps = [];
+  CustomerPlans = [];
+  CurrentCustomerPlans = [];
   Applications = [];
   DropDownMonths = [];
   Organizations = [];
@@ -41,7 +41,7 @@ export class CustomerinvoiceComponent implements OnInit {
   CustomerInvoiceList = [];
   InvoiceComponents = [];
   CustomerInvoiceComponents = [];
-  CustomerAppDataSource: MatTableDataSource<ICustomerAppsDisplay>;
+  CustomerPlanDataSource: MatTableDataSource<ICustomerPlansDisplay>;
   CustomerInvoiceDataSource: MatTableDataSource<ICustomerInvoice>;
   allMasterData = [];
   PagePermission = '';
@@ -67,7 +67,7 @@ export class CustomerinvoiceComponent implements OnInit {
     "Active",
     "Action"
   ];
-  CustomerAppDisplayedColumns = [
+  CustomerPlanDisplayedColumns = [
     "ApplicationName",
     "LoginUserCount",
     "PersonOrItemCount",
@@ -94,7 +94,7 @@ export class CustomerinvoiceComponent implements OnInit {
       searchOrgId: [0],
       searchYearMonth: [0]
     });
-    this.CustomerAppDataSource = new MatTableDataSource<ICustomerAppsDisplay>([]);
+    this.CustomerPlanDataSource = new MatTableDataSource<ICustomerPlansDisplay>([]);
     this.CustomerInvoiceDataSource = new MatTableDataSource<ICustomerInvoice>([]);
     this.PageLoad();
   }
@@ -107,7 +107,7 @@ export class CustomerinvoiceComponent implements OnInit {
     else {
       this.DropDownMonths = this.GetSessionFormattedMonths();
       this.GetOrganizations();
-      this.GetCustomerApps();
+      this.GetCustomerPlans();
       this.GetMasterData();
 
     }
@@ -283,8 +283,8 @@ export class CustomerinvoiceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
 
-        var _SelectedCustomerApps = this.CustomerApps.filter(c => c.CustomerAppsId == _searchCustomerId);
-        this.CurrentCustomerApps = [..._SelectedCustomerApps];
+        var _SelectedCustomerPlans = this.CustomerPlans.filter(c => c.CustomerPlanId == _searchCustomerId);
+        this.CurrentCustomerPlans = [..._SelectedCustomerPlans];
         if (data.value.length > 0) {
           this.CustomerInvoiceList = data.value.map(db => {
             db.CustomerName = this.Organizations.filter(f => f.OrganizationId == _searchCustomerId)[0].OrganizationName;
@@ -292,7 +292,7 @@ export class CustomerinvoiceComponent implements OnInit {
           });
         }
         else {
-          var _TotalAmount = _SelectedCustomerApps.reduce((acc, current) => acc + (+current.AmountPerMonth), 0);
+          var _TotalAmount = _SelectedCustomerPlans.reduce((acc, current) => acc + (+current.AmountPerMonth), 0);
           var _formula = '';
           var _custinvComp = this.CustomerInvoiceComponents.filter(c => c.CustomerId == _searchCustomerId);
           _custinvComp.forEach(inv => {
@@ -324,24 +324,24 @@ export class CustomerinvoiceComponent implements OnInit {
         this.loading = false;
       })
   }
-  GetCustomerApps() {
+  GetCustomerPlans() {
 
     var filterstr = 'Active eq 1 ';
 
     let list: List = new List();
     list.fields = [
-      "CustomerAppsId",
-      "ApplicationPriceId",
+      "CustomerPlanId",
+      "PlanId",
       "LoginUserCount",
       "PersonOrItemCount",
       "AmountPerMonth",
       "Active"
     ];
-    list.PageName = "CustomerApps";
+    list.PageName = "CustomerPlans";
     list.filter = [filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.CustomerApps = [...data.value];
+        this.CustomerPlans = [...data.value];
       })
   }
   onBlur(element) {
@@ -443,7 +443,7 @@ export interface ICustomerInvoice {
   OrgId: number;
   Active: number;
 }
-export interface ICustomerAppsDisplay {
+export interface ICustomerPlansDisplay {
   ApplicationName?: string;
   LoginUserCount?: number;
   PersonOrItemCount?: number;

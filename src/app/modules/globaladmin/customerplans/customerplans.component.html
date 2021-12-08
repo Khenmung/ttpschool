@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Customer Apps</strong></div>
+        <div><strong>Customer Plan</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
@@ -18,18 +18,18 @@
                     </mat-form-field>
                    
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
-                        (click)="GetCustomerApps()">
+                        (click)="GetCustomerPlans()">
                         <mat-icon>search</mat-icon>
                     </button>
                 </div>
             </form>
           
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="ApplicationName">
-                    <mat-header-cell *matHeaderCellDef>Application
+                <ng-container matColumnDef="PlanName">
+                    <mat-header-cell *matHeaderCellDef>Plan name
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.ApplicationName}}
+                        {{element.PlanName}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PCPM">
@@ -85,7 +85,7 @@
                 <ng-container matColumnDef="Formula">
                     <mat-header-cell *matHeaderCellDef> Formula </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.pc]="15">
+                        <mat-form-field appearance="outline">
                             <textarea (blur)="onBlur(element)" 
                             [(ngModel)]="element.Formula" 
                             [value]="element.Formula" matInput
@@ -97,13 +97,13 @@
                 <ng-container matColumnDef="AmountPerMonth">
                     <mat-header-cell *matHeaderCellDef>Amount Per Month
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-cell *matCellDef="let element" style="justify-content: end;">
                        {{element.AmountPerMonth}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Active </mat-header-cell>
+                    <mat-cell *matCellDef="let element" style="justify-content: center;">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                             [checked]="element.Active==1?true:false">
                         </mat-checkbox>

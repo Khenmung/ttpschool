@@ -51,7 +51,7 @@ export class CustomerPlansComponent implements OnInit {
   };
 
   displayedColumns = [
-    "ApplicationName",
+    "PlanName",
     "PCPM",
     "MinCount",
     "MinPrice",
@@ -59,7 +59,6 @@ export class CustomerPlansComponent implements OnInit {
     "PersonOrItemCount",
     "Formula",
     "AmountPerMonth",
-    "Currency",
     "Active",
     "Action"
   ];
@@ -105,6 +104,7 @@ export class CustomerPlansComponent implements OnInit {
   }
 
   UpdateOrSave(row) {
+    
 
     this.CustomerPlansData.CustomerPlanId = row.CustomerPlanId;
     this.CustomerPlansData.PlanId = row.PlanId;
@@ -174,9 +174,11 @@ export class CustomerPlansComponent implements OnInit {
       "PlanId",
       "Title",
       "Description",
-      "Price",
+      "Logic",
+      "PCPM",
+      "MinCount",
+      "MinPrice",
       "Active"
-
     ];
     list.PageName = "Plans";
     list.filter = ["Active eq 1"];
@@ -250,6 +252,8 @@ GetCustomerPlans() {
             "CurrencyId": p.CurrencyId,
             "CustomerPlanId": d[0].CustomerPlanId,
             "PlanId": d[0].PlanId,
+            "PlanName": p.Title,
+            "Logic":p.Logic,
             "Formula": d[0].Formula,
             "LoginUserCount": d[0].LoginUserCount,
             "PersonOrItemCount": d[0].PersonOrItemCount,
@@ -257,16 +261,17 @@ GetCustomerPlans() {
             "MinPrice": p.MinPrice,
             "PCPM": p.PCPM,
             "Description": p.Description,
-            "Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
+            //"Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
             "Active": d[0].Active
           });
         }
         else {
           this.CustomerPlansList.push({
             "AmountPerMonth": 0,
-            "CurrencyId": p.CurrencyId,
             "CustomerPlanId": 0,
             "PlanId": p.PlanId,
+            "PlanName":p.Title,
+            "Logic":p.Logic,
             "Formula": '',
             "LoginUserCount": 0,
             "PersonOrItemCount": 0,
@@ -274,7 +279,7 @@ GetCustomerPlans() {
             "MinPrice": p.MinPrice,
             "PCPM": p.PCPM,
             "Description": p.Description,
-            "Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
+            //"Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
             "Active": 0
           });
         }
@@ -286,8 +291,9 @@ GetCustomerPlans() {
 
 
 onBlur(element) {
+  debugger;
   element.Action = true;
-  var formula = element.Description;
+  var formula = element.Formula==''?element.Logic : element.Formula;
   Object.keys(element).forEach(prop => {
     if (formula.includes('[' + prop + ']') && prop != 'Description')
       formula = formula.replaceAll('[' + prop + ']', element[prop]);
