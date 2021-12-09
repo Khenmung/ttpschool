@@ -196,7 +196,7 @@ export class roleuserdashboardComponent implements OnInit {
   }
   GetUsers() {
 
-    //console.log(this.LoginUserDetail);
+    ////console.log(this.LoginUserDetail);
 
     let list: List = new List();
     list.fields = [
@@ -211,7 +211,7 @@ export class roleuserdashboardComponent implements OnInit {
     this.authservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.length > 0) {
           this.Users = [...data];
         }
@@ -237,7 +237,7 @@ export class roleuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         //var filteredUsers = data.value.filter(d => d.UserId == this.searchForm.get("searchUserName").value.ApplicationUserId)
         if (data.value.length > 0) {
 

@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
-      //console.log('result',result);
+      ////console.log('result',result);
       this.deviceXs = result[0].mqAlias === "xs" ? true : false;
       if (this.deviceXs) {
         this.openSideBar = false;
@@ -45,7 +45,7 @@ export class HomeComponent implements OnInit {
         //this.sidebarcls = "sidebartop65width100";
       }
       //this.ref.detectChanges();
-      //console.log('contentcls', this.contentcls);
+      ////console.log('contentcls', this.contentcls);
     })
     //this.GetMenuData();
 
@@ -54,14 +54,14 @@ export class HomeComponent implements OnInit {
     this.mediaSub.unsubscribe();
   }
   DownFromMenu(value) {
-    //console.log('from menu',value);
+    ////console.log('from menu',value);
     if (this.deviceXs)
       this.openSideBar = !this.openSideBar;
   }
   sideBarToggler() {
     //debugger;
     this.openSideBar = !this.openSideBar;
-    //console.log('this.deviceXs in toggle',this.deviceXs)
+    ////console.log('this.deviceXs in toggle',this.deviceXs)
     if (!this.openSideBar && this.deviceXs)
       this.contentcls = "DeviceXs";
     else if (this.openSideBar && this.deviceXs)

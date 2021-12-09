@@ -106,7 +106,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-      //console.log(this.CheckPermission);
+      ////console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
@@ -146,7 +146,7 @@ export class ClassSubjectDetailComponent implements OnInit {
 
       if (b.length != 0) {
         _sessionStartEnd = { ...b };
-        //console.log('b',b)
+        ////console.log('b',b)
         var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();
         var startMonth = new Date(_sessionStartEnd.StartDate).getMonth();
 
@@ -229,7 +229,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         let classSubjects = data.value.map(item => {
 
           return {
@@ -287,7 +287,7 @@ export class ClassSubjectDetailComponent implements OnInit {
         //   this.ClassSubjectList = [...firstData];
         // }
         //this.shareddata.ChangeApplicationRoles(this.AppRoleList); 
-        //console.log('this.ClassSubjectList', this.ClassSubjectList)
+        ////console.log('this.ClassSubjectList', this.ClassSubjectList)
         this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
         this.loading = false;
         //this.changeDetectorRefs.detectChanges();
@@ -367,7 +367,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       this.loading = false;
       return;
     }
-    //console.log("row.TeacherId", row.TeacherId);
+    ////console.log("row.TeacherId", row.TeacherId);
     if (row.TeacherId == 0) {
       this.alert.error("Please select teacher for the subject.", this.optionsNoAutoClose);
       this.loading = false;
@@ -429,7 +429,7 @@ export class ClassSubjectDetailComponent implements OnInit {
 
   insert(row) {
 
-    console.log('this.ClassSubjectData', this.ClassSubjectData)
+    //console.log('this.ClassSubjectData', this.ClassSubjectData)
     //debugger;
     this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, 0, 'post')
       .subscribe(

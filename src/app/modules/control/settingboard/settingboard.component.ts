@@ -51,18 +51,20 @@ export class settingboardComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     debugger
-    // this.LoginUserDetail = this.tokenStorage.getUserDetail();
-    // this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
     var selectedApp = this.tokenStorage.getPermittedApplications().filter(f => f.applicationId == SelectedApplicationId);
     if (selectedApp.length > 0)
       this.AppName = selectedApp[0].appShortName
+      //this.AppName ='common'
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.CONTROL)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
 
     }
+    this.Permissions.ParentPermission ='rwd';
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.MASTERS)
     var comindx = this.components.indexOf(AddMasterDataComponent);

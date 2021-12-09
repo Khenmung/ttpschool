@@ -182,14 +182,14 @@ export class EmployeeLeaveComponent implements OnInit {
           this.EmployeeLeaveData.NoOfDays = row.NoOfDays;
           this.EmployeeLeaveData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.EmployeeLeaveData.Remarks = row.Remarks;
-          console.log('data', this.EmployeeLeaveData);
+          //console.log('data', this.EmployeeLeaveData);
 
           if (this.EmployeeLeaveData.EmployeeLeaveId == 0) {
             this.EmployeeLeaveData["CreatedDate"] = new Date();
             this.EmployeeLeaveData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.EmployeeLeaveData["UpdatedDate"] = new Date();
             delete this.EmployeeLeaveData["UpdatedBy"];
-            //console.log('exam slot', this.ExamStudentSubjectResultData)
+            ////console.log('exam slot', this.ExamStudentSubjectResultData)
             this.insert(row);
           }
           else {
@@ -223,7 +223,7 @@ get f(){
         });
   }
   update(row) {
-    //console.log("this.GradeComponentData", this.GradeComponentData);
+    ////console.log("this.GradeComponentData", this.GradeComponentData);
     this.dataservice.postPatch(this.EmployeeLeaveListName, this.EmployeeLeaveData, this.EmployeeLeaveData.EmployeeLeaveId, 'patch')
       .subscribe(
         (data: any) => {
@@ -256,7 +256,7 @@ get f(){
   onBlur(element, event) {
     //debugger;
     var _colName = event.srcElement.name;
-    console.log("event", event);
+    //console.log("event", event);
     //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     //row[0][_colName] = element[_colName];
   }
@@ -316,7 +316,7 @@ get f(){
             Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
           }
         })
-        console.log("employeeid",this.searchForm.get("searchEmployee").value.EmployeeId)
+        //console.log("employeeid",this.searchForm.get("searchEmployee").value.EmployeeId)
         //this.GetGradeComponents();
       })
 

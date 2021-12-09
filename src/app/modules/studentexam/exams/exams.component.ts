@@ -188,7 +188,7 @@ export class ExamsComponent implements OnInit {
 
           this.ExamsData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ExamsData.BatchId = this.SelectedBatchId;
-          //console.log('data', this.ClassSubjectData);
+          ////console.log('data', this.ClassSubjectData);
           if (this.ExamsData.ExamId == 0) {
             this.ExamsData["CreatedDate"] = new Date();
             this.ExamsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -265,7 +265,7 @@ export class ExamsComponent implements OnInit {
             }
           }
         })
-        //console.log('this', this.Exams)
+        ////console.log('this', this.Exams)
         this.Exams.sort((a, b) => {
           return this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
@@ -392,7 +392,7 @@ export class ExamsComponent implements OnInit {
               Active: _active
             });
         })
-        //console.log("examresultstatus",examresultstatus);
+        ////console.log("examresultstatus",examresultstatus);
         debugger;
         this.dataservice.postPatch('ExamStudentResults', examresultstatus, 0, 'post')
           .subscribe(
@@ -401,13 +401,13 @@ export class ExamsComponent implements OnInit {
               row.Action =false;
               this.alert.success("Students result generated successfully.", this.optionAutoClose);
             }, error => {
-              console.log("error",error);
+              //console.log("error",error);
               this.alert.error("Something went wrong. Please try again.");
               this.loading = false;
             })
 
 
-        //console.log("this.ExamStudentSubjectResult",this.ExamStudentSubjectResult);
+        ////console.log("this.ExamStudentSubjectResult",this.ExamStudentSubjectResult);
       })
   }
   getDropDownData(dropdowntype) {

@@ -191,7 +191,7 @@ export class FeeDefinitionComponent implements OnInit {
           this.FeeDefinitionData.BatchId = this.SelectedBatchId;
 
           this.FeeDefinitionData.Active = row.Active;
-          //console.log('exam slot', this.FeeDefinitionData)
+          ////console.log('exam slot', this.FeeDefinitionData)
 
           if (this.FeeDefinitionData.FeeDefinitionId == 0) {
             this.FeeDefinitionData["CreatedDate"] = new Date();

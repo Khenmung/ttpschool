@@ -308,7 +308,7 @@ export class AddMasterDataComponent implements OnInit {
   //   this.enableTopEdit = false;
   //   this.topMaster = 1;
   //   this.searchForm.patchValue({ ParentId: 0 });
-  //   //console.log('searchvalue', this.searchForm.get("ParentId").value)
+  //   ////console.log('searchvalue', this.searchForm.get("ParentId").value)
   //   this.AddData();
   //   this.GetTopMasters();
   //   this.topMaster = 0;
@@ -395,7 +395,7 @@ export class AddMasterDataComponent implements OnInit {
       else
         this.Parent = this.TopMasters.filter(f => f.MasterDataId == this.SearchParentId)[0].MasterDataName;
 
-      //console.log("parent", this.Parent)
+      ////console.log("parent", this.Parent)
       this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
       this.datasource.paginator = this.paginator;
       this.datasource.sort = this.sort;
@@ -403,7 +403,7 @@ export class AddMasterDataComponent implements OnInit {
     });
   }
   updateActive(row, value) {
-    //console.log('clicked',value);
+    ////console.log('clicked',value);
     //debugger;
     this.loading = true;
     let message = value.checked == true ? "activated" : "deactivated";
@@ -445,7 +445,7 @@ export class AddMasterDataComponent implements OnInit {
   }
   getoldvalue(value: string, row) {
     this.oldvalue = row.MasterDataName;
-    //  console.log('old value', this.oldvalue);
+    //  //console.log('old value', this.oldvalue);
   }
   SaveRow(row) {
     this.DataToSaveCount = 0;
@@ -506,7 +506,7 @@ export class AddMasterDataComponent implements OnInit {
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
       mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
-      //console.log('data to update',mastertoUpdate);
+      ////console.log('data to update',mastertoUpdate);
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {

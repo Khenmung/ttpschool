@@ -131,7 +131,7 @@ export class TextEditorComponent implements OnInit {
       return;
     }
     this.selectedFile = files[0];
-    console.log('image size',this.selectedFile.size);
+    //console.log('image size',this.selectedFile.size);
     
     if(this.selectedFile.size > this.OneMB)
     {
@@ -188,7 +188,7 @@ export class TextEditorComponent implements OnInit {
     this.fileUploadService.postFile(this.formdata).subscribe(res => {
       //let filename = this.selectedFile.name.substring(0,10).replace(' ','-').
       this.PageDetailForm.patchValue({"PhotoPath": res});
-      //console.log('res',res);
+      ////console.log('res',res);
       this.alert.success("Files Uploaded successfully.", options);
       this.imageCount =0;
       this.Edit = false;
@@ -262,7 +262,7 @@ export class TextEditorComponent implements OnInit {
   }
   onSave() {
     //debugger;
-    //console.log('to update', this.PageDetailForm.value)
+    ////console.log('to update', this.PageDetailForm.value)
     if (this.Id == undefined) {
       this.insert();
     }
@@ -341,16 +341,16 @@ export class TextEditorComponent implements OnInit {
                           this.loading = false;
                         }, (error) => {
                           this.loading = false;
-                          console.log(error);
+                          //console.log(error);
                         })
                   }
                   this.router.navigate(['/home/pages']);
                 }, (error) => {
-                  console.log('update histories', error);
+                  //console.log('update histories', error);
                 });
           },
           (error) => {
-            console.log('update pages', error);
+            //console.log('update pages', error);
           });
     }
   }
@@ -387,7 +387,7 @@ export class TextEditorComponent implements OnInit {
       }
       else
         this.PageDetail.link = this.PageDetailForm.value.link;
-      //console.log('this.PageDetailForm.value.ParentId', this.PageDetailForm.value.ParentId);
+      ////console.log('this.PageDetailForm.value.ParentId', this.PageDetailForm.value.ParentId);
       let FullPath = '';
       if (this.PageDetailForm.value.ParentId == 0)
         FullPath = this.PageDetailForm.value.PageTitle;
@@ -432,7 +432,7 @@ export class TextEditorComponent implements OnInit {
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
         this.PageGroups = data.value;
-        //console.log(this.PageGroups);
+        ////console.log(this.PageGroups);
       });
 
   }

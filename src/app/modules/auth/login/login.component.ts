@@ -60,7 +60,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
-      //console.log("authlogin",this.deviceXs);
+      ////console.log("authlogin",this.deviceXs);
     });
     //debugger;
     if (this.tokenStorage.getToken()) {
@@ -88,6 +88,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('orgId', decodedUser.sid);
         localStorage.setItem('userId', decodedUser.Id);
         localStorage.setItem('planId', decodedUser.iss);
+        console.log("decodedUser.iss",decodedUser.iss)
         //  localStorage.setItem('userInfo',decodedUser);
         this.isLoginFailed = false;
         this.isLoggedIn = true;
@@ -110,7 +111,7 @@ export class LoginComponent implements OnInit {
 
     //this.userInfo = JSON.parse(localStorage.getItem('userInfo')); 
 
-    //console.log('userinfo after login', this.userInfo)
+    ////console.log('userinfo after login', this.userInfo)
     let list: List = new List();
     list.fields = [
       'UserId',
@@ -128,7 +129,7 @@ export class LoginComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //console.log("data", data)
+        ////console.log("data", data)
         if (data.value.length > 0) {
           if (data.value[0].Org.Active == 1)
             this.GetMasterData(data.value);
@@ -153,7 +154,7 @@ export class LoginComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
@@ -224,13 +225,13 @@ export class LoginComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      'ApplicationFeatureId',
+      'PlanFeatureId',     
       'RoleId',
       'PermissionId'
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
-    list.lookupFields = ["ApplicationFeature($select=PageTitle,label,link,faIcon,ApplicationId,ParentId)"]
+    list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
 
     this.dataservice.get(list)
@@ -243,8 +244,8 @@ export class LoginComponent implements OnInit {
           data.value.forEach(item => {
             _applicationName = '';
             _appShortName = '';
-            _applicationName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].Description;
-            _appShortName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].MasterDataName
+            _applicationName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].Description;
+            _appShortName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].MasterDataName
 
             var _permission = '';
             if (item.PermissionId != null)
@@ -252,17 +253,17 @@ export class LoginComponent implements OnInit {
             debugger;
 
             this.UserDetail[0]["applicationRolePermission"].push({
-              'applicationFeatureId': item.ApplicationFeatureId,
-              'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,
+              'pageId': item.PlanFeature.PageId,
+              'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
               'roleId': item.RoleId,
               'permissionId': item.PermissionId,
               'permission': _permission,
               'applicationName': _applicationName,
-              'applicationId': item.ApplicationFeature.ApplicationId,
+              'applicationId': item.PlanFeature.Page.ApplicationId,
               'appShortName': _appShortName,
-              'faIcon': item.ApplicationFeature.faIcon,
-              'label': item.ApplicationFeature.label,
-              'link': item.ApplicationFeature.link
+              'faIcon': item.PlanFeature.Page.faIcon,
+              'label': item.PlanFeature.Page.label,
+              'link': item.PlanFeature.Page.link
             });
 
           });

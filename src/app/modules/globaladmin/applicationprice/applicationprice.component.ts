@@ -112,13 +112,13 @@ export class ApplicationpriceComponent implements OnInit {
     this.ApplicationPriceData.Active = row.Active;
     this.ApplicationPriceData.OrgId = this.LoginUserDetail[0]["orgId"];
 
-    console.log('data', this.ApplicationPriceData);
+    //console.log('data', this.ApplicationPriceData);
     if (this.ApplicationPriceData.ApplicationPriceId == 0) {
       this.ApplicationPriceData["CreatedDate"] = new Date();
       this.ApplicationPriceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
       this.ApplicationPriceData["UpdatedDate"] = new Date();
       delete this.ApplicationPriceData["UpdatedBy"];
-      //console.log('exam slot', this.SchoolClassPeriodListData)
+      ////console.log('exam slot', this.SchoolClassPeriodListData)
       this.insert(row);
     }
     else {
@@ -210,7 +210,7 @@ export class ApplicationpriceComponent implements OnInit {
             }
           })
         }
-        console.log('app',this.ApplicationPriceList)
+        //console.log('app',this.ApplicationPriceList)
         this.dataSource = new MatTableDataSource<any>(this.ApplicationPriceList);
         this.loading = false;
       })

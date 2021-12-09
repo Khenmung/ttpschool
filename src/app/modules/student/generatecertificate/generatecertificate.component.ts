@@ -109,7 +109,7 @@ export class GenerateCertificateComponent implements OnInit {
     const styleEl = this.document.createElement('style');
     styleEl.innerText = strStyle;
     headEl.appendChild(styleEl);
-    //console.log('dd', styleEl)
+    ////console.log('dd', styleEl)
   }
   private _filter(name: string): IStudent[] {
 
@@ -286,7 +286,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.loading = false;
       }
       else {
-        //console.log('data.value',data.value)
+        ////console.log('data.value',data.value)
         debugger;
         data.value.forEach(d => {
 
@@ -346,7 +346,7 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "ReasonForLeaving", val: _reason }
           )
         })
-        //console.log('this.StudentForVariables',this.StudentForVariables);
+        ////console.log('this.StudentForVariables',this.StudentForVariables);
         this.GenerateCertificate();
 
       }
@@ -361,7 +361,7 @@ export class GenerateCertificateComponent implements OnInit {
       this.alert.error("Certificate not defined!", this.optionAutoClose);
       return;
     }
-    //console.log("_certificateBody",_certificateBody);
+    ////console.log("_certificateBody",_certificateBody);
     _certificateBody.forEach(c => {
       this.StudentForVariables.forEach(s => {
         if (c.Description.includes('[' + s.name.trim() + ']'))
@@ -384,7 +384,7 @@ export class GenerateCertificateComponent implements OnInit {
       styleStr += s.Description;
     });
     this.loadTheme(styleStr);
-    //console.log("ss",this.CertificateElements)
+    ////console.log("ss",this.CertificateElements)
     this.dataSource = new MatTableDataSource<any>(this.CertificateElements);
     this.loading = false;
   }
@@ -469,7 +469,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.CommonFooter = this.getDropDownData(globalconstants.MasterDefinitions.school.COMMONFOOTER);
         this.CommonHeader.sort((a, b) => a.Sequence - b.Sequence)
         this.CommonFooter.sort((a, b) => a.Sequence - b.Sequence)
-        //console.log('cer type',this.CertificateTypes)
+        ////console.log('cer type',this.CertificateTypes)
         this.shareddata.ChangeBatch(this.Batches);
         this.GetStudents(0);
         //this.GetExams();
@@ -518,7 +518,7 @@ export class GenerateCertificateComponent implements OnInit {
       })
   }
   UpdateStudentCertificates() {
-    console.log("hi")
+    //console.log("hi")
   }
   getDropDownData(dropdowntype) {
     let Id = 0;

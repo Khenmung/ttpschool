@@ -198,7 +198,7 @@ export class ClassdetailComponent implements OnInit {
           this.ClassMasterData.BatchId = this.SelectedBatchId;
 
           this.ClassMasterData.Active = row.Active;
-          //console.log('exam slot', this.ClassMasterData)
+          ////console.log('exam slot', this.ClassMasterData)
 
           if (this.ClassMasterData.ClassId == 0) {
             this.ClassMasterData["CreatedDate"] = new Date();

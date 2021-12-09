@@ -85,7 +85,7 @@ export class FeecollectionreportComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-//      console.log('this.Permission', this.Permission)
+//      //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
         this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
@@ -187,7 +187,7 @@ export class FeecollectionreportComponent implements OnInit {
           });
           debugger;
           this.ELEMENT_DATA = alasql("select Name,ClassRollNoSection,RollNo,MAX(Month) month from ? group by Name,ClassRollNoSection,RollNo", [result]);
-          console.log("elementdata",result)
+          //console.log("elementdata",result)
           this.ELEMENT_DATA.forEach(f => {
 
             var monthobj = this.Months.filter(m => m.val === f.month);
@@ -277,7 +277,7 @@ export class FeecollectionreportComponent implements OnInit {
   }
   GetStudents() {
 
-    //console.log(this.LoginUserDetail);
+    ////console.log(this.LoginUserDetail);
 
     let list: List = new List();
     list.fields = [
@@ -295,7 +295,7 @@ export class FeecollectionreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
             var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);

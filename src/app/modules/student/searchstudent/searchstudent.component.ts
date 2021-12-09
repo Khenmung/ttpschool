@@ -155,9 +155,9 @@ export class searchstudentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
-        //console.log('this.SelectedBatchId',this.SelectedBatchId);
+        ////console.log('this.SelectedBatchId',this.SelectedBatchId);
         this.SelectedBatchId = +this.token.getSelectedBatchId();
         this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
 
@@ -361,7 +361,7 @@ export class searchstudentComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         if (data.value.length > 0) {
           var formattedData = data.value.filter(sc => {
             let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
@@ -391,7 +391,7 @@ export class searchstudentComponent implements OnInit {
           this.ELEMENT_DATA = [];
           this.alert.info("No student found!", this.options);
         }
-        console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
+        //console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -419,7 +419,7 @@ export class searchstudentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
             var _RollNo = '';

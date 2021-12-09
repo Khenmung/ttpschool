@@ -82,12 +82,12 @@ export class CalendarComponent implements OnInit {
 
   }  
   handleDateClick(arg) {
-    console.log("arg",arg)
+    //console.log("arg",arg)
     //alert('date click! ' + arg)
   }
   eventMouseOver(value){
     debugger;
-    console.log("mouseover",value.detail)
+    //console.log("mouseover",value.detail)
     this.alert.info(value,this.optionsNoAutoClose);
   }
   TimeGridView()

@@ -90,7 +90,7 @@ export class CustomerPlansComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       //this.Applications = this.tokenstorage.getPermittedApplications();
-      //console.log("app this",this.Applications)
+      ////console.log("app this",this.Applications)
       this.GetMasterData();
       this.GetOrganizations();
       this.GetPlan();
@@ -115,7 +115,7 @@ export class CustomerPlansComponent implements OnInit {
     this.CustomerPlansData.Active = row.Active;
     this.CustomerPlansData.OrgId = this.LoginUserDetail[0]["orgId"];
 
-    console.log('data', this.CustomerPlansData);
+    //console.log('data', this.CustomerPlansData);
     if (this.CustomerPlansData.CustomerPlanId == 0) {
       this.CustomerPlansData["CreatedDate"] = new Date();
       this.CustomerPlansData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

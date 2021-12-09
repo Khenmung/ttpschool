@@ -231,7 +231,7 @@ export class StudentattendancereportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         this.ClassSubjects = data.value.map(item => {
           var _classname = ''
           var objCls = this.Classes.filter(f => f.ClassId == item.ClassId)

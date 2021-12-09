@@ -133,7 +133,7 @@ export class ClassmasterdashboardComponent implements OnInit {
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         //this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
-        //console.log(this.CheckPermission);
+        ////console.log(this.CheckPermission);
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
@@ -193,7 +193,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (_classId != 0 && _teacherId != undefined) {
           if (data.value.length > 0)
             data.value.forEach(element => {
@@ -326,7 +326,7 @@ export class ClassmasterdashboardComponent implements OnInit {
             this.ClassSubjectTeacherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.ClassSubjectTeacherData["UpdatedDate"];
             delete this.ClassSubjectTeacherData["UpdatedBy"];
-            console.log('to insert', this.ClassSubjectTeacherData)
+            //console.log('to insert', this.ClassSubjectTeacherData)
             this.insert(row);
           }
           else {
@@ -335,7 +335,7 @@ export class ClassmasterdashboardComponent implements OnInit {
             delete this.ClassSubjectTeacherData["CreatedBy"];
             this.ClassSubjectTeacherData["UpdatedDate"] = new Date();
             this.ClassSubjectTeacherData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            console.log('to update', this.ClassSubjectTeacherData)
+            //console.log('to update', this.ClassSubjectTeacherData)
             this.update(row);
           }
         }
@@ -413,7 +413,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         this.ClassSubjects = data.value.map(item => {
           var _classname = this.Classes.filter(f => f.ClassId == item.ClassId)[0].ClassName;
           var _subjectName = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)[0].MasterDataName;

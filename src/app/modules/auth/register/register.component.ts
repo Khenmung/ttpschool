@@ -69,7 +69,7 @@ export class RegisterComponent implements OnInit {
     })
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
-      //console.log("authlogin",this.deviceXs);
+      ////console.log("authlogin",this.deviceXs);
     });
     this.shareddata.CurrentCustomerPlan.subscribe(p => this.CustomerPlan = p);
   }
@@ -116,11 +116,11 @@ export class RegisterComponent implements OnInit {
                 this.isSuccessful = true;
                 this.isSignUpFailed = false;
               }, (error) => {
-                console.log('creating user error', error);
+                //console.log('creating user error', error);
 
               });
         }, (error) => {
-          console.log('creating organization error', error);
+          //console.log('creating organization error', error);
 
         })
 
@@ -164,7 +164,7 @@ export class RegisterComponent implements OnInit {
         }
 
         this.isSignUpFailed = true;
-        console.log(err.error)
+        //console.log(err.error)
       }
     );
   }

@@ -192,7 +192,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
             this.EmployeeGradeHistoryData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.EmployeeGradeHistoryData["UpdatedDate"] = new Date();
             delete this.EmployeeGradeHistoryData["UpdatedBy"];
-            console.log('exam EmployeeGradeHistoryData', this.EmployeeGradeHistoryData)
+            //console.log('exam EmployeeGradeHistoryData', this.EmployeeGradeHistoryData)
             this.insert(row);
           }
           else {
@@ -223,7 +223,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
         });
   }
   update(row) {
-    console.log("to update", this.EmployeeGradeHistoryData)
+    //console.log("to update", this.EmployeeGradeHistoryData)
     this.dataservice.postPatch('EmpEmployeeGradeSalHistories', this.EmployeeGradeHistoryData, this.EmployeeGradeHistoryData.EmployeeGradeHistoryId, 'patch')
       .subscribe(
         (data: any) => {
@@ -256,7 +256,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
   onBlur(element, event) {
     //debugger;
     var _colName = event.srcElement.name;
-    console.log("event", event);
+    //console.log("event", event);
     var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     row[0][_colName] = element[_colName];
   }

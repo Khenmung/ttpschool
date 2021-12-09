@@ -97,7 +97,7 @@ export class DashboardclassfeeComponent implements OnInit {
       this.Months = this.contentservice.GetSessionFormattedMonths();
 
       if (this.Permission == 'deny') {
-        console.log('access denied to Fee');
+        //console.log('access denied to Fee');
         //this.alert.error('access denied!',this.optionAutoClose);  
         //this.route.navigate(['/edu'])
       }
@@ -275,7 +275,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.classFeeData.LocationId = +row.LocationId;
           this.classFeeData.Month = this.searchForm.get("searchMonth").value;
           this.classFeeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          console.log("dataclassfee", this.classFeeData);
+          //console.log("dataclassfee", this.classFeeData);
           if (this.classFeeData.ClassFeeId == 0)
             this.insert(row);
           else
@@ -343,7 +343,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "Done": true
               }
           })
-          //console.log('classes', this.ClassStatuses);
+          ////console.log('classes', this.ClassStatuses);
           this.loading = false;
         }
       })
@@ -435,7 +435,7 @@ export class DashboardclassfeeComponent implements OnInit {
         }
         //this.ELEMENT_DATA = 
         this.ELEMENT_DATA.sort((a,b)=>b.Active-a.Active);
-        //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
+        ////console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -471,7 +471,7 @@ export class DashboardclassfeeComponent implements OnInit {
     if (value == NaN)
       value = 0;
     row.Amount = parseFloat(value);
-    //console.log('from change', row);
+    ////console.log('from change', row);
   }
   GetMasterData() {
 

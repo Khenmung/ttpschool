@@ -45,6 +45,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   ApplicationDataStatus = [];
   SchoolDataStatus = [];
   DisplayColumns = [
+    "ApplicationFeatureRoleId",
     "FeatureName",
     "PermissionId",
     "Active",
@@ -133,6 +134,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   //       }
   //     });
   // }
+
   GetTopMasters() {
     let list: List = new List();
     list.fields = [
@@ -200,23 +202,23 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     list.fields = [
       "PlanFeatureId",
       "PlanId",
-      "FeatureId",
+      "PageId",
       "ParentId",
       "ApplicationId"
     ];
     list.PageName = "PlanFeatures";
-    list.lookupFields = ["Feature($select=label,PageTitle,DisplayOrder)"]
-    list.filter = ["PlanId eq 1" + // + this.UserDetails[0]["planId"] +
+    list.lookupFields = ["Page($select=label,PageTitle,DisplayOrder)"]
+    list.filter = ["PlanId eq " + this.UserDetails[0]["planId"] +
       " and Active eq 1 and ApplicationId eq " + this.SelectedApplicationId];
     this.PageFeatures = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.PageFeatures = data.value.map(d => {
-           // d.PageId = d.Page.PageId;
-            d.label = d.Feature.label;
-            d.PageTitle = d.Feature.PageTitle;
-            d.DisplayOrder = d.Feature.DisplayOrder;
+            // d.PageId = d.Page.PageId;
+            d.label = d.Page.label;
+            d.PageTitle = d.Page.PageTitle;
+            d.DisplayOrder = d.Page.DisplayOrder;
             return d;
           });
           this.TopPageFeatures = this.PageFeatures.filter(f => f.ParentId == 0);
@@ -224,7 +226,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         else
           this.PageFeatures = [];
         this.loading = false;
-        //console.log("PageFeatures", this.PageFeatures)
+        ////console.log("PageFeatures", this.PageFeatures)
       })
   }
   FilterPageFeatures() {
@@ -242,10 +244,10 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     }
     // else
     //   rolefilter += " and ApplicationFeature/ApplicationId eq " + this.SelectedApplicationId;
-
+    var _planFeatureId = this.searchForm.get("PlanFeatureId").value;
     var _ParentId = 0;
-    if (this.searchForm.get("PlanFeatureId").value > 0) {
-      _ParentId = this.searchForm.get("PlanFeatureId").value;
+    if (_planFeatureId > 0) {
+      _ParentId = this.PageFeatures.filter(f => f.PlanFeatureId == _planFeatureId)[0].PageId;
     }
     rolefilter += " and ParentId eq " + _ParentId;
 
@@ -283,7 +285,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
             ResultedPermittedPageFeatures.push({
               ApplicationFeatureRoleId: existing[0].ApplicationFeatureRoleId,
               PlanFeatureId: existing[0].PlanFeatureId,
-              FeatureId:p.FeatureId,
+              FeatureId: p.FeatureId,
               FeatureName: p.label,// this.PageFeatures.filter(t => t.PageId == existing[0].PlanFeatureId)[0].Label,
               RoleId: existing[0].RoleId,
               Role: this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)[0].MasterDataName,
@@ -297,7 +299,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
             ResultedPermittedPageFeatures.push({
               ApplicationFeatureRoleId: 0,
               PlanFeatureId: p.PlanFeatureId,
-              FeatureId:p.FeatureId,
+              FeatureId: p.FeatureId,
               FeatureName: p.label,// this.PageFeatures.filter(t => t.PageId == p.PageId)[0].Label,
               RoleId: _roleId,
               DisplayOrder: p.DisplayOrder,
@@ -329,17 +331,15 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       record.Action = true;
     })
   }
-  saveall() {
-    this.ApplicationRoleList.forEach((record, indx) => {
-      if (record.Action == true) {
-        this.UpdateOrSave(record);
-      }
-      if (indx == this.ApplicationRoleList.length - 1) {
-        this.alert.success("All attendance saved sucessfully.", this.optionAutoClose);
-        //this.SaveAll = false;
-      }
-    })
-  }
+  // saveall() {
+  //   var ToUpdate = this.ApplicationRoleList.filter(f => f.Action);
+  //   this.NoOfRowsToUpdate = ToUpdate.length;
+  //   ToUpdate.forEach((record, indx) => {
+  //     this.NoOfRowsToUpdate--;
+  //     this.UpdateOrSave(record);
+
+  //   })
+  // }
   get f() { return this.searchForm.controls }
   UpdateSaveButton(element) {
     //debugger;
@@ -405,8 +405,11 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         }
         else {
           var _ParentId = 0;
-          if (this.searchForm.get("PlanFeatureId").value > 0) {
-            _ParentId = this.searchForm.get("PlanFeatureId").value;
+          var _planFeatureId = this.searchForm.get("PlanFeatureId").value;
+          if (_planFeatureId > 0) {
+            var obj = this.TopPageFeatures.filter(t => t.PlanFeatureId == _planFeatureId);
+            if (obj.length > 0)
+              _ParentId = obj[0].PageId;
           }
 
           this.AppRoleData.Active = row.Active;
@@ -417,7 +420,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.AppRoleData.PermissionId = row.PermissionId;
           this.AppRoleData.OrgId = this.UserDetails[0]["orgId"];
 
-          console.log('data', this.AppRoleData);
+          //console.log('data', this.AppRoleData);
           if (this.AppRoleData.ApplicationFeatureRoleId == 0) {
             this.AppRoleData["CreatedDate"] = new Date();
             this.AppRoleData["CreatedBy"] = this.UserDetails[0].userId;
@@ -447,9 +450,10 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.loading = false;
           row.ApplicationFeatureRoleId = data.ApplicationFeatureRoleId;
           row.Action = false;
-          if (this.NoOfRowsToUpdate == 0)
+          if (this.NoOfRowsToUpdate == 0) {
             this.alert.success("Data saved successfully.", this.optionAutoClose);
-          this.NoOfRowsToUpdate = -1;
+            this.NoOfRowsToUpdate = -1;
+          }
         });
   }
   update(row) {
@@ -459,9 +463,10 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          if (this.NoOfRowsToUpdate == 0)
+          if (this.NoOfRowsToUpdate == 0) {
             this.alert.success("Data updated successfully.", this.optionAutoClose);
-          this.NoOfRowsToUpdate = -1;
+            this.NoOfRowsToUpdate = -1;
+          }
         });
   }
   selected(event) {
@@ -469,7 +474,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   }
   getoldvalue(value: string, row) {
     this.oldvalue = row.MasterDataName;
-    //  console.log('old value', this.oldvalue);
+    //  //console.log('old value', this.oldvalue);
   }
 
   getDropDownData(dropdowntype) {

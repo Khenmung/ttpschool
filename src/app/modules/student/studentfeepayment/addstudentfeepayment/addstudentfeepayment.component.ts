@@ -449,11 +449,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
               //debugger;
               let AmountAfterFormulaApplied = 0;
               this.VariableObjList.push(studentClassFee);
-              //console.log('before',this.VariableObjList)
+              ////console.log('before',this.VariableObjList)
               var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
               this.VariableObjList.splice(this.VariableObjList.indexOf(studentClassFee), 1);
-              //console.log('after',this.VariableObjList)
-              //console.log('formula', formula)
+              ////console.log('after',this.VariableObjList)
+              ////console.log('formula', formula)
               AmountAfterFormulaApplied = evaluate(formula);
 
               var monthadded = this.StudentLedgerList.filter(f => f.Month == studentClassFee.Month);
@@ -485,7 +485,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         }
 
         this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
-        console.log("this.StudentLedgerList", this.StudentLedgerList)
+        //console.log("this.StudentLedgerList", this.StudentLedgerList)
         this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
         this.loading = false;
       })
@@ -593,7 +593,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       })
       row.Action = false;
     }
-    //console.log("this.MonthlyDueDetail", this.MonthlyDueDetail);
+    ////console.log("this.MonthlyDueDetail", this.MonthlyDueDetail);
     this.billdataSource = new MatTableDataSource<IPaymentDetail>(this.MonthlyDueDetail);
 
   }
@@ -707,7 +707,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           });
       });
     })
-    console.log("this.FeePayment", this.FeePayment);
+    //console.log("this.FeePayment", this.FeePayment);
     this.dataservice.postPatch(this.FeeReceiptListName, this.FeePayment, 0, 'post')
       .subscribe((data: any) => {
         this.StudentReceiptData.StudentFeeReceiptId = data.StudentFeeReceiptId;
@@ -768,7 +768,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   tabChanged(tabChangeEvent: number) {
     this.selectedIndex = tabChangeEvent;
     this.navigateTab(this.selectedIndex);
-    //   console.log('tab selected: ' + tabChangeEvent);
+    //   //console.log('tab selected: ' + tabChangeEvent);
   }
   public nextStep() {
     this.selectedIndex += 1;

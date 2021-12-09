@@ -136,8 +136,8 @@ export class PromoteclassComponent implements OnInit {
         this.PromotePermission = perObj[0].permission;
 
       this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
-      //console.log('selected batchid', this.SelectedBatchId);
-      //console.log('current batchid', this.CurrentBatchId)
+      ////console.log('selected batchid', this.SelectedBatchId);
+      ////console.log('current batchid', this.CurrentBatchId)
       if (this.PromotePermission == 'read')
         this.displayedColumns = [
           'Student',
@@ -148,7 +148,7 @@ export class PromoteclassComponent implements OnInit {
           //'Promote',
           'Action'
         ];
-      //console.log('log', this.CheckPermission)
+      ////console.log('log', this.CheckPermission)
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
 
       //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
@@ -411,7 +411,7 @@ export class PromoteclassComponent implements OnInit {
             this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentClassData["UpdatedDate"];
             delete this.StudentClassData["UpdatedBy"];
-            console.log('to insert', this.StudentClassData)
+            //console.log('to insert', this.StudentClassData)
             this.insert(row);
           }
           else {
@@ -482,7 +482,7 @@ export class PromoteclassComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
             return {

@@ -192,7 +192,7 @@ export class LeaveBalanceComponent implements OnInit {
         
         if (b.length !=0) {
           _sessionStartEnd = {...b};
-          console.log('b',b)
+          //console.log('b',b)
           var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();
           var startMonth = new Date(_sessionStartEnd.StartDate).getMonth();
 
@@ -209,7 +209,7 @@ export class LeaveBalanceComponent implements OnInit {
           }
         }
       });
-      //console.log('monthArray',monthArray);
+      ////console.log('monthArray',monthArray);
     //}, 3000);
     return monthArray;
   }
@@ -248,13 +248,13 @@ export class LeaveBalanceComponent implements OnInit {
           this.LeaveBalanceData.BatchId = this.SelectedBatchId;
           this.LeaveBalanceData.Active = row.Active;
 
-          console.log('data', this.LeaveBalanceData);
+          //console.log('data', this.LeaveBalanceData);
           if (this.LeaveBalanceData.LeaveBalanceId == 0) {
             this.LeaveBalanceData["CreatedDate"] = new Date();
             this.LeaveBalanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.LeaveBalanceData["UpdatedDate"] = new Date();
             delete this.LeaveBalanceData["UpdatedBy"];
-            //console.log('exam slot', this.ExamStudentSubjectResultData)
+            ////console.log('exam slot', this.ExamStudentSubjectResultData)
             this.insert(row);
           }
           else {
@@ -285,7 +285,7 @@ export class LeaveBalanceComponent implements OnInit {
         });
   }
   update(row) {
-    //console.log("this.EmpComponentData", this.EmpComponentData);
+    ////console.log("this.EmpComponentData", this.EmpComponentData);
     this.dataservice.postPatch(this.LeaveBalanceListName, this.LeaveBalanceData, this.LeaveBalanceData.LeaveBalanceId, 'patch')
       .subscribe(
         (data: any) => {
@@ -318,7 +318,7 @@ export class LeaveBalanceComponent implements OnInit {
   onBlur(element, event) {
     //debugger;
     var _colName = event.srcElement.name;
-    console.log("event", event);
+    //console.log("event", event);
     //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     //row[0][_colName] = element[_colName];
   }
@@ -559,7 +559,7 @@ export class LeaveBalanceComponent implements OnInit {
           }
         })
         this.loading = false;
-        //console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
+        ////console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
         //this.GetGradeComponents();
       })
 

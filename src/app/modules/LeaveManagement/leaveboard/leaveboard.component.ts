@@ -24,7 +24,7 @@ export class LeaveboardComponent implements OnInit {
   tabChanged(tabChangeEvent: number) {
     this.selectedIndex = tabChangeEvent;
     this.navigateTab(this.selectedIndex);
-    //   console.log('tab selected: ' + tabChangeEvent);
+    //   //console.log('tab selected: ' + tabChangeEvent);
   }
   public nextStep() {
     this.selectedIndex += 1;

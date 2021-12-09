@@ -52,7 +52,11 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Active">
-        <mat-header-cell style="justify-content: center;" *matHeaderCellDef>Active
+        <mat-header-cell style="justify-content: center;" *matHeaderCellDef>
+            <mat-checkbox *ngIf="PlanFeatureList.length>0" matTooltip="check/uncheck all" mat-mini-fab
+                (click)="$event.stopPropagation()" (change)="checkall($event)">
+            </mat-checkbox>
+            &nbsp;Active
         </mat-header-cell>
         <mat-cell style="justify-content: center;" *matCellDef="let element">
             <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"

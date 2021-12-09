@@ -35,7 +35,7 @@ export class ContactComponent implements OnInit {
     private activeUrl: ActivatedRoute) {
     this.activeUrl.paramMap.subscribe(params => {
       this.Id = +params.get("id");
-      //console.log("id",this.Id);
+      ////console.log("id",this.Id);
     })
   }
 
@@ -76,7 +76,7 @@ export class ContactComponent implements OnInit {
           //this.route.navigate(["/home"]);
         },
         (error) => {
-          console.log('messages page', error);
+          //console.log('messages page', error);
         });
   }
   GetContactEntry() {

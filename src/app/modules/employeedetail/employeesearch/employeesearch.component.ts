@@ -313,7 +313,7 @@ export class EmployeesearchComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         if (data.value.length > 0) {
           
           this.EmployeeData = data.value.map(item => {
@@ -346,7 +346,7 @@ export class EmployeesearchComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
             

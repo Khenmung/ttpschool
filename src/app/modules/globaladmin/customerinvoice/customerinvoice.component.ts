@@ -154,13 +154,13 @@ export class CustomerinvoiceComponent implements OnInit {
     this.CustomerInvoiceData.Active = row.Active;
     this.CustomerInvoiceData.OrgId = this.LoginUserDetail[0]["orgId"];
 
-    console.log('data', this.CustomerInvoiceData);
+    //console.log('data', this.CustomerInvoiceData);
     if (this.CustomerInvoiceData.CustomerInvoiceId == 0) {
       this.CustomerInvoiceData["CreatedDate"] = new Date();
       this.CustomerInvoiceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
       this.CustomerInvoiceData["UpdatedDate"] = new Date();
       delete this.CustomerInvoiceData["UpdatedBy"];
-      //console.log('exam slot', this.SchoolClassPeriodListData)
+      ////console.log('exam slot', this.SchoolClassPeriodListData)
       this.insert(row);
     }
     else {
@@ -319,7 +319,7 @@ export class CustomerinvoiceComponent implements OnInit {
             "Action": false
           })
         }
-        console.log('Organizations', this.Organizations)
+        //console.log('Organizations', this.Organizations)
         this.CustomerInvoiceDataSource = new MatTableDataSource<any>(this.CustomerInvoiceList);
         this.loading = false;
       })
@@ -373,7 +373,7 @@ export class CustomerinvoiceComponent implements OnInit {
 
       if (b.length != 0) {
         _sessionStartEnd = { ...b };
-        //console.log('b',b)
+        ////console.log('b',b)
         var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();
         var startMonth = new Date(_sessionStartEnd.StartDate).getMonth();
 
@@ -389,7 +389,7 @@ export class CustomerinvoiceComponent implements OnInit {
         }
       }
     });
-    //console.log('monthArray',monthArray);
+    ////console.log('monthArray',monthArray);
     //}, 3000);
     return monthArray;
   }

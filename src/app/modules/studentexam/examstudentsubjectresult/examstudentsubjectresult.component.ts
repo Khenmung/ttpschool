@@ -171,13 +171,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           this.ExamStudentSubjectResultData.BatchId = this.SelectedBatchId;
           this.ExamStudentSubjectResultData.ExamStatus = _examstatus;
           this.ExamStudentSubjectResultData.Marks = row.Marks;
-          //console.log('data', this.ClassSubjectData);
+          ////console.log('data', this.ClassSubjectData);
           if (this.ExamStudentSubjectResultData.ExamStudentSubjectResultId == 0) {
             this.ExamStudentSubjectResultData["CreatedDate"] = new Date();
             this.ExamStudentSubjectResultData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.ExamStudentSubjectResultData["UpdatedDate"] = new Date();
             delete this.ExamStudentSubjectResultData["UpdatedBy"];
-            //console.log('exam slot', this.ExamStudentSubjectResultData)
+            ////console.log('exam slot', this.ExamStudentSubjectResultData)
             this.insert(row);
           }
           else {
@@ -440,8 +440,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         })
 
         this.displayedColumns.push("Action");
-        //console.log('this.displayedColumns', this.displayedColumns);
-        //console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult);
+        ////console.log('this.displayedColumns', this.displayedColumns);
+        ////console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult);
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
         this.loading = false;
       })
@@ -465,7 +465,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   onBlur(element, event) {
     //debugger;
     var _colName = event.srcElement.name;
-    //console.log("event", event);
+    ////console.log("event", event);
     var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     row[0][_colName] = element[_colName];
     element.Action = true;

@@ -146,7 +146,7 @@ export class SchoolFeeTypesComponent implements OnInit {
             this.FeeTypeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.FeeTypeData["UpdatedDate"] = new Date();
             delete this.FeeTypeData["UpdatedBy"];
-            //console.log('exam slot', this.SlotNClassSubjectData)
+            ////console.log('exam slot', this.SlotNClassSubjectData)
             this.insert(row);
           }
           else {
@@ -211,7 +211,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.FeeTypeList = [...data.value];
         }

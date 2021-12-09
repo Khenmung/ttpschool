@@ -91,7 +91,7 @@ export class PlansComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.PLAN)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -184,7 +184,7 @@ export class PlansComponent implements OnInit {
           this.PlanData.MinPrice = +row.MinPrice;
           this.PlanData.MinCount = +row.MinCount;
           this.PlanData.Active = row.Active;
-          //console.log("plandata", this.PlanData)
+          ////console.log("plandata", this.PlanData)
           if (this.PlanData.PlanId == 0) {
             this.insert(row);
           }

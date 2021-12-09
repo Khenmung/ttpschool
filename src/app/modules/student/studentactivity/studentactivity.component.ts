@@ -187,7 +187,7 @@ export class StudentactivityComponent implements OnInit {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.StudentActivityForUpdate=[];;
-          //console.log("inserting-1",this.StudentActivityForUpdate);
+          ////console.log("inserting-1",this.StudentActivityForUpdate);
           this.StudentActivityForUpdate.push(
             {
               StudentActivityId: row.StudentActivityId,
@@ -210,7 +210,7 @@ export class StudentactivityComponent implements OnInit {
             delete this.StudentActivityForUpdate[0]["SubCategories"];
             
             
-            //console.log("inserting1",this.StudentActivityForUpdate);
+            ////console.log("inserting1",this.StudentActivityForUpdate);
             this.insert(row);
           }
           else {
@@ -230,7 +230,7 @@ export class StudentactivityComponent implements OnInit {
     this.loading = false;
   }
   insert(row) {
-    console.log("inserting",this.StudentActivityForUpdate);
+    //console.log("inserting",this.StudentActivityForUpdate);
     //debugger;
     this.dataservice.postPatch('StudentActivities', this.StudentActivityForUpdate, 0, 'post')
       .subscribe(
@@ -242,7 +242,7 @@ export class StudentactivityComponent implements OnInit {
         });
   }
   update(row) {
-    console.log("updating",this.StudentActivityForUpdate);
+    //console.log("updating",this.StudentActivityForUpdate);
     this.dataservice.postPatch('StudentActivities', this.StudentActivityForUpdate, this.StudentActivityForUpdate[0].StudentActivityId, 'patch')
       .subscribe(
         (data: any) => {
@@ -281,7 +281,7 @@ export class StudentactivityComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.StudentActivityList = data.value.map(item => {
             return {
@@ -303,7 +303,7 @@ export class StudentactivityComponent implements OnInit {
           })
         }
 
-        console.log('studentactivity', this.StudentActivityList)
+        //console.log('studentactivity', this.StudentActivityList)
         this.dataSource = new MatTableDataSource<IStudentActivity>(this.StudentActivityList);
         this.loadingFalse();
       });
@@ -343,7 +343,7 @@ export class StudentactivityComponent implements OnInit {
     var item = this.StudentActivityList.filter(f => f.StudentActivityId == row.StudentActivityId);
     item[0].SubCategories = this.allMasterData.filter(f => f.ParentId == row.CategoryId);
 
-    //console.log("dat", this.StudentActivityList);
+    ////console.log("dat", this.StudentActivityList);
     this.dataSource = new MatTableDataSource(this.StudentActivityList);
 
 
@@ -369,7 +369,7 @@ export class StudentactivityComponent implements OnInit {
   }
   GetStudents() {
 
-    //console.log(this.LoginUserDetail);
+    ////console.log(this.LoginUserDetail);
 
     let list: List = new List();
     list.fields = [
@@ -387,7 +387,7 @@ export class StudentactivityComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
             // var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);

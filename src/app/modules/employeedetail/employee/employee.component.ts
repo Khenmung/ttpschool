@@ -217,7 +217,7 @@ export class EmployeeComponent implements OnInit {
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
   ngAfterViewInit() {
-    //console.log('total tabs: ' + this.allTabs.first._tabs.length);
+    ////console.log('total tabs: ' + this.allTabs.first._tabs.length);
   }
 
   get f() { return this.EmployeeForm.controls }
@@ -229,7 +229,7 @@ export class EmployeeComponent implements OnInit {
   tabChanged(tabChangeEvent: number) {
     this.selectedIndex = tabChangeEvent;
     this.navigateTab(this.selectedIndex);
-    //   console.log('tab selected: ' + tabChangeEvent);
+    //   //console.log('tab selected: ' + tabChangeEvent);
   }
   public nextStep() {
     this.selectedIndex += 1;
@@ -263,7 +263,7 @@ export class EmployeeComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
         this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
@@ -379,7 +379,7 @@ export class EmployeeComponent implements OnInit {
       }, error => console.log(error))
   }
   update() {
-    //console.log('Employee', this.EmployeeForm.value)
+    ////console.log('Employee', this.EmployeeForm.value)
 
     this.dataservice.postPatch('EmpEmployees', this.EmployeeData, this.EmployeeId, 'patch')
       .subscribe((result: any) => {
@@ -389,7 +389,7 @@ export class EmployeeComponent implements OnInit {
       })
   }
   adjustDateForTimeOffset(dateToAdjust) {
-    //console.log(dateToAdjust)
+    ////console.log(dateToAdjust)
     var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
     return new Date(dateToAdjust.getTime() - offsetMs);
   }

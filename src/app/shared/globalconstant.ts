@@ -440,14 +440,14 @@ export class globalconstants {
 
         let list: List = new List();
         list.fields = [
-            'ApplicationFeatureId',
+            'PlanFeatureId',
             'RoleId',
             'PermissionId'
         ];
         var _UserDetail = [];
         var _RoleFilter = tokenservice.getRoleFilter();
         list.PageName = "ApplicationFeatureRolesPerms";
-        list.lookupFields = ["ApplicationFeature($select=PageTitle,label,link,faIcon,ApplicationId,ParentId)"]
+        list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
         list.filter = ["Active eq 1 " + _RoleFilter];
 
         this.dataservice.get(list)
@@ -460,8 +460,8 @@ export class globalconstants {
                     data.value.forEach(item => {
                         _applicationName = '';
                         _appShortName = '';
-                        _applicationName = Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].Description;
-                        _appShortName = Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].MasterDataName
+                        _applicationName = Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].Description;
+                        _appShortName = Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].MasterDataName
 
                         var _permission = '';
                         if (item.PermissionId != null)
@@ -469,17 +469,17 @@ export class globalconstants {
                         debugger;
 
                         _UserDetail[0]["applicationRolePermission"].push({
-                            'applicationFeatureId': item.ApplicationFeatureId,
-                            'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,
+                            'planFeatureId': item.planFeatureId,
+                            'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
                             'roleId': item.RoleId,
                             'permissionId': item.PermissionId,
                             'permission': _permission,
                             'applicationName': _applicationName,
-                            'applicationId': item.ApplicationFeature.ApplicationId,
+                            'applicationId': item.PlanFeature.Page.ApplicationId,
                             'appShortName': _appShortName,
-                            'faIcon': item.ApplicationFeature.faIcon,
-                            'label': item.ApplicationFeature.label,
-                            'link': item.ApplicationFeature.link
+                            'faIcon': item.PlanFeature.Page.faIcon,
+                            'label': item.PlanFeature.Page.label,
+                            'link': item.PlanFeature.Page.link
                         });
 
                     });

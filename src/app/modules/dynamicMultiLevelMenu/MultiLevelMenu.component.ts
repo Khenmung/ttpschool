@@ -56,7 +56,7 @@ export class MultiLevelMenuComponent implements OnInit {
 
   }
   selectMenuID(MenuID) {
-    //    console.log('menuid', MenuID);
+    //    //console.log('menuid', MenuID);
     this.multilevelMenuService.selectMenuByID(MenuID);
   }
   setExpandCollapseStatus(type: ExpandCollapseStatusEnum) {
@@ -65,15 +65,15 @@ export class MultiLevelMenuComponent implements OnInit {
 
   selectedItem(menu: any) {
     //debugger;
-    //console.log('menu', menu);
+    ////console.log('menu', menu);
     this.openLeftMenu.emit('1');
     this.navigate.navigate([menu.link]);
   }
   selectedLabel(event) {
-    console.log('selectedLabel', event);
+    //console.log('selectedLabel', event);
   }
   ngOnInit(): void {
-    //console.log('get',``)
+    ////console.log('get',``)
     this.loading == true;
     this.config = {
       //customTemplate: true,
@@ -151,7 +151,7 @@ export class MultiLevelMenuComponent implements OnInit {
     
     let arr = [];
     this.shareddata.CurrentPagesData.subscribe(m => (arr = m));
-    //console.log('accessing menu data from left menu', arr);
+    ////console.log('accessing menu data from left menu', arr);
     //let arr = [...arrPageMenu["value"]];
     let topmenu = [];
     arr.forEach((ele, key) => {
@@ -160,7 +160,7 @@ export class MultiLevelMenuComponent implements OnInit {
 
     });
 
-    //console.log('after copy',topmenu);  
+    ////console.log('after copy',topmenu);  
     let adminId: any;
     let top = topmenu.filter(ele => {
       return ele.ParentId == 0
@@ -182,7 +182,7 @@ export class MultiLevelMenuComponent implements OnInit {
         item.items.sort((prev, current) => current.DisplayOrder - prev.DisplayOrder)
       }
     });
-    //console.log('top',top);
+    ////console.log('top',top);
     this.appitem = [];
     let final: IMenu[] = [];
     this.appitem = top.map<IMenu>(element => {
@@ -225,8 +225,8 @@ export class MultiLevelMenuComponent implements OnInit {
 
     //this.appitems = [...final];
     //this.appitem =this.menudata();
-    //console.log('final', this.appitem);
-    //console.log('ori', this.menudata());
+    ////console.log('final', this.appitem);
+    ////console.log('ori', this.menudata());
     //   }
     // });
   }

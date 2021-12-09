@@ -129,7 +129,7 @@ export class MenuConfigComponent implements OnInit {
         this.TopMenu = [...data.value].sort((a, b) => a.DisplayOrder - b.DisplayOrder);
       })
 
-    console.log("topmenu", this.TopMenu)
+    //console.log("topmenu", this.TopMenu)
   }
   GetMasterData() {
 
@@ -177,7 +177,7 @@ export class MenuConfigComponent implements OnInit {
       .subscribe({
         next: (arrPage) => {
           debugger;
-          //console.log('arrpage', arrPage);
+          ////console.log('arrpage', arrPage);
           let arr = [];
           Object.keys(arrPage).map(function (key) {
             arr.push({ [key]: arrPage[key] })
@@ -234,7 +234,7 @@ export class MenuConfigComponent implements OnInit {
     this.navigate.navigate(['/home/pages/']);
   }
   applyFilter(filterValue: string) {
-    //console.log("this.AllData", this.AllData.length)
+    ////console.log("this.AllData", this.AllData.length)
     if (filterValue.length > 2) {
       let filtered = this.AllData.filter(item => {
         let parentPage = false;
@@ -269,7 +269,7 @@ export class MenuConfigComponent implements OnInit {
   // }
   getoldvalue(value: string) {
     this.oldvalue = value;
-    //  console.log('old value', this.oldvalue);
+    //  //console.log('old value', this.oldvalue);
   }
   onBlur(row) {
     row.Action = true;
@@ -446,7 +446,7 @@ export class MenuConfigComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false;
-        //console.log('data',this.PageList)
+        ////console.log('data',this.PageList)
       });
 
   }

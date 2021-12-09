@@ -59,7 +59,7 @@ export class FiledragAndDropComponent implements OnInit {
 
   public dropped(files: NgxFileDropEntry[]) {
     this.files = files;
-    //console.log('this.files', this.files)
+    ////console.log('this.files', this.files)
     //debugger;
     this.Processing = true;
     for (const droppedFile of files) {
@@ -77,7 +77,7 @@ export class FiledragAndDropComponent implements OnInit {
           }
           this.Requestsize += file.size
           // Here you can access the real file
-          //console.log(droppedFile.relativePath, file);
+          ////console.log(droppedFile.relativePath, file);
           if (file.type.includes("image") || file.type == "application/pdf" ||
             file.type == "application/vnd.ms-excel" ||
             file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
@@ -91,13 +91,13 @@ export class FiledragAndDropComponent implements OnInit {
       } else {
         // It was a directory (empty directories are added, otherwise only files)
         const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
-        //console.log(droppedFile.relativePath, fileEntry);
+        ////console.log(droppedFile.relativePath, fileEntry);
       }
     }
     if (this.errorMessage.length > 0)
       this.alert.error(this.errorMessage, this.options);
     this.Processing =false;
-      //console.log('this.formdata',this.filesForDisplayOnly);
+      ////console.log('this.formdata',this.filesForDisplayOnly);
   }
   Upload() {
 
@@ -111,7 +111,7 @@ export class FiledragAndDropComponent implements OnInit {
 
     let selectedAlbum = this.dragdropForm.get("folderName").value;
     let selectedAlbumId = this.dragdropForm.get("parentId").value;
-    //console.log(this.Albums);//alert(selectedAlbum);
+    ////console.log(this.Albums);//alert(selectedAlbum);
     if (this.files.length < 1) {
       error = true;
       this.alert.warn("No image to upload", this.options);
@@ -146,10 +146,10 @@ export class FiledragAndDropComponent implements OnInit {
     }
   }
   uploadFile() {
-      //console.log('form dasta',this.formdata);
+      ////console.log('form dasta',this.formdata);
     this.Processing =true;
     this.uploadService.postFiles(this.formdata).subscribe(res => {
-      //console.log("Upload complete");
+      ////console.log("Upload complete");
       this.alert.success("Files Uploaded successfully.", this.options);
       this.formdata = null;
       this.files = [];
@@ -175,10 +175,10 @@ export class FiledragAndDropComponent implements OnInit {
       });
   }
   public fileOver(event) {
-    //console.log(event);
+    ////console.log(event);
   }
 
   public fileLeave(event) {
-    //console.log(event);
+    ////console.log(event);
   }
 }

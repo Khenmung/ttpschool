@@ -39,7 +39,7 @@ export class PhotosComponent implements OnInit {
     private tokenStorage:TokenStorageService) {
     this.route.paramMap.subscribe(item => {
       this.selectedAlbumId = +this.route.snapshot.queryParamMap.get('AlbumId');//item.get('AlbumId')
-      //console.log('this.selectedAlbum',item);
+      ////console.log('this.selectedAlbum',item);
     })
   }
 
@@ -84,7 +84,7 @@ export class PhotosComponent implements OnInit {
 
           this.selectedAlbum = data.value[0].Album.UpdatableName;// this.images[0].Album.AlbumName;
           this.title = this.selectedAlbum;
-          //console.log('this.images',this.images)
+          ////console.log('this.images',this.images)
         }
         else
           this.error = "No image to display";
@@ -99,7 +99,7 @@ export class PhotosComponent implements OnInit {
     this.nav.navigate(["/home/photos"],{queryParams:{"photoId":albumId}});
   }
   Update(event,button, photoPath) {
-    console.log('button._elementRef.nativeElement.id',button);
+    //console.log('button._elementRef.nativeElement.id',button);
     event.stopPropagation();
     let confirmYesNo: Boolean = false;
     this.dialog.openConfirmDialog("Are you sure you want to delete this photo?")
@@ -114,7 +114,7 @@ export class PhotosComponent implements OnInit {
             AlbumId:this.selectedAlbumId,
             UploadDate: new Date()
           }
-          //console.log('albumtoUpdate',albumtoUpdate);
+          ////console.log('albumtoUpdate',albumtoUpdate);
           this.dataservice.postPatch('PhotoGalleries', albumtoUpdate, button._elementRef.nativeElement.id, 'patch')
             .subscribe(res => {
 

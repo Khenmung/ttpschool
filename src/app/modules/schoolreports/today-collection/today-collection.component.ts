@@ -151,12 +151,12 @@ export class TodayCollectionComponent implements OnInit {
         })
 
         this.HeadsWiseCollection = alasql("select FeeCategory,Sum(Amount) Amount from ? group by FeeCategory", [this.HeadsWiseCollection]);
-        console.log('this.HeadsWiseCollection', this.HeadsWiseCollection)
+        //console.log('this.HeadsWiseCollection', this.HeadsWiseCollection)
 
         this.GroupByPaymentType = [...groupbyPaymentType];
         if (this.DateWiseCollection.length == 0)
           this.alert.info("No collection found.", this.options);
-        //console.log("result",result)
+        ////console.log("result",result)
         this.dataSource = new MatTableDataSource(this.DateWiseCollection)
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

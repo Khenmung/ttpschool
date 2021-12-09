@@ -210,7 +210,7 @@ export class GetreportComponent implements OnInit {
           this.ReportConfigItemData.ReportName = row.ReportName;
           this.ReportConfigItemData.TableNames = row.TableNames;
 
-          //console.log('data', this.ReportConfigItemData);
+          ////console.log('data', this.ReportConfigItemData);
 
           if (this.ReportConfigItemData.ReportConfigItemId == 0) {
             this.ReportConfigItemData["CreatedDate"] = new Date();
@@ -484,7 +484,7 @@ export class GetreportComponent implements OnInit {
         var filter = this.FilterCriteria.join(" and ")
         if (filter.length > 0)
           filter += " and ";
-        //console.log('filter str', filter);
+        ////console.log('filter str', filter);
 
         list.filter = [filter + "OrgId eq " + this.LoginUserDetail[0]["orgId"]];
 
@@ -730,7 +730,7 @@ export class GetreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
             var _RollNo = '';
@@ -790,7 +790,7 @@ export class GetreportComponent implements OnInit {
   onNgModelChange(event) {
     debugger;
     this.searchCondition1 = event.option[0].value;
-    console.log('dd', this.searchCondition1);
+    //console.log('dd', this.searchCondition1);
   }
   ExportToExcel() {
     const datatoExport: Partial<any>[] = [...this.ReportConfigItemList];

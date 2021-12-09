@@ -80,7 +80,7 @@ export class ExamtimetableComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    console.log('loginuserdetail', this.LoginUserDetail)
+    //console.log('loginuserdetail', this.LoginUserDetail)
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -88,7 +88,7 @@ export class ExamtimetableComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-      console.log('this.Permission', this.Permission)
+      //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -124,7 +124,7 @@ export class ExamtimetableComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
           var _class = '';
           var clsObj = this.Classes.filter(c => c.ClassId == item.ClassId);
@@ -214,7 +214,7 @@ export class ExamtimetableComponent implements OnInit {
       })
   }
   GetSlotNClassSubjects() {
-    //console.log("this.searchForm.get(searchClassId).value",this.searchForm.get("searchClassId").value)
+    ////console.log("this.searchForm.get(searchClassId).value",this.searchForm.get("searchClassId").value)
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
@@ -297,7 +297,7 @@ export class ExamtimetableComponent implements OnInit {
               return { ["Slot" + index]: slot.SlotName, "ClassName": _className, "ClassId": d.ClassId, "Sequence": _classSequence, "Subjects": '' }
             });
 
-            //console.log("distinctClasses", classIdlist);
+            ////console.log("distinctClasses", classIdlist);
             filteredOneSlotSubjects.forEach(f => {
               var _subject = this.Subjects.filter(s => s.MasterDataId == f.ClassSubject.SubjectId)[0].MasterDataName;
               var classobj = oneSlotClasslist.filter(c => c.ClassId == f.ClassSubject.ClassId)
@@ -318,7 +318,7 @@ export class ExamtimetableComponent implements OnInit {
                   timeTableRow[inx]["Slot" + index] = r.Subjects;
               })
             }
-            console.log("timeTableRow", timeTableRow)
+            //console.log("timeTableRow", timeTableRow)
           })
 
           this.SlotNClassSubjects.push(header);
@@ -330,7 +330,7 @@ export class ExamtimetableComponent implements OnInit {
           })
           //this.SlotNClassSubjects.push(...timeTableRow);
 
-          console.log("SlotNClassSubjects", this.SlotNClassSubjects)
+          //console.log("SlotNClassSubjects", this.SlotNClassSubjects)
         })
         this.dataSource = new MatTableDataSource<any>(this.SlotNClassSubjects);
         this.loading = false;

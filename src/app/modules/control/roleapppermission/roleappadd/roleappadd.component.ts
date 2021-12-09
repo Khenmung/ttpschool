@@ -99,7 +99,7 @@ export class roleappAddComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-      //  console.log('roleuser', data);
+      //  //console.log('roleuser', data);
         data.value.forEach(element => {
           this.AppRoleForm.patchValue({
             ApplicationRoleId: element.ApplicationRoleId,
@@ -151,7 +151,7 @@ export class roleappAddComponent implements OnInit {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
-          //console.log(this.UserDetail);
+          ////console.log(this.UserDetail);
           this.AppRoleData.Active = this.AppRoleForm.get("Active").value==true?1:0;
           this.AppRoleData.ApplicationRoleId = this.AppRoleForm.get("ApplicationRoleId").value;
           this.AppRoleData.ApplicationId = this.AppRoleForm.get("ApplicationId").value;
@@ -164,7 +164,7 @@ export class roleappAddComponent implements OnInit {
           this.AppRoleData.CreatedBy=this.UserDetail[0].userId;
           this.AppRoleData.UpdatedDate=new Date();
           this.AppRoleData.UpdatedBy=this.UserDetail[0].userId;
-          console.log('data',this.AppRoleData);
+          //console.log('data',this.AppRoleData);
           if (this.AppRoleData.ApplicationRoleId == 0) {
             this.insert();
           }

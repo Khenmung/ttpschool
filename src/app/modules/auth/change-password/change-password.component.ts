@@ -28,7 +28,7 @@ export class ChangePasswordComponent implements OnInit {
   ngOnInit(): void {
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
-      //console.log("authlogin",this.deviceXs);
+      ////console.log("authlogin",this.deviceXs);
     });
   }
   gotohome() {
@@ -39,7 +39,7 @@ export class ChangePasswordComponent implements OnInit {
     //debugger;
     this.authService.changePassword(ConfirmPassword, OldPassword, NewPassword).subscribe(
       data => {
-        //console.log(data);
+        ////console.log(data);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
       },
@@ -56,7 +56,7 @@ export class ChangePasswordComponent implements OnInit {
           }
 
           this.isSignUpFailed = true;
-          console.log(err.error)
+          //console.log(err.error)
         }
       }
     );

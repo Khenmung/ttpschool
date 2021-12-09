@@ -170,13 +170,13 @@ export class SlotnclasssubjectComponent implements OnInit {
           this.SlotNClassSubjectData.ClassSubjectId = row.ClassSubjectId;
           this.SlotNClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SlotNClassSubjectData.BatchId = this.SelectedBatchId;
-          //console.log('data', this.ClassSubjectData);
+          ////console.log('data', this.ClassSubjectData);
           if (this.SlotNClassSubjectData.SlotClassSubjectId == 0) {
             this.SlotNClassSubjectData["CreatedDate"] = new Date();
             this.SlotNClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.SlotNClassSubjectData["UpdatedDate"] = new Date();
             delete this.SlotNClassSubjectData["UpdatedBy"];
-            //console.log('exam slot', this.SlotNClassSubjectData)
+            ////console.log('exam slot', this.SlotNClassSubjectData)
             this.insert(row);
           }
           else {
@@ -237,7 +237,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         this.ClassSubjectList = data.value.map(item => {
           var _class = '';
           var clsobj = this.Classes.filter(c => c.ClassId == item.ClassId)
@@ -325,7 +325,7 @@ export class SlotnclasssubjectComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log("data", data);
+        ////console.log("data", data);
         //var _MaxSubjectCount = 0;
         //this.displayedColumns = ["ClassName"];
         this.StoreForUpdate = [];
@@ -380,7 +380,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         if (this.StoreForUpdate.length == 0) {
           this.alert.info("No record found! Subject not defined in class subject module.", this.optionsNoAutoClose);
         }
-        console.log('this', this.ClassWiseSubjectDisplay)
+        //console.log('this', this.ClassWiseSubjectDisplay)
         //this.dataSource = new MatTableDataSource<ISlotNClassSubject>(this.ClassWiseDatasource);
         this.loading = false;
       })

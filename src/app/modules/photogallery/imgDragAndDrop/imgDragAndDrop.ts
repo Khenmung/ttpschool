@@ -92,11 +92,11 @@ export class ImgDragAndDropComponent implements OnInit {
     //         this.alert.error(error.reason,this.options);
     //         //this.files.splice(i,1);
     //         this.errorMessage += error.reason;
-    //         //console.log('error:', error);
+    //         ////console.log('error:', error);
     //      })
     }
     
-    console.log('request', this.Requestsize)
+    //console.log('request', this.Requestsize)
   }
   // onImageChange(event) {
   //   let image = event.target.files[0];
@@ -107,7 +107,7 @@ export class ImgDragAndDropComponent implements OnInit {
   //       //this.getImagePreview(this.uploadedImage);
   //     },
   //     error => {
-  //       console.log('😢 Oh no!', error);
+  //       //console.log('😢 Oh no!', error);
   //     }
   //   );
   // }
@@ -144,7 +144,7 @@ export class ImgDragAndDropComponent implements OnInit {
       this.formData.append("description", "");
       this.formData.append("folderName", selectedAlbum);
       this.formData.append("parentId", selectedAlbumId);
-      //console.log('formdata',this.formData);
+      ////console.log('formdata',this.formData);
       let filteredAlbum: any[] = [];
       if (this.Albums.length > 0) {
         filteredAlbum = this.Albums.filter(item => {
@@ -162,7 +162,7 @@ export class ImgDragAndDropComponent implements OnInit {
       keepAfterRouteChange: true
     };
     this.uploadService.postFiles(this.formData).subscribe(res => {
-      //console.log("Upload complete");
+      ////console.log("Upload complete");
       this.alert.success("Files Uploaded successfully.", options);
       this.formData = null;
       this.files = [];

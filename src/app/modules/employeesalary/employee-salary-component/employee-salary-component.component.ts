@@ -197,13 +197,13 @@ export class EmployeeSalaryComponentComponent implements OnInit {
           this.EmployeeSalaryComponentData.Amount = row.Amount.toString();
           this.EmployeeSalaryComponentData.EmpComponentId = row.EmpComponentId;
           this.EmployeeSalaryComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
-          //console.log('data', this.ClassSubjectData);
+          ////console.log('data', this.ClassSubjectData);
           if (this.EmployeeSalaryComponentData.EmployeeSalaryComponentId == 0) {
             this.EmployeeSalaryComponentData["CreatedDate"] = new Date();
             this.EmployeeSalaryComponentData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.EmployeeSalaryComponentData["UpdatedDate"] = new Date();
             delete this.EmployeeSalaryComponentData["UpdatedBy"];
-            console.log('EmployeeSalaryComponentData', this.EmployeeSalaryComponentData)
+            //console.log('EmployeeSalaryComponentData', this.EmployeeSalaryComponentData)
             this.insert(row);
           }
           else {
@@ -370,7 +370,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
           });
         })
       })
-    console.log('this.VariableConfigs', this.VariableConfigs);
+    //console.log('this.VariableConfigs', this.VariableConfigs);
   }
   GetEmpComponents() {
 
@@ -414,7 +414,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.Month = this.searchForm.get("searchMonth").value;
     var MonthFilter = ' and Month eq ' + this.Month
-    console.log("Month", this.Month);
+    //console.log("Month", this.Month);
     let list: List = new List();
 
     list.fields = [
@@ -581,7 +581,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
             { "VariableName": "EmployeeCode", "VariableAmount": item.Employee.EmployeeCode }
           )
         });
-        console.log("v inside", this.VariableConfigs)
+        //console.log("v inside", this.VariableConfigs)
       })
   }
   getMasterText(arr, itemId) {

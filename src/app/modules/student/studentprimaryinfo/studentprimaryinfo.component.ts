@@ -150,7 +150,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
       this.StudentId = this.tokenService.getStudentId();
       this.StudentClassId = this.tokenService.getStudentClassId()
-        console.log("this.StudentClassId",this.StudentClassId)
+        //console.log("this.StudentClassId",this.StudentClassId)
       this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
       this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
       this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
@@ -209,7 +209,7 @@ export class studentprimaryinfoComponent implements OnInit {
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
   ngAfterViewInit() {
-    //console.log('total tabs: ' + this.allTabs.first._tabs.length);
+    ////console.log('total tabs: ' + this.allTabs.first._tabs.length);
   }
 
   get f() { return this.studentForm.controls }
@@ -221,7 +221,7 @@ export class studentprimaryinfoComponent implements OnInit {
   tabChanged(tabChangeEvent: number) {
     this.selectedIndex = tabChangeEvent;
     this.navigateTab(this.selectedIndex);
-    //   console.log('tab selected: ' + tabChangeEvent);
+    //   //console.log('tab selected: ' + tabChangeEvent);
   }
   public nextStep() {
     this.selectedIndex += 1;
@@ -260,7 +260,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
@@ -364,7 +364,7 @@ export class studentprimaryinfoComponent implements OnInit {
       }, error => console.log(error))
   }
   update() {
-    //console.log('student', this.studentForm.value)
+    ////console.log('student', this.studentForm.value)
 
     this.dataservice.postPatch('Students', this.studentData, +this.studentForm.get("StudentId").value, 'patch')
       .subscribe((result: any) => {
@@ -374,7 +374,7 @@ export class studentprimaryinfoComponent implements OnInit {
       })
   }
   adjustDateForTimeOffset(dateToAdjust) {
-    //console.log(dateToAdjust)
+    ////console.log(dateToAdjust)
     var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
     return new Date(dateToAdjust.getTime() - offsetMs);
   }

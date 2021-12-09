@@ -172,7 +172,7 @@ export class ClassprerequisiteComponent implements OnInit {
           this.PrerequisiteData.BatchId = this.SelectedBatchId;
 
           this.PrerequisiteData.Active = row.Active;
-          //console.log('exam slot', this.PrerequisiteData)
+          ////console.log('exam slot', this.PrerequisiteData)
 
           if (this.PrerequisiteData.PrerequisiteId == 0) {
             this.PrerequisiteData["CreatedDate"] = new Date();

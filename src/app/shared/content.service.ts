@@ -149,7 +149,7 @@ export class ContentService implements OnInit {
     //debugger
     this.url = globalconstants.apiUrl + '/odata/' + title + '?' + query;
     //this.url = '/odata/' +title + '?' + query;  
-    //console.log(this.url);
+    ////console.log(this.url);
     return this.http.get(this.url);//.map(res=>res.json());
     //.pipe(map((res:Response) => res.json()));
     // .pipe(map((res:any)=>{
@@ -208,12 +208,12 @@ export class ContentService implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //console.log("data", data)
+        ////console.log("data", data)
         if (data.value.length > 0) {
           if (data.value[0].Org.Active == 1)
             this.GetMasterData(data.value);
           else {
-            console.log("User's Organization not active!, Please contact your administrator!");
+            //console.log("User's Organization not active!, Please contact your administrator!");
           }
         }
       })
@@ -229,7 +229,7 @@ export class ContentService implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         //this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
@@ -275,13 +275,13 @@ export class ContentService implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      'ApplicationFeatureId',
+      'PlanFeatureId',
       'RoleId',
       'PermissionId'
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
-    list.lookupFields = ["ApplicationFeature($select=PageTitle,label,link,faIcon,ApplicationId,ParentId)"]
+    list.lookupFields = ["PlanFeature($filter=Active eq 1;$expand=Page($select=PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
 
     this.dataservice.get(list)
@@ -294,29 +294,29 @@ export class ContentService implements OnInit {
           data.value.forEach(item => {
             _applicationName = '';
             _appShortName = '';
-            _applicationName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].Description;
-            _appShortName = this.Applications.filter(f => f.MasterDataId == item.ApplicationFeature.ApplicationId)[0].MasterDataName
+            _applicationName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].Description;
+            _appShortName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].MasterDataName
 
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
 
             this.UserDetail[0]["applicationRolePermission"].push({
-              'applicationFeatureId': item.ApplicationFeatureId,
-              'applicationFeature': item.ApplicationFeature.PageTitle,//_applicationFeature,
+              'planFeatureId': item.PlanFeatureId,
+              'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
               'roleId': item.RoleId,
               'permissionId': item.PermissionId,
               'permission': _permission,
               'applicationName': _applicationName,
-              'applicationId': item.ApplicationFeature.ApplicationId,
+              'applicationId': item.PlanFeature.Page.ApplicationId,
               'appShortName': _appShortName,
-              'faIcon': item.ApplicationFeature.faIcon,
-              'label': item.ApplicationFeature.label,
-              'link': item.ApplicationFeature.link
+              'faIcon': item.PlanFeature.Page.faIcon,
+              'label': item.PlanFeature.Page.label,
+              'link': item.PlanFeature.Page.link
             });
 
           });
-          console.log("this.UserDetail", this.UserDetail);
+          //console.log("this.UserDetail", this.UserDetail);
           this.tokenService.saveUserdetail(this.UserDetail);
         }
       })

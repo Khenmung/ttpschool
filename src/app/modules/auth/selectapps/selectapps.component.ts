@@ -127,7 +127,7 @@ export class SelectappsComponent implements OnInit {
     this.CustomerAppsData.Active = row.Active;
     this.CustomerAppsData.OrgId = this.OrgId;
 
-    console.log('data', this.CustomerAppsData);
+    //console.log('data', this.CustomerAppsData);
     if (this.CustomerAppsData.CustomerAppsId == 0) {
       this.CustomerAppsData["CreatedDate"] = new Date();
       this.CustomerAppsData["CreatedBy"] = this.UserId;

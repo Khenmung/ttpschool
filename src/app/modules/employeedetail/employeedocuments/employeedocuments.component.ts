@@ -121,7 +121,7 @@ export class EmployeedocumentsComponent implements OnInit {
     this.formdata.append("studentId", "0");
     this.formdata.append("EmployeeId", this.EmployeeId.toString());
     this.formdata.append("docTypeId", this.uploadForm.get("DocTypeId").value);
-    //console.log('this.uploadForm.get("DocTypeId").value")',this.uploadForm.get("DocTypeId").value);
+    ////console.log('this.uploadForm.get("DocTypeId").value")',this.uploadForm.get("DocTypeId").value);
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
     this.uploadImage();
   }
@@ -168,7 +168,7 @@ export class EmployeedocumentsComponent implements OnInit {
             }
           })
           this.documentUploadSource = new MatTableDataSource<IUploadDoc>(this.StudentDocuments);
-          //console.log("studentdocuments",this.StudentDocuments)
+          ////console.log("studentdocuments",this.StudentDocuments)
         }
       });
 

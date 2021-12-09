@@ -126,13 +126,13 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
     this.CustomerInvoiceComponentData.Active = row.Active;
     this.CustomerInvoiceComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
 
-    console.log('data', this.CustomerInvoiceComponentData);
+    //console.log('data', this.CustomerInvoiceComponentData);
     if (this.CustomerInvoiceComponentData.CustomerInvoiceComponentId == 0) {
       this.CustomerInvoiceComponentData["CreatedDate"] = new Date();
       this.CustomerInvoiceComponentData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
       this.CustomerInvoiceComponentData["UpdatedDate"] = new Date();
       delete this.CustomerInvoiceComponentData["UpdatedBy"];
-      //console.log('exam slot', this.SchoolClassPeriodListData)
+      ////console.log('exam slot', this.SchoolClassPeriodListData)
       this.insert(row);
     }
     else {

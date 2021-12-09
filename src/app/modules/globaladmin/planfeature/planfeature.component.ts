@@ -52,7 +52,7 @@ export class PlanFeatureComponent implements OnInit {
     PlanFeatureId: 0,
     PlanId: 0,
     ParentId: 0,
-    FeatureId: 0,
+    PageId: 0,
     ApplicationId: 0,
     Active: 0
   };
@@ -92,7 +92,7 @@ export class PlanFeatureComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.PLANFEATURE)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -117,7 +117,7 @@ export class PlanFeatureComponent implements OnInit {
   //     FeatureId: 0,
   //     FeatureName: '',
   //     ParentId: 0,
-      
+
   //     Active: 0,
   //     Action: false
   //   };
@@ -157,8 +157,8 @@ export class PlanFeatureComponent implements OnInit {
     });
 
   }
-  SaveRow(row){
-    this.RowToUpdateCount=0;
+  SaveRow(row) {
+    this.RowToUpdateCount = 0;
     this.UpdateOrSave(row);
   }
   UpdateOrSave(row: IPlanFeature) {
@@ -172,7 +172,7 @@ export class PlanFeatureComponent implements OnInit {
       row.Action = false;
       return;
     }
-    let checkFilterString = "FeatureId eq " + row.FeatureId + " and PlanId eq " + this.searchForm.get("searchPlanId").value
+    let checkFilterString = "PageId eq " + row.PageId + " and PlanId eq " + this.searchForm.get("searchPlanId").value
 
     if (row.PlanFeatureId > 0)
       checkFilterString += " and PlanFeatureId ne " + row.PlanFeatureId;
@@ -194,11 +194,11 @@ export class PlanFeatureComponent implements OnInit {
 
           this.PlanFeatureData.PlanFeatureId = row.PlanFeatureId;
           this.PlanFeatureData.PlanId = row.PlanId;
-          this.PlanFeatureData.FeatureId = row.FeatureId;
+          this.PlanFeatureData.PageId = row.PageId;
           this.PlanFeatureData.ParentId = row.ParentId;
           this.PlanFeatureData.ApplicationId = row.ApplicationId;
           this.PlanFeatureData.Active = row.Active;
-          //console.log("PlanFeaturedata", this.PlanFeatureData)
+          ////console.log("PlanFeaturedata", this.PlanFeatureData)
           if (this.PlanFeatureData.PlanFeatureId == 0) {
             this.insert(row);
           }
@@ -239,160 +239,174 @@ export class PlanFeatureComponent implements OnInit {
           }
         });
   }
-  GetPlans() {
-    this.loading = true;
-    let list: List = new List();
-    list.fields = [
-      "PlanId",
-      "Title",
-      "Description",
-      "Logic"
-    ];
+  checkall(value) {
 
-    list.PageName = "Plans";
-    list.filter = ["Active eq 1"];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.Plans = [...data.value];
-      })
+    if (value.checked) {
+      this.PlanFeatureList.forEach(record => {
+        record.Active = 1;
+        record.Action = true;
+      });
+      }
+    else {
+      this.PlanFeatureList.forEach(record => {
+        record.Active = 0;
+        record.Action = true;
+      });
+    }  
+}
+GetPlans() {
+  this.loading = true;
+  let list: List = new List();
+  list.fields = [
+    "PlanId",
+    "Title",
+    "Description",
+    "Logic"
+  ];
+
+  list.PageName = "Plans";
+  list.filter = ["Active eq 1"];
+  this.dataservice.get(list)
+    .subscribe((data: any) => {
+      this.Plans = [...data.value];
+    })
+}
+GetTopFeature() {
+  var ApplicationId = this.searchForm.get("searchApplicationId").value;
+  this.GetFeatures(ApplicationId).subscribe((d: any) => {
+    this.Features = [...d.value];
+    this.Topfeatures = this.Features.filter(f => f.ParentId == 0);
+    this.loading = false;
+  });
+}
+GetFeatures(appId) {
+  this.loading = true;
+  let list: List = new List();
+  list.fields = [
+    "PageId",
+    "PageTitle",
+    "ParentId"
+  ];
+
+  list.PageName = "Pages";
+  list.filter = ["Active eq 1 and ApplicationId eq " + appId];
+  return this.dataservice.get(list)
+  // .subscribe((data: any) => {
+  //   this.Features = [...data.value];
+  // })
+}
+GetPlanFeature() {
+  debugger;
+
+  var _PlanId = this.searchForm.get("searchPlanId").value;
+
+  if (_PlanId == 0) {
+    this.alert.info("Please select plan.", this.optionAutoClose);
+    return;
   }
-  GetTopFeature() {
-    var ApplicationId = this.searchForm.get("searchApplicationId").value;
-    this.GetFeatures(ApplicationId).subscribe((d: any) => {
-      this.Features = [...d.value];
-      this.Topfeatures = this.Features.filter(f => f.ParentId == 0);
+  var _applicationId = this.searchForm.get("searchApplicationId").value;
+  if (_applicationId == 0) {
+    this.alert.info("Please select application.", this.optionAutoClose);
+    return;
+  }
+
+  this.loading = true;
+
+  let list: List = new List();
+  list.fields = [
+    "PlanFeatureId",
+    "PlanId",
+    "PageId",
+    "ParentId",
+    "ApplicationId",
+    "Active"
+  ];
+
+  list.PageName = this.PlanFeatureListName;
+  list.filter = ["Active eq 1 and ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
+  this.PlanFeatureList = [];
+  this.dataservice.get(list)
+    .subscribe((data: any) => {
+      var _ParentId = 0;
+      if (this.searchForm.get("searchTopfeatureId").value > 0)
+        _ParentId = this.searchForm.get("searchTopfeatureId").value;
+
+      this.SelectedFeatures = this.Features.filter(f => f.ParentId == _ParentId);
+      this.SelectedFeatures.forEach(f => {
+
+        var existing = data.value.filter(d => d.PageId == f.PageId);
+        if (existing.length > 0) {
+          existing[0].ParentId = _ParentId;
+          existing[0].FeatureName = f.PageTitle;
+          existing[0].Action = false;
+          this.PlanFeatureList.push(existing[0]);
+        }
+        else {
+          this.PlanFeatureList.push(
+            {
+              PlanFeatureId: 0,
+              PlanId: _PlanId,
+              PageId: f.PageId,
+              ParentId: _ParentId,
+              FeatureName: f.PageTitle,
+              ApplicationId: this.searchForm.get("searchApplicationId").value,
+              Active: 0,
+              Action: false
+            });
+        }
+      })
+      if (this.PlanFeatureList.length == 0) {
+        this.alert.info("No record found.", this.optionAutoClose);
+      }
+      this.PlanFeatureList.sort((a, b) => b.Active - a.Active);
+      this.dataSource = new MatTableDataSource<IPlanFeature>(this.PlanFeatureList);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      this.loadingFalse();
+    });
+
+}
+
+GetMasterData() {
+
+  let list: List = new List();
+
+  list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
+  list.PageName = "MasterItems";
+  list.filter = ["Active eq 1 and (ParentId eq 0 or MasterDataName eq 'Application' or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
+  //list.orderBy = "ParentId";
+
+  this.dataservice.get(list)
+    .subscribe((data: any) => {
+      this.allMasterData = [...data.value];
+      this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+      this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
       this.loading = false;
     });
-  }
-  GetFeatures(appId) {
-    this.loading = true;
-    let list: List = new List();
-    list.fields = [
-      "PageId",
-      "PageTitle",
-      "ParentId"
-    ];
-
-    list.PageName = "Pages";
-    list.filter = ["Active eq 1 and ApplicationId eq " + appId];
-    return this.dataservice.get(list)
-    // .subscribe((data: any) => {
-    //   this.Features = [...data.value];
-    // })
-  }
-  GetPlanFeature() {
-    debugger;
-
-    var _PlanId = this.searchForm.get("searchPlanId").value;
-
-    if (_PlanId == 0) {
-      this.alert.info("Please select plan.", this.optionAutoClose);
-      return;
-    }
-    var _applicationId = this.searchForm.get("searchApplicationId").value;
-    if (_applicationId == 0) {
-      this.alert.info("Please select application.", this.optionAutoClose);
-      return;
-    }
-
-    this.loading = true;
-
-    let list: List = new List();
-    list.fields = [
-      "PlanFeatureId",
-      "PlanId",
-      "FeatureId",
-      "ParentId",
-      "ApplicationId",
-      "Active"
-    ];
-
-    list.PageName = this.PlanFeatureListName;
-    list.filter = ["Active eq 1 and ApplicationId eq "+ _applicationId +" and PlanId eq " + _PlanId];
-    this.PlanFeatureList = [];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        var _ParentId = 0;
-        if (this.searchForm.get("searchTopfeatureId").value > 0)
-          _ParentId = this.searchForm.get("searchTopfeatureId").value;
-
-        this.SelectedFeatures = this.Features.filter(f => f.ParentId == _ParentId);
-        this.SelectedFeatures.forEach(f => {
-
-          var existing = data.value.filter(d => d.FeatureId == f.PageId);
-          if (existing.length > 0) {
-            existing[0].ParentId = _ParentId;
-            existing[0].FeatureName = f.PageTitle;
-            existing[0].Action = false;
-            this.PlanFeatureList.push(existing[0]);
-          }
-          else {
-            this.PlanFeatureList.push(
-              {
-                PlanFeatureId: 0,
-                PlanId: _PlanId,
-                FeatureId: f.PageId,
-                ParentId: _ParentId,
-                FeatureName: f.PageTitle,
-                ApplicationId: this.searchForm.get("searchApplicationId").value,
-                Active: 0,
-                Action: false
-              });
-          }
-        })
-        if(this.PlanFeatureList.length==0)
-        {
-          this.alert.info("No record found.",this.optionAutoClose);
-        }
-        this.PlanFeatureList.sort((a,b)=>b.Active-a.Active);
-        this.dataSource = new MatTableDataSource<IPlanFeature>(this.PlanFeatureList);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this.loadingFalse();
-      });
-
-  }
-
-  GetMasterData() {
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or MasterDataName eq 'Application' or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.allMasterData = [...data.value];
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        this.loading = false;
-      });
-  }
-  getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+}
+getDropDownData(dropdowntype) {
+  let Id = 0;
+  let Ids = this.allMasterData.filter((item, indx) => {
+    return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+  })
+  if (Ids.length > 0) {
+    Id = Ids[0].MasterDataId;
+    return this.allMasterData.filter((item, index) => {
+      return item.ParentId == Id
     })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
-
   }
+  else
+    return [];
+
+}
 }
 export interface IPlanFeature {
   PlanFeatureId: number;
   PlanId: number;
-  FeatureId: number;
+  PageId: number;
   FeatureName: string;
   ParentId: number;
-  ApplicationId:number;
+  ApplicationId: number;
   Active: number;
   Action: boolean;
 }

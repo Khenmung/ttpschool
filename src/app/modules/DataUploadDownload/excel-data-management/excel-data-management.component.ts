@@ -125,7 +125,7 @@ export class ExcelDataManagementComponent implements OnInit {
   SelectedUploadtype = '';
   onselectchange(event) {
     ////debugger;
-    //    console.log('event', event);
+    //    //console.log('event', event);
     this.SelectedUploadtype = this.UploadTypes.filter(item => {
       return item.MasterDataId == event.value
     })[0].MasterDataName
@@ -203,7 +203,7 @@ export class ExcelDataManagementComponent implements OnInit {
     readFile.onload = (e) => {
       this.storeData = readFile.result;
       var data = new Uint8Array(this.storeData);
-      //console.log('data',data)
+      ////console.log('data',data)
       var arr = new Array();
       for (var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
       var bstr = arr.join("");
@@ -291,7 +291,7 @@ export class ExcelDataManagementComponent implements OnInit {
         });
       //}
     });
-    //console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
+    ////console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
   }
   ValidateStudentData() {
     let slno: any = 0;
@@ -347,7 +347,7 @@ export class ExcelDataManagementComponent implements OnInit {
       this.ELEMENT_DATA.push(element);
 
     });
-    //console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
+    ////console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
   }
   readAsCSV() {
     this.csvData = XLSX.utils.sheet_to_csv(this.worksheet);
@@ -387,7 +387,7 @@ export class ExcelDataManagementComponent implements OnInit {
       }
     }
     catch (ex) {
-      console.log("something went wrong: ", ex);
+      //console.log("something went wrong: ", ex);
     }
   }
   readAsHTML() {
@@ -459,7 +459,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "BatchId": +row["BatchId"]
       });
     });
-    //console.log("toInsert", toInsert)
+    ////console.log("toInsert", toInsert)
     this.dataservice.postPatch('Students', toInsert, 0, 'post')
       .subscribe((result: any) => {
         this.loading = false;
@@ -472,10 +472,10 @@ export class ExcelDataManagementComponent implements OnInit {
       }, error => console.log(error))
   }
   saveStudentClass() {
-    console.log('data to save', this.studentData[0].element)
+    //console.log('data to save', this.studentData[0].element)
     this.dataservice.postPatch('StudentClasses', this.studentData[0].element, 0, 'post')
       .subscribe((result: any) => {
-        console.log('inserted');
+        //console.log('inserted');
       }, error => console.log(error))
   }
   GetStudentClasses() {
@@ -517,7 +517,7 @@ export class ExcelDataManagementComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //console.log(data.value);
+        ////console.log(data.value);
         this.AllMasterData = [...data.value];
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);

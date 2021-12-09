@@ -99,7 +99,7 @@ export class ExamslotComponent implements OnInit {
   }
   AssignExamDate(selected) {
     var startdate = this.Exams.filter(f => f.ExamId == selected.value)[0].StartDate;
-    console.log("value", selected.value)
+    //console.log("value", selected.value)
 
     this.searchForm.patchValue({ "searchExamDate": startdate });
   }
@@ -181,13 +181,13 @@ export class ExamslotComponent implements OnInit {
           this.ExamSlotsData.Sequence = row.Sequence;
           this.ExamSlotsData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ExamSlotsData.BatchId = this.SelectedBatchId;
-          //console.log('data', this.ClassSubjectData);
+          ////console.log('data', this.ClassSubjectData);
           if (this.ExamSlotsData.ExamSlotId == 0) {
             this.ExamSlotsData["CreatedDate"] = new Date();
             this.ExamSlotsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.ExamSlotsData["UpdatedDate"] = new Date();
             delete this.ExamSlotsData["UpdatedBy"];
-            console.log('exam slot', this.ExamSlotsData)
+            //console.log('exam slot', this.ExamSlotsData)
             this.insert(row);
           }
           else {
@@ -354,7 +354,7 @@ export class ExamslotComponent implements OnInit {
           })
           _examDate.setDate(_examDate.getDate() + 1);
         }
-        //console.log('this', this.ExamSlots)
+        ////console.log('this', this.ExamSlots)
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
         this.loading = false;
       })

@@ -124,7 +124,7 @@ export class StudentDocumentComponent implements OnInit {
       this.formdata.append("studentId", this.StudentId + "");
     this.formdata.append("studentClassId", this.StudentClassId.toString());
     this.formdata.append("docTypeId", this.uploadForm.get("DocTypeId").value);
-    //console.log('this.uploadForm.get("DocTypeId").value")',this.uploadForm.get("DocTypeId").value);
+    ////console.log('this.uploadForm.get("DocTypeId").value")',this.uploadForm.get("DocTypeId").value);
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
     this.uploadImage();
   }
@@ -171,7 +171,7 @@ export class StudentDocumentComponent implements OnInit {
             }
           })
           this.documentUploadSource = new MatTableDataSource<IUploadDoc>(this.StudentDocuments);
-          //console.log("studentdocuments",this.StudentDocuments)
+          ////console.log("studentdocuments",this.StudentDocuments)
         }
       });
 

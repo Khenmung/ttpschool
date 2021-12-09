@@ -109,7 +109,7 @@ export class VerifyResultsComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-      console.log('this.Permission', this.Permission)
+      //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
 
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -296,7 +296,7 @@ export class VerifyResultsComponent implements OnInit {
               this.ExamStudentSubjectResult.push(forDisplay);
             })
             this.displayedColumns.push("Total", "Rank", "Division");
-            //console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult)
+            ////console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult)
 
             this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
             this.StudentGrades.sort((a, b) => a.Sequence - b.Sequence);
@@ -305,7 +305,7 @@ export class VerifyResultsComponent implements OnInit {
 
               for (var i = 0; i < this.StudentGrades.length; i++) {
                 var formula = this.StudentGrades[i].Logic.replaceAll("[TotalMark]", r.Total).replaceAll("[FullMark]",this.ClassFullMark[0].FullMark);
-                //console.log('formula ', formula, evaluate(formula));
+                ////console.log('formula ', formula, evaluate(formula));
                 if (evaluate(formula)) {
                   r.Division = this.StudentGrades[i].MasterDataName;
                   break;

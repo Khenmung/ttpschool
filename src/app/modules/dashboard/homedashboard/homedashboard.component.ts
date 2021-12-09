@@ -131,7 +131,7 @@ export class HomeDashboardComponent implements OnInit {
       //this.shareddata.ChangeNextBatchIdOfSelecteBatchId(_nextBatchId);
     }
     //this.tokenStorage.saveSelectedBatchId(batchId)
-    //console.log("selected",batchId);
+    ////console.log("selected",batchId);
   }
   getBatches() {
     var list = new List();
@@ -177,7 +177,7 @@ export class HomeDashboardComponent implements OnInit {
     "body": "WhatsApp API on Chat API from TTP again"
     }
     this.http.post(api,data).subscribe((data:any)=>{
-      console.log("messagereturn",data);
+      //console.log("messagereturn",data);
     });      
   }
 }

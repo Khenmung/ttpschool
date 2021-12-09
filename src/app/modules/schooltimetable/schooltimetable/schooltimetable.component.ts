@@ -156,13 +156,13 @@ export class SchooltimetableComponent implements OnInit {
           this.SchoolTimeTableData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SchoolTimeTableData.BatchId = this.SelectedBatchId;
 
-          console.log('data', this.SchoolTimeTableData);
+          //console.log('data', this.SchoolTimeTableData);
           if (this.SchoolTimeTableData.TimeTableId == 0) {
             this.SchoolTimeTableData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             this.SchoolTimeTableData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             delete this.SchoolTimeTableData["UpdatedBy"];
-            //console.log('exam slot', this.SchoolClassPeriodListData)
+            ////console.log('exam slot', this.SchoolClassPeriodListData)
             this.insert(row);
           }
           else {
@@ -262,7 +262,7 @@ export class SchooltimetableComponent implements OnInit {
         //iterrate through weekdays
         // iterate through class periods
 
-        //console.log('this.WeekDays',this.WeekDays);
+        ////console.log('this.WeekDays',this.WeekDays);
         var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
         if (filterPeriods.length == 0) {
           this.alert.info("Period not yet defined for this class.", this.optionsNoAutoClose);
@@ -355,7 +355,7 @@ export class SchooltimetableComponent implements OnInit {
         }).sort((a, b) => a.Sequence - b.Sequence);
 
         this.loading = false;
-        console.log("this.AllClassPeriods", this.AllClassPeriods);
+        //console.log("this.AllClassPeriods", this.AllClassPeriods);
       })
   }
   GetClassSubject() {

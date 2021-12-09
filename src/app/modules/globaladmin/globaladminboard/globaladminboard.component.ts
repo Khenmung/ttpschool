@@ -34,14 +34,14 @@ export class GlobaladminboardComponent implements AfterViewInit {
   ];
   LoginUserDetail=[];
   tabNames = [
-    { 'label': 'customer', 'faIcon': '' },
-    { 'label': 'customer', 'faIcon': '' },
-    { 'label': 'add master', 'faIcon': '' },
+    { 'label': 'Plan', 'faIcon': '' },
+    { 'label': 'Plan Feature', 'faIcon': '' },
+    { 'label': "Customer's Plan", 'faIcon': '' },
+    { 'label': 'Customer invoice', 'faIcon': '' },
+    { 'label': 'Masters', 'faIcon': '' },
     { 'label': 'invoice component', 'faIcon': '' },
-    { 'label': 'report config', 'faIcon': '' },
+    { 'label': 'Report Config', 'faIcon': '' },
     { 'label': 'menu config', 'faIcon': '' },
-    { 'label': 'plans', 'faIcon': '' },
-    { 'label': 'plan feature', 'faIcon': '' },
     { 'label': 'Role Permission', 'faIcon': '' },
   ];
 
@@ -139,7 +139,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
     }
   }
   public tabChange(index: number) {
-    //    console.log("index", index)
+    //    //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
     }, 550);

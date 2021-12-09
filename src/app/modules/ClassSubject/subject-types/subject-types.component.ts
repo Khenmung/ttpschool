@@ -154,7 +154,7 @@ export class SubjectTypesComponent implements OnInit {
           this.SubjectTypeData.SelectHowMany = row.SelectHowMany;
           this.SubjectTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SubjectTypeData.BatchId = this.SelectedBatchId;
-          //console.log('data', this.ClassSubjectData);
+          ////console.log('data', this.ClassSubjectData);
           if (this.SubjectTypeData.SubjectTypeId == 0) {
             this.SubjectTypeData["CreatedDate"] = new Date();
             this.SubjectTypeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -167,7 +167,7 @@ export class SubjectTypesComponent implements OnInit {
             delete this.SubjectTypeData["CreatedBy"];
             this.SubjectTypeData["UpdatedDate"] = new Date();
             this.SubjectTypeData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            console.log('this', this.SubjectTypeData)
+            //console.log('this', this.SubjectTypeData)
             this.update(row);
           }
         }

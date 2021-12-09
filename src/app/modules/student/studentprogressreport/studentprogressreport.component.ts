@@ -99,7 +99,7 @@ export class StudentprogressreportComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-      //console.log('this.Permission', this.Permission)
+      ////console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
         this.StudentClassId = this.tokenstorage.getStudentClassId();
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -160,7 +160,7 @@ export class StudentprogressreportComponent implements OnInit {
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        console.log("data", data)
+        //console.log("data", data)
         var _class = '';
         var _subject = '';
         var _section = '';
@@ -235,7 +235,7 @@ export class StudentprogressreportComponent implements OnInit {
 
         })
 
-        //console.log("shd", progressreport);
+        ////console.log("shd", progressreport);
 
         this.dataSource = new MatTableDataSource<any>(progressreport);
         this.dataSource.sort = this.sort;

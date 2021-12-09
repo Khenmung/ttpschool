@@ -211,9 +211,9 @@ export class AlbumsComponent implements OnInit {
   }
 
   selected(event) {
-    //console.log('event',event)
+    ////console.log('event',event)
     this.selectedAlbum = event.target.value;
-    //    console.log('this.selectedAlbum', this.selectedAlbum)
+    //    //console.log('this.selectedAlbum', this.selectedAlbum)
     // let tempImages = this.Albums.filter((item)=>{
     //   return item.Album == this.selectedAlbum
     // })
@@ -221,10 +221,10 @@ export class AlbumsComponent implements OnInit {
   }
   getoldvalue(value: string) {
     this.oldvalue = value;
-    //  console.log('old value', this.oldvalue);
+    //  //console.log('old value', this.oldvalue);
   }
   updateAlbum(value) {
-    //console.log(value);
+    ////console.log(value);
     //value.stopPropagation();
     if (this.oldvalue == value)
       return;
@@ -253,7 +253,7 @@ export class AlbumsComponent implements OnInit {
     this.route.navigate(["/home/photos"], { queryParams: { "AlbumId": albumId } });
   }
   Delete(value) {
-    //console.log(value);
+    ////console.log(value);
     value.stopPropagation();
     let confirmYesNo: Boolean = false;
     if (value.length == 0 || value.length > 50) {
@@ -273,10 +273,10 @@ export class AlbumsComponent implements OnInit {
           let selectedAlbumId = this.Albums.filter(item => {
             return item.UpdatedFileFolderName == this.oldvalue
           })[0].FileId;
-          //    console.log('selectedAlbumId', selectedAlbumId);
+          //    //console.log('selectedAlbumId', selectedAlbumId);
           // this.dataservice.get('Albums', albumtoUpdate, selectedAlbumId, 'patch')
           //   .subscribe(res => {
-          //     console.log(res);
+          //     //console.log(res);
           //   });
 
         }

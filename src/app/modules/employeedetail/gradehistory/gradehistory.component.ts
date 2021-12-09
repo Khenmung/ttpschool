@@ -220,7 +220,7 @@ export class GradehistoryComponent implements OnInit {
             this.EmploymentHistoryData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.EmploymentHistoryData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             delete this.EmploymentHistoryData["UpdatedBy"];
-            console.log('this.EmploymentHistoryData', this.EmploymentHistoryData)
+            //console.log('this.EmploymentHistoryData', this.EmploymentHistoryData)
             this.insert(row);
           }
           else {
@@ -284,7 +284,7 @@ export class GradehistoryComponent implements OnInit {
           f.ManagerName =_ManagerName; 
           return f;
         })
-        console.log("EmploymentHistoryList",this.EmploymentHistoryList)
+        //console.log("EmploymentHistoryList",this.EmploymentHistoryList)
         this.dataSource = new MatTableDataSource<IEmployeementHistory>(this.EmploymentHistoryList);
         this.loadingFalse();
       });
@@ -337,7 +337,7 @@ export class GradehistoryComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
             

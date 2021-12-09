@@ -283,11 +283,11 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          //console.log('before',this.StudentClassId);
+          ////console.log('before',this.StudentClassId);
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId +"")
           //this.shareddata.ChangeStudentClassId(this.StudentClassId);
-          //console.log('after',this.StudentClassId);
+          ////console.log('after',this.StudentClassId);
 
           this.alert.success("Data saved successfully", this.optionsAutoClose);
           //this.router.navigate(['/home/pages']);

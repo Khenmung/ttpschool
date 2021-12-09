@@ -180,7 +180,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
   }
   view(element) {
-    //console.log('this.mattable', this.mattable);
+    ////console.log('this.mattable', this.mattable);
     this.UserId = element.UserId;
     this.container.nativeElement.style.backgroundColor = "grey";
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
@@ -201,7 +201,7 @@ export class AppuserdashboardComponent implements OnInit {
   // }
   GetUsers() {
 
-    //console.log(this.LoginUserDetail);
+    ////console.log(this.LoginUserDetail);
 
     let list: List = new List();
     list.fields = [
@@ -216,7 +216,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.authservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        //  console.log('data.value', data.value);
+        //  //console.log('data.value', data.value);
         if (data.length > 0) {
           this.Users = [...data];
         }
@@ -270,7 +270,7 @@ export class AppuserdashboardComponent implements OnInit {
 
         //this.AppUsers.forEach(element => rows.push(element, { detailRow: true, element }));
 
-        console.log("users", this.AppUsers)
+        //console.log("users", this.AppUsers)
         this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
         this.loading = false;
       });

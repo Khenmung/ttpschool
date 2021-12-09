@@ -66,7 +66,7 @@ title ='';
   ngOnInit(): void {
     
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
-    //console.log('breakpoint',this.breakpoint);
+    ////console.log('breakpoint',this.breakpoint);
     this.title=this.UserId>0?'Update Detail':'Add User';
     var date = new Date();
     var validto = date.setDate(date.getDate() + globalconstants.TrialPeriod);

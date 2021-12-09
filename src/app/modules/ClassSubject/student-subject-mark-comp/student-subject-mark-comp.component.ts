@@ -141,7 +141,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
             this.classSubjectComponentData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.classSubjectComponentData["UpdatedDate"];
             delete this.classSubjectComponentData["UpdatedBy"];
-            //console.log('this', this.classSubjectComponentData);
+            ////console.log('this', this.classSubjectComponentData);
             this.insert(row);
           }
           else {
@@ -340,12 +340,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         if (this.ELEMENT_DATA.length == 0)
           this.alert.info("No record found!", this.options);
 
-        //console.log('this', this.ELEMENT_DATA);
+        ////console.log('this', this.ELEMENT_DATA);
         //this.ELEMENT_DATA=this.ELEMENT_DATA.sort((a,b)=>(a.PaymentOrder>b.PaymentOrder?1:-1))
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
         this.loading = false;
-        //console.log("element data", this.ELEMENT_DATA)
+        ////console.log("element data", this.ELEMENT_DATA)
       });
   }
   updateActive(row) {
@@ -367,7 +367,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     if (value == NaN)
       value = 0;
     row.Amount = parseFloat(value);
-    //console.log('from change', row);
+    ////console.log('from change', row);
   }
 }
 export interface ISubjectMarkComponent {
