@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { ApplicationpriceComponent } from './applicationprice/applicationprice.component';
+import { ApplicationpriceComponent } from '../globaladmininvoice/applicationprice/applicationprice.component';
 import { CustomerPlansComponent } from './customerplans/customerplans.component';
-import { CustomerinvoiceComponent } from './customerinvoice/customerinvoice.component';
-import { CustomerinvoicecomponentsComponent } from './customerinvoicecomponents/customerinvoicecomponents.component';
+import { CustomerinvoiceComponent } from '../globaladmininvoice/customerinvoice/customerinvoice.component';
+import { CustomerinvoicecomponentsComponent } from '../globaladmininvoice/customerinvoicecomponents/customerinvoicecomponents.component';
 import { GlobaladminboardComponent } from './globaladminboard/globaladminboard.component';
 import { MenuConfigComponent } from './menu-config/menu-config.component';
-import { ReportConfigItemComponent } from './reportconfigitem/reportconfigitem.component';
+import { ReportConfigItemComponent } from '../globaladmininvoice/reportconfigitem/reportconfigitem.component';
 import { PlansComponent } from './plans/plans.component';
 import { PlanFeatureComponent } from './planfeature/planfeature.component';
+import { AdminrolepermissionComponent } from './adminrolepermission/adminrolepermission.component';
+import { InvoiceboardComponent } from '../globaladmininvoice/invoiceboard/invoiceboard.component';
 
 const routes: Routes = [
   {
@@ -35,5 +37,7 @@ export const GlobalAdminComponents = [
   ReportConfigItemComponent,
   MenuConfigComponent,
   PlansComponent,
-  PlanFeatureComponent
+  PlanFeatureComponent,
+  AdminrolepermissionComponent,
+  InvoiceboardComponent
 ]
