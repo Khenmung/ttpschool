@@ -99,7 +99,11 @@ const routes: Routes = [
   },  
   {
     path: 'globaladmin',
-    loadChildren: () => import('./modules/globaladmin/globaladmin.module').then(m => m.GlobaladminModule)
+    loadChildren: () => import('./modules/globaladmininitial/globaladminInitial.module').then(m => m.GlobaladminInitialModule)
+  },
+  {
+    path: 'globaladmin/inv',
+    loadChildren: () => import('./modules/globaladmininvoice/globaladmininvoice.module').then(m => m.GlobaladmininvoiceModule)
   },
   { path: '**', component: NotfoundComponent },
   

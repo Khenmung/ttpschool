@@ -1,0 +1,21 @@
+mat-form-field,button{
+    flex:1 1 100%;
+    margin-right: 15px;
+    
+}
+
+.mat-column-DisplayName,.mat-column-Formula,.mat-column-ReportName{
+    flex: 1 1 150px;
+}
+.mat-column-TableNames{
+    flex: 1 1 250px;
+}
+.mat-column-ColumnSequence{
+    flex:1 1 50px;
+}
+.mat-column-Active{
+    justify-content: center;
+}
+mat-cell:first-of-type{
+    padding-left: 0px;
+}

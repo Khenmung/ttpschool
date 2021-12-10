@@ -57,7 +57,7 @@ export class globalconstants {
         {
             "globaladmin":{
                 "GLOBALADMIN":"globaladmin",
-                "ROLEFEATURE":'Role Feature Permission',
+                "ADMINROLEFEATURE":'Admin Role Permission',
                 "PLAN":'plan',
                 "PLANFEATURE":'plan feature',
                 "CUSTOMERINVOICE":'customer invoice',

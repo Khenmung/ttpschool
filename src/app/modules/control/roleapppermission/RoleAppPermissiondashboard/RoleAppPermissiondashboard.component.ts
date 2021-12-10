@@ -35,7 +35,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   AppRoleData = {
     ApplicationFeatureRoleId: 0,
     PlanFeatureId: 0,
-    ParentId: 0,
+    //ParentId: 0,
     RoleId: 0,
     PermissionId: 0,
     OrgId: 0,
@@ -152,8 +152,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.MasterData = [...data.value];
-          //var applicationId = data.value.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-          //this.Applications = data.value.filter(t => t.ParentId == applicationId);
+          var applicationId = data.value.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
+          this.Applications = data.value.filter(t => t.ParentId == applicationId);
           this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
           //this.GetCustomerApps();
         }
@@ -203,11 +203,10 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       "PlanFeatureId",
       "PlanId",
       "PageId",
-      "ParentId",
       "ApplicationId"
     ];
     list.PageName = "PlanFeatures";
-    list.lookupFields = ["Page($select=label,PageTitle,DisplayOrder)"]
+    list.lookupFields = ["Page($select=ParentId,label,PageTitle,DisplayOrder)"]
     list.filter = ["PlanId eq " + this.UserDetails[0]["planId"] +
       " and Active eq 1 and ApplicationId eq " + this.SelectedApplicationId];
     this.PageFeatures = [];
@@ -215,7 +214,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.PageFeatures = data.value.map(d => {
-            // d.PageId = d.Page.PageId;
+            d.ParentId = d.Page.ParentId;
             d.label = d.Page.label;
             d.PageTitle = d.Page.PageTitle;
             d.DisplayOrder = d.Page.DisplayOrder;
@@ -249,7 +248,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     if (_planFeatureId > 0) {
       _ParentId = this.PageFeatures.filter(f => f.PlanFeatureId == _planFeatureId)[0].PageId;
     }
-    rolefilter += " and ParentId eq " + _ParentId;
+    //rolefilter += " and ParentId eq " + _ParentId;
 
     if (this.searchForm.get("RoleId").value == 0) {
       this.alert.error("Please select role.", this.optionAutoClose);
@@ -262,13 +261,13 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     list.fields = [
       "ApplicationFeatureRoleId",
       "PlanFeatureId",
-      "ParentId",
+      //"ParentId",
       "RoleId",
       "PermissionId",
       "Active"
     ];
     list.PageName = "ApplicationFeatureRolesPerms";
-    //list.lookupFields = ["PlanFeature($select=FeatureId;$expand=Page($select=PageId,PageTitle,label))"];
+    list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=FeatureId;$expand=Page($select=ParentId))"];
 
     list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + rolefilter];
     this.ApplicationRoleList = [];
@@ -291,7 +290,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
               Role: this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)[0].MasterDataName,
               PermissionId: existing[0].PermissionId,
               DisplayOrder: p.DisplayOrder,
-              ParentId: p.ParentId,
+              ParentId: p.PlanFeature.Page.ParentId,
               Active: existing[0].Active,
               Action: false
             })
@@ -305,7 +304,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
               DisplayOrder: p.DisplayOrder,
               Role: this.Roles.filter(ir => ir.MasterDataId == _roleId)[0].MasterDataName,
               PermissionId: 0,
-              ParentId: p.ParentId,
+              ParentId: p.PlanFeature.Page.ParentId,
               Active: 0,
               Action: false
             })
@@ -404,18 +403,18 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.loading = false;
         }
         else {
-          var _ParentId = 0;
-          var _planFeatureId = this.searchForm.get("PlanFeatureId").value;
-          if (_planFeatureId > 0) {
-            var obj = this.TopPageFeatures.filter(t => t.PlanFeatureId == _planFeatureId);
-            if (obj.length > 0)
-              _ParentId = obj[0].PageId;
-          }
+          //var _ParentId = 0;
+          // var _planFeatureId = this.searchForm.get("PlanFeatureId").value;
+          // if (_planFeatureId > 0) {
+          //   var obj = this.TopPageFeatures.filter(t => t.PlanFeatureId == _planFeatureId);
+          //   if (obj.length > 0)
+          //     _ParentId = obj[0].PageId;
+          // }
 
           this.AppRoleData.Active = row.Active;
           this.AppRoleData.ApplicationFeatureRoleId = row.ApplicationFeatureRoleId;
           this.AppRoleData.PlanFeatureId = row.PlanFeatureId;
-          this.AppRoleData.ParentId = _ParentId;
+          //this.AppRoleData.ParentId = _ParentId;
           this.AppRoleData.RoleId = row.RoleId;
           this.AppRoleData.PermissionId = row.PermissionId;
           this.AppRoleData.OrgId = this.UserDetails[0]["orgId"];

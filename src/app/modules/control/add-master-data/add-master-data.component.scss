@@ -7,15 +7,6 @@
     background-color: lightgray;
 }
 
-app-edit-input {
-    display       : inline-block;
-    vertical-align: baseline;
-    width         : 300px;
-    height        : 30px;
-    margin        : 5px;
-    //padding: 5px;
-}
-
 .boxes {
     border-collapse : collapse;
     border          : 1px solid lightgrey;
@@ -26,11 +17,8 @@ app-edit-input {
 
 .Header {
     height     : 40px;
-    //min-width: 300px;
     margin-left: 15px;
-
 }
-
 table {
     border-collapse: collapse;
 }
@@ -39,33 +27,33 @@ div {
     margin-right: 5px;
 }
 
-mat-checkbox {
-    margin-right: 15px;
-}
+// mat-checkbox {
+//     margin-right: 15px;
+// }
 
 button {
     //   margin : 5px;
     outline: none;
 }
-mat-cell:first-of-type{
-    padding-left: 0px;
-}
+// mat-cell:first-of-type{
+//     padding-left: 0px;
+// }
 mat-form-field {
     margin-right: 5px;
+    width: 98%;
 }
-.mat-table{
-    min-width:960px;
+// .mat-table{
+//     min-width:960px;
+// }
+.mat-column-MasterDataName,.mat-column-ParentId,.mat-column-Description,.mat-column-Logic {
+    flex:0 0 220px;
 }
-.mat-column-MasterDataName,.mat-column-Description,.mat-column-Logic {
-    flex:1 0 250px;
-}
-.mat-column-Active{
+.mat-column-Active,.mat-column-Action{
     justify-content: center;
-    flex:1 0 140px;
+    flex:0 0 100px;
 }
 .mat-column-Sequence,.mat-column-MasterDataId {
-    justify-content: center;
-    flex:1 0 70px;
+    flex:0 0 70px;
 }
 
 // mat-cell:first-of-type{
