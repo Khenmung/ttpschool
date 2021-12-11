@@ -1,27 +1,13 @@
-mat-form-field{
-    margin-right: 20px;
+mat-form-field {
+  margin-right: 15px;
+  width       : 98%;
+  max-width   : 250px;
 }
-button{
-    margin-right: 15px;
+
+button {
+  margin-right: 15px;
 }
-.example-form {
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-  }
-  
-  .example-full-width {
-    width: 50%;
-  }
-  .searchinput{
-    height: 40px;
-    width: 100%;
-    border: 0px 0px !important;
-    //border-color: lightgray;
-    border-collapse: collapse;
-    padding: 5px;
-    outline: none;
-  }
-  ::ng-deep .mat-figure{
-    justify-content: left !important;
-  }
+
+::ng-deep .mat-figure {
+  justify-content: left !important;
+}

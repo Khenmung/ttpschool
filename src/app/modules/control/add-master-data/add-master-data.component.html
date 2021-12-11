@@ -3,14 +3,7 @@
 <alert></alert>
 <br>
 <form [formGroup]="searchForm">
-    <!-- <mat-form-field appearance="outline" [style.width.px]="200">
-        <mat-label>Master</mat-label>
-        <mat-select #ParentId formControlName="ParentId" (selectionChange)="GetSubMasters($event)">
-            <mat-option *ngFor="let master of TopMasters" [value]="master.MasterDataId">
-                {{master.MasterDataName}}
-            </mat-option>
-        </mat-select>
-    </mat-form-field> -->
+    
     <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Master</mat-label>
         <input type="text" matInput formControlName="ParentId"         
@@ -25,7 +18,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Sub Master</mat-label>
-        <mat-select #ParentId formControlName="SubId">
+        <mat-select #ParentId formControlName="SubId" (selectionChange)="emptyresult()">
             <mat-option [value]="0">--sub master--</mat-option>
             <mat-option *ngFor="let master of SubMasters" [value]="master.MasterDataId">
                 {{master.MasterDataName}}

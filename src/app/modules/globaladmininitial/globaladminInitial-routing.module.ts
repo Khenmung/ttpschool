@@ -7,6 +7,7 @@ import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { PlansComponent } from './plans/plans.component';
 import { PlanFeatureComponent } from './planfeature/planfeature.component';
 import { AdminrolepermissionComponent } from './adminrolepermission/adminrolepermission.component';
+import { PlanandmasteritemComponent } from './planandmasteritem/planandmasteritem.component';
 
 const routes: Routes = [
   {
@@ -28,5 +29,6 @@ export const GlobalAdminInitialComponents = [
   MenuConfigComponent,
   PlansComponent,
   PlanFeatureComponent,
-  AdminrolepermissionComponent
+  AdminrolepermissionComponent,
+  PlanandmasteritemComponent
 ]

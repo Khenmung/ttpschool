@@ -1,11 +1,8 @@
 <!-- <mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}"> -->
 <mat-toolbar>
     <mat-toolbar-row class="width100" fxLayout="row" fxLayoutAlign="space-between center">
-        <div fxLayout="row wrap" fxLayoutAlign="start center">
-            <!-- <button [disabled]="loading" mat-button (click)="toggleSideBar()">
-                <mat-icon>menu</mat-icon>
-            </button> -->
-            <a [routerLink]="['/']"><img style="border-radius: 3px;" src="assets/images/ttplogo1.png"
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <a [routerLink]="['/']"><img style="border-radius: 8px;" src="assets/images/ttplogo1.png"
                     alt="St Paul's Institute" width="50px" /></a>
             <span>{{SelectedApplicationName}}</span>    
                 </div>

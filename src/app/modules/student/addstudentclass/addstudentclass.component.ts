@@ -231,7 +231,7 @@ export class AddstudentclassComponent implements OnInit {
     this.breakpoint = (event.target.innerWidth <= 400) ? 1 : 3;
   }
   back() {
-    this.nav.navigate(['/admin/dashboardstudent']);
+    this.nav.navigate(['/edu']);
   }
   UpdateOrSave() {
     //debugger;

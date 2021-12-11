@@ -288,7 +288,7 @@ export class AdminrolepermissionComponent implements OnInit {
             ResultedPermittedPageFeatures.push({
               ApplicationFeatureRoleId: existing[0].ApplicationFeatureRoleId,
               PlanFeatureId: existing[0].PlanFeatureId,
-              FeatureId: p.FeatureId,
+              //FeatureId: p.FeatureId,
               FeatureName: p.label,// this.PlanFeaturePages.filter(t => t.PageId == existing[0].PlanFeatureId)[0].Label,
               RoleId: existing[0].RoleId,
               Role: this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)[0].MasterDataName,
@@ -302,7 +302,7 @@ export class AdminrolepermissionComponent implements OnInit {
             ResultedPermittedPageFeatures.push({
               ApplicationFeatureRoleId: 0,
               PlanFeatureId: p.PlanFeatureId,
-              FeatureId: p.FeatureId,
+              //FeatureId: p.FeatureId,
               FeatureName: p.label,// this.PlanFeaturePages.filter(t => t.PageId == p.PageId)[0].Label,
               RoleId: _roleId,
               DisplayOrder: p.DisplayOrder,

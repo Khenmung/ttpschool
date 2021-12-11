@@ -179,9 +179,13 @@ export class AddMasterDataComponent implements OnInit {
     list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
     return this.dataservice.get(list).subscribe((data: any) => {
-      this.MasterData = [...data.value];
+      this.MasterData = [...data.value].sort((a,b)=>a.ParentId - b.ParentId);
     })
 
+  }
+  emptyresult(){
+    this.MasterList =[];
+    this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
   }
   GetOrganizations() {
     this.loading = true;
@@ -224,7 +228,7 @@ export class AddMasterDataComponent implements OnInit {
 
   }
   SaveAll() {
-    var ToUpdate = this.MasterData.filter(f => f.Action);
+    var ToUpdate = this.MasterList.filter(f => f.Action);
     this.DataToSaveCount = ToUpdate.length;
 
     ToUpdate.forEach(s => {
@@ -238,7 +242,7 @@ export class AddMasterDataComponent implements OnInit {
     if (editedrow.Sequence != editedrow.OldSequence) {
 
       if (editedrow.Sequence > editedrow.OldSequence) {
-        var filteredData = this.MasterData.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
+        var filteredData = this.MasterList.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
           && currentrow.Sequence > editedrow.OldSequence
           && currentrow.Sequence <= editedrow.Sequence)
 
@@ -251,7 +255,7 @@ export class AddMasterDataComponent implements OnInit {
         });
       }
       else if (editedrow.Sequence < editedrow.OldSequence) {
-        var filteredData = this.MasterData.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
+        var filteredData = this.MasterList.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
           && currentrow.Sequence >= editedrow.Sequence
           && currentrow.Sequence < editedrow.OldSequence)
 
@@ -263,8 +267,8 @@ export class AddMasterDataComponent implements OnInit {
       }
       editedrow.Action = true;
       editedrow.OldSequence = editedrow.Sequence;
-      this.MasterData.sort((a, b) => a.Sequence - b.Sequence);
-      this.datasource = new MatTableDataSource<IMaster>(this.MasterData);
+      this.MasterList.sort((a, b) => a.Sequence - b.Sequence);
+      this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
       this.datasource.sort = this.sort;
       this.datasource.paginator = this.paginator;
     }
@@ -275,26 +279,15 @@ export class AddMasterDataComponent implements OnInit {
   }
   GetSubMasters(element) {
     debugger;
-    // if (element.value > 0)
-    //   this.enableTopEdit = true;
-    // else
-    //   this.enableTopEdit = false;
     this.loading = true;
     this.GetMasters(element.MasterDataId, this.UserDetails[0]["orgId"]).subscribe((data: any) => {
       this.SubMasters = [...data.value];
-      //this.RowParent = [...this.SubMasters];
-      this.loading = false;
+          this.loading = false;
     })
-    // this.TopMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
-    //   || t.ParentId == this.SelectedApplicationId);
-
+    this.emptyresult();
+    
   }
-  FilterMaster() {
-    debugger;
-    this.TopMasters = this.DefinedMaster.filter(t => (t.ApplicationId == this.SelectedApplicationId && t.ParentId == 0)
-      || t.ParentId == this.SelectedApplicationId);
-  }
-
+  
   AddData() {
     //debugger;
 
@@ -500,29 +493,29 @@ export class AddMasterDataComponent implements OnInit {
     }
 
   }
-  updateDescription(value, row) {
-    //debugger;
-    if (row.Description.toLowerCase() == value.toLowerCase())
-      return;
-    let confirmYesNo: Boolean = false;
-    if (value.length == 0 || value.length > 50) {
-      this.alert.error("Character should not be empty or less than 50!");
-      return;
-    }
+  // updateDescription(value, row) {
+  //   //debugger;
+  //   if (row.Description.toLowerCase() == value.toLowerCase())
+  //     return;
+  //   let confirmYesNo: Boolean = false;
+  //   if (value.length == 0 || value.length > 50) {
+  //     this.alert.error("Character should not be empty or less than 50!");
+  //     return;
+  //   }
 
-    let mastertoUpdate = {
-      Description: value
-    }
+  //   let mastertoUpdate = {
+  //     Description: value
+  //   }
 
-    let selectedMasterDataId = this.MasterData.filter(item => {
-      return item.Id == row.Id
-    })[0].Id;
+  //   let selectedMasterDataId = this.MasterData.filter(item => {
+  //     return item.Id == row.Id
+  //   })[0].Id;
 
-    this.dataservice.postPatch('MasterItems', mastertoUpdate, selectedMasterDataId, 'patch')
-      .subscribe(res => {
-        this.alert.success("Master data updated!", this.optionAutoClose);
-      });
-  }
+  //   this.dataservice.postPatch('MasterItems', mastertoUpdate, selectedMasterDataId, 'patch')
+  //     .subscribe(res => {
+  //       this.alert.success("Master data updated!", this.optionAutoClose);
+  //     });
+  // }
   getDropDownData(dropdowntype) {
     let Id = this.MasterData.filter((item, indx) => {
       return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER

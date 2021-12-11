@@ -91,7 +91,6 @@
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Gender</mat-label>
                             <mat-select formControlName="Gender">
-                                <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
@@ -104,30 +103,29 @@
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Religion</mat-label>
                             <mat-select formControlName="Religion">
-                                <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </mat-grid-tile>
-
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Blood group</mat-label>
                             <mat-select formControlName="Bloodgroup">
-                                <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
+                        <span class="text-danger"
+                            *ngIf="f.Bloodgroup.touched && f.Bloodgroup.hasError('required')">Blood group
+                            is required.</span>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Category</mat-label>
                             <mat-select formControlName="Category">
-                                <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
@@ -187,7 +185,7 @@
                     <mat-label>Aadhaar No</mat-label>
                     <input formControlName="AadharNo" autocomplete="Off" #Pincode matInput [maxlength]="10">
                 </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.pc]="22">
+                <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Permanent address</mat-label>
                     <textarea formControlName="PermanentAddress" autocomplete="Off" matInput
                         [maxlength]="250"></textarea>
@@ -196,7 +194,7 @@
                         *ngIf="f.PermanentAddress.touched && f.PermanentAddress.hasError('required')">Permanent
                         Address is required.</span>
                 </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.pc]="22">
+                <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Present address</mat-label>
                     <textarea formControlName="PresentAddress" autocomplete="Off" matInput [maxlength]="250"></textarea>
                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
@@ -281,50 +279,45 @@
                 <mat-icon>note_add</mat-icon>Additional Info. & Save
             </ng-template>
             <div style="padding:15px 15px 10px 15px;"><strong>Additional Info.</strong></div>
-            <div class="content" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="100px">
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Last school attended</mat-label>
-                    <input formControlName="TransferFromSchool" autocomplete="Off" #Pincode matInput [maxlength]="100">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Percentage obtained in last examination</mat-label>
-                    <input formControlName="LastSchoolPercentage" autocomplete="Off" #Pincode matInput [maxlength]="10">
-                </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Class for which admission is sought</mat-label>
-                    <mat-select formControlName="ClassAdmissionSought">
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
-                            {{p.ClassName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.pc]="50">
-                    <mat-label>Remarks</mat-label>
-                    <input formControlName="Remarks" autocomplete="Off" #Pincode matInput [maxlength]="250">
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Location</mat-label>
-                    <mat-select formControlName="LocationId">
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of Location" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <div>
+            <div fxLayout="column" fxLayoutAlign="space-around">
+                <div style="padding: 15px 15px 0px 15px;">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Last school attended</mat-label>
+                        <input formControlName="TransferFromSchool" autocomplete="Off" #Pincode matInput
+                            [maxlength]="100">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Percentage obtained in last examination</mat-label>
+                        <input formControlName="LastSchoolPercentage" autocomplete="Off" #Pincode matInput
+                            [maxlength]="10">
+                    </mat-form-field>
+                </div>
+                <div style="padding: 15px 15px 0px 15px">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Class for which admission is sought</mat-label>
+                        <mat-select formControlName="ClassAdmissionSought">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                                {{p.ClassName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Remarks</mat-label>
+                        <input formControlName="Remarks" autocomplete="Off" #Pincode matInput [maxlength]="250">
+                    </mat-form-field>
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
+                    <mat-form-field *ngIf="StudentLeaving" appearance="outline">
+                        <mat-label>Reason For Leaving</mat-label>
+                        <mat-select formControlName="ReasonForLeavingId">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of ReasonForLeaving" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
-                <mat-form-field *ngIf="StudentLeaving" appearance="outline">
-                    <mat-label>Reason For Leaving</mat-label>
-                    <mat-select formControlName="ReasonForLeavingId">
-                        <mat-option value="0">---</mat-option>
-                        <mat-option *ngFor="let p of ReasonForLeaving" [value]="p.MasterDataId">
-                            {{p.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                 <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"

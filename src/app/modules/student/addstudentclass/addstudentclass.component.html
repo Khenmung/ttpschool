@@ -3,9 +3,9 @@
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 
     <form [formGroup]="studentclassForm">
-        <mat-grid-list fxLayoutAlign="space-around center"  [cols]="3" rowHeight="80px" (window:resize)="onResize($event)">
+        <mat-grid-list style="max-width: 600px;" [cols]="2" rowHeight="80px" (window:resize)="onResize($event)">
             <mat-grid-tile [colspan]="1" [rowspan]="1">
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="ClassId" #ClassId>
                         <mat-option value="0">---</mat-option>
@@ -18,7 +18,7 @@
                 </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline">
                     <mat-label>Roll No.</mat-label>
                     <input formControlName="RollNo" autocomplete="Off" #RollNo matInput [maxlength]="50">
                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
@@ -27,7 +27,7 @@
                 </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline">
                     <mat-label>Section</mat-label>
                     <mat-select formControlName="SectionId" #SectionId>
                         <mat-option value="0">---</mat-option>
@@ -40,7 +40,7 @@
                 </mat-form-field>
             </mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline">
                     <mat-label>Fee type</mat-label>
                     <mat-select formControlName="FeeTypeId">
                         <mat-option value="0">---</mat-option>
@@ -53,15 +53,15 @@
                 </mat-form-field>
             </mat-grid-tile>           
             <mat-grid-tile [colspan]="1" [rowspan]="1">
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline">
                     <mat-label>Admission Date</mat-label>
                     <input formControlName="AdmissionDate" matInput [matDatepicker]="picker" autocomplete="off">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
             </mat-grid-tile>
-            <mat-grid-tile [colspan]="2" [rowspan]="1" fxFlex>
-                <mat-form-field appearance="outline" [style.width.pc]="32">
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                <mat-form-field appearance="outline">
                     <mat-label>Remarks</mat-label>
                     <input formControlName="Remarks" autocomplete="Off" #Remarks matInput [maxlength]="250">
                 </mat-form-field>
@@ -79,6 +79,6 @@
         <mat-icon>save</mat-icon>
     </button>
     <button [disabled]="loading" class="mat-raised-button" (click)="back()">
-        <mat-icon>cancel</mat-icon>
+        <mat-icon>arrow_back</mat-icon>
     </button>
 </mat-card-actions>

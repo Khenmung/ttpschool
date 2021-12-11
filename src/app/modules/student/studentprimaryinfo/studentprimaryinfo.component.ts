@@ -27,10 +27,15 @@ export class studentprimaryinfoComponent implements OnInit {
   // @ViewChild(StudentDocumentComponent) studentDocument: StudentDocumentComponent;
   // @ViewChild(GenerateCertificateComponent) gencertificate: GenerateCertificateComponent;
   Edit = false;
-  options = {
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionsAutoClose = {
     autoClose: true,
     keepAfterRouteChange: true
   };
+
   loginUserDetail = [];
   StudentLeaving = false;
   StudentName = '';
@@ -56,9 +61,8 @@ export class studentprimaryinfoComponent implements OnInit {
   Location = [];
   allMasterData = [];
   ReasonForLeaving = [];
-  studentData = {};
+  studentData = [];
   CountryId = 0;
-  LocationId = 0;
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
@@ -169,7 +173,7 @@ export class studentprimaryinfoComponent implements OnInit {
         City: [0],
         Country: [0],
         DOB: [new Date(), [Validators.required]],
-        Bloodgroup: [0],
+        Bloodgroup: [0, [Validators.required]],
         Category: [0, [Validators.required]],
         BankAccountNo: [''],
         IFSCCode: [''],
@@ -192,8 +196,7 @@ export class studentprimaryinfoComponent implements OnInit {
         TransferFromSchool: [''],
         TransferFromSchoolBoard: [''],
         Remarks: [''],
-        Active: [1],
-        LocationId: [0]
+        Active: [1]
       });
     }
   }
@@ -272,11 +275,9 @@ export class studentprimaryinfoComponent implements OnInit {
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
-        this.LocationId = this.Location.filter(location => location.MasterDataName.toLowerCase() == "lamka")[0].MasterDataId;
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
         this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
         this.studentForm.patchValue({ Country: this.CountryId });
-        this.studentForm.patchValue({ LocationId: this.LocationId });
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
         this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
@@ -301,8 +302,21 @@ export class studentprimaryinfoComponent implements OnInit {
 
   }
   SaveOrUpdate() {
+    
+    if(this.studentForm.get("Bloodgroup").value==0)
+    {
+      this.loading=false;
+      this.alert.info("Please select blood group.",this.optionsNoAutoClose);      
+      return;
+    }
+    if(this.studentForm.get("Category").value==0)
+    {
+      this.loading=false;
+      this.alert.info("Please select Category.",this.optionsNoAutoClose);      
+      return;
+    }
     this.loading = true;
-    this.studentData = {
+    this.studentData.push({
       FirstName: this.studentForm.get("FirstName").value,
       LastName: this.studentForm.get("LastName").value,
       FatherName: this.studentForm.get("FatherName").value,
@@ -337,9 +351,10 @@ export class studentprimaryinfoComponent implements OnInit {
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
       Remarks: this.studentForm.get("Remarks").value,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
-      LocationId: this.studentForm.get("LocationId").value,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
-    }
+      OrgId:this.loginUserDetail[0]["orgId"]
+    });
+    console.log("studentData",this.studentData)
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else
@@ -357,7 +372,7 @@ export class studentprimaryinfoComponent implements OnInit {
             StudentId: result.StudentId
           })
           this.loading = false;
-          this.alert.success("Student's data saved successfully.", this.options);
+          this.alert.success("Student's data saved successfully.", this.optionsAutoClose);
 
         }
 
@@ -366,11 +381,11 @@ export class studentprimaryinfoComponent implements OnInit {
   update() {
     ////console.log('student', this.studentForm.value)
 
-    this.dataservice.postPatch('Students', this.studentData, +this.studentForm.get("StudentId").value, 'patch')
+    this.dataservice.postPatch('Students', this.studentData[0], +this.studentForm.get("StudentId").value, 'patch')
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
-        this.alert.success("Student's data updated successfully.", this.options);
+        this.alert.success("Student's data updated successfully.", this.optionsAutoClose);
       })
   }
   adjustDateForTimeOffset(dateToAdjust) {
@@ -432,9 +447,7 @@ export class studentprimaryinfoComponent implements OnInit {
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
               Remarks: stud.Remarks,
               Active: stud.Active,
-              LocationId: stud.LocationId,
-              ReasonForLeavingId: stud.ReasonForLeavingId,
-              //PhotoPath:stud.StorageFnP.FileName
+              ReasonForLeavingId: stud.ReasonForLeavingId             
             })
 
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
@@ -447,7 +460,7 @@ export class studentprimaryinfoComponent implements OnInit {
           })
         }
         else {
-          this.alert.error("No data found.", this.options);
+          this.alert.error("No data found.", this.optionsAutoClose);
         }
       });
   }

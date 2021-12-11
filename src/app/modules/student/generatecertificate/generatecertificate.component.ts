@@ -268,7 +268,6 @@ export class GenerateCertificateComponent implements OnInit {
         "NameOfContactPerson," +
         "RelationWithContactPerson," +
         "ContactPersonContactNo," +
-        "LocationId," +
         "ReasonForLeavingId)"];
     list.filter = [filterstr + orgIdSearchstr];
 
@@ -296,9 +295,6 @@ export class GenerateCertificateComponent implements OnInit {
             _studentClass = classObj[0].ClassName
           var _section = d.SectionId == null ? '' : this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName;
           var _gender = d.Student.Gender == null ? '' : this.Genders.filter(c => c.MasterDataId == d.Student.Gender)[0].MasterDataName;
-          // var _city = d.Student.City == null ? '' : this.City.filter(c => c.MasterDataId == d.Student.City)[0].MasterDataName;
-          // var _state = d.Student.State == null ? '' : this.State.filter(c => c.MasterDataId == d.Student.State)[0].MasterDataName;
-          // var _country = d.Student.Country == null ? '' : this.Country.filter(c => c.MasterDataId == d.Student.Country)[0].MasterDataName;
           var _bloodgroup = d.Student.Bloodgroup == null ? '' : this.BloodGroup.filter(c => c.MasterDataId == d.Student.Bloodgroup)[0].MasterDataName;
           var _category = d.Student.Category == null ? '' : this.Category.filter(c => c.MasterDataId == d.Student.Category)[0].MasterDataName;
           var _religion = d.Student.Religion == null ? '' : this.Religion.filter(c => c.MasterDataId == d.Student.Religion)[0].MasterDataName;
@@ -342,7 +338,6 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "NameOfContactPerson", val: d.Student.NameOfContactPerson },
             { name: "RelationWithContactPerson", val: d.Student.RelationWithContactPerson },
             { name: "ContactPersonContactNo", val: d.Student.ContactPersonContactNo },
-            { name: "Location", val: d.Student.LocationId },
             { name: "ReasonForLeaving", val: _reason }
           )
         })

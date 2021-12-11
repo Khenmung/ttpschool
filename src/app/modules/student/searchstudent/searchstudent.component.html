@@ -14,9 +14,11 @@
                 <mat-label>Father</mat-label>
                 <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
                 <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnF">
+                 <cdk-virtual-scroll-viewport itemSize="25">
                     <mat-option *ngFor="let option of filteredFathers | async" [value]="option">
                         {{option.FatherName}}
                     </mat-option>
+                </cdk-virtual-scroll-viewport>
                 </mat-autocomplete>
             </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="250">
@@ -110,9 +112,9 @@
             <mat-paginator [pageSizeOptions]="[10,25,50]"></mat-paginator>
         </div>
     </mat-card-content>
-    <mat-card-actions fxLayoutAlign="center center">
+    <!-- <mat-card-actions fxLayoutAlign="center center">
         <button [disabled]="loading" (click)="exportArray()" matTooltip="export to excel" class="mat-raised-button">
             <mat-icon>download</mat-icon>
         </button>
-    </mat-card-actions>
+    </mat-card-actions> -->
 </mat-card>
