@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -50,6 +51,7 @@ export class AppuserdashboardComponent implements OnInit {
   Locations = [];
   Roles = [];
   LoginDetail = [];
+  SelectedApplicationId=0;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   datasource: MatTableDataSource<IAppUser>;
@@ -78,12 +80,12 @@ export class AppuserdashboardComponent implements OnInit {
   AppUsers = [];
   searchForm: FormGroup;
   constructor(
-    private datepipe: DatePipe,
+    private contentservice: ContentService,
     private shareddata: SharedataService,
     private fb: FormBuilder,
     private route: Router,
     private tokenStorage: TokenStorageService,
-    private dataservice: NaomitsuService,
+    //private dataservice: NaomitsuService,
     private authservice: AuthService,
     private alert: AlertService) { }
   ngOnInit() {
@@ -118,6 +120,7 @@ export class AppuserdashboardComponent implements OnInit {
     if (perObj.length > 0)
       this.Permission = perObj[0].permission;
     if (this.Permission != 'deny') {
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
       this.filterwithOrg = globalconstants.getStandardFilter(this.LoginDetail);
       this.GetMasterData();
     }
@@ -126,16 +129,7 @@ export class AppuserdashboardComponent implements OnInit {
 
   GetMasterData() {
 
-    var orgIdSearchstr = ' or OrgId eq ' + this.LoginDetail[0]["orgId"];
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 " + orgIdSearchstr + ')'];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);

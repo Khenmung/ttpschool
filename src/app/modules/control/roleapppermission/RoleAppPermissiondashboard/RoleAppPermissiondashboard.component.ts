@@ -225,7 +225,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         else
           this.PageFeatures = [];
         this.loading = false;
-        ////console.log("PageFeatures", this.PageFeatures)
+        console.log("PageFeatures", this.PageFeatures)
       })
   }
   FilterPageFeatures() {
@@ -267,7 +267,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ApplicationFeatureRolesPerms";
-    list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PlanFeatureId;$expand=Page($select=ParentId))"];
+    list.lookupFields = ["PlanFeature($filter=Active eq 1 and ApplicationId eq "+ this.SelectedApplicationId +";$select=PlanFeatureId,ApplicationId;$expand=Page($select=ParentId))"];
 
     list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + rolefilter];
     this.ApplicationRoleList = [];
@@ -290,7 +290,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
               Role: this.Roles.filter(r => r.MasterDataId == existing[0].RoleId)[0].MasterDataName,
               PermissionId: existing[0].PermissionId,
               DisplayOrder: p.DisplayOrder,
-              ParentId: p.PlanFeature.Page.ParentId,
+              ParentId: p.Page.ParentId,
               Active: existing[0].Active,
               Action: false
             })
@@ -304,7 +304,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
               DisplayOrder: p.DisplayOrder,
               Role: this.Roles.filter(ir => ir.MasterDataId == _roleId)[0].MasterDataName,
               PermissionId: 0,
-              ParentId: p.PlanFeature.Page.ParentId,
+              ParentId: p.Page.ParentId,
               Active: 0,
               Action: false
             })
@@ -315,6 +315,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         if (this.ApplicationRoleList.length == 0) {
           this.alert.info("No feature found!", this.optionAutoClose);
         }
+        console.log("this.ApplicationRoleList",this.ApplicationRoleList)
         this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
         this.datasource.sort = this.sort;
         this.datasource.paginator = this.paginator;

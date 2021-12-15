@@ -57,6 +57,7 @@ export class searchstudentComponent implements OnInit {
   UploadTypes = [];
   ReasonForLeaving = [];
   //StandardFilter ='';
+  SelectedApplicationId=0;
   SelectedBatchId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
@@ -65,7 +66,7 @@ export class searchstudentComponent implements OnInit {
   filteredStudents: Observable<IStudent[]>;
   filteredFathers: Observable<IStudent[]>;
   filteredMothers: Observable<IStudent[]>;
-  LoginUserDetail = [];
+  LoginUserDetail;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -76,45 +77,52 @@ export class searchstudentComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
-    //debugger;
+
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
+    if (this.LoginUserDetail == "") {
+      this.route.navigate(['/auth/login']);
+    }
+    else {
+      this.SelectedBatchId = +this.token.getSelectedBatchId();
+      this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.SelectedApplicationId =  +this.token.getSelectedAPPId();
+      this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.studentSearchForm = this.fb.group({
+        searchStudentId: [''],
+        searchStudentName: [''],
+        FatherName: [''],
+        MotherName: ['']
+      })
 
-    this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-    this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
-    this.studentSearchForm = this.fb.group({
-      searchStudentId:[''],
-      searchStudentName: [''],
-      FatherName: [''],
-      MotherName: ['']
-    })
+      this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.Name),
+          map(Name => Name ? this._filter(Name) : this.Students.slice())
+        );
+      this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.FatherName),
+          map(FatherName => FatherName ? this._filterF(FatherName) : this.Students.slice())
+        );
+      this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.MotherName),
+          map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
+        );
 
-    this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.Students.slice())
-      );
-    this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.FatherName),
-        map(FatherName => FatherName ? this._filterF(FatherName) : this.Students.slice())
-      );
-    this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.MotherName),
-        map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
-      );
-
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-      this.Classes = [...data.value];
-    });
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      });
 
 
-    this.GetMasterData();
-    this.GetFeeTypes();
+      this.GetMasterData();
+      this.GetFeeTypes();
+    }
     //this.GetStudents();
   }
   private _filter(name: string): IStudent[] {
@@ -145,22 +153,9 @@ export class searchstudentComponent implements OnInit {
     return stud && stud.MotherName ? stud.MotherName : '';
   }
   GetMasterData() {
-    //debugger;
-    this.loading = true;
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or " + this.filterOrgIdOnly + ')'];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
-        ////console.log(data.value);
-        //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
-        ////console.log('this.SelectedBatchId',this.SelectedBatchId);
-        this.SelectedBatchId = +this.token.getSelectedBatchId();
-        this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
-
+        
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
@@ -196,8 +191,8 @@ export class searchstudentComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.contentservice.GetFeeDefinitions(this.SelectedBatchId,this.LoginUserDetail[0]["orgId"]).subscribe((f:any)=>{
-          this.FeeDefinitions =[...f.value];
+        this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
+          this.FeeDefinitions = [...f.value];
           this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
         });
 
@@ -348,7 +343,7 @@ export class searchstudentComponent implements OnInit {
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
       "ReasonForLeavingId"];
-    list.lookupFields = ["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId+";$select=StudentClassId,BatchId,ClassId,RollNo)"];
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,BatchId,ClassId,RollNo)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";

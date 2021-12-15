@@ -70,7 +70,7 @@ export class LeaveBalanceComponent implements OnInit {
   filteredOptions: Observable<IEmployee[]>;
   dataSource: MatTableDataSource<ILeaveBalance>;
   allMasterData = [];
-
+  SelectedApplicationId=0;
   LeaveBalanceData = {
     LeaveBalanceId: 0,
     EmployeeId: 0,
@@ -90,7 +90,7 @@ export class LeaveBalanceComponent implements OnInit {
   searchForm: FormGroup;
   constructor(
     private shareddata: SharedataService,
-    private contentService: ContentService,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -131,7 +131,7 @@ export class LeaveBalanceComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
 
@@ -336,16 +336,7 @@ export class LeaveBalanceComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         //debugger;
         this.allMasterData = [...data.value];

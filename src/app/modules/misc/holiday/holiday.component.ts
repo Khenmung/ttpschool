@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -61,8 +62,10 @@ export class HolidayComponent implements OnInit {
     "Active",
     "Action"
   ];
+  SelectedApplicationId=0;
   searchForm: FormGroup;
   constructor(
+    private contentservice:ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -89,6 +92,7 @@ export class HolidayComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -243,14 +247,7 @@ export class HolidayComponent implements OnInit {
 
   GetMasterData() {
 
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.HolidayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.HOLIDAYLIST)

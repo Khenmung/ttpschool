@@ -30,6 +30,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   CurrentBatch = '';
   CurrentBatchId = 0;
   SelectedBatchId = 0;
+  SelectedApplicationId=0;
   Classes = [];
   Subjects = [];
   ClassSubjectnComponents = [];
@@ -83,6 +84,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   PageLoad() {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
     this.SelectedBatchId = +this.token.getSelectedBatchId();
+    this.SelectedApplicationId = +this.token.getSelectedAPPId();
     this.GetMasterData();
     if (this.Classes.length == 0) {
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -184,16 +186,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);

@@ -109,9 +109,7 @@ export class LoginComponent implements OnInit {
   }
   GetApplicationRoleUser() {
 
-    //this.userInfo = JSON.parse(localStorage.getItem('userInfo')); 
-
-    ////console.log('userinfo after login', this.userInfo)
+    debugger;
     let list: List = new List();
     list.fields = [
       'UserId',
@@ -145,40 +143,25 @@ export class LoginComponent implements OnInit {
   }
 
   GetMasterData(UserRole) {
-    //debugger;
+    debugger;
     let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
+    list.fields = ["MasterDataId","MasterDataName","Description","ParentId"];
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq 0 or OrgId eq " + localStorage.getItem("orgId") + ")"];
-    //list.orderBy = "ParentId";
-
+    list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq "+ localStorage.getItem('planId') + ";$select=MasterDataId,PlanAndMasterDataId,PlanId,ApplicationId)"];
+    list.filter = ["(ParentId eq 0 or OrgId eq "+ localStorage.getItem('orgId')+") and Active eq 1"];
+    
     this.dataservice.get(list)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.shareddata.ChangeMasterData(data.value);
-        this.allMasterData = [...data.value];
-
-        // this.Organizations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.ORGANIZATION);
-        // this.shareddata.ChangeOrganization(this.Organizations);
-
-        // this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
-        // this.shareddata.ChangeDepartment(this.Departments);
+        this.allMasterData = [...data.value];//.filter(f=>f.);
 
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-
-        // this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        // this.shareddata.ChangeLocation(this.Locations);
 
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
         this.shareddata.ChangeRoles(this.Roles);
 
         this.RoleFilter = ' and (RoleId eq 0';
-        //var _location = '';
-        // if (this.Locations.length > 0 && UserRole.LocationId != null)
-        //   _location = this.Locations.filter(l => l.MasterDataId == UserRole.LocationId)[0].MasterDataName;
-        // var _department = '';
-        // if (this.Departments.length > 0 && UserRole.DepartmentId != null)
-        //   _department = this.Departments.filter(l => l.MasterDataId == UserRole.DepartmentId)[0].MasterDataName;
         var __organization = '';
         if (UserRole[0].OrgId != null)
           __organization = UserRole[0].Org.OrganizationName;
@@ -250,7 +233,7 @@ export class LoginComponent implements OnInit {
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
-            debugger;
+           
 
             this.UserDetail[0]["applicationRolePermission"].push({
               'pageId': item.PlanFeature.PageId,

@@ -32,6 +32,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   };
   ClassSubjectListName = "ClassSubjects";
   Permission = '';
+  SelectedApplicationId=0;
   StandardFilterWithBatchId = '';
   loading = false;
   WorkAccounts = [];
@@ -100,7 +101,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
@@ -509,16 +510,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);

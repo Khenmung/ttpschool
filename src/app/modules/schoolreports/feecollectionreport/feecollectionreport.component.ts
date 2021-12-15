@@ -27,6 +27,7 @@ export class FeecollectionreportComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SelectedApplicationId=0;
   Permission = 'deny';
   LoginUserDetail = [];
   TotalPaidStudentCount = 0;
@@ -87,6 +88,7 @@ export class FeecollectionreportComponent implements OnInit {
       }
 //      //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
+        this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
         this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.shareddata.CurrentFeeDefinitions.subscribe(c => (this.FeeDefinitions = c));
@@ -246,15 +248,7 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetMasterData() {
-    debugger;
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or " + this.filterOrgIdOnly + ')'];
-
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);

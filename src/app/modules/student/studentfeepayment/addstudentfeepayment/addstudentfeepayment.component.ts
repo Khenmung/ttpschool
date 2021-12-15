@@ -80,6 +80,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     "LedgerAccount": [],
     "AccountingVoucher": []
   }
+  SelectedApplicationId=0;
   OriginalAmountForCalc = 0;
   VariableObjList: any[] = [];
   Months = [];
@@ -194,6 +195,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource<any>(this.MonthlyDueDetail);
         this.Months = this.contentservice.GetSessionFormattedMonths();
@@ -229,13 +231,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
 
   GetMasterData() {
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {

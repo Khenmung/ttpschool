@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -34,12 +34,12 @@ export class PlanandmasteritemComponent implements OnInit {
   PlanAndMasterItemListName = 'PlanAndMasterItems';
   loading = false;
   SelectedBatchId = 0;
-  //SelectedApplicationId =0;
+  SelectedApplicationId =0;
   RowToUpdateCount = -1;
-  Topfeatures = [];
+  TopMasterItems = [];
   Plans = [];
-  Features = [];
-  SelectedFeatures = [];
+  MasterItems = [];
+  SelectedMasterItems = [];
   PlanAndMasterItemList: IPlanMasterItem[] = [];
   filteredOptions: Observable<IPlanMasterItem[]>;
   dataSource: MatTableDataSource<IPlanMasterItem>;
@@ -52,15 +52,19 @@ export class PlanandmasteritemComponent implements OnInit {
     PlanAndMasterDataId: 0,
     PlanId: 0,
     MasterDataId: 0,
+    ApplicationId:0,
     Active: 0
   };
   displayedColumns = [
-    "PlanAndMasterDataId",
-    "PlanId",
-    "MasterDataId",
+    "PlanAndMasterDataId",    
+    "MasterItemName",
     "Active",
     "Action"
   ];
+  nameFilter = new FormControl('');
+  filterValues = {
+    MasterItemName: ''    
+  };
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
@@ -69,15 +73,23 @@ export class PlanandmasteritemComponent implements OnInit {
     private alert: AlertService,
     private nav: Router,
     private fb: FormBuilder
-  ) { }
+  ) {
+    }
 
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
-      searchPlanId: [0],
-      searchTopfeatureId: [0]
+      searchPlanId: [0]
     });
+    
+    this.nameFilter.valueChanges
+    .subscribe(
+      name => {
+        this.filterValues.MasterItemName = name;
+        this.dataSource.filter = JSON.stringify(this.filterValues);
+      }
+    )
     this.PageLoad();
   }
 
@@ -101,6 +113,7 @@ export class PlanandmasteritemComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.GetPlans();
         this.GetMasterData();
 
@@ -166,12 +179,13 @@ export class PlanandmasteritemComponent implements OnInit {
     this.loading = true;
 
     if (row.PlanId == 0) {
-      this.alert.error("Please enter PlanAndMasterItem name.", this.optionsNoAutoClose);
+      this.alert.error("Please select plan name.", this.optionsNoAutoClose);
       this.loading = false;
       row.Action = false;
       return;
     }
-    let checkFilterString = "PlanId eq " + row.PlanId + " and PlanId eq " + this.searchForm.get("searchPlanId").value
+    let checkFilterString = "PlanId eq " + row.PlanId + " and MasterDataId eq " + row.MasterDataId + 
+                          " and ApplicationId eq " + row.ApplicationId;
 
     if (row.PlanAndMasterDataId > 0)
       checkFilterString += " and PlanAndMasterDataId ne " + row.PlanAndMasterDataId;
@@ -194,10 +208,9 @@ export class PlanandmasteritemComponent implements OnInit {
           this.PlanAndMasterItemData.PlanAndMasterDataId = row.PlanAndMasterDataId;
           this.PlanAndMasterItemData.PlanId = row.PlanId;
           this.PlanAndMasterItemData.MasterDataId = row.MasterDataId;
-          //this.PlanAndMasterItemData.ParentId = row.ParentId;
-          //this.PlanAndMasterItemData.ApplicationId = row.ApplicationId;
+          this.PlanAndMasterItemData.ApplicationId = row.ApplicationId;
           this.PlanAndMasterItemData.Active = row.Active;
-          ////console.log("PlanAndMasterItemdata", this.PlanAndMasterItemData)
+         
           if (this.PlanAndMasterItemData.PlanAndMasterDataId == 0) {
             this.insert(row);
           }
@@ -272,26 +285,26 @@ export class PlanandmasteritemComponent implements OnInit {
   }
   GetTopFeature() {
     var ApplicationId = this.searchForm.get("searchApplicationId").value;
-    this.GetFeatures(ApplicationId).subscribe((d: any) => {
-      this.Features = [...d.value];
-      this.Topfeatures = this.Features.filter(f => f.ParentId == 0);
+    this.GetMasterItems(ApplicationId).subscribe((d: any) => {
+      this.MasterItems = [...d.value];
+      this.TopMasterItems = this.MasterItems.filter(f => f.ParentId == 0);
       this.loading = false;
     });
   }
-  GetFeatures(appId) {
+  GetMasterItems(appId) {
     this.loading = true;
     let list: List = new List();
     list.fields = [
-      "PageId",
-      "PageTitle",
+      "MasterDataId",
+      "MasterDataName",
       "ParentId"
     ];
 
-    list.PageName = "Pages";
+    list.PageName = "MasterItems";
     list.filter = ["Active eq 1 and ApplicationId eq " + appId];
     return this.dataservice.get(list)
     // .subscribe((data: any) => {
-    //   this.Features = [...data.value];
+    //   this.MasterItems = [...data.value];
     // })
   }
   GetPlanAndMasterItem() {
@@ -316,36 +329,39 @@ export class PlanandmasteritemComponent implements OnInit {
       "PlanAndMasterDataId",
       "PlanId",
       "MasterDataId",
+      "ApplicationId",
       "Active"
     ];
 
     list.PageName = this.PlanAndMasterItemListName;
-    list.lookupFields = ["Plan($select=PlanId,Title;$filter=Active eq 1)","MasterItem($filter=Active eq 1;$select=MasterDataId,ApplicationId)"];
+    list.lookupFields = ["Plan($select=PlanId,Title;$filter=Active eq 1)","MasterData($filter=Active eq 1;$select=MasterDataId,ApplicationId)"];
     
-    list.filter = ["Active eq 1 and ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
+    list.filter = ["ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
     this.PlanAndMasterItemList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _ParentId = 0;
-        if (this.searchForm.get("searchTopfeatureId").value > 0)
-          _ParentId = this.searchForm.get("searchTopfeatureId").value;
+        // if (this.searchForm.get("searchTopfeatureId").value > 0)
+        //   _ParentId = this.searchForm.get("searchTopfeatureId").value;
+        this.SelectedMasterItems = this.MasterItems.filter(f => f.ParentId == _ParentId);
+        this.SelectedMasterItems.forEach(f => {
 
-        this.SelectedFeatures = this.Features.filter(f => f.ParentId == _ParentId);
-        this.SelectedFeatures.forEach(f => {
-
-          var existing = data.value.filter(d => d.PageId == f.PageId);
+          var existing = data.value.filter(d => d.MasterDataId == f.MasterDataId);
           if (existing.length > 0) {
             existing[0].ParentId = _ParentId;
-            existing[0].FeatureName = f.PageTitle;
+            existing[0].MasterItemName = f.MasterDataName;
             existing[0].Action = false;
             this.PlanAndMasterItemList.push(existing[0]);
           }
           else {
+
             this.PlanAndMasterItemList.push(
               {
                 PlanAndMasterDataId: 0,
                 PlanId: _PlanId,
-                MasterDataId:0,
+                MasterDataId:f.MasterDataId,
+                MasterItemName:f.MasterDataName,
+                ApplicationId:_applicationId,
                 Active: 0,
                 Action: false
               });
@@ -358,21 +374,23 @@ export class PlanandmasteritemComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IPlanMasterItem>(this.PlanAndMasterItemList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.dataSource.filterPredicate = this.createFilter();
         this.loadingFalse();
       });
 
   }
-
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function(data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.MasterItemName.toLowerCase().indexOf(searchTerms.MasterItemName) !== -1
+        // && data.id.toString().toLowerCase().indexOf(searchTerms.id) !== -1
+        // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
+        // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
+    }
+    return filterFunction;
+  }
   GetMasterData() {
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or MasterDataName eq 'Application' or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
@@ -400,6 +418,8 @@ export interface IPlanMasterItem {
   PlanAndMasterDataId: number;
   PlanId: number;
   MasterDataId: number;
+  MasterItemName:string;
+  ApplicationId:number;
   Active: number;
   Action: boolean;
 }

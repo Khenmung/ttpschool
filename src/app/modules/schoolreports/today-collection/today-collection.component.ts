@@ -46,7 +46,7 @@ export class TodayCollectionComponent implements OnInit {
     "PaymentType",
     "TotalAmount"
   ]
-
+  SelectedApplicationId = 0;
   Permission = 'deny';
   DateWiseCollection = [];
   HeadsWiseCollection = [];
@@ -72,11 +72,13 @@ export class TodayCollectionComponent implements OnInit {
       ToDate: [new Date(), Validators.required],
       searchReportType: ['', Validators.required],
     })
+
     this.PageLoad();
   }
   PageLoad() {
     debugger;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -164,13 +166,7 @@ export class TodayCollectionComponent implements OnInit {
       })
   }
   GetMasterData() {
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
@@ -193,12 +189,18 @@ export class TodayCollectionComponent implements OnInit {
 
   }
   getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
+    let IdObj = this.allMasterData.filter((item, indx) => {
       return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
-    });
+    })
+    var Id=0;
+    if (IdObj.length > 0) {
+      Id = IdObj[0].MasterDataId;
+      return this.allMasterData.filter((item, index) => {
+        return item.ParentId == Id
+      });
+    }
+    else
+    return [];
   }
 }
 export interface ITodayReceipt {

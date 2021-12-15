@@ -8,6 +8,7 @@ import { PlansComponent } from '../plans/plans.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { PlanFeatureComponent } from '../planfeature/planfeature.component';
 import { AdminrolepermissionComponent } from '../adminrolepermission/adminrolepermission.component';
+import { PlanandmasteritemComponent } from '../planandmasteritem/planandmasteritem.component';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -19,6 +20,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
   components = [
     PlansComponent,
     PlanFeatureComponent,
+    PlanandmasteritemComponent,
     CustomerPlansComponent,
     MenuConfigComponent,
     AdminrolepermissionComponent
@@ -27,6 +29,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
   tabNames = [
     { 'label': 'Plan', 'faIcon': '' },
     { 'label': 'Plan Feature', 'faIcon': '' },
+    { 'label': 'Plan n Master', 'faIcon': '' },
     { 'label': "Customer's Plan", 'faIcon': '' },
     { 'label': 'menu config', 'faIcon': '' },
     { 'label': 'Admin Role Permission', 'faIcon': '' },
@@ -36,6 +39,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
     {
       ParentPermission: '',
       PlanPermission: '',
+      PlanNMasterPermission: '',
       CustomerAppsPermission: '',
       MenuConfigPermission: '',
       RoleFeaturePermission: ''
@@ -69,6 +73,10 @@ export class GlobaladminboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLANFEATURE)
     var comindx = this.components.indexOf(PlanFeatureComponent);
+    this.GetComponents(perObj,comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLANANDMASTERDATA)
+    var comindx = this.components.indexOf(PlanandmasteritemComponent);
     this.GetComponents(perObj,comindx)
     
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ADMINROLEFEATURE)

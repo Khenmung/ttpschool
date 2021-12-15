@@ -89,6 +89,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     "Action"
   ];
   searchForm: FormGroup;
+  SelectedApplicationId=0;
   constructor(
     private contentService: ContentService,
     private dataservice: NaomitsuService,
@@ -96,7 +97,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     private alert: AlertService,
     private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
+    private contentservice: ContentService,
     private datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
@@ -137,6 +138,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.getVariables();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
@@ -310,16 +312,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
   // }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);

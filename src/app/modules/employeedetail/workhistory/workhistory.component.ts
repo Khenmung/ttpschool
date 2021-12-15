@@ -40,6 +40,7 @@ export class WorkhistoryComponent implements OnInit {
   EmployeeWorkHistory = [];
   Permission = 'deny';
   EmployeeId = 0;
+  SelectedApplicationId=0;
   EmployeeWorkHistoryData = {
     EmpWorkHistoryId: 0,
     OrganizationName: '',
@@ -102,7 +103,7 @@ export class WorkhistoryComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.GetEmployeeWorkHistory();
       }
     }
@@ -244,14 +245,7 @@ export class WorkhistoryComponent implements OnInit {
 
   GetMasterData() {
 
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);

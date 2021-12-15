@@ -38,6 +38,7 @@ export class DashboardclassfeeComponent implements OnInit {
   StandardFilterWithBatchId = '';
   CurrentBatch = '';
   CurrentBatchId = 0;
+  SelectedApplicationId=0;
   SelectedBatchId = 0;
   FeeDefinitions = [];
   Classes = [];
@@ -89,7 +90,7 @@ export class DashboardclassfeeComponent implements OnInit {
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
     else {
-
+      this.SelectedApplicationId = +this.token.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -123,7 +124,7 @@ export class DashboardclassfeeComponent implements OnInit {
           if (this.Classes.length == 0) {
             this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
               this.Classes = [...data.value];
-              this.GetMasterData();
+              //this.GetMasterData();
             })
             this.GetDistinctClassFee();
             this.loading = false;
@@ -378,7 +379,7 @@ export class DashboardclassfeeComponent implements OnInit {
       "Month",
       "BatchId",
       "Active",
-      "LocationId",
+      //"LocationId",
       "PaymentOrder"];
     list.PageName = "ClassFees";
     //list.orderBy ="PaymentOrder";
@@ -410,7 +411,7 @@ export class DashboardclassfeeComponent implements OnInit {
                 "Month": 0,
                 "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
                 "Active": 0,
-                "LocationId": this.Locations[0].MasterDataId,
+                //"LocationId": this.Locations[0].MasterDataId,
                 "Action": false
               }
           })
@@ -427,7 +428,7 @@ export class DashboardclassfeeComponent implements OnInit {
               "Month": 0,
               "BatchId": this.SelectedBatchId,
               "Active": 0,
-              "LocationId": this.Locations[0].MasterDataId,
+              //"LocationId": this.Locations[0].MasterDataId,
               "Action": false
             }
           });
@@ -475,16 +476,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
@@ -518,6 +510,6 @@ export interface Element {
   Month: number;
   BatchId: number;
   Active: number;
-  LocationId: number;
+  //LocationId: number;
   Action: boolean;
 }

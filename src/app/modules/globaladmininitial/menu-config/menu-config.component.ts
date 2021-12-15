@@ -10,6 +10,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { globalconstants } from 'src/app/shared/globalconstant';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-menu-config',
@@ -43,6 +44,7 @@ export class MenuConfigComponent implements OnInit {
   Id: number;
   query: string;//displayedColumns: Array<any>;
   list: List;
+  SelectedApplicationId=0;
   MenuConfigData = {
     "PageId": 0,
     "PageTitle": 0,
@@ -95,10 +97,12 @@ export class MenuConfigComponent implements OnInit {
   }
   PageLoad() {
     this.checklogin();
-
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
   }
-  constructor(private dataservice: NaomitsuService,
+  constructor(
+    private contentservice:ContentService,
+    private dataservice: NaomitsuService,
     private fb: FormBuilder,
     private navigate: Router,
     private route: ActivatedRoute,
@@ -135,16 +139,7 @@ export class MenuConfigComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence", "ApplicationId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

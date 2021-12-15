@@ -5,10 +5,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -33,6 +33,7 @@ export class ExamsComponent implements OnInit {
   Exams: IExams[] = [];
   SelectedBatchId = 0;
   //ClassSubjectComponents = [];
+  SelectedApplicationId=0;
   StudentGradeFormula = [];
   ClassFullMarkPassMark = [];
   ExamNames = [];
@@ -70,7 +71,7 @@ export class ExamsComponent implements OnInit {
     private alert: AlertService,
     private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
+    private contentservice: ContentService,
     private datepipe: DatePipe
   ) { }
 
@@ -85,6 +86,7 @@ export class ExamsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var feature = globalconstants.AppAndMenuAndFeatures.edu.examination.exam;
 
       var perObj = globalconstants.getPermission(this.tokenstorage, feature);
@@ -279,16 +281,7 @@ export class ExamsComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId","Logic"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);

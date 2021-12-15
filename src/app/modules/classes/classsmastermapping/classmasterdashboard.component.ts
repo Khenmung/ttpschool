@@ -35,6 +35,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SelectedApplicationId=0;
   StandardFilterWithBatchId = '';
   loading = false;
   Permission = '';
@@ -115,7 +116,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -427,16 +428,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

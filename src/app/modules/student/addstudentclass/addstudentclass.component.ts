@@ -40,6 +40,7 @@ export class AddstudentclassComponent implements OnInit {
   FeeType = [];
   studentclassForm: FormGroup;
   StudentName = '';
+  SelectedApplicationId=0;
   LoginUserDetail = [];
   studentclassData = {
     StudentClassId: 0,
@@ -89,7 +90,7 @@ export class AddstudentclassComponent implements OnInit {
         });
      // }
 
-
+     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();  
       //this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
       
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
@@ -110,13 +111,7 @@ export class AddstudentclassComponent implements OnInit {
   get f() { return this.studentclassForm.controls }
 
   GetMasterData() {
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));

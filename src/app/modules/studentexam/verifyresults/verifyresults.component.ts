@@ -41,6 +41,7 @@ export class VerifyResultsComponent implements OnInit {
   ClassFullMark = 0;
   ClassSubjectComponents = [];
   SelectedBatchId = 0;
+  SelectedApplicationId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
   MarkComponents = [];
@@ -100,6 +101,7 @@ export class VerifyResultsComponent implements OnInit {
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
@@ -324,15 +326,7 @@ export class VerifyResultsComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Logic", "Sequence"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

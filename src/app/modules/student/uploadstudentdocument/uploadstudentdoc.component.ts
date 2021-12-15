@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
+import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
@@ -32,6 +33,7 @@ export class StudentDocumentComponent implements OnInit {
   formdata: FormData;
   selectedFile: any;
   StudentId: number = 0;
+  SelectedApplicationId=0;
   StudentClassId: number = 0;
   StudentDocuments = [];
   Edit: boolean;
@@ -51,6 +53,7 @@ export class StudentDocumentComponent implements OnInit {
   ]
   documentUploadSource: MatTableDataSource<IUploadDoc>;
   constructor(
+    private contentservice:ContentService,
     private fileUploadService: FileUploadService,
     private alertMessage: AlertService,
     private shareddata: SharedataService,
@@ -73,6 +76,7 @@ export class StudentDocumentComponent implements OnInit {
       this.nav.navigate(['/edu']);
     }
     else {
+      this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.DOCUMENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -182,12 +186,7 @@ export class StudentDocumentComponent implements OnInit {
   }
   GetMasterData() {
     debugger;
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["(" + this.FilterOrgIdOnly + " or ParentId eq 0) and Active eq 1"];
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.DOCUMENTTYPE);

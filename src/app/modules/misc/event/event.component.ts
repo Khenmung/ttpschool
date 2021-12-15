@@ -63,6 +63,7 @@ export class EventComponent implements OnInit {
     "Active",
     "Action"
   ];
+  SelectedApplicationId=0;
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
@@ -94,6 +95,7 @@ export class EventComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -250,14 +252,7 @@ export class EventComponent implements OnInit {
 
   GetMasterData() {
 
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);

@@ -259,16 +259,7 @@ export class GetreportComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = ' and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.AllMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

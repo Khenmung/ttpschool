@@ -37,14 +37,15 @@ export class EmployeesearchComponent implements OnInit {
   EmployeeData: IEmployee[];
   dataSource: MatTableDataSource<IEmployee>;
   displayedColumns = [
-    'EmployeeCode', 
-    'Name', 
-    'Department', 
+    'EmployeeCode',
+    'Name',
+    'Department',
     'Designation',
     'Grade',
     'Manager',
-    'Active', 
+    'Active',
     'Action'];
+  SelectedApplicationId = 0;
   allMasterData = [];
   Employees = [];
   Genders = [];
@@ -84,14 +85,14 @@ export class EmployeesearchComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
-    
+
     this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
     this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
     this.EmployeeSearchForm = this.fb.group({
       searchemployeeName: [''],
       EmployeeCode: ['']
     })
-
+    this.SelectedApplicationId = +this.token.getSelectedAPPId();
     this.filteredEmployees = this.EmployeeSearchForm.get("searchemployeeName").valueChanges
       .pipe(
         startWith(''),
@@ -104,11 +105,11 @@ export class EmployeesearchComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.EmployeeCode),
         map(EmployeeCode => EmployeeCode ? this._filterC(EmployeeCode) : this.Employees.slice())
       );
-    
-      this.contentservice.GetGrades(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Grades = [...data.value];
-      });
-    
+
+    this.contentservice.GetGrades(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Grades = [...data.value];
+    });
+
 
     this.GetMasterData();
     //this.GetFeeTypes();
@@ -133,15 +134,7 @@ export class EmployeesearchComponent implements OnInit {
     return emp && emp.EmployeeCode ? emp.EmployeeCode : '';
   }
   GetMasterData() {
-    //debugger;
-    this.loading = true;
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or " + this.filterOrgIdOnly + ')'];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
 
         this.SelectedBatchId = +this.token.getSelectedBatchId();
@@ -182,12 +175,12 @@ export class EmployeesearchComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.contentservice.GetFeeDefinitions(this.SelectedBatchId,this.LoginUserDetail[0]["orgId"]).subscribe((f:any)=>{
-          this.FeeDefinitions =[...f];
+        this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
+          this.FeeDefinitions = [...f];
           this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
         });
         //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-        
+
 
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeSection(this.Sections);
@@ -236,7 +229,7 @@ export class EmployeesearchComponent implements OnInit {
     this.shareddata.ChangeEmployeeName(EmployeeName);
 
     this.token.saveEmployeeId(element.EmployeeId);
-    
+
   }
   new() {
     //var url = this.route.url;
@@ -252,11 +245,11 @@ export class EmployeesearchComponent implements OnInit {
     const datatoExport: Partial<IEmployeeDownload>[] = this.EmployeeData.map(x => ({
       EmployeeCode: x.EmployeeCode,
       FistName: x.FirstName,
-      LastName: x.LastName,      
+      LastName: x.LastName,
       Designation: x.Designation,
-      Department:x.Department,
-      Manager:x.Manager,
-      Grade:x.Grade      
+      Department: x.Department,
+      Manager: x.Manager,
+      Grade: x.Grade
     }));
     TableUtil.exportArrayToExcel(datatoExport, "ExampleArray");
   }
@@ -296,16 +289,16 @@ export class EmployeesearchComponent implements OnInit {
     var EmployeeName = this.EmployeeSearchForm.get("searchemployeeName").value.Name;
     if (EmployeeName != undefined && EmployeeName.trim().length > 0)
       checkFilterString += " and  EmployeeId eq " + this.EmployeeSearchForm.get("searchemployeeName").value.EmployeeId;
-   
+
     let list: List = new List();
     list.fields = [
-      "EmployeeId",    
-      "EmpGradeId", 
+      "EmployeeId",
+      "EmpGradeId",
       "DepartmentId",
       "DesignationId",
       "Active"
-      ];
-    
+    ];
+
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($select=ShortName,FirstName,LastName),EmpGrade($select=MasterDataName),Designation($select=MasterDataName),Department($select=MasterDataName),Manager($select=ShortName,FirstName,LastName)"];
     list.filter = [this.filterOrgIdOnly + checkFilterString];
@@ -315,14 +308,14 @@ export class EmployeesearchComponent implements OnInit {
       .subscribe((data: any) => {
         ////console.log(data.value);
         if (data.value.length > 0) {
-          
+
           this.EmployeeData = data.value.map(item => {
             item.EmployeeCode = item.EmployeeCode;
             item.Name = item.Employee.FirstName + " " + item.Employee.LastName;
             item.Grade = item.EmpGrade.MasterDataName;
-            item.Designation = item.Designation.MasterDataName;           
+            item.Designation = item.Designation.MasterDataName;
             item.Department = item.Department.MasterDataName;
-            item.Manager = item.Manager.FirstName + " " + item.Manager.LastName;           
+            item.Manager = item.Manager.FirstName + " " + item.Manager.LastName;
             return item;
           })
         }
@@ -339,7 +332,7 @@ export class EmployeesearchComponent implements OnInit {
   GetEmployees() {
     this.loading = true;
     let list: List = new List();
-    list.fields = ["EmpEmployeeId","EmployeeCode","FirstName","LastName","ContactNo"];
+    list.fields = ["EmpEmployeeId", "EmployeeCode", "FirstName", "LastName", "ContactNo"];
     list.PageName = "EmpEmployees";
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
@@ -349,13 +342,13 @@ export class EmployeesearchComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
-            
+
             var _name = Employee.FirstName + " " + Employee.LastName;
             var _fullDescription = _name + "-" + Employee.ContactNo;
             return {
-              EmployeeId:Employee.EmpEmployeeId,
+              EmployeeId: Employee.EmpEmployeeId,
               EmployeeCode: Employee.EmployeeCode,
-              Name: _fullDescription              
+              Name: _fullDescription
             }
           })
         }
@@ -365,10 +358,10 @@ export class EmployeesearchComponent implements OnInit {
 }
 export interface IEmployee {
   EmployeeCode: string;
-  Name:string;
+  Name: string;
   FirstName: string;
   LastName: string;
-  ShortName:string;
+  ShortName: string;
   Department: string;
   Designation: string;
   Manager: string;
@@ -379,7 +372,7 @@ export interface IEmployee {
 export interface IEmployeeDownload {
   EmployeeCode: string;
   FistName: string;
-  LastName:string;
+  LastName: string;
 }
 
 

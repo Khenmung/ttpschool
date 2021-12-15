@@ -20,15 +20,9 @@ mat-form-field{
     
     flex: 1 1 80px;
 }
-// .w-80{
-//     width: 80px;
-// }
-// .w-100{
-//     width:100px;
-// }
-// .w-130{
-//     width: 130px;
-// }
-// .w-150{
-//     width: 150px;
-// }
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-radius: 0px !important;
+  }
+  ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    border-radius: 0px !important;
+  }

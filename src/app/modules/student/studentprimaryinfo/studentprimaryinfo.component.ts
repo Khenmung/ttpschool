@@ -35,7 +35,7 @@ export class studentprimaryinfoComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-
+  SelectedApplicationId=0;
   loginUserDetail = [];
   StudentLeaving = false;
   StudentName = '';
@@ -154,7 +154,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
       this.StudentId = this.tokenService.getStudentId();
       this.StudentClassId = this.tokenService.getStudentClassId()
-        //console.log("this.StudentClassId",this.StudentClassId)
+      //console.log("this.StudentClassId",this.StudentClassId)
       this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
       this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
       this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
@@ -203,11 +203,17 @@ export class studentprimaryinfoComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.StudentId > 0)
-      this.GetStudent();
-    this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-      this.Classes = [...data.value];
-    });
+    if (this.loginUserDetail == null)
+      this.route.navigate(['/auth/login'])
+    else {
+      this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
+
+      if (this.StudentId > 0)
+        this.GetStudent();
+      this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      });
+    }
   }
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
@@ -240,7 +246,7 @@ export class studentprimaryinfoComponent implements OnInit {
       case 4:
         this.studentClass.PageLoad();
         break;
-      
+
     }
   }
   back() {
@@ -255,13 +261,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
   }
   GetMasterData() {
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.loginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
@@ -302,17 +302,15 @@ export class studentprimaryinfoComponent implements OnInit {
 
   }
   SaveOrUpdate() {
-    
-    if(this.studentForm.get("Bloodgroup").value==0)
-    {
-      this.loading=false;
-      this.alert.info("Please select blood group.",this.optionsNoAutoClose);      
+
+    if (this.studentForm.get("Bloodgroup").value == 0) {
+      this.loading = false;
+      this.alert.info("Please select blood group.", this.optionsNoAutoClose);
       return;
     }
-    if(this.studentForm.get("Category").value==0)
-    {
-      this.loading=false;
-      this.alert.info("Please select Category.",this.optionsNoAutoClose);      
+    if (this.studentForm.get("Category").value == 0) {
+      this.loading = false;
+      this.alert.info("Please select Category.", this.optionsNoAutoClose);
       return;
     }
     this.loading = true;
@@ -352,9 +350,9 @@ export class studentprimaryinfoComponent implements OnInit {
       Remarks: this.studentForm.get("Remarks").value,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
-      OrgId:this.loginUserDetail[0]["orgId"]
+      OrgId: this.loginUserDetail[0]["orgId"]
     });
-    console.log("studentData",this.studentData)
+    console.log("studentData", this.studentData)
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else
@@ -447,7 +445,7 @@ export class studentprimaryinfoComponent implements OnInit {
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
               Remarks: stud.Remarks,
               Active: stud.Active,
-              ReasonForLeavingId: stud.ReasonForLeavingId             
+              ReasonForLeavingId: stud.ReasonForLeavingId
             })
 
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)

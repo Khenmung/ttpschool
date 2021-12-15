@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, SelectMultipleControlValueAccessor } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -35,6 +35,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   StoreForUpdate: ISlotNClassSubject[] = [];
   ClassWiseSubjectDisplay = [];
   SelectedBatchId = 0;
+  SelectedApplicationId =0;
   ExamSlots = [];
   Classes = [];
   Subjects = [];
@@ -85,10 +86,11 @@ export class SlotnclasssubjectComponent implements OnInit {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
+ 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -462,16 +464,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);

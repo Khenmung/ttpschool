@@ -57,6 +57,7 @@ export class StudentprogressreportComponent implements OnInit {
   allMasterData = [];
   Permission = 'deny';
   ExamId = 0;
+  SelectedApplicationId=0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     ExamId: 0,
@@ -92,6 +93,7 @@ export class StudentprogressreportComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -266,16 +268,7 @@ export class StudentprogressreportComponent implements OnInit {
 
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Logic", "Sequence"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

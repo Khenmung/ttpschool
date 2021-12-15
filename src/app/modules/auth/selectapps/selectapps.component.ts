@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -29,6 +30,7 @@ export class SelectappsComponent implements OnInit {
   OrgId = 0;
   UserId ="";
   loading = false;
+  SelectedApplicationId=0;
   Applications = [];
   ToUpdateCount = -1;
   TotalAmount = 0;
@@ -69,7 +71,8 @@ export class SelectappsComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private nav: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private contentservice:ContentService
   ) {
 
   }
@@ -85,6 +88,7 @@ export class SelectappsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.OrgId = +localStorage.getItem('orgId');
       this.UserId = localStorage.getItem('userId');
       if (this.OrgId == 0 || isNaN(this.OrgId))
@@ -266,16 +270,7 @@ export class SelectappsComponent implements OnInit {
 
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq 0 or OrgId eq ' + this.OrgId + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.common.CURRENCY);

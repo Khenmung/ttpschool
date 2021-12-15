@@ -9,6 +9,7 @@ import { evaluate } from 'mathjs';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -39,6 +40,7 @@ export class VariableConfigComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   rowCount = 0;
+  SelectedApplicationId=0;
   filteredOptions: Observable<IVariableConfig[]>;
   VariableConfig = [];
   ConfigTypes = [];
@@ -69,10 +71,8 @@ export class VariableConfigComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
+    private contentservice: ContentService,
     private fb: FormBuilder
   ) { }
 
@@ -106,6 +106,7 @@ export class VariableConfigComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
       //      this.GetVariables();
@@ -295,23 +296,10 @@ export class VariableConfigComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.CONFIGTYPE);
-        // this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
-        // this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
-        // this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
-        //this.loading = false;
         this.GetVariables();
       });
   }

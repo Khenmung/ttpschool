@@ -16,6 +16,7 @@ export class ContentService implements OnInit {
   Applications = [];
   UserDetail = [];
   url: any;
+  SelectedApplicationId = 0;
   constructor(
     private tokenService: TokenStorageService,
     private http: HttpClient,
@@ -25,6 +26,8 @@ export class ContentService implements OnInit {
   ngOnInit(): void {
     //debugger;
     //this.UserDetail = this.tokenService.getUserDetail();
+    this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
+
   }
   AddUpdateContent(pagecontent: any) {
     ////debugger  
@@ -220,55 +223,72 @@ export class ContentService implements OnInit {
   }
 
   private GetMasterData(UserRole) {
-    //debugger;
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq 0 or OrgId eq " + localStorage.getItem("orgId") + ")"];
-    //list.orderBy = "ParentId";
+    var applicationtext = globalconstants.MasterDefinitions.ttpapps.bang;
+    var roletext = globalconstants.MasterDefinitions.school.ROLE
 
+    let list: List = new List();
+    list.fields = ["MasterDataId", "MasterDataName"];
+    list.PageName = "MasterItems";
+    list.filter = ["MasterDataName eq '" + applicationtext +
+      "' or MasterDataName eq '" + roletext + "'"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        ////console.log(data.value);
-        //this.shareddata.ChangeMasterData(data.value);
-        this.allMasterData = [...data.value];
+        var Ids = [...data.value];
 
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+        if (Ids.length > 0) {
+          var ApplicationMasterDataId = Ids.filter(f => f.MasterDataName.toLowerCase() == applicationtext)[0].MasterDataId;
+          var RoleMasterDataId = Ids.filter(f => f.MasterDataName.toLowerCase() == roletext)[0].MasterDataId;
+          let list: List = new List();
+          list.fields = ["MasterDataId,MasterDataName,Description,ParentId"];
+          list.PageName = "MasterItems";
+          list.filter = ["(ParentId eq " + ApplicationMasterDataId + " or ParentId eq " + RoleMasterDataId +
+            " or MasterDataId eq " + ApplicationMasterDataId + " or MasterDataId eq " + RoleMasterDataId +
+            ") and Active eq 1"];
 
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
+          this.dataservice.get(list)
+            .subscribe((data: any) => {
+              ////console.log(data.value);
+              //this.shareddata.ChangeMasterData(data.value);
+              this.allMasterData = [...data.value];
 
-        this.RoleFilter = ' and (RoleId eq 0';
-        var __organization = '';
-        if (UserRole[0].OrgId != null)
-          __organization = UserRole[0].Org.OrganizationName;
+              this.Applications = this.getDropDownData(applicationtext);
 
-        this.UserDetail[0]["RoleUsers"] =
-          UserRole.map(roleuser => {
-            if (roleuser.Active == 1 && roleuser.RoleId != null) {
-              this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
-              var _role = '';
-              if (this.Roles.length > 0 && roleuser.RoleId != null)
-                _role = this.Roles.filter(a => a.MasterDataId == roleuser.RoleId)[0].MasterDataName;
-              return {
-                roleId: roleuser.RoleId,
-                role: _role,
-              }
-            }
-            else
-              return false;
-          })
+              this.Roles = this.getDropDownData(roletext);
+
+              this.RoleFilter = ' and (RoleId eq 0';
+              var __organization = '';
+              if (UserRole[0].OrgId != null)
+                __organization = UserRole[0].Org.OrganizationName;
+
+              this.UserDetail[0]["RoleUsers"] =
+                UserRole.map(roleuser => {
+                  if (roleuser.Active == 1 && roleuser.RoleId != null) {
+                    this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
+                    var _role = '';
+                    if (this.Roles.length > 0 && roleuser.RoleId != null)
+                      _role = this.Roles.filter(a => a.MasterDataId == roleuser.RoleId)[0].MasterDataName;
+                    return {
+                      roleId: roleuser.RoleId,
+                      role: _role,
+                    }
+                  }
+                  else
+                    return false;
+                })
 
 
-        //login detail is save even though roles are not defined.
-        //so that user can continue their settings.
-        this.tokenService.saveUserdetail(this.UserDetail);
-        if (this.RoleFilter.length > 0)
-          this.RoleFilter += ')';
-        this.tokenService.saveCheckEqualBatchId
-        this.GetApplicationRolesPermission();
-      }, error => {
-        this.tokenService.signOut();
-      });
+              //login detail is save even though roles are not defined.
+              //so that user can continue their settings.
+              this.tokenService.saveUserdetail(this.UserDetail);
+              if (this.RoleFilter.length > 0)
+                this.RoleFilter += ')';
+              this.tokenService.saveCheckEqualBatchId
+              this.GetApplicationRolesPermission();
+            }, error => {
+              this.tokenService.signOut();
+            });
+        }
+      })
   }
 
   private GetApplicationRolesPermission() {
@@ -286,7 +306,7 @@ export class ContentService implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        debugger;
         if (data.value.length > 0) {
           var _applicationName = '';
           var _appShortName = '';
@@ -321,5 +341,17 @@ export class ContentService implements OnInit {
         }
       })
   }
+  GetCommonMasterData(orgId,appId) {
 
+    var orgIdSearchstr = ' and ApplicationId eq ' + appId +
+      ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
+
+    let list: List = new List();
+
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId","Description","Logic","Sequence","Active"];
+    list.PageName = "MasterItems";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    return this.dataservice.get(list);
+
+  }
 }

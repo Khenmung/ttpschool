@@ -66,7 +66,7 @@ export class globalconstants {
                 "CUSTOMERINVOICECOMPONENT":'invoice components',
                 "REPORTCONIG":'report config',
                 "MENUCONFIG":'menu config',
-                "PLANANDMASTERDATA":'plan and master data'
+                "PLANANDMASTERDATA":'Plan n Master Item'
             },
             "common": {
                 'AUTH': {

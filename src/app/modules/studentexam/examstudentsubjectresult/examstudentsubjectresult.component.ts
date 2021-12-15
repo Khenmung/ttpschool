@@ -31,6 +31,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   SelectedBatchId = 0;
+  SelectedApplicationId=0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
   MarkComponents = [];
@@ -91,7 +92,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -494,16 +495,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

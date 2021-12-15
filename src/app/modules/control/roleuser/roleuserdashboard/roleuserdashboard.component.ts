@@ -14,6 +14,7 @@ import { map, startWith } from 'rxjs/operators';
 import { AuthService } from 'src/app/_services/auth.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-roleuserdashboard',
@@ -41,7 +42,7 @@ export class roleuserdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-
+  SelectedApplicationId=0;
   Departments = [];
   Locations = [];
   Applications = [];
@@ -79,6 +80,7 @@ export class roleuserdashboardComponent implements OnInit {
     private authservice: AuthService,
     private nav: Router,
     private shareddata: SharedataService,
+    private contentservice:ContentService,
     private fb: FormBuilder) {
   }
 
@@ -112,6 +114,7 @@ export class roleuserdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     }
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -155,16 +158,7 @@ export class roleuserdashboardComponent implements OnInit {
 
   GetMasterData() {
 
-    var orgIdSearchstr = ' or OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 " + orgIdSearchstr + ')'];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);

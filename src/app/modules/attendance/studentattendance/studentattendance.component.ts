@@ -76,6 +76,7 @@ export class StudentAttendanceComponent implements OnInit {
     'Remarks',
     'Action'
   ];
+  SelectedApplicationId=0;
 
   constructor(
     private fb: FormBuilder,
@@ -93,7 +94,8 @@ export class StudentAttendanceComponent implements OnInit {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.StudentClassId = 1;
+    this.StudentClassId = 0;
+    this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -431,16 +433,7 @@ export class StudentAttendanceComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

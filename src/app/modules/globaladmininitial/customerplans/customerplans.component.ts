@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -62,8 +63,10 @@ export class CustomerPlansComponent implements OnInit {
     "Active",
     "Action"
   ];
+  SelectedApplicationId=0;
   searchForm: FormGroup;
   constructor(
+    private contentservice:ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -89,6 +92,7 @@ export class CustomerPlansComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       //this.Applications = this.tokenstorage.getPermittedApplications();
       ////console.log("app this",this.Applications)
       this.GetMasterData();
@@ -303,16 +307,7 @@ onBlur(element) {
 
 GetMasterData() {
 
-  var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-  let list: List = new List();
-
-  list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Sequence"];
-  list.PageName = "MasterItems";
-  list.filter = ["Active eq 1 " + orgIdSearchstr];
-  //list.orderBy = "ParentId";
-
-  this.dataservice.get(list)
+  this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
     .subscribe((data: any) => {
       this.allMasterData = [...data.value];
       this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.common.CURRENCY);

@@ -24,6 +24,7 @@ export class EmployeeComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SelectedApplicationId=0;
   loginUserDetail = [];
   EmployeeLeaving = false;
   EmployeeName = '';
@@ -203,6 +204,7 @@ export class EmployeeComponent implements OnInit {
   ngOnInit(): void {
     this.loginUserDetail = this.tokenService.getUserDetail();
     this.EmployeeId = this.tokenService.getEmployeeId();
+    this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
     if (this.EmployeeId > 0)
     {
       this.GetMasterData();
@@ -255,13 +257,7 @@ export class EmployeeComponent implements OnInit {
   }
   GetMasterData() {
 
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or OrgId eq " + this.loginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];

@@ -34,7 +34,7 @@ export class PlanFeatureComponent implements OnInit {
   PlanFeatureListName = 'PlanFeatures';
   loading = false;
   SelectedBatchId = 0;
-  //SelectedApplicationId =0;
+  SelectedApplicationId =0;
   RowToUpdateCount = -1;
   Topfeatures = [];
   Plans = [];
@@ -102,6 +102,7 @@ export class PlanFeatureComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.GetPlans();
         this.GetMasterData();
 
@@ -369,14 +370,7 @@ GetPlanFeature() {
 
 GetMasterData() {
 
-  let list: List = new List();
-
-  list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-  list.PageName = "MasterItems";
-  list.filter = ["Active eq 1 and (ParentId eq 0 or MasterDataName eq 'Application' or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-  //list.orderBy = "ParentId";
-
-  this.dataservice.get(list)
+  this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
     .subscribe((data: any) => {
       this.allMasterData = [...data.value];
       this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -26,6 +27,7 @@ export class EmployeedocumentsComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SelectedApplicationId=0;
   Permission = '';
   FilterOrgnBatchId = '';
   FilterOrgIdOnly = '';
@@ -50,6 +52,7 @@ export class EmployeedocumentsComponent implements OnInit {
   ]
   documentUploadSource: MatTableDataSource<IUploadDoc>;
   constructor(
+    private contentservice:ContentService,
     private fileUploadService: FileUploadService,
     private alertMessage: AlertService,
     private shareddata: SharedataService,
@@ -77,6 +80,7 @@ export class EmployeedocumentsComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         //this.StudentId = this.tokenService.getStudentId();
+        this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
         this.LoginUserDetail = this.tokenService.getUserDetail();
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.FilterOrgnBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenService);
@@ -178,13 +182,7 @@ export class EmployeedocumentsComponent implements OnInit {
     return;
   }
   GetMasterData() {
-    debugger;
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["(" + this.FilterOrgIdOnly + " or ParentId eq 0) and Active eq 1"];
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.DOCUMENT);

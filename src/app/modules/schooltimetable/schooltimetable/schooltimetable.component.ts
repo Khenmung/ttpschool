@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class SchooltimetableComponent implements OnInit {
   //weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
+  SelectedApplicationId =0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -94,6 +94,7 @@ export class SchooltimetableComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.CLASSTIMETABLE)
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -266,7 +267,7 @@ export class SchooltimetableComponent implements OnInit {
         var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
         if (filterPeriods.length == 0) {
           this.alert.info("Period not yet defined for this class.", this.optionsNoAutoClose);
-          
+
         }
         else {
           this.WeekDays.forEach(p => {
@@ -498,21 +499,7 @@ export class SchooltimetableComponent implements OnInit {
   }
 
   GetMasterData() {
-
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = [
-      "MasterDataId",
-      "MasterDataName",
-      "ParentId",
-      "Sequence"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);

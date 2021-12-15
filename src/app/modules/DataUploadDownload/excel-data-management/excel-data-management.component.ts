@@ -33,6 +33,7 @@ export class ExcelDataManagementComponent implements OnInit {
     STUDENTDATA: 'student upload',
     STUDENTACTIVITY: 'student activity'
   }
+  SelectedApplicationId=0;
   filterOrgIdNBatchId = '';
   filterOrgId = '';
 
@@ -73,6 +74,7 @@ export class ExcelDataManagementComponent implements OnInit {
     this.PageLoad();
   }
   PageLoad() {
+    this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
     if (this.UploadTypes.length == 0)
       this.GetMasterData();
     else
@@ -509,13 +511,7 @@ export class ExcelDataManagementComponent implements OnInit {
       })
   }
   GetMasterData() {
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or " + this.filterOrgId + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.AllMasterData = [...data.value];

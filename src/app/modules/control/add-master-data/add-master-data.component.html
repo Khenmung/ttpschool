@@ -43,11 +43,12 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input [disabled]="Parent=='Information Restriction' 
-                                            || Parent=='Period Type'
-                                            || Parent=='Roll No Generation' 
-                                            || Parent=='Class Promotion'
-                                            || element.MasterDataName=='Cash'" matInput
+                    <input [disabled]="element.ParentId ==0
+                                       || Parent=='Information Restriction' 
+                                       || Parent=='Period Type'
+                                       || Parent=='Roll No Generation' 
+                                       || Parent=='Class Promotion'
+                                       || element.MasterDataName=='Cash'" matInput
                         [value]="element.MasterDataName" [(ngModel)]="element.MasterDataName" autocomplete="Off"
                         placeholder="" (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
                 </mat-form-field>
@@ -118,7 +119,7 @@
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="view/edit"
+                <button [disabled]="loading || !element.Action || Permission=='read' || element.ParentId ==0" matTooltip="view/edit"
                     mat-mini-fab (click)="SaveRow(element)">
                     <mat-icon>save</mat-icon>
                 </button>

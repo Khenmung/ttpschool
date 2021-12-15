@@ -31,6 +31,7 @@ export class ClassdetailComponent implements OnInit {
   ClassMasterListName = 'ClassMasters';
   Applications = [];
   loading = false;
+  SelectedApplicationId=0;
   SelectedBatchId = 0;
   ClassMasterList: IClassMaster[] = [];
   filteredOptions: Observable<IClassMaster[]>;
@@ -52,7 +53,7 @@ export class ClassdetailComponent implements OnInit {
     EndDate: Date,
     StudyAreaId: 0,
     StudyModeId: 0,
-    Sequence:0,
+    Sequence: 0,
     BatchId: 0,
     OrgId: 0,
     Active: 0
@@ -102,6 +103,7 @@ export class ClassdetailComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -127,7 +129,7 @@ export class ClassdetailComponent implements OnInit {
     var newdata = {
       ClassId: 0,
       ClassName: '',
-      Sequence:0,
+      Sequence: 0,
       DurationId: 0,
       MinStudent: 0,
       MaxStudent: 0,
@@ -284,14 +286,7 @@ export class ClassdetailComponent implements OnInit {
 
   GetMasterData() {
 
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and (ParentId eq 0 or MasterDataName eq 'Application' or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
@@ -327,7 +322,7 @@ export interface IClassMaster {
   EndDate: Date;
   StudyAreaId: number;
   StudyModeId: number;
-  Sequence:number;
+  Sequence: number;
   BatchId: number;
   Active: number;
   Action: boolean;

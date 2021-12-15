@@ -15,7 +15,7 @@ export class SidebarComponent implements OnInit {
   loginUserDetail = [];
   sideMenu = [];
   collapse = false;
-  ApplicationId = 0;
+  SelectedApplicationId = 0;
   constructor(
     private dataservice: NaomitsuService,
     private shareddata: SharedataService,
@@ -27,10 +27,11 @@ export class SidebarComponent implements OnInit {
     //   this.ApplicationId = param["id"];
     // })
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-    this.ApplicationId = +this.tokenStorage.getSelectedAPPId();
-    if (this.ApplicationId == 0)
+    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+    if (this.SelectedApplicationId == 0)
       this.route.navigate(['/dashboard']);
-    this.GetMenuData();
+    else
+      this.GetMenuData();
   }
   open() {
 
@@ -42,32 +43,38 @@ export class SidebarComponent implements OnInit {
     debugger;
     //let containAdmin = window.location.href.toLowerCase().indexOf('admin');
     let strFilter = '';
-    strFilter = "ParentId eq 0 and Active eq 1 and ApplicationId eq " + this.ApplicationId;
+    strFilter = "PlanId eq " + this.loginUserDetail[0]["planId"] + " and Active eq 1 and ApplicationId eq " + this.SelectedApplicationId;
 
     let list: List = new List();
     list.fields = [
-      "PageId"
-      , "PageTitle"
-      , "label"
-      , "faIcon"
-      , "link"
-      , "ParentId"
-      , "HasSubmenu"
-      , "UpdateDate"
+      "PlanFeatureId",
+      "PlanId",
+      "PageId",
+      "ApplicationId"
     ];
 
-    list.PageName = "Pages";
-    list.orderBy = "DisplayOrder";
+    list.PageName = "PlanFeatures";
+    list.lookupFields = ["Page($select=PageId,PageTitle,label,faIcon,link,ParentId,HasSubmenu,UpdateDate,DisplayOrder)"];
+    //list.orderBy = "DisplayOrder";
     list.filter = [strFilter];
     var permission;
     this.dataservice.get(list).subscribe((data: any) => {
       //this.sideMenu = [...data.value];
       data.value.forEach(m => {
-        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.PageTitle.toLowerCase().trim())
+        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId==0)
         if (permission.length > 0 && permission[0].permission !='deny') {
+          m.PageId = m.Page.PageId;
+          m.PageTitle = m.Page.PageTitle;
+          m.label = m.Page.label;
+          m.faIcon = m.Page.faIcon;
+          m.link = m.Page.link;
+          m.ParentId = m.Page.ParentId;
+          m.HasSubmenu = m.Page.HasSubmenu;
+          m.DisplayOrder = m.Page.DisplayOrder;
           this.sideMenu.push(m);
         }
       })
+      this.sideMenu = this.sideMenu.sort((a,b)=>a.DisplayOrder - b.DisplayOrder);
 
       let NewsNEvents = this.sideMenu.filter(item => {
         return item.label.toUpperCase() == 'NEWS N EVENTS'

@@ -68,6 +68,7 @@ export class GenerateCertificateComponent implements OnInit {
   filteredOptions: Observable<IStudent[]>;
   ExamId = 0;
   StudentClassId = 0;
+  SelectedApplicationId=0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     ExamId: 0,
@@ -131,7 +132,7 @@ export class GenerateCertificateComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.StudentClassId = +this.tokenstorage.getStudentClassId();
-
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.GENERATECERTIFICATE);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -428,16 +429,7 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetMasterData() {
 
-    var orgIdSearchstr = 'and (ParentId eq 0  or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ')';
-
-    let list: List = new List();
-
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId", "Logic", "Sequence"];
-    list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         // this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
