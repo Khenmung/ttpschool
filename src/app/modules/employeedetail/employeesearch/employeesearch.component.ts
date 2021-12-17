@@ -30,7 +30,7 @@ export class EmployeesearchComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  //ApplicationId = 0;
+  Designations = [];
   filterOrgIdNBatchId = '';
   filterOrgIdOnly = '';
   filterBatchIdNOrgId = '';
@@ -59,9 +59,6 @@ export class EmployeesearchComponent implements OnInit {
   Location = [];
   LanguageSubjUpper = [];
   LanguageSubjLower = [];
-  FeeType = [];
-  FeeDefinitions = [];
-  Sections = [];
   UploadTypes = [];
   ReasonForLeaving = [];
   //StandardFilter ='';
@@ -114,6 +111,7 @@ export class EmployeesearchComponent implements OnInit {
     this.GetMasterData();
     //this.GetFeeTypes();
     this.GetEmployees();
+    this.loading=false;
   }
   private _filter(name: string): IEmployee[] {
 
@@ -175,15 +173,19 @@ export class EmployeesearchComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
-          this.FeeDefinitions = [...f];
-          this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
-        });
+        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+        //this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.);
+        //this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
+
+        // this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
+        //   this.FeeDefinitions = [...f.value];
+        //   this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
+        // });
         //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
 
 
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.ChangeSection(this.Sections);
+        // this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        // this.shareddata.ChangeSection(this.Sections);
 
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
@@ -225,15 +227,17 @@ export class EmployeesearchComponent implements OnInit {
     this.route.navigate(['/edu/feepayment']);
   }
   generateDetail(element) {
+    debugger;
     let EmployeeName = element.EmployeeCode + ' ' + element.Name;
     this.shareddata.ChangeEmployeeName(EmployeeName);
 
-    this.token.saveEmployeeId(element.EmployeeId);
+    this.token.saveEmployeeId(element.EmpEmployeeId);
 
   }
-  new() {
+  addNew() {
     //var url = this.route.url;
-    this.route.navigate(['/edu/addEmployee']);
+    this.token.saveEmployeeId("0");
+    this.route.navigate(['/employee/info']);
   }
   ExportTOExcel() {
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.tableRef.nativeElement);
@@ -267,43 +271,37 @@ export class EmployeesearchComponent implements OnInit {
         }
       })
   }
-  GetFeeTypes() {
-    this.loading = true;
-    var filter = globalconstants.getStandardFilterWithBatchId(this.token);
-    let list: List = new List();
-    list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
-    list.PageName = "SchoolFeeTypes";
-    list.filter = [filter];
+  // GetFeeTypes() {
+  //   this.loading = true;
+  //   var filter = globalconstants.getStandardFilterWithBatchId(this.token);
+  //   let list: List = new List();
+  //   list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
+  //   list.PageName = "SchoolFeeTypes";
+  //   list.filter = [filter];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.FeeType = [...data.value];
-        this.shareddata.ChangeFeeType(this.FeeType);
-        this.loading = false;
-      })
-  }
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.FeeType = [...data.value];
+  //       this.shareddata.ChangeFeeType(this.FeeType);
+  //       this.loading = false;
+  //     })
+  // }
   GetEmployee() {
     //debugger;
 
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var EmployeeName = this.EmployeeSearchForm.get("searchemployeeName").value.Name;
     if (EmployeeName != undefined && EmployeeName.trim().length > 0)
-      checkFilterString += " and  EmployeeId eq " + this.EmployeeSearchForm.get("searchemployeeName").value.EmployeeId;
+      checkFilterString += " and  EmpEmployeeId eq " + this.EmployeeSearchForm.get("searchemployeeName").value.EmployeeId;
 
     let list: List = new List();
     list.fields = [
-      "EmployeeId",
-      "EmpGradeId",
-      "DepartmentId",
-      "DesignationId",
-      "Active"
+      "EmpEmployeeId","ShortName","FirstName","LastName","EmployeeCode"
     ];
-
-    list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["Employee($select=ShortName,FirstName,LastName),EmpGrade($select=MasterDataName),Designation($select=MasterDataName),Department($select=MasterDataName),Manager($select=ShortName,FirstName,LastName)"];
+    list.PageName = "EmpEmployees";
+    list.lookupFields = ["EmpEmployeeGradeSalHistoryEmployees($select=EmployeeId,EmpGradeId,DepartmentId,DesignationId,Active)"];
     list.filter = [this.filterOrgIdOnly + checkFilterString];
-    //list.orderBy = "ParentId";
-
+  
     this.dataservice.get(list)
       .subscribe((data: any) => {
         ////console.log(data.value);
@@ -311,11 +309,11 @@ export class EmployeesearchComponent implements OnInit {
 
           this.EmployeeData = data.value.map(item => {
             item.EmployeeCode = item.EmployeeCode;
-            item.Name = item.Employee.FirstName + " " + item.Employee.LastName;
-            item.Grade = item.EmpGrade.MasterDataName;
-            item.Designation = item.Designation.MasterDataName;
-            item.Department = item.Department.MasterDataName;
-            item.Manager = item.Manager.FirstName + " " + item.Manager.LastName;
+            item.Name = item.FirstName + " " + item.LastName;
+            item.Grade = item.EmpEmployeeGradeSalHistoryEmployees.EmpGradeId;
+            item.Designation = item.EmpEmployeeGradeSalHistoryEmployees.DesignationId;
+            item.Department = item.EmpEmployeeGradeSalHistoryEmployees.DepartmentId;
+            item.Manager = '';//item.EmpEmployeeGradeSalHistoryManagers.FirstName + " " + item.EmpEmployeeGradeSalHistoryManagers.LastName;
             return item;
           })
         }

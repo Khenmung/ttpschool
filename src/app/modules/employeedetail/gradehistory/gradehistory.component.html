@@ -6,7 +6,8 @@
     <alert></alert>
     <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
         <!-- <div style="width: 100%;"> -->
-            <mat-table style="overflow: auto;min-height: 60vh;" #table [dataSource]="dataSource">
+            <mat-table style="min-height: 60vh;width: 1760px;" #table [dataSource]="dataSource">
+
                 <ng-container matColumnDef="EmployeeGradeHistoryId">
                     <mat-header-cell *matHeaderCellDef>Id
                     </mat-header-cell>
@@ -14,6 +15,28 @@
                         {{element.EmployeeGradeHistoryId}}
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button [disabled]="loading || Permission=='read'|| EmployeeId==0" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" style="justify-content: center;">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                            (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef>Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>                
                 <ng-container matColumnDef="EmpGradeId">
                     <mat-header-cell *matHeaderCellDef>Grade
                     </mat-header-cell>
@@ -94,8 +117,7 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="150">
-                            <mat-label>employee</mat-label>
-                            <input type="text" (blur)="onBlur(element)" 
+                            <input type="text" (blur)="UpdateManagerId(element)" 
                             matInput [value]="element.ManagerName" 
                             [(ngModel)]="element.ManagerName" 
                             [matAutocomplete]="ManagerAutoComplete">
@@ -108,14 +130,22 @@
                         
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ReportingTo">
+                <ng-container matColumnDef="ReportingToName">
                     <mat-header-cell *matHeaderCellDef>Reporting To
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="150">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="256"
-                                [value]="element.ReportingTo" [(ngModel)]="element.ReportingTo">
+                            <input type="text" (blur)="UpdateReportingToId(element)" 
+                            matInput [value]="element.ReportingToName" 
+                            [(ngModel)]="element.ReportingToName" 
+                            [matAutocomplete]="ManagerAutoComplete">
+                            <mat-autocomplete #ManagerAutoComplete="matAutocomplete">
+                                <mat-option *ngFor="let option of filterEmployee(element.ReportingToName)" [value]="option.Name">
+                                    {{option.Name}}
+                                </mat-option>
+                            </mat-autocomplete>
                         </mat-form-field>
+                        
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FromDate">
@@ -144,35 +174,14 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="150">
-                            <textarea matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="256"
-                                [value]="element.Remarks" [(ngModel)]="element.Remarks"></textarea>
+                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="256"
+                                [value]="element.Remarks" [(ngModel)]="element.Remarks" autocomplete="Off">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>Active
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                            [checked]="element.Active==1?true:false">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
-                            (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
+                
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row">
+                <mat-row *matRowDef="let row; columns: displayedColumns;" style="align-items: baseline;">
                 </mat-row>
             </mat-table>
         </div>

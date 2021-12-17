@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { EmployeeactivityComponent } from './employeeactivity/employeeactivity.component';
 
 @NgModule({
   declarations: [EmployeeDetailComponents],

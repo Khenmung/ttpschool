@@ -72,7 +72,9 @@ export class EmployeedocumentsComponent implements OnInit {
     this.EmployeeId = this.tokenService.getEmployeeId();
 
     if (this.EmployeeId == 0) {
-      this.nav.navigate(['/emp']);
+      
+      this.alertMessage.info("Please define employee first.",this.optionsAutoClose);
+      //this.nav.navigate(['/employee/info']);
     }
     else {
       var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.emp.employee.DOCUMENT);

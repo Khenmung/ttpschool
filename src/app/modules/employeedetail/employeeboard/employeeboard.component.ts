@@ -5,6 +5,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { EducationhistoryComponent } from '../educationhistory/educationhistory.component';
 import { EmployeeComponent } from '../employee/employee.component';
+import { EmployeeactivityComponent } from '../employeeactivity/employeeactivity.component';
 import { EmployeedocumentsComponent } from '../employeedocuments/employeedocuments.component';
 import { EmployeeskillComponent } from '../employeeskill/employeeskill.component';
 import { FamilyComponent } from '../family/family.component';
@@ -24,7 +25,8 @@ export class EmployeeboardComponent implements AfterViewInit {
     EducationhistoryComponent,
     WorkhistoryComponent,
     EmployeeskillComponent,
-    GradehistoryComponent
+    GradehistoryComponent,
+    EmployeeactivityComponent
   ];
 
   tabNames = [
@@ -34,9 +36,10 @@ export class EmployeeboardComponent implements AfterViewInit {
     { "label": "Education History", "faIcon": '' },
     { "label": "Work History", "faIcon": '' },
     { "label": "Employee Skill", "faIcon": '' },
-    { "label": "Employement History", "faIcon": '' }
+    { "label": "Employement History", "faIcon": '' },
+    { "label": "Employement Activity", "faIcon": '' }
   ];
-  //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
+  EmployeeName='';
   Permissions =
     {
       ParentPermission: '',
@@ -57,6 +60,7 @@ export class EmployeeboardComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     debugger
+    this.shareddata.CurrentEmployeeName.subscribe(s => (this.EmployeeName = s));
     this.LoginUserDetail =  this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYEE)
@@ -71,6 +75,7 @@ export class EmployeeboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.emp.employee.DOCUMENT)
     this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYEESKILL)
     this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYMENTHISTORY)
+    this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYEEACTIVITY)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -117,6 +122,9 @@ export class EmployeeboardComponent implements AfterViewInit {
         break;
       case "employment history":
         comindx =this.components.indexOf(GradehistoryComponent);
+        break;
+      case "employment activity":
+        comindx =this.components.indexOf(EmployeeactivityComponent);
         break;
     } 
     

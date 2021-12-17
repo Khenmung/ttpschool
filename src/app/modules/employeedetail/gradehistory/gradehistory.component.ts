@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { element } from 'protractor';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
@@ -29,7 +30,7 @@ export class GradehistoryComponent implements OnInit {
     keepAfterRouteChange: true
   };
   EmploymentHistoryListName = 'EmpEmployeeGradeSalHistories';
-  Employees=[];
+  Employees = [];
   Grades = [];
   Designations = [];
   Departments = [];
@@ -45,7 +46,7 @@ export class GradehistoryComponent implements OnInit {
   EmploymentHistory = [];
   Permission = 'deny';
   EmployeeId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   EmploymentHistoryData = {
     EmployeeGradeHistoryId: 0,
     EmpGradeId: 0,
@@ -66,24 +67,24 @@ export class GradehistoryComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [
+    "Action",
+    "Active",    
     "EmployeeGradeHistoryId",
     "EmpGradeId",
     "DesignationId",
-    "JobTitleId",            
+    "JobTitleId",
     "DepartmentId",
     "WorkAccountId",
     "ManagerName",
-    "ReportingTo",            
-    //"CTC",
+    "ReportingToName",
     "FromDate",
     "ToDate",
     "Remarks",
-    "Active",
-    "Action"
+    
   ];
   searchForm: FormGroup;
   constructor(
-    private contentservice:ContentService,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
@@ -105,9 +106,11 @@ export class GradehistoryComponent implements OnInit {
     //   );
     this.PageLoad();
   }
-  filterEmployee(name: string){
+  filterEmployee(name: string) {
+    var filterValue = '';
+    if (name != undefined)
+      filterValue = name.toLowerCase();
 
-    const filterValue = name.toLowerCase();
     return name && this.Employees.filter(option => option.Name.toLowerCase().includes(filterValue)) || this.Employees;
 
   }
@@ -134,7 +137,7 @@ export class GradehistoryComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.GetEmployees();
         this.GetMasterData();
-        
+
       }
     }
   }
@@ -149,7 +152,9 @@ export class GradehistoryComponent implements OnInit {
       FromDate: new Date(),
       ToDate: new Date(),
       ManagerId: 0,
+      ManagerName: '',
       ReportingTo: 0,
+      ReportingName:'',
       JobTitleId: 0,
       DesignationId: 0,
       WorkAccountId: 0,
@@ -163,6 +168,14 @@ export class GradehistoryComponent implements OnInit {
   }
   onBlur(element) {
     element.Action = true;
+  }
+  UpdateManagerId(row:IEmployeementHistory){
+    row.Action=true;
+    row.ManagerId= this.Employees.filter(f=>f.Name ==row.ManagerName)[0].EmployeeId
+  }
+  UpdateReportingToId(row){
+    row.Action=true;
+    row.ReportingTo= this.Employees.filter(f=>f.Name ==row.ReportingToName)[0].EmployeeId
   }
   updateActive(row, value) {
     row.Action = true;
@@ -182,11 +195,11 @@ export class GradehistoryComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     this.loading = true;
-    let checkFilterString = "EmpGradeId eq " + row.EmpGradeId + 
-                            " and DesignationId eq " + row.DesignationId +
-                            " and EmployeeId eq " + this.EmployeeId
+    let checkFilterString = "EmpGradeId eq " + row.EmpGradeId +
+      " and DesignationId eq " + row.DesignationId +
+      " and EmployeeId eq " + this.EmployeeId
 
     if (row.EmployeeGradeHistoryId > 0)
       checkFilterString += " and EmployeeGradeHistoryId ne " + row.EmployeeGradeHistoryId;
@@ -203,7 +216,7 @@ export class GradehistoryComponent implements OnInit {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
-
+          
           this.EmploymentHistoryData.EmployeeGradeHistoryId = row.EmployeeGradeHistoryId;
           this.EmploymentHistoryData.Active = row.Active;
           this.EmploymentHistoryData.EmpGradeId = row.EmpGradeId;
@@ -214,7 +227,7 @@ export class GradehistoryComponent implements OnInit {
           this.EmploymentHistoryData.ManagerId = +row.ManagerId;
           this.EmploymentHistoryData.ReportingTo = +row.ReportingTo;
           this.EmploymentHistoryData.WorkAccountId = +row.WorkAccountId;
-          this.EmploymentHistoryData.CTC = row.CTC;          
+          this.EmploymentHistoryData.CTC = row.CTC;
           this.EmploymentHistoryData.FromDate = row.FromDate;
           this.EmploymentHistoryData.ToDate = row.ToDate;
           this.EmploymentHistoryData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -250,6 +263,7 @@ export class GradehistoryComponent implements OnInit {
           row.Action = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
           this.loadingFalse()
+          this.GetEmploymentHistory();
         });
   }
   update(row) {
@@ -260,6 +274,7 @@ export class GradehistoryComponent implements OnInit {
           row.Action = false;
           this.alert.success("Data updated successfully.", this.optionAutoClose);
           this.loadingFalse();
+          this.GetEmploymentHistory();
         });
   }
   GetEmploymentHistory() {
@@ -277,17 +292,22 @@ export class GradehistoryComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.EmploymentHistoryList = data.value.map(f=>{
-           
-          var _ManagerNameObj=this.Employees.filter(e=>e.EmployeeId==f.ManagerId);
-          var _ManagerName='';
-          if(_ManagerNameObj.length>0)
-          {
-            _ManagerName =_ManagerNameObj[0].Name;
+        this.EmploymentHistoryList = data.value.map(f => {
+
+          var _ManagerNameObj = this.Employees.filter(e => e.EmployeeId == f.ManagerId);
+          var _ManagerName = '';
+          if (_ManagerNameObj.length > 0) {
+            _ManagerName = _ManagerNameObj[0].Name;
           }
-          f.ManagerName =_ManagerName; 
+          var _ReportingToNameObj = this.Employees.filter(e => e.EmployeeId == f.ReportingTo);
+          var _ReportingToName = '';
+          if (_ReportingToNameObj.length > 0) {
+            _ReportingToName = _ReportingToNameObj[0].Name;
+          }
+          f.ReportingToName=_ReportingToName;
+          f.ManagerName = _ManagerName;
           return f;
-        })
+        }).sort((a,b)=>b.EmployeeGradeHistoryId-a.EmployeeGradeHistoryId)
         //console.log("EmploymentHistoryList",this.EmploymentHistoryList)
         this.dataSource = new MatTableDataSource<IEmployeementHistory>(this.EmploymentHistoryList);
         this.loadingFalse();
@@ -297,10 +317,10 @@ export class GradehistoryComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Grades =this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
@@ -327,7 +347,7 @@ export class GradehistoryComponent implements OnInit {
   GetEmployees() {
     this.loading = true;
     let list: List = new List();
-    list.fields = ["EmpEmployeeId","EmployeeCode","FirstName","LastName","ContactNo"];
+    list.fields = ["EmpEmployeeId", "EmployeeCode", "FirstName", "LastName", "ContactNo"];
     list.PageName = "EmpEmployees";
     list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
@@ -337,13 +357,13 @@ export class GradehistoryComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
-            
+
             var _name = Employee.FirstName + " " + Employee.LastName;
             var _fullDescription = _name + "-" + Employee.ContactNo;
             return {
-              EmployeeId:Employee.EmpEmployeeId,
+              EmployeeId: Employee.EmpEmployeeId,
               EmployeeCode: Employee.EmployeeCode,
-              Name: _fullDescription              
+              Name: _fullDescription
             }
           })
         }
@@ -359,7 +379,9 @@ export interface IEmployeementHistory {
   FromDate: Date;
   ToDate: Date;
   ManagerId: number;
+  ManagerName: string;
   ReportingTo: number;
+  ReportingName: string;
   JobTitleId: number;
   DesignationId: number;
   WorkAccountId: number;

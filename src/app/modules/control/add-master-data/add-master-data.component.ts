@@ -150,33 +150,38 @@ export class AddMasterDataComponent implements OnInit {
   displayFn(master: IMaster): string {
     return master && master.MasterDataName ? master.MasterDataName : '';
   }
-  
+
   GetMastersForAutoComplete() {
     debugger;
+    var apps = this.tokenStorage.getPermittedApplications();
+    var commonAppId = apps.filter(f => f.appShortName == 'common')[0].applicationId;
+
     var applicationFilter = '';
-    applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
-    var masterFilter =  "Active eq 1 and OrgId eq " + this.UserDetails[0]["orgId"]  + " and ApplicationId eq " + this.SelectedApplicationId
+    //applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
+    var applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"] +
+      " and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
     let list: List = new List();
     list.fields = [
-      "MasterDataId", 
+      "MasterDataId",
       "PlanAndMasterDataId"
-      ];
+    ];
     list.PageName = "PlanAndMasterItems";
     list.lookupFields = ["MasterData($select=MasterDataId,ParentId,MasterDataName,Description,ApplicationId)"];
 
     list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
+    //console.log("GetMastersForAutoComplete",this.SelectedApplicationId)  
     return this.dataservice.get(list).subscribe((data: any) => {
-      var result= data.value.map(d=>{
+      var result = data.value.map(d => {
         d.MasterDataName = d.MasterData.MasterDataName,
-        d.ParentId = d.MasterData.ParentId,
-        d.ApplicationId = d.MasterData.ApplicationId,
-        d.Description = d.MasterData.Description
-        return d;        
-      }).filter(f=>f.ApplicationId == this.SelectedApplicationId)
-      
-      this.MasterData =result.sort((a, b) => a.ParentId - b.ParentId);
-      console.log("MasterData",this.MasterData);
+          d.ParentId = d.MasterData.ParentId,
+          d.ApplicationId = d.MasterData.ApplicationId,
+          d.Description = d.MasterData.Description
+        return d;
+      })//.filter(f=>f.ApplicationId == this.SelectedApplicationId)
+
+      this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);
+      //console.log("MasterData",this.MasterData);
     })
 
   }
@@ -277,20 +282,21 @@ export class AddMasterDataComponent implements OnInit {
   GetSubMasters(element) {
     debugger;
     this.loading = true;
-    this.GetMasters(element.MasterDataId, this.UserDetails[0]["orgId"]).subscribe((data: any) => {
+    var _appId = this.MasterData.filter(f=>f.MasterDataId==element.MasterDataId)[0].ApplicationId;
+    this.GetMasters(element.MasterDataId, this.UserDetails[0]["orgId"],_appId).subscribe((data: any) => {
       this.SubMasters = [...data.value];
       this.loading = false;
     })
     this.emptyresult();
 
   }
-  GetMasters(ParentId, OrgId) {
+  GetMasters(ParentId, OrgId,AppId) {
     debugger;
     var applicationFilter = '';
-    applicationFilter = "OrgId eq " + OrgId + " and ApplicationId eq " + this.SelectedApplicationId
+    applicationFilter = "OrgId eq " + OrgId + " and ApplicationId eq " + AppId
     let list: List = new List();
     list.fields = [
-      "MasterDataId","ParentId","MasterDataName","Description","Logic","Sequence","ApplicationId"
+      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId"
     ];
     list.PageName = "MasterItems";
     list.filter = ["ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
@@ -346,22 +352,23 @@ export class AddMasterDataComponent implements OnInit {
     debugger;
     var _searchParentId = 0;
     var _OrgId = 0;
-    if (this.searchForm.get("SubId").value > 0)
-    {
-      _searchParentId = this.searchForm.get("SubId").value;    
+    var _appId =0;
+    if (this.searchForm.get("SubId").value > 0) {
+      _searchParentId = this.searchForm.get("SubId").value;
       this.RowParent = [...this.SubMasters];
-    }    
+    }
     else if (this.searchForm.get("ParentId").value.MasterDataId != undefined) {
-      _searchParentId = this.searchForm.get("ParentId").value.MasterDataId; 
+      _searchParentId = this.searchForm.get("ParentId").value.MasterDataId;
     }
     else {
       _searchParentId = 0;
       this.RowParent = [];
     }
-    if (_searchParentId > 0)
+    if (_searchParentId > 0) {
+      _appId = this.MasterData.filter(f=>f.MasterDataId==_searchParentId)[0].ApplicationId;
       _OrgId = this.UserDetails[0]["orgId"];
-
-    this.GetMasters(_searchParentId, _OrgId).subscribe((data: any) => {
+    }
+    this.GetMasters(_searchParentId, _OrgId,_appId).subscribe((data: any) => {
       this.MasterList = data.value.map(item => {
         return {
           "MasterDataId": item.MasterDataId,

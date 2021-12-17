@@ -1,0 +1,102 @@
+<div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div><strong>Employee Activity</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;">
+        <div style="width: 100%;">
+            <!-- <form [formGroup]="searchForm">
+               <mat-form-field [style.width.pc]="50">
+                    <mat-label>Name-class-section-roll no</mat-label>
+                    <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option.Name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>      
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentActivity()">
+                    <mat-icon>search</mat-icon>
+                </button>                
+            </form> -->
+            <mat-table #table [dataSource]="dataSource">               
+                <ng-container matColumnDef="Activity">
+                    <mat-header-cell *matHeaderCellDef>Activity
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                           <mat-form-field appearance="outline">
+                               <textarea matInput 
+                               (blur)="onBlur(element)"
+                               [value]="element.Activity"  
+                               [(ngModel)]="element.Activity"></textarea>
+                           </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="EmployeeActivityCategoryId">
+                    <mat-header-cell *matHeaderCellDef>Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                           <mat-form-field appearance="outline">
+                               <mat-select (selectionChange)="CategoryChanged(element)" 
+                               [(ngModel)]="element.EmployeeActivityCategoryId" 
+                               [value]="element.EmployeeActivityCategoryId">
+                                   <mat-option *ngFor="let item of EmployeeActivityCategories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                               </mat-select>
+                           </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="EmployeeActivitySubCategoryId">
+                    <mat-header-cell *matHeaderCellDef>Sub Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                           <mat-form-field appearance="outline">                               
+                               <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.EmployeeActivitySubCategoryId" 
+                               [value]="element.EmployeeActivitySubCategoryId">
+                                <mat-option [value]="0">--sub category--</mat-option>
+                                <mat-option *ngFor="let item of element.EmployeeActivitySubCategories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                               </mat-select>
+                           </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ActivityDate">
+                    <mat-header-cell *matHeaderCellDef>Date
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                           <mat-form-field appearance="outline">
+                            <input [value]="element.ActivityDate" (dateChange)="onBlur(element)"
+                            [(ngModel)]="element.ActivityDate" matInput 
+                            [matDatepicker]="ActivityDate" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="ActivityDate"></mat-datepicker-toggle>
+                            <mat-datepicker #ActivityDate></mat-datepicker>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" style="justify-content: center;">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: start;"></mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

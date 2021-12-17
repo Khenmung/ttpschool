@@ -1,4 +1,4 @@
-<div style="font-weight: bold;padding: 15px 15px 0px 15px;"><strong>Employee Document</strong></div>
+<div style="font-weight: bold;padding: 15px 15px 15px 15px;"><strong>Employee Document</strong></div>
 <alert></alert>
 <div class="divCls" fxLayout="row wrap" fxLayoutGap="100px">
     <form [formGroup]="uploadForm" fxLayout="row" fxLayoutAlign="space-between center">
@@ -16,7 +16,7 @@
             </mat-form-field>
         </div>
         <span fxLayout="row" fxLayoutAlign="space-between center">
-            <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()" matTooltip="upload file" class="mat-raised-button">
+            <button [disabled]="loading || Permission=='read' || EmployeeId==0" type="submit" (click)="uploadFile()" matTooltip="upload file" class="mat-raised-button">
                 <mat-icon aria-label="file_upload">file_upload</mat-icon>
             </button>&nbsp;&nbsp;
         </span>
@@ -24,10 +24,6 @@
 </div>
 <div fxLayout="row" fxLayoutAlign="space-between center" class="mat-elevation-z8">
     <mat-table [dataSource]="documentUploadSource" fxFlex>
-        <!-- <ng-container matColumnDef="FileId">
-            <mat-header-cell *matHeaderCellDef> Document Id</mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.FileId}} </mat-cell>
-        </ng-container> -->
         <ng-container matColumnDef="UpdatedFileFolderName">
             <mat-header-cell *matHeaderCellDef> Document Name </mat-header-cell>
             <mat-cell *matCellDef="let element">

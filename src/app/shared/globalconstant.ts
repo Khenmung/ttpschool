@@ -102,7 +102,8 @@ export class globalconstants {
                         "EMPLOYEESKILL":"employee skill",
                         "FAMILY":"family",
                         "ATTENDANCE":"attendance",
-                        "EMPLOYMENTHISTORY":"employment history"
+                        "EMPLOYMENTHISTORY":"employment history",
+                        "EMPLOYEEACTIVITY":"employee activity"
                     }
             },
             "edu": {
@@ -272,7 +273,9 @@ export class globalconstants {
                 "COMPONENTTYPE": "salary component type",
                 "DOCUMENT": "employee document",
                 "FAMILYRELATIONSHIP": "family relationship",
-                "EMPLOYEESKILL": "employee skill"
+                "EMPLOYEESKILL": "employee skill",
+                "EMPLOYEEACTIVITYCATEGORY": "employee activity category",
+                "EMPLOYEEACTIVITYSUBCATEGORY": "employee activity sub category"
             },
             "StudentVariableName": [
                 "Today",

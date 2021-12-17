@@ -23,12 +23,11 @@
                         {{option.EmployeeCode}}
                     </mat-option>
                 </mat-autocomplete>
-            </mat-form-field>
-          
+            </mat-form-field>          
             <button [disabled]="loading" class="mat-raised-button" (click)="GetEmployee()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button [disabled]="loading" class="mat-raised-button" (click)="new()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="addNew()">
                 <mat-icon>fiber_new</mat-icon>
             </button>
         </form>

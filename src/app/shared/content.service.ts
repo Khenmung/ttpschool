@@ -4,7 +4,6 @@ import { PageDetail } from '../content';
 import { globalconstants } from './globalconstant';
 import { NaomitsuService } from './databaseService';
 import { List } from './interface';
-import { SharedataService } from './sharedata.service';
 import { TokenStorageService } from '../_services/token-storage.service';
 @Injectable({
   providedIn: 'root'
@@ -21,7 +20,6 @@ export class ContentService implements OnInit {
     private tokenService: TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
-    private shareddata: SharedataService,
   ) { }
   ngOnInit(): void {
     //debugger;
@@ -117,22 +115,19 @@ export class ContentService implements OnInit {
     }
     return monthArray;
   }
-  // getDropDownData(obj, dropdowntype, appId) {
-  //   let Id = 0;
-  //   let Ids = obj.filter((item, indx) => {
-  //     return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase() && item.ApplicationId == appId;
+  GetDropDownDataFromDB(ParentId, OrgId, AppId) {
+    debugger;
+    var applicationFilter = '';
+    applicationFilter = "OrgId eq " + OrgId + " and ApplicationId eq " + AppId
+    let list: List = new List();
+    list.fields = [
+      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId"
+    ];
+    list.PageName = "MasterItems";
+    list.filter = ["ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
+    return this.dataservice.get(list)
 
-  //   })
-  //   if (Ids.length > 0) {
-  //     Id = Ids[0].MasterDataId;
-  //     return obj.filter((item, index) => {
-  //       return item.ParentId == Id
-  //     })
-  //   }
-  //   else
-  //     return [];
-
-  // }
+  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {
@@ -341,14 +336,23 @@ export class ContentService implements OnInit {
         }
       })
   }
-  GetCommonMasterData(orgId,appId) {
+  GetPermittedAppId(appShortName) {
+    var appId = 0;
+    var apps = this.tokenService.getPermittedApplications();
+    var commonAppobj = apps.filter(f => f.appShortName == appShortName)
+    if (commonAppobj.length > 0)
+      appId = commonAppobj[0].applicationId;
+    return appId;
+  }
+  GetCommonMasterData(orgId, appId) {
 
-    var orgIdSearchstr = ' and ApplicationId eq ' + appId +
-      ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
+    var commonAppId = this.GetPermittedAppId('common');
+    var orgIdSearchstr = ' and (ApplicationId eq ' + appId + " or ApplicationId eq " + commonAppId + ")"
+    ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId","Description","Logic","Sequence","Active"];
+    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description", "Logic", "Sequence", "Active"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     return this.dataservice.get(list);

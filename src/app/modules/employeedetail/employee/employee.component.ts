@@ -24,7 +24,7 @@ export class EmployeeComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   loginUserDetail = [];
   EmployeeLeaving = false;
   EmployeeName = '';
@@ -38,15 +38,19 @@ export class EmployeeComponent implements OnInit {
   formdata: FormData;
   EmployeeId = 0;
   loading = false;
-  WorkNature =[];
-  MaritalStatus =[];
+  WorkNature = [];
+  MaritalStatus = [];
   EmploymentStatus = [];
   EmploymentTypes = [];
+  PresentState = [];
+  PresentCity = [];
+  PermanentState = [];
+  PermanentCity = [];
   Grades = [];
   Genders = [];
   Category = [];
-  City=[];
-  State = [];
+  //City = [];
+  //State = [];
   Country = [];
   Bloodgroup = [];
   Religion = [];
@@ -137,84 +141,83 @@ export class EmployeeComponent implements OnInit {
     // if (this.Genders.length == 0)
     //   this.route.navigate(['/employee/']);
     // else {
-      this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
+    this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
 
-      //this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
-      this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
-      this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
-      this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
-      //this.shareddata.CurrentStates.subscribe(st => (this.States = st));
-      this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
-      //this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
+    //this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
+    this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
+    this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
+    this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
+    //this.shareddata.CurrentStates.subscribe(st => (this.States = st));
+    this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
+    //this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
 
-      this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
-      this.shareddata.CurrentEmployeeName.subscribe(s => (this.EmployeeName = s));
-      //this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
-      this.EmployeeForm = this.fb.group({
-        ShortName:[''],
-        FirstName:['',[Validators.required]],
-        LastName:[''],
-        FatherName:[''],
-        MotherName:[''],
-        Gender:[0],
-        DOB:['',[Validators.required]],
-        DOJ:['',[Validators.required]],
-        Bloodgroup:[0],
-        CategoryId:[0],
-        BankAccountNo:[''],
-        IFSCcode:[''],
-        MICRNo:[''],
-        AdhaarNo:[''],
-        PhotoPath:[''],
-        ReligionId:[0],
-        ContactNo:[''],
-        WhatsappNo:[''],
-        AlternateContactNo:[''],
-        EmailAddress:[''],
-        EmergencyContactNo:[''],
-        EmploymentStatusId:[0],
-        EmploymentTypeId:[0],
-        ConfirmationDate:[''],
-        NoticePeriodDays:[0],
-        ProbationPeriodDays:[0],
-        PAN:[''],
-        PassportNo:[''],
-        AadharNo:[''],
-        MaritalStatusId:[0],
-        MarriedDate:[''],
-        PFAccountNo:[''],
-        NatureId:[0],
-        EmployeeCode:[''],
-        Active:[0],
-        Remarks:[''],
-        PresentAddress:[''],
-        PermanentAddress:[''],
-        PresentAddressCityId:[0],
-        PresentAddressStateId:[0],
-        PresentAddressCountryId:[0],
-        PermanentAddressCityId:[0],
-        PermanentAddressStateId:[0],
-        PermanentAddressCountryId:[0],
-        PresentAddressPincode:[''],
-        PermanentAddressPincode:['']
-      });
+    this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
+
+    //this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
+    this.EmployeeForm = this.fb.group({
+      ShortName: [''],
+      FirstName: ['', [Validators.required]],
+      LastName: [''],
+      FatherName: ['', [Validators.required]],
+      MotherName: [''],
+      GenderId: [0, [Validators.required]],
+      DOB: ['', [Validators.required]],
+      DOJ: ['', [Validators.required]],
+      BloodgroupId: [0],
+      CategoryId: [0],
+      BankAccountNo: [''],
+      IFSCcode: [''],
+      MICRNo: [''],
+      AdhaarNo: [''],
+      PhotoPath: [''],
+      ReligionId: [0],
+      ContactNo: [''],
+      WhatsappNo: [''],
+      AlternateContactNo: [''],
+      EmailAddress: [''],
+      EmergencyContactNo: [''],
+      EmploymentStatusId: [0],
+      EmploymentTypeId: [0],
+      ConfirmationDate: [''],
+      NoticePeriodDays: [0],
+      ProbationPeriodDays: [0],
+      PAN: [''],
+      PassportNo: [''],
+      AadharNo: [''],
+      MaritalStatusId: [0],
+      MarriedDate: [''],
+      PFAccountNo: [''],
+      NatureId: [0],
+      EmployeeCode: [''],
+      Active: [0, [Validators.required]],
+      Remarks: [''],
+      PresentAddress: [''],
+      PermanentAddress: [''],
+      PresentAddressCityId: [0],
+      PresentAddressStateId: [0],
+      PresentAddressCountryId: [0],
+      PermanentAddressCityId: [0],
+      PermanentAddressStateId: [0],
+      PermanentAddressCountryId: [0],
+      PresentAddressPincode: [''],
+      PermanentAddressPincode: ['']
+    });
     //}
   }
 
   ngOnInit(): void {
+    debugger;
     this.loginUserDetail = this.tokenService.getUserDetail();
     this.EmployeeId = this.tokenService.getEmployeeId();
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-    if (this.EmployeeId > 0)
-    {
-      this.GetMasterData();
+    this.GetMasterData();
+
+    if (this.EmployeeId > 0) {
       this.GetEmployee();
-    } 
-    else
+    }
+    else {
       this.route.navigate(['/employee/']);
-    // this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-    //   this.Grades = [...data.value];
-    // });
+    }
   }
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
@@ -257,7 +260,7 @@ export class EmployeeComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
@@ -266,15 +269,15 @@ export class EmployeeComponent implements OnInit {
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
-        this.State = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+        //this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
+        //this.State = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
         this.WorkNature = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
         this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);
         this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
-        
-        
+
+
       });
 
   }
@@ -301,7 +304,25 @@ export class EmployeeComponent implements OnInit {
 
   }
   SaveOrUpdate() {
+    if (this.EmployeeForm.get("FirstName").value == '') {
+      this.alert.info("First name is required.", this.options.autoClose);
+      return;
+    }
+    else if (this.EmployeeForm.get("FatherName").value == '') {
+      this.alert.info("Father name is required.", this.options.autoClose);
+      return;
+    }
+    else if (this.EmployeeForm.get("DOB").value == '') {
+      this.alert.info("DOB is required.", this.options.autoClose);
+      return;
+    }
+    else if (this.EmployeeForm.get("DOJ").value == '') {
+      this.alert.info("DOJ is required.", this.options.autoClose);
+      return;
+    }
+
     this.loading = true;
+
     this.EmployeeData = {
       EmpEmployeeId: this.EmployeeId,
       ShortName: this.EmployeeForm.get("ShortName").value,
@@ -309,10 +330,10 @@ export class EmployeeComponent implements OnInit {
       LastName: this.EmployeeForm.get("LastName").value,
       FatherName: this.EmployeeForm.get("FatherName").value,
       MotherName: this.EmployeeForm.get("MotherName").value,
-      Gender: this.EmployeeForm.get("Gender").value,
+      GenderId: this.EmployeeForm.get("GenderId").value,
       DOB: this.EmployeeForm.get("DOB").value,
       DOJ: this.EmployeeForm.get("DOJ").value,
-      Bloodgroup: this.EmployeeForm.get("Bloodgroup").value,
+      BloodgroupId: this.EmployeeForm.get("BloodgroupId").value,
       CategoryId: this.EmployeeForm.get("CategoryId").value,
       BankAccountNo: this.EmployeeForm.get("BankAccountNo").value,
       IFSCcode: this.EmployeeForm.get("IFSCcode").value,
@@ -349,8 +370,14 @@ export class EmployeeComponent implements OnInit {
       PermanentAddressPincode: this.EmployeeForm.get("PermanentAddressPincode").value,
       PermanentAddressStateId: this.EmployeeForm.get("PermanentAddressStateId").value,
       PermanentAddressCountryId: this.EmployeeForm.get("PermanentAddressCountryId").value,
-      PermanentAddress: this.EmployeeForm.get("PermanentAddress").value
+      PermanentAddress: this.EmployeeForm.get("PermanentAddress").value,
+      OrgId: this.loginUserDetail[0]["orgId"]
     }
+    if (this.EmployeeData["MarriedDate"] == "")
+      delete this.EmployeeData["MarriedDate"];
+    if (this.EmployeeData["ConfirmationDate"] == "")
+      delete this.EmployeeData["ConfirmationDate"];
+    console.log('this.EmployeeData', this.EmployeeData)
     if (this.EmployeeId == 0)
       this.save();
     else
@@ -364,6 +391,7 @@ export class EmployeeComponent implements OnInit {
       .subscribe((result: any) => {
         //debugger;
         if (result != undefined) {
+          this.EmployeeId = result.EmployeeId;
           this.EmployeeForm.patchValue({
             EmployeeId: result.EmployeeId
           })
@@ -389,6 +417,35 @@ export class EmployeeComponent implements OnInit {
     var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
     return new Date(dateToAdjust.getTime() - offsetMs);
   }
+  SelectPresentState(value) {
+    debugger;
+    var commonId = this.contentservice.GetPermittedAppId('common');
+    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+      .subscribe((data: any) => {
+        this.PresentState = [...data.value];
+      })
+  }
+  SelectPresentCity(value) {
+    var commonId = this.contentservice.GetPermittedAppId('common');
+    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+      .subscribe((data: any) => {
+        this.PresentCity = [...data.value];
+      })
+  }
+  SelectPermanentState(value) {
+    var commonId = this.contentservice.GetPermittedAppId('common');
+    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+      .subscribe((data: any) => {
+        this.PermanentState = [...data.value];
+      })
+  }
+  SelectPermanentCity(value) {
+    var commonId = this.contentservice.GetPermittedAppId('common');
+    this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
+      .subscribe((data: any) => {
+        this.PermanentCity = [...data.value];
+      })
+  }
   GetEmployee() {
     let list: List = new List();
     list.fields = ["*"];
@@ -399,21 +456,26 @@ export class EmployeeComponent implements OnInit {
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        debugger;
         if (data.value.length > 0) {
           data.value.forEach(stud => {
+            this.SelectPresentState(stud.PresentAddressCountryId);
+            this.SelectPresentCity(stud.PresentAddressStateId);
+            this.SelectPermanentState(stud.PermanentAddressCountryId);
+            this.SelectPermanentCity(stud.PermanentAddressStateId);
 
-            this.EmployeeId = stud.EmpEmployeeId;            
-            
+            this.EmployeeId = stud.EmpEmployeeId;
+
             this.EmployeeForm.patchValue({
               "ShortName": stud.ShortName,
               "FirstName": stud.FirstName,
               "LastName": stud.LastName,
               "FatherName": stud.FatherName,
               "MotherName": stud.MotherName,
-              "Gender": stud.Gender,
+              "GenderId": stud.GenderId,
               "DOB": stud.DOB,
               "DOJ": stud.DOJ,
-              "Bloodgroup": stud.Bloodgroup,
+              "BloodgroupId": stud.BloodgroupId,
               "CategoryId": stud.CategoryId,
               "BankAccountNo": stud.BankAccountNo,
               "IFSCcode": stud.IFSCcode,
@@ -449,8 +511,8 @@ export class EmployeeComponent implements OnInit {
               "PermanentAddressCityId": stud.PermanentAddressCityId,
               "PermanentAddressStateId": stud.PermanentAddressStateId,
               "PermanentAddressCountryId": stud.PermanentAddressCountryId,
-              "PresentAddressPincode":stud.PresentAddressPincode,
-              "PermanentAddressPincode":stud.PermanentAddressPincode
+              "PresentAddressPincode": stud.PresentAddressPincode,
+              "PermanentAddressPincode": stud.PermanentAddressPincode
             });
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;

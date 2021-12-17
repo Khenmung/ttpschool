@@ -1,15 +1,13 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -29,7 +27,7 @@ export class FamilyComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   EmployeeFamilyListName = 'EmployeeFamilies';
   Applications = [];
   loading = false;
@@ -39,8 +37,8 @@ export class FamilyComponent implements OnInit {
   dataSource: MatTableDataSource<IFamily>;
   allMasterData = [];
   EmployeeFamilys = [];
-  FamilyRelationship=[];
-  Genders=[];
+  FamilyRelationship = [];
+  Genders = [];
   Permission = 'deny';
   EmployeeId = 0;
   EmployeeFamilyData = {
@@ -97,7 +95,6 @@ export class FamilyComponent implements OnInit {
 
       if (this.Permission == 'deny') {
 
-        //this.nav.navigate(['/edu'])
       }
       else {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
@@ -171,7 +168,7 @@ export class FamilyComponent implements OnInit {
           this.EmployeeFamilyData.FullName = row.FullName;
           this.EmployeeFamilyData.Gender = row.Gender;
           this.EmployeeFamilyData.OrgId = this.LoginUserDetail[0]["orgId"];
-                    
+
           if (this.EmployeeFamilyData.EmployeeFamilyId == 0) {
             this.EmployeeFamilyData["CreatedDate"] = new Date();
             this.EmployeeFamilyData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -240,12 +237,13 @@ export class FamilyComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
-        this.GetEmployeeFamilys();
+        if (this.EmployeeId > 0)
+          this.GetEmployeeFamilys();
         this.loading = false;
       });
   }
