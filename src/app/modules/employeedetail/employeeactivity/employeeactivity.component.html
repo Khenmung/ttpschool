@@ -21,15 +21,24 @@
                 </button>                
             </form> -->
             <mat-table #table [dataSource]="dataSource">               
+                
+                <ng-container matColumnDef="EmployeeActivityId">
+                    <mat-header-cell *matHeaderCellDef>Id
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.EmployeeActivityId}}
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="Activity">
                     <mat-header-cell *matHeaderCellDef>Activity
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                            <mat-form-field appearance="outline">
-                               <textarea matInput 
+                               <input matInput
+                               [maxlength]="256" 
                                (blur)="onBlur(element)"
                                [value]="element.Activity"  
-                               [(ngModel)]="element.Activity"></textarea>
+                               [(ngModel)]="element.Activity">
                            </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -54,7 +63,7 @@
                                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.EmployeeActivitySubCategoryId" 
                                [value]="element.EmployeeActivitySubCategoryId">
                                 <mat-option [value]="0">--sub category--</mat-option>
-                                <mat-option *ngFor="let item of element.EmployeeActivitySubCategories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                                <mat-option *ngFor="let item of element.ActivitySubCategory" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
                                </mat-select>
                            </mat-form-field>
                     </mat-cell>

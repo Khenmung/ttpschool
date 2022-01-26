@@ -7,7 +7,7 @@
     <form [formGroup]="searchForm">
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Customer</mat-label>
-            <mat-select formControlName="searchCustomerId">
+            <mat-select formControlName="searchCustomerId" (selectionChange)="SelectApplication($event)">
                 <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
                     {{item.OrganizationName}}
                 </mat-option>
@@ -17,14 +17,14 @@
             <mat-label>Application</mat-label>
             <mat-select formControlName="searchApplicationId" (selectionChange)="setSelectedApplication($event)">
                 <mat-option [value]="0">select</mat-option>
-                <mat-option *ngFor="let feature of Applications" [value]="feature.MasterDataId">
+                <mat-option *ngFor="let feature of CustomerApps" [value]="feature.MasterDataId">
                     {{feature.Description}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Top Feature</mat-label>
-            <mat-select formControlName="PlanFeatureId" (selectionChange)="enable($event)">
+            <mat-select formControlName="PlanFeatureId" (selectionChange)="EmptyData()">
                 <mat-option [value]="0">select</mat-option>
                 <mat-option *ngFor="let feature of TopPageFeatures" [value]="feature.PlanFeatureId">
                     {{feature.label}}
@@ -33,7 +33,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Role</mat-label>
-            <mat-select formControlName="RoleId" (selectionChange)="enable($event)">
+            <mat-select formControlName="RoleId" (selectionChange)="EmptyData()">
                 <mat-option *ngFor="let role of Roles" [value]="role.MasterDataId">
                     {{role.MasterDataName}}
                 </mat-option>

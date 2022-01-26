@@ -82,8 +82,8 @@ export class RegisterComponent implements OnInit {
   PageLoad() {
 
   }
-  selectapps(){
-    this.route.navigate(["/auth/apps"]);
+  selectplan(){
+    this.route.navigate(["/auth/selectplan"]);
   }
   AddAppUsers() {
     let orgToUpdate = {

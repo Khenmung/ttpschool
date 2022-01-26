@@ -13,6 +13,7 @@ export class HeaderComponent implements OnInit {
   userName: string = '';
   loggedIn: boolean;
   SelectedApplicationName = '';
+  LoginUserDetails=[];
   constructor(
     private route: Router,
     private tokenStorage: TokenStorageService
@@ -20,22 +21,27 @@ export class HeaderComponent implements OnInit {
   }
   ngOnInit(): void {
 
-    this.userName = this.tokenStorage.getUser();
+    this.LoginUserDetails = this.tokenStorage.getUserDetail();
+    this.userName = this.LoginUserDetails[0]["userName"];
     if (this.userName === undefined || this.userName === null || this.userName == '')
       this.loggedIn = false;
     else
       this.loggedIn = true;
-    var PermittedApplications = this.tokenStorage.getPermittedApplications();
-    if (PermittedApplications.length == 0) {
-      this.route.navigate(["/auth/apps"]);
-    }
-    else {
-      var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
-      this.SelectedApplicationName = '';
-      var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
+    //  console.log("this.userName",this.userName)
+    if (this.loggedIn) {
+      var PermittedApplications = this.tokenStorage.getPermittedApplications();
+      debugger;
+      if (PermittedApplications.length == 0) {
+        this.route.navigate(["/auth/selectplan"]);
+      }
+      else {
+        var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
+        this.SelectedApplicationName = '';
+        var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
 
-      if (apps.length > 0) {
-        this.SelectedApplicationName = apps[0].applicationName;
+        if (apps.length > 0) {
+          this.SelectedApplicationName = apps[0].applicationName;
+        }
       }
     }
   }

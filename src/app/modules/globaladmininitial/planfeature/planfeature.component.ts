@@ -297,8 +297,8 @@ GetFeatures(appId) {
   // })
 }
 GetPlanFeature() {
-  debugger;
 
+  debugger;
   var _PlanId = this.searchForm.get("searchPlanId").value;
 
   if (_PlanId == 0) {
@@ -369,8 +369,9 @@ GetPlanFeature() {
 }
 
 GetMasterData() {
-
-  this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+  var globaladminId = this.contentservice.GetPermittedAppId("globaladmin");
+  var ids= globaladminId +","+this.SelectedApplicationId
+  this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],ids)
     .subscribe((data: any) => {
       this.allMasterData = [...data.value];
       this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

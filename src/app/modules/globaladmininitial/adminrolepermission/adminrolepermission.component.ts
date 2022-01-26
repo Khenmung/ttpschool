@@ -4,7 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import alasql from 'alasql';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -32,6 +34,7 @@ export class AdminrolepermissionComponent implements OnInit {
   FilteredPageFeatures = [];
   oldvalue = '';
   selectedData = '';
+  SelectedCustomerPlanId=0;
   datasource: MatTableDataSource<IApplicationRolePermission>;
   AppRoleData = {
     ApplicationFeatureRoleId: 0,
@@ -41,6 +44,7 @@ export class AdminrolepermissionComponent implements OnInit {
     OrgId: 0,
     Active: 0
   };
+  CustomerApps=[];
   SelectedApplicationId = 0;
   ApplicationDataStatus = [];
   SchoolDataStatus = [];
@@ -59,6 +63,7 @@ export class AdminrolepermissionComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
+    private contentservice: ContentService,
   ) { }
 
   ngOnInit(): void {
@@ -122,18 +127,19 @@ export class AdminrolepermissionComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "MasterItems";
-    list.filter = ["(ParentId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] +
-      ") and Active eq 1"];
+    list.filter = ["ParentId eq 0 and Active eq 1"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.MasterData = [...data.value];
-          var applicationId = data.value.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-          this.Applications = data.value.filter(t => t.ParentId == applicationId);
-          this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
+          var applicationId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
+          //var globaladminId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "globaladmin")[0].MasterDataId;
+          this.contentservice.GetDropDownDataFromDB(applicationId,0,0)
+          .subscribe((data:any)=>{
+            this.Applications =[...data.value];
+          })
           this.loading=false;
-          //this.GetCustomerApps();
         }
       });
   }
@@ -142,19 +148,62 @@ export class AdminrolepermissionComponent implements OnInit {
       && f.ParentId == 0)
     this.TopMenu = this.TopMenu.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
   }
+  getCustomersData(){
+    //var applicationparentId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
+    var RoleId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "role")[0].MasterDataId;
+    
+    var OrgId = this.searchForm.get("searchCustomerId").value;
+    var appId = this.Applications.filter(m=>m.MasterDataName.toLowerCase()=='common')[0].MasterDataId;
+  //debugger;
+    this.contentservice.GetDropDownDataFromDB(RoleId,OrgId,appId)
+    .subscribe((data:any)=>{
+      this.Roles =[...data.value];
+    })
+
+  }
   GetOrganizations() {
 
     let list: List = new List();
     list.fields = [
-      "OrganizationId",
-      "OrganizationName"
+      "PlanId","CustomerPlanId"
     ];
-    list.PageName = "Organizations";
+    list.PageName = "CustomerPlans";
+    list.lookupFields = ["Org($select=OrganizationId,OrganizationName)"];    
     list.filter = ["Active eq 1"];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Organizations = [...data.value];
+        this.Organizations = data.value.map(f=>{
+            f.OrganizationId = f.Org.OrganizationId,
+            f.OrganizationName = f.Org.OrganizationName
+            return f;
+        })
       })
+  }
+  SelectApplication(event){
+    this.EmptyData();
+    this.getCustomersData();    
+    this.SelectedCustomerPlanId = this.Organizations.filter(f=>f.OrganizationId == event.value)[0].PlanId;
+    var list = new List();
+    list.fields = [
+      "ApplicationId"
+    ];
+    list.PageName = "PlanFeatures";
+    //list.lookupFields = "MasterItem($select=MasterDataName)";
+    this.CustomerApps=[];
+    list.filter=["Active eq 1 and PlanId eq " + this.SelectedCustomerPlanId];
+    this.dataservice.get(list).subscribe((data:any)=>{
+      debugger;
+      var DistinctAppIds =alasql("select distinct ApplicationId from ?",[data.value]);
+      var objapp;
+      DistinctAppIds.forEach(appid=>{
+        objapp= this.Applications.filter(a=>a.MasterDataId == appid.ApplicationId);
+        if(objapp.length>0)
+        {
+            this.CustomerApps.push(objapp[0]);
+        }
+      })
+     
+    })
   }
   getSettingStatus(data) {
     let defined;
@@ -180,16 +229,11 @@ export class AdminrolepermissionComponent implements OnInit {
     });
 
   }
-  enable(elment) {
-    //debugger;
-    if (elment.value > 0)
-      this.enableTopEdit = true;
-    else
-      this.enableTopEdit = false;
-  }
+  
   setSelectedApplication(dropdown){
-    
+    this.EmptyData();
     this.SelectedApplicationId =dropdown.value;
+    
     this.GetPageFeatures();
   }
   GetPageFeatures() {
@@ -204,7 +248,7 @@ export class AdminrolepermissionComponent implements OnInit {
     ];
     list.PageName = "PlanFeatures";
     list.lookupFields = ["Page($select=ParentId,label,PageTitle,DisplayOrder)"]
-    list.filter = ["PlanId eq " + this.UserDetails[0]["planId"] +
+    list.filter = ["PlanId eq " + this.SelectedCustomerPlanId +
       " and Active eq 1 and ApplicationId eq " + this.SelectedApplicationId];
     this.PlanFeaturePages = [];
     this.dataservice.get(list)
@@ -230,6 +274,10 @@ export class AdminrolepermissionComponent implements OnInit {
     this.FilteredPageFeatures = this.PlanFeaturePages.filter(f => f.ApplicationId == this.SelectedApplicationId);
 
   }
+  EmptyData(){
+    this.ApplicationRoleList =[];
+    this.datasource = new MatTableDataSource(this.ApplicationRoleList);
+  }
   GetApplicationFeatureRole() {
     debugger;
 
@@ -246,7 +294,7 @@ export class AdminrolepermissionComponent implements OnInit {
       this.alert.error("Please select Application", this.optionAutoClose);
       return;
     }
-        
+    this.EmptyData();    
     var _planFeatureId = this.searchForm.get("PlanFeatureId").value;
     var _ParentId = 0;
     if (_planFeatureId > 0) {

@@ -1,3 +1,4 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -18,11 +19,20 @@ import { List } from '../../../shared/interface';
 @Component({
   selector: 'app-today-collection',
   templateUrl: './today-collection.component.html',
-  styleUrls: ['./today-collection.component.scss']
+  styleUrls: ['./today-collection.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
+      state('expanded', style({ height: '*', visibility: 'visible' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class TodayCollectionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  expandedElement: any;
+  isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -64,7 +74,9 @@ export class TodayCollectionComponent implements OnInit {
     private fb: FormBuilder,
     private nav: Router,
     private alert: AlertService,
-  ) { }
+    private datepipe: DatePipe
+
+    ) { }
 
   ngOnInit(): void {
     this.SearchForm = this.fb.group({
@@ -115,7 +127,7 @@ export class TodayCollectionComponent implements OnInit {
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = [
-      "AccountingVouchers($filter=Active eq 1;$select=FeeReceiptId,GLAccountId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
+      "AccountingVouchers($filter=Active eq 1;$select=FeeReceiptId,GLAccountId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
 
     ]
     list.filter = [filterstring];
@@ -128,6 +140,8 @@ export class TodayCollectionComponent implements OnInit {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
           d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
+          d.ReceiptDate = this.datepipe.transform(d.ReceiptDate,'dd/MM/yyyy') 
+          //d.FeeName = this.FeeDefinitions.filter(f=>f.FeeDefinitionId == d.AccountingVouchers[0].ClassFeeId)[0].FeeName;
           return d;
         })
         var groupbyPaymentType = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType", [this.DateWiseCollection]);
@@ -158,8 +172,11 @@ export class TodayCollectionComponent implements OnInit {
         this.GroupByPaymentType = [...groupbyPaymentType];
         if (this.DateWiseCollection.length == 0)
           this.alert.info("No collection found.", this.options);
-        ////console.log("result",result)
-        this.dataSource = new MatTableDataSource(this.DateWiseCollection)
+        
+        const rows = [];
+        this.DateWiseCollection.forEach(element => rows.push(element, { detailRow: true, element }));
+        console.log("rows",rows)
+        this.dataSource = new MatTableDataSource(rows);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false;
@@ -169,6 +186,7 @@ export class TodayCollectionComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
+        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
           this.FeeDefinitions = [...f];
           if (this.FeeDefinitions.length == 0) {
@@ -177,13 +195,12 @@ export class TodayCollectionComponent implements OnInit {
             })
           }
         })
-        //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+        
 
       });
 

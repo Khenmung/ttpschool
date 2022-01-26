@@ -115,13 +115,22 @@ export class ContentService implements OnInit {
     }
     return monthArray;
   }
-  GetDropDownDataFromDB(ParentId, OrgId, AppId) {
+  GetDropDownDataFromDB(ParentId, OrgId, AppIds) {
     debugger;
+    var applicationparam = '';
+    (AppIds + "").split(',').forEach(id => {
+      applicationparam += applicationparam == '' ? 'ApplicationId eq ' + id : ' or ApplicationId eq ' + id
+    })
+
     var applicationFilter = '';
-    applicationFilter = "OrgId eq " + OrgId + " and ApplicationId eq " + AppId
-    let list: List = new List();
+    if (ParentId == 0)
+      applicationFilter = "(" + applicationparam + ")";
+    else
+      applicationFilter = "OrgId eq " + OrgId + " and (" + applicationparam + ")";
+    
+      let list: List = new List();
     list.fields = [
-      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId"
+      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId","Active"
     ];
     list.PageName = "MasterItems";
     list.filter = ["ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
@@ -302,11 +311,13 @@ export class ContentService implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        if (data.value.length > 0) {
+        var LoginUserDetail = this.tokenService.getUserDetail();
+        var planfilteredFeature = data.value.filter(f => f.PlanFeature.PlanId == LoginUserDetail[0]["planId"]);
+        if (planfilteredFeature.length > 0) {
           var _applicationName = '';
           var _appShortName = '';
           this.UserDetail[0]["applicationRolePermission"] = [];
-          data.value.forEach(item => {
+          planfilteredFeature.forEach(item => {
             _applicationName = '';
             _appShortName = '';
             _applicationName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].Description;
@@ -344,10 +355,15 @@ export class ContentService implements OnInit {
       appId = commonAppobj[0].applicationId;
     return appId;
   }
-  GetCommonMasterData(orgId, appId) {
+  GetCommonMasterData(orgId, appIds) {
+    var applicationparam = '';
+    (appIds + "").split(',').forEach(id => {
+      applicationparam += ' or ApplicationId eq ' + id
+    })
+
 
     var commonAppId = this.GetPermittedAppId('common');
-    var orgIdSearchstr = ' and (ApplicationId eq ' + appId + " or ApplicationId eq " + commonAppId + ")"
+    var orgIdSearchstr = ' and (ApplicationId eq ' + commonAppId + applicationparam + ")"
     ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
 
     let list: List = new List();

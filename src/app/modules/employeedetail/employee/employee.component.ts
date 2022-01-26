@@ -64,6 +64,7 @@ export class EmployeeComponent implements OnInit {
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
+  Permission = '';
   EmployeeForm: FormGroup;
 
   public files: NgxFileDropEntry[] = [];
@@ -213,7 +214,16 @@ export class EmployeeComponent implements OnInit {
     this.GetMasterData();
 
     if (this.EmployeeId > 0) {
-      this.GetEmployee();
+      if (this.loginUserDetail != null) {
+        var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.emp.employee.EMPLOYEEDETAIL);
+        if (perObj.length > 0)
+          this.Permission = perObj[0].permission;
+        if (this.Permission == 'deny')
+          this.route.navigate(['/employee/']);
+        else
+          this.GetEmployee();
+      }
+
     }
     else {
       this.route.navigate(['/employee/']);

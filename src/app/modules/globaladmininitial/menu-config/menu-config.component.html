@@ -13,7 +13,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Parent Menu</mat-label>
-        <mat-select formControlName="searchTopMenuId">
+        <mat-select formControlName="searchTopMenuId" (selectionChange)="EmptyData()">
             <mat-option>--select parent menu--</mat-option>
             <mat-option *ngFor="let option of TopMenu" [value]="option.PageId">
                 {{option.label}}

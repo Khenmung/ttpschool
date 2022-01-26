@@ -124,12 +124,16 @@ export class MenuConfigComponent implements OnInit {
     this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
     this.GetMasterData();
   }
+  EmptyData(){
+    this.PageList=[];
+    this.dataSource = new MatTableDataSource(this.PageList);
+  }
   GetTopMenu() {
     let list: List = new List();
     list.fields = ["PageId,PageTitle,label,ApplicationId,ParentId,DisplayOrder"];
     list.PageName = "Pages";
     list.filter = ["Active eq 1 and ParentId eq 0 and ApplicationId eq " + this.searchForm.get("searchApplicationId").value];
-
+    this.EmptyData();
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.TopMenu = [...data.value].sort((a, b) => a.DisplayOrder - b.DisplayOrder);
@@ -138,8 +142,9 @@ export class MenuConfigComponent implements OnInit {
     //console.log("topmenu", this.TopMenu)
   }
   GetMasterData() {
+    var globaladminId = this.contentservice.GetPermittedAppId("globaladmin");
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],globaladminId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

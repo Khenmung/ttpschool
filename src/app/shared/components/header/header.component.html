@@ -3,10 +3,11 @@
     <mat-toolbar-row class="width100" fxLayout="row" fxLayoutAlign="space-between center">
         <div fxLayout="row" fxLayoutAlign="start center">
             <a [routerLink]="['/']"><img style="border-radius: 8px;" src="assets/images/ttplogo1.png"
-                    alt="St Paul's Institute" width="50px" /></a>
+                    alt="TTP" width="50px" /></a>
             <span>{{SelectedApplicationName}}</span>    
                 </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
+            <div style="font-size: medium;">{{userName}}</div>
             <span class="rightside" *ngIf="!deviceXs">
                 <button [disabled]="loading" mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>

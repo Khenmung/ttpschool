@@ -293,7 +293,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           debugger;
           if (data.value.length > 0) {
             if (data.value[0].FeeType == undefined) {
-              this.alert.error("Fee Type not yet defined.", this.optionAutoClose);
+              this.alert.error("Fee Type not yet defined.", this.optionsNoAutoClose);
               this.loading = false;
             }
             else {

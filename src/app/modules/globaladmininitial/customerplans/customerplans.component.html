@@ -10,7 +10,7 @@
                 <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
                     <mat-form-field appearance="outline">
                         <mat-label>Customer</mat-label>
-                        <mat-select formControlName="searchCustomerId">
+                        <mat-select formControlName="searchCustomerId" [(ngModel)]="OrgId">
                             <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
                                 {{item.OrganizationName}}
                             </mat-option>
@@ -121,6 +121,11 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
+        </div>
+        <div style="width:100%; display: flex;align-items: center; justify-content: center;padding: 15px 15px 15px 0px">
+            <button [disabled]="loading" class="mat-raised-button" matTooltip="login" (click)="login()">
+                <mat-icon>login</mat-icon>
+            </button>
         </div>
     </div>
 </div>

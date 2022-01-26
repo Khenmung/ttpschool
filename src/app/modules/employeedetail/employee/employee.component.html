@@ -149,6 +149,9 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
+                </button>
                 <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
@@ -274,11 +277,14 @@
 
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
+                </button>
+                <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
@@ -309,6 +315,9 @@
                 <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
+                </button>
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
                 </button>
                 <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
                     class="mat-raised-button">
@@ -346,6 +355,9 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
+                </button>
                 <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
@@ -354,7 +366,7 @@
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
-                <mat-icon>note_add</mat-icon>Employment & Save
+                <mat-icon>note_add</mat-icon>Employment
             </ng-template>
             <div style="padding:15px 15px 10px 15px;"><strong>Employment</strong></div>
 
@@ -431,14 +443,14 @@
                 </mat-checkbox>&nbsp; Active
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="previous info"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
                 <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading" (click)="back()" alt="next info" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
             </mat-card-actions>

@@ -284,6 +284,8 @@ export class PlanandmasteritemComponent implements OnInit {
       })
   }
   GetTopFeature() {
+    
+    this.ClearDisplay();
     var ApplicationId = this.searchForm.get("searchApplicationId").value;
     this.GetMasterItems(ApplicationId).subscribe((d: any) => {
       this.MasterItems = [...d.value];
@@ -379,6 +381,10 @@ export class PlanandmasteritemComponent implements OnInit {
       });
 
   }
+  ClearDisplay(){
+    this.PlanAndMasterItemList = [];
+    this.dataSource = new MatTableDataSource(this.PlanAndMasterItemList);
+  }
   createFilter(): (data: any, filter: string) => boolean {
     let filterFunction = function(data, filter): boolean {
       let searchTerms = JSON.parse(filter);
@@ -390,7 +396,9 @@ export class PlanandmasteritemComponent implements OnInit {
     return filterFunction;
   }
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    var globalAdminId = this.contentservice.GetPermittedAppId("globaladmin");
+    var Ids = globalAdminId + "," + this.SelectedApplicationId
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],Ids)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

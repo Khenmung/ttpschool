@@ -1,40 +1,54 @@
+<!-- <div fxLayoutAlign="start start" > -->
+
+
 <mat-card>
-    <mat-card-title style="margin:100px 0px 0px 100px;">Login</mat-card-title>
+    <mat-card-title style="margin:60px 0px 0px 60px;">Login</mat-card-title>
     <mat-card-content>
         <div class="container" fxLayout="row wrap" fxLayoutAlign="space-around center">
-            <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control" name="username" [(ngModel)]="form.username" required
-                        #username="ngModel" autocomplete="Off" />
-                    <div class="alert alert-danger" role="alert" *ngIf="username.errors && f.submitted">
-                        Username is required!
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" name="password" [(ngModel)]="form.password" required
-                        minlength="6" #password="ngModel" />
-                    <div class="alert alert-danger" role="alert" *ngIf="password.errors && f.submitted">
-                        <div *ngIf="password.errors.required">Password is required</div>
-                        <div *ngIf="password.errors.minlength">
-                            Password must be at least 6 characters
-                        </div>
-                    </div>
-                </div>
-                <br>
-                <div fxLayoutAlign="space-around center">
-                    <button [disabled]="loading" class="mat-raised-button" matTooltip="login">
+            <form [formGroup]="loginForm" novalidate style="display: flex;justify-content: center;flex-direction: column;">
+                <mat-form-field>
+                    <mat-label for="username">Username</mat-label>
+                    <input type="text" matInput formControlName="username" required autocomplete="Off" />
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label for="password">Password</mat-label>
+                    <input type="password" matInput formControlName="password" required minlength="6"
+                        autocomplete="Off" />
+                </mat-form-field>
+                
+                <div fxLayoutAlign="space-between center">
+                    <button [disabled]="loading" 
+                    class="mat-raised-button"
+                    (click)="onSubmit()" 
+                    matTooltip="login">
                         <mat-icon>login</mat-icon>
                     </button>
                     <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" class="mat-raised-button">
                         <mat-icon>cancel</mat-icon>
                     </button>
                 </div>
-                <div class="form-group">
-                    <div class="alert alert-danger" role="alert" *ngIf="f.submitted && isLoginFailed">
+                <div style="padding: 15px 15px 15px 0px;">
+                    <div class="alert alert-danger" role="alert" *ngIf="errorMessage.length>0">
                         Login failed: {{ errorMessage }}
                     </div>
+                </div>
+                <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
+
+                    <div *ngIf="f.username.errors?.['required']">
+                        user name is required.
+                    </div>
+                    <!-- <div *ngIf="f.username.errors?.['minlength']">
+                        User name must be at least 6 characters long.
+                    </div>                     -->
+                </div>
+                <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
+
+                    <div *ngIf="f.password.errors?.['required']">
+                        password is required.
+                    </div>
+                    <div *ngIf="f.password.errors?.['minlength']">
+                        password must be at least 6 characters long.
+                    </div>                    
                 </div>
             </form>
         </div>
@@ -44,3 +58,4 @@
 
     </mat-card-content>
 </mat-card>
+<!-- </div> -->

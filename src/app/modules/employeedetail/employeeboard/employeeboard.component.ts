@@ -123,7 +123,7 @@ export class EmployeeboardComponent implements AfterViewInit {
       case "employment history":
         comindx =this.components.indexOf(GradehistoryComponent);
         break;
-      case "employment activity":
+      case "employee activity":
         comindx =this.components.indexOf(EmployeeactivityComponent);
         break;
     } 

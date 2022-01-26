@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Subscription } from 'rxjs';
@@ -35,10 +36,7 @@ export class LoginComponent implements OnInit {
   Locations = [];
   Roles = [];
   ApplicationFeatures = [];
-  form: any = {
-    username: null,
-    password: null
-  };
+  loginForm: FormGroup;
   isLoggedIn = false;
   isLoginFailed = false;
   errorMessage = '';
@@ -47,7 +45,8 @@ export class LoginComponent implements OnInit {
   username: string = '';
   mediaSub: Subscription;
   deviceXs: boolean;
-  common: globalconstants;
+  //common: globalconstants;
+  IsSubmitted = false;
   constructor(private authService: AuthService,
     private alert: AlertService,
     private dataservice: NaomitsuService,
@@ -55,6 +54,7 @@ export class LoginComponent implements OnInit {
     private route: Router,
     private shareddata: SharedataService,
     private mediaObserver: MediaObserver,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +62,12 @@ export class LoginComponent implements OnInit {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       ////console.log("authlogin",this.deviceXs);
     });
-    //debugger;
+    this.loginForm = this.fb.group({
+      username: ['', Validators.required],
+      password: ['',[Validators.required, Validators.minLength(6)]]
+    })
+
+    debugger;
     if (this.tokenStorage.getToken()) {
       this.isLoggedIn = true;
       this.route.navigate(['/dashboard']);
@@ -73,11 +78,13 @@ export class LoginComponent implements OnInit {
     // });
   }
   onSubmit(): void {
-    const { username, password } = this.form;
-
+    this.IsSubmitted=true;
+    var username = this.loginForm.get("username").value;
+    var password = this.loginForm.get("password").value;
+    debugger;
     this.authService.login(username, password).subscribe(
       data => {
-        debugger;
+
         this.tokenStorage.saveToken(data.token);
         this.tokenStorage.saveRefreshToken(data.refreshToken);
         this.tokenStorage.saveUser(data);
@@ -88,20 +95,26 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('orgId', decodedUser.sid);
         localStorage.setItem('userId', decodedUser.Id);
         localStorage.setItem('planId', decodedUser.iss);
-        console.log("decodedUser.iss",decodedUser.iss)
-        //  localStorage.setItem('userInfo',decodedUser);
-        this.isLoginFailed = false;
-        this.isLoggedIn = true;
-        //this.roles = this.tokenStorage.getUser().roles;
-        this.GetApplicationRoleUser();
-        //this.reloadPage();
-
+        //console.log("decodedUser.iss",decodedUser.iss)
+        //if PlanId is zero, redirect to select plan.
+        if (decodedUser.iss == 0)
+          this.route.navigate(['/auth/selectplan']);
+        else {
+          //  localStorage.setItem('userInfo',decodedUser);
+          this.isLoginFailed = false;
+          this.isLoggedIn = true;
+          //this.roles = this.tokenStorage.getUser().roles;
+          this.GetApplicationRoleUser();
+          //this.reloadPage();
+        }
       },
       err => {
-        this.errorMessage = err.error.message;
+        this.errorMessage = '';
+        err.error.errors.forEach(x => this.errorMessage += x);
         this.isLoginFailed = true;
       }
     );
+    this.IsSubmitted=false;
   }
 
   reloadPage(): void {
@@ -137,7 +150,7 @@ export class LoginComponent implements OnInit {
         }
         else {
           //if no roleuser data present redirect to select apps.
-          this.route.navigate(["/auth/apps"]);
+          this.route.navigate(["/auth/selectplan"]);
         }
       })
   }
@@ -145,11 +158,11 @@ export class LoginComponent implements OnInit {
   GetMasterData(UserRole) {
     debugger;
     let list: List = new List();
-    list.fields = ["MasterDataId","MasterDataName","Description","ParentId"];
+    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
     list.PageName = "MasterItems";
-    list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq "+ localStorage.getItem('planId') + ";$select=MasterDataId,PlanAndMasterDataId,PlanId,ApplicationId)"];
-    list.filter = ["(ParentId eq 0 or OrgId eq "+ localStorage.getItem('orgId')+") and Active eq 1"];
-    
+    list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + localStorage.getItem('planId') + ";$select=MasterDataId,PlanAndMasterDataId,PlanId,ApplicationId)"];
+    list.filter = ["(ParentId eq 0 or OrgId eq 0 or OrgId eq " + localStorage.getItem('orgId') + ") and Active eq 1"];
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
         ////console.log(data.value);
@@ -167,13 +180,13 @@ export class LoginComponent implements OnInit {
           __organization = UserRole[0].Org.OrganizationName;
 
         this.UserDetail = [{
-          employeeId:this.userInfo["nameid"],
+          employeeId: this.userInfo["nameid"],
           userId: this.userInfo["Id"],
           userName: this.userInfo["email"],
           email: this.userInfo["email"],
           orgId: UserRole[0].OrgId,
           org: __organization,
-          planId:localStorage.getItem("planId"),
+          planId: localStorage.getItem("planId"),
           RoleUsers: UserRole.map(roleuser => {
             if (roleuser.Active == 1 && roleuser.RoleId != null) {
               this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
@@ -195,7 +208,7 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.saveUserdetail(this.UserDetail);
         if (this.RoleFilter.length > 0)
           this.RoleFilter += ')';
-        this.tokenStorage.saveCheckEqualBatchId  
+        this.tokenStorage.saveCheckEqualBatchId
         this.GetApplicationRolesPermission();
 
 
@@ -203,12 +216,14 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.signOut();
       });
   }
-
+  get f() {
+    return this.loginForm.controls;
+  }
   GetApplicationRolesPermission() {
 
     let list: List = new List();
     list.fields = [
-      'PlanFeatureId',     
+      'PlanFeatureId',
       'RoleId',
       'PermissionId'
     ];
@@ -233,7 +248,7 @@ export class LoginComponent implements OnInit {
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
-           
+
 
             this.UserDetail[0]["applicationRolePermission"].push({
               'pageId': item.PlanFeature.PageId,
@@ -261,7 +276,7 @@ export class LoginComponent implements OnInit {
         }
         else {
           this.alert.info("Initial minimal settings must be done.", this.optionsNoAutoClose);
-          this.route.navigate(['control/settings']);
+          this.route.navigate(['edu/setting']);
         }
       })
   }

@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
@@ -57,11 +57,10 @@ export class EmployeeactivityComponent implements OnInit {
   EmployeeActivityForUpdate = [];
   displayedColumns = [
     "EmployeeActivityId",
-    "Activity",
     "EmployeeActivityCategoryId",
-    "EmployeeActivitySubCategoryId",
+    "EmployeeActivitySubCategoryId",    
+    "Activity",
     "ActivityDate",
-    "EmployeeId",
     "Active",
     'Action'
   ];
@@ -73,6 +72,7 @@ export class EmployeeactivityComponent implements OnInit {
     private alert: AlertService,
     private nav: Router,
     private shareddata: SharedataService,
+    private datepipe: DatePipe,
   ) { }
 
   ngOnInit(): void {
@@ -156,8 +156,10 @@ export class EmployeeactivityComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "EmployeeId eq " + row.EmployeeId +
-      " and Activity eq '" + row.Activity + "'";
+    let checkFilterString = "EmployeeActivityCategoryId eq " + row.EmployeeActivityCategoryId +
+    " and EmployeeActivitySubCategoryId eq " + row.EmployeeActivitySubCategoryId;
+    " and EmployeeId eq " + row.EmployeeId +     
+    " and ActivityDate eq " + this.datepipe.transform(row.ActivityDate,'yyyy-MM-dd');
 
 
     if (row.EmployeeActivityId > 0)
@@ -165,7 +167,7 @@ export class EmployeeactivityComponent implements OnInit {
     checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
     list.fields = ["EmployeeActivityId"];
-    list.PageName = "StudentActivities";
+    list.PageName = "EmployeeActivities";
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -179,7 +181,7 @@ export class EmployeeactivityComponent implements OnInit {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.EmployeeActivityForUpdate = [];;
-          ////console.log("inserting-1",this.EmployeeActivityForUpdate);
+          //console.log("inserting-1",this.EmployeeActivityForUpdate);
           this.EmployeeActivityForUpdate.push(
             {
               EmployeeActivityId: row.EmployeeActivityId,
@@ -187,8 +189,9 @@ export class EmployeeactivityComponent implements OnInit {
               EmployeeActivityCategoryId: row.EmployeeActivityCategoryId,
               EmployeeActivitySubCategoryId: row.EmployeeActivitySubCategoryId,
               ActivityDate: row.ActivityDate,
-              EmployeeId: this.searchForm.get("").value,
-              Active: row.Active              
+              EmployeeId: this.EmployeeId,
+              OrgId: this.LoginUserDetail[0]["orgId"],
+              Active: row.Active
             });
 
           if (this.EmployeeActivityForUpdate[0].EmployeeActivityId == 0) {
@@ -197,10 +200,8 @@ export class EmployeeactivityComponent implements OnInit {
             this.EmployeeActivityForUpdate[0]["UpdatedDate"] = new Date();
             delete this.EmployeeActivityForUpdate[0]["UpdatedBy"];
             //delete this.EmployeeActivityForUpdate[0]["SubCategories"];
-
-
-            ////console.log("inserting1",this.EmployeeActivityForUpdate);
-            this.insert(row);
+            //console.log("inserting2",this.EmployeeActivityForUpdate);
+            this.insert(row, this.EmployeeActivityForUpdate[0]);
           }
           else {
             this.EmployeeActivityForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
@@ -209,7 +210,7 @@ export class EmployeeactivityComponent implements OnInit {
             //delete this.EmployeeActivityForUpdate[0]["EmployeeSubCategories"];
             delete this.EmployeeActivityForUpdate[0]["UpdatedBy"];
             //this.EmployeeActivityForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.insert(row);
+            this.update(row);
             //this.update(row);
           }
         }
@@ -218,21 +219,23 @@ export class EmployeeactivityComponent implements OnInit {
   loadingFalse() {
     this.loading = false;
   }
-  insert(row) {
+  insert(row, toinsert) {
     //console.log("inserting",this.EmployeeActivityForUpdate);
+
     //debugger;
-    this.dataservice.postPatch('EmployeeActivities', this.EmployeeActivityForUpdate, 0, 'post')
+    this.dataservice.postPatch('EmployeeActivities', toinsert, 0, 'post')
       .subscribe(
         (data: any) => {
           row.EmployeeActivityId = data.EmployeeActivityId;
           row.Action = false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
           this.loadingFalse()
+          this.GetEmployeeActivity();
         });
   }
   update(row) {
     //console.log("updating",this.EmployeeActivityForUpdate);
-    this.dataservice.postPatch('EmployeeActivities', this.EmployeeActivityForUpdate, this.EmployeeActivityForUpdate[0].EmployeeActivityId, 'patch')
+    this.dataservice.postPatch('EmployeeActivities', this.EmployeeActivityForUpdate[0], this.EmployeeActivityForUpdate[0].EmployeeActivityId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -260,7 +263,7 @@ export class EmployeeactivityComponent implements OnInit {
     ];
 
     list.PageName = "EmployeeActivities";
-    list.lookupFields = ["EmpEmployee($select=FirstName,LastName,EmployeeCode)"];
+    list.lookupFields = ["Employee($select=FirstName,LastName,EmployeeCode)"];
     list.filter = [filterStr];
     this.EmployeeActivityList = [];
     this.dataservice.get(list)
@@ -273,8 +276,9 @@ export class EmployeeactivityComponent implements OnInit {
               EmployeeActivityId: item.EmployeeActivityId,
               EmployeeId: item.EmployeeId,
               Activity: item.Activity,
-              EmployeeActivityCategoryId:item.EmployeeActivityCategoryId,
-              EmployeeActivitySubCategoryId:item.EmployeeActivitySubCategoryId,
+              EmployeeActivityCategoryId: item.EmployeeActivityCategoryId,
+              ActivitySubCategory: this.allMasterData.filter(f => f.ParentId == item.EmployeeActivityCategoryId),
+              EmployeeActivitySubCategoryId: item.EmployeeActivitySubCategoryId,
               ActivityDate: item.ActivityDate,
               Remark: item.Remarks,
               Active: item.Active,
@@ -297,7 +301,7 @@ export class EmployeeactivityComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
-        this.EmployeeActivitySubCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSUBCATEGORY);
+        //this.EmployeeActivitySubCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSUBCATEGORY);
         this.GetEmployees();
         this.GetEmployeeActivity();
       });

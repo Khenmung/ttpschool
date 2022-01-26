@@ -46,7 +46,7 @@
                 </button>
             </form>
             <p>Record will be displayed if it is defined in Subjects in Slot.</p>
-            <mat-table #table [dataSource]="dataSource">          
+            <mat-table #table [dataSource]="dataSource" style="min-width: 600px;">          
                 
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>                      

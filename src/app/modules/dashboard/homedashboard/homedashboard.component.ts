@@ -59,7 +59,7 @@ export class HomeDashboardComponent implements OnInit {
       this.userName = this.tokenStorage.getUser();
       var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
       if (PermittedApps.length == 0) {
-        this.route.navigate(["/auth/apps"]);
+        this.route.navigate(["/auth/selectplan"]);
       }
       else {
         var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)

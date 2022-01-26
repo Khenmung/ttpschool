@@ -151,6 +151,12 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
+                <button [disabled]="loading" (click)="back()" class="mat-raised-button">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
+                </button>
             </mat-card-actions>
             <!-- </mat-card> -->
         </mat-tab>
@@ -242,6 +248,12 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
+                <button [disabled]="loading" (click)="back()" class="mat-raised-button">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
+                </button>
             </mat-card-actions>
         </mat-tab>
         <mat-tab>
@@ -271,6 +283,12 @@
                 <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
+                </button>
+                <button [disabled]="loading" (click)="back()" class="mat-raised-button">
+                    <mat-icon>arrow_back</mat-icon>
+                </button>
+                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                    <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -335,9 +353,3 @@
 
     </mat-tab-group>
 </form>
-<!-- </div> -->
-<mat-card-actions style="padding-left: 15px;">
-    <button [disabled]="loading" (click)="back()" class="mat-raised-button">
-        <mat-icon>arrow_back</mat-icon>
-    </button>
-</mat-card-actions>

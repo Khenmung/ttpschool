@@ -1,0 +1,18 @@
+mat-form-field{
+    width: 98%;
+}
+.mat-column-EmployeeActivityId,.mat-column-Active,.mat-column-Action{
+    flex:0 0 100px;
+}
+.mat-column-EmployeeActivityId{
+    flex:0 0 70px;
+}
+.mat-column-ActivityDate{
+    flex:0 0 130px;
+}
+.mat-column-EmployeeActivity{
+    flex:0 0  150px;
+}
+.mat-column-EmployeeActivityCategory,.mat-column-EmployeeActivitySubCategory{
+    flex:0 0  120px;
+}

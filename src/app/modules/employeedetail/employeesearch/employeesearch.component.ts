@@ -54,6 +54,7 @@ export class EmployeesearchComponent implements OnInit {
   Bloodgroup = [];
   Category = [];
   Religion = [];
+  Departments = [];
   States = []
   PrimaryContact = [];
   Location = [];
@@ -103,15 +104,15 @@ export class EmployeesearchComponent implements OnInit {
         map(EmployeeCode => EmployeeCode ? this._filterC(EmployeeCode) : this.Employees.slice())
       );
 
-    this.contentservice.GetGrades(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-      this.Grades = [...data.value];
-    });
+    // this.contentservice.GetGrades(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+    //   this.Grades = [...data.value];
+    // });
 
 
     this.GetMasterData();
     //this.GetFeeTypes();
     this.GetEmployees();
-    this.loading=false;
+    this.loading = false;
   }
   private _filter(name: string): IEmployee[] {
 
@@ -174,6 +175,8 @@ export class EmployeesearchComponent implements OnInit {
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
         //this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.);
         //this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
@@ -287,7 +290,7 @@ export class EmployeesearchComponent implements OnInit {
   //     })
   // }
   GetEmployee() {
-    //debugger;
+    debugger;
 
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var EmployeeName = this.EmployeeSearchForm.get("searchemployeeName").value.Name;
@@ -296,24 +299,45 @@ export class EmployeesearchComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "EmpEmployeeId","ShortName","FirstName","LastName","EmployeeCode"
+      "EmpEmployeeId", "ShortName", "FirstName", "LastName", "EmployeeCode", "Active"
     ];
     list.PageName = "EmpEmployees";
-    list.lookupFields = ["EmpEmployeeGradeSalHistoryEmployees($select=EmployeeId,EmpGradeId,DepartmentId,DesignationId,Active)"];
+    list.lookupFields = ["EmpEmployeeGradeSalHistoryEmployees($filter=Active eq 1;$select=ManagerId,EmployeeId,EmpGradeId,DepartmentId,DesignationId,Active)"];
     list.filter = [this.filterOrgIdOnly + checkFilterString];
-  
+
     this.dataservice.get(list)
       .subscribe((data: any) => {
         ////console.log(data.value);
         if (data.value.length > 0) {
 
           this.EmployeeData = data.value.map(item => {
+            var gradeObj = this.Grades.filter(g => g.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].EmpGradeId);
+            var _gradeName = '';
+            if (gradeObj.length > 0)
+              _gradeName = gradeObj[0].MasterDataName;
+            
+              var designationObj = this.Designations.filter(d => d.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].DesignationId);
+            var _designationName = '';
+            if (designationObj.length > 0)
+            _designationName = designationObj[0].MasterDataName;
+            
+            var departmentObj = this.Departments.filter(d => d.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].DepartmentId);
+            var _departmentName = '';
+            if (departmentObj.length > 0)
+            _departmentName = departmentObj[0].MasterDataName;
+            
+            var managerObj = this.Employees.filter(d => d.EmployeeId == item.EmpEmployeeGradeSalHistoryEmployees[0].ManagerId);
+            var _managerName = '';
+            if (managerObj.length > 0)
+            _managerName = managerObj[0].Name;
+
+            
             item.EmployeeCode = item.EmployeeCode;
             item.Name = item.FirstName + " " + item.LastName;
-            item.Grade = item.EmpEmployeeGradeSalHistoryEmployees.EmpGradeId;
-            item.Designation = item.EmpEmployeeGradeSalHistoryEmployees.DesignationId;
-            item.Department = item.EmpEmployeeGradeSalHistoryEmployees.DepartmentId;
-            item.Manager = '';//item.EmpEmployeeGradeSalHistoryManagers.FirstName + " " + item.EmpEmployeeGradeSalHistoryManagers.LastName;
+            item.Grade = _gradeName;
+            item.Designation = _designationName;
+            item.Department = _departmentName;
+            item.Manager = _managerName;//item.EmpEmployeeGradeSalHistoryManagers.FirstName + " " + item.EmpEmployeeGradeSalHistoryManagers.LastName;
             return item;
           })
         }
