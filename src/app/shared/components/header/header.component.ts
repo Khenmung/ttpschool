@@ -53,7 +53,7 @@ export class HeaderComponent implements OnInit {
     this.route.navigate(["/auth/login"]);
   }
   createlogin() {
-    this.route.navigate(["/auth/createlogin"]);
+    this.route.navigate(["/auth/register"]);
   }
   addUser() {
     this.route.navigate(["/auth/signup"]);

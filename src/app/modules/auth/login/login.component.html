@@ -2,10 +2,10 @@
 
 
 <mat-card>
-    <mat-card-title style="margin:60px 0px 0px 60px;">Login</mat-card-title>
+    <mat-card-title style="margin:30px 0px 0px 30px;">Login</mat-card-title>
     <mat-card-content>
-        <div class="container" fxLayout="row wrap" fxLayoutAlign="space-around center">
-            <form [formGroup]="loginForm" novalidate style="display: flex;justify-content: center;flex-direction: column;">
+        <!-- <div class="container" fxLayout="row wrap" fxLayoutAlign="space-around center"> -->
+            <form [formGroup]="loginForm" novalidate style="margin:30px;display: flex;flex-direction: column;">
                 <mat-form-field>
                     <mat-label for="username">Username</mat-label>
                     <input type="text" matInput formControlName="username" required autocomplete="Off" />
@@ -14,9 +14,8 @@
                     <mat-label for="password">Password</mat-label>
                     <input type="password" matInput formControlName="password" required minlength="6"
                         autocomplete="Off" />
-                </mat-form-field>
-                
-                <div fxLayoutAlign="space-between center">
+                </mat-form-field>                
+                <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">
                     <button [disabled]="loading" 
                     class="mat-raised-button"
                     (click)="onSubmit()" 
@@ -26,6 +25,9 @@
                     <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" class="mat-raised-button">
                         <mat-icon>cancel</mat-icon>
                     </button>
+                </div>
+                <div style="margin: 15px 15px 15px 0px;">
+                    <a [routerLink]="['/auth/forgot']">Forgot password</a>
                 </div>
                 <div style="padding: 15px 15px 15px 0px;">
                     <div class="alert alert-danger" role="alert" *ngIf="errorMessage.length>0">
@@ -51,7 +53,7 @@
                     </div>                    
                 </div>
             </form>
-        </div>
+        <!-- </div> -->
         <div class="alert alert-success col-md-12" *ngIf="isLoggedIn">
             Logged in as {{ username }}.
         </div>

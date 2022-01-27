@@ -1,7 +1,8 @@
 :host{
-    width: 100%;
     display: grid;
-    place-items: center;    
+    place-items: center;
+    min-height: 92vh;
+    background-color:white;    
 }
 .container{
     margin: 100px;

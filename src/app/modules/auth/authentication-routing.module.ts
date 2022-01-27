@@ -4,9 +4,11 @@ import { CustomerPlansComponent } from '../globaladmininitial/customerplans/cust
 import { AuthHomeComponent } from './authhome/authhome.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ConfirmemailComponent } from './confirmemail/confirmemail.component';
+import { ForgotpasswordComponent } from './forgotpassword/forgotpassword.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { RegisterComponent } from './register/register.component';
+import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 //import { SelectappsComponent } from './selectapps/selectapps.component';
 
 const routes: Routes = [
@@ -15,9 +17,11 @@ const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'changepassword', component: ChangePasswordComponent },
-      { path: 'createlogin', component: RegisterComponent },
+      { path: 'register', component: RegisterComponent },
       { path: 'selectplan', component: CustomerPlansComponent },      
       { path: 'confirmemail/:id', component: ConfirmemailComponent },      
+      { path: 'forgot', component: ForgotpasswordComponent },      
+      { path: 'reset', component: ResetpasswordComponent },      
     ]
   },
 ];
@@ -34,5 +38,7 @@ export const AuthComponents = [
   ProfileComponent,
   RegisterComponent,
   AuthHomeComponent,
-  ConfirmemailComponent
+  ConfirmemailComponent,
+  ForgotpasswordComponent,
+  ResetpasswordComponent
 ]

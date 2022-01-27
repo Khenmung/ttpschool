@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MediaObserver, MediaChange } from '@angular/flex-layout';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AuthService } from '../../../_services/auth.service';
 
 @Component({
-  selector: 'app-change-password',
-  templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.scss']
+  selector: 'app-forgotpassword',
+  templateUrl: './forgotpassword.component.html',
+  styleUrls: ['./forgotpassword.component.scss']
 })
-export class ChangePasswordComponent implements OnInit {
+export class ForgotpasswordComponent implements OnInit {
   loading = false;
   loginUserDetail = [];
-  changepwdForm: FormGroup;
+  forgotpwdForm: FormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
@@ -46,7 +46,7 @@ export class ChangePasswordComponent implements OnInit {
     if (this.loginUserDetail == null)
       this.route.navigate(['/auth/login']);
     else {
-      this.changepwdForm = this.fb.group({
+      this.forgotpwdForm = this.fb.group({
         ConfirmPassword: ['', [Validators.required, Validators.minLength(6)]],
         OldPassword: ['', [Validators.required, Validators.minLength(6)]],
         NewPassword: ['', [Validators.required, Validators.minLength(6)]]
@@ -57,26 +57,19 @@ export class ChangePasswordComponent implements OnInit {
     this.route.navigate(['/dashboard']);
   }
   get f() {
-    return this.changepwdForm.controls;
+    return this.forgotpwdForm.controls;
   }
   onSubmit(): void {
-    var ConfirmPassword = this.changepwdForm.get("ConfirmPassword").value;
-    var OldPassword = this.changepwdForm.get("OldPassword").value;
-    var NewPassword = this.changepwdForm.get("NewPassword").value;
+    var email = this.forgotpwdForm.get("email").value;    
     var payload = {
-      'UserId': this.loginUserDetail[0]["userId"],
-      'OldPassword': OldPassword,
-      'NewPassword': NewPassword,
-      'ConfirmPassword': ConfirmPassword
+      'Email': email
     }
-    debugger;
-    this.authService.changePassword(payload).subscribe(
+    
+    this.authService.forgotPassword(payload).subscribe(
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;
-        this.alert.success("Password changed.", this.optionsAutoClose);
-        this.tokenService.signOut();
-        this.route.navigate(['/auth/login']);
+        this.alert.success("Email sent to your register email address.", this.optionsNoAutoClose);        
       },
       err => {
         if (err.error) {

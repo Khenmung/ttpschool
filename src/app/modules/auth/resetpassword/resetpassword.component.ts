@@ -1,26 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AuthService } from '../../../_services/auth.service';
 
 @Component({
-  selector: 'app-change-password',
-  templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.scss']
+  selector: 'app-resetpassword',
+  templateUrl: './resetpassword.component.html',
+  styleUrls: ['./resetpassword.component.scss']
 })
-export class ChangePasswordComponent implements OnInit {
+export class ResetpasswordComponent implements OnInit {
   loading = false;
   loginUserDetail = [];
-  changepwdForm: FormGroup;
+  resetpwdForm: FormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
-  mediaSub: Subscription;
-  deviceXs: boolean;
+  // mediaSub: Subscription;
+  // deviceXs: boolean;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -29,54 +27,54 @@ export class ChangePasswordComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Code='';
+  UserId='';
   constructor(private authService: AuthService,
     private route: Router,
-    private mediaObserver: MediaObserver,
+    private aroute:ActivatedRoute,
     private fb: FormBuilder,
     private tokenService: TokenStorageService,
     private alert: AlertService
   ) { }
 
   ngOnInit(): void {
-    this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
-      this.deviceXs = result.mqAlias === "xs" ? true : false;
-    });
-
-    this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.loginUserDetail == null)
-      this.route.navigate(['/auth/login']);
-    else {
-      this.changepwdForm = this.fb.group({
-        ConfirmPassword: ['', [Validators.required, Validators.minLength(6)]],
-        OldPassword: ['', [Validators.required, Validators.minLength(6)]],
+    this.aroute.paramMap.subscribe(param=>{
+      this.Code = param.get("code");
+      this.UserId = param.get("userid");
+    })
+    // this.loginUserDetail = this.tokenService.getUserDetail();
+    // if (this.loginUserDetail == null)
+    //   this.route.navigate(['/auth/login']);
+    // else {
+      this.resetpwdForm = this.fb.group({
+        ConfirmPassword: ['', [Validators.required, Validators.minLength(6)]],        
         NewPassword: ['', [Validators.required, Validators.minLength(6)]]
       });
-    }
+    //}
   }
   gotohome() {
     this.route.navigate(['/dashboard']);
   }
   get f() {
-    return this.changepwdForm.controls;
+    return this.resetpwdForm.controls;
   }
   onSubmit(): void {
-    var ConfirmPassword = this.changepwdForm.get("ConfirmPassword").value;
-    var OldPassword = this.changepwdForm.get("OldPassword").value;
-    var NewPassword = this.changepwdForm.get("NewPassword").value;
+    var ConfirmPassword = this.resetpwdForm.get("ConfirmPassword").value;
+    var NewPassword = this.resetpwdForm.get("NewPassword").value;
     var payload = {
-      'UserId': this.loginUserDetail[0]["userId"],
-      'OldPassword': OldPassword,
+      'UserId': this.UserId,
+      'Code': this.Code,
       'NewPassword': NewPassword,
       'ConfirmPassword': ConfirmPassword
     }
     debugger;
-    this.authService.changePassword(payload).subscribe(
+    this.authService.resetPassword(payload).subscribe(
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;
-        this.alert.success("Password changed.", this.optionsAutoClose);
+        this.alert.success("Password reset.", this.optionsAutoClose);
         this.tokenService.signOut();
-        this.route.navigate(['/auth/login']);
+        //this.route.navigate(['/auth/login']);
       },
       err => {
         if (err.error) {

@@ -5,7 +5,7 @@ import { List } from "./interface";
 import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
-    public static apiUrl: string = "http://localhost:8020";//"http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:5000";//"http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;

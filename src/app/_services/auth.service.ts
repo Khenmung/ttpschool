@@ -52,12 +52,14 @@ ngOnInit(): void {
     return this.http.post(this.AUTH_API + '/api/AuthManagement/RefreshToken',tokenrequest
     , this.httpOptions);
   }
-  changePassword(confirmPassword: string, OldPassword: string, password: string): Observable<any> {
-    return this.http.post(this.AUTH_API + '/api/Account/ChangePassword', {
-      OldPassword: OldPassword,
-      NewPassword: password,
-      ConfirmPassword: confirmPassword      
-    }, this.httpOptions);
+  changePassword(payload): Observable<any> {    
+    return this.http.post(this.AUTH_API + '/api/AuthManagement/ChangePassword',payload, this.httpOptions);
+  }
+  forgotPassword(payload): Observable<any> {    
+    return this.http.post(this.AUTH_API + '/api/AuthManagement/ForgotPassword',payload, this.httpOptions);
+  }
+  resetPassword(payload): Observable<any> {    
+    return this.http.post(this.AUTH_API + '/api/AuthManagement/ResetPassword',payload, this.httpOptions);
   }
   loadUserInfo() {
     let userdata; 
