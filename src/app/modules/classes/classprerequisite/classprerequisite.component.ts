@@ -90,7 +90,7 @@ export class ClassprerequisiteComponent implements OnInit {
         //this.nav.navigate(['/edu']);
       }
       else if (this.ClassMasters.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
           this.ClassMasters = [...data.value];
           this.loading = false;
         })

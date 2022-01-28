@@ -22,7 +22,6 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
 
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
-    this.userName = this.LoginUserDetails[0]["userName"];
     if (this.userName === undefined || this.userName === null || this.userName == '')
       this.loggedIn = false;
     else
@@ -35,6 +34,7 @@ export class HeaderComponent implements OnInit {
         this.route.navigate(["/auth/selectplan"]);
       }
       else {
+        this.userName = this.LoginUserDetails[0]["userName"];
         var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
         this.SelectedApplicationName = '';
         var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)

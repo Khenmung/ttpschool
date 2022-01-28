@@ -143,7 +143,7 @@ export class HomeDashboardComponent implements OnInit {
       "CurrentBatch",
       "Active"];
     list.PageName = "Batches";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and OrgId eq "+ this.loginUserDetail[0]["orgId"]];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
       this.shareddata.ChangeBatch(this.Batches);

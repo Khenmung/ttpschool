@@ -115,7 +115,7 @@ export class ClassdetailComponent implements OnInit {
       }
       else {
         if (this.ClassMasters.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
             this.ClassMasters = [...data.value];
           })
         }
@@ -168,7 +168,7 @@ export class ClassdetailComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "ClassName eq '" + row.ClassName + "'"
+    let checkFilterString = "ClassName eq '" + row.ClassName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"]
 
     if (row.ClassId > 0)
       checkFilterString += " and ClassId ne " + row.ClassId;

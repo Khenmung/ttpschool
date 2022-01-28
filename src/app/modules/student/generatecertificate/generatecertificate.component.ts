@@ -143,7 +143,7 @@ export class GenerateCertificateComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 

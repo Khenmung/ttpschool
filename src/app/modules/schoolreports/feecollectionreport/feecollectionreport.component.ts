@@ -95,7 +95,7 @@ export class FeecollectionreportComponent implements OnInit {
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
 
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 

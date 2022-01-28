@@ -121,7 +121,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
         this.Classes = [...data.value];
       })
       this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);

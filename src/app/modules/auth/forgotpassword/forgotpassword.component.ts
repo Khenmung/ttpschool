@@ -47,9 +47,7 @@ export class ForgotpasswordComponent implements OnInit {
       this.route.navigate(['/auth/login']);
     else {
       this.forgotpwdForm = this.fb.group({
-        ConfirmPassword: ['', [Validators.required, Validators.minLength(6)]],
-        OldPassword: ['', [Validators.required, Validators.minLength(6)]],
-        NewPassword: ['', [Validators.required, Validators.minLength(6)]]
+        email: ['', [Validators.required]]
       });
     }
   }

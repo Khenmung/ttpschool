@@ -25,7 +25,7 @@ export class ContentService implements OnInit {
     //debugger;
     //this.UserDetail = this.tokenService.getUserDetail();
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-
+  
   }
   AddUpdateContent(pagecontent: any) {
     ////debugger  
@@ -39,10 +39,10 @@ export class ContentService implements OnInit {
     list.PageName = "EmpEmployees";
     return this.dataservice.get(list);
   }
-  GetClasses(orgId) {
+  GetClasses(orgId,SelectedBatchId) {
     let list = new List();
     list.fields = ["*"];
-    list.filter = ["Active eq 1 and OrgId eq " + orgId];
+    list.filter = ["Active eq 1 and BatchId eq "+ SelectedBatchId +" and OrgId eq " + orgId];
     list.PageName = "ClassMasters";
     return this.dataservice.get(list);
   }
@@ -363,8 +363,8 @@ export class ContentService implements OnInit {
 
 
     var commonAppId = this.GetPermittedAppId('common');
-    var orgIdSearchstr = ' and (ApplicationId eq ' + commonAppId + applicationparam + ")"
-    ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
+    var orgIdSearchstr = ' and (ApplicationId eq ' + commonAppId + applicationparam + ")" +
+                         ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
 
     let list: List = new List();
 

@@ -213,7 +213,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
         this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
         this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
-        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.GetMasterData();
         });

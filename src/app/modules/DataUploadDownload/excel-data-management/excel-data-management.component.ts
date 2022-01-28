@@ -53,7 +53,7 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentPrimaryContact.subscribe(c => (this.PrimaryContact = c));
     this.shareddata.CurrentLocation.subscribe(c => (this.Location = c));
 
-    this.contentservice.GetClasses(this.loginDetail[0]["orgId"]).subscribe((data: any) => {
+    this.contentservice.GetClasses(this.loginDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
       this.Classes = [...data.value];
 
     });

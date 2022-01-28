@@ -38,7 +38,7 @@ export class ResetpasswordComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.aroute.paramMap.subscribe(param=>{
+    this.aroute.queryParamMap.subscribe(param=>{
       this.Code = param.get("code");
       this.UserId = param.get("userid");
     })

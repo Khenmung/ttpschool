@@ -114,7 +114,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       this.GetMasterData();
       this.GetSubjectTypes();
       if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
           this.Classes = [...data.value];
 
         });
