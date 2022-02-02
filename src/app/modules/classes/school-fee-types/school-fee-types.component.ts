@@ -192,9 +192,9 @@ export class SchoolFeeTypesComponent implements OnInit {
     //   return;
     // }  
     this.loading = true;
-    let filterStr = '';
+    let filterStr ='';// 'BatchId eq '+ this.SelectedBatchId;
     if (this.searchForm.get("searchFeeTypeName").value.length != 0)
-      filterStr = " contains(FeeTypeName,'" + this.searchForm.get("searchFeeTypeName").value + "')";
+      filterStr += " and contains(FeeTypeName,'" + this.searchForm.get("searchFeeTypeName").value + "')";
 
     let list: List = new List();
     list.fields = [
@@ -215,8 +215,13 @@ export class SchoolFeeTypesComponent implements OnInit {
         if (data.value.length > 0) {
           this.FeeTypeList = [...data.value];
         }
+        else
+        {
+          this.alert.success("No data found.",this.optionAutoClose);
+        }
         this.dataSource = new MatTableDataSource<IFeeType>(this.FeeTypeList);
         this.loadingFalse();
+        
       });
 
   }

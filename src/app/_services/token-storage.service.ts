@@ -17,6 +17,9 @@ const STUDENTID='StudentId';
 const STUDENTCLASSID='StudentClassId';
 const EMPLOYEEID ='employeeId';
 const ROLEFILTER ='rolefilter';
+const SELECTEDBATCHNAME ='selectedbatchname';
+const CURRENTBATCHID ='currentbatchid';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -52,6 +55,13 @@ export class TokenStorageService {
     localStorage.removeItem(NEXTBATCHID);
     localStorage.setItem(NEXTBATCHID, token);
   }
+  public saveSelectedBatchName(token: string): void {
+    localStorage.removeItem(SELECTEDBATCHNAME);
+    localStorage.setItem(SELECTEDBATCHNAME, token);
+  }
+  public getSelectedBatchName(): string | null {
+    return localStorage.getItem(SELECTEDBATCHNAME);
+  }
   public getNextBatchId(): string | null {
     return localStorage.getItem(NEXTBATCHID);
   }
@@ -60,7 +70,7 @@ export class TokenStorageService {
     localStorage.setItem(PREVIOUSBATCHID, token);
   }
   public getPreviousBatchId(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(PREVIOUSBATCHID);
   }
   
   public saveRefreshToken(RefreshToken: string): void {
@@ -145,6 +155,13 @@ export class TokenStorageService {
   }
   public getSelectedBatchId(): string | null {
     return localStorage.getItem(SELECTEDBATCHID);
+  }
+  public saveCurrentBatchId(token: string): void {
+    localStorage.removeItem(CURRENTBATCHID);
+    localStorage.setItem(CURRENTBATCHID, token);
+  }
+  public getCurrentBatchId(): string | null {
+    return localStorage.getItem(CURRENTBATCHID);
   }
   public saveUser(user: any): void {
     localStorage.removeItem(USER_KEY);

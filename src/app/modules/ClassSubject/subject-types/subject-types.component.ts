@@ -35,7 +35,9 @@ export class SubjectTypesComponent implements OnInit {
   Batches = [];
   dataSource: MatTableDataSource<ISubjectType>;
   allMasterData = [];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
+  StandardFilterWithPreviousBatchId = '';
+  PreviousBatchId = -1;
   SubjectTypeId = 0;
   SubjectTypeData = {
     SubjectTypeId: 0,
@@ -46,6 +48,7 @@ export class SubjectTypesComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
+    'SubjectTypeId',
     'SubjectTypeName',
     'SelectHowMany',
     'Active',
@@ -82,14 +85,25 @@ export class SubjectTypesComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
+      if (this.Permission != 'deny') {
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        if (+this.tokenstorage.getPreviousBatchId() > 0)
+          this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage)
+        this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
 
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.GetSubjectTypes();
-      //    this.GetMasterData();      
+        this.GetSubjectTypes(0);
+      }//    this.GetMasterData();      
     }
   }
   onBlur(row) {
     row.Action = true;
+  }
+  CopyFromPreviousBatch() {
+    //console.log("here ", this.PreviousBatchId)
+    if (this.PreviousBatchId == -1)
+      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+    else
+      this.GetSubjectTypes(1)
   }
   addnew() {
 
@@ -197,9 +211,13 @@ export class SubjectTypesComponent implements OnInit {
           this.alert.success("Data updated successfully.", this.optionAutoClose);
         });
   }
-  GetSubjectTypes() {
+  GetSubjectTypes(previousbatch) {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = '';
+    if (previousbatch == 1)
+      orgIdSearchstr = this.StandardFilterWithPreviousBatchId;
+    else
+      orgIdSearchstr = this.StandardFilterWithBatchId;
 
     let list: List = new List();
 
@@ -211,7 +229,9 @@ export class SubjectTypesComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SubjectTypes = data.value.map(m => {
+          m.SubjectTypeId =previousbatch ==1?0:m.SubjectTypeId
           m.Action = false;
+          m.Active= previousbatch ==1?0:m.Active
           return m;
         });
         this.dataSource = new MatTableDataSource<ISubjectType>(this.SubjectTypes);
@@ -220,7 +240,7 @@ export class SubjectTypesComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
 

@@ -210,7 +210,7 @@ export class studentprimaryinfoComponent implements OnInit {
       var SelectedBatchId= this.tokenService.getSelectedBatchId();
       if (this.StudentId > 0)
         this.GetStudent();
-      this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"],SelectedBatchId).subscribe((data: any) => {
+      this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
     }

@@ -31,7 +31,7 @@ export class ClassdetailComponent implements OnInit {
   ClassMasterListName = 'ClassMasters';
   Applications = [];
   loading = false;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   SelectedBatchId = 0;
   ClassMasterList: IClassMaster[] = [];
   filteredOptions: Observable<IClassMaster[]>;
@@ -58,6 +58,9 @@ export class ClassdetailComponent implements OnInit {
     OrgId: 0,
     Active: 0
   };
+  PreviousBatchId = 0;
+  StandardFilterWithPreviousBatchId = '';
+  StandardFilterWithBatchId = '';
   displayedColumns = [
     "ClassId",
     "ClassName",
@@ -114,8 +117,10 @@ export class ClassdetailComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
         if (this.ClassMasters.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.ClassMasters = [...data.value];
           })
         }
@@ -167,6 +172,23 @@ export class ClassdetailComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
+
+    if (row.Sequence > 250) {
+      this.alert.error("Sequence can not be greater than 250", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
+    // if(row.MinStudent<1)
+    // {
+    //   this.alert.error("Minimum can not be less than 1",this.optionsNoAutoClose);
+    //   this.loading=false;
+    //   return;
+    // }
+    if (row.MaxStudent > 1000) {
+      this.alert.error("Maximum can not be greater than 1000", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
     this.loading = true;
     let checkFilterString = "ClassName eq '" + row.ClassName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"]
 
@@ -197,7 +219,7 @@ export class ClassdetailComponent implements OnInit {
           this.ClassMasterData.StudyAreaId = row.StudyAreaId;
           this.ClassMasterData.StudyModeId = row.StudyModeId;
           this.ClassMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ClassMasterData.BatchId = this.SelectedBatchId;
+          //this.ClassMasterData.BatchId = this.SelectedBatchId;
 
           this.ClassMasterData.Active = row.Active;
           ////console.log('exam slot', this.ClassMasterData)
@@ -248,7 +270,9 @@ export class ClassdetailComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'BatchId eq ' + this.SelectedBatchId
+    let filterStr = '';
+    filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+
     var _searchClassName = this.searchForm.get("searchClassName").value;
     if (_searchClassName > 0) {
       filterStr += ' and ClassId eq ' + _searchClassName;
@@ -286,7 +310,7 @@ export class ClassdetailComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);

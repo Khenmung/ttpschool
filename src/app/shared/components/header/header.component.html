@@ -2,12 +2,14 @@
 <mat-toolbar>
     <mat-toolbar-row class="width100" fxLayout="row" fxLayoutAlign="space-between center">
         <div fxLayout="row" fxLayoutAlign="start center">
-            <a [routerLink]="['/']"><img style="border-radius: 8px;" src="assets/images/ttplogo1.png"
-                    alt="TTP" width="50px" /></a>
-            <span>{{SelectedApplicationName}}</span>    
-                </div>
+            <a [routerLink]="['/']"><img style="border-radius: 8px;" src="assets/images/ttplogo1.png" alt="TTP"
+                    width="50px" /></a>
+            <span>{{SelectedApplicationName}}</span>
+            <span *ngIf="SelectedBatchName.length>0">-{{SelectedBatchName}}</span>            
+        </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <div style="font-size: medium;">{{userName}}</div>
+
             <span class="rightside" *ngIf="!deviceXs">
                 <button [disabled]="loading" mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
@@ -18,7 +20,7 @@
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>
                 <mat-icon *ngIf="!deviceXs">account_circle</mat-icon>
             </button>
-            
+
             <mat-menu #menu="matMenu">
                 <button [disabled]="loading" mat-menu-item *ngIf="!loggedIn" (click)="gotoLogin()">
                     <mat-icon>login</mat-icon>login

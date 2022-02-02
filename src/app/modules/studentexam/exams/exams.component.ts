@@ -104,12 +104,6 @@ export class ExamsComponent implements OnInit {
     this.GetSubjectComponents();
 
   }
-  // GetCurrentBatchIDnAssign() {
-  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-  //   if (CurrentBatches.length > 0) {
-  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;   
-  //   }
-  // }
   addnew() {
 
     let toadd = {
@@ -218,6 +212,7 @@ export class ExamsComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.ExamId = data.ExamId;
+          row.Action=false;
           this.alert.success("Data saved successfully.", this.optionAutoClose);
         });
   }
@@ -226,6 +221,7 @@ export class ExamsComponent implements OnInit {
     this.dataservice.postPatch('Exams', this.ExamsData, this.ExamsData.ExamId, 'patch')
       .subscribe(
         (data: any) => {
+          row.Action=false;
           this.GetExamStudentSubjectResults(this.ExamsData.ExamId,row);
         });
   }

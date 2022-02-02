@@ -39,16 +39,17 @@ export class ContentService implements OnInit {
     list.PageName = "EmpEmployees";
     return this.dataservice.get(list);
   }
-  GetClasses(orgId,SelectedBatchId) {
+  GetClasses(orgId) {
     let list = new List();
     list.fields = ["*"];
-    list.filter = ["Active eq 1 and BatchId eq "+ SelectedBatchId +" and OrgId eq " + orgId];
+    list.filter = ["Active eq 1 and OrgId eq " + orgId];
     list.PageName = "ClassMasters";
     return this.dataservice.get(list);
   }
-  GetFeeDefinitions(SelectedBatchId, orgId) {
-
-    let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;
+  GetFeeDefinitions(orgId) {
+    //Fee definition is not batch wise.      
+    //let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;
+    let filterStr = 'OrgId eq ' + orgId;
     let list: List = new List();
     list.fields = [
       "FeeDefinitionId",

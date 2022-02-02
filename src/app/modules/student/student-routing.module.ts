@@ -6,7 +6,7 @@ import { AddstudentclassComponent } from './addstudentclass/addstudentclass.comp
 import { searchstudentComponent } from './searchstudent/searchstudent.component';
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from './studentfeepayment/feereceipt/feereceipt.component';
-import { StudentDocumentComponent } from '../student/uploadstudentdocument/uploadstudentdoc.component';
+import { StudentDocumentComponent } from './uploadstudentdocument/uploadstudentdoc.component';
 import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
 import { StudentattendancereportComponent } from './studentattendancereport/studentattendancereport.component';
 import { StudentboardComponent } from './studentboard/studentboard.component';

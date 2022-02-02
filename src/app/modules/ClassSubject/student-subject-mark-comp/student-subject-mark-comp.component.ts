@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { filter } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -26,11 +27,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   loading = false;
   Permission = '';
   LoginUserDetail = [];
-  StandardFilter = '';
   CurrentBatch = '';
   CurrentBatchId = 0;
   SelectedBatchId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
+  StandardOrgIdWithBatchId = '';
+  StandardOrgIdWithPreviousBatchId = '';
+  PreviousBatchId = 0;
   Classes = [];
   Subjects = [];
   ClassSubjectnComponents = [];
@@ -41,7 +44,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   ELEMENT_DATA: ISubjectMarkComponent[] = [];
   dataSource: MatTableDataSource<ISubjectMarkComponent>;
   allMasterData = [];
-  searchForm: any;
+  searchForm: FormGroup;
   classSubjectComponentData = {
     ClassSubjectMarkComponentId: 0,
     ClassSubjectId: 0,
@@ -70,10 +73,11 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.StandardOrgIdWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+        this.StandardOrgIdWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.token);
         this.searchForm = this.fb.group({
-          SubjectId: [0],
-          ClassId: [0]
+          searchSubjectId: [0],
+          searchClassId: [0]
         });
         //debugger;
         //this.GetClassFee();
@@ -85,9 +89,10 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //this.shareddata.CurrentSelectedBatchId.subscribe(c=>this.SelectedBatchId=c);
     this.SelectedBatchId = +this.token.getSelectedBatchId();
     this.SelectedApplicationId = +this.token.getSelectedAPPId();
+
     this.GetMasterData();
     if (this.Classes.length == 0) {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
 
       });
@@ -186,7 +191,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
@@ -266,12 +271,26 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         this.MergeSubjectnComponents();
       })
   }
-  GetClassSubjectComponent() {
+  CopyFromPreviousBatch() {
+    //console.log("here ", this.PreviousBatchId)
+    this.PreviousBatchId = +this.token.getPreviousBatchId();
+    if (this.PreviousBatchId == -1)
+      this.alert.info("Previous batch not defined.", this.options.autoClose);
+    else
+      this.GetClassSubjectComponent(1)
+  }
+  GetClassSubjectComponent(previousbatch) {
 
-    if (this.searchForm.get("ClassId").value == 0) {
+    if (this.searchForm.get("searchClassId").value == 0) {
       this.alert.error("Please select class.", this.options.autoClose);
       return;
     }
+    var filterstr = '';
+    if (previousbatch == 1)
+      filterstr = this.StandardOrgIdWithPreviousBatchId;
+    else
+      filterstr = this.StandardOrgIdWithBatchId;
+
     this.loading = true;
     let list: List = new List();
     list.fields = [
@@ -286,7 +305,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     ];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)"];
-    list.filter = ["Active eq 1 and " + this.StandardFilter];
+    list.filter = ["Active eq 1 and " + filterstr];
     //list.orderBy = "ParentId";
     this.ELEMENT_DATA = [];
     this.dataservice.get(list)
@@ -294,12 +313,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         //debugger;
         var clsSubjFiltered = [];
         //if all subject is selected.
-        clsSubjFiltered = data.value.filter(item => item.ClassSubject.ClassId == this.searchForm.get("ClassId").value);
+        clsSubjFiltered = data.value.filter(item => item.ClassSubject.ClassId == this.searchForm.get("searchClassId").value);
         var filteredClassSubjectnComponents = this.ClassSubjectnComponents.filter(clssubjcomponent =>
-          clssubjcomponent.ClassId == this.searchForm.get("ClassId").value);
-        if (this.searchForm.get("SubjectId").value > 0) {
-          clsSubjFiltered = clsSubjFiltered.filter(item => item.ClassSubject.SubjectId == this.searchForm.get("SubjectId").value);
-          filteredClassSubjectnComponents = filteredClassSubjectnComponents.filter(clssubjcomponent => clssubjcomponent.SubjectId == this.searchForm.get("SubjectId").value);
+          clssubjcomponent.ClassId == this.searchForm.get("searchClassId").value);
+        if (this.searchForm.get("searchSubjectId").value > 0) {
+          clsSubjFiltered = clsSubjFiltered.filter(item => item.ClassSubject.SubjectId == this.searchForm.get("searchSubjectId").value);
+          filteredClassSubjectnComponents = filteredClassSubjectnComponents.filter(clssubjcomponent => clssubjcomponent.SubjectId == this.searchForm.get("searchSubjectId").value);
         }
 
         filteredClassSubjectnComponents.forEach((subj, indx) => {
@@ -308,6 +327,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
             let existing = clsSubjFiltered.filter(fromdb => fromdb.ClassSubject.SubjectId == subj.SubjectId
               && fromdb.SubjectComponentId == component.MasterDataId)
             if (existing.length > 0) {
+              existing[0].ClassSubjectMarkComponentId = previousbatch == 1 ? 0 : existing[0].ClassSubjectMarkComponentId;
+              existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active;
               existing[0].ClassSubject = subj.ClassSubject;
               existing[0].SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName;
               this.ELEMENT_DATA.push(existing[0]);
@@ -333,12 +354,10 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         if (this.ELEMENT_DATA.length == 0)
           this.alert.info("No record found!", this.options);
 
-        ////console.log('this', this.ELEMENT_DATA);
-        //this.ELEMENT_DATA=this.ELEMENT_DATA.sort((a,b)=>(a.PaymentOrder>b.PaymentOrder?1:-1))
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
         this.loading = false;
-        ////console.log("element data", this.ELEMENT_DATA)
+
       });
   }
   updateActive(row) {

@@ -374,7 +374,13 @@ GetMasterData() {
   this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],ids)
     .subscribe((data: any) => {
       this.allMasterData = [...data.value];
-      this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+      //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+      var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+        this.contentservice.GetDropDownDataFromDB(_ParentId, 0, 0)
+          .subscribe((data: any) => {
+            this.Applications = [...data.value];
+          });
       this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
       this.loading = false;
     });

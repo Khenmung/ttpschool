@@ -21,9 +21,13 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassTeacher()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassTeacher(0)">
                 <mat-icon>search</mat-icon>
             </button>
+             <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
+                        (click)="CopyFromPreviousBatch()">
+                        <mat-icon>copy_all</mat-icon>
+                    </button>
         </form>
         <mat-table #table [dataSource]="dataSource">
 

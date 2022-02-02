@@ -4,20 +4,28 @@
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
-    <div style="padding: 15px;" fxLayout="row wrap">
-        <div style="width: 100%;">
+    <div style="padding: 15px;">
+        <!-- <div style="width: 100%;"> -->
             <form [formGroup]="searchForm">
-                <mat-form-field appearance="outline" [style.width.pc]="25">
+                <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassName">
+                        <mat-option [value]="0">select</mat-option>
                         <mat-option *ngFor="let option of ClassMasters" [value]="option.ClassId">
                             {{option.ClassName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button [disabled]="loading" class="mat-raised-button" (click)="GetClassMasters()">
-                    <mat-icon>search</mat-icon>
-                </button>
+                <!-- <div style="display: flex;width:100%; justify-content: space-between center;flex-direction: row;"> -->
+                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                        (click)="GetClassMasters()">
+                        <mat-icon>search</mat-icon>
+                    </button>
+                    <!-- <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
+                        (click)="CopyFromPreviousBatch()">
+                        <mat-icon>copy_all</mat-icon>
+                    </button> -->
+                <!-- </div> -->
             </form>
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="ClassId">
@@ -32,8 +40,8 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <input matInput ng-pattern="/^[a-zA-Z0-9]*$/" (blur)="onBlur(element)" autocomplete="Off" [maxlength]="50"
-                                [value]="element.ClassName" [(ngModel)]="element.ClassName">
+                            <input matInput ng-pattern="/^[a-zA-Z0-9]*$/" (blur)="onBlur(element)" autocomplete="Off"
+                                [maxlength]="50" [value]="element.ClassName" [(ngModel)]="element.ClassName">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -42,7 +50,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <input type="number" matInput (blur)="onBlur(element)" autocomplete="Off" [max]="50"
+                            <input type="number" matInput (blur)="onBlur(element)" autocomplete="Off" [max]="250"
                                 [value]="element.Sequence" [(ngModel)]="element.Sequence">
                         </mat-form-field>
                     </mat-cell>
@@ -129,7 +137,7 @@
                             <mat-datepicker #EndDate></mat-datepicker>
                         </mat-form-field>
                     </mat-cell>
-                </ng-container>                
+                </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>Active
                     </mat-header-cell>
@@ -145,8 +153,7 @@
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" 
-                    fxLayoutAlign="space-between center" fxLayout="row">
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
                             (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
@@ -154,9 +161,10 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row">
+                </mat-row>
             </mat-table>
         </div>
 
     </div>
-</div>
+<!-- </div> -->

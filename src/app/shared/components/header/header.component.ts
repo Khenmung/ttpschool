@@ -13,7 +13,8 @@ export class HeaderComponent implements OnInit {
   userName: string = '';
   loggedIn: boolean;
   SelectedApplicationName = '';
-  LoginUserDetails=[];
+  SelectedBatchName = '';
+  LoginUserDetails = [];
   constructor(
     private route: Router,
     private tokenStorage: TokenStorageService
@@ -22,19 +23,18 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
 
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
-    if (this.userName === undefined || this.userName === null || this.userName == '')
+    if (this.LoginUserDetails === undefined)
       this.loggedIn = false;
-    else
+    else {
       this.loggedIn = true;
-    //  console.log("this.userName",this.userName)
-    if (this.loggedIn) {
+      this.userName = this.LoginUserDetails[0]["userName"];    
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
       debugger;
       if (PermittedApplications.length == 0) {
         this.route.navigate(["/auth/selectplan"]);
       }
       else {
-        this.userName = this.LoginUserDetails[0]["userName"];
+        this.SelectedBatchName = this.tokenStorage.getSelectedBatchName();
         var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
         this.SelectedApplicationName = '';
         var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
@@ -44,6 +44,7 @@ export class HeaderComponent implements OnInit {
         }
       }
     }
+
   }
 
   changepassword() {

@@ -85,7 +85,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   VariableObjList: any[] = [];
   Months = [];
   StudentName = '';
-  loginUserDetail = [];
+  LoginUserDetail = [];
   Sections = [];
   FeeDefinitions = [];
   Classes = [];
@@ -199,7 +199,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource<any>(this.MonthlyDueDetail);
         this.Months = this.contentservice.GetSessionFormattedMonths();
-        this.loginUserDetail = this.tokenstorage.getUserDetail();
+        this.LoginUserDetail = this.tokenstorage.getUserDetail();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
         //this.shareddata.CurrentStudentId.subscribe(fy => (this.studentInfoTodisplay.StudentId = fy));
@@ -213,7 +213,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
         this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
         this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
-        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.GetMasterData();
         });
@@ -231,13 +231,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
           this.FeeDefinitions = [...f];
           if (this.FeeDefinitions.length == 0) {
-            this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.loginUserDetail[0]["orgId"]).subscribe((d: any) => {
+            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
               this.FeeDefinitions = [...d.value];
             })
           }
@@ -542,7 +542,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           ShortText: '',
           Month: row.Month,
           //PaymentOrder: row.PaymentOrder,
-          OrgId: this.loginUserDetail[0]["orgId"],
+          OrgId: this.LoginUserDetail[0]["orgId"],
           SubOrgId: 0,
           Active: 1,
           Action: true
@@ -571,7 +571,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             ClassFeeId: f.ClassFeeId,
             AmountEditable: f.AmountEditable,
             ShortText: '',
-            OrgId: this.loginUserDetail[0]["orgId"],
+            OrgId: this.LoginUserDetail[0]["orgId"],
             SubOrgId: 0,
             Active: 1,
             Action: true
@@ -649,7 +649,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.StudentReceiptData.TotalAmount = +this.TotalAmount;
     this.StudentReceiptData.PaymentTypeId = +this.PaymentTypeId;
     this.StudentReceiptData.BatchId = this.SelectedBatchId;
-    this.StudentReceiptData.OrgId = this.loginUserDetail[0]["orgId"];
+    this.StudentReceiptData.OrgId = this.LoginUserDetail[0]["orgId"];
     this.StudentReceiptData.StudentClassId = this.studentInfoTodisplay.StudentClassId;
     this.StudentReceiptData.Balance = this.Balance;
     this.StudentReceiptData.Active = 1;
@@ -674,7 +674,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.StudentLedgerData.Balance = this.Balance;
       this.StudentLedgerData.Month = selectedMonthrow.Month;
       this.StudentLedgerData.StudentClassId = selectedMonthrow.StudentClassId;
-      this.StudentLedgerData.OrgId = this.loginUserDetail[0]["orgId"];
+      this.StudentLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
       this.StudentLedgerData.TotalDebit = monthAmount;
       this.StudentLedgerData.TotalCredit = this.Balance ==0 ? monthAmount : selectedMonthrow.TotalCredit;
 
@@ -695,11 +695,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
             "GLAccountId": selectedMonthrow.StudentEmployeeLedegerId,
             "ShortText": paydetail.ShortText,
             "Active": 1,
-            "OrgId": this.loginUserDetail[0]["orgId"],
+            "OrgId": this.LoginUserDetail[0]["orgId"],
             "CreatedDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
             "DocDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
             "PostingDate": this.datepipe.transform(new Date(), 'yyyy-MM-dd'),
-            "CreatedBy": this.loginUserDetail[0]["userId"],
+            "CreatedBy": this.LoginUserDetail[0]["userId"],
           });
       });
     })

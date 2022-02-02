@@ -90,7 +90,7 @@ export class ClassprerequisiteComponent implements OnInit {
         //this.nav.navigate(['/edu']);
       }
       else if (this.ClassMasters.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.ClassMasters = [...data.value];
           this.loading = false;
         })
@@ -221,7 +221,7 @@ export class ClassprerequisiteComponent implements OnInit {
     //debugger;
 
     this.loading = true;
-    let filterStr = 'BatchId eq ' + this.SelectedBatchId
+    let filterStr = '';// BatchId eq  + this.SelectedBatchId
     var _searchClassId = this.searchForm.get("searchClassId").value;
     if (_searchClassId == 0) {
       this.loading = false;
@@ -229,7 +229,7 @@ export class ClassprerequisiteComponent implements OnInit {
       return;
     }
     else {
-      filterStr += ' and ClassId eq ' + _searchClassId
+      filterStr += ' ClassId eq ' + _searchClassId
     }
     let list: List = new List();
     list.fields = [
@@ -248,6 +248,10 @@ export class ClassprerequisiteComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.PrerequisiteList = [...data.value];
+        }
+        else
+        {
+          this.alert.info("No record found!",this.optionAutoClose);
         }
         this.dataSource = new MatTableDataSource<IPrerequisite>(this.PrerequisiteList);
         this.loadingFalse();

@@ -6,7 +6,7 @@
     <form [formGroup]="searchForm">
         <mat-form-field appearance="outline">
             <mat-label>Class/Course</mat-label>
-            <mat-select formControlName="ClassId">
+            <mat-select formControlName="searchClassId">
                 <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
                     {{p.ClassName}}
                 </mat-option>
@@ -14,16 +14,20 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Subject</mat-label>
-            <mat-select formControlName="SubjectId" #SubjectId>
+            <mat-select formControlName="searchSubjectId" #SubjectId>
                 <mat-option value="0">All</mat-option>
                 <mat-option *ngFor="let p of Subjects" [value]="p.MasterDataId">
                     {{p.MasterDataName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubjectComponent()">
+        <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubjectComponent(0)">
             <mat-icon>search</mat-icon>
-        </button><br>
+        </button>
+        <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
+            (click)="CopyFromPreviousBatch()">
+            <mat-icon>copy_all</mat-icon>
+        </button>
     </form>
     <div class="example-container mat-elevation-z8">
         <mat-table #table [dataSource]="dataSource" matSort>
@@ -46,11 +50,11 @@
                     <mat-form-field>
                         <input #fullMark="ngModel" matInput (blur)="onBlur(element)" type="number" max="1000"
                             [value]="element.FullMark" [(ngModel)]="element.FullMark" />
-                            <mat-error *ngIf="fullMark?.invalid">  
-                                <div *ngIf="fullMark.errors.max">Max is 1000</div>  
-                            </mat-error>
-                        </mat-form-field>
-                    
+                        <mat-error *ngIf="fullMark?.invalid">
+                            <div *ngIf="fullMark.errors.max">Max is 1000</div>
+                        </mat-error>
+                    </mat-form-field>
+
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="PassMark">
@@ -59,10 +63,10 @@
                     <mat-form-field>
                         <input (blur)="onBlur(element)" #PassMark="ngModel" matInput type="number" [max]="1000"
                             [value]="element.PassMark" [(ngModel)]="element.PassMark" />
-                            <mat-error *ngIf="PassMark?.invalid">  
-                                <div *ngIf="PassMark.errors.max">Max is 1000</div>  
-                            </mat-error>
-                        </mat-form-field>
+                        <mat-error *ngIf="PassMark?.invalid">
+                            <div *ngIf="PassMark.errors.max">Max is 1000</div>
+                        </mat-error>
+                    </mat-form-field>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Active">
@@ -76,8 +80,8 @@
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button [disabled]="loading || !element.Action || Permission == 'read'" matTooltip="save" mat-mini-fab
-                        (click)="UpdateOrSave(element)">
+                    <button [disabled]="loading || !element.Action || Permission == 'read'" matTooltip="save"
+                        mat-mini-fab (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>

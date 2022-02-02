@@ -99,7 +99,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 

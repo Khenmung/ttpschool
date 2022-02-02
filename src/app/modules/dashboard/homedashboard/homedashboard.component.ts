@@ -95,10 +95,18 @@ export class HomeDashboardComponent implements OnInit {
 
   }
   ChangeCurrentBatchId(selected) {
-    //debugger;
-    var _SelectedBatch = this.Batches.filter(b => b.BatchId == selected)
+    debugger;
+    var _SelectedBatch = this.Batches.filter(b => b.BatchId == selected.value);
+    var SelectedBatchName = ''
+    if(_SelectedBatch.length>0)
+    {
+      SelectedBatchName = _SelectedBatch[0].BatchName;
+    }
+    
     if (_SelectedBatch.length > 0) {
-      this.shareddata.ChangeSelectedBatchStartEnd({ 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
+      //this.shareddata.ChangeSelectedBatchStartEnd({ 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
+      this.tokenStorage.saveSelectedBatchStartEnd(
+        { 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
     }
     //this is for enabling promote student purpose. if selected value is >= current, promote should not be enable 
     if (selected.value >= this.CurrentBatchId)
@@ -107,31 +115,25 @@ export class HomeDashboardComponent implements OnInit {
       this.tokenStorage.saveCheckEqualBatchId("1");
 
     this.tokenStorage.saveSelectedBatchId(selected.value);
-    //this.shareddata.ChangeSelectedBatchId(selected.value);
+    this.tokenStorage.saveSelectedBatchName(SelectedBatchName);
 
     this.generateBatchIds(selected.value);
-    //this.route.navigated = false;
-    //var currenturl = this.route.url;
-    //window.location.href = currenturl;
-    //this.route.navigate([currenturl]);
   }
-  generateBatchIds(batchId) {
-    var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(batchId) - 1;
+  generateBatchIds(SelectedbatchId) {
+    debugger;
+    var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(SelectedbatchId) - 1;
     var _previousBatchId = -1;
     if (previousBatchIndex > -1) {
-      _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];
-      this.tokenStorage.savePreviousBatchId(_previousBatchId.toString())
-      //this.shareddata.ChangePreviousBatchIdOfSelecteBatchId(_previousBatchId);
+      _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];      
     }
-    var nextBatchIndex = this.Batches.map(d => d.BatchId).indexOf(batchId) + 1;
+
+    this.tokenStorage.savePreviousBatchId(_previousBatchId.toString())
+    var nextBatchIndex = this.Batches.map(d => d.BatchId).indexOf(SelectedbatchId) + 1;
     var _nextBatchId = -1;
-    if (nextBatchIndex > -1) {
+    if (this.Batches.length > nextBatchIndex) {
       _nextBatchId = this.Batches[nextBatchIndex]["BatchId"];
-      this.tokenStorage.saveNextBatchId(_nextBatchId.toString());
-      //this.shareddata.ChangeNextBatchIdOfSelecteBatchId(_nextBatchId);
     }
-    //this.tokenStorage.saveSelectedBatchId(batchId)
-    ////console.log("selected",batchId);
+    this.tokenStorage.saveNextBatchId(_nextBatchId.toString());
   }
   getBatches() {
     var list = new List();
@@ -158,15 +160,16 @@ export class HomeDashboardComponent implements OnInit {
         this.tokenStorage.saveSelectedBatchStartEnd(_currentBatchStartEnd)
         this.CurrentBatchId = _currentBatch[0].BatchId;
       }
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
       if (this.SelectedBatchId == 0) {
-        this.tokenStorage.saveSelectedBatchId(this.CurrentBatchId.toString())
+        this.tokenStorage.saveCurrentBatchId(this.CurrentBatchId.toString())
         this.SelectedBatchId = this.CurrentBatchId;
       }
 
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
-      this.generateBatchIds(this.CurrentBatchId);
+      this.generateBatchIds(this.SelectedBatchId);
       this.loading=false;
     });
   }

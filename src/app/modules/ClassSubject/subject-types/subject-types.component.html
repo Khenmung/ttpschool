@@ -1,50 +1,62 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Subject Types</strong></div>
-
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <alert></alert>
-        <mat-table #table [dataSource]="dataSource">
-            <ng-container matColumnDef="SubjectTypeName">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Subject Type Name
-                </mat-header-cell>
-                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-                    <mat-form-field [style.width.px]="150">
-                        <input matInput (blur)="onBlur(element)" [value]="element.SubjectTypeName" [(ngModel)]="element.SubjectTypeName">
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="SelectHowMany">
-                <mat-header-cell *matHeaderCellDef> No. Of Subject to Select </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field [style.width.px]="150">
-                        <input matInput (blur)="onBlur(element)" [value]="element.SelectHowMany" [(ngModel)]="element.SelectHowMany">
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                        [checked]="element.Active==1?true:false">
-                    </mat-checkbox>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading || CurrentPagePermission=='Read'" matTooltip="add new" mat-mini-fab (click)="addnew()">
-                        <mat-icon>add</mat-icon>
-                    </button>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || CurrentPagePermission=='Read'" matTooltip="save"
-                        mat-mini-fab (click)="UpdateOrSave(element)">
-                        <mat-icon>save</mat-icon>
-                    </button>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-        </mat-table>
     </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <mat-table #table [dataSource]="dataSource">
+        <ng-container matColumnDef="SubjectTypeId">
+            <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Id
+            </mat-header-cell>
+            <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+               {{element.SubjectTypeId}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SubjectTypeName">
+            <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Subject Type Name
+            </mat-header-cell>
+            <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                <mat-form-field>
+                    <input matInput (blur)="onBlur(element)" [value]="element.SubjectTypeName"
+                        [(ngModel)]="element.SubjectTypeName">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SelectHowMany">
+            <mat-header-cell *matHeaderCellDef> No. Of Subject to Select </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field>
+                    <input matInput (blur)="onBlur(element)" [value]="element.SelectHowMany"
+                        [(ngModel)]="element.SelectHowMany">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Active">
+            <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                    [checked]="element.Active==1?true:false">
+                </mat-checkbox>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Action">
+            <mat-header-cell *matHeaderCellDef>
+                <button [disabled]="loading || Permission=='Read'" matTooltip="add new" mat-mini-fab
+                    (click)="addnew()">
+                    <mat-icon>add</mat-icon>
+                </button>&nbsp;
+                <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button" (click)="CopyFromPreviousBatch()">
+                    <mat-icon>copy_all</mat-icon>
+                </button><br>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                <button [disabled]="loading || !element.Action || Permission=='Read'" matTooltip="save"
+                    mat-mini-fab (click)="UpdateOrSave(element)">
+                    <mat-icon>save</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
 </div>

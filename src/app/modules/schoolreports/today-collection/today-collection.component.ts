@@ -99,7 +99,7 @@ export class TodayCollectionComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
         this.GetMasterData();
@@ -190,7 +190,7 @@ export class TodayCollectionComponent implements OnInit {
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
           this.FeeDefinitions = [...f];
           if (this.FeeDefinitions.length == 0) {
-            this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
+            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
               this.FeeDefinitions = [...d.value];
             })
           }

@@ -131,6 +131,10 @@ export class FeeDefinitionComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
   }
+  updateAmountEditable(row, value) {
+    row.Action = true;
+    row.AmountEditable = value.checked ? 1 : 0;
+  }
   updateActive(row, value) {
     row.Action = true;
     row.Active = value.checked ? 1 : 0;
@@ -241,7 +245,7 @@ export class FeeDefinitionComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'BatchId eq ' + this.SelectedBatchId + ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     // var _searchClassName = this.searchForm.get("searchClassName").value;
     // if (_searchClassName > 0) {
     //   filterStr += ' and FeeDefinitionId eq ' + _searchClassName;

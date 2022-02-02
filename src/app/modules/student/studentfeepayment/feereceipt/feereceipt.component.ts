@@ -113,7 +113,7 @@ export class FeereceiptComponent implements OnInit {
     this.loading = true;
     this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.LoginUserDetail = this.tokenservice.getUserDetail();
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
       this.Classes = [...data.value];
     })
     this.shareddata.CurrentBatch.subscribe(lo => (this.Batches = lo));

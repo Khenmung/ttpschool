@@ -44,7 +44,7 @@ export class MenuConfigComponent implements OnInit {
   Id: number;
   query: string;//displayedColumns: Array<any>;
   list: List;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   MenuConfigData = {
     "PageId": 0,
     "PageTitle": 0,
@@ -101,7 +101,7 @@ export class MenuConfigComponent implements OnInit {
 
   }
   constructor(
-    private contentservice:ContentService,
+    private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
     private navigate: Router,
@@ -124,8 +124,8 @@ export class MenuConfigComponent implements OnInit {
     this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
     this.GetMasterData();
   }
-  EmptyData(){
-    this.PageList=[];
+  EmptyData() {
+    this.PageList = [];
     this.dataSource = new MatTableDataSource(this.PageList);
   }
   GetTopMenu() {
@@ -144,10 +144,15 @@ export class MenuConfigComponent implements OnInit {
   GetMasterData() {
     var globaladminId = this.contentservice.GetPermittedAppId("globaladmin");
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],globaladminId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], globaladminId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+        var _ParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
+        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
+        this.contentservice.GetDropDownDataFromDB(_ParentId, 0, 0)
+          .subscribe((data: any) => {
+            this.Applications = [...data.value];
+          });
 
         this.loading = false;
       });

@@ -114,7 +114,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.BatchList = [...data.value];
+        this.BatchList = [...data.value.sort((a,b)=>new Date(a.StartDate).getTime() - new Date(b.StartDate).getTime())];
         this.dataSource = new MatTableDataSource<IBatches>(this.BatchList);
         this.loading = false;
       });

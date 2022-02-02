@@ -23,15 +23,23 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentClasses()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentClasses('')">
                 <mat-icon>search</mat-icon>
+            </button>
+            <button [disabled]="loading" matTooltip="copy from previous class & previous batch" class="mat-raised-button"
+                (click)="CopyFromPreviousClassAndBatch()">
+                <mat-icon>copy_all</mat-icon>
+            </button>
+            <button [disabled]="loading" matTooltip="copy from same class & previous batch" class="mat-raised-button"
+                (click)="CopyFromSameClassPreviousBatch()">
+                <mat-icon>copy_all</mat-icon>
             </button>
         </div>
         <div style="padding:15px;border:1px solid lightgray">
-            <span style="padding: 15px;">{{RollNoGenerationSortBy}}</span>            
+            <span style="padding: 15px;">{{RollNoGenerationSortBy}}</span>
             <button matTooltip="generate roll no"
-                [disabled]="loading || StudentClassList.length==0 || Permission=='read'" class="mat-raised-button"
+                [disabled]="loading || StudentClassList.length==0 || Permission=='read'" 
+                class="mat-raised-button"
                 (click)="GenerateRollNo()">
                 <mat-icon>hdr_auto</mat-icon>
             </button>

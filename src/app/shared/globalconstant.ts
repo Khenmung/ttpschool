@@ -5,7 +5,7 @@ import { List } from "./interface";
 import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
-    public static apiUrl: string = "http://localhost:5000";//"http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:8020";//"http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -55,18 +55,18 @@ export class globalconstants {
         };
     public static Pages =
         {
-            "globaladmin":{
-                "GLOBALADMIN":"globaladmin",
-                "ADMINROLEFEATURE":'Admin Role Permission',
-                "PLAN":'plan',
-                "PLANFEATURE":'plan feature',
-                "CUSTOMERINVOICE":'customer invoice',
-                "CUSTOMERPLAN":'customer plan',
-                "MASTERDATA":'master data',
-                "CUSTOMERINVOICECOMPONENT":'invoice components',
-                "REPORTCONIG":'report config',
-                "MENUCONFIG":'menu config',
-                "PLANANDMASTERDATA":'Plan n Master Item'
+            "globaladmin": {
+                "GLOBALADMIN": "globaladmin",
+                "ADMINROLEFEATURE": 'Admin Role Permission',
+                "PLAN": 'plan',
+                "PLANFEATURE": 'plan feature',
+                "CUSTOMERINVOICE": 'customer invoice',
+                "CUSTOMERPLAN": 'customer plan',
+                "MASTERDATA": 'master data',
+                "CUSTOMERINVOICECOMPONENT": 'invoice components',
+                "REPORTCONIG": 'report config',
+                "MENUCONFIG": 'menu config',
+                "PLANANDMASTERDATA": 'Plan n Master Item'
             },
             "common": {
                 'AUTH': {
@@ -83,28 +83,28 @@ export class globalconstants {
                     'USERS': 'user',
                     'MASTERS': 'Essential Data'
                 },
-                "misc":{
-                    "MISC":"misc",
-                    "CALENDAR":"calendar",
-                    "NEWS":"news",
-                    "EVENT":"event",
-                    "HOLIDAY":"holiday"
+                "misc": {
+                    "MISC": "misc",
+                    "CALENDAR": "calendar",
+                    "NEWS": "news",
+                    "EVENT": "event",
+                    "HOLIDAY": "holiday"
                 }
             },
-            "emp":{
-                    "employee":{
-                        "EMPLOYEE":"employee",
-                        "EMPLOYEEDETAIL":"employee detail",
-                        "SALARY":"salary",
-                        "DOCUMENT":"employee document",
-                        "EDUCATIONHISTORY":"education history",
-                        "WORKHISTORY":"work history",
-                        "EMPLOYEESKILL":"employee skill",
-                        "FAMILY":"family",
-                        "ATTENDANCE":"attendance",
-                        "EMPLOYMENTHISTORY":"employment history",
-                        "EMPLOYEEACTIVITY":"employee activity"
-                    }
+            "emp": {
+                "employee": {
+                    "EMPLOYEE": "employee",
+                    "EMPLOYEEDETAIL": "employee detail",
+                    "SALARY": "salary",
+                    "DOCUMENT": "employee document",
+                    "EDUCATIONHISTORY": "education history",
+                    "WORKHISTORY": "work history",
+                    "EMPLOYEESKILL": "employee skill",
+                    "FAMILY": "family",
+                    "ATTENDANCE": "attendance",
+                    "EMPLOYMENTHISTORY": "employment history",
+                    "EMPLOYEEACTIVITY": "employee activity"
+                }
             },
             "edu": {
                 'STUDENT': {
@@ -124,7 +124,7 @@ export class globalconstants {
                     'CLASSCOURSE': 'class-course',
                     'CLASSDETAIL': 'classdetail',
                     'CLASSFEE': 'class fee',
-                    'FEEDEFINITION': 'fee definition',                
+                    'FEEDEFINITION': 'fee definition',
                     'FEETYPE': 'fee type',
                     'PREREQUISITE': 'pre-requisite',
                     'CLASSMASTER': 'class master'
@@ -135,7 +135,7 @@ export class globalconstants {
                     'EXAMSTUDENTSUBJECTRESULT': 'Exam Result Entry',
                     'SLOTNCLASSSUBJECT': 'slot n class subject',
                     'VERIFYRESULT': 'verify result',
-                    
+
                 },
                 'SUBJECT': {
                     'SUBJECT': 'class subject',
@@ -158,7 +158,7 @@ export class globalconstants {
                 },
                 'REPORT': {
                     'REPORT': 'report',
-                    'EXAMTIMETABLE': 'exam time table',                    
+                    'EXAMTIMETABLE': 'exam time table',
                     'RESULT': 'result',
                     'FEEPAYMENTSTATUS': 'Fee Payment Status',
                     'DATEWISECOLLECTION': 'date wise collection',
@@ -392,6 +392,19 @@ export class globalconstants {
         var loginUserdetail = tokenService.getUserDetail();
         _selectedBathId = +tokenService.getSelectedBatchId();
         var filterstr = 'BatchId eq ' + _selectedBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"];
+        return filterstr;
+
+    }
+    public static getStandardFilterWithPreviousBatchId(tokenService) {
+        debugger;
+        var _previousBathId = 0;
+        var loginUserdetail = tokenService.getUserDetail();
+        _previousBathId = +tokenService.getPreviousBatchId();
+        var filterstr = ''
+        if (_previousBathId > -1)
+            filterstr = 'BatchId eq ' + _previousBathId + ' and OrgId eq ' + loginUserdetail[0]["orgId"];
+        else
+            filterstr = 'OrgId eq ' + loginUserdetail[0]["orgId"];
         return filterstr;
 
     }

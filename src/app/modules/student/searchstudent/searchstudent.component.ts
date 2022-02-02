@@ -115,7 +115,7 @@ export class searchstudentComponent implements OnInit {
           map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
         );
 
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
       });
 
@@ -191,7 +191,7 @@ export class searchstudentComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
+        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
           this.FeeDefinitions = [...f.value];
           this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
         });

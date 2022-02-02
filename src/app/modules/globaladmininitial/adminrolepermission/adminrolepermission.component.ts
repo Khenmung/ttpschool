@@ -321,7 +321,7 @@ export class AdminrolepermissionComponent implements OnInit {
     list.PageName = "ApplicationFeatureRolesPerms";
     //list.lookupFields = ["PlanFeature($select=FeatureId;$expand=Page($select=PageId,PageTitle,label))"];
 
-    list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + rolefilter];
+    list.filter = ["OrgId eq " + _customerId + rolefilter];
     this.ApplicationRoleList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {

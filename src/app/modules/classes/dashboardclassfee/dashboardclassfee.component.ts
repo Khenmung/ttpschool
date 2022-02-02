@@ -36,10 +36,12 @@ export class DashboardclassfeeComponent implements OnInit {
   DataCountToUpdate = -1;
   LoginUserDetail = [];
   StandardFilterWithBatchId = '';
+  StandardFilterWithPreviousBatchId = '';
   CurrentBatch = '';
   CurrentBatchId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   SelectedBatchId = 0;
+  PreviousBatchId = 0;
   FeeDefinitions = [];
   Classes = [];
   Batches = [];
@@ -98,13 +100,14 @@ export class DashboardclassfeeComponent implements OnInit {
       this.Months = this.contentservice.GetSessionFormattedMonths();
 
       if (this.Permission == 'deny') {
-        //console.log('access denied to Fee');
-        //this.alert.error('access denied!',this.optionAutoClose);  
-        //this.route.navigate(['/edu'])
       }
       else {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+        if (+this.token.getPreviousBatchId() > 0)
+          this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.token)
+
         this.SelectedBatchId = +this.token.getSelectedBatchId();
+        this.PreviousBatchId = +this.token.getPreviousBatchId();
         if (this.SelectedBatchId == 0) {
           //this.alert.error("Current batch not defined in master!", this.options);
           this.route.navigate(['/admin']);
@@ -115,14 +118,14 @@ export class DashboardclassfeeComponent implements OnInit {
           this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
             this.FeeDefinitions = [...f];
             if (this.FeeDefinitions.length == 0) {
-              this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
+              this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
                 this.FeeDefinitions = [...d.value];
               })
             }
           })
 
           if (this.Classes.length == 0) {
-            this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+            this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
               this.Classes = [...data.value];
               //this.GetMasterData();
             })
@@ -141,7 +144,7 @@ export class DashboardclassfeeComponent implements OnInit {
     'Amount',
     //'PaymentOrder',
     //'Recurring',
-    //'Month',
+    'Month',
     'Active',
     'Action'];
   updateActive(row, value) {
@@ -206,53 +209,37 @@ export class DashboardclassfeeComponent implements OnInit {
     }
     return monthArray;
   }
-  //   this.shareddata.CurrentSelectedBatchStartEnd$.subscribe((b: any) => {
 
-  //     if (b.length != 0) {
-  //       _sessionStartEnd = { ...b };
-  //       var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();
-  //       var startMonth = new Date(_sessionStartEnd.StartDate).getMonth();
-
-  //       for (var month = 0; month < 12; month++, startMonth++) {
-  //         monthArray.push({
-  //           MonthName: Months[startMonth] + " " + _Year,
-  //           val: _Year + startMonth.toString().padStart(2, "0")
-  //         })
-  //         if (startMonth == 11) {
-  //           startMonth = -1;
-  //           _Year++;
-  //         }
-  //       }
-  //     }
-  //   });
-  //   return monthArray;
-  // }
   Save(row) {
     this.DataCountToUpdate = 0;
     this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
-    //debugger;
+    debugger;
     if (row.Amount == 0) {
       row.Action = false;
-      this.loading=false;
+      this.loading = false;
       this.alert.error("Amount should be greater than zero.", this.optionsNoAutoClose);
       return;
     }
     else if (row.Amount > 100000) {
       row.Action = false;
-      this.loading=false;
+      this.loading = false;
       this.alert.error("Amount should be smaller than 100,000.", this.optionsNoAutoClose);
       return;
     }
-   
+    else if (row.Month == 0) {
+      row.Action = false;
+      this.loading = false;
+      this.alert.error("Please select month.", this.optionsNoAutoClose);
+      return;
+    }
     this.loading = true;
     let checkFilterString = "1 eq 1 " +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
       " and ClassId eq " + row.ClassId +
-      " and Month eq " + this.searchForm.get("searchMonth").value +
-      " and BatchId eq " + row.BatchId +
-      " and LocationId eq " + row.LocationId
+      " and Month eq " + row.Month +
+      " and BatchId eq " + row.BatchId
     if (row.ClassFeeId > 0)
       checkFilterString += " and ClassFeeId ne " + row.ClassFeeId;
 
@@ -264,6 +251,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
+          this.loading=false;
           this.alert.error("Record already exists!", this.optionAutoClose);
         }
         else {
@@ -274,7 +262,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.classFeeData.ClassId = row.ClassId;
           this.classFeeData.FeeDefinitionId = row.FeeDefinitionId;
           this.classFeeData.LocationId = +row.LocationId;
-          this.classFeeData.Month = this.searchForm.get("searchMonth").value;
+          this.classFeeData.Month = row.Month;
           this.classFeeData.OrgId = this.LoginUserDetail[0]["orgId"];
           //console.log("dataclassfee", this.classFeeData);
           if (this.classFeeData.ClassFeeId == 0)
@@ -349,26 +337,33 @@ export class DashboardclassfeeComponent implements OnInit {
         }
       })
   }
-  GetClassFee() {
-
+  CopyFromPreviousBatch() {
+    //console.log("here ", this.PreviousBatchId)
+    if (this.PreviousBatchId==-1)
+      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+    else
+      this.GetClassFee(this.StandardFilterWithPreviousBatchId, 1)
+  }
+  GetClassFee(OrgIdAndbatchId, previousbatch) {
+    debugger;
     if (this.searchForm.get("ClassId").value == 0) {
       this.alert.info("Please select class/course.", this.optionAutoClose);
       return;
 
     }
-    if (this.searchForm.get("searchMonth").value == 0) {
-      this.alert.info("Please month year.", this.optionAutoClose);
-      return;
-    }
+    // if (this.searchForm.get("searchMonth").value == 0) {
+    //   this.alert.info("Please month year.", this.optionAutoClose);
+    //   return;
+    // }
 
     this.loading = true;
     let filterstr = "";
-    //if (this.searchForm.get("ClassId").value > 0)
-    filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
+    if (previousbatch == 0)
+      filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
     // if (this.searchForm.get("FeeDefinitionId").value > 0)
     //   filterstr += " and FeeDefinitionId eq " + this.searchForm.get("FeeDefinitionId").value;
-    //if (this.searchForm.get("Batch").value > 0)
-    filterstr += " and Month eq " + this.searchForm.get("searchMonth").value;
+    if (this.searchForm.get("searchMonth").value > 0)
+      filterstr += " and Month eq " + this.searchForm.get("searchMonth").value;
 
     let list: List = new List();
     list.fields = [
@@ -383,7 +378,7 @@ export class DashboardclassfeeComponent implements OnInit {
       "PaymentOrder"];
     list.PageName = "ClassFees";
     //list.orderBy ="PaymentOrder";
-    list.filter = [this.StandardFilterWithBatchId + filterstr];
+    list.filter = [OrgIdAndbatchId + filterstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -397,7 +392,10 @@ export class DashboardclassfeeComponent implements OnInit {
               existing[0].SlNo = indx + 1;
               existing[0].FeeName = mainFeeName.FeeName;
               existing[0].Action = false;
-              //existing[0].PaymentOrder = existing[0].PaymentOrder == null ? 0 : existing[0].PaymentOrder;
+              existing[0].ClassFeeId = previousbatch ==1? 0: existing[0].ClassFeeId
+              existing[0].Active = previousbatch ==1? 0: existing[0].Active
+              existing[0].Month = previousbatch ==1? 0: existing[0].Month;
+
               return existing[0];
             }
             else
@@ -411,7 +409,6 @@ export class DashboardclassfeeComponent implements OnInit {
                 "Month": 0,
                 "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
                 "Active": 0,
-                //"LocationId": this.Locations[0].MasterDataId,
                 "Action": false
               }
           })
@@ -435,7 +432,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
         }
         //this.ELEMENT_DATA = 
-        this.ELEMENT_DATA.sort((a,b)=>b.Active-a.Active);
+        this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
         ////console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
@@ -459,6 +456,9 @@ export class DashboardclassfeeComponent implements OnInit {
     row.Action = true;
     // row.Amount = value;
   }
+  UpdateActive(row, value) {
+    row.Action = true;
+  }
   updatePaymentOrder(row, value) {
 
     row.Action = true;
@@ -476,7 +476,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);

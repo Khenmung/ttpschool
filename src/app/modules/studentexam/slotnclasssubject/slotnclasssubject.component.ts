@@ -471,7 +471,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.GetExamSlots();
           this.GetClassSubject();

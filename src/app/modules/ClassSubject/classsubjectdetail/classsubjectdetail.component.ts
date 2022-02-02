@@ -32,8 +32,10 @@ export class ClassSubjectDetailComponent implements OnInit {
   };
   ClassSubjectListName = "ClassSubjects";
   Permission = '';
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   StandardFilterWithBatchId = '';
+  StandardFilterWithPreviousBatchId = '';
+  PreviousBatchId = 0;
   loading = false;
   WorkAccounts = [];
   Teachers = [];
@@ -109,12 +111,13 @@ export class ClassSubjectDetailComponent implements OnInit {
         this.Permission = perObj[0].permission;
       ////console.log(this.CheckPermission);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+      this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
       //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
       this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
       this.GetMasterData();
       this.GetSubjectTypes();
       if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
 
         });
@@ -168,7 +171,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   GetClassSubjectId(event) {
     this.ClassSubjectId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
-    this.GetClassSubject();
+    this.GetClassSubject(0);
   }
 
   View(element) {
@@ -187,8 +190,15 @@ export class ClassSubjectDetailComponent implements OnInit {
     //   this.classSubjectAdd.PageLoad();
     // }, 50);
   }
-
-  GetClassSubject() {
+  CopyFromPreviousBatch() {
+    //console.log("here ", this.PreviousBatchId)
+    this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
+    if (this.PreviousBatchId == -1)
+      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+    else
+      this.GetClassSubject(1)
+  }
+  GetClassSubject(previousbatch) {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;
     this.loading = true;
@@ -199,12 +209,11 @@ export class ClassSubjectDetailComponent implements OnInit {
       this.alert.error("Please select class/course", this.optionAutoClose);
       return;
     }
-    // if (this.searchForm.get("searchSubjectId").value != 0)
-    //   filterStr += " and SubjectId eq " + this.searchForm.get("searchSubjectId").value;
-    // if (this.searchForm.get("searchSubjectTypeId").value != 0)
-    //   filterStr += " and SubjectTypeId eq " + this.searchForm.get("searchSubjectTypeId").value;
-    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-    filterStr += ' and ' + this.StandardFilterWithBatchId;
+
+    if (previousbatch == 1)
+      filterStr += ' and ' + this.StandardFilterWithPreviousBatchId;
+    else
+      filterStr += ' and ' + this.StandardFilterWithBatchId;
 
     if (filterStr.length == 0) {
       this.loading = false;
@@ -254,7 +263,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           let existing = classSubjects.filter(e => e.SubjectId == s.MasterDataId);
           if (existing.length > 0) {
             this.ClassSubjectList.push({
-              ClassSubjectId: existing[0].ClassSubjectId,
+              ClassSubjectId: previousbatch==1?0:existing[0].ClassSubjectId,
               SubjectId: existing[0].SubjectId,
               SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
               SubjectTypeId: existing[0].SubjectTypeId,
@@ -262,7 +271,7 @@ export class ClassSubjectDetailComponent implements OnInit {
               TeacherId: existing[0].TeacherId,
               Credits: existing[0].Credits,
               ClassId: existing[0].ClassId,
-              Active: existing[0].Active,
+              Active: previousbatch==1?0:existing[0].Active,
               Action: false
             });
           }
@@ -283,15 +292,8 @@ export class ClassSubjectDetailComponent implements OnInit {
           }
           //})
         })
-        // }
-        // else {
-        //   this.ClassSubjectList = [...firstData];
-        // }
-        //this.shareddata.ChangeApplicationRoles(this.AppRoleList); 
-        ////console.log('this.ClassSubjectList', this.ClassSubjectList)
         this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
         this.loading = false;
-        //this.changeDetectorRefs.detectChanges();
       });
   }
   clear() {
@@ -351,8 +353,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     this.DataCountToSave = 0;
     //debugger;
     this.loading = true;
-    if(row.SubjectTypeId==0)
-    {
+    if (row.SubjectTypeId == 0) {
       this.alert.error("Please select subject type.", this.optionsNoAutoClose);
       this.loading = false;
       return;
@@ -508,9 +509,10 @@ export class ClassSubjectDetailComponent implements OnInit {
 
       })
   }
+
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);

@@ -52,6 +52,7 @@ export class AddstudentclassComponent implements OnInit {
     FeeTypeId: 0,
     AdmissionDate: new Date(),
     Remarks: '',
+    Promoted:0,
     Active: 1,
     OrgId: 0
   }
@@ -85,7 +86,7 @@ export class AddstudentclassComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
      // }

@@ -41,15 +41,18 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  StandardFilter = '';
+  StandardFilterWithBatchId = '';
+  StandardFilterWithPreviousBatchId = '';
+  SameClassPreviousBatch ="SameClassPreviousBatch";
+  PreviousClassPreviousBatch="PreviousClassPreviousBatch";
   loading = false;
-  RollNoGeneration=[];
-//  ClassPromotion =[];
+  RollNoGeneration = [];
+  //  ClassPromotion =[];
   Genders = [];
   Classes = [];
   FeeTypes = [];
   Sections = [];
-  StudentGrades =[];
+  StudentGrades = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   PreviousBatchId = 0;
@@ -60,7 +63,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   allMasterData = [];
   searchForm: FormGroup;
 
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   checkBatchIdNSelectedIdEqual = 0;
   StudentClassData = {
     StudentClassId: 0,
@@ -121,13 +124,15 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
-        this.Classes = [...data.value];
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
       })
       this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
+      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+      this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
       if (perObj.length > 0)
@@ -143,14 +148,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           'RollNo',
           'SectionId',
           'FeeTypeId',
-          //'Promote',
           'Action'
         ];
-      ////console.log('log', this.CheckPermission)
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-
-      //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      //this.shareddata.CurrentSelectedBatchId.subscribe(a => this.SelectedBatchId = a);
       this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
       //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
       this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
@@ -160,9 +159,6 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.GetFeeTypes();
       }
       else {
-
-        //this.SelectedBatchId = this.Batches.filter(b => b.CurrentBatch==1)[0].BatchId;
-
         this.loading = false;
       }
     }
@@ -170,10 +166,6 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   GenerateRollNo() {
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    // if (this.searchForm.get("searchStudentName").value.StudentId == 0 && this.searchForm.get("searchClassId").value == 0) {
-    //   this.alert.error("Please select class/stream", this.optionAutoClose);
-    //   return;
-    // }
     this.loading = true;
     if (this.searchForm.get("searchClassId").value > 0)
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
@@ -213,7 +205,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           var _feetype = ''
           if (feetype.length > 0)
             _feetype = feetype[0].FeeTypeName;
-            
+
 
           StudentClassRollNoGenList.push({
             StudentClassId: stud.StudentClassId,
@@ -269,15 +261,15 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.alert.info("No record found!", this.optionAutoClose);
         else {
           this.RollNoGenerationSortBy = 'Gender,StudentName';
-          var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " + 
-                                  this.RollNoGenerationSortBy;
-            
+          var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " +
+            this.RollNoGenerationSortBy;
+
           this.StudentClassList = alasql(orderbystatement, [StudentClassRollNoGenList]);
           this.StudentClassList.forEach((student, index) => {
             student.RollNo = (index + 1) + "";
           });
-          
-          this.alert.info("New Roll Nos. has been generated. Please confirm and save it all.",this.optionsNoAutoClose);
+
+          this.alert.info("New Roll Nos. has been generated. Please confirm and save it all.", this.optionsNoAutoClose);
 
           this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
           this.dataSource.sort = this.sort;
@@ -337,14 +329,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   promotePreviousBatch() {
     //debugger;
-
-    var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(4) - 1;
-    var previousBatchId = this.Batches[previousBatchIndex];
-    if (previousBatchIndex > -1) {
-      this.SelectedBatchId = previousBatchId;
-      this.GetStudentClasses();
-
-    }
+    var previousBatchId = +this.tokenstorage.getPreviousBatchId();
+    this.SelectedBatchId = previousBatchId;
+    this.GetStudentClasses(0);
   }
   onBlur(row) {
     row.Action = true;
@@ -367,26 +354,60 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.loading = false;
       })
   }
-  GetStudentClasses() {
+  CopyFromSameClassPreviousBatch() {
+    if (this.PreviousBatchId == -1)
+      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+    else
+      this.GetStudentClasses(this.SameClassPreviousBatch);
+  }
+  CopyFromPreviousClassAndBatch() {
+    if (this.PreviousBatchId == -1)
+      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+    else
+      this.GetStudentClasses(this.PreviousClassPreviousBatch)
+  }
+  GetStudentClasses(previousbatch) {
 
-    //debugger;
-    // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.ASSIGNSTUDENTCLASS);
-    // if (perObj.length > 0)
-    //   this.Permission = perObj[0].permission;
-
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    // if (this.searchForm.get("searchStudentName").value.StudentId == 0 && this.searchForm.get("searchClassId").value == 0) {
-    //   this.alert.error("Please select class/stream", this.optionAutoClose);
-    //   return;
-    // }
+    let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
-    if (this.searchForm.get("searchClassId").value > 0)
-      filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
+    var _classId = this.searchForm.get("searchClassId").value;
+
+    if (_classId == 0) {
+      this.alert.info("Please select class.", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
+    else {
+
+      filterStr = this.StandardFilterWithPreviousBatchId;
+
+      if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
+        filterStr += " and ClassId eq " + _classId + " and Promoted eq 0";
+      }
+      else if (previousbatch == this.PreviousClassPreviousBatch ) {
+        var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
+        var previousClassId = 0;
+        if (classIdIndex > 0)//means if first element
+        {
+          previousClassId = this.Classes[classIdIndex - 1]["ClassId"];
+          filterStr += " and ClassId eq " + previousClassId + " and Promoted eq 0";
+        }
+        else {
+          this.loading = false;
+          this.alert.error("Previous class not defined.", this.optionsNoAutoClose);
+          return;
+        }
+      }
+      else {
+        filterStr = this.StandardFilterWithBatchId;
+        filterStr += " and ClassId eq " + _classId;
+      }
+    }
+
 
     if (this.searchForm.get("searchSectionId").value > 0)
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
+    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
       this.loading = false;
@@ -412,9 +433,6 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((StudentClassesdb: any) => {
         var result;
-        // if (this.searchForm.get("searchGenderId").value > 0)
-        //   result = StudentClassesdb.value.filter(f => f.Student.Gender == this.searchForm.get("searchGenderId").value);
-        // else
         result = [...StudentClassesdb.value];
 
         result.forEach(s => {
@@ -424,7 +442,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             _feetype = feetype[0].FeeTypeName;
 
           this.StudentClassList.push({
-            StudentClassId: s.StudentClassId,
+            StudentClassId: previousbatch == '' ? s.StudentClassId:0,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + " " + s.Student.LastName,
@@ -434,7 +452,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             RollNo: s.RollNo,
             SectionId: s.SectionId,
             Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
-            Active: s.Active,
+            Active: previousbatch == '' ? s.Active:0,
             Promote: 0,
             Action: false
           });
@@ -495,8 +513,6 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     let checkFilterString = "ClassId eq " + row.ClassId +
       " and StudentId eq " + row.StudentId + ' and Active eq 1 and BatchId eq ' + this.SelectedBatchId
-    // " and Active eq " + row.Active +
-    this.StandardFilter;
 
     if (row.StudentClassId > 0)
       checkFilterString += " and StudentClassId ne " + row.StudentClassId;
@@ -616,7 +632,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         debugger;
         this.allMasterData = [...data.value];
@@ -625,9 +641,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         //this.ClassPromotion = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSPROMOTION);
-        
+
         //this.shareddata.ChangeBatch(this.Batches);
-        this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f=>f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
+        this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
         this.loading = false;
       });
   }

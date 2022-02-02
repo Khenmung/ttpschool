@@ -35,8 +35,10 @@ export class ClassmasterdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId=0;
+  PreviousBatchId = 0;
+  SelectedApplicationId = 0;
   StandardFilterWithBatchId = '';
+  StandardFilterWithPreviousBatchId = '';
   loading = false;
   Permission = '';
   Classes = [];
@@ -127,17 +129,19 @@ export class ClassmasterdashboardComponent implements OnInit {
 
       }
       else {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"],this.SelectedBatchId).subscribe((data: any) => {
-          this.Classes = [...data.value];
-        })
 
         //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         //this.CheckPermission = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
         ////console.log(this.CheckPermission);
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
 
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        })
 
         this.GetMasterData();
       }
@@ -153,9 +157,16 @@ export class ClassmasterdashboardComponent implements OnInit {
     //   this.classSubjectAdd.PageLoad();
     // }, 50);
   }
-
-  GetClassTeacher() {
-    let filterStr = this.StandardFilterWithBatchId;//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+  CopyFromPreviousBatch() {
+    //console.log("here ", this.PreviousBatchId)
+    this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
+    if (this.PreviousBatchId == -1)
+      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+    else
+      this.GetClassTeacher(1)
+  }
+  GetClassTeacher(previousbatch) {
+    let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;
     this.loading = true;
     var _teacherId = this.searchForm.get("searchTeacherId").value.TeacherId;
@@ -165,6 +176,11 @@ export class ClassmasterdashboardComponent implements OnInit {
       this.alert.info("Please select atleast one of the options", this.optionAutoClose);
       return;
     }
+
+    if (previousbatch == 1)
+      filterStr = this.StandardFilterWithPreviousBatchId
+    else
+      filterStr = this.StandardFilterWithBatchId
 
     if (_teacherId != undefined)
       filterStr += " and TeacherId eq " + _teacherId;
@@ -199,12 +215,12 @@ export class ClassmasterdashboardComponent implements OnInit {
           if (data.value.length > 0)
             data.value.forEach(element => {
               this.ClassSubjectTeacherList.push({
-                "TeacherClassMappingId": element.TeacherClassMappingId,
+                "TeacherClassMappingId": previousbatch==1?0:element.TeacherClassMappingId,
                 "TeacherId": element.TeacherId,
                 "ClassId": element.ClassId,
                 "SectionId": element.SectionId,
                 "Section": this.Sections.filter(f => f.MasterDataId == element.SectionId)[0].MasterDataName,
-                "Active": element.Active,
+                "Active": previousbatch==1?0:element.Active,
                 "Action": false
               })
             });
@@ -228,12 +244,12 @@ export class ClassmasterdashboardComponent implements OnInit {
             var existing = data.value.filter(f => f.SectionId == s.MasterDataId);
             if (existing.length > 0) {
               this.ClassSubjectTeacherList.push({
-                "TeacherClassMappingId": existing[0].TeacherClassMappingId,
+                "TeacherClassMappingId": previousbatch==1?0:existing[0].TeacherClassMappingId,
                 "TeacherId": existing[0].TeacherId,
                 "ClassId": existing[0].ClassId,
                 "SectionId": existing[0].SectionId,
                 "Section": this.Sections.filter(s => s.MasterDataId == existing[0].SectionId)[0].MasterDataName,
-                "Active": existing[0].Active,
+                "Active": previousbatch==1?0:existing[0].Active,
                 "Action": false
               })
             }
@@ -428,7 +444,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
