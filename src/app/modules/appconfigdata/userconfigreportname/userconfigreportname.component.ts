@@ -142,12 +142,11 @@ export class UserconfigreportnameComponent implements OnInit {
       return;
     }
     if (AvailableReportId == 0) {
-      this.alert.error("Please select available report name", this.optionAutoClose);
-      return;
+      AvailableReportId = this.BaseReportId;     
     }
     this.loading = true;
     let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ApplicationId eq " + row.ApplicationId + //" and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ParentId eq " + AvailableReportId;
     
     if (row.ReportConfigItemId > 0)
@@ -322,7 +321,7 @@ export class UserconfigreportnameComponent implements OnInit {
       "ReportConfigItemId"
     ]
     list.PageName = this.ReportConfigItemListName;
-    list.filter = ["Active eq 1 and ReportName eq 'Reports'"];
+    list.filter = ["Active eq 1 and ReportName eq 'Reports'"]; //and ApplicationId eq " + this.SelectedApplicationId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -351,7 +350,7 @@ export class UserconfigreportnameComponent implements OnInit {
       "UserId",
       "Active"]
     list.PageName = this.ReportConfigItemListName;
-    list.filter = ["Active eq 1 and ParentId eq " + this.BaseReportId];
+    list.filter = ["Active eq 1 and ParentId eq " + this.BaseReportId + ' and ApplicationId eq ' + this.SelectedApplicationId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

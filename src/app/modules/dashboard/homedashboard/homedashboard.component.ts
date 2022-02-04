@@ -115,7 +115,7 @@ export class HomeDashboardComponent implements OnInit {
       this.tokenStorage.saveCheckEqualBatchId("1");
 
     this.tokenStorage.saveSelectedBatchId(selected.value);
-    this.tokenStorage.saveSelectedBatchName(SelectedBatchName);
+    this.tokenStorage.saveSelectedBatchName(SelectedBatchName); 
 
     this.generateBatchIds(selected.value);
   }
@@ -156,6 +156,7 @@ export class HomeDashboardComponent implements OnInit {
           'StartDate': _currentBatch[0].StartDate,
           'EndDate': _currentBatch[0].EndDate,
         };
+        this.tokenStorage.saveSelectedBatchName(_currentBatch[0].BatchName);
         this.tokenStorage.saveCurrentBatchStartEnd(_currentBatchStartEnd)
         this.tokenStorage.saveSelectedBatchStartEnd(_currentBatchStartEnd)
         this.CurrentBatchId = _currentBatch[0].BatchId;

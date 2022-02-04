@@ -5,12 +5,11 @@
             <a [routerLink]="['/']"><img style="border-radius: 8px;" src="assets/images/ttplogo1.png" alt="TTP"
                     width="50px" /></a>
             <span>{{SelectedApplicationName}}</span>
-            <span *ngIf="SelectedBatchName.length>0">-{{SelectedBatchName}}</span>            
+            <span *ngIf="SelectedBatchName">-{{SelectedBatchName}}</span>            
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
-            <div style="font-size: medium;">{{userName}}</div>
-
-            <span class="rightside" *ngIf="!deviceXs">
+            <div style="font-size: medium;margin-right: 15px;">{{userName}}</div>
+            <span class="rightside" *ngIf="!deviceXs && !loggedIn">
                 <button [disabled]="loading" mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
                 </button>

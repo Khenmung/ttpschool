@@ -64,7 +64,7 @@ export class LoginComponent implements OnInit {
     });
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['',[Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     })
 
     debugger;
@@ -78,7 +78,7 @@ export class LoginComponent implements OnInit {
     // });
   }
   onSubmit(): void {
-    this.IsSubmitted=true;
+    this.IsSubmitted = true;
     var username = this.loginForm.get("username").value;
     var password = this.loginForm.get("password").value;
     debugger;
@@ -114,7 +114,7 @@ export class LoginComponent implements OnInit {
         this.isLoginFailed = true;
       }
     );
-    this.IsSubmitted=false;
+    this.IsSubmitted = false;
   }
 
   reloadPage(): void {
@@ -231,7 +231,7 @@ export class LoginComponent implements OnInit {
     list.PageName = "ApplicationFeatureRolesPerms";
     list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
-
+debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -248,8 +248,6 @@ export class LoginComponent implements OnInit {
             var _permission = '';
             if (item.PermissionId != null)
               _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
-
-
             this.UserDetail[0]["applicationRolePermission"].push({
               'pageId': item.PlanFeature.PageId,
               'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,

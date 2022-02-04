@@ -1,19 +1,10 @@
 <div style="max-height: inherit;">
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Report Name</strong></div>
+        <div><strong>Re-define Report Name</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <form [formGroup]="searchForm">
-        <div style="display: flex;flex-direction: row;width: 100%;">
-            <!-- <mat-form-field appearance="outline" style="margin-right:15px;">
-                        <mat-label>Application</mat-label>
-                        <mat-select formControlName="searchApplicationId" (selectionChange)="GetAvailableReportNames()">
-                            <mat-option *ngFor="let option of Applications" [value]="option.applicationId">
-                                {{option.applicationName}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field> -->
             <mat-form-field appearance="outline" [style.width.px]="300">
                 <mat-label>Available Reports</mat-label>
                 <mat-select formControlName="searchAvailableReportName">
@@ -25,13 +16,12 @@
             <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetReportConfigItem()">
                 <mat-icon>search</mat-icon>
             </button>
-        </div>
     </form>
     <mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="ReportName">
             <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-form-field [style.width.pc]="10" appearance="outline">
+                <mat-form-field appearance="outline">
                     <input matInput [value]="element.ReportName" [(ngModel)]="element.ReportName" autocomplete="Off"
                         placeholder="" (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
                 </mat-form-field>

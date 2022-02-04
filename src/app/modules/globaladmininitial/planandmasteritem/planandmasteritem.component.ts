@@ -34,7 +34,7 @@ export class PlanandmasteritemComponent implements OnInit {
   PlanAndMasterItemListName = 'PlanAndMasterItems';
   loading = false;
   SelectedBatchId = 0;
-  SelectedApplicationId =0;
+  SelectedApplicationId = 0;
   RowToUpdateCount = -1;
   TopMasterItems = [];
   Plans = [];
@@ -52,18 +52,18 @@ export class PlanandmasteritemComponent implements OnInit {
     PlanAndMasterDataId: 0,
     PlanId: 0,
     MasterDataId: 0,
-    ApplicationId:0,
+    ApplicationId: 0,
     Active: 0
   };
   displayedColumns = [
-    "PlanAndMasterDataId",    
+    "PlanAndMasterDataId",
     "MasterItemName",
     "Active",
     "Action"
   ];
   nameFilter = new FormControl('');
   filterValues = {
-    MasterItemName: ''    
+    MasterItemName: ''
   };
   searchForm: FormGroup;
   constructor(
@@ -74,7 +74,7 @@ export class PlanandmasteritemComponent implements OnInit {
     private nav: Router,
     private fb: FormBuilder
   ) {
-    }
+  }
 
   ngOnInit(): void {
     //debugger;
@@ -82,14 +82,14 @@ export class PlanandmasteritemComponent implements OnInit {
       searchApplicationId: [0],
       searchPlanId: [0]
     });
-    
+
     this.nameFilter.valueChanges
-    .subscribe(
-      name => {
-        this.filterValues.MasterItemName = name;
-        this.dataSource.filter = JSON.stringify(this.filterValues);
-      }
-    )
+      .subscribe(
+        name => {
+          this.filterValues.MasterItemName = name;
+          this.dataSource.filter = JSON.stringify(this.filterValues);
+        }
+      )
     this.PageLoad();
   }
 
@@ -184,8 +184,8 @@ export class PlanandmasteritemComponent implements OnInit {
       row.Action = false;
       return;
     }
-    let checkFilterString = "PlanId eq " + row.PlanId + " and MasterDataId eq " + row.MasterDataId + 
-                          " and ApplicationId eq " + row.ApplicationId;
+    let checkFilterString = "PlanId eq " + row.PlanId + " and MasterDataId eq " + row.MasterDataId +
+      " and ApplicationId eq " + row.ApplicationId;
 
     if (row.PlanAndMasterDataId > 0)
       checkFilterString += " and PlanAndMasterDataId ne " + row.PlanAndMasterDataId;
@@ -210,7 +210,7 @@ export class PlanandmasteritemComponent implements OnInit {
           this.PlanAndMasterItemData.MasterDataId = row.MasterDataId;
           this.PlanAndMasterItemData.ApplicationId = row.ApplicationId;
           this.PlanAndMasterItemData.Active = row.Active;
-         
+
           if (this.PlanAndMasterItemData.PlanAndMasterDataId == 0) {
             this.insert(row);
           }
@@ -284,7 +284,7 @@ export class PlanandmasteritemComponent implements OnInit {
       })
   }
   GetTopFeature() {
-    
+
     this.ClearDisplay();
     var ApplicationId = this.searchForm.get("searchApplicationId").value;
     this.GetMasterItems(ApplicationId).subscribe((d: any) => {
@@ -336,8 +336,8 @@ export class PlanandmasteritemComponent implements OnInit {
     ];
 
     list.PageName = this.PlanAndMasterItemListName;
-    list.lookupFields = ["Plan($select=PlanId,Title;$filter=Active eq 1)","MasterData($filter=Active eq 1;$select=MasterDataId,ApplicationId)"];
-    
+    list.lookupFields = ["Plan($select=PlanId,Title;$filter=Active eq 1)", "MasterData($filter=Active eq 1;$select=MasterDataId,ApplicationId)"];
+
     list.filter = ["ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
     this.PlanAndMasterItemList = [];
     this.dataservice.get(list)
@@ -361,9 +361,9 @@ export class PlanandmasteritemComponent implements OnInit {
               {
                 PlanAndMasterDataId: 0,
                 PlanId: _PlanId,
-                MasterDataId:f.MasterDataId,
-                MasterItemName:f.MasterDataName,
-                ApplicationId:_applicationId,
+                MasterDataId: f.MasterDataId,
+                MasterItemName: f.MasterDataName,
+                ApplicationId: _applicationId,
                 Active: 0,
                 Action: false
               });
@@ -381,28 +381,34 @@ export class PlanandmasteritemComponent implements OnInit {
       });
 
   }
-  ClearDisplay(){
+  ClearDisplay() {
     this.PlanAndMasterItemList = [];
     this.dataSource = new MatTableDataSource(this.PlanAndMasterItemList);
   }
   createFilter(): (data: any, filter: string) => boolean {
-    let filterFunction = function(data, filter): boolean {
+    let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);
       return data.MasterItemName.toLowerCase().indexOf(searchTerms.MasterItemName) !== -1
-        // && data.id.toString().toLowerCase().indexOf(searchTerms.id) !== -1
-        // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
-        // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
+      // && data.id.toString().toLowerCase().indexOf(searchTerms.id) !== -1
+      // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
+      // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
     }
     return filterFunction;
   }
   GetMasterData() {
     var globalAdminId = this.contentservice.GetPermittedAppId("globaladmin");
     var Ids = globalAdminId + "," + this.SelectedApplicationId
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],Ids)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], Ids)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
+
+        var applicationId = this.allMasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
+        this.contentservice.GetDropDownDataFromDB(applicationId, 0, 0)
+          .subscribe((data: any) => {
+            this.Applications = [...data.value];
+          })
+
         this.loading = false;
       });
   }
@@ -426,8 +432,8 @@ export interface IPlanMasterItem {
   PlanAndMasterDataId: number;
   PlanId: number;
   MasterDataId: number;
-  MasterItemName:string;
-  ApplicationId:number;
+  MasterItemName: string;
+  ApplicationId: number;
   Active: number;
   Action: boolean;
 }
