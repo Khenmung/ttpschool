@@ -7,6 +7,7 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { SchoolReportsModule } from '../schoolreports/reports.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+//import { OrganizationComponent } from './organization/organization.component';
 //import { DefinePagesModule } from '../define-pages/define-pages.module';
 
 @NgModule({

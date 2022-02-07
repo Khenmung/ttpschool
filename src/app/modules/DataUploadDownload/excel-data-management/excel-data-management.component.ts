@@ -231,24 +231,116 @@ export class ExcelDataManagementComponent implements OnInit {
     readFile.readAsArrayBuffer(this.fileUploaded);
 
   }
+
   ValidateEmployeeData() {
     debugger;
+    this.ErrorMessage = '';
     this.jsonData.map((element, indx) => {
-      // slno = parseInt(indx) + 1;
+      if (element.FirstName.length == 0)
+        this.ErrorMessage += 'First name at row ' + indx + ' is required.\n';
+      if (element.FatherName.length == 0)
+        this.ErrorMessage += 'Father name at row ' + indx + ' is required.\n';
+      if (element.GenderId == 0)
+        this.ErrorMessage += 'GenderId at row ' + indx + ' is required.\n';
+      if (element.BloodgroupId != '' && isNaN(element.BloodgroupId))
+        this.ErrorMessage += 'BloodgroupId at row ' + indx + ' must be numeric.\n';
+      if (element.CategoryId != '' && isNaN(element.CategoryId))
+        this.ErrorMessage += 'CategoryId at row ' + indx + ' must be numeric.\n';
+      if (element.EmploymentStatusId != '' && isNaN(element.EmploymentStatusId))
+        this.ErrorMessage += 'EmploymentStatusId at row ' + indx + ' must be numeric.\n';
+      if (element.ReligionId != '' && isNaN(element.ReligionId))
+        this.ErrorMessage += 'ReligionId at row ' + indx + ' must be numeric.\n';
+      if (element.EmploymentTypeId != '' && isNaN(element.EmploymentTypeId))
+        this.ErrorMessage += 'EmploymentTypeId at row ' + indx + ' must be numeric.\n';
+      if (element.NoticePeriodDays != '' && isNaN(element.NoticePeriodDays))
+        this.ErrorMessage += 'NoticePeriodDays at row ' + indx + ' must be numeric.\n';
+      if (element.ProbationPeriodDays != '' && isNaN(element.ProbationPeriodDays))
+        this.ErrorMessage += 'ProbationPeriodDays at row ' + indx + ' must be numeric.\n';
+      if (element.MaritalStatusId != '' && isNaN(element.MaritalStatusId))
+        this.ErrorMessage += 'MaritalStatusId at row ' + indx + ' must be numeric.\n';
+      if (element.NatureId != '' && isNaN(element.NatureId))
+        this.ErrorMessage += 'NatureId at row ' + indx + ' must be numeric.\n';
 
-      // let CategoryIdFilter = this.ActivityCategory.filter(g => g.MasterDataId == element.CategoryId);
-      // if (CategoryIdFilter.length == 0)
-      //   this.ErrorMessage += "Invalid CategoryId at row " + slno + ":" + element.CategoryId + "<br>";
-      // let SubCategoryIdFilter = this.ActivitySubCategory.filter(g => g.MasterDataId == element.SubCategoryId);
-      // if (SubCategoryIdFilter.length == 0)
-      //   this.ErrorMessage += "Invalid Sub Category Id at row " + slno + ":" + element.SubCategoryId + "<br>";
-      // let StudentClsFilter = this.StudentClassList.filter(g => g.StudentClassId == element.StudentClassId);
-      // if (StudentClsFilter.length == 0)
-      //   this.ErrorMessage += "Invalid StudentClassId at row " + slno + ":" + element.StudentClassId + "<br>";
-      //if (this.ErrorMessage.length == 0) {
+      if (element.PermanentAddressStateId != '' && isNaN(element.PermanentAddressStateId))
+        this.ErrorMessage += 'PermanentAddressStateId at row ' + indx + ' must be numeric.\n';
+      if (element.PermanentAddressCountryId != '' && isNaN(element.PermanentAddressCountryId))
+        this.ErrorMessage += 'PermanentAddressCountryId at row ' + indx + ' must be numeric.\n';
+      if (element.DepartmentId != '' && isNaN(element.DepartmentId))
+        this.ErrorMessage += 'DepartmentId at row ' + indx + ' must be numeric.\n';
+      if (element.DesignationId != '' && isNaN(element.DesignationId))
+        this.ErrorMessage += 'DesignationId at row ' + indx + ' must be numeric.\n';
+      if (element.EmpGradeId != '' && isNaN(element.EmpGradeId))
+        this.ErrorMessage += 'EmpGradeId at row ' + indx + ' must be numeric.\n';
+
+      if (element.DOB != '' && isNaN(Date.parse(element.DOB)))
+        this.ErrorMessage += 'Invalid DOB at row ' + indx;
+      if (element.DOJ != '' && isNaN(Date.parse(element.DOJ)))
+        this.ErrorMessage += 'Invalid DOJ at row ' + indx;
+      if (element.ConfirmationDate != '' && isNaN(Date.parse(element.ConfirmationDate)))
+        this.ErrorMessage += 'Invalid ConfirmationDate at row ' + indx;
+      if (element.MarriedDate != '' && isNaN(Date.parse(element.MarriedDate)))
+        this.ErrorMessage += 'Invalid MarriedDate at row ' + indx;
+
+
+      if (element.ShortName.length > 10)
+        this.ErrorMessage += 'ShortName must be less than 11 characters at row ' + indx + '.\n';
+      if (element.FirstName.length > 30)
+        this.ErrorMessage += 'FirstName must be less than 31 characters at row ' + indx + '.\n';
+      if (element.LastName.length > 30)
+        this.ErrorMessage += 'LastName must be less than 31 characters at row ' + indx + '.\n';
+
+      if (element.MotherName.length > 30)
+        this.ErrorMessage += 'MotherName must be less than 31 characters at row ' + indx + '.\n';
+      if (element.FatherName.length > 30)
+        this.ErrorMessage += 'FatherName must be less than 31 characters at row ' + indx + '.\n';
+      if (element.MICRNo.length > 20)
+        this.ErrorMessage += 'MICRNo must be less than 21 characters at row ' + indx + '.\n';
+
+      if (element.BankAccountNo.length > 20)
+        this.ErrorMessage += 'BankAccountNo must be less than 21 characters at row ' + indx + '.\n';
+      if (element.IFSCcode.length > 15)
+        this.ErrorMessage += 'IFSCcode must be less than 16 characters at row ' + indx + '.\n';
+      if (element.MICRNo.length > 20)
+        this.ErrorMessage += 'MICRNo must be less than 21 characters at row ' + indx + '.\n';
+
+      if (element.AdhaarNo.length > 15)
+        this.ErrorMessage += 'AdhaarNo must be less than 16 characters at row ' + indx + '.\n';
+      if (element.PhotoPath.length > 50)
+        this.ErrorMessage += 'PhotoPath must be less than 51 characters at row ' + indx + '.\n';
+      if (element.ContactNo.length > 12)
+        this.ErrorMessage += 'ContactNo must be less than 13 characters at row ' + indx + '.\n';
+      if (element.WhatsappNo.length > 12)
+        this.ErrorMessage += 'WhatsappNo must be less than 13 characters at row ' + indx + '.\n';
+      if (element.AlternateContactNo.length > 12)
+        this.ErrorMessage += 'AlternateContactNo should be less than 13 characters at row ' + indx + '.\n';
+
+
+      if (element.EmailAddress.length > 30)
+        this.ErrorMessage += 'EmailAddress must be less than 31 characters at row ' + indx + '.\n';
+      if (element.EmergencyContactNo.length > 12)
+        this.ErrorMessage += 'EmergencyContactNo must be less than 13 characters at row ' + indx + '.\n';
+      if (element.PassportNo.length > 12)
+        this.ErrorMessage += 'PassportNo must be less than 13 characters at row ' + indx + '.\n';
+      if (element.PAN.length > 12)
+        this.ErrorMessage += 'PAN must be less 13 characters than 12 at row ' + indx + '.\n';
+      if (element.PFAccountNo.length > 20)
+        this.ErrorMessage += 'PFAccountNo must be less 21 characters at row ' + indx + '.\n';
+      if (element["Remarks"] == undefined) {
+        element["Remarks"] = '';
+      }
+      if (element["Remarks"] != undefined && element.Remarks.length > 20)
+        this.ErrorMessage += 'Remarks must be less 21 characters at row ' + indx + '.\n';
+      if (element.PresentAddress.length > 256)
+        this.ErrorMessage += 'PresentAddress must be less 257 characters at row ' + indx + '.\n';
+
+      if (element.PresentAddressPincode.length > 10)
+        this.ErrorMessage += 'PresentAddressPincode must be less 11 characters at row ' + indx + '.\n';
+      if (element.PermanentAddressPincode.length > 10)
+        this.ErrorMessage += 'PermanentAddressPincode must be less 11 characters at row ' + indx + '.\n';
+
       element.OrgId = this.loginDetail[0]["orgId"];
-      //element.BatchId = this.SelectedBatchId;
-      this.ELEMENT_DATA.push(element);
+      if (this.ErrorMessage.length == 0)
+        this.ELEMENT_DATA.push(element);
     });
   }
   ValidateStudentActivity() {
@@ -487,7 +579,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "CreatedDate": this.datepipe.transform(row["CreatedDate"], 'yyyy/MM/dd'),
         "WhatsAppNumber": row["WhatsAppNumber"],
         "BatchId": +row["BatchId"]
-        
+
       });
     });
     ////console.log("toInsert", toInsert)

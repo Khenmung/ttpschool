@@ -9,6 +9,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { PlanFeatureComponent } from '../planfeature/planfeature.component';
 import { AdminrolepermissionComponent } from '../adminrolepermission/adminrolepermission.component';
 import { PlanandmasteritemComponent } from '../planandmasteritem/planandmasteritem.component';
+import { OrganizationpaymentComponent } from '../organizationpayment/organizationpayment.component';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -18,12 +19,13 @@ import { PlanandmasteritemComponent } from '../planandmasteritem/planandmasterit
 export class GlobaladminboardComponent implements AfterViewInit {
   
   components = [
+    OrganizationpaymentComponent,
+    MenuConfigComponent,
     PlansComponent,
     PlanFeatureComponent,
     PlanandmasteritemComponent,
-    CustomerPlansComponent,
-    MenuConfigComponent,
-    AdminrolepermissionComponent
+    AdminrolepermissionComponent,
+    CustomerPlansComponent   
   ];
   LoginUserDetail=[];
   tabNames = [
@@ -33,6 +35,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
     { 'label': "Customer's Plan", 'faIcon': '' },
     { 'label': 'menu config', 'faIcon': '' },
     { 'label': 'Admin Role Permission', 'faIcon': '' },
+    { 'label': 'Organization payment', 'faIcon': '' },
   ];
 
   Permissions =
@@ -42,7 +45,8 @@ export class GlobaladminboardComponent implements AfterViewInit {
       PlanNMasterPermission: '',
       CustomerAppsPermission: '',
       MenuConfigPermission: '',
-      RoleFeaturePermission: ''
+      RoleFeaturePermission: '',
+      PaymentPermission: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -89,6 +93,10 @@ export class GlobaladminboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.MENUCONFIG)
     var comindx = this.components.indexOf(MenuConfigComponent);
+    this.GetComponents(perObj,comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT)
+    var comindx = this.components.indexOf(OrganizationpaymentComponent);
     this.GetComponents(perObj,comindx)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

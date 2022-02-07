@@ -5,7 +5,7 @@ import { List } from "./interface";
 import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
-    public static apiUrl: string = "http://localhost:5000";//"http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:8020";//"http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -66,7 +66,8 @@ export class globalconstants {
                 "CUSTOMERINVOICECOMPONENT": 'invoice components',
                 "REPORTCONIG": 'report config',
                 "MENUCONFIG": 'menu config',
-                "PLANANDMASTERDATA": 'Plan n Master Item'
+                "PLANANDMASTERDATA": 'Plan n Master Item',
+                "ORGANIZATIONPAYMENT": 'organization payment'
             },
             "common": {
                 'AUTH': {
@@ -81,7 +82,8 @@ export class globalconstants {
                     'APPLICATIONFEATUREPERMISSION': 'Role Feature Permission',
                     'ROLEUSER': 'role user',
                     'USERS': 'user',
-                    'MASTERS': 'Essential Data'
+                    'MASTERS': 'Essential Data',
+                    'ORGANIZATION': 'organization'
                 },
                 "misc": {
                     "MISC": "misc",
@@ -271,7 +273,7 @@ export class globalconstants {
                 "GENDER": "employee gender",
                 "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
-                "DOCUMENT": "employee document",
+                "DOCUMENT": "document type",
                 "FAMILYRELATIONSHIP": "family relationship",
                 "EMPLOYEESKILL": "employee skill",
                 "EMPLOYEEACTIVITYCATEGORY": "employee activity category",

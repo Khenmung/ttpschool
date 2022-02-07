@@ -21,7 +21,7 @@
             (click)="inputfile.click()">
             <mat-icon aria-label="photo">attach_file</mat-icon>
         </button>
-        <button [disabled]="loading" type="submit" (click)="readAsJson()" matTooltip="upload file"
+        <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="readAsJson()" matTooltip="upload file"
             class="mat-raised-button">
             <mat-icon aria-label="file_upload">file_upload</mat-icon>
         </button>&nbsp;&nbsp;

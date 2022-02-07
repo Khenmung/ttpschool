@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ControlModule } from '../control/control.module';
+//import { OrganizationpaymentComponent } from './organizationpayment/organizationpayment.component';
 
 
 @NgModule({

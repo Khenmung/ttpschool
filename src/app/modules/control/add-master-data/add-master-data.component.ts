@@ -167,17 +167,18 @@ export class AddMasterDataComponent implements OnInit {
       "PlanAndMasterDataId"
     ];
     list.PageName = "PlanAndMasterItems";
-    list.lookupFields = ["MasterData($select=MasterDataId,ParentId,MasterDataName,Description,ApplicationId)"];
+    list.lookupFields = ["MasterData($select=MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId)"];
 
     list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
     //console.log("GetMastersForAutoComplete",this.SelectedApplicationId)  
     return this.dataservice.get(list).subscribe((data: any) => {
       var result = data.value.map(d => {
-        d.MasterDataName = d.MasterData.MasterDataName,
-          d.ParentId = d.MasterData.ParentId,
-          d.ApplicationId = d.MasterData.ApplicationId,
-          d.Description = d.MasterData.Description
+        d.MasterDataName = d.MasterData.MasterDataName
+        d.ParentId = d.MasterData.ParentId
+        d.ApplicationId = d.MasterData.ApplicationId
+        d.Description = d.MasterData.Description
+        d.OrgId = d.MasterData.OrgId
         return d;
       })//.filter(f=>f.ApplicationId == this.SelectedApplicationId)
 
@@ -285,7 +286,6 @@ export class AddMasterDataComponent implements OnInit {
     this.loading = true;
     var _appId = this.MasterData.filter(f => f.MasterDataId == element.MasterDataId)[0].ApplicationId;
     this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.UserDetails[0]["orgId"], _appId)
-      //this.GetMasters(element.MasterDataId, this.UserDetails[0]["orgId"],_appId)
       .subscribe((data: any) => {
         this.SubMasters = [...data.value];
         this.loading = false;
@@ -307,21 +307,25 @@ export class AddMasterDataComponent implements OnInit {
 
   // }
   AddData() {
-    //debugger;
-
+    debugger;
+    var subMasterId = this.searchForm.get("SubId").value;
     if (this.searchForm.get("ParentId").value == 0) {
       this.alert.info("Please select master name to add items to", this.optionAutoClose);
       return;
     }
-    else if (this.SubMasters.length > 0 && this.searchForm.get("SubId").value == 0) {
-      this.alert.info("Please select submaster.", this.optionAutoClose);
-      return;
-    }
+    // else if (this.SubMasters.length > 0 && subMasterId == 0) {
+    //   this.alert.info("Please select submaster.", this.optionAutoClose);
+    //   return;
+    // }
     var _ParentId = 0;
-    if (this.searchForm.get("SubId").value > 0)
-      _ParentId = this.searchForm.get("SubId").value;
+    var _appId = 0;
+
+    if (subMasterId > 0)
+      _ParentId = subMasterId;
     else
       _ParentId = this.searchForm.get("ParentId").value.MasterDataId;
+
+    _appId = this.MasterData.filter(f => f.MasterDataId == _ParentId)[0].ApplicationId;
 
     let newrow = {
       "MasterDataId": 0,
@@ -333,7 +337,7 @@ export class AddMasterDataComponent implements OnInit {
       "ParentId": _ParentId,
       "OrgId": 0,
       "Active": 0,
-      "ApplicationId": this.SelectedApplicationId,
+      "ApplicationId": _appId,
       "Action": false
     }
     //if add new button is clicked more than once.
@@ -349,8 +353,8 @@ export class AddMasterDataComponent implements OnInit {
     this.Parent = '';
     this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
 
-    if (this.SelectedApplicationName.toLowerCase().includes("admin"))
-      this.OrgId = this.searchForm.get("OrgId").value;
+    // if (this.SelectedApplicationName.toLowerCase().includes("admin"))
+    //   this.OrgId = this.searchForm.get("OrgId").value;
     debugger;
     var _searchParentId = 0;
     var _OrgId = 0;
@@ -444,6 +448,7 @@ export class AddMasterDataComponent implements OnInit {
       return;
     }
     if (this.searchForm.get("ParentId").value == 0) {
+      this.SubMasters = [];
       let duplicate = this.TopMasters.filter(item => item.OrgId == this.UserDetails[0]["orgId"]
         && item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
         && item.ApplicationId == row.ApplicationId)
@@ -455,7 +460,7 @@ export class AddMasterDataComponent implements OnInit {
     }
     else {
       let duplicate = this.MasterData.filter(item => item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
-        && item.MasterDataId != row.MasterDataId && item.ApplicationId == row.ApplicationId)
+        && item.MasterDataId != row.MasterDataId && item.ApplicationId == row.ApplicationId && item.OrgId == row.OrgId);
       if (duplicate.length > 0) {
         this.loading = false;
         this.alert.error("Data already exists!", this.optionNoAutoClose);
@@ -489,20 +494,16 @@ export class AddMasterDataComponent implements OnInit {
       Active: row.Active == true ? 1 : 0
     }
 
-    //let selectedMasterDataId = 0;
     if (row.MasterDataId == 0) {
-
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
-      mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
+      //mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
 
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {
             row.MasterDataId = res.MasterDataId;
             row.Action = false;
-            // if (this.searchForm.get("ParentId").value == 0)
-            //   this.searchForm.patchValue({ ParentId: res["MasterDataId"] });
 
             if (this.DataToSaveCount == 0) {
               this.loading = false;
@@ -526,29 +527,7 @@ export class AddMasterDataComponent implements OnInit {
     }
 
   }
-  // updateDescription(value, row) {
-  //   //debugger;
-  //   if (row.Description.toLowerCase() == value.toLowerCase())
-  //     return;
-  //   let confirmYesNo: Boolean = false;
-  //   if (value.length == 0 || value.length > 50) {
-  //     this.alert.error("Character should not be empty or less than 50!");
-  //     return;
-  //   }
 
-  //   let mastertoUpdate = {
-  //     Description: value
-  //   }
-
-  //   let selectedMasterDataId = this.MasterData.filter(item => {
-  //     return item.Id == row.Id
-  //   })[0].Id;
-
-  //   this.dataservice.postPatch('MasterItems', mastertoUpdate, selectedMasterDataId, 'patch')
-  //     .subscribe(res => {
-  //       this.alert.success("Master data updated!", this.optionAutoClose);
-  //     });
-  // }
   getDropDownData(dropdowntype) {
     let Id = this.MasterData.filter((item, indx) => {
       return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER

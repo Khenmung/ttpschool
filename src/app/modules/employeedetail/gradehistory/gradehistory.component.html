@@ -117,11 +117,11 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline" [style.width.px]="150">
-                            <input type="text" (blur)="UpdateManagerId(element)" 
+                            <input type="text" 
                             matInput [value]="element.ManagerName" 
                             [(ngModel)]="element.ManagerName" 
                             [matAutocomplete]="ManagerAutoComplete">
-                            <mat-autocomplete #ManagerAutoComplete="matAutocomplete">
+                            <mat-autocomplete (optionSelected)="UpdateManagerId(element)" #ManagerAutoComplete="matAutocomplete">
                                 <mat-option *ngFor="let option of filterEmployee(element.ManagerName)" [value]="option.Name">
                                     {{option.Name}}
                                 </mat-option>

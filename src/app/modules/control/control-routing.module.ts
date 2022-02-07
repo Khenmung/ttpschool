@@ -11,6 +11,7 @@ import { ControlhomeComponent } from './controlhome/controlhome.component';
 import { BatchdashboardComponent } from './batchdashboard/batchdashboard.component';
 import { AddMasterDataComponent } from './add-master-data/add-master-data.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { OrganizationComponent } from './organization/organization.component';
 
 const routes: Routes = [
   {
@@ -21,7 +22,6 @@ const routes: Routes = [
       { path: 'roleuser', component: roleuseraddComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
-      //{ path: 'appfeature', component: ApplicationfeatureComponent },
       
     ]
   }
@@ -43,5 +43,5 @@ export const settingsComponent = [
   ControlhomeComponent,
   BatchdashboardComponent,
   AddMasterDataComponent,
-  
+  OrganizationComponent  
 ]

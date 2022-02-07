@@ -362,7 +362,6 @@ export class ContentService implements OnInit {
       applicationparam += ' or ApplicationId eq ' + id
     })
 
-
     var commonAppId = this.GetPermittedAppId('common');
     var orgIdSearchstr = ' and (ApplicationId eq ' + commonAppId + applicationparam + ")" +
                          ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
@@ -374,5 +373,29 @@ export class ContentService implements OnInit {
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     return this.dataservice.get(list);
 
+  }
+  GetParentZeroMasters() {
+    let list: List = new List();
+    list.fields = [
+      "MasterDataId",
+      "ParentId",
+      "MasterDataName",
+      "Description",
+      "Active",
+      "OrgId"];
+    list.PageName = "MasterItems";
+    list.filter = ["ParentId eq 0 and Active eq 1"];
+    return this.dataservice.get(list);
+      // .subscribe((data: any) => {
+      //   if (data.value.length > 0) {
+      //     this.MasterData = [...data.value];
+      //     var applicationId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
+      //     this.contentservice.GetDropDownDataFromDB(applicationId,0,0)
+      //     .subscribe((data:any)=>{
+      //       this.Applications =[...data.value];
+      //     })
+      //     this.loading=false;
+      //   }
+      // });
   }
 }

@@ -67,7 +67,7 @@ export class GradehistoryComponent implements OnInit {
   };
   displayedColumns = [
     "Action",
-    "Active",    
+    "Active",
     "EmployeeGradeHistoryId",
     "EmpGradeId",
     "DesignationId",
@@ -79,7 +79,7 @@ export class GradehistoryComponent implements OnInit {
     "FromDate",
     "ToDate",
     "Remarks",
-    
+
   ];
   searchForm: FormGroup;
   constructor(
@@ -135,7 +135,7 @@ export class GradehistoryComponent implements OnInit {
       else {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.GetEmployees();
-        this.GetMasterData();
+        //this.GetMasterData();
 
       }
     }
@@ -153,7 +153,7 @@ export class GradehistoryComponent implements OnInit {
       ManagerId: 0,
       ManagerName: '',
       ReportingTo: 0,
-      ReportingName:'',
+      ReportingName: '',
       JobTitleId: 0,
       DesignationId: 0,
       WorkAccountId: 0,
@@ -168,13 +168,13 @@ export class GradehistoryComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
   }
-  UpdateManagerId(row:IEmployeementHistory){
-    row.Action=true;
-    row.ManagerId= this.Employees.filter(f=>f.Name ==row.ManagerName)[0].EmployeeId
+  UpdateManagerId(row: IEmployeementHistory) {
+    row.Action = true;
+    row.ManagerId = this.Employees.filter(f => f.Name == row.ManagerName)[0].EmployeeId
   }
-  UpdateReportingToId(row){
-    row.Action=true;
-    row.ReportingTo= this.Employees.filter(f=>f.Name ==row.ReportingToName)[0].EmployeeId
+  UpdateReportingToId(row) {
+    row.Action = true;
+    row.ReportingTo = this.Employees.filter(f => f.Name == row.ReportingToName)[0].EmployeeId
   }
   updateActive(row, value) {
     row.Action = true;
@@ -199,7 +199,16 @@ export class GradehistoryComponent implements OnInit {
     let checkFilterString = "EmpGradeId eq " + row.EmpGradeId +
       " and DesignationId eq " + row.DesignationId +
       " and EmployeeId eq " + this.EmployeeId
-
+    if (row.ManagerId == null || row.ManagerId == 0) {
+      this.loading = false;
+      this.alert.error("Please assign manager.", this.optionsNoAutoClose);
+      return
+    }
+    if (row.WorkAccountId == null || row.WorkAccountId == 0) {
+      this.loading = false;
+      this.alert.error("Please select work account.", this.optionsNoAutoClose);
+      return
+    }
     if (row.EmployeeGradeHistoryId > 0)
       checkFilterString += " and EmployeeGradeHistoryId ne " + row.EmployeeGradeHistoryId;
     let list: List = new List();
@@ -215,7 +224,7 @@ export class GradehistoryComponent implements OnInit {
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
         }
         else {
-          
+
           this.EmploymentHistoryData.EmployeeGradeHistoryId = row.EmployeeGradeHistoryId;
           this.EmploymentHistoryData.Active = row.Active;
           this.EmploymentHistoryData.EmpGradeId = row.EmpGradeId;
@@ -303,10 +312,10 @@ export class GradehistoryComponent implements OnInit {
           if (_ReportingToNameObj.length > 0) {
             _ReportingToName = _ReportingToNameObj[0].Name;
           }
-          f.ReportingToName=_ReportingToName;
+          f.ReportingToName = _ReportingToName;
           f.ManagerName = _ManagerName;
           return f;
-        }).sort((a,b)=>b.EmployeeGradeHistoryId-a.EmployeeGradeHistoryId)
+        }).sort((a, b) => b.EmployeeGradeHistoryId - a.EmployeeGradeHistoryId)
         //console.log("EmploymentHistoryList",this.EmploymentHistoryList)
         this.dataSource = new MatTableDataSource<IEmployeementHistory>(this.EmploymentHistoryList);
         this.loadingFalse();
@@ -362,10 +371,12 @@ export class GradehistoryComponent implements OnInit {
             return {
               EmployeeId: Employee.EmpEmployeeId,
               EmployeeCode: Employee.EmployeeCode,
-              Name: _fullDescription
+              Name: _name,
+              NameNContact:_fullDescription
             }
           })
         }
+        this.GetMasterData();
         this.loading = false;
       })
   }

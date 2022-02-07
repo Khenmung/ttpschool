@@ -110,31 +110,19 @@ export class AdminrolepermissionComponent implements OnInit {
       if (this.Permission != 'deny') {
         //this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
-        this.GetTopMasters();
+        this.GetApplications();
         this.GetOrganizations();
         //this.GetPageFeatures();
       }
     }
   }
   
-  GetTopMasters() {
-    let list: List = new List();
-    list.fields = [
-      "MasterDataId",
-      "ParentId",
-      "MasterDataName",
-      "Description",
-      "Active",
-      "OrgId"];
-    list.PageName = "MasterItems";
-    list.filter = ["ParentId eq 0 and Active eq 1"];
-    //debugger;
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
+  GetApplications(){
+    this.contentservice.GetParentZeroMasters()
+    .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.MasterData = [...data.value];
           var applicationId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-          //var globaladminId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "globaladmin")[0].MasterDataId;
           this.contentservice.GetDropDownDataFromDB(applicationId,0,0)
           .subscribe((data:any)=>{
             this.Applications =[...data.value];
@@ -143,6 +131,7 @@ export class AdminrolepermissionComponent implements OnInit {
         }
       });
   }
+  
   GetTopMenu() {
     this.TopMenu = this.PlanFeaturePages.filter(f => f.ApplicationId == this.SelectedApplicationId
       && f.ParentId == 0)
