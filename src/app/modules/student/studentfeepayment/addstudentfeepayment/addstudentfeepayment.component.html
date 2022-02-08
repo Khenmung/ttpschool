@@ -15,51 +15,59 @@
                             <mat-icon>payments</mat-icon>&nbsp;Payments
                         </ng-template>
                         <div fxLayout="row" fxLayoutAlign="start space-around">
-                            <div style="width:50%">
-                                <mat-table #table [dataSource]="dataSource" style="min-width: 400px;">
-                                    <ng-container matColumnDef="SlNo">
-                                        <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
-                                        <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="MonthName">
-                                        <mat-header-cell *matHeaderCellDef> Month </mat-header-cell>
-                                        <mat-cell *matCellDef="let element">
-                                            {{element.MonthName}}
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="TotalCredit">
-                                        <mat-header-cell *matHeaderCellDef> Fee Amount </mat-header-cell>
-                                        <mat-cell *matCellDef="let element">
-                                            {{element.TotalCredit}}
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="TotalDebit">
-                                        <mat-header-cell *matHeaderCellDef> Paid </mat-header-cell>
-                                        <mat-cell *matCellDef="let element">
-                                            {{element.TotalDebit}}
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="Balance">
-                                        <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
-                                        <mat-cell *matCellDef="let element">
-                                            {{element.Balance}}
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="Action">
-                                        <mat-header-cell *matHeaderCellDef>Select </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center"
-                                            fxLayout="row">
-                                            <mat-checkbox
-                                                [disabled]="loading || element.Balance==0 || Permission=='read'"
-                                                mat-mini-fab (change)="SelectRow(element,$event)"
-                                                [checked]="element.Action">
-                                            </mat-checkbox>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                                    <mat-row *matRowDef="let row; columns: displayedColumns;let i=index" matRipple
-                                        class="element-row" [class.expanded]="expandedElement == row"></mat-row>
-                                </mat-table>
+                            <div style="display: flex;flex-direction: column;">
+                                <div style="width:50%" id="printSection">
+                                    <mat-table #table [dataSource]="dataSource" style="min-width: 400px;">
+                                        <ng-container matColumnDef="SlNo">
+                                            <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
+                                            <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="MonthName">
+                                            <mat-header-cell *matHeaderCellDef> Month </mat-header-cell>
+                                            <mat-cell *matCellDef="let element">
+                                                {{element.MonthName}}
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="TotalCredit">
+                                            <mat-header-cell *matHeaderCellDef> Fee Amount </mat-header-cell>
+                                            <mat-cell *matCellDef="let element">
+                                                {{element.TotalCredit}}
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="TotalDebit">
+                                            <mat-header-cell *matHeaderCellDef> Paid </mat-header-cell>
+                                            <mat-cell *matCellDef="let element">
+                                                {{element.TotalDebit}}
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="Balance">
+                                            <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
+                                            <mat-cell *matCellDef="let element">
+                                                {{element.Balance}}
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="Action">
+                                            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                                            <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center"
+                                                fxLayout="row">
+                                                <mat-checkbox
+                                                    [disabled]="loading || element.Balance==0 || Permission=='read'"
+                                                    mat-mini-fab (change)="SelectRow(element,$event)"
+                                                    [checked]="element.Action">
+                                                </mat-checkbox>
+                                            </mat-cell>
+                                        </ng-container>
+                                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: displayedColumns;let i=index" matRipple
+                                            class="element-row" [class.expanded]="expandedElement == row"></mat-row>
+                                    </mat-table>
+                                </div>
+                                <div style="margin-top: 15px;display: flex;justify-content: center;">
+                                    <button [disabled]="loading" matTooltip="print" printSectionId="printSection"
+                                        [useExistingCss]="true" ngxPrint class="mat-raised-button">
+                                        <mat-icon>print</mat-icon>
+                                    </button>
+                                </div>
                             </div>
                             <div style="background-color: lightgray;width:1px">&nbsp;</div>
                             <div style="width: 50%;">

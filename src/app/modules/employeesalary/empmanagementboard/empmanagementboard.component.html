@@ -1,10 +1,8 @@
 <mat-card>
-    <mat-card-title>Employee Management</mat-card-title>
+    <mat-card-title style="margin:20px">Employee Management</mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
-    <mat-card-content>
-        <div style="margin:5px">
-            <!-- <div fxLayout="row" fxLayoutAlign="space-around center"> -->
-            <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
+    <mat-card-content style="margin:20px">
+                <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
                 <mat-tab>
                     <ng-template mat-tab-label>
                         <mat-icon>info</mat-icon>Salary Components
@@ -23,19 +21,8 @@
                     </ng-template>
                     <app-employee-salary-component></app-employee-salary-component>
                 </mat-tab>
-                <!-- <mat-tab>
-                    <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Student Exam Subject Marks
-                    </ng-template>
-                    <app-examstudentsubjectresult></app-examstudentsubjectresult>
-                </mat-tab>
-                <mat-tab>
-                    <ng-template mat-tab-label>
-                        <mat-icon>info</mat-icon>Student Activity
-                    </ng-template>
-                    <app-studentactivity></app-studentactivity>
-                </mat-tab> -->
+           
             </mat-tab-group>
-        </div>
+        
     </mat-card-content>
 </mat-card>

@@ -12,7 +12,7 @@
     <ng-container matColumnDef="BatchName">
         <mat-header-cell *matHeaderCellDef> Batch </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field>
+            <mat-form-field appearance="outline">
                 <mat-label>batch</mat-label>
                 <input matInput [value]="element.BatchName" [(ngModel)]="element.BatchName" [maxlength]="50">
             </mat-form-field>
@@ -26,11 +26,10 @@
             </mat-checkbox>
         </mat-cell>
     </ng-container>
-
     <ng-container matColumnDef="StartDate">
         <mat-header-cell *matHeaderCellDef> Start </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline" [style.width.px]="130">
+            <mat-form-field appearance="outline">
                 <mat-label>Start</mat-label>
                 <input [(ngModel)]="element.StartDate" (dateChange)="onBlur(element)" [value]="element.StartDate"
                     matInput [matDatepicker]="StartDate" autocomplete="off">
@@ -42,7 +41,7 @@
     <ng-container matColumnDef="EndDate">
         <mat-header-cell *matHeaderCellDef> End </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline" [style.width.px]="130">
+            <mat-form-field appearance="outline">
                 <mat-label>End</mat-label>
                 <input [(ngModel)]="element.EndDate" (dateChange)="onBlur(element)" [value]="element.EndDate" matInput
                     [matDatepicker]="EndDate" autocomplete="off">

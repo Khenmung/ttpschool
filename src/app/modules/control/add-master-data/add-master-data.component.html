@@ -3,14 +3,12 @@
 <alert></alert>
 <br>
 <form [formGroup]="searchForm">
-    
+
     <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Master</mat-label>
-        <input type="text" matInput formControlName="ParentId"         
-        [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" 
-        (optionSelected) ="GetSubMasters($event.option.value)"
-        [displayWith]="displayFn">
+        <input type="text" matInput formControlName="ParentId" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="GetSubMasters($event.option.value)"
+            [displayWith]="displayFn">
             <mat-option *ngFor="let option of filteredMaster | async" [value]="option">
                 {{option.MasterDataName}}
             </mat-option>
@@ -47,20 +45,22 @@
                                        || Parent=='Period Type'
                                        || Parent=='Roll No Generation' 
                                        || Parent=='Class Promotion'
-                                       || element.MasterDataName=='Cash'"
-                                       matInput
-                        [value]="element.MasterDataName" [(ngModel)]="element.MasterDataName" autocomplete="Off"
-                        placeholder="" (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
+                                       || element.MasterDataName=='Admin'
+                                       || element.MasterDataName=='Teacher'
+                                       || element.MasterDataName=='Student'
+                                       || element.MasterDataName=='Cash'"  
+                        matInput [value]="element.MasterDataName"
+                        [(ngModel)]="element.MasterDataName" autocomplete="Off" placeholder="" (blur)="onBlur(element)"
+                        [minlength]="1" [maxlength]="50">
                 </mat-form-field>
             </mat-cell>
-        </ng-container>        
+        </ng-container>
         <ng-container matColumnDef="ParentId">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Parent</mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-select 
-                    (selectionChange)="onBlur(element)"    
-                    [(ngModel)]="element.ParentId" [value]="element.ParentId">
+                    <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ParentId"
+                        [value]="element.ParentId">
                         <mat-option [value]="0">select</mat-option>
                         <mat-option *ngFor="let item of RowParent" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
@@ -81,10 +81,8 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>Sequence</mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input type="number" matInput 
-                    (blur)="onBlur(element)"
-                    [value]="element.Sequence" [(ngModel)]="element.Sequence"
-                        autocomplete="Off" (blur)="ReSequence(element)" [max]="100">
+                    <input type="number" matInput (blur)="onBlur(element)" [value]="element.Sequence"
+                        [(ngModel)]="element.Sequence" autocomplete="Off" (blur)="ReSequence(element)" [max]="100">
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -121,9 +119,7 @@
             <mat-cell *matCellDef="let element">
                 <button [disabled]="loading 
                 || !element.Action 
-                || Permission=='read'" 
-                matTooltip="view/edit"
-                    mat-mini-fab (click)="SaveRow(element)">
+                || Permission=='read'" matTooltip="view/edit" mat-mini-fab (click)="SaveRow(element)">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-cell>
@@ -135,33 +131,31 @@
     </mat-table>
     <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
 </div>
-<div>
-    <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center" class="boxes">
-        <strong>Below variable name can be added in certificate definition.</strong>
-        <div *ngFor="let item of StudentVariableNames">
-            {{item}}
-        </div>
+<div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center" class="boxes">
+    <strong>Below variable name can be added in certificate definition.</strong>
+    <div *ngFor="let item of StudentVariableNames">
+        {{item}}
     </div>
-    <div fxLayout="column" fxLayoutAlign="center center" class="boxes">
-        <strong>Essential data for Application setting Statuses</strong>
-        <div
-            style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid lightgrey;">
-            <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
-                <div style="width:200px" *ngFor="let item of ApplicationDataStatus">{{item.MasterDataName}}
-                    <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-                    <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
-                </div>
+</div>
+<div fxLayout="column" fxLayoutAlign="center center" class="boxes">
+    <strong>Essential data for Application setting Statuses</strong>
+    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid lightgrey;">
+        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <div style="width:200px" *ngFor="let item of ApplicationDataStatus">{{item.MasterDataName}}
+                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
             </div>
         </div>
     </div>
-    <div fxLayout="column" fxLayoutAlign="center center" class="boxes">
-        <strong>Essential data for <b>School Application</b> setting Statuses</strong>
-        <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid grey;">
-            <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
-                <div style="width:200px" *ngFor="let item of SchoolDataStatus">{{item.MasterDataName}}
-                    <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-                    <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
-                </div>
+</div>
+<div fxLayout="column" fxLayoutAlign="center center" class="boxes">
+    <strong>Essential data for <b>School Application</b> setting Statuses</strong>
+    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid grey;">
+        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <div style="width:200px" *ngFor="let item of SchoolDataStatus">{{item.MasterDataName}}
+                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
+                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
             </div>
         </div>
     </div>
+</div>

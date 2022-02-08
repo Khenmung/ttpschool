@@ -55,6 +55,7 @@ export class SubjectTypesComponent implements OnInit {
     'Action'
   ];
   Permission = '';
+  IsCurrentBatchSelected=1;
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -86,6 +87,7 @@ export class SubjectTypesComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
+        this.IsCurrentBatchSelected = +this.tokenstorage.getCheckEqualBatchId();
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         if (+this.tokenstorage.getPreviousBatchId() > 0)
           this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage)

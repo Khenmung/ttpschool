@@ -1,7 +1,7 @@
 <mat-card>
-    <mat-card-title>Student</mat-card-title>
+    <mat-card-title style="margin:20px">Student</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
-    <mat-card-content>
+    <mat-card-content style="margin:20px">
         <alert></alert>
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
@@ -10,7 +10,7 @@
                 <mat-label>Id</mat-label>
                 <input formControlName="searchStudentId" autocomplete="Off" matInput [maxlength]="10">
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="250">
+            <mat-form-field appearance="outline">
                 <mat-label>Father</mat-label>
                 <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
                 <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnF">
@@ -21,7 +21,7 @@
                 </cdk-virtual-scroll-viewport>
                 </mat-autocomplete>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="250">
+            <mat-form-field appearance="outline">
                 <mat-label>Mother</mat-label>
                 <input type="text" matInput formControlName="MotherName" [matAutocomplete]="autoM">
                 <mat-autocomplete #autoM="matAutocomplete" [displayWith]="displayFnM">
@@ -56,7 +56,7 @@
                             <mat-icon>pageview</mat-icon>
                         </button>
                         &nbsp;
-                        <button [disabled]="loading" matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
+                        <button [disabled]="loading || element.ClassName==''" matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
                             <mat-icon>payments</mat-icon>
                         </button>
                     </mat-cell>

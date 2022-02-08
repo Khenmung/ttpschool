@@ -1,6 +1,13 @@
 mat-form-field{
     margin-right: 15px;
+    width: 98%;
 }
 .mat-column-Active{
     justify-content: center;
+}
+.mat-column-PrerequisiteId{
+    flex: 0 0 70px;
+}
+.mat-column-Description{
+    flex:1 1 300px;
 }

@@ -445,8 +445,8 @@ export class globalconstants {
 
         //shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(t => checkBatchIdNSelectedId = t);
         //user is viewing old data
-        if (checkBatchIdNSelectedId == 1 && feature.toLowerCase().indexOf('promote') == -1)
-            return 'read';
+        if (checkBatchIdNSelectedId == 0 && feature.toLowerCase().indexOf('promote') == -1)
+            return ['read'];
         else {
             var _permission = loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
             if (_permission.length > 0)

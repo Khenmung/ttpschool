@@ -46,18 +46,23 @@
                 </button>
             </form>
             <p>Record will be displayed if it is defined in Subjects in Slot.</p>
-            <mat-table #table [dataSource]="dataSource" style="min-width: 600px;">          
-                
-                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef>                      
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" [innerHTML]="element[disCol]">                        
-                                                             
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>                
-            </mat-table>
+            <span id="printSection">
+                <mat-table #table [dataSource]="dataSource" style="min-width: 600px;">
+                    <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
+                        matColumnDef="{{disCol}}">
+                        <mat-header-cell *matHeaderCellDef>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element" [innerHTML]="element[disCol]">
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                </mat-table>
+            </span>
+            <button [disabled]="loading" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
+                ngxPrint class="mat-raised-button">
+                <mat-icon>print</mat-icon>
+            </button>
         </div>
     </div>
 </div>

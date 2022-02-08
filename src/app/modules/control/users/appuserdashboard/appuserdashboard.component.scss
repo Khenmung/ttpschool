@@ -3,23 +3,20 @@
 // }
 .mat-form-field{
     margin-right: 10px;
-    width: 99%;
+    width: 98%;
 }
 button{
     padding:5px;
 }  
  .mat-column-ApplicationUserId{
-   flex:0 0 8%;
+   flex:0 0 70px;
 }
-// .mat-column-EmailAddress{
-//     flex:0 0 20%;
-// }
-
-// .mat-column-UserName{
-//     flex:0 0 20%;
-// }
+.mat-column-Active{
+    justify-content: center;
+    flex:0 0 100px
+}
 .mat-column-ValidFrom,.mat-column-ValidTo{
-    flex:0 0 130px;
+    flex:0 0 140px;
 }
 .mat-column-UserName,.mat-column-EmailAddress{
     flex:0 0 250px;

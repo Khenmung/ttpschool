@@ -28,6 +28,7 @@ export class ClassprerequisiteComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  IscurrentBatchSelect=1;
   PrerequisiteListName = 'ClassPrerequisites';
   Applications = [];
   Permission = '';
@@ -81,6 +82,7 @@ export class ClassprerequisiteComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      this.IscurrentBatchSelect = +this.tokenstorage.getCheckEqualBatchId();
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE);
       if (perObj.length > 0)

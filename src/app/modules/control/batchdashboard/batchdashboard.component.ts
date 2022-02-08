@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -29,7 +29,7 @@ export class BatchdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  Permission='';
+  Permission = '';
   StandardFilter = '';
   loading = false;
   SelectedBatchId = 0;
@@ -47,10 +47,11 @@ export class BatchdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
+    'BatchId',
     'BatchName',
-    'CurrentBatch',
     'StartDate',
     'EndDate',
+    'CurrentBatch',
     'Active',
     'Action'
   ];
@@ -114,7 +115,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.BatchList = [...data.value.sort((a,b)=>new Date(a.StartDate).getTime() - new Date(b.StartDate).getTime())];
+        this.BatchList = [...data.value.sort((a, b) => new Date(a.StartDate).getTime() - new Date(b.StartDate).getTime())];
         this.dataSource = new MatTableDataSource<IBatches>(this.BatchList);
         this.loading = false;
       });

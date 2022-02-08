@@ -1,0 +1,13 @@
+mat-form-field{
+    margin-right: 15px;
+    width: 98%;
+}
+.mat-column-CreatedDate,.mat-column-ValidTo{
+    flex: 0 0 140px;
+}
+.mat-column-Contact,.mat-column-Active,.mat-column-Action,.mat-column-Country,.mat-column-State,.mat-column-City{
+    flex: 0 0 120px;    
+}
+.mat-column-LogoPath,.mat-column-Address,.mat-column-OrganizationName{
+    flex: 0 0 150px;
+}

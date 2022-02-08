@@ -27,40 +27,46 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Section</mat-label>
                     <mat-select formControlName="searchSectionId">
-                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}
-                    </mat-option>
-                </mat-select>  
-                </mat-form-field>               
+                        <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetExamStudentResults()">
                     <mat-icon>search</mat-icon>
                 </button>
                 <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button>
-            </form>            
+            </form>
+            <span id="printSection">
+                <mat-table style="min-width: 600px;max-width: 1000px;" #table [dataSource]="dataSource" matSort>
 
-            <mat-table style="min-width: 600px;max-width: 1000px;" #table [dataSource]="dataSource" matSort>                
-            
-                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header 
-                    [ngStyle]="{'justify-content':disCol!='Rank' && disCol!='Student'?'center':'start'}">
-                        {{disCol!='Action'?disCol:''}}                      
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" 
-                        [ngStyle]="{'justify-content':disCol=='Rank' 
+                    <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
+                        matColumnDef="{{disCol}}">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header
+                            [ngStyle]="{'justify-content':disCol!='Rank' && disCol!='Student'?'center':'start'}">
+                            {{disCol!='Action'?disCol:''}}
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':disCol=='Rank' 
                         || disCol=='Division' 
-                        || disCol=='Student'?'start':'center'}">                        
-                        
-                        {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}                                    
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-                
-            </mat-table>
-            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
-        </div>
+                        || disCol=='Student'?'start':'center'}">
 
+                            {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+
+                </mat-table>
+            </span>
+            <span style="margin-top: 15px;" fxLayout="row">
+                <button [disabled]="loading || ExamStudentResult.length ==0" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
+                    ngxPrint class="mat-raised-button">
+                    <mat-icon>print</mat-icon>
+                </button>
+                <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+            </span>
+        </div>
     </div>
 </div>

@@ -11,79 +11,124 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Customer</mat-label>
                         <mat-select formControlName="searchCustomerId">
-                            <mat-option [value]="0" >select</mat-option>
+                            <mat-option [value]="0">select</mat-option>
                             <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
                                 {{item.OrganizationName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                   
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
-                        (click)="GetOrganizationPayment()">
+                        (click)="GetOrganizationDetail()">
                         <mat-icon>search</mat-icon>
                     </button>
                 </div>
             </form>
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="OrganizationPaymentId">
+                <ng-container matColumnDef="OrganizationId">
                     <mat-header-cell *matHeaderCellDef>Id
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.OrganizationPaymentId}}
+                        {{element.OrganizationId}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="PlanName">
-                    <mat-header-cell *matHeaderCellDef>Plan Name
+                <ng-container matColumnDef="OrganizationName">
+                    <mat-header-cell *matHeaderCellDef>Name
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.PlanName}}
+                        {{element.OrganizationName}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="PaymentDate">
-                    <mat-header-cell *matHeaderCellDef>Payment Date
+                <ng-container matColumnDef="LogoPath">
+                    <mat-header-cell *matHeaderCellDef>Logo
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                       {{element.PaymentDate|date:'dd/MM/yyyy'}}
+                        {{element.LogoPath}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="AmountPerMonth">
-                    <mat-header-cell *matHeaderCellDef>Amount Per Month
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                       {{element.AmountPerMonth}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="PaidMonths">
-                    <mat-header-cell *matHeaderCellDef>No. of Months
+                <ng-container matColumnDef="Address">
+                    <mat-header-cell *matHeaderCellDef>Address
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <input (blur)="onBlur(element)" type="number"
-                            [(ngModel)]="element.PaidMonths" [value]="element.PaidMonths" matInput
-                                autocomplete="off" [max]="72">                          
+                            <textarea matInput [(ngModel)]="element.Address" [value]="element.Address"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Amount">
-                    <mat-header-cell *matHeaderCellDef>Total Amount
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.Amount}}
-                    </mat-cell>
-                </ng-container> 
-                <ng-container matColumnDef="PaymentMode">
-                    <mat-header-cell *matHeaderCellDef>Payment Mode
+                <ng-container matColumnDef="Country">
+                    <mat-header-cell *matHeaderCellDef>Country
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-label>payment mode</mat-label>
-                            <mat-select [value]="element.PaymentMode"
-                                [(ngModel)]="element.PaymentMode">
-                                <mat-option *ngFor="let item of PaymentModes" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
+                            <mat-select (selectionChange)="PopulateState($event)" [(ngModel)]="element.Country"
+                                [value]="element.Country">
+                                <mat-option *ngFor="let item of Country" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
                             </mat-select>
-                        </mat-form-field>                        
+                        </mat-form-field>
                     </mat-cell>
-                </ng-container>                
+                </ng-container>
+                <ng-container matColumnDef="State">
+                    <mat-header-cell *matHeaderCellDef>State
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="PopulateCity($event)" [(ngModel)]="element.State"
+                                [value]="element.State">
+                                <mat-option *ngFor="let item of States" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="City">
+                    <mat-header-cell *matHeaderCellDef>City
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.City"
+                                [value]="element.City">
+                                <mat-option *ngFor="let item of City" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Contact">
+                    <mat-header-cell *matHeaderCellDef>Contact
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input (onBlur)="onBlur(element)" autocomplete="Off" matInput [(ngModel)]="element.Contact"
+                                [value]="element.Contact" [maxlength]="12">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="CreatedDate">
+                    <mat-header-cell *matHeaderCellDef>Registered On
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Start Date</mat-label>
+                            <input (onBlur)="onBlur(element)" [(ngModel)]="element.CreatedDate"
+                                [value]="element.CreatedDate" matInput [matDatepicker]="CreatedDate" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="CreatedDate"></mat-datepicker-toggle>
+                            <mat-datepicker #CreatedDate></mat-datepicker>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ValidTo">
+                    <mat-header-cell *matHeaderCellDef>Valid Till
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <!-- <mat-label>Start Date</mat-label> -->
+                            <input (onBlur)="onBlur(element)" [(ngModel)]="element.ValidTo" [value]="element.ValidTo"
+                                matInput [matDatepicker]="ValidTo" autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
+                            <mat-datepicker #ValidTo></mat-datepicker>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Active </mat-header-cell>
                     <mat-cell *matCellDef="let element" style="justify-content: center;">
@@ -94,18 +139,16 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+                            (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;align-items: baseline;"></mat-row>
             </mat-table>
             <mat-paginator [pageSizeOptions]="[10,20,30]"></mat-paginator>
         </div>

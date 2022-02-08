@@ -80,7 +80,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     "LedgerAccount": [],
     "AccountingVoucher": []
   }
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   OriginalAmountForCalc = 0;
   VariableObjList: any[] = [];
   Months = [];
@@ -231,7 +231,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
@@ -265,8 +265,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   GetStudentClass() {
     debugger;
-    if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0)
+    if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0) {
+      this.alert.info("Please define class for this student.", this.optionsNoAutoClose);
       this.nav.navigate(["/edu"]);
+    }
     else {
 
       let filterstr = "Active eq 1 and StudentClassId eq " + this.studentInfoTodisplay.StudentClassId;
@@ -423,7 +425,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               var alreadyAdded = this.StudentLedgerList.filter(f => f.Month == studentClassFee.Month)
               if (alreadyAdded.length == 0)
                 existing.forEach(exitem => {
-                  itemcount += 1;
+                  //itemcount += 1;
                   this.StudentLedgerList.push({
                     SlNo: itemcount++,
                     StudentEmployeeLedegerId: exitem.StudentEmployeeLedegerId,
@@ -676,7 +678,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.StudentLedgerData.StudentClassId = selectedMonthrow.StudentClassId;
       this.StudentLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
       this.StudentLedgerData.TotalDebit = monthAmount;
-      this.StudentLedgerData.TotalCredit = this.Balance ==0 ? monthAmount : selectedMonthrow.TotalCredit;
+      this.StudentLedgerData.TotalCredit = this.Balance == 0 ? monthAmount : selectedMonthrow.TotalCredit;
 
       this.FeePayment.LedgerAccount.push(JSON.parse(JSON.stringify(this.StudentLedgerData)));
 

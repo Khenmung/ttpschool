@@ -8,9 +8,6 @@ mat-form-field{
 button{
     margin-right:15px;
 }
-.mat-column-ClassSubjectId{
-    flex:0 0 5%;
- }
- .mat-column-Active{
-     justify-content: center;
- }
+.mat-column-SubjectTypeId,.mat-column-Credits,.mat-column-TeacherId{
+    flex:1 1 120px;
+} 

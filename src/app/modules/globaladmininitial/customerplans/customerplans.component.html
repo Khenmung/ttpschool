@@ -64,7 +64,7 @@
                     <mat-header-cell *matHeaderCellDef>Person Or ItemCount
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.pc]="5">
+                        <mat-form-field appearance="outline">
                             <input (blur)="onBlur(element)" type="number"
                             [(ngModel)]="element.PersonOrItemCount" [value]="element.PersonOrItemCount" matInput
                                 autocomplete="off" [max]="100000">                          
@@ -75,7 +75,7 @@
                     <mat-header-cell *matHeaderCellDef>Login User Count
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.pc]="5">
+                        <mat-form-field appearance="outline">
                             <input (blur)="onBlur(element)" type="number"
                             [(ngModel)]="element.LoginUserCount" [value]="element.LoginUserCount" matInput
                                 autocomplete="off" [max]="100000">                          

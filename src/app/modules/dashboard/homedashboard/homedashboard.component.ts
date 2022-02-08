@@ -13,7 +13,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
   styleUrls: ['./homedashboard.component.scss']
 })
 export class HomeDashboardComponent implements OnInit {
-  loading= false;
+  loading = false;
   searchForm: FormGroup;
   NewsNEventPageId = 0;
   MenuData = [];
@@ -35,7 +35,7 @@ export class HomeDashboardComponent implements OnInit {
     private aroute: ActivatedRoute,
     private dataservice: NaomitsuService,
     private http: HttpClient
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     // var urlId = 0;
@@ -43,7 +43,7 @@ export class HomeDashboardComponent implements OnInit {
     //   urlId = +p.get('id');
     //   this.shareddata.ChangeApplicationId(urlId);
     // })
-    
+
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
       searchBatchId: [0]
@@ -55,7 +55,7 @@ export class HomeDashboardComponent implements OnInit {
     }
     else {
       debugger;
-      this.loading=true;
+      this.loading = true;
       this.userName = this.tokenStorage.getUser();
       var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
       if (PermittedApps.length == 0) {
@@ -79,7 +79,7 @@ export class HomeDashboardComponent implements OnInit {
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
         //if (this.Batches.length == 0)
-          this.getBatches();
+        this.getBatches();
 
         //this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
         //this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
@@ -87,44 +87,47 @@ export class HomeDashboardComponent implements OnInit {
     }
   }
   ChangeApplication() {
+    var selectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
+    if (selectedBatchId > 0)
+      this.ChangeCurrentBatchId(selectedBatchId);
+        
     this.tokenStorage.saveSelectedAppId(SelectedAppId);
     var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
-    
+
     this.route.navigate(['/', selectedApp[0].appShortName])
 
   }
-  ChangeCurrentBatchId(selected) {
+  ChangeCurrentBatchId(selectedBatchId) {
     debugger;
-    var _SelectedBatch = this.Batches.filter(b => b.BatchId == selected.value);
+    var _SelectedBatch = this.Batches.filter(b => b.BatchId == selectedBatchId);
     var SelectedBatchName = ''
-    if(_SelectedBatch.length>0)
-    {
+    if (_SelectedBatch.length > 0) {
       SelectedBatchName = _SelectedBatch[0].BatchName;
     }
-    
+
     if (_SelectedBatch.length > 0) {
       //this.shareddata.ChangeSelectedBatchStartEnd({ 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
       this.tokenStorage.saveSelectedBatchStartEnd(
         { 'StartDate': _SelectedBatch[0].StartDate, 'EndDate': _SelectedBatch[0].EndDate });
     }
     //this is for enabling promote student purpose. if selected value is >= current, promote should not be enable 
-    if (selected.value >= this.CurrentBatchId)
-      this.tokenStorage.saveCheckEqualBatchId("0");
-    else
+    if (selectedBatchId >= this.CurrentBatchId)
       this.tokenStorage.saveCheckEqualBatchId("1");
+    else
+      this.tokenStorage.saveCheckEqualBatchId("0");
 
-    this.tokenStorage.saveSelectedBatchId(selected.value);
-    this.tokenStorage.saveSelectedBatchName(SelectedBatchName); 
+    this.tokenStorage.saveSelectedBatchId(selectedBatchId);
+    this.tokenStorage.saveSelectedBatchName(SelectedBatchName);
 
-    this.generateBatchIds(selected.value);
+    this.generateBatchIds(selectedBatchId);
   }
   generateBatchIds(SelectedbatchId) {
     debugger;
     var previousBatchIndex = this.Batches.map(d => d.BatchId).indexOf(SelectedbatchId) - 1;
     var _previousBatchId = -1;
     if (previousBatchIndex > -1) {
-      _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];      
+      _previousBatchId = this.Batches[previousBatchIndex]["BatchId"];
     }
 
     this.tokenStorage.savePreviousBatchId(_previousBatchId.toString())
@@ -145,7 +148,7 @@ export class HomeDashboardComponent implements OnInit {
       "CurrentBatch",
       "Active"];
     list.PageName = "Batches";
-    list.filter = ["Active eq 1 and OrgId eq "+ this.loginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"]];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
       this.shareddata.ChangeBatch(this.Batches);
@@ -171,17 +174,17 @@ export class HomeDashboardComponent implements OnInit {
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
       this.generateBatchIds(this.SelectedBatchId);
-      this.loading=false;
+      this.loading = false;
     });
   }
-  sendmessage(){
-    var api="https://api.chat-api.com/instance358541/sendMessage?token=sfhfmzsd9temr6ca";
-    var data ={
+  sendmessage() {
+    var api = "https://api.chat-api.com/instance358541/sendMessage?token=sfhfmzsd9temr6ca";
+    var data = {
       "phone": "918974098031",
-    "body": "WhatsApp API on Chat API from TTP again"
+      "body": "WhatsApp API on Chat API from TTP again"
     }
-    this.http.post(api,data).subscribe((data:any)=>{
+    this.http.post(api, data).subscribe((data: any) => {
       //console.log("messagereturn",data);
-    });      
+    });
   }
 }
