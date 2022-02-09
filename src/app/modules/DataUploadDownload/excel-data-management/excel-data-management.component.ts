@@ -240,6 +240,8 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'First name at row ' + indx + ' is required.\n';
       if (element.FatherName.length == 0)
         this.ErrorMessage += 'Father name at row ' + indx + ' is required.\n';
+        if (element.WorkAccountId == 0)
+        this.ErrorMessage += 'Work Account at row ' + indx + ' is required.\n';
       if (element.GenderId == 0)
         this.ErrorMessage += 'GenderId at row ' + indx + ' is required.\n';
       if (element.BloodgroupId != '' && isNaN(element.BloodgroupId))

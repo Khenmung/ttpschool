@@ -9,7 +9,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { roleuseraddComponent } from '../roleuseradd/roleuseradd.component';
+//import { roleuseraddComponent } from '../roleuseradd/roleuseradd.component';
 import { map, startWith } from 'rxjs/operators';
 import { AuthService } from 'src/app/_services/auth.service';
 import { MatPaginator } from '@angular/material/paginator';
@@ -24,7 +24,7 @@ import { ContentService } from 'src/app/shared/content.service';
 export class roleuserdashboardComponent implements OnInit {
   @ViewChild("table") mattable;
   @ViewChild("container") container: ElementRef;
-  @ViewChild(roleuseraddComponent, { static: false }) roleuseradd: roleuseraddComponent;
+  //@ViewChild(roleuseraddComponent, { static: false }) roleuseradd: roleuseraddComponent;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -135,9 +135,9 @@ export class roleuserdashboardComponent implements OnInit {
     this.RoleUserId = element.RoleUserId;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     this.container.nativeElement.style.backgroundColor = "grey";
-    setTimeout(() => {
-      this.roleuseradd.PageLoad();
-    }, 50);
+    // setTimeout(() => {
+    //   this.roleuseradd.PageLoad();
+    // }, 50);
 
   }
 

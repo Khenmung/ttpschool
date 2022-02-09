@@ -1,4 +1,4 @@
-<div style="font-weight:bold;padding: 15px 0px 0px 15px;">Employee Detail</div>
+<div style="font-weight:bold;padding: 15px 0px 0px 0px;">Employee Detail</div>
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <alert></alert>
 <form [formGroup]="EmployeeForm">
@@ -8,148 +8,149 @@
             <ng-template mat-tab-label>
                 <mat-icon>info</mat-icon>Primary
             </ng-template>
-            <div style="padding:15px 15px 0px 15px;"><strong>Primary</strong>
-                <mat-grid-list cols="3" rowHeight="70px" #basic>
+            <div style="margin:15px 15px 15px 15px;"><strong>Primary</strong></div>
+            <mat-grid-list cols="3" rowHeight="70px" #basic>
 
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>First Name</mat-label>
-                            <input formControlName="FirstName" autocomplete="Off" #input matInput [maxlength]="30">
-                            <span class="text-danger"
-                                *ngIf="f.FirstName.touched && f.FirstName.hasError('required')">First Name
-                                is required.</span>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Last Name</mat-label>
-                            <input formControlName="LastName" autocomplete="Off" #input matInput [maxlength]="30">
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="2">
-                        <div *ngIf="EmployeeId>0" fxLayout="column" fxLayoutAlign="space-between center">
-                            <span style="color:red;" *ngIf="message">{{message}}</span>
-                            <div style="padding-bottom: 15px;">
-                                <input #inputfile [hidden]="true" type="file" accept='image/*'
-                                    (change)="preview(inputfile.files)" />
-                                <img [src]="imgURL" height="160" *ngIf="imgURL">
-                            </div>
-                            <div fxLayout="row" fxLayoutAlign="space-between center">
-                                <span>
-                                    <button [disabled]="loading" class="mat-raised-button" matTooltip="select file"
-                                        color="primary" (click)="inputfile.click()">
-                                        <mat-icon aria-label="photo">photo</mat-icon>
-                                    </button>&nbsp;&nbsp;
-                                    <button [disabled]="loading" type="submit" (click)="uploadFile()"
-                                        matTooltip="upload file" class="mat-raised-button">
-                                        <mat-icon aria-label="file_upload">file_upload</mat-icon>
-                                    </button>&nbsp;&nbsp;
-                                </span>
-                            </div>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>First Name</mat-label>
+                        <input formControlName="FirstName" autocomplete="Off" #input matInput [maxlength]="30">
+                        <span class="text-danger" *ngIf="f.FirstName.touched && f.FirstName.hasError('required')">First
+                            Name
+                            is required.</span>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Last Name</mat-label>
+                        <input formControlName="LastName" autocomplete="Off" #input matInput [maxlength]="30">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="2">
+                    <div *ngIf="EmployeeId>0" fxLayout="column" fxLayoutAlign="space-between center">
+                        <span style="color:red;" *ngIf="message">{{message}}</span>
+                        <div style="padding-bottom: 15px;">
+                            <input #inputfile [hidden]="true" type="file" accept='image/*'
+                                (change)="preview(inputfile.files)" />
+                            <img [src]="imgURL" height="160" *ngIf="imgURL">
                         </div>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Employee Code</mat-label>
-                            <input formControlName="EmployeeCode" autocomplete="Off" #input matInput [maxlength]="30">
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Short Name</mat-label>
-                            <input formControlName="ShortName" autocomplete="Off" #input matInput [maxlength]="10">
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Father's name</mat-label>
-                            <input formControlName="FatherName" autocomplete="Off" #input matInput [maxlength]="30">
-                            <span class="text-danger"
-                                *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's
-                                name
-                                is required.</span>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Mother's name</mat-label>
-                            <input formControlName="MotherName" autocomplete="Off" matInput [maxlength]="30">
-                            <span class="text-danger"
-                                *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's
-                                name
-                                is required.</span>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Gender</mat-label>
-                            <mat-select formControlName="GenderId">
-                                <mat-option value="0">---</mat-option>
-                                <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
-                                    {{p.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                            <span class="text-danger" *ngIf="f.GenderId.touched && f.GenderId.hasError('required')">Gender
-                                is required.</span>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>DOB</mat-label>
-                            <input formControlName="DOB" matInput [matDatepicker]="DOB" autocomplete="off">
-                            <mat-datepicker-toggle matSuffix [for]="DOB"></mat-datepicker-toggle>
-                            <mat-datepicker #DOB></mat-datepicker>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>DOJ</mat-label>
-                            <input formControlName="DOJ" matInput [matDatepicker]="DOJ" autocomplete="off">
-                            <mat-datepicker-toggle matSuffix [for]="DOJ"></mat-datepicker-toggle>
-                            <mat-datepicker #DOJ></mat-datepicker>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Blood group</mat-label>
-                            <mat-select formControlName="BloodgroupId">
-                                <mat-option value="0">---</mat-option>
-                                <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
-                                    {{p.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Category</mat-label>
-                            <mat-select formControlName="CategoryId">
-                                <mat-option value="0">---</mat-option>
-                                <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
-                                    {{p.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field appearance="outline" fxFlex>
-                            <mat-label>Religion</mat-label>
-                            <mat-select formControlName="ReligionId">
-                                <mat-option value="0">---</mat-option>
-                                <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
-                                    {{p.MasterDataName}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                </mat-grid-list>
-            </div>
+                        <div fxLayout="row" fxLayoutAlign="space-between center">
+                            <span>
+                                <button [disabled]="loading" class="mat-raised-button" matTooltip="select file"
+                                    color="primary" (click)="inputfile.click()">
+                                    <mat-icon aria-label="photo">photo</mat-icon>
+                                </button>&nbsp;&nbsp;
+                                <button [disabled]="loading" type="submit" (click)="uploadFile()"
+                                    matTooltip="upload file" class="mat-raised-button">
+                                    <mat-icon aria-label="file_upload">file_upload</mat-icon>
+                                </button>&nbsp;&nbsp;
+                            </span>
+                        </div>
+                    </div>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Employee Code</mat-label>
+                        <input formControlName="EmployeeCode" autocomplete="Off" #input matInput [maxlength]="30">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Short Name</mat-label>
+                        <input formControlName="ShortName" autocomplete="Off" #input matInput [maxlength]="10">
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Father's name</mat-label>
+                        <input formControlName="FatherName" autocomplete="Off" #input matInput [maxlength]="30">
+                        <span class="text-danger"
+                            *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's
+                            name
+                            is required.</span>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Mother's name</mat-label>
+                        <input formControlName="MotherName" autocomplete="Off" matInput [maxlength]="30">
+                        <span class="text-danger"
+                            *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's
+                            name
+                            is required.</span>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Gender</mat-label>
+                        <mat-select formControlName="GenderId">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                        <span class="text-danger" *ngIf="f.GenderId.touched && f.GenderId.hasError('required')">Gender
+                            is required.</span>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>DOB</mat-label>
+                        <input formControlName="DOB" matInput [matDatepicker]="DOB" autocomplete="off">
+                        <mat-datepicker-toggle matSuffix [for]="DOB"></mat-datepicker-toggle>
+                        <mat-datepicker #DOB></mat-datepicker>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>DOJ</mat-label>
+                        <input formControlName="DOJ" matInput [matDatepicker]="DOJ" autocomplete="off">
+                        <mat-datepicker-toggle matSuffix [for]="DOJ"></mat-datepicker-toggle>
+                        <mat-datepicker #DOJ></mat-datepicker>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Blood group</mat-label>
+                        <mat-select formControlName="BloodgroupId">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Category</mat-label>
+                        <mat-select formControlName="CategoryId">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field appearance="outline" fxFlex>
+                        <mat-label>Religion</mat-label>
+                        <mat-select formControlName="ReligionId">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                 <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
+                    class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
                 <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
@@ -205,7 +206,8 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>Country</mat-label>
-                            <mat-select formControlName="PresentAddressCountryId" (selectionChange)="SelectPresentState($event.value)">
+                            <mat-select formControlName="PresentAddressCountryId"
+                                (selectionChange)="SelectPresentState($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Country" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
@@ -214,7 +216,8 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>State/Province/Division</mat-label>
-                            <mat-select formControlName="PresentAddressStateId" (selectionChange)="SelectPresentCity($event.value)">
+                            <mat-select formControlName="PresentAddressStateId"
+                                (selectionChange)="SelectPresentCity($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of PresentState" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
@@ -234,7 +237,8 @@
                 </div>
                 <div fxLayout="column">
                     <div style="background-color: lightgray;padding: 10px;">Permanent Address</div>
-                    <div fxLayout="row" style="align-items: baseline; min-width: 1080px; margin-left: 0px;margin-bottom: 15px;padding:15px;border: 1px solid lightgray;">
+                    <div fxLayout="row"
+                        style="align-items: baseline; min-width: 1080px; margin-left: 0px;margin-bottom: 15px;padding:15px;border: 1px solid lightgray;">
                         <mat-form-field [style.width.px]="250" appearance="outline">
                             <mat-label>Permanent Address</mat-label>
                             <textarea [maxlength]="256" matInput autocomplete="Off"
@@ -247,7 +251,8 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>Country</mat-label>
-                            <mat-select formControlName="PermanentAddressCountryId" (selectionChange)="SelectPermanentState($event.value)">
+                            <mat-select formControlName="PermanentAddressCountryId"
+                                (selectionChange)="SelectPermanentState($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Country" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
@@ -256,7 +261,8 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>State/Province/Division</mat-label>
-                            <mat-select formControlName="PermanentAddressStateId" (selectionChange)="SelectPermanentCity($event.value)">
+                            <mat-select formControlName="PermanentAddressStateId"
+                                (selectionChange)="SelectPermanentCity($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of PermanentState" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
@@ -277,15 +283,16 @@
 
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
-                    class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex>0" (click)="previousStep()"
+                    alt="save" class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
+                    class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
-                    class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex<4" (click)="nextStep()"
+                    alt="save" class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
             </mat-card-actions>
@@ -316,7 +323,8 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
+                    class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
                 <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
@@ -355,7 +363,8 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
+                    class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
                 <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"

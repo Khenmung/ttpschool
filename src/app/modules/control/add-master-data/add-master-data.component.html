@@ -48,7 +48,9 @@
                                        || element.MasterDataName=='Admin'
                                        || element.MasterDataName=='Teacher'
                                        || element.MasterDataName=='Student'
-                                       || element.MasterDataName=='Cash'"  
+                                       || element.MasterDataName=='Cash'
+                                       || element.MasterDataName=='Teaching'  
+                                       || element.MasterDataName=='Non Teaching'"  
                         matInput [value]="element.MasterDataName"
                         [(ngModel)]="element.MasterDataName" autocomplete="Off" placeholder="" (blur)="onBlur(element)"
                         [minlength]="1" [maxlength]="50">

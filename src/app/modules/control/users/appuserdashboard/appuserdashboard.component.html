@@ -93,8 +93,7 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
-                    [class.expanded]="expandedElement == row"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" style="display:flex; align-items: baseline;"></mat-row>
             </mat-table>
         </div>
     </div>

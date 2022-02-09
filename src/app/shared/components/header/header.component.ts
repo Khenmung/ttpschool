@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
       this.loggedIn = false;
     else {
       this.loggedIn = true;
-      this.userName = this.LoginUserDetails[0]["userName"];    
+      this.userName = localStorage.getItem('username');    
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
       debugger;
       if (PermittedApplications.length == 0) {

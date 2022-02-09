@@ -83,7 +83,8 @@ export class employee {
                 CreatedBy: this.loginUserDetail[0]['userId'],
                 DepartmentId: +row.DepartmentId,
                 DesignationId: +row.DesignationId,
-                EmpGradeId: +row.EmpGradeId
+                EmpGradeId: +row.EmpGradeId,
+                WorkAccountId: +row.WorkAccountId
             });
         });
         ////console.log("toInsert", toInsert)

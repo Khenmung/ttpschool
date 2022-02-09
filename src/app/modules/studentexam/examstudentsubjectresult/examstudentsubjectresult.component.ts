@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./examstudentsubjectresult.component.scss']
 })
 export class ExamstudentsubjectresultComponent implements OnInit {
-  ResultReleased=0;
+  ResultReleased = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -26,12 +26,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  AllowedSubjectIds = [];
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   SelectedBatchId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   StoredForUpdate = [];
   SubjectMarkComponents = [];
   MarkComponents = [];
@@ -50,7 +51,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   ExamId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
-    StudentClassId:0,
+    StudentClassId: 0,
     ExamId: 0,
     StudentClassSubjectId: 0,
     ClassSubjectMarkComponentId: 0,
@@ -74,7 +75,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //debugger;
+    debugger;
     this.searchForm = this.fb.group({
       searchExamId: [0],
       searchClassId: [0],
@@ -98,12 +99,14 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+
         this.GetMasterData();
+
       }
     }
   }
-  GetResultReleased(source){
-      this.ResultReleased = this.Exams.filter(e=>e.ExamId == source.value)[0].ReleaseResult;
+  GetResultReleased(source) {
+    this.ResultReleased = this.Exams.filter(e => e.ExamId == source.value)[0].ReleaseResult;
   }
   updateActive(row, value) {
     //if(!row.Action)
@@ -125,13 +128,12 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;   
-    if(row.Marks>1000)
-    {
-      this.loading=false;
-      this.alert.error("Marks cannot be greater than 1000.",this.optionAutoClose);
+    if (row.Marks > 1000) {
+      this.loading = false;
+      this.alert.error("Marks cannot be greater than 1000.", this.optionAutoClose);
       return;
     }
-   
+
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
@@ -263,7 +265,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           return {
             StudentClassSubjectId: s.StudentClassSubjectId,
             ClassSubjectId: s.ClassSubjectId,
-            StudentClassId:s.StudentClassId,
+            StudentClassId: s.StudentClassId,
             StudentClassSubject: s.StudentClass.RollNo + ' - ' + _class + ' - ' + _section + ' - ' + _subject,
             SubjectId: s.ClassSubject.SubjectId,
             ClassId: s.ClassSubject.ClassId,
@@ -393,7 +395,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
                 ExamId: existing[0].ExamStudentResultId,
                 ClassSubjectId: ss.ClassSubjectId,
-                StudentClassId:existing[0].StudentClassId,
+                StudentClassId: existing[0].StudentClassId,
                 StudentClassSubjectId: existing[0].StudentClassSubjectId,
                 StudentClassSubject: ss.StudentClassSubject,
                 ClassSubjectMarkComponentId: existing[0].ClassSubjectMarkComponentId,
@@ -419,7 +421,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
                 ExamId: this.searchForm.get("searchExamId").value,
                 StudentClassSubjectId: ss.StudentClassSubjectId,
                 ClassSubjectId: ss.ClassSubjectId,
-                StudentClassId:ss.StudentClassId,
+                StudentClassId: ss.StudentClassId,
                 StudentClassSubject: ss.StudentClassSubject,
                 ClassSubjectMarkComponentId: component.ClassSubjectMarkComponentId,
                 SubjectMarkComponent: _componentName,
@@ -495,7 +497,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -507,8 +509,40 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
+        
+        //if role is teacher, only their respective class and subject will be allowed.
+        if (this.LoginUserDetail[0]['RoleUsers'][0].role == 'Teacher') {
+          this.GetAllowedSubjects();
+        }
+        
         this.GetExams();
 
+      });
+  }
+  GetAllowedSubjects() {
+    let list: List = new List();
+    list.fields = [
+      'ClassSubjectId',
+      'SubjectId',
+      'ClassId',
+      'TeacherId',
+      'Active',
+    ];
+
+    list.PageName = "ClassSubjects"
+    list.filter = ['Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId') + ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.AllowedSubjectIds = [...data.value];
+        var _AllClassId = [...this.Classes];
+
+        if (this.AllowedSubjectIds.length > 0) {
+          this.Classes = _AllClassId.map(m => {
+            var result = this.AllowedSubjectIds.filter(x => x.ClassId == m.ClassId);
+            if (result.length > 0)
+              return m;
+          })
+        }
       });
   }
   GetExams() {
@@ -517,7 +551,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId","ReleaseResult"];
+    list.fields = ["ExamId", "ExamNameId", "ReleaseResult"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -528,7 +562,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           return {
             ExamId: e.ExamId,
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName,
-            ReleaseResult:e.ReleaseResult
+            ReleaseResult: e.ReleaseResult
           }
         })
         this.GetStudentSubjects();

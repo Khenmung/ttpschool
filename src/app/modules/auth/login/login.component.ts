@@ -68,7 +68,9 @@ export class LoginComponent implements OnInit {
     })
 
     debugger;
-    if (this.tokenStorage.getToken()) {
+    var loginUserDetail = this.tokenStorage.getUserDetail();
+    //if (this.tokenStorage.getToken()) {
+    if (loginUserDetail != null) {
       this.isLoggedIn = true;
       this.route.navigate(['/dashboard']);
     }
@@ -95,6 +97,9 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('orgId', decodedUser.sid);
         localStorage.setItem('userId', decodedUser.Id);
         localStorage.setItem('planId', decodedUser.iss);
+        localStorage.setItem('username', decodedUser.email);
+        localStorage.setItem('employeeId', decodedUser.nameid);
+
         //console.log("decodedUser.iss",decodedUser.iss)
         //if PlanId is zero, redirect to select plan.
         if (decodedUser.iss == 0)
@@ -231,7 +236,7 @@ export class LoginComponent implements OnInit {
     list.PageName = "ApplicationFeatureRolesPerms";
     list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
-debugger;
+    debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;

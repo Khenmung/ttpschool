@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { roleappAddComponent } from './roleapppermission/roleappadd/roleappadd.component';
 import { RoleAppPermissiondashboardComponent } from './roleapppermission/RoleAppPermissiondashboard/RoleAppPermissiondashboard.component';
-import { roleuseraddComponent } from './roleuser/roleuseradd/roleuseradd.component';
+//import { roleuseraddComponent } from './roleuser/roleuseradd/roleuseradd.component';
 import { roleuserdashboardComponent } from './roleuser/roleuserdashboard/roleuserdashboard.component';
 import { settingboardComponent } from './settingboard/settingboard.component';
 import { userComponent } from './users/appuser/user.component';
@@ -19,7 +19,7 @@ const routes: Routes = [
     children: [
       { path: '', component: settingboardComponent },
       { path: 'setting', component: settingboardComponent },
-      { path: 'roleuser', component: roleuseraddComponent },
+  //    { path: 'roleuser', component: roleuseraddComponent },
       { path: 'appuser', component: userComponent },
       { path: 'appuserdashboard', component: AppuserdashboardComponent },
       
@@ -35,7 +35,7 @@ export class AdminsettingsRoutingModule { }
 export const settingsComponent = [
   userComponent,
   AppuserdashboardComponent,
-  roleuseraddComponent,
+  //roleuseraddComponent,
   roleuserdashboardComponent,
   settingboardComponent,
   roleappAddComponent,
