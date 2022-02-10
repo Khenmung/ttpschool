@@ -11,7 +11,9 @@ export class HeaderComponent implements OnInit {
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
   loading: false;
   userName: string = '';
+  logoPath ='';
   loggedIn: boolean;
+  OrganizationName ='';
   SelectedApplicationName = '';
   SelectedBatchName = '';
   LoginUserDetails = [];
@@ -21,26 +23,30 @@ export class HeaderComponent implements OnInit {
   ) {
   }
   ngOnInit(): void {
-
+debugger;
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
-    if (this.LoginUserDetails === undefined)
+    if (this.LoginUserDetails.length==0)
       this.loggedIn = false;
     else {
       this.loggedIn = true;
       this.userName = localStorage.getItem('username');    
+      this.logoPath = this.LoginUserDetails[0].logoPath;
+
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
       debugger;
       if (PermittedApplications.length == 0) {
         this.route.navigate(["/auth/selectplan"]);
       }
       else {
-        this.SelectedBatchName = this.tokenStorage.getSelectedBatchName();
+        this.OrganizationName = this.LoginUserDetails[0].org
         var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
         this.SelectedApplicationName = '';
         var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
 
-        if (apps.length > 0) {
-          this.SelectedApplicationName = apps[0].applicationName;
+        if (apps.length > 0) {        
+          
+          this.SelectedBatchName = this.tokenStorage.getSelectedBatchName();
+          this.SelectedApplicationName = apps[0].applicationName + ' - ' + this.SelectedBatchName
         }
       }
     }

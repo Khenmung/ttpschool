@@ -39,6 +39,9 @@ export class EmployeeComponent implements OnInit {
   EmployeeId = 0;
   loading = false;
   WorkNature = [];
+  WorkAccounts=[];
+  Designations=[];
+  Departments=[];
   MaritalStatus = [];
   EmploymentStatus = [];
   EmploymentTypes = [];
@@ -49,8 +52,6 @@ export class EmployeeComponent implements OnInit {
   Grades = [];
   Genders = [];
   Category = [];
-  //City = [];
-  //State = [];
   Country = [];
   Bloodgroup = [];
   Religion = [];
@@ -58,7 +59,7 @@ export class EmployeeComponent implements OnInit {
   Location = [];
   allMasterData = [];
   ReasonForLeaving = [];
-  EmployeeData = {};
+  EmployeeData = [];
   CountryId = 0;
   LocationId = 0;
   PrimaryContactDefaultId = 0;
@@ -201,7 +202,12 @@ export class EmployeeComponent implements OnInit {
       PermanentAddressStateId: [0],
       PermanentAddressCountryId: [0],
       PresentAddressPincode: [''],
-      PermanentAddressPincode: ['']
+      PermanentAddressPincode: [''],
+      DepartmentId: [0],
+      DesignationId: [0],
+      WorkAccountId: [0],
+      EmpGradeId: [0]
+
     });
     //}
   }
@@ -211,23 +217,25 @@ export class EmployeeComponent implements OnInit {
     this.loginUserDetail = this.tokenService.getUserDetail();
     this.EmployeeId = this.tokenService.getEmployeeId();
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-    this.GetMasterData();
 
-    if (this.EmployeeId > 0) {
-      if (this.loginUserDetail != null) {
-        var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.emp.employee.EMPLOYEEDETAIL);
-        if (perObj.length > 0)
-          this.Permission = perObj[0].permission;
-        if (this.Permission == 'deny')
-          this.route.navigate(['/employee/']);
-        else
+    //if (this.EmployeeId > 0) {
+    if (this.loginUserDetail.length > 0) {
+      var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.emp.employee.EMPLOYEEDETAIL);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission == 'deny')
+        this.route.navigate(['/employee/']);
+      else {
+        if (this.EmployeeId > 0)
           this.GetEmployee();
+        this.GetMasterData();
       }
+    }
 
-    }
-    else {
-      this.route.navigate(['/employee/']);
-    }
+    // }
+    // else {
+    //   this.route.navigate(['/employee/info']);
+    // }
   }
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
@@ -274,18 +282,20 @@ export class EmployeeComponent implements OnInit {
       .subscribe((data: any) => {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
-        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
+        this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
         this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        //this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
-        //this.State = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
         this.WorkNature = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
         this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);
         this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
+        this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
 
 
       });
@@ -333,7 +343,7 @@ export class EmployeeComponent implements OnInit {
 
     this.loading = true;
 
-    this.EmployeeData = {
+    this.EmployeeData = [{
       EmpEmployeeId: this.EmployeeId,
       ShortName: this.EmployeeForm.get("ShortName").value,
       FirstName: this.EmployeeForm.get("FirstName").value,
@@ -381,8 +391,12 @@ export class EmployeeComponent implements OnInit {
       PermanentAddressStateId: this.EmployeeForm.get("PermanentAddressStateId").value,
       PermanentAddressCountryId: this.EmployeeForm.get("PermanentAddressCountryId").value,
       PermanentAddress: this.EmployeeForm.get("PermanentAddress").value,
+      DepartmentId:this.EmployeeForm.get("DepartmentId").value,
+      DesignationId:this.EmployeeForm.get("DesignationId").value,
+      WorkAccountId:this.EmployeeForm.get("WorkAccountId").value,
+      EmpGradeId:this.EmployeeForm.get("EmpGradeId").value,
       OrgId: this.loginUserDetail[0]["orgId"]
-    }
+    }]
     if (this.EmployeeData["MarriedDate"] == "")
       delete this.EmployeeData["MarriedDate"];
     if (this.EmployeeData["ConfirmationDate"] == "")

@@ -187,7 +187,7 @@ export class EmployeedocumentsComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.DOCUMENT);
+        this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.DOCUMENTTYPE);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.GetDocuments();

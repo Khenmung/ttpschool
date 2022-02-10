@@ -83,8 +83,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Gender</mat-label>
-                        <mat-select formControlName="GenderId">
-                            <mat-option value="0">---</mat-option>
+                        <mat-select formControlName="GenderId">                          
                             <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -438,6 +437,46 @@
                     <mat-select formControlName="NatureId">
                         <mat-option value="0">---</mat-option>
                         <mat-option *ngFor="let p of WorkNature" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
+                <mat-form-field appearance="outline">
+                    <mat-label>Department</mat-label>
+                    <mat-select formControlName="DepartmentId">
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Departments" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Work Account</mat-label>
+                    <mat-select formControlName="WorkAccountId">
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of WorkAccounts" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
+                <mat-form-field appearance="outline">
+                    <mat-label>Designation</mat-label>
+                    <mat-select formControlName="DesignationId">
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Designations" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Grade</mat-label>
+                    <mat-select formControlName="EmpGradeId">
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Grades" [value]="p.MasterDataId">
                             {{p.MasterDataName}}
                         </mat-option>
                     </mat-select>

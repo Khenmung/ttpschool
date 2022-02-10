@@ -49,14 +49,14 @@ export class HomeDashboardComponent implements OnInit {
       searchBatchId: [0]
     })
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-    if (this.loginUserDetail.length == 0) {
+    if (this.loginUserDetail.length==0) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
     }
     else {
       debugger;
       this.loading = true;
-      this.userName = this.tokenStorage.getUser();
+      this.userName = localStorage.getItem('userName');
       var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
       if (PermittedApps.length == 0) {
         this.route.navigate(["/auth/selectplan"]);

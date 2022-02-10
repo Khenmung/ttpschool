@@ -5,8 +5,8 @@ import { List } from "./interface";
 import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
-    //"https://api.ttpsolutions.in";//
-    public static apiUrl: string = "http://localhost:8090";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    ////"https://api.ttpsolutions.in";
+    public static apiUrl: string = "http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -231,9 +231,9 @@ export class globalconstants {
                 "LANGUAGESUBJECTLOWERCLS": "language subject lower",
                 "LANGUAGESUBJECTUPPERCLS": "language subject upper",
                 "FEENAME": "fee name",
-                "UPLOADTYPE": "upload type",
+                "UPLOADTYPE": "student upload type",
                 "DOWNLOADTYPE": "download type",
-                "DOCUMENTTYPE": "document type",
+                "STUDENTDOCUMENTTYPE": "student document type",
                 "CURRENTBATCH": "current batch",
                 "REASONFORLEAVING": "reason for leaving",
                 "EXAMNAME": "exam name",
@@ -262,7 +262,7 @@ export class globalconstants {
                 "REPORTNAMES": "employee report name",
                 "EMPLOYEEGENDER": "employee gender",
                 "EMPLOYMENTTYPE": "employment type",
-                "NATURE": "nature",
+                "NATURE": "work nature",
                 "MARITALSTATUS": "marital status",
                 "EMPLOYMENTSTATUS": "employment status",
                 "WORKACCOUNT": "work account",
@@ -274,7 +274,7 @@ export class globalconstants {
                 "GENDER": "employee gender",
                 "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
-                "DOCUMENT": "document type",
+                "DOCUMENTTYPE": "employee document type",
                 "FAMILYRELATIONSHIP": "family relationship",
                 "EMPLOYEESKILL": "employee skill",
                 "EMPLOYEEACTIVITYCATEGORY": "employee activity category",

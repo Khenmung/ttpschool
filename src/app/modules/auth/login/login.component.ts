@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  allMasterData = [];
+  //allMasterData = [];
   Organizations = [];
   Departments = [];
   Applications = [];
@@ -54,7 +55,8 @@ export class LoginComponent implements OnInit {
     private route: Router,
     private shareddata: SharedataService,
     private mediaObserver: MediaObserver,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private contentservice: ContentService
   ) { }
 
   ngOnInit(): void {
@@ -70,21 +72,18 @@ export class LoginComponent implements OnInit {
     debugger;
     var loginUserDetail = this.tokenStorage.getUserDetail();
     //if (this.tokenStorage.getToken()) {
-    if (loginUserDetail != null) {
+    if (loginUserDetail.length > 0) {
       this.isLoggedIn = true;
       this.route.navigate(['/dashboard']);
     }
-    //this.GetApplicationFeatures();
-    // this.shareddata.GetApplication().subscribe((data: any) => {
-    //   this.Applications = [...data.value];
-    // });
+
   }
   onSubmit(): void {
     this.IsSubmitted = true;
-    var username = this.loginForm.get("username").value;
+    this.username = this.loginForm.get("username").value;
     var password = this.loginForm.get("password").value;
     debugger;
-    this.authService.login(username, password).subscribe(
+    this.authService.login(this.username, password).subscribe(
       data => {
 
         this.tokenStorage.saveToken(data.token);
@@ -102,7 +101,7 @@ export class LoginComponent implements OnInit {
 
         //console.log("decodedUser.iss",decodedUser.iss)
         //if PlanId is zero, redirect to select plan.
-        if (decodedUser.iss == 0)
+        if (+decodedUser.iss == 0)
           this.route.navigate(['/auth/selectplan']);
         else {
           //  localStorage.setItem('userInfo',decodedUser);
@@ -162,64 +161,69 @@ export class LoginComponent implements OnInit {
 
   GetMasterData(UserRole) {
     debugger;
-    let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName", "Description", "ParentId"];
-    list.PageName = "MasterItems";
-    list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + localStorage.getItem('planId') + ";$select=MasterDataId,PlanAndMasterDataId,PlanId,ApplicationId)"];
-    list.filter = ["(ParentId eq 0 or OrgId eq 0 or OrgId eq " + localStorage.getItem('orgId') + ") and Active eq 1"];
+    //this.Applications = this.tokenStorage.getPermittedApplications();
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        ////console.log(data.value);
-        this.shareddata.ChangeMasterData(data.value);
-        this.allMasterData = [...data.value];//.filter(f=>f.);
-
-        this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
-        this.shareddata.ChangeRoles(this.Roles);
-
-        this.RoleFilter = ' and (RoleId eq 0';
-        var __organization = '';
-        if (UserRole[0].OrgId != null)
-          __organization = UserRole[0].Org.OrganizationName;
-
-        this.UserDetail = [{
-          employeeId: this.userInfo["nameid"],
-          userId: this.userInfo["Id"],
-          userName: this.userInfo["email"],
-          email: this.userInfo["email"],
-          orgId: UserRole[0].OrgId,
-          org: __organization,
-          planId: localStorage.getItem("planId"),
-          RoleUsers: UserRole.map(roleuser => {
-            if (roleuser.Active == 1 && roleuser.RoleId != null) {
-              this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
-              var _role = '';
-              if (this.Roles.length > 0 && roleuser.RoleId != null)
-                _role = this.Roles.filter(a => a.MasterDataId == roleuser.RoleId)[0].MasterDataName;
-              return {
-                roleId: roleuser.RoleId,
-                role: _role,
-              }
-            }
-            else
-              return false;
-          })
-        }]
-
-        //login detail is save even though roles are not defined.
-        //so that user can continue their settings.
-        this.tokenStorage.saveUserdetail(this.UserDetail);
-        if (this.RoleFilter.length > 0)
-          this.RoleFilter += ')';
-        this.tokenStorage.saveCheckEqualBatchId
-        this.GetApplicationRolesPermission();
+    this.contentservice.GetParentZeroMasters().subscribe((data: any) => {
+      var TopMasters = [...data.value];
+      var countryparentId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].MasterDataId;
+      var appId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'application')[0].ApplicationId;
+      this.contentservice.GetDropDownDataFromDB(countryparentId, 0, 0)
+        .subscribe((data: any) => {
+          this.Applications = [...data.value];
+          var commonappId = this.Applications.filter(f => f.MasterDataName.toLowerCase() == 'common')[0].MasterDataId;
+          var roleparentId = TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'role')[0].MasterDataId;
+          this.contentservice.GetDropDownDataFromDB(roleparentId, localStorage.getItem('orgId'), commonappId)
+            .subscribe((data: any) => {
+              this.Roles = [...data.value];
 
 
-      }, error => {
-        this.tokenStorage.signOut();
-      });
+              this.RoleFilter = ' and (RoleId eq 0';
+              var __organization = '';
+              if (UserRole[0].OrgId != null)
+                __organization = UserRole[0].Org.OrganizationName;
+
+              this.UserDetail = [{
+                employeeId: this.userInfo["nameid"],
+                userId: this.userInfo["Id"],
+                userName: this.userInfo["email"],
+                email: this.userInfo["email"],
+                orgId: UserRole[0].OrgId,
+                org: __organization,
+                planId: localStorage.getItem("planId"),
+                logoPath: UserRole[0].Org.LogoPath,
+                RoleUsers: UserRole.map(roleuser => {
+                  if (roleuser.Active == 1 && roleuser.RoleId != null) {
+                    this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
+                    var _role = '';
+                    if (this.Roles.length > 0 && roleuser.RoleId != null)
+                      var _roleobj = this.Roles.filter(a => a.MasterDataId == roleuser.RoleId)
+                    if (_roleobj.length > 0) {
+                      _role = _roleobj[0].MasterDataName;
+                    }
+                    else {
+                      this.alert.error("No matching role found.", this.optionsNoAutoClose);
+                    }
+                    return {
+                      roleId: roleuser.RoleId,
+                      role: _role,
+
+                    }
+                  }
+                  else
+                    return false;
+                })
+              }]
+
+              //login detail is save even though roles are not defined.
+              //so that user can continue their settings.
+              this.tokenStorage.saveUserdetail(this.UserDetail);
+              if (this.RoleFilter.length > 0)
+                this.RoleFilter += ')';
+              this.tokenStorage.saveCheckEqualBatchId
+              this.GetApplicationRolesPermission();
+            })
+        })
+    })
   }
   get f() {
     return this.loginForm.controls;
@@ -305,19 +309,19 @@ export class LoginComponent implements OnInit {
         }
       })
   }
-  getDropDownData(dropdowntype) {
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      let Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      });
-    }
-    else
-      return [];
-  }
+  // getDropDownData(dropdowntype) {
+  //   let Ids = this.allMasterData.filter((item, indx) => {
+  //     return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+  //   })
+  //   if (Ids.length > 0) {
+  //     let Id = Ids[0].MasterDataId;
+  //     return this.allMasterData.filter((item, index) => {
+  //       return item.ParentId == Id
+  //     });
+  //   }
+  //   else
+  //     return [];
+  // }
   gotohome() {
     this.route.navigate(['/dashboard']);
   }

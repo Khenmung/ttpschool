@@ -1,11 +1,11 @@
 <!-- <mat-toolbar [ngClass]="{'width81':!deviceXs,'width100':deviceXs}"> -->
 <mat-toolbar>
     <mat-toolbar-row class="width100" fxLayout="row" fxLayoutAlign="space-between center">
-        <div fxLayout="row" fxLayoutAlign="start center">
-            <a [routerLink]="['/']"><img style="border-radius: 11px;" src="assets/images/ttplogo1.png" alt="TTP"
-                    width="50px" /></a>
+        <div style="margin:10px 10px 10px 15px;" fxLayout="row" fxLayoutAlign="start center">
+            <a [routerLink]="['/']"><img style="border-radius: 20px;" src="{{logoPath}}" alt="{{OrganizationName}}"
+                    width="40px" /></a>
             <span>{{SelectedApplicationName}}</span>
-            <span *ngIf="SelectedBatchName">-{{SelectedBatchName}}</span>            
+            <!-- <span *ngIf="SelectedBatchName"> - {{SelectedBatchName}}</span>             -->
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <div style="font-size: medium;margin-right: 15px;">{{userName}}</div>

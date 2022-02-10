@@ -381,6 +381,7 @@ export class ContentService implements OnInit {
       "ParentId",
       "MasterDataName",
       "Description",
+      "ApplicationId",
       "Active",
       "OrgId"];
     list.PageName = "MasterItems";

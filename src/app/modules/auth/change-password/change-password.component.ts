@@ -21,6 +21,7 @@ export class ChangePasswordComponent implements OnInit {
   errorMessage = '';
   mediaSub: Subscription;
   deviceXs: boolean;
+  SelectedApplicationName='';
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -43,9 +44,11 @@ export class ChangePasswordComponent implements OnInit {
     });
 
     this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.loginUserDetail == null)
+
+    if (this.loginUserDetail.length == 0)
       this.route.navigate(['/auth/login']);
     else {
+      //this.SelectedApplicationName = this.tokenService.gets
       this.changepwdForm = this.fb.group({
         ConfirmPassword: ['', [Validators.required, Validators.minLength(6)]],
         OldPassword: ['', [Validators.required, Validators.minLength(6)]],

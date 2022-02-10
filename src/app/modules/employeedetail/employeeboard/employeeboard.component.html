@@ -1,7 +1,7 @@
 
 <mat-card>
     <mat-card-title style="margin: 20px;">Employee</mat-card-title>
-    <mat-card-subtitle>{{EmployeeName}}</mat-card-subtitle>
+    <mat-card-subtitle style="margin:0px 20px 20px 20px;">{{EmployeeName}}</mat-card-subtitle>
     <mat-card-content style="margin:20px;max-height: inherit;">
         <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChange($event)">
             <mat-tab *ngFor="let component of components;let indx=index">
