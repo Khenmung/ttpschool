@@ -9,7 +9,7 @@
                 <mat-icon>info</mat-icon>Primary
             </ng-template>
             <div style="padding:15px 15px 10px 15px;"><strong>Primary</strong>
-                <mat-grid-list cols="3" rowHeight="70px" #basic>
+                <mat-grid-list cols="3" rowHeight="90px" #basic>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Name</mat-label>
@@ -25,25 +25,25 @@
                             <input formControlName="LastName" autocomplete="Off" #input matInput [maxlength]="50">
                         </mat-form-field>
                     </mat-grid-tile>
+
                     <mat-grid-tile [colspan]="1" [rowspan]="2">
-                        <div *ngIf="StudentId>0" fxLayout="column" fxLayoutAlign="space-between center">
+                        <div style="margin-bottom: 15px;" *ngIf="StudentId>0" fxLayout="row"
+                            fxLayoutAlign="space-between center">
                             <span style="color:red;" *ngIf="message">{{message}}</span>
-                            <div style="padding-bottom: 15px;">
-                                <input #inputfile [hidden]="true" type="file" accept='image/*'
-                                    (change)="preview(inputfile.files)" />
-                                <img [src]="imgURL" height="160" *ngIf="imgURL">
+                            <input #inputfile [hidden]="true" type="file" accept='image/*'
+                                (change)="preview(inputfile.files)" />
+                            <div style="border:1px solid lightgray; padding:5px;margin-top: 5px;margin-bottom: 5px;">
+                                <img [src]="imgURL" height="150px" *ngIf="imgURL">
                             </div>
-                            <div fxLayout="row" fxLayoutAlign="space-between center">
-                                <span>
-                                    <button [disabled]="loading" class="mat-raised-button" matTooltip="select file"
-                                        color="primary" (click)="inputfile.click()">
-                                        <mat-icon aria-label="photo">photo</mat-icon>
-                                    </button>&nbsp;&nbsp;
-                                    <button [disabled]="loading" type="submit" (click)="uploadFile()"
-                                        matTooltip="upload file" class="mat-raised-button">
-                                        <mat-icon aria-label="file_upload">file_upload</mat-icon>
-                                    </button>&nbsp;&nbsp;
-                                </span>
+                            <div fxLayout="column" fxLayoutAlign="space-between center" style="margin: 5px;">
+                                <button [disabled]="loading" class="mat-flat-button" matTooltip="select file"
+                                    (click)="inputfile.click()">
+                                    <mat-icon aria-label="photo">photo</mat-icon>
+                                </button>&nbsp;&nbsp;
+                                <button [disabled]="loading" type="submit" (click)="uploadFile()"
+                                    matTooltip="upload file" class="mat-flat-button">
+                                    <mat-icon aria-label="file_upload">file_upload</mat-icon>
+                                </button>&nbsp;&nbsp;
                             </div>
                         </div>
                     </mat-grid-tile>

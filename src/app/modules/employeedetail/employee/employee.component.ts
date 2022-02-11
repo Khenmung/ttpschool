@@ -20,7 +20,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class EmployeeComponent implements OnInit {
 
   Edit = false;
-  options = {
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionAutoClose = {
     autoClose: true,
     keepAfterRouteChange: true
   };
@@ -39,9 +43,9 @@ export class EmployeeComponent implements OnInit {
   EmployeeId = 0;
   loading = false;
   WorkNature = [];
-  WorkAccounts=[];
-  Designations=[];
-  Departments=[];
+  WorkAccounts = [];
+  Designations = [];
+  Departments = [];
   MaritalStatus = [];
   EmploymentStatus = [];
   EmploymentTypes = [];
@@ -324,23 +328,40 @@ export class EmployeeComponent implements OnInit {
 
   }
   SaveOrUpdate() {
+    var errorMessage = '';
     if (this.EmployeeForm.get("FirstName").value == '') {
-      this.alert.info("First name is required.", this.options.autoClose);
+      errorMessage += "First name is required.<br>";
       return;
     }
-    else if (this.EmployeeForm.get("FatherName").value == '') {
-      this.alert.info("Father name is required.", this.options.autoClose);
-      return;
-    }
-    else if (this.EmployeeForm.get("DOB").value == '') {
-      this.alert.info("DOB is required.", this.options.autoClose);
-      return;
-    }
-    else if (this.EmployeeForm.get("DOJ").value == '') {
-      this.alert.info("DOJ is required.", this.options.autoClose);
-      return;
-    }
+    if (this.EmployeeForm.get("FatherName").value == '') {
+      errorMessage += "Father name is required.<br>";
 
+    }
+    if (this.EmployeeForm.get("DOB").value == '') {
+      errorMessage += "DOB is required.<br>";
+    }
+    if (this.EmployeeForm.get("DOJ").value == '') {
+      errorMessage += "DOJ is required.<br>";
+    }
+    if (this.EmployeeForm.get("DepartmentId").value == '') {
+      errorMessage += "Department is required.<br>";
+    }
+    if (this.EmployeeForm.get("DesignationId").value == '') {
+      errorMessage += "Designation is required.<br>";
+
+    }
+    if (this.EmployeeForm.get("EmpGradeId").value == '') {
+      errorMessage += "Grade is required.<br>";
+
+    }
+    if (this.EmployeeForm.get("WorkAccountId").value == '') {
+      errorMessage += "Work Account is required.<br>";
+    }
+    if (errorMessage.length > 0) {
+      this.alert.error(errorMessage, this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
     this.loading = true;
 
     this.EmployeeData = [{
@@ -391,17 +412,21 @@ export class EmployeeComponent implements OnInit {
       PermanentAddressStateId: this.EmployeeForm.get("PermanentAddressStateId").value,
       PermanentAddressCountryId: this.EmployeeForm.get("PermanentAddressCountryId").value,
       PermanentAddress: this.EmployeeForm.get("PermanentAddress").value,
-      DepartmentId:this.EmployeeForm.get("DepartmentId").value,
-      DesignationId:this.EmployeeForm.get("DesignationId").value,
-      WorkAccountId:this.EmployeeForm.get("WorkAccountId").value,
-      EmpGradeId:this.EmployeeForm.get("EmpGradeId").value,
+      DepartmentId: this.EmployeeForm.get("DepartmentId").value,
+      DesignationId: this.EmployeeForm.get("DesignationId").value,
+      WorkAccountId: this.EmployeeForm.get("WorkAccountId").value,
+      EmpGradeId: this.EmployeeForm.get("EmpGradeId").value,
       OrgId: this.loginUserDetail[0]["orgId"]
     }]
-    if (this.EmployeeData["MarriedDate"] == "")
+    if (this.EmployeeData["MarriedDate"] == "") {
+      //this.EmployeeData["MarriedDate"] = new Date();
       delete this.EmployeeData["MarriedDate"];
-    if (this.EmployeeData["ConfirmationDate"] == "")
+    }
+    if (this.EmployeeData["ConfirmationDate"] == "") {
+      //this.EmployeeData["ConfirmationDate"]= new Date();
       delete this.EmployeeData["ConfirmationDate"];
-    console.log('this.EmployeeData', this.EmployeeData)
+    }
+    //console.log('this.EmployeeData', this.EmployeeData)
     if (this.EmployeeId == 0)
       this.save();
     else
@@ -409,7 +434,7 @@ export class EmployeeComponent implements OnInit {
   }
 
   save() {
-    this.EmployeeForm.patchValue({ AlternateContact: "" });
+    //this.EmployeeForm.patchValue({ AlternateContactNo: "" });
 
     this.dataservice.postPatch('EmpEmployees', this.EmployeeData, 0, 'post')
       .subscribe((result: any) => {
@@ -420,20 +445,28 @@ export class EmployeeComponent implements OnInit {
             EmployeeId: result.EmployeeId
           })
           this.loading = false;
-          this.alert.success("Employee's data saved successfully.", this.options);
+          this.alert.success("Employee's data saved successfully.", this.optionsNoAutoClose);
 
         }
 
-      }, error => console.log(error))
+      }, error => {
+        this.loading = false;
+        console.log(error)
+      })
   }
   update() {
     ////console.log('Employee', this.EmployeeForm.value)
-
-    this.dataservice.postPatch('EmpEmployees', this.EmployeeData, this.EmployeeId, 'patch')
+    //console.log('update data',this.EmployeeData)
+    //this.EmployeeForm.patchValue({ AlternateContactNo: "" });
+    this.dataservice.postPatch('EmpEmployees', this.EmployeeData[0], this.EmployeeId, 'patch')
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
-        this.alert.success("Employee's data updated successfully.", this.options);
+        this.alert.success("Employee's data updated successfully.", this.optionsNoAutoClose);
+      }, error => {
+        this.loading = false;
+        this.alert.error("Issue, Please contact your administrator.", this.optionsNoAutoClose.autoClose);
+        throw error;
       })
   }
   adjustDateForTimeOffset(dateToAdjust) {
@@ -474,7 +507,7 @@ export class EmployeeComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];
     list.PageName = "EmpEmployees";
-    list.lookupFields = ["StorageFnPs($select=FileName;$filter=EmployeeId eq " + this.EmployeeId + ")"]
+    list.lookupFields = ["StorageFnPs($select=FileId,FileName;$filter=EmployeeId eq " + this.EmployeeId + ")"]
     list.filter = ["EmpEmployeeId eq " + this.EmployeeId];
     //list.orderBy = "ParentId";
     //debugger;
@@ -536,20 +569,31 @@ export class EmployeeComponent implements OnInit {
               "PermanentAddressStateId": stud.PermanentAddressStateId,
               "PermanentAddressCountryId": stud.PermanentAddressCountryId,
               "PresentAddressPincode": stud.PresentAddressPincode,
-              "PermanentAddressPincode": stud.PermanentAddressPincode
+              "PermanentAddressPincode": stud.PermanentAddressPincode,
+              "DepartmentId": stud.DepartmentId,
+              "DesignationId": stud.DesignationId,
+              "EmpGradeId": stud.EmpGradeId,
+              "WorkAccountId": stud.WorkAccountId
             });
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;
             else
               this.displayContactPerson = false;
-            if (stud.StorageFnPs.length > 0)
+            if (stud.StorageFnPs.length > 0) {
+              var fileNames = stud.StorageFnPs.sort((a, b) => b.FileId - a.FileId);
               this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.loginUserDetail[0]["org"] +
-                "/EmployeePhoto/" + stud.StorageFnPs[0].FileName;
+                "/EmployeePhoto/" + fileNames[0].FileName;
+            }
+            else if (this.EmployeeId > 0)
+              this.imgURL = 'assets/images/emptyimageholder.jpg';
           })
         }
         else {
-          this.alert.error("No data found.", this.options);
+          this.alert.error("No data found.", this.optionsNoAutoClose);
         }
+      }, error => {
+        this.loading = false;
+        console.error(error);
       });
   }
 }

@@ -35,7 +35,7 @@ export class studentprimaryinfoComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   loginUserDetail = [];
   StudentLeaving = false;
   StudentName = '';
@@ -51,12 +51,12 @@ export class studentprimaryinfoComponent implements OnInit {
   StudentId = 0;
   loading = false;
   Classes = [];
-  Country = [];
+  //Country = [];
   Genders = [];
   Category = [];
   Bloodgroup = [];
   Religion = [];
-  States = [];
+  //States = [];
   PrimaryContact = [];
   Location = [];
   allMasterData = [];
@@ -138,26 +138,10 @@ export class studentprimaryinfoComponent implements OnInit {
     private tokenService: TokenStorageService,
 
   ) {
-    this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
-    if (this.Genders.length == 0)
-      this.route.navigate(["/edu"]);
-    else {
-      this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
-
-      this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
-      this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
-      this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
-      this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
-      this.shareddata.CurrentStates.subscribe(st => (this.States = st));
-      this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
-      this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
-
-      this.StudentId = this.tokenService.getStudentId();
-      this.StudentClassId = this.tokenService.getStudentClassId()
-      //console.log("this.StudentClassId",this.StudentClassId)
-      this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
-      this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
-      this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
+    //this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
+    //if (this.Genders.length == 0)
+    //  this.route.navigate(["/edu"]);
+    //else {
       this.studentForm = this.fb.group({
         ReasonForLeavingId: [0],
         StudentId: [0],
@@ -170,8 +154,6 @@ export class studentprimaryinfoComponent implements OnInit {
         Gender: [0, [Validators.required]],
         PresentAddress: ['', [Validators.required]],
         PermanentAddress: ['', [Validators.required]],
-        City: [0],
-        Country: [0],
         DOB: [new Date(), [Validators.required]],
         Bloodgroup: [0, [Validators.required]],
         Category: [0, [Validators.required]],
@@ -198,16 +180,35 @@ export class studentprimaryinfoComponent implements OnInit {
         Remarks: [''],
         Active: [1]
       });
-    }
+      this.StudentId = this.tokenService.getStudentId();
+      this.StudentClassId = this.tokenService.getStudentClassId()
+      // this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
+
+      // this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
+      // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
+      // this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
+      // this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
+      // this.shareddata.CurrentStates.subscribe(st => (this.States = st));
+      // this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
+      // this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
+
+      
+      // //console.log("this.StudentClassId",this.StudentClassId)
+      // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
+      // this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
+      // this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
+      
+    //}
   }
 
   ngOnInit(): void {
     this.loginUserDetail = this.tokenService.getUserDetail();
-    if (this.loginUserDetail == null)
+    if (this.loginUserDetail.length == 0)
       this.route.navigate(['/auth/login'])
     else {
       this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-      var SelectedBatchId= this.tokenService.getSelectedBatchId();
+      //var SelectedBatchId = this.tokenService.getSelectedBatchId();
+      this.GetMasterData();
       if (this.StudentId > 0)
         this.GetStudent();
       this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -266,20 +267,21 @@ export class studentprimaryinfoComponent implements OnInit {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+        //this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+    //    this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
+        //this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
         this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
-        this.studentForm.patchValue({ Country: this.CountryId });
+        //this.studentForm.patchValue({ Country: this.CountryId });
+        this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
-        this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
+  //      this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
       });
 
@@ -302,15 +304,29 @@ export class studentprimaryinfoComponent implements OnInit {
 
   }
   SaveOrUpdate() {
-
+    var errorMessage ='';
+    if (this.studentForm.get("FirstName").value == 0) {      
+      errorMessage += "First Name is required.<br>";
+    }
+    if (this.studentForm.get("FatherName").value == 0) {
+      errorMessage += "Father name is required.<br>";
+      
+    }
     if (this.studentForm.get("Bloodgroup").value == 0) {
-      this.loading = false;
-      this.alert.info("Please select blood group.", this.optionsNoAutoClose);
-      return;
+      errorMessage += "Please select blood group.<br>";
+      
+    }
+    if (this.studentForm.get("Gender").value == 0) {
+      errorMessage += "Please select gender.<br>";
+      
     }
     if (this.studentForm.get("Category").value == 0) {
-      this.loading = false;
-      this.alert.info("Please select Category.", this.optionsNoAutoClose);
+      errorMessage += "Please select Category.<br>";    
+    }
+    if(errorMessage.length>0)
+    {
+      this.loading=false;
+      this.alert.error(errorMessage,this.optionsNoAutoClose);
       return;
     }
     this.loading = true;
@@ -369,6 +385,7 @@ export class studentprimaryinfoComponent implements OnInit {
           this.studentForm.patchValue({
             StudentId: result.StudentId
           })
+          this.StudentId =result.StudentId;
           this.loading = false;
           this.alert.success("Student's data saved successfully.", this.optionsAutoClose);
 
@@ -396,7 +413,7 @@ export class studentprimaryinfoComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
-    list.lookupFields = ["StorageFnPs($select=FileName;$filter=StudentId eq " + this.StudentId + ")"]
+    list.lookupFields = ["StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
     list.filter = ["StudentId eq " + this.StudentId];
     //list.orderBy = "ParentId";
     //debugger;
@@ -416,10 +433,6 @@ export class studentprimaryinfoComponent implements OnInit {
               PresentAddress: stud.PresentAddress,
               PermanentAddress: stud.PermanentAddress,
               Gender: stud.Gender,
-              //City: stud.City,
-              //Pincode: stud.Pincode,
-              //State: stud.State,
-              //Country: stud.Country,
               DOB: new Date(stud.DOB),//this.formatdate.transform(stud.DOB,'dd/MM/yyyy'),
               Bloodgroup: stud.Bloodgroup,
               Category: stud.Category,
@@ -452,9 +465,13 @@ export class studentprimaryinfoComponent implements OnInit {
               this.displayContactPerson = true;
             else
               this.displayContactPerson = false;
-            if (stud.StorageFnPs.length > 0)
+            if (stud.StorageFnPs.length > 0) {
+              var fileNames = stud.StorageFnPs.sort((a, b) => b.FileId - a.FileId)
               this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.loginUserDetail[0]["org"] +
-                "/StudentPhoto/" + stud.StorageFnPs[0].FileName;
+                "/StudentPhoto/" + fileNames[0].FileName;
+            }
+            else if(this.StudentId>0)
+              this.imgURL = 'assets/images/emptyimageholder.jpg'
           })
         }
         else {

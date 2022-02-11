@@ -40,7 +40,7 @@ export class AddstudentclassComponent implements OnInit {
   FeeType = [];
   studentclassForm: FormGroup;
   StudentName = '';
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   LoginUserDetail = [];
   studentclassData = {
     StudentClassId: 0,
@@ -52,7 +52,7 @@ export class AddstudentclassComponent implements OnInit {
     FeeTypeId: 0,
     AdmissionDate: new Date(),
     Remarks: '',
-    Promoted:0,
+    Promoted: 0,
     Active: 1,
     OrgId: 0
   }
@@ -83,26 +83,23 @@ export class AddstudentclassComponent implements OnInit {
   PageLoad() {
     //debugger;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    if (this.LoginUserDetail == null)
+    if (this.LoginUserDetail.length == 0)
       this.nav.navigate(['/auth/login']);
     else {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-        });
-     // }
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      });
 
-     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();  
-      //this.shareddata.CurrentBatch.subscribe(t => this.Batches = t);
-      
+      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
-      if(this.FeeType.length==0)
-      {
+      if (this.FeeType.length == 0) {
         this.nav.navigate(["/edu"]);
       }
       this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
       //this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
       this.StudentId = this.tokenstorage.getStudentId();
-      this.StudentClassId =  this.tokenstorage.getStudentClassId()
+      this.StudentClassId = this.tokenstorage.getStudentClassId()
       //this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
       this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
@@ -112,7 +109,7 @@ export class AddstudentclassComponent implements OnInit {
   get f() { return this.studentclassForm.controls }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
@@ -185,7 +182,7 @@ export class AddstudentclassComponent implements OnInit {
 
     let list: List = new List();
     list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "BatchId", "FeeTypeId",
-     "AdmissionDate", "Remarks", "Active"];
+      "AdmissionDate", "Remarks", "Active"];
     list.PageName = "StudentClasses";
     list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
 
@@ -281,7 +278,7 @@ export class AddstudentclassComponent implements OnInit {
         (data: any) => {
           ////console.log('before',this.StudentClassId);
           this.StudentClassId = data.StudentClassId;
-          this.tokenstorage.saveStudentClassId(this.StudentClassId +"")
+          this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
           //this.shareddata.ChangeStudentClassId(this.StudentClassId);
           ////console.log('after',this.StudentClassId);
 

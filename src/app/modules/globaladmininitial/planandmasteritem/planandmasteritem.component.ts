@@ -100,7 +100,7 @@ export class PlanandmasteritemComponent implements OnInit {
 
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    if (this.LoginUserDetail == null)
+    if (this.LoginUserDetail.length == 0)
       this.nav.navigate(['/auth/login']);
     else {
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.PLANANDMASTERDATA)

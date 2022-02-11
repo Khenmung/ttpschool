@@ -73,7 +73,10 @@ export class StudentDocumentComponent implements OnInit {
     this.StudentClassId = this.tokenService.getStudentClassId();
 
     if (this.StudentClassId == 0) {
-      this.nav.navigate(['/edu']);
+      this.alertMessage.error("Student Class Id not found.",this.optionsAutoClose);
+      setTimeout(() => {
+        this.nav.navigate(['/edu']);  
+      }, 2000);      
     }
     else {
       this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
