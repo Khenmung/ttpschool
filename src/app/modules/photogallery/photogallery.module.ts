@@ -10,7 +10,7 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import {ClipboardModule} from '@angular/cdk/clipboard'
 
 @NgModule({
   declarations: [PhotogalleryComponents],
@@ -18,6 +18,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     CommonModule,
     NgbModule,
     PhotogalleryRoutingModule,
+    ClipboardModule,
     SharedhomepageModule,
     FormsModule,
     ReactiveFormsModule,

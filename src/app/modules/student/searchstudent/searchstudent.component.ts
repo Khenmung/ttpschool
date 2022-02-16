@@ -332,10 +332,10 @@ export class searchstudentComponent implements OnInit {
       checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentId").value;
     if (studentName != undefined && studentName.trim().length > 0)
       checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentName").value.StudentId;
-    if (this.studentSearchForm.get("FatherName").value.FatherName != undefined)
-      checkFilterString += " and FatherName eq '" + this.studentSearchForm.get("FatherName").value.FatherName + "'";
-    if (this.studentSearchForm.get("MotherName").value.MotherName != undefined)
-      checkFilterString += " and MotherName eq '" + this.studentSearchForm.get("MotherName").value.MotherName + "'"
+    if (this.studentSearchForm.get("FatherName").value != '')
+      checkFilterString += " and contains(FatherName,'" + this.studentSearchForm.get("FatherName").value.FatherName + "')";
+    if (this.studentSearchForm.get("MotherName").value != '')
+      checkFilterString += " and contains(MotherName,'" + this.studentSearchForm.get("MotherName").value.MotherName + "')"
 
     let list: List = new List();
     list.fields = ["StudentId",
@@ -435,8 +435,8 @@ export class searchstudentComponent implements OnInit {
               StudentClassId: _studentClassId,
               StudentId: student.StudentId,
               Name: _fullDescription,
-              FatherName: student.FatherName + "-" + student.FatherContactNo,
-              MotherName: student.MotherName + "-" + student.MotherContactNo,
+              FatherName: student.FatherName,// + "-" + student.FatherContactNo,
+              MotherName: student.MotherName,// + "-" + student.MotherContactNo,
             }
           })
         }

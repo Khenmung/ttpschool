@@ -410,6 +410,7 @@ export class studentprimaryinfoComponent implements OnInit {
   }
   GetStudent() {
     debugger;
+    this.loading=true;
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
@@ -477,6 +478,7 @@ export class studentprimaryinfoComponent implements OnInit {
         else {
           this.alert.error("No data found.", this.optionsAutoClose);
         }
+        this.loading=false;
       });
   }
 }

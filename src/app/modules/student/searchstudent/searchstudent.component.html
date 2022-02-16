@@ -14,11 +14,11 @@
                 <mat-label>Father</mat-label>
                 <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
                 <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnF">
-                 <cdk-virtual-scroll-viewport itemSize="25">
+                 <!-- <cdk-virtual-scroll-viewport itemSize="25"> -->
                     <mat-option *ngFor="let option of filteredFathers | async" [value]="option">
                         {{option.FatherName}}
                     </mat-option>
-                </cdk-virtual-scroll-viewport>
+                <!-- </cdk-virtual-scroll-viewport> -->
                 </mat-autocomplete>
             </mat-form-field>
             <mat-form-field appearance="outline">

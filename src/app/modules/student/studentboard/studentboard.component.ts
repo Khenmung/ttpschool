@@ -72,7 +72,7 @@ export class StudentboardComponent implements AfterViewInit {
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.DOCUMENT)
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT)
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
-      this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTACTIVITY)
+      this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTAPROFILE)
 
       this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
       if (this.Permissions.ParentPermission != 'deny') {
@@ -118,7 +118,7 @@ export class StudentboardComponent implements AfterViewInit {
         case "progress report":
           comindx =this.components.indexOf(StudentprogressreportComponent);
           break;
-          case "student activity":
+          case "student profile":
           comindx =this.components.indexOf(StudentactivityComponent);
           break;  
       } 

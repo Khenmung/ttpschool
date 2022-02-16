@@ -1,15 +1,16 @@
-<div style="padding: 15px;">
+<div style="margin: 20px;">
     <strong>Upload Data</strong>
 </div>
+<div style="min-height: 400px;">
 <form [formGroup]="uploadForm">
     <div class="row">
         <input [hidden]="true" #inputfile type="file" class="form-control" (change)="browseOnChange($event)"
             placeholder="Upload file" accept=".xlsx">
     </div>
     <alert></alert>
-    <span fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px">
-        <span>{{selectedFile}}</span>
-        <mat-form-field appearance="outline">
+    <span>
+        <span style="margin-right: 15px;">{{selectedFile}}</span>
+        <mat-form-field appearance="outline" style="margin-right: 15px;">
             <mat-label>Upload For</mat-label>
             <mat-select formControlName="UploadTypeId" (selectionChange)="onselectchange($event)">
                 <mat-option *ngFor="let p of UploadTypes" [value]="p.MasterDataId">
@@ -17,7 +18,7 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <button [disabled]="loading" class="mat-raised-button" matTooltip="select file" color="primary"
+        <button [disabled]="loading" class="mat-raised-button" matTooltip="select file" style="margin-right: 15px;"
             (click)="inputfile.click()">
             <mat-icon aria-label="photo">attach_file</mat-icon>
         </button>
@@ -44,3 +45,4 @@
     </div>
     
 </form>
+</div>

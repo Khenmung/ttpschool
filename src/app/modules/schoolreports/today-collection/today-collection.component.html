@@ -5,6 +5,15 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="SearchForm">
     <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
+        <mat-form-field [style.width.px]="250" appearance="outline">
+            <mat-label>Name-class-section-roll no</mat-label>
+            <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{option.Name}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>From Date</mat-label>
             <input formControlName="FromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
@@ -47,7 +56,7 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="PaymentType">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Payment Type </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Receipt Type </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 {{element.PaymentType}}
             </mat-cell>
@@ -64,7 +73,7 @@
                 <div
                     style="padding:5px;display:flex;flex-direction: row;background-color:lightgray;border-bottom:1px solid lightgray ;">
                     <div class="mat-header-cell" style="width: 150px;">Fee Name</div>
-                    <div class="mat-header-cell" style="display: flex;justify-content: center; width: 150px;">Amount
+                    <div class="mat-header-cell" style="display: flex;justify-content: end; width: 150px;">Amount
                     </div>
                 </div>
                 <div style="display:flex;flex-direction: row;" *ngFor="let voucher of row.element.AccountingVouchers">

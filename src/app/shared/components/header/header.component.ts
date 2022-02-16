@@ -31,7 +31,10 @@ debugger;
       this.loggedIn = true;
       this.userName = localStorage.getItem('username');    
       this.logoPath = this.LoginUserDetails[0].logoPath;
-
+      if(this.logoPath.length==0)
+      {
+        this.logoPath = "assets/images/ttplogo1.png"
+      }
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
       debugger;
       if (PermittedApplications.length == 0) {

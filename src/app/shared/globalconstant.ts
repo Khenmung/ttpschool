@@ -6,7 +6,7 @@ import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "https://api.ttpsolutions.in";//"http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -106,7 +106,7 @@ export class globalconstants {
                     "FAMILY": "family",
                     "ATTENDANCE": "attendance",
                     "EMPLOYMENTHISTORY": "employment history",
-                    "EMPLOYEEACTIVITY": "employee activity"
+                    "EMPLOYEEPROFILE": "employee profile"
                 }
             },
             "edu": {
@@ -121,7 +121,7 @@ export class globalconstants {
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',
                     'FEERECEIPT': 'fee receipt',
-                    'STUDENTACTIVITY': 'student activity'
+                    'STUDENTAPROFILE': 'student profile'
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
@@ -246,8 +246,8 @@ export class globalconstants {
                 "CLASSPROMOTION": "class promotion",
                 "FEEPAYMENTTYPE": "fee payment type",
                 "FEETYPE": "fee type",
-                "ACTIVITYCATEGORY": "activity category",
-                "ACTIVITYSUBCATEGORY": "activity sub category",
+                "ACTIVITYCATEGORY": "profile category",
+                "ACTIVITYSUBCATEGORY": "profile sub category",
                 "ROLE": "role",
                 "FEECATEGORY": "fee category"
 

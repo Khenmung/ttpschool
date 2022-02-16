@@ -29,7 +29,7 @@
         </button>
     </form>
     Subject can be assigned to student defined in student class.
-    <mat-table #table [dataSource]="dataSource">
+    <mat-table #table [dataSource]="dataSource" style="min-width: 1200px;">
         <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
             <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
                 <div *ngIf="StudentSubjectList.length>0" fxLayoutAlign="center center">

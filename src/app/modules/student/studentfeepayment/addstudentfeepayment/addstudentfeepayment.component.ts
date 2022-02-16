@@ -743,12 +743,12 @@ export class AddstudentfeepaymentComponent implements OnInit {
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
   Receipt() {
-    this.nav.navigate(['/admin/printreceipt/' + this.studentInfoTodisplay.StudentId]);
+    this.nav.navigate(['/edu/printreceipt/' + this.studentInfoTodisplay.StudentId]);
   }
 
 
   back() {
-    this.nav.navigate(['/admin/dashboardstudent']);
+    this.nav.navigate(['/edu']);
   }
   validate(value) {
     value = "";

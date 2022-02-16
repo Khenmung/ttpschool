@@ -29,6 +29,9 @@ export class ExamtimetableComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  NoOfColumn=0;
+  SelectedExamName='';
+  SelectedClasses='';
   StandardFilterWithBatchId = '';
   loading = false;
   SlotNClassSubjects = [];
@@ -211,7 +214,7 @@ export class ExamtimetableComponent implements OnInit {
             EndTime: s.EndTime
           }
         })
-
+        this.NoOfColumn= this.ExamSlots.length;
 
       })
   }
@@ -223,8 +226,15 @@ export class ExamtimetableComponent implements OnInit {
       this.alert.error("Please select exam.", this.optionAutoClose);
       return;
     }
-
-
+    this.SelectedExamName = this.Exams.filter(f=>f.ExamId == this.searchForm.get("searchExamId").value)[0].ExamName;
+    var classesobj=  this.Classes.filter(f=> this.searchForm.get("searchClassId").value.includes(f.ClassId));
+    classesobj.forEach((m,indx)=>
+    {
+      
+      this.SelectedClasses += indx == classesobj.length-1? m.ClassName + ".": m.ClassName + ", ";
+      
+    });
+    //this.SelectedClasses =  this.SelectedClasses.
     let list: List = new List();
     list.fields = [
       "SlotClassSubjectId",

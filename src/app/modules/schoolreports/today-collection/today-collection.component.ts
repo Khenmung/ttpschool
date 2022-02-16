@@ -7,6 +7,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import alasql from 'alasql';
+import { Observable } from 'rxjs';
+import { startWith,map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
@@ -14,6 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
+import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
 //import { IStudentFeePaymentReceipt } from '../../feereceipt/feereceipt.component';
 
 @Component({
@@ -44,6 +47,7 @@ export class TodayCollectionComponent implements OnInit {
   Classes = [];
   Batches = [];
   Sections = [];
+  Students=[];
   GroupByPaymentType = [];
   ELEMENT_DATA = [];
   GrandTotalAmount = 0;
@@ -65,6 +69,7 @@ export class TodayCollectionComponent implements OnInit {
   SearchForm: FormGroup;
   ErrorMessage: string = '';
   SelectedBatchId = 0;
+  filteredOptions: Observable<IStudent[]>;
   constructor(
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
@@ -80,11 +85,17 @@ export class TodayCollectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.SearchForm = this.fb.group({
+      searchStudentName:[0],
       FromDate: [new Date(), Validators.required],
       ToDate: [new Date(), Validators.required],
       searchReportType: ['', Validators.required],
     })
-
+    this.filteredOptions = this.SearchForm.get("searchStudentName").valueChanges
+    .pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : value.Name),
+      map(Name => Name ? this._filter(Name) : this.Students.slice())
+    );
     this.PageLoad();
   }
   PageLoad() {
@@ -106,6 +117,15 @@ export class TodayCollectionComponent implements OnInit {
       }
     }
   }
+  private _filter(name: string): IStudent[] {
+
+    const filterValue = name.toLowerCase();
+    return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
+
+  }
+  displayFn(user: IStudent): string {
+    return user && user.Name ? user.Name : '';
+  }
   GetStudentFeePaymentDetails() {
     debugger;
     this.ErrorMessage = '';
@@ -117,6 +137,8 @@ export class TodayCollectionComponent implements OnInit {
       " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd') +
       " and BatchId eq " + this.SelectedBatchId +
       " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+      if (this.SearchForm.get("searchStudentName").value.StudentClassId>0)
+      filterstring += " and StudentClassId eq " + this.SearchForm.get("searchStudentName").value.StudentClassId;
 
     let list: List = new List();
     list.fields = [
@@ -135,15 +157,17 @@ export class TodayCollectionComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
+        console.log('paymentd ata',data.value);
         this.GrandTotalAmount = data.value.reduce((acc, current) => acc + current.TotalAmount, 0);
         this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
           d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
-          d.ReceiptDate = this.datepipe.transform(d.ReceiptDate,'dd/MM/yyyy') 
+          //d.ReceiptDate = this.datepipe.transform(d.ReceiptDate,'dd/MM/yyyy') 
           //d.FeeName = this.FeeDefinitions.filter(f=>f.FeeDefinitionId == d.AccountingVouchers[0].ClassFeeId)[0].FeeName;
           return d;
         })
+
         var groupbyPaymentType = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType", [this.DateWiseCollection]);
 
         data.value.forEach(d => {
@@ -200,10 +224,56 @@ export class TodayCollectionComponent implements OnInit {
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        
+        this.GetStudents();      
 
       });
 
+  }
+  GetStudents() {
+
+    ////console.log(this.LoginUserDetail);
+
+    let list: List = new List();
+    list.fields = [
+      'StudentClassId',
+      'StudentId',
+      'ClassId',
+      'RollNo',
+      'SectionId'
+    ];
+
+    list.PageName = "StudentClasses";
+    list.lookupFields = ["Student($select=FirstName,LastName)"]
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        //  //console.log('data.value', data.value);
+        if (data.value.length > 0) {
+          this.Students = data.value.map(student => {
+            var _classNameobj = this.Classes.filter(c => c.ClassId == student.ClassId);
+            var _className = '';
+            if (_classNameobj.length > 0)
+              _className = _classNameobj[0].ClassName;
+
+            var _Section = '';
+            var _sectionobj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
+            if (_sectionobj.length > 0)
+              _Section = _sectionobj[0].MasterDataName;
+
+            var _RollNo = student.RollNo;
+            var _name = student.Student.FirstName + " " + student.Student.LastName;
+            var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
+            return {
+              StudentClassId: student.StudentClassId,
+              StudentId: student.StudentId,
+              Name: _fullDescription
+            }
+          })
+        }
+        this.loading = false;
+      })
   }
   getDropDownData(dropdowntype) {
     let IdObj = this.allMasterData.filter((item, indx) => {

@@ -7,7 +7,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { AlbumsModule } from '../photogallery/albums/albums.module';
+//import { AlbumsModule } from '../photogallery/albums/albums.module';
 import { DefinePagesComponents } from './define-pages-routing.module';
 
 @NgModule({
@@ -21,9 +21,7 @@ import { DefinePagesComponents } from './define-pages-routing.module';
     SharedModule,
     SharedhomepageModule,
     RouterModule,
-    FlexLayoutModule,
-    
-    AlbumsModule
+    FlexLayoutModule
   ],
   exports: [DefinePagesComponents]
 })

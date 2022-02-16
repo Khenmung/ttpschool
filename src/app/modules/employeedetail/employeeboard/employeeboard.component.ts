@@ -75,7 +75,7 @@ export class EmployeeboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.emp.employee.DOCUMENT)
     this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYEESKILL)
     this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYMENTHISTORY)
-    this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYEEACTIVITY)
+    this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYEEPROFILE)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {

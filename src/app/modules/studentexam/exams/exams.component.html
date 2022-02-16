@@ -58,7 +58,7 @@
                     <mat-header-cell *matHeaderCellDef>ReleaseDate
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.ReleaseDate}}
+                        {{element.ReleaseDate|date:'dd/MM/yyyy'}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">

@@ -504,13 +504,12 @@ export class EmployeeComponent implements OnInit {
       })
   }
   GetEmployee() {
+    this.loading = true;
     let list: List = new List();
     list.fields = ["*"];
     list.PageName = "EmpEmployees";
     list.lookupFields = ["StorageFnPs($select=FileId,FileName;$filter=EmployeeId eq " + this.EmployeeId + ")"]
     list.filter = ["EmpEmployeeId eq " + this.EmployeeId];
-    //list.orderBy = "ParentId";
-    //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
@@ -591,6 +590,7 @@ export class EmployeeComponent implements OnInit {
         else {
           this.alert.error("No data found.", this.optionsNoAutoClose);
         }
+        this.loading = false;
       }, error => {
         this.loading = false;
         console.error(error);
