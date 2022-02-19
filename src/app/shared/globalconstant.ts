@@ -6,7 +6,7 @@ import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "https://api.ttpsolutions.in";//"http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -56,6 +56,18 @@ export class globalconstants {
         };
     public static Pages =
         {
+            "website": {
+                "website": "web site",
+                "view": 'view',
+                "editor": 'editor',
+                "pagelist": 'page list',
+                "newsdashboard": 'news dashboard',
+                "album": 'album',
+                "carousel": 'carousel',
+                "filedragAndDrop": 'Image drag and drop',
+                "photo": 'photo',
+                "photobrowser": 'photo browser'
+            },
             "globaladmin": {
                 "GLOBALADMIN": "globaladmin",
                 "ADMINROLEFEATURE": 'Admin Role Permission',
@@ -165,6 +177,7 @@ export class globalconstants {
                     'RESULT': 'result',
                     'FEEPAYMENTSTATUS': 'Fee Payment Status',
                     'DATEWISECOLLECTION': 'date wise collection',
+                    'CHARTREPORT': 'Chart Report'
                 },
                 'DATA': {
                     'DATA': 'data',
@@ -226,6 +239,7 @@ export class globalconstants {
                 "PRIMARYCONTACT": "primary contact",
                 "BATCH": "batch",
                 "SECTION": "section",
+                "HOUSE": "house",
                 "CLASSGROUP": "class group",
                 "SUBJECTMARKCOMPONENT": "subject mark component",
                 "LANGUAGESUBJECTLOWERCLS": "language subject lower",

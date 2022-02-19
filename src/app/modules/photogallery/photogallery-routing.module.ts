@@ -6,12 +6,14 @@ import { CarouselComponent } from './carousel/carousel.component';
 import { FiledragAndDropComponent } from './filedrag-and-drop/filedrag-and-drop.component';
 import { ImgDragAndDropComponent } from './imgDragAndDrop/imgDragAndDrop';
 import { PhotobrowserComponent } from './photobrowser/photobrowser.component';
+import { PhotofileboardComponent } from './photofileboard/photofileboard.component';
 import { PhotosComponent } from './photos/photos.component';
 
 const routes: Routes = [
   {
     path: "", component: HomeComponent,
     children: [
+      { path: '', component: PhotofileboardComponent },
       { path: 'photocarousel', component: CarouselComponent },
       { path: 'browsephoto', component: PhotobrowserComponent },
       { path: 'dragdrop', component: ImgDragAndDropComponent },

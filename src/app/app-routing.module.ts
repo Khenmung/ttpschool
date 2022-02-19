@@ -14,7 +14,7 @@ const routes: Routes = [
     loadChildren: () => import('./modules/photogallery/photogallery.module').then(m => m.PhotogalleryModule)
   },
   {
-    path: 'web/pages',
+    path: 'web/page',
     loadChildren: () => import('./modules/define-pages/define-pages.module').then(m => m.DefinePagesModule)
   },
   {

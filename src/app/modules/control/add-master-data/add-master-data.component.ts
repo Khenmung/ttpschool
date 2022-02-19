@@ -159,7 +159,7 @@ export class AddMasterDataComponent implements OnInit {
 
     var applicationFilter = '';
     //applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
-    var applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"] +
+    var applicationFilter = "PlanId eq " + this.UserDetails[0]["planId"] +
       " and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
     let list: List = new List();
     list.fields = [
@@ -285,7 +285,7 @@ export class AddMasterDataComponent implements OnInit {
     debugger;
     this.loading = true;
     var _appId = this.MasterData.filter(f => f.MasterDataId == element.MasterDataId)[0].ApplicationId;
-    this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.UserDetails[0]["orgId"], _appId)
+    this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.UserDetails[0]["orgId"], _appId,0)
       .subscribe((data: any) => {
         this.SubMasters = [...data.value];
         this.loading = false;
@@ -381,7 +381,7 @@ export class AddMasterDataComponent implements OnInit {
     }
     _OrgId = this.UserDetails[0]["orgId"];
     //}
-    this.contentservice.GetDropDownDataFromDB(_searchParentId, _OrgId, Ids)
+    this.contentservice.GetDropDownDataFromDB(_searchParentId, _OrgId, Ids,0)
       //this.GetMasters(_searchParentId, _OrgId,_appId)
       .subscribe((data: any) => {
         debugger;

@@ -214,7 +214,7 @@ export class OrganizationpaymentComponent implements OnInit {
         var globalAdminId = this.Applications.filter(f => f.appShortName.toLowerCase() == 'globaladmin')[0].applicationId;
         var PaymentModeParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == globalconstants.MasterDefinitions.ttpapps.PAYMENTSTATUS)[0].MasterDataId;
 
-        this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.LoginUserDetail[0]["orgId"], globalAdminId)
+        this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.LoginUserDetail[0]["orgId"], globalAdminId,1)
           .subscribe((data: any) => {
             this.PaymentModes = [...data.value];
             this.loading = false;

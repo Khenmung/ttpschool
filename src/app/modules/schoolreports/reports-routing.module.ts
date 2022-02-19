@@ -6,6 +6,8 @@ import { FeecollectionreportComponent } from '../schoolreports/feecollectionrepo
 import { ReportboardComponent } from './reportboard/reportboard.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ExamtimetableComponent } from '../schoolreports/examtimetable/examtimetable.component';
+import { ChartReportComponent } from './chartreport/chartreport.component';
+import { ResultComponent } from './result/result.component';
 const routes: Routes = [{
   path: '', component: HomeComponent,
   children: [
@@ -27,5 +29,6 @@ export const SchoolReportsComponents = [
   FeecollectionreportComponent,
   ReportboardComponent,
   ExamtimetableComponent,
- 
+  ChartReportComponent,
+  ResultComponent
 ]

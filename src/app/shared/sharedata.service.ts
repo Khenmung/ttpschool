@@ -53,6 +53,9 @@ export class SharedataService {
   private CustomerPlanSource = new BehaviorSubject(this.items);  
   private UserInfoSource = new BehaviorSubject(this.items);  
   private PermissionAtParentSource = new BehaviorSubject('');  
+  private HouseSource = new BehaviorSubject(this.items);  
+
+  CurrentHouse = this.HouseSource.asObservable(); 
 
   CurrentPermissionAtParent = this.PermissionAtParentSource.asObservable(); 
 
@@ -112,6 +115,9 @@ export class SharedataService {
   }
   ngOnInit() {
 
+  }
+  ChangeHouse(item){
+    this.HouseSource.next(item);
   }
   ChangePermissionAtParent(item){
     this.PermissionAtParentSource.next(item);

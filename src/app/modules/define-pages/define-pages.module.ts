@@ -9,9 +9,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 //import { AlbumsModule } from '../photogallery/albums/albums.module';
 import { DefinePagesComponents } from './define-pages-routing.module';
+import { PagesboardComponent } from './pagesboard/pagesboard.component';
 
 @NgModule({
-  declarations: [DefinePagesComponents],
+  declarations: [DefinePagesComponents, PagesboardComponent],
   imports: [
     CommonModule,
     CKEditorModule,

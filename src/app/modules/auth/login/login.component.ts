@@ -83,6 +83,7 @@ export class LoginComponent implements OnInit {
     this.username = this.loginForm.get("username").value;
     var password = this.loginForm.get("password").value;
     debugger;
+    this.loading = true;
     this.authService.login(this.username, password).subscribe(
       data => {
 
@@ -113,6 +114,7 @@ export class LoginComponent implements OnInit {
         }
       },
       err => {
+        this.loading = false;
         this.errorMessage = '';
         err.error.errors.forEach(x => this.errorMessage += x);
         this.isLoginFailed = true;
@@ -249,29 +251,33 @@ export class LoginComponent implements OnInit {
           var _appShortName = '';
           this.UserDetail[0]["applicationRolePermission"] = [];
           data.value.forEach(item => {
+            var appObj = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId);
             _applicationName = '';
             _appShortName = '';
-            _applicationName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].Description;
-            _appShortName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].MasterDataName
+            //only active application's features will be available. 
+            if (appObj.length > 0) {
+              _applicationName = appObj[0].Description;
+              _appShortName = appObj[0].MasterDataName;
 
-            var _permission = '';
-            if (item.PermissionId != null)
-              _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
-            this.UserDetail[0]["applicationRolePermission"].push({
-              'pageId': item.PlanFeature.PageId,
-              'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
-              'roleId': item.RoleId,
-              'permissionId': item.PermissionId,
-              'permission': _permission,
-              'applicationName': _applicationName,
-              'applicationId': item.PlanFeature.Page.ApplicationId,
-              'appShortName': _appShortName,
-              'faIcon': item.PlanFeature.Page.faIcon,
-              'label': item.PlanFeature.Page.label,
-              'link': item.PlanFeature.Page.link
-            });
-
+              var _permission = '';
+              if (item.PermissionId != null)
+                _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
+              this.UserDetail[0]["applicationRolePermission"].push({
+                'pageId': item.PlanFeature.PageId,
+                'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
+                'roleId': item.RoleId,
+                'permissionId': item.PermissionId,
+                'permission': _permission,
+                'applicationName': _applicationName,
+                'applicationId': item.PlanFeature.Page.ApplicationId,
+                'appShortName': _appShortName,
+                'faIcon': item.PlanFeature.Page.faIcon,
+                'label': item.PlanFeature.Page.label,
+                'link': item.PlanFeature.Page.link
+              });
+            }
           });
+          this.loading = false;
           this.tokenStorage.saveUserdetail(this.UserDetail);
           this.isLoginFailed = false;
           this.isLoggedIn = true;

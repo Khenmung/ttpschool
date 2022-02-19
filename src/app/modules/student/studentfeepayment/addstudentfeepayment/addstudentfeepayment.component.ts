@@ -447,11 +447,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
               //debugger;
               let AmountAfterFormulaApplied = 0;
               this.VariableObjList.push(studentClassFee);
-              ////console.log('before',this.VariableObjList)
               var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
+              //after applying, remove again since it is for each student
               this.VariableObjList.splice(this.VariableObjList.indexOf(studentClassFee), 1);
-              ////console.log('after',this.VariableObjList)
-              ////console.log('formula', formula)
               AmountAfterFormulaApplied = evaluate(formula);
 
               var monthadded = this.StudentLedgerList.filter(f => f.Month == studentClassFee.Month);

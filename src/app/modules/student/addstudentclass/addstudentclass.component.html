@@ -62,6 +62,19 @@
             </mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">
                 <mat-form-field appearance="outline">
+                    <mat-label>House</mat-label>
+                    <mat-select formControlName="HouseId">
+                        <mat-option value="0">---</mat-option>
+                        <mat-option *ngFor="let p of Houses" [value]="p.MasterDataId">
+                            {{p.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                    <!-- <span class="text-danger" *ngIf="f.FeeTypeId.touched && f.FeeTypeId.hasError('required')">Fee type is
+                        required.</span> -->
+                </mat-form-field>
+            </mat-grid-tile>
+            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                <mat-form-field appearance="outline">
                     <mat-label>Remarks</mat-label>
                     <input formControlName="Remarks" autocomplete="Off" #Remarks matInput [maxlength]="250">
                 </mat-form-field>

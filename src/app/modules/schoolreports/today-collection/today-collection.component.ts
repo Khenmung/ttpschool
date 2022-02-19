@@ -8,7 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import alasql from 'alasql';
 import { Observable } from 'rxjs';
-import { startWith,map } from 'rxjs/operators';
+import { startWith, map } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
@@ -34,9 +34,14 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
 export class TodayCollectionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  allRowsExpanded: boolean = false;
   expandedElement: any;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
-  options = {
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionAutoClose = {
     autoClose: true,
     keepAfterRouteChange: true
   };
@@ -47,7 +52,7 @@ export class TodayCollectionComponent implements OnInit {
   Classes = [];
   Batches = [];
   Sections = [];
-  Students=[];
+  Students = [];
   GroupByPaymentType = [];
   ELEMENT_DATA = [];
   GrandTotalAmount = 0;
@@ -81,21 +86,21 @@ export class TodayCollectionComponent implements OnInit {
     private alert: AlertService,
     private datepipe: DatePipe
 
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.SearchForm = this.fb.group({
-      searchStudentName:[0],
+      searchStudentName: [0],
       FromDate: [new Date(), Validators.required],
       ToDate: [new Date(), Validators.required],
       searchReportType: ['', Validators.required],
     })
     this.filteredOptions = this.SearchForm.get("searchStudentName").valueChanges
-    .pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value.Name),
-      map(Name => Name ? this._filter(Name) : this.Students.slice())
-    );
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.Students.slice())
+      );
     this.PageLoad();
   }
   PageLoad() {
@@ -126,6 +131,10 @@ export class TodayCollectionComponent implements OnInit {
   displayFn(user: IStudent): string {
     return user && user.Name ? user.Name : '';
   }
+  public toggle() {
+    this.allRowsExpanded = !this.allRowsExpanded;
+    this.expandedElement = null;
+  }
   GetStudentFeePaymentDetails() {
     debugger;
     this.ErrorMessage = '';
@@ -133,11 +142,21 @@ export class TodayCollectionComponent implements OnInit {
     let toDate = this.SearchForm.get("ToDate").value;
     let filterstring = '';
     this.loading = true;
-    filterstring = "Active eq 1 and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
-      " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd') +
-      " and BatchId eq " + this.SelectedBatchId +
+    filterstring = "Active eq 1 ";
+    // if ((fromDate != null || toDate != null) && this.SearchForm.get("searchStudentName").value == 0) {
+    //   this.loading = false;
+    //   this.alert.error("Please select student or enter both date.", this.optionsNoAutoClose);
+    //   return;
+    // }
+    // else if (fromDate != null && toDate != null) {
+      filterstring += " and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
+        " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd');
+    //}
+
+    filterstring += " and BatchId eq " + this.SelectedBatchId +
       " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-      if (this.SearchForm.get("searchStudentName").value.StudentClassId>0)
+
+    if (this.SearchForm.get("searchStudentName").value.StudentClassId > 0)
       filterstring += " and StudentClassId eq " + this.SearchForm.get("searchStudentName").value.StudentClassId;
 
     let list: List = new List();
@@ -157,7 +176,7 @@ export class TodayCollectionComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        console.log('paymentd ata',data.value);
+        console.log('paymentd ata', data.value);
         this.GrandTotalAmount = data.value.reduce((acc, current) => acc + current.TotalAmount, 0);
         this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
@@ -195,11 +214,11 @@ export class TodayCollectionComponent implements OnInit {
 
         this.GroupByPaymentType = [...groupbyPaymentType];
         if (this.DateWiseCollection.length == 0)
-          this.alert.info("No collection found.", this.options);
-        
+          this.alert.info("No collection found.", this.optionsNoAutoClose);
+
         const rows = [];
         this.DateWiseCollection.forEach(element => rows.push(element, { detailRow: true, element }));
-        console.log("rows",rows)
+        console.log("rows", rows)
         this.dataSource = new MatTableDataSource(rows);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -207,7 +226,7 @@ export class TodayCollectionComponent implements OnInit {
       })
   }
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
@@ -224,7 +243,7 @@ export class TodayCollectionComponent implements OnInit {
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.GetStudents();      
+        this.GetStudents();
 
       });
 
@@ -279,7 +298,7 @@ export class TodayCollectionComponent implements OnInit {
     let IdObj = this.allMasterData.filter((item, indx) => {
       return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     })
-    var Id=0;
+    var Id = 0;
     if (IdObj.length > 0) {
       Id = IdObj[0].MasterDataId;
       return this.allMasterData.filter((item, index) => {
@@ -287,7 +306,7 @@ export class TodayCollectionComponent implements OnInit {
       });
     }
     else
-    return [];
+      return [];
   }
 }
 export interface ITodayReceipt {

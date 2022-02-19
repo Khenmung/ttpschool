@@ -112,11 +112,11 @@
                     (click)="SaveRow(element)">
                     <mat-icon>save</mat-icon>
                 </button>
-                <button
+                <!-- <button
                     [disabled]="loading|| PromotePermission=='read'|| PromotePermission=='deny' || checkBatchIdNSelectedIdEqual==0"
                     matTooltip="promote" mat-mini-fab (click)="PromoteRow(element)">
                     <mat-icon>loupe</mat-icon>
-                </button>
+                </button> -->
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

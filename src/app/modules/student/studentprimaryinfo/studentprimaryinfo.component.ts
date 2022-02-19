@@ -80,7 +80,14 @@ export class studentprimaryinfoComponent implements OnInit {
       this.message = "Only images are supported.";
       return;
     }
+    debugger;
     this.selectedFile = files[0];
+    if(this.selectedFile.size>60000)
+    {
+      this.loading=false;
+      this.alert.error("Image size should be less than 80kb",this.optionsNoAutoClose);
+      return;
+    }
     var reader = new FileReader();
     this.imagePath = files;
     reader.readAsDataURL(files[0]);

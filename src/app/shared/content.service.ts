@@ -25,7 +25,7 @@ export class ContentService implements OnInit {
     //debugger;
     //this.UserDetail = this.tokenService.getUserDetail();
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-  
+
   }
   AddUpdateContent(pagecontent: any) {
     ////debugger  
@@ -116,8 +116,9 @@ export class ContentService implements OnInit {
     }
     return monthArray;
   }
-  GetDropDownDataFromDB(ParentId, OrgId, AppIds) {
+  GetDropDownDataFromDB(ParentId, OrgId, AppIds, activeMaster = 1) {
     debugger;
+    var _active = activeMaster == 0 ? '' : "Active eq 1 and ";
     var applicationparam = '';
     (AppIds + "").split(',').forEach(id => {
       applicationparam += applicationparam == '' ? 'ApplicationId eq ' + id : ' or ApplicationId eq ' + id
@@ -128,13 +129,13 @@ export class ContentService implements OnInit {
       applicationFilter = "(" + applicationparam + ")";
     else
       applicationFilter = "OrgId eq " + OrgId + " and (" + applicationparam + ")";
-    
-      let list: List = new List();
+
+    let list: List = new List();
     list.fields = [
-      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId","Active"
+      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId", "Active"
     ];
     list.PageName = "MasterItems";
-    list.filter = ["ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
+    list.filter = [_active + "ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     return this.dataservice.get(list)
 
   }
@@ -321,27 +322,29 @@ export class ContentService implements OnInit {
           planfilteredFeature.forEach(item => {
             _applicationName = '';
             _appShortName = '';
-            _applicationName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].Description;
-            _appShortName = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId)[0].MasterDataName
+            var appobj = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId);
+            if (appobj.length > 0) {
+              _applicationName = appobj[0].Description;
+              _appShortName = appobj[0].MasterDataName
 
-            var _permission = '';
-            if (item.PermissionId != null)
-              _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
+              var _permission = '';
+              if (item.PermissionId != null)
+                _permission = globalconstants.PERMISSIONTYPES.filter(a => a.val == item.PermissionId)[0].type
 
-            this.UserDetail[0]["applicationRolePermission"].push({
-              'planFeatureId': item.PlanFeatureId,
-              'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
-              'roleId': item.RoleId,
-              'permissionId': item.PermissionId,
-              'permission': _permission,
-              'applicationName': _applicationName,
-              'applicationId': item.PlanFeature.Page.ApplicationId,
-              'appShortName': _appShortName,
-              'faIcon': item.PlanFeature.Page.faIcon,
-              'label': item.PlanFeature.Page.label,
-              'link': item.PlanFeature.Page.link
-            });
-
+              this.UserDetail[0]["applicationRolePermission"].push({
+                'planFeatureId': item.PlanFeatureId,
+                'applicationFeature': item.PlanFeature.Page.PageTitle,//_applicationFeature,
+                'roleId': item.RoleId,
+                'permissionId': item.PermissionId,
+                'permission': _permission,
+                'applicationName': _applicationName,
+                'applicationId': item.PlanFeature.Page.ApplicationId,
+                'appShortName': _appShortName,
+                'faIcon': item.PlanFeature.Page.faIcon,
+                'label': item.PlanFeature.Page.label,
+                'link': item.PlanFeature.Page.link
+              });
+            }
           });
           //console.log("this.UserDetail", this.UserDetail);
           this.tokenService.saveUserdetail(this.UserDetail);
@@ -364,7 +367,7 @@ export class ContentService implements OnInit {
 
     var commonAppId = this.GetPermittedAppId('common');
     var orgIdSearchstr = ' and (ApplicationId eq ' + commonAppId + applicationparam + ")" +
-                         ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
+      ' and (ParentId eq 0  or OrgId eq ' + orgId + ')';
 
     let list: List = new List();
 
@@ -387,16 +390,16 @@ export class ContentService implements OnInit {
     list.PageName = "MasterItems";
     list.filter = ["ParentId eq 0 and Active eq 1"];
     return this.dataservice.get(list);
-      // .subscribe((data: any) => {
-      //   if (data.value.length > 0) {
-      //     this.MasterData = [...data.value];
-      //     var applicationId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-      //     this.contentservice.GetDropDownDataFromDB(applicationId,0,0)
-      //     .subscribe((data:any)=>{
-      //       this.Applications =[...data.value];
-      //     })
-      //     this.loading=false;
-      //   }
-      // });
+    // .subscribe((data: any) => {
+    //   if (data.value.length > 0) {
+    //     this.MasterData = [...data.value];
+    //     var applicationId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
+    //     this.contentservice.GetDropDownDataFromDB(applicationId,0,0)
+    //     .subscribe((data:any)=>{
+    //       this.Applications =[...data.value];
+    //     })
+    //     this.loading=false;
+    //   }
+    // });
   }
 }

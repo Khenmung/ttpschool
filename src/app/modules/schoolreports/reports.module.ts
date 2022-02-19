@@ -12,15 +12,18 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MatTableModule } from '@angular/material/table';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
 import { NgxPrintModule } from 'ngx-print';
-import { ResultComponent } from './result/result.component';
+import { ChartsModule } from 'ng2-charts';
+import { BrowserModule } from '@angular/platform-browser';
 
 
 @NgModule({
   declarations: [
-    SchoolReportsComponents,
-    ResultComponent
+    SchoolReportsComponents
+    
   ],
   imports: [
+   // BrowserModule,
+   // NgModule,
     CommonModule,
     MaterialModule,
     SharedModule,
@@ -32,7 +35,9 @@ import { ResultComponent } from './result/result.component';
     SchoolReportsRoutingModule,
     SharedhomepageModule,
     MatTableModule,
-    NgxPrintModule
+    NgxPrintModule,    
+    ChartsModule
+
   ],
   providers:[
     { provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },

@@ -5,6 +5,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ExamtimetableComponent } from '../examtimetable/examtimetable.component';
 import { FeecollectionreportComponent } from '../feecollectionreport/feecollectionreport.component';
+import { ChartReportComponent } from '../chartreport/chartreport.component';
 import { ResultComponent } from '../result/result.component';
 import { TodayCollectionComponent } from '../today-collection/today-collection.component';
 
@@ -19,13 +20,15 @@ export class ReportboardComponent implements AfterViewInit {
     TodayCollectionComponent,
     FeecollectionreportComponent,
     ResultComponent,
-    ExamtimetableComponent
+    ExamtimetableComponent,
+    ChartReportComponent
   ];
 
   tabNames = [
     { 'label': '1Exam Time Table', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Fee Payment Status', 'faIcon': '' },
+    { 'label': '1Date Wise Collection', 'faIcon': '' },
     { 'label': '1Date Wise Collection', 'faIcon': '' },
   ];
 
@@ -35,7 +38,8 @@ export class ReportboardComponent implements AfterViewInit {
       ExamTimeTablePermission: '',
       ExamResultPermission: '',
       FeeCollectionPermission: '',
-      DatewisePermission: ''
+      DatewisePermission: '',
+      ChartPermission: ''
     };
     LoginUserDetail=[];
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -112,6 +116,22 @@ export class ReportboardComponent implements AfterViewInit {
       this.tabNames.splice(comindx, 1);
     }
 
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.CHARTREPORT)
+    var comindx = this.components.indexOf(ChartReportComponent);
+    if (perObj.length > 0) {
+      if (perObj[0].permission == 'deny') {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      else {
+        this.tabNames[comindx].faIcon = perObj[0].faIcon;
+        this.tabNames[comindx].label = perObj[0].label;
+      }
+    }
+    else {
+      this.components.splice(comindx, 1);
+      this.tabNames.splice(comindx, 1);
+    }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.DATEWISECOLLECTION)
     var comindx = this.components.indexOf(TodayCollectionComponent);

@@ -89,8 +89,10 @@
         <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: DisplayColumns;" matRipple class="element-row"
             [class.expanded]="expandedElement == row" (click)="expandedElement = row"></mat-row>
-        <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
-            [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'" style="overflow: hidden">
+        <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" style="overflow: hidden"
+            [@detailExpand]="(row.element == expandedElement || allRowsExpanded) ? 'expanded' : 'collapsed'">
+
+            <!-- [@detailExpand]="row.element == expandedElement ? 'expanded' : 'collapsed'" style="overflow: hidden"> -->
         </mat-row>
     </mat-table>
 
@@ -124,9 +126,13 @@
     <hr style="color:lightgrey;">
     <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
 </div>
-<span fxLayout="row" fxLayoutAlign="center center">
-    <button [disabled]="loading || DateWiseCollection.length ==0" matTooltip="print" printSectionId="printSection"
-        [useExistingCss]="true" ngxPrint class="mat-raised-button">
-        <mat-icon>print</mat-icon>
-    </button>
-</span>
+<div style="display: flex;flex-direction: row;padding: 15px;">
+    <button style="margin-right: 15px;" mat-raised-button (click)="toggle()">{{allRowsExpanded ? 'Collapse' :
+        'Expand'}}</button>
+    <span fxLayout="row" fxLayoutAlign="center center">
+        <button [disabled]="loading || DateWiseCollection.length ==0" matTooltip="print" printSectionId="printSection"
+            [useExistingCss]="true" ngxPrint class="mat-raised-button">
+            <mat-icon>print</mat-icon>
+        </button>
+    </span>
+</div>

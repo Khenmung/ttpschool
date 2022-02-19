@@ -54,6 +54,7 @@ export class searchstudentComponent implements OnInit {
   FeeType = [];
   FeeDefinitions = [];
   Sections = [];
+  Houses = [];
   UploadTypes = [];
   ReasonForLeaving = [];
   //StandardFilter ='';
@@ -199,6 +200,9 @@ export class searchstudentComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeSection(this.Sections);
 
+        this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+        this.shareddata.ChangeHouse(this.Houses);
+
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
@@ -343,7 +347,7 @@ export class searchstudentComponent implements OnInit {
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
       "ReasonForLeavingId"];
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,BatchId,ClassId,RollNo)"];
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";

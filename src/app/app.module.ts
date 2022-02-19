@@ -13,12 +13,14 @@ import { MaterialModule } from './shared/material/material.module';
 import { AuthService } from './_services/auth.service';
 import { AuthGuard } from './guards/auth.guard';
 import { authInterceptorProviders } from './_helpers/auth.interceptor';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
     AppComponent,
     MatConfirmDialogComponent,
-    NotfoundComponent
+    NotfoundComponent,
+
   ],
   imports: [
     RouterModule,
@@ -27,7 +29,8 @@ import { authInterceptorProviders } from './_helpers/auth.interceptor';
     AppRoutingModule,
     HttpClientModule,
     NgbModule,
-    MaterialModule    
+    MaterialModule,
+    ChartsModule
   ],
   exports: [
     NotfoundComponent

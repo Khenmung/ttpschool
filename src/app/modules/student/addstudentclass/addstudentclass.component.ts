@@ -35,7 +35,7 @@ export class AddstudentclassComponent implements OnInit {
   allMasterData = [];
   Students = [];
   Classes = [];
-  //Batches = [];
+  Houses = [];
   Sections = [];
   FeeType = [];
   studentclassForm: FormGroup;
@@ -47,6 +47,7 @@ export class AddstudentclassComponent implements OnInit {
     StudentId: 0,
     ClassId: 0,
     SectionId: 0,
+    HouseId:0,
     RollNo: '',
     BatchId: 0,
     FeeTypeId: 0,
@@ -72,6 +73,7 @@ export class AddstudentclassComponent implements OnInit {
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
       SectionId: [0, [Validators.required]],
+      HouseId: [0],
       RollNo: ['', [Validators.required]],
       FeeTypeId: [0, [Validators.required]],
       Remarks: [''],
@@ -97,6 +99,8 @@ export class AddstudentclassComponent implements OnInit {
         this.nav.navigate(["/edu"]);
       }
       this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
+      this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
+
       //this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
       this.StudentId = this.tokenstorage.getStudentId();
       this.StudentClassId = this.tokenstorage.getStudentClassId()
@@ -114,6 +118,7 @@ export class AddstudentclassComponent implements OnInit {
         this.allMasterData = [...data.value];
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
 
         this.aRoute.paramMap.subscribe(param => {
           this.GetStudent();
@@ -181,7 +186,7 @@ export class AddstudentclassComponent implements OnInit {
     //   studentId = this.Id;
 
     let list: List = new List();
-    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "BatchId", "FeeTypeId",
+    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "HouseId","BatchId", "FeeTypeId",
       "AdmissionDate", "Remarks", "Active"];
     list.PageName = "StudentClasses";
     list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
@@ -194,6 +199,7 @@ export class AddstudentclassComponent implements OnInit {
             StudentId: data.value[0].StudentId,
             ClassId: data.value[0].ClassId,
             SectionId: data.value[0].SectionId,
+            HouseId: data.value[0].HouseId,
             RollNo: data.value[0].RollNo,
             BatchId: data.value[0].BatchId,
             FeeTypeId: data.value[0].FeeTypeId,
@@ -208,6 +214,7 @@ export class AddstudentclassComponent implements OnInit {
             StudentName: this.StudentName,
             ClassId: 0,
             SectionId: 0,
+            HouseId:0,
             RollNo: '',
             BatchId: this.SelectedBatchId,
             FeeTypeId: 0,
@@ -256,6 +263,7 @@ export class AddstudentclassComponent implements OnInit {
       this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
       this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
       this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
+      this.studentclassData.HouseId = this.studentclassForm.value.HouseId;
       this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
       this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
       this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
@@ -276,14 +284,9 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          ////console.log('before',this.StudentClassId);
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
-          //this.shareddata.ChangeStudentClassId(this.StudentClassId);
-          ////console.log('after',this.StudentClassId);
-
           this.alert.success("Data saved successfully", this.optionsAutoClose);
-          //this.router.navigate(['/home/pages']);
         });
 
   }
