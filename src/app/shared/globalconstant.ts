@@ -192,7 +192,10 @@ export class globalconstants {
                 }
             },
             "accounting": {
-                "VOUCHER": "voucher"
+                "ACCOUNTING": "accounting",
+                "VOUCHER": "voucher",
+                "TRIALBALANCE": "trial balance",
+                "LEDGERACCOUNT": "ledger account"
             }
         }
 

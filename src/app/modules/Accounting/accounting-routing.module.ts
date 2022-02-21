@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { AccountingVoucherComponent } from './accounting-voucher/accounting-voucher.component';
+import { JournalEntryComponent } from './JournalEntry/JournalEntry.component';
 import { AccountingboardComponent } from './accountingboard/accountingboard.component';
 import { TrialBalanceComponent } from './trial-balance/trial-balance.component';
+import { GeneralLedgerComponent } from './ledger-account/ledger-account.component';
 
 const routes: Routes = [
   {
@@ -20,7 +21,8 @@ const routes: Routes = [
 })
 export class AccountingRoutingModule { }
 export const AccountingComponents=[
-  AccountingVoucherComponent,
+  JournalEntryComponent,
   TrialBalanceComponent,
-  AccountingboardComponent
+  AccountingboardComponent,
+  GeneralLedgerComponent
 ]

@@ -339,8 +339,8 @@ export class MenuConfigComponent implements OnInit {
     //   _ParentId = this.searchForm.get("searchTopMenuId").value;
     // }
     var duplicatecheck = "ApplicationId eq " + this.SelectedAppId +
-      " and PageTitle eq '" + row.PageTitle + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"]
-
+      " and PageTitle eq '" + row.PageTitle + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ApplicationId eq " + this.searchForm.get("searchApplicationId").value;
     if (row.PageId > 0)
       duplicatecheck += " and PageId ne " + row.PageId;
 

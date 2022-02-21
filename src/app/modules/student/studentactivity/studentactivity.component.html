@@ -51,7 +51,8 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                            <mat-form-field appearance="outline">                               
-                               <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.SubCategoryId" [value]="element.SubCategoryId">
+                               <mat-select (selectionChange)="onBlur(element)" 
+                               [(ngModel)]="element.SubCategoryId" [value]="element.SubCategoryId">
                                 <mat-option [value]="0">--sub category--</mat-option>
                                 <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
                                </mat-select>

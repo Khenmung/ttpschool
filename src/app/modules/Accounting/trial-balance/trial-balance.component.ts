@@ -10,7 +10,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { IAccountingVoucher } from '../accounting-voucher/accounting-voucher.component';
+import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
 
 @Component({
   selector: 'app-trial-balance',
@@ -34,10 +34,7 @@ export class TrialBalanceComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  AccountingPeriod = {
-    StartDate: new Date(),
-    EndDate: new Date()
-  }
+  AccountingPeriod = [];
   SelectedApplicationId=0;
   Permission = '';
   StandardFilterWithBatchId = '';
@@ -124,8 +121,9 @@ export class TrialBalanceComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages[0].SUBJECT.CLASSSUBJECTMAPPING);
+      this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
+    
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.TRIALBALANCE);
       if (perObj.length > 0) {
        
         this.Permission = perObj[0].permission;
@@ -133,7 +131,7 @@ export class TrialBalanceComponent implements OnInit {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         //this.GetMasterData();
         this.GetGLAccounts();
-        this.GetAccountingPeriod();
+        //this.GetAccountingPeriod();
       }
     }
   }
@@ -313,7 +311,7 @@ export class TrialBalanceComponent implements OnInit {
       "AccountNatureId"
     ];
 
-    list.PageName = "AccountingTrialBalances";
+    list.PageName = "AccountingLedgerTrialBalances";
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.GLAccounts = [];
     this.dataservice.get(list)

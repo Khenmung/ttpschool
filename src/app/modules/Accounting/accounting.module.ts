@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @NgModule({
   declarations: [AccountingComponents],
@@ -18,7 +19,8 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
     FormsModule,
     ReactiveFormsModule,
     StudentSubjectModule,
-    MaterialModule
+    MaterialModule,
+    MatAutocompleteModule
   ],
   exports:[AccountingComponents]
 })

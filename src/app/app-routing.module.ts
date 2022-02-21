@@ -98,6 +98,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
   },
   {
+    path: 'accounting/setting',
+    loadChildren: () => import('./modules/control/control.module').then(m => m.ControlModule)
+  },
+  {
     path: 'leave',
     loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)
   },

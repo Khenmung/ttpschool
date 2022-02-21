@@ -55,6 +55,7 @@ export class searchstudentComponent implements OnInit {
   FeeDefinitions = [];
   Sections = [];
   Houses = [];
+  StudentClasses=[];
   UploadTypes = [];
   ReasonForLeaving = [];
   //StandardFilter ='';
@@ -123,6 +124,7 @@ export class searchstudentComponent implements OnInit {
 
       this.GetMasterData();
       this.GetFeeTypes();
+      
     }
     //this.GetStudents();
   }
@@ -208,7 +210,7 @@ export class searchstudentComponent implements OnInit {
 
         this.loading = false;
         this.getSelectedBatchStudentIDRollNo();
-        this.GetStudents();
+        this.GetStudentClasses();
 
       });
 
@@ -391,6 +393,21 @@ export class searchstudentComponent implements OnInit {
       });
 
   }
+  GetStudentClasses() {
+    //debugger;
+    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+    
+    let list: List = new List();
+    list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
+    list.PageName = "StudentClasses";
+    list.filter = ["Active eq 1 and " + filterOrgIdNBatchId];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.StudentClasses = [...data.value];
+        this.GetStudents();
+      })
+    }
   GetStudents() {
     this.loading = true;
     let list: List = new List();
@@ -406,12 +423,13 @@ export class searchstudentComponent implements OnInit {
     ];
 
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,RollNo,SectionId)"]
+    //list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,RollNo,SectionId)"]
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        //this.Students = [...data.value];
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
@@ -420,17 +438,18 @@ export class searchstudentComponent implements OnInit {
             var _className = '';
             var _section = '';
             var _studentClassId = 0;
-            if (student.StudentClasses.length > 0) {
-              _studentClassId = student.StudentClasses[0].StudentClassId;
-              var _classNameobj = this.Classes.filter(c => c.ClassId == student.StudentClasses[0].ClassId);
+            var studentclassobj= this.StudentClasses.filter(f=>f.StudentId == student.StudentId);
+            if (studentclassobj.length > 0) {
+              _studentClassId = studentclassobj[0].StudentClassId;
+              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
 
               if (_classNameobj.length > 0)
                 _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.StudentClasses[0].SectionId)
+              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
 
               if (_SectionObj.length > 0)
                 _section = _SectionObj[0].MasterDataName;
-              _RollNo = student.StudentClasses[0].RollNo;
+              _RollNo = studentclassobj[0].RollNo;
             }
 
             _name = student.FirstName + " " + student.LastName;
@@ -447,6 +466,7 @@ export class searchstudentComponent implements OnInit {
         this.loading = false;
       })
   }
+  
 }
 export interface IStudent {
   StudentId: number;

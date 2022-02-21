@@ -2,25 +2,23 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-accounting-voucher',
-  templateUrl: './accounting-voucher.component.html',
-  styleUrls: ['./accounting-voucher.component.scss']
+  selector: 'app-JournalEntry',
+  templateUrl: './JournalEntry.component.html',
+  styleUrls: ['./JournalEntry.component.scss']
 })
-export class AccountingVoucherComponent implements OnInit {
+export class JournalEntryComponent implements OnInit {
 
 
   @ViewChild("table") mattable;
-  //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   AccountingVoucherListName = 'AccountingVouchers';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
@@ -48,7 +46,6 @@ export class AccountingVoucherComponent implements OnInit {
   dataSource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
   searchForm: FormGroup;
-  //ClassSubjectId = 0;
   AccountingVoucherData = {
     AccountingVoucherId: 0,
     DocDate: new Date(),
@@ -155,10 +152,8 @@ export class AccountingVoucherComponent implements OnInit {
     ////debugger;
     this.loading = true;
 
-    filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate,'yyyy-MM-dd') + //T00:00:00.000Z
-     "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate,'yyyy-MM-dd') + "'";//T00:00:00.000Z
-    // if (_ClassId != 0)
-    //   filterStr += " and ClassId eq " + _ClassId;
+    filterStr += " and PostingDate ge " + this.datepipe.transform(this.AccountingPeriod[0].StartDate,'yyyy-MM-dd') + //T00:00:00.000Z
+     " and  PostingDate le " + this.datepipe.transform(this.AccountingPeriod[0].EndDate,'yyyy-MM-dd');//T00:00:00.000Z
 
     let list: List = new List();
     list.fields = [
@@ -179,11 +174,9 @@ export class AccountingVoucherComponent implements OnInit {
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
         this.AccountingVoucherList =[...data.value];
         this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
         this.loading = false;
-        //this.changeDetectorRefs.detectChanges();
       });
   }
   onBlur(row) {
@@ -299,13 +292,13 @@ export class AccountingVoucherComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "AccountingTrialBalanceId",
-      "GeneralLedger",
+      "GeneralLedgerId",
+      "GeneralLedgerName",
       "AccountGroupId",
       "AccountNatureId"
     ];
 
-    list.PageName = "AccountingTrialBalances";
+    list.PageName = "AccountingLedgerTrialBalances";
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.GLAccounts = [];
     this.dataservice.get(list)

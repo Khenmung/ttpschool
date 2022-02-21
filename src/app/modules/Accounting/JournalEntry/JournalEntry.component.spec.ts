@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccountingVoucherComponent } from './accounting-voucher.component';
+import { JournalEntryComponent } from './JournalEntry.component';
 
 describe('AccountingVoucherComponent', () => {
-  let component: AccountingVoucherComponent;
-  let fixture: ComponentFixture<AccountingVoucherComponent>;
+  let component: JournalEntryComponent;
+  let fixture: ComponentFixture<JournalEntryComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [AccountingVoucherComponent],
+    declarations: [JournalEntryComponent],
     teardown: { destroyAfterEach: false }
 })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AccountingVoucherComponent);
+    fixture = TestBed.createComponent(JournalEntryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

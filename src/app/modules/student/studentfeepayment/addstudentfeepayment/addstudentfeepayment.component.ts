@@ -33,6 +33,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   AccountingLedgerTrialBalanceListName = 'AccountingLedgerTrialBalances';
   AccountingVoucherListName = 'AccountingVouchers';
   FeeReceiptListName = 'StudentFeeReceipts';
+  StudentFeeLedgerName = 'Student Fee';
   Permission = 'deny';
   selectedIndex = 0;
   loading = false;
@@ -92,6 +93,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   Batches = [];
   Locations = [];
   AccountNature = [];
+  GeneralLedgers = [];
   AccountGroup = [];
   StudentClassFees: any[] = [];
   FeeTypes = [];
@@ -143,12 +145,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
     StudentEmployeeLedegerId: 0,
     StudentClassId: 0,
     Month: 0,
-    AccountGroupId: 0,
-    AccountNatureId: 0,
+    GeneralLedgerId: 0,
     TotalDebit: 0,
     TotalCredit: 0,
     Balance: 0,
-    //MonthName: '',
     BatchId: 0,
     OrgId: 0,
     Active: 1
@@ -218,6 +218,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           this.GetMasterData();
         });
         this.GetStudentClass();
+        this.getGeneralLedgers();
       }
     }
   }
@@ -229,7 +230,20 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.Balance = 0;
     return this.TotalAmount;
   }
-
+  getGeneralLedgers() {
+    let list: List = new List();
+    list.fields = [
+      "GeneralLedgerId",
+      "GeneralLedgerName",
+      "AccountNatureId",
+      "AccountGroupId"];
+    list.PageName = "GeneralLedgers";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GeneralLedgers = [...data.value];
+      })
+  }
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
@@ -247,7 +261,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
         this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
-        this.AccountGroup = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
+        //this.AccountGroup = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
         this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
         this.PaymentTypeId = this.PaymentTypes.filter(p => p.MasterDataName.toLowerCase() == "cash")[0].MasterDataId;
         //this.GetClassFee(this.studentInfoTodisplay.ClassId);
@@ -351,8 +365,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         "StudentEmployeeLedegerId",
         "StudentClassId",
         "Month",
-        "AccountGroupId",
-        "AccountNatureId",
+        "GeneralLedgerId",
         "TotalDebit",
         "TotalCredit",
         "Balance",
@@ -429,13 +442,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   this.StudentLedgerList.push({
                     SlNo: itemcount++,
                     StudentEmployeeLedegerId: exitem.StudentEmployeeLedegerId,
-                    StudentClassId: exitem.StudentClassId,
+                    StudentClassId: exitem.StudentClassId,                    
                     Month: exitem.Month,
-                    AccountGroupId: exitem.AccountGroupId,
-                    AccountNatureId: exitem.AccountNatureId,
                     TotalDebit: exitem.TotalDebit,
                     TotalCredit: +exitem.TotalCredit,
-                    //AmountEditable: studentClassFee.AmountEditable,
+                    GeneralLedgerId:exitem.GeneralLedgerId,
                     Balance: exitem.Balance,
                     MonthName: studentClassFee.MonthName,
                     BatchId: exitem.BatchId,
@@ -463,8 +474,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   StudentEmployeeLedegerId: 0,
                   StudentClassId: this.studentInfoTodisplay.StudentClassId,
                   Month: studentClassFee.Month,
-                  AccountGroupId: 0,
-                  AccountNatureId: 0,
+                  GeneralLedgerId: 0,                  
                   TotalDebit: 0,
                   TotalCredit: +AmountAfterFormulaApplied,
                   Balance: +AmountAfterFormulaApplied,
@@ -630,16 +640,26 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   UpdateOrSave() {
     debugger;
+
     if (this.StudentLedgerData.StudentEmployeeLedegerId == 0)
       this.insert();
     else
       this.update();
+
   }
 
   insert() {
 
-    //debugger;
-    //to get org specific receipt no.
+    var StudentFeeLedgerNameId = 0;
+    var ledgerObj = this.GeneralLedgers.filter(f => f.GeneralLedgerName.toLowerCase() == this.StudentFeeLedgerName.toLowerCase())
+
+    if (ledgerObj.length == 0) {
+      this.loading = false;
+      this.alert.error("Student Fee ledger not found in the general ledger master.");
+      return;
+    }
+    
+    StudentFeeLedgerNameId = ledgerObj[0].GeneralLedgerId;
     var list = new List();
     list.fields = ["ReceiptNo"];
     list.PageName = this.FeeReceiptListName;
@@ -660,6 +680,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     var SelectedMonths = this.StudentLedgerList.filter(f => f.Action)
     this.FeePayment.LedgerAccount["AccountingVoucher"] = [];
+
     SelectedMonths.forEach(selectedMonthrow => {
       var monthPayAmount = this.MonthlyDueDetail.filter(f => f.Month == selectedMonthrow.Month)
       var monthAmount = monthPayAmount.reduce((acc, item) => {
@@ -668,9 +689,9 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
       this.StudentLedgerData.StudentEmployeeLedegerId = selectedMonthrow.StudentEmployeeLedegerId;
       this.StudentLedgerData.Active = 1;
-      this.StudentLedgerData.AccountGroupId = 188;// row.AccountGroupId;
+      this.StudentLedgerData.GeneralLedgerId = StudentFeeLedgerNameId;// row.AccountGroupId;
       this.StudentLedgerData.BatchId = this.SelectedBatchId;
-      this.StudentLedgerData.AccountNatureId = 189;// row.AccountNatureId;
+      //this.StudentLedgerData.AccountNatureId = 189;// row.AccountNatureId;
       this.StudentLedgerData.Balance = this.Balance;
       this.StudentLedgerData.Month = selectedMonthrow.Month;
       this.StudentLedgerData.StudentClassId = selectedMonthrow.StudentClassId;
@@ -796,8 +817,7 @@ export interface ILedger {
   StudentClassId: number;
   Month: number;
   MonthName: string;
-  AccountGroupId: number;
-  AccountNatureId: number;
+  GeneralLedgerId: number;
   TotalDebit: number;
   TotalCredit: number;
   Balance: number;

@@ -41,7 +41,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input [disabled]="Parent=='Information Restriction' 
+                    <input [disabled]="element.MasterDataId>0 && (Parent=='Information Restriction' 
                                        || Parent=='Period Type'
                                        || Parent=='Roll No Generation' 
                                        || Parent=='Class Promotion'
@@ -50,7 +50,7 @@
                                        || element.MasterDataName=='Student'
                                        || element.MasterDataName=='Cash'
                                        || element.MasterDataName=='Teaching'  
-                                       || element.MasterDataName=='Non Teaching'"  
+                                       || element.MasterDataName=='Non Teaching')"  
                         matInput [value]="element.MasterDataName"
                         [(ngModel)]="element.MasterDataName" autocomplete="Off" placeholder="" (blur)="onBlur(element)"
                         [minlength]="1" [maxlength]="50">

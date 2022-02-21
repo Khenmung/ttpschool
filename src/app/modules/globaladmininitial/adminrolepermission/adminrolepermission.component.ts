@@ -427,6 +427,7 @@ export class AdminrolepermissionComponent implements OnInit {
       // " and PermissionId eq " + row.PermissionId +
       " and PlanFeatureId eq " + row.PlanFeatureId +
       " and OrgId eq " + this.UserDetails[0]["orgId"];
+      
 
     if (row.ApplicationFeatureRoleId > 0)
       checkFilterString += " and ApplicationFeatureRoleId ne " + row.ApplicationFeatureRoleId;

@@ -1,12 +1,12 @@
 <mat-card>
-    <mat-card-title>Fee Payment Detail</mat-card-title>
-    <mat-card-subtitle><strong>
+    <mat-card-title style="margin: 20px;">Fee Payment Detail</mat-card-title>
+    <mat-card-subtitle style="margin: 0px 20px 20px 20px;"><strong>
             Student</strong>: {{StudentName}}<br>
         <strong>Fee Type</strong>: {{studentInfoTodisplay.StudentFeeType}}
     </mat-card-subtitle>
-    <mat-card-content>
-        <div style="padding: 0px 0px 15px 15px;" fxLayout="row wrap" fxLayoutGap="100px">
-            <div style="width: 100%;">
+    <mat-card-content style="margin: 0px 20px 20px 20px;">
+        <!-- <div style="padding: 0px 0px 15px 15px;" fxLayout="row wrap" fxLayoutGap="100px"> -->
+            <!-- <div style="width: 100%;"> -->
                 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
                 <alert></alert>
                 <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
@@ -144,8 +144,8 @@
                             [StudentClass]="studentInfoTodisplay" [BillDetail]="MonthlyDueDetail"></app-feereceipt>
                     </mat-tab>
                 </mat-tab-group>
-            </div>
-        </div>
+            <!-- </div> -->
+        <!-- </div> -->
         <div>
             <button [disabled]="loading" (click)="back()" class="mat-raised-button">
                 <mat-icon>arrow_back</mat-icon>
