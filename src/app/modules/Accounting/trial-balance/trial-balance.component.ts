@@ -52,7 +52,7 @@ export class TrialBalanceComponent implements OnInit {
     DocDate: new Date(),
     PostingDate: new Date(),
     Reference: '',
-    GLAccountId: 0,
+    LedgerId: 0,
     DebitCreditId: 0,
     Amount: '',
     ShortText: '',
@@ -65,7 +65,7 @@ export class TrialBalanceComponent implements OnInit {
     "DocDate",
     "PostingDate",
     "Reference",
-    "GLAccountId",
+    "LedgerId",
     "DebitCreditId",
     "Amount",
     "ShortText",
@@ -145,14 +145,14 @@ export class TrialBalanceComponent implements OnInit {
       DocDate: new Date(),
       PostingDate: new Date(),
       Reference: '',
-      GLAccountId: 0,
+      LedgerId: 0,
       DebitCreditId: 0,
       Amount: '',
       ShortText: '',
       Active: 0,
       Action: true
     }
-    this.AccountingVoucherList.push(newdata);
+    //this.AccountingVoucherList.push(newdata);
     this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
   }
 
@@ -172,7 +172,7 @@ export class TrialBalanceComponent implements OnInit {
       "DocDate",
       "PostingDate",
       "Reference",
-      "GLAccountId",
+      "LedgerId",
       "DebitCreditId",
       "Amount",
       "ShortText",
@@ -180,7 +180,7 @@ export class TrialBalanceComponent implements OnInit {
     ];
 
     list.PageName = this.AccountingVoucherListName;
-    list.lookupFields = ["AccountingTrialBalance"];
+    //list.lookupFields = ["AccountingTrialBalance"];
     list.filter = [filterStr];
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
@@ -249,7 +249,7 @@ export class TrialBalanceComponent implements OnInit {
     this.AccountingVoucherData.DebitCreditId = row.DebitCreditId;
     this.AccountingVoucherData.PostingDate = row.PostingDate;
     this.AccountingVoucherData.Reference = row.Reference;
-    this.AccountingVoucherData.GLAccountId = row.GLAccountId;
+    this.AccountingVoucherData.LedgerId = row.LedgerId;
     this.AccountingVoucherData.ShortText = row.ShortText;
     this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
     if (row.AccountingVoucherId == 0) {
@@ -320,7 +320,7 @@ export class TrialBalanceComponent implements OnInit {
         //  //console.log('data.value', data.value);
         this.GLAccounts = data.value.map(f => {
           return {
-            GLAccountId: f.AccountingTrialBalanceId,
+            LedgerId: f.AccountingTrialBalanceId,
             GLAccount: f.GeneralLedger
           }
         });

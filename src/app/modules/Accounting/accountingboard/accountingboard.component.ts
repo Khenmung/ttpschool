@@ -14,8 +14,8 @@ import { TrialBalanceComponent } from '../trial-balance/trial-balance.component'
 })
 export class AccountingboardComponent implements AfterViewInit {
   components = [
-    GeneralLedgerComponent,
     JournalEntryComponent,
+    GeneralLedgerComponent,
     TrialBalanceComponent,
     
   ];
@@ -56,8 +56,8 @@ export class AccountingboardComponent implements AfterViewInit {
 
     }
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.VOUCHER)
-    var comindx = this.components.indexOf(GeneralLedgerComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.JOURNALENTRY)
+    var comindx = this.components.indexOf(JournalEntryComponent);
     this.GetComponents(perObj,comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.TRIALBALANCE)

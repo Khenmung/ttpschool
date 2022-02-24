@@ -52,8 +52,7 @@ export class LoginComponent implements OnInit {
     private alert: AlertService,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
-    private route: Router,
-    private shareddata: SharedataService,
+    private route: Router,   
     private mediaObserver: MediaObserver,
     private fb: FormBuilder,
     private contentservice: ContentService

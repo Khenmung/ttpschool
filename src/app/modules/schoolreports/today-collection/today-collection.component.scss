@@ -3,13 +3,16 @@
     place-items: center end;
 }
 
-.mat-table {
-    overflow  : auto;
-    max-height: 500px;
+// .mat-table {
+//     overflow  : auto;
+//     max-height: 500px;
+// }
+mat-cell:first-of-type {
+    padding-left: 0px;
 }
-
 .element-row {
     position: relative;
+
 }
 
 .element-row:not(.expanded) {

@@ -48,13 +48,26 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="FeeCategoryId">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Fee Category
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Category
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-select (selectionChange)="onBlur(element)" [value]="element.FeeCategoryId"
+                            <mat-select (selectionChange)="GetSubCategory(element)" [value]="element.FeeCategoryId"
                                 [(ngModel)]="element.FeeCategoryId">
                                 <mat-option *ngFor="let item of FeeCategories" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="FeeSubCategoryId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Sub-Category
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.FeeSubCategoryId"
+                                [(ngModel)]="element.FeeSubCategoryId">
+                                <mat-option *ngFor="let item of element.FeeSubCategories" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
@@ -95,7 +108,7 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row style="width: 100%;display: flex;align-items: baseline;" *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
-            <mat-paginator [pageSizeOptions]="[10,20,50]"></mat-paginator>
+            <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
         </div>
 
     </div>

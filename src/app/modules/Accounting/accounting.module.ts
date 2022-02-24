@@ -8,6 +8,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ErrorStateMatcher, MAT_DATE_LOCALE } from '@angular/material/core';
+import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
 
 @NgModule({
   declarations: [AccountingComponents],
@@ -22,6 +24,10 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     MaterialModule,
     MatAutocompleteModule
   ],
-  exports:[AccountingComponents]
+  exports:[AccountingComponents],
+  providers:[
+    { provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+  ],
 })
 export class AccountingModule { }

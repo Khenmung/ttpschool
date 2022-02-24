@@ -15,7 +15,7 @@
                             <mat-icon>payments</mat-icon>&nbsp;Payments
                         </ng-template>
                         <div fxLayout="row" fxLayoutAlign="start space-around">
-                            <div style="display: flex;flex-direction: column;">
+                            <div style="margin-top:15px;display: flex;flex-direction: column;border: 1px solid lightgray;">
                                 <div style="width:50%" id="printSection">
                                     <mat-table #table [dataSource]="dataSource" style="min-width: 400px;">
                                         <ng-container matColumnDef="SlNo">
@@ -62,15 +62,15 @@
                                             class="element-row" [class.expanded]="expandedElement == row"></mat-row>
                                     </mat-table>
                                 </div>
-                                <div style="margin-top: 15px;display: flex;justify-content: center;">
+                                <div style="margin: 15px;display: flex;justify-content: center;">
                                     <button [disabled]="loading" matTooltip="print" printSectionId="printSection"
                                         [useExistingCss]="true" ngxPrint class="mat-raised-button">
                                         <mat-icon>print</mat-icon>
                                     </button>
                                 </div>
                             </div>
-                            <div style="background-color: lightgray;width:1px">&nbsp;</div>
-                            <div style="width: 50%;">
+                            <!-- <div style="background-color: lightgray;width:1px">&nbsp;asdf</div> -->
+                            <div style="width: 50%;margin: 15px 0px 0px 15px;border: 1px solid lightgray;">
                                 <mat-table [dataSource]="billdataSource">
                                     <ng-container matColumnDef="SlNo">
                                         <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
@@ -146,7 +146,7 @@
                 </mat-tab-group>
             <!-- </div> -->
         <!-- </div> -->
-        <div>
+        <div style="margin: 15px;justify-content: center;display:flex">
             <button [disabled]="loading" (click)="back()" class="mat-raised-button">
                 <mat-icon>arrow_back</mat-icon>
             </button>

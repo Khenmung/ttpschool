@@ -186,7 +186,7 @@ export class FeereceiptComponent implements OnInit {
     ];
 
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["AccountingVouchers($select=AccountingVoucherId,ShortText,GLAccountId,FeeReceiptId,Amount,ClassFeeId)"];
+    list.lookupFields = ["AccountingVouchers($select=AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
     list.filter = ["StudentClassId eq " + this.studentInfoTodisplay.StudentClassId];
 
     this.dataservice.get(list)

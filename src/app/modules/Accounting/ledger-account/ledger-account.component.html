@@ -5,128 +5,162 @@
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
     <div style="padding: 15px;">
-        <div style="width: 100%;">
-            <form [formGroup]="searchForm">               
-                <mat-form-field appearance="outline">
-                    <mat-label>Account Nature</mat-label>
-                    <mat-select formControlName="searchAccountNatureId" (selectionChange)="SearchAccountNatureChanged()">
-                        <mat-option *ngFor="let option of AccountNatures" [value]="option.MasterDataId">
-                            {{option.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Account Group</mat-label>
-                    <mat-select formControlName="searchAccountGroupId">
-                        <mat-option *ngFor="let option of AccountGroups" [value]="option.MasterDataId">
-                            {{option.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>  
-                <mat-form-field appearance="outline">
-                    <mat-label>ledger account</mat-label>
-                    <input type="text" matInput formControlName="searchLedgerName" [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                            {{option.GeneralLedgerName}}
-                        </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>     
-                <button [disabled]="loading" class="mat-raised-button" (click)="GetGeneralLedger()">
-                    <mat-icon>search</mat-icon>
-                </button>                
-            </form>            
-            <mat-table #table [dataSource]="dataSource">               
-                <ng-container matColumnDef="GeneralLedgerId">
-                    <mat-header-cell *matHeaderCellDef>Id
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.GeneralLedgerId}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="GeneralLedgerName">
-                    <mat-header-cell *matHeaderCellDef>Account
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           <mat-form-field appearance="outline">
-                               <input matInput autocomplete="Off"
-                               [maxlength]="50"
-                               (blur)="onBlur(element)"
-                               [value]="element.GeneralLedgerName"  
-                               [(ngModel)]="element.GeneralLedgerName">
-                           </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="AccountNatureId">
-                    <mat-header-cell *matHeaderCellDef>Account Nature
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           <mat-form-field appearance="outline">
-                               <mat-select (selectionChange)="AccountNatureChanged(element)" 
-                               [(ngModel)]="element.AccountNatureId" 
-                               [value]="element.AccountNatureId">
-                                   <mat-option *ngFor="let item of AccountNatures" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
-                               </mat-select>
-                           </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="AccountGroupId">
-                    <mat-header-cell *matHeaderCellDef>Account Group
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           <mat-form-field appearance="outline">                               
-                               <mat-select (selectionChange)="onBlur(element)" 
-                               [(ngModel)]="element.AccountGroupId" 
-                               [value]="element.AccountGroupId">
-                                <mat-option *ngFor="let item of element.AccountGroups" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
-                               </mat-select>
-                           </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ParentId">
-                    <mat-header-cell *matHeaderCellDef>Parent
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-label>parent account</mat-label>
-                            <input type="text" matInput 
-                            formControlName="ParentId" 
-                            [(ngModel)]="element.ParentId"
-                            [value]="element.ParentId"
-                            [matAutocomplete]="auto">
-                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                                    {{option.GeneralLedgerName}}
-                                </mat-option>
-                            </mat-autocomplete>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" style="justify-content: center;">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
-                            [checked]="element.Active==1?true:false">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: start;"></mat-row>
-            </mat-table>
-        </div>
-
+        <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline">
+                <mat-label>Account Nature</mat-label>
+                <mat-select formControlName="searchAccountNatureId" (selectionChange)="SearchAccountNatureChanged()">
+                    <mat-option *ngFor="let option of AccountNatures" [value]="option.MasterDataId">
+                        {{option.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Account Group</mat-label>
+                <mat-select formControlName="searchAccountGroupId">
+                    <mat-option *ngFor="let option of AccountGroups" [value]="option.MasterDataId">
+                        {{option.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>ledger account</mat-label>
+                <input type="text" matInput formControlName="searchLedgerName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option.GeneralLedgerName}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetGeneralLedger()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </form>
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="GeneralLedgerId">
+                <mat-header-cell *matHeaderCellDef>Id
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.GeneralLedgerId}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="GeneralLedgerName">
+                <mat-header-cell *matHeaderCellDef>Account
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                            [value]="element.GeneralLedgerName" [(ngModel)]="element.GeneralLedgerName">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="AccountNatureId">
+                <mat-header-cell *matHeaderCellDef>Account Nature
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-select (selectionChange)="AccountNatureChanged(element)"
+                            [(ngModel)]="element.AccountNatureId" [value]="element.AccountNatureId">
+                            <mat-option *ngFor="let item of AccountNatures" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="AccountGroupId">
+                <mat-header-cell *matHeaderCellDef>Account Group
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.AccountGroupId"
+                            [value]="element.AccountGroupId">
+                            <mat-option *ngFor="let item of element.AccountGroups" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ParentId">
+                <mat-header-cell *matHeaderCellDef>Parent
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-label>parent account</mat-label>
+                        <input type="text" matInput formControlName="ParentId" [(ngModel)]="element.ParentId"
+                            [value]="element.ParentId" [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                                {{option.GeneralLedgerName}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ContactNo">
+                <mat-header-cell *matHeaderCellDef>Contact no.
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput autocomplete="Off" [maxlength]="30" (blur)="onBlur(element)"
+                            [value]="element.ContactNo" [(ngModel)]="element.ContactNo">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ContactName">
+                <mat-header-cell *matHeaderCellDef>Contact Person
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput autocomplete="Off" [maxlength]="30" (blur)="onBlur(element)"
+                            [value]="element.ContactName" [(ngModel)]="element.ContactName">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Email">
+                <mat-header-cell *matHeaderCellDef>Email
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput autocomplete="Off" [maxlength]="50" (blur)="onBlur(element)"
+                            [value]="element.Email" [(ngModel)]="element.Email">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Address">
+                <mat-header-cell *matHeaderCellDef>Address
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput autocomplete="Off" [maxlength]="255" (blur)="onBlur(element)"
+                            [value]="element.Address" [(ngModel)]="element.Address">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                        [checked]="element.Active==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="AddNew()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                        (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: start;">
+            </mat-row>
+        </mat-table>
     </div>
+
 </div>

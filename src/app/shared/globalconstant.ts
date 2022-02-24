@@ -6,7 +6,7 @@ import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:5000";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -193,7 +193,7 @@ export class globalconstants {
             },
             "accounting": {
                 "ACCOUNTING": "accounting",
-                "VOUCHER": "voucher",
+                "JOURNALENTRY": "journal entry",
                 "TRIALBALANCE": "trial balance",
                 "LEDGERACCOUNT": "ledger account"
             }

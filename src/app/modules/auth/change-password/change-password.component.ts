@@ -73,7 +73,7 @@ export class ChangePasswordComponent implements OnInit {
       'ConfirmPassword': ConfirmPassword
     }
     debugger;
-    this.authService.changePassword(payload).subscribe(
+    this.authService.CallAPI(payload,'ChangePassword').subscribe(
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;

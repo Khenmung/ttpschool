@@ -31,12 +31,9 @@
         </button>
     </div>
 </form>
+<!-- <div *ngIf="DateWiseCollection.length>0"> -->
 <div id="printSection">
-    <mat-table style="min-width: 600px;" #table [dataSource]="dataSource" matSort>
-        <!-- <ng-container matColumnDef="{{column}}" *ngFor="let column of DisplayColumns">
-        <mat-header-cell *matHeaderCellDef> {{column}} </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element[column]}} </mat-cell>
-    </ng-container> -->
+    <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="Student">
             <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.Student}} </mat-cell>
@@ -98,7 +95,7 @@
 
     <div style="padding-top: 15px;display:flex; flex-direction: row;">
         <div style="margin:10px 15px 20px 10px;padding-bottom: 15px; border: 1px solid lightgray;">
-            <div style="padding: 15px 20px 0px 20px;"><strong>Receipt Heads</strong></div>
+            <div style="padding: 15px 20px 0px 20px;"><strong>Fee Category</strong></div>
             <div *ngFor="let item of HeadsWiseCollection"
                 style="padding: 15px 15px 0px 20px; min-width:450px; display: flex;flex-direction: row;justify-content: center;align-items: center;">
 
@@ -124,15 +121,19 @@
         <span *ngIf="ErrorMessage.length>0">{{ErrorMessage}}</span>
     </div>
     <hr style="color:lightgrey;">
+
+</div>
+<div style="display: flex;flex-direction: row;justify-content: space-between;">
+    <div style="display: flex;flex-direction: row;padding: 15px;">
+        <button style="margin-right: 15px;" mat-raised-button (click)="toggle()">{{allRowsExpanded ? 'Collapse' :
+            'Expand'}}</button>
+        <span fxLayout="row" fxLayoutAlign="center center">
+            <button [disabled]="loading || DateWiseCollection.length ==0" matTooltip="print"
+                printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
+                <mat-icon>print</mat-icon>
+            </button>
+        </span>
+    </div>
     <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
 </div>
-<div style="display: flex;flex-direction: row;padding: 15px;">
-    <button style="margin-right: 15px;" mat-raised-button (click)="toggle()">{{allRowsExpanded ? 'Collapse' :
-        'Expand'}}</button>
-    <span fxLayout="row" fxLayoutAlign="center center">
-        <button [disabled]="loading || DateWiseCollection.length ==0" matTooltip="print" printSectionId="printSection"
-            [useExistingCss]="true" ngxPrint class="mat-raised-button">
-            <mat-icon>print</mat-icon>
-        </button>
-    </span>
-</div>
+<!-- </div> -->

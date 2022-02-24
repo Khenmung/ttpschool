@@ -4,8 +4,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { evaluate } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
+import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -30,8 +32,10 @@ export class DashboardclassfeeComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+
   Months = [];
-  //SaveAll = false;
+  VariableObjList = [];
+  LedgerData = [];
   FeeDefinitionListName = 'FeeDefinitions'
   DataCountToUpdate = -1;
   LoginUserDetail = [];
@@ -66,6 +70,7 @@ export class DashboardclassfeeComponent implements OnInit {
   };
   //matcher = new TouchedErrorStateMatcher();
   constructor(
+    private authservice: AuthService,
     private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
@@ -118,7 +123,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
             this.FeeDefinitions = [...f];
             if (this.FeeDefinitions.length == 0) {
-              this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
+              this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"],1).subscribe((d: any) => {
                 this.FeeDefinitions = [...d.value];
               })
             }
@@ -159,6 +164,66 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   UpdateSelectedBatchId(value) {
     this.SelectedBatchId = value;
+  }
+  CreateInvoice() {
+    this.GetInvoice()
+  }
+  GetInvoice() {
+    debugger;
+    var selectedMonth = this.searchForm.get("searchMonth").value;
+    var OrgIdAndbatchId = {
+      OrgId: this.LoginUserDetail[0]["orgId"],
+      BatchId: this.SelectedBatchId,
+      Month: selectedMonth
+    }
+
+    this.authservice.CallAPI(OrgIdAndbatchId, 'getinvoice')
+      .subscribe((data: any) => {
+        console.log("invoices", data)
+        var AmountAfterFormulaApplied = 0;
+        data.forEach(inv => {
+          this.VariableObjList.push(inv)
+          if (inv.Formula.length > 0) {
+            var formula = this.ApplyVariables(inv.Formula);
+            //after applying, remove again since it is for each student
+            this.VariableObjList.splice(this.VariableObjList.indexOf(inv), 1);
+            AmountAfterFormulaApplied = evaluate(formula);
+          }
+          this.LedgerData.push({
+            LedgerId: 0,
+            Active: 1,
+            GeneralLedgerId: 0,
+            BatchId: this.SelectedBatchId,
+            Balance: AmountAfterFormulaApplied,
+            Month: inv.Month,
+            StudentClassId: inv.StudentClassId,
+            OrgId: this.LoginUserDetail[0]["orgId"],
+            TotalDebit: AmountAfterFormulaApplied,
+            TotalCredit: 0,
+          });
+        });
+        console.log("ledgerdata",this.LedgerData)
+        this.authservice.CallAPI(this.LedgerData, 'createinvoice')
+          .subscribe((data: any) => {
+            this.alert.success("Invoice created successfully.", this.optionAutoClose);
+            this.loading = false;
+          })
+      });
+  }
+  ApplyVariables(formula) {
+    var filledVar = formula;
+    this.VariableObjList.forEach(stud => {
+      Object.keys(stud).forEach(studproperty => {
+        //var prop =studproperty.toLowerCase()
+        if (filledVar.includes(studproperty)) {
+          if (isNaN(stud[studproperty]))
+            filledVar = filledVar.replaceAll("[" + studproperty + "]", "'" + stud[studproperty] + "'");
+          else
+            filledVar = filledVar.replaceAll("[" + studproperty + "]", stud[studproperty]);
+        }
+      });
+    })
+    return filledVar;
   }
   SaveAll() {
     this.loading = true;
@@ -251,7 +316,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.loading=false;
+          this.loading = false;
           this.alert.error("Record already exists!", this.optionAutoClose);
         }
         else {
@@ -339,7 +404,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   CopyFromPreviousBatch() {
     //console.log("here ", this.PreviousBatchId)
-    if (this.PreviousBatchId==-1)
+    if (this.PreviousBatchId == -1)
       this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
     else
       this.GetClassFee(this.StandardFilterWithPreviousBatchId, 1)
@@ -392,9 +457,9 @@ export class DashboardclassfeeComponent implements OnInit {
               existing[0].SlNo = indx + 1;
               existing[0].FeeName = mainFeeName.FeeName;
               existing[0].Action = false;
-              existing[0].ClassFeeId = previousbatch ==1? 0: existing[0].ClassFeeId
-              existing[0].Active = previousbatch ==1? 0: existing[0].Active
-              existing[0].Month = previousbatch ==1? 0: existing[0].Month;
+              existing[0].ClassFeeId = previousbatch == 1 ? 0 : existing[0].ClassFeeId
+              existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active
+              existing[0].Month = previousbatch == 1 ? 0 : existing[0].Month;
 
               return existing[0];
             }

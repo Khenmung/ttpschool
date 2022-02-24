@@ -29,7 +29,7 @@
         <!-- "DocDate",
         "PostingDate",
         "Reference",
-        "GLAccountId",
+        "LedgerId",
         "DebitCreditId",
         "Amount",
         "ShortText",
@@ -72,13 +72,13 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="GLAccountId">
+            <ng-container matColumnDef="LedgerId">
                 <mat-header-cell *matHeaderCellDef> GL Accounts </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field [style.width.px]="130">
-                        <mat-select [(ngModel)]="element.GLAccountId" [value]="element.GLAccountId">
+                        <mat-select [(ngModel)]="element.LedgerId" [value]="element.LedgerId">
                             <mat-option [value]="0">GL Accounts</mat-option>
-                            <mat-option *ngFor="let item of GLAccounts" [value]="item.GLAccountId">{{item.GLAccount}}
+                            <mat-option *ngFor="let item of GLAccounts" [value]="item.LedgerId">{{item.GLAccount}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

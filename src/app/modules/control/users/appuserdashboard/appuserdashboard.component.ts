@@ -330,7 +330,7 @@ export class AppuserdashboardComponent implements OnInit {
   insert(row) {
 
     //debugger;
-    this.authservice.register(this.AppUsersData)
+    this.authservice.CallAPI(this.AppUsersData,'Register')
       .subscribe(
         (data: any) => {
 

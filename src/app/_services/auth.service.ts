@@ -44,22 +44,25 @@ ngOnInit(): void {
 
   }
 
-  register(userDetail): Observable<any> {
-    return this.http.post(this.AUTH_API + '/api/AuthManagement/Register',userDetail
-    , this.httpOptions);
-  }
-  RefreshToken(tokenrequest): Observable<any> {
-    return this.http.post(this.AUTH_API + '/api/AuthManagement/RefreshToken',tokenrequest
-    , this.httpOptions);
-  }
-  changePassword(payload): Observable<any> {    
-    return this.http.post(this.AUTH_API + '/api/AuthManagement/ChangePassword',payload, this.httpOptions);
-  }
-  forgotPassword(payload): Observable<any> {    
-    return this.http.post(this.AUTH_API + '/api/AuthManagement/ForgotPassword',payload, this.httpOptions);
-  }
-  resetPassword(payload): Observable<any> {    
-    return this.http.post(this.AUTH_API + '/api/AuthManagement/ResetPassword',payload, this.httpOptions);
+  // register(userDetail): Observable<any> {
+  //   return this.http.post(this.AUTH_API + '/api/AuthManagement/Register',userDetail
+  //   , this.httpOptions);
+  // }
+  // RefreshToken(tokenrequest): Observable<any> {
+  //   return this.http.post(this.AUTH_API + '/api/AuthManagement/RefreshToken',tokenrequest
+  //   , this.httpOptions);
+  // }
+  // changePassword(payload): Observable<any> {    
+  //   return this.http.post(this.AUTH_API + '/api/AuthManagement/ChangePassword',payload, this.httpOptions);
+  // }
+  // forgotPassword(payload): Observable<any> {    
+  //   return this.http.post(this.AUTH_API + '/api/AuthManagement/ForgotPassword',payload, this.httpOptions);
+  // }
+  // resetPassword(payload): Observable<any> {    
+  //   return this.http.post(this.AUTH_API + '/api/AuthManagement/ResetPassword',payload, this.httpOptions);
+  // }
+  CallAPI(payload,actionName):Observable<any>{
+    return this.http.post(this.AUTH_API + '/api/AuthManagement/'+ actionName,payload, this.httpOptions);
   }
   loadUserInfo() {
     let userdata; 

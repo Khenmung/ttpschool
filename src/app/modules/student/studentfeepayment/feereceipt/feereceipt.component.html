@@ -1,7 +1,7 @@
 <!-- <div class="divCls"><strong>Fee Receipts</strong></div> -->
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="display: flex;flex-direction: row;align-items: start;">
-    <div fxLayout="column" fxLayoutAlign="space-around start">
+    <div style="display: flex;flex-direction: column;padding: 15px 15px 15px 0px;">
         <div style="padding: 5px;"><b>Receipts</b></div>
         <div style="border:1px solid lightgray;">
             <mat-table [dataSource]="dataReceiptSource" matSort>
@@ -32,7 +32,7 @@
             </mat-table>
         </div>
     </div>
-    <div style="display: flex; flex-direction: column; width: 100%;">
+    <div style="display: flex; flex-direction: column; width: 100%;padding: 15px 0px 15px 0px;">
         <div style="padding: 5px;"><b>Print/Cancel Receipt</b></div>
         <div style="border:1px solid lightgray;" class="divCls" fxLayoutGap="100px" id="printSection">
             <div fxLayout="column" fxLayoutAlign="space-around center">
@@ -64,8 +64,6 @@
                 </span>
             </div>
             <div style="border-collapse: collapse; border: 1px solid lightgray;">
-                <br>
-                <div>
                     <mat-table [dataSource]="dataSource">
                         <ng-container matColumnDef="index">
                             <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
@@ -94,8 +92,7 @@
                         </mat-row>
                         <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
                         </mat-footer-row>
-                    </mat-table>
-                </div>
+                    </mat-table>            
             </div>
         </div>
         <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">

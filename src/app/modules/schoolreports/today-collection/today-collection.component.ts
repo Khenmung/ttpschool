@@ -168,7 +168,7 @@ export class TodayCollectionComponent implements OnInit {
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = [
-      "AccountingVouchers($filter=Active eq 1;$select=FeeReceiptId,GLAccountId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
+      "AccountingVouchers($filter=Active eq 1;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
 
     ]
     list.filter = [filterstring];
@@ -176,7 +176,7 @@ export class TodayCollectionComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        console.log('paymentd ata', data.value);
+        //console.log('paymentd ata', data.value);
         this.GrandTotalAmount = data.value.reduce((acc, current) => acc + current.TotalAmount, 0);
         this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
@@ -218,7 +218,7 @@ export class TodayCollectionComponent implements OnInit {
 
         const rows = [];
         this.DateWiseCollection.forEach(element => rows.push(element, { detailRow: true, element }));
-        console.log("rows", rows)
+        //console.log("rows", rows)
         this.dataSource = new MatTableDataSource(rows);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -233,7 +233,7 @@ export class TodayCollectionComponent implements OnInit {
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
           this.FeeDefinitions = [...f];
           if (this.FeeDefinitions.length == 0) {
-            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"]).subscribe((d: any) => {
+            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"],1).subscribe((d: any) => {
               this.FeeDefinitions = [...d.value];
             })
           }

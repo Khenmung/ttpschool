@@ -142,7 +142,7 @@ export class ChartReportComponent {
 
 
     //var classfeeObjForSelectedMonth = alasql("select sum(Amount) AS TotalAmount, ClassId from ? GROUP BY ClassId",[classfeeobj]);
-    var studentClassObj = alasql("select sum(1) AS NoOfStudent, ClassId from ? GROUP BY ClassId", [this.StudentClasses]);
+    //var studentClassObj = alasql("select sum(1) AS NoOfStudent, ClassId from ? GROUP BY ClassId", [this.StudentClasses]);
     this.VariableObjList = [];
     this.ReceiptAmount = 0;
     this.ExpectedAmount = 0;
@@ -169,7 +169,7 @@ export class ChartReportComponent {
     })
 
     //this.ExpectedAmount =  classfeeobj.reduce((acc,current)=> acc + current.Amount,0);
-    this.ReceiptAmount = paymentObj.reduce((acc, current) => acc + current.TotalDebit, 0);
+    this.ReceiptAmount = paymentObj.reduce((acc, current) => acc + current.TotalCredit, 0);
 
     var noofUnpaid = studentCount - paymentcount;
     this.pieChartLabels = ['Payment %', 'Non-payment %']

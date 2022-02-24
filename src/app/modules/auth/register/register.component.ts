@@ -139,7 +139,7 @@ export class RegisterComponent implements OnInit {
       OrganizationName: OrganizationName,
       ContactNo: ContactNo
     }
-    this.authService.register(userDetail).subscribe(
+    this.authService.CallAPI(userDetail,'Register').subscribe(
       data => {
         //this.AddAppUsers()
         this.alert.success("Congratulations! Your registration is successful.", this.optionsAutoClose);

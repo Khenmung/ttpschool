@@ -1,12 +1,16 @@
-.mat-column-DebitCreditId
-{
-    flex:0 0 50px;
+mat-form-field{
+    margin-right: 15px;   
+    width: 98%;}
+
+.mat-column-DocDate,.mat-column-PostingDate,
+.mat-column-Reference,.mat-column-GeneralLedgerAccountId,
+.mat-column-Amount{   
+    flex:1 1 150px;
 }
-.mat-column-DocDate,.mat-column-PostingDate,.mat-column-Reference,.mat-column-GLAccountId,
-.mat-column-Amount{
-    align-items: center;
-    flex:0 0 150px;
+.mat-column-Active,.mat-column-Action,.mat-column-DebitCreditId{
+    justify-content: center;
+    flex: 1 1 100px;
 }
 .mat-column-ShortText{
-    flex:0 0 160px;
+    flex:1 1 160px;
 }

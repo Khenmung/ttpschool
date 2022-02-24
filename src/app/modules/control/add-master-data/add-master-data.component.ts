@@ -159,31 +159,35 @@ export class AddMasterDataComponent implements OnInit {
 
     var applicationFilter = '';
     //applicationFilter = "Active eq 1 and PlanId eq " + this.UserDetails[0]["planId"]
-    var applicationFilter = "PlanId eq " + this.UserDetails[0]["planId"] +
-      " and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
+    var applicationFilter = "(OrgId eq 0 or OrgId eq " + this.UserDetails[0]["orgId"] +
+      ") and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
     let list: List = new List();
     list.fields = [
-      "MasterDataId",
-      "PlanAndMasterDataId"
+      "MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId"
     ];
-    list.PageName = "PlanAndMasterItems";
-    list.lookupFields = ["MasterData($select=MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId)"];
+    list.PageName = "MasterItems";
+    list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + this.UserDetails[0]["planId"] + ";$select=MasterDataId,PlanAndMasterDataId)"];
 
     list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
     //console.log("GetMastersForAutoComplete",this.SelectedApplicationId)  
     return this.dataservice.get(list).subscribe((data: any) => {
-      var result = data.value.map(d => {
-        d.MasterDataName = d.MasterData.MasterDataName
-        d.ParentId = d.MasterData.ParentId
-        d.ApplicationId = d.MasterData.ApplicationId
-        d.Description = d.MasterData.Description
-        d.OrgId = d.MasterData.OrgId
-        return d;
+      var result = [];
+      data.value.forEach(d => {
+        if (d.PlanAndMasterItems.length > 0) {
+          result.push({
+            MasterDataId:d.MasterDataId,
+            MasterDataName: d.MasterDataName,
+            ParentId: d.ParentId,
+            ApplicationId: d.ApplicationId,
+            Description: d.Description,
+            OrgId: d.OrgId,
+          });
+        }
       })//.filter(f=>f.ApplicationId == this.SelectedApplicationId)
 
       this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);
-      //console.log("MasterData",this.MasterData);
+      console.log("my MasterData", this.MasterData);
     })
 
   }
@@ -285,7 +289,8 @@ export class AddMasterDataComponent implements OnInit {
     debugger;
     this.loading = true;
     var _appId = this.MasterData.filter(f => f.MasterDataId == element.MasterDataId)[0].ApplicationId;
-    this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.UserDetails[0]["orgId"], _appId,0)
+    this.SubMasters=[];
+    this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.UserDetails[0]["orgId"], _appId, 0)
       .subscribe((data: any) => {
         this.SubMasters = [...data.value];
         this.loading = false;
@@ -381,7 +386,7 @@ export class AddMasterDataComponent implements OnInit {
     }
     _OrgId = this.UserDetails[0]["orgId"];
     //}
-    this.contentservice.GetDropDownDataFromDB(_searchParentId, _OrgId, Ids,0)
+    this.contentservice.GetDropDownDataFromDB(_searchParentId, _OrgId, Ids, 0)
       //this.GetMasters(_searchParentId, _OrgId,_appId)
       .subscribe((data: any) => {
         debugger;

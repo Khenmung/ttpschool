@@ -27,7 +27,7 @@ export class FeecollectionreportComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   Permission = 'deny';
   LoginUserDetail = [];
   TotalPaidStudentCount = 0;
@@ -86,7 +86,7 @@ export class FeecollectionreportComponent implements OnInit {
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-//      //console.log('this.Permission', this.Permission)
+      //      //console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
@@ -102,8 +102,10 @@ export class FeecollectionreportComponent implements OnInit {
 
         this.SearchForm = this.fb.group({
           searchStudentName: [0],
-          searchClassId: [0],
-          searchSectionId: [0]
+          // searchClassId: [0],
+          // searchSectionId: [0],
+          searchMonth: [0],
+          PaidNotPaid: ['']
         })
 
         this.filteredOptions = this.SearchForm.get("searchStudentName").valueChanges
@@ -137,19 +139,34 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetStudentFeePaymentReport() {
-    debugger;
-
-    if (this.SearchForm.get("searchStudentName").value == 0 && this.SearchForm.get("searchClassId").value == 0) {
-      this.alert.error('Please select either student or class!', this.options.autoClose);
-      return;
-    }
-
+    
     this.ErrorMessage = '';
     let filterstring = '';
-    
+
+    var selectedMonth = this.SearchForm.get("searchMonth").value;
+    var paidNotPaid = this.SearchForm.get("PaidNotPaid").value;
+    var studentclassId = this.SearchForm.get("searchStudentName").value.StudentClassId;
+    if (studentclassId == 0) {
+      if (selectedMonth == 0) {
+        this.loading = false;
+        this.alert.error("Please select month.", this.options.autoClose);
+        return;
+      }
+      else {
+
+       if (paidNotPaid == 'NotPaid')
+          filterstring += " and Month lt " + selectedMonth
+        else
+          filterstring += " and Month ge " + selectedMonth
+
+      }
+    }
+    else
+      filterstring += " and StudentClassId eq " + studentclassId;
+
     filterstring = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    if (this.SearchForm.get("searchStudentName").value.StudentClassId>0)
-    filterstring += " and StudentClassId eq " + this.SearchForm.get("searchStudentName").value.StudentClassId;
+
+
     let list: List = new List();
     list.fields = [
       'StudentClassId',
@@ -159,8 +176,8 @@ export class FeecollectionreportComponent implements OnInit {
     list.PageName = "AccountingLedgerTrialBalances";
     list.lookupFields = ["StudentClass($select=ClassId,RollNo,SectionId,StudentClassId;$expand=Student($select=FirstName,LastName))"];
     list.filter = [filterstring];
-    this.ELEMENT_DATA =[];
-    this.dataSource= new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
+    this.ELEMENT_DATA = [];
+    this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
@@ -198,15 +215,14 @@ export class FeecollectionreportComponent implements OnInit {
 
           })
           this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a, b) => a.month - b.month)
-          this.loading=false;
+          this.loading = false;
           this.TotalPaidStudentCount = this.ELEMENT_DATA.length;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }
-        else
-        {
-          this.alert.info("No record found.",this.options.autoClose);
-          this.loading=false;
+        else {
+          this.alert.info("No record found.", this.options.autoClose);
+          this.loading = false;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }
@@ -248,7 +264,7 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);

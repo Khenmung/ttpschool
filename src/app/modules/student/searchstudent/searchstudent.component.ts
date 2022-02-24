@@ -194,7 +194,7 @@ export class searchstudentComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
+        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"],1).subscribe((f: any) => {
           this.FeeDefinitions = [...f.value];
           this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
         });

@@ -2,6 +2,20 @@
 <alert></alert>
 <form [formGroup]="SearchForm">
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px">
+       
+        <div style="padding: 15px 10px 2px 15px;height: 55px;">
+            <mat-radio-group formControlName="PaidNotPaid">
+                <mat-radio-button class="example-margin" value="Paid">Paid</mat-radio-button>&nbsp;
+                <mat-radio-button class="example-margin" [checked]="true" value="NotPaid">Not Paid</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <mat-form-field [style.width.px]="250" appearance="outline" style="margin-right: 15px;">
+            <mat-label>Month</mat-label>
+            <mat-select formControlName="searchMonth">
+                <mat-option [value]="0">select</mat-option>
+                <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
+            </mat-select>
+        </mat-form-field>
         <mat-form-field [style.width.px]="250" appearance="outline">
             <mat-label>Name-class-section-roll no</mat-label>
             <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
@@ -11,7 +25,7 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <!-- <mat-form-field appearance="outline">
             <mat-label>Class</mat-label>
             <mat-select formControlName="searchClassId">
                 <mat-option>--class--</mat-option>
@@ -28,7 +42,7 @@
                     {{item.MasterDataName}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
         <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentReport()">
             <mat-icon>search</mat-icon>
         </button>

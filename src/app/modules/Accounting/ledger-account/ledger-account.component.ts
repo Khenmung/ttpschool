@@ -51,6 +51,10 @@ export class GeneralLedgerComponent implements OnInit {
   GeneralLedgerData = {
     GeneralLedgerId: 0,
     GeneralLedgerName: '',
+    ContactNo: '',
+    ContactName: '',
+    Email: '',
+    Address: '',
     ParentId: 0,
     AccountNatureId: 0,
     AccountGroupId: 0,
@@ -64,6 +68,10 @@ export class GeneralLedgerComponent implements OnInit {
     'ParentId',
     'AccountNatureId',
     'AccountGroupId',
+    'ContactNo',
+    'ContactName',
+    'Email',
+    'Address',
     'Active',
     'Action'
   ];
@@ -143,6 +151,10 @@ export class GeneralLedgerComponent implements OnInit {
       AccountNatureId: this.searchForm.get("searchAccountNatureId").value,
       AccountGroupId: this.searchForm.get("searchAccountGroupId").value,
       AccountGroups: this.AccountGroups,
+      ContactNo: '',
+      ContactName: '',
+      Email: '',
+      Address: '',
       OrgId: 0,
       Active: 0,
       Action: false
@@ -155,22 +167,19 @@ export class GeneralLedgerComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    if(row.AccountNatureId==0)
-    {
-      this.loading=false;
-      this.alert.error("Please select account nature.",this.optionAutoClose);
+    if (row.AccountNatureId == 0) {
+      this.loading = false;
+      this.alert.error("Please select account nature.", this.optionAutoClose);
       return;
     }
-    if(row.AccountGroupId==0)
-    {
-      this.loading=false;
-      this.alert.error("Please select account group.",this.optionAutoClose);
+    if (row.AccountGroupId == 0) {
+      this.loading = false;
+      this.alert.error("Please select account group.", this.optionAutoClose);
       return;
     }
-    if(row.GeneralLedgerName.length==0)
-    {
-      this.loading=false;
-      this.alert.error("Please enter account name.",this.optionAutoClose);
+    if (row.GeneralLedgerName.length == 0) {
+      this.loading = false;
+      this.alert.error("Please enter account name.", this.optionAutoClose);
       return;
     }
     let checkFilterString = "GeneralLedgerName eq '" + row.GeneralLedgerName + "'";
@@ -200,6 +209,10 @@ export class GeneralLedgerComponent implements OnInit {
           this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
           this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
           this.GeneralLedgerData.GeneralLedgerName = row.GeneralLedgerName;
+          this.GeneralLedgerData.ContactNo=row.ContactNo,
+          this.GeneralLedgerData.ContactName=row.ContactName,
+          this.GeneralLedgerData.Email=row.Email,
+          this.GeneralLedgerData.Address=row.Address,
           this.GeneralLedgerData.ParentId = row.ParentId;
           this.GeneralLedgerData.Active = row.Active;
           this.GeneralLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -308,6 +321,10 @@ export class GeneralLedgerComponent implements OnInit {
       'ParentId',
       'AccountNatureId',
       'AccountGroupId',
+      'ContactNo',
+      'ContactName',
+      'Email',
+      'Address',
       'Active',
     ];
 
@@ -317,9 +334,9 @@ export class GeneralLedgerComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          var acgroup=[];
+          var acgroup = [];
           this.GeneralLedgerList = data.value.map(item => {
-            acgroup=this.allMasterData.filter(f => f.ParentId == item.AccountNatureId);
+            acgroup = this.allMasterData.filter(f => f.ParentId == item.AccountNatureId);
             item.AccountGroups = acgroup;
             item.Action = false;
             return item;
@@ -345,8 +362,8 @@ export class GeneralLedgerComponent implements OnInit {
   }
   AccountNatureChanged(row) {
     debugger;
-    row.Action = true;    
-    var acgroup=this.allMasterData.filter(f => f.ParentId == row.AccountNatureId);
+    row.Action = true;
+    var acgroup = this.allMasterData.filter(f => f.ParentId == row.AccountNatureId);
     row.AccountGroups = acgroup;
     this.dataSource = new MatTableDataSource(this.GeneralLedgerList);
   }
@@ -381,6 +398,10 @@ export interface IGeneralLedger {
   GeneralLedgerId: number;
   GeneralLedgerName: string;
   ParentId: number;
+  ContactNo: string;
+  ContactName: string;
+  Email: string;
+  Address: string;
   AccountNatureId: number;
   AccountGroupId: number;
   AccountGroups: any[];

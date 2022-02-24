@@ -68,7 +68,7 @@ export class ResetpasswordComponent implements OnInit {
       'ConfirmPassword': ConfirmPassword
     }
     debugger;
-    this.authService.resetPassword(payload).subscribe(
+    this.authService.CallAPI(payload,'ResetPassword').subscribe(
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;
