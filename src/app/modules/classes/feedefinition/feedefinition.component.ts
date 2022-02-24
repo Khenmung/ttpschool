@@ -21,6 +21,7 @@ export class FeeDefinitionComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -31,7 +32,7 @@ export class FeeDefinitionComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   FeeDefinitionListName = 'FeeDefinitions';
   Applications = [];
   loading = false;
@@ -49,7 +50,8 @@ export class FeeDefinitionComponent implements OnInit {
     FeeName: '',
     Description: '',
     FeeCategoryId: 0,
-    AmountEditable:0,
+    FeeSubCategoryId: 0,
+    AmountEditable: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
@@ -59,6 +61,7 @@ export class FeeDefinitionComponent implements OnInit {
     "FeeName",
     "Description",
     "FeeCategoryId",
+    "FeeSubCategoryId",
     "AmountEditable",
     "Active",
     "Action"
@@ -104,7 +107,7 @@ export class FeeDefinitionComponent implements OnInit {
       else {
         this.GetMasterData();
         this.GetFeeDefinitions();
-     
+
       }
     }
   }
@@ -116,7 +119,9 @@ export class FeeDefinitionComponent implements OnInit {
       FeeName: '',
       Description: '',
       FeeCategoryId: 0,
-      AmountEditable:0,
+      FeeSubCategoryId: 0,
+      FeeSubCategories: [],
+      AmountEditable: 0,
       OrgId: 0,
       BatchId: 0,
       Active: 0,
@@ -155,7 +160,10 @@ export class FeeDefinitionComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "FeeName eq '" + row.FeeName + "'"
+    let checkFilterString = "FeeName eq '" + row.FeeName + "'" +
+    " and FeeCategoryId eq " + row.FeeCategoryId +
+    " and FeeSubCategoryId eq " + row.FeeSubCategoryId +
+    " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
     if (row.FeeCategoryId == 0) {
       this.alert.error("Please select Fee Category.", this.optionsNoAutoClose);
@@ -191,6 +199,7 @@ export class FeeDefinitionComponent implements OnInit {
           this.FeeDefinitionData.FeeName = row.FeeName;
           this.FeeDefinitionData.Description = row.Description;
           this.FeeDefinitionData.FeeCategoryId = row.FeeCategoryId;
+          this.FeeDefinitionData.FeeSubCategoryId = row.FeeSubCategoryId;
           this.FeeDefinitionData.AmountEditable = row.AmountEditable;
           this.FeeDefinitionData.Active = row.Active;
           this.FeeDefinitionData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -218,6 +227,10 @@ export class FeeDefinitionComponent implements OnInit {
   }
   loadingFalse() {
     this.loading = false;
+  }
+  GetSubCategory(row) {
+    row.FeeSubCategories = this.allMasterData.filter(f => f.ParentId == row.FeeCategoryId);
+    row.Action = true;
   }
   insert(row) {
 
@@ -256,6 +269,7 @@ export class FeeDefinitionComponent implements OnInit {
       "FeeName",
       "Description",
       "FeeCategoryId",
+      "FeeSubCategoryId",
       "AmountEditable",
       "OrgId",
       "BatchId",
@@ -269,8 +283,13 @@ export class FeeDefinitionComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.FeeDefinitionList = [...data.value];
+          this.FeeDefinitionList = data.value.map(m => {
+            m.FeeSubCategories = this.allMasterData.filter(f => f.ParentId == m.FeeCategoryId);
+            return m;
+          });
+
         }
+        //console.log('this.FeeDefinitionList',this.FeeDefinitionList)
         this.dataSource = new MatTableDataSource<IFeeDefinition>(this.FeeDefinitionList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -281,9 +300,10 @@ export class FeeDefinitionComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
+       
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
         this.loading = false;
@@ -310,6 +330,7 @@ export interface IFeeDefinition {
   FeeName: string;
   Description: string;
   FeeCategoryId: number;
+  FeeSubCategoryId: number;
   AmountEditable: number;
   OrgId: number;
   BatchId: number;
