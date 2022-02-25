@@ -5,7 +5,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { MatConfirmDialogComponent } from './shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NotfoundComponent } from './shared/components/notfound/notfound.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -18,7 +17,6 @@ import { ChartsModule } from 'ng2-charts';
 @NgModule({
   declarations: [
     AppComponent,
-    MatConfirmDialogComponent,
     NotfoundComponent,
 
   ],
@@ -44,7 +42,6 @@ import { ChartsModule } from 'ng2-charts';
   
   ],
   bootstrap: [AppComponent],
-  entryComponents: [MatConfirmDialogComponent
-  ]
+
 })
 export class AppModule { }

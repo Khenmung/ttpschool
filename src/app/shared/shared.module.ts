@@ -10,16 +10,22 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { EncodeHTMLPipe } from '../encode-html.pipe';
 import { GrdFilterPipe } from './gridfilter';
+import { ConfirmDialogComponent } from './components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
     AreaComponent,
     AutofocusDirective,
     EncodeHTMLPipe,
-    GrdFilterPipe
+    GrdFilterPipe,
+    ConfirmDialogComponent
     ],
   imports: [
     CommonModule,
+    //BrowserAnimationsModule,
+    MatDialogModule,
     FlexLayoutModule,
     MaterialModule,
     MultiLevelMenuModule,    
@@ -28,9 +34,13 @@ import { GrdFilterPipe } from './gridfilter';
     MatProgressBarModule,
     MatSidenavModule
   ],
+  entryComponents: [
+    ConfirmDialogComponent
+  ],
   exports: [
     AreaComponent,
-    EncodeHTMLPipe
+    EncodeHTMLPipe,
+    ConfirmDialogComponent
   ],
   
 

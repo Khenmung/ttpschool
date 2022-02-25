@@ -57,7 +57,7 @@ export class StudentboardComponent implements AfterViewInit {
     }
   
     public ngAfterViewInit(): void {
-      //debugger
+      debugger
       this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
       this.LoginUserDetail =  this.tokenStorage.getUserDetail();
       this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);

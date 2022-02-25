@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -43,8 +46,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   };
   StandardFilterWithBatchId = '';
   StandardFilterWithPreviousBatchId = '';
-  SameClassPreviousBatch ="SameClassPreviousBatch";
-  PreviousClassPreviousBatch="PreviousClassPreviousBatch";
+  SameClassPreviousBatch = "SameClassPreviousBatch";
+  PreviousClassPreviousBatch = "PreviousClassPreviousBatch";
+  HeaderTitle = '';
   loading = false;
   RollNoGeneration = [];
   //  ClassPromotion =[];
@@ -77,16 +81,18 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
+    'StudentId',
     'StudentName',
     'SectionId',
     'RollNo',
     'FeeTypeId',
-    'Promote',
     'Action'
   ];
   Students: IStudent[] = [];
   filteredOptions: Observable<IStudent[]>;
   constructor(
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private contentservice: ContentService,
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
@@ -163,7 +169,51 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       }
     }
   }
+  openDialog() {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+    const snack = this.snackBar.open('Snack bar open before dialog');
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        //this.GenerateRollNo();
+        snack.dismiss();
+        const a = document.createElement('a');
+        a.click();
+        a.remove();
+        snack.dismiss();
+        this.snackBar.open('Closing snack bar in a few seconds', 'Fechar', {
+          duration: 2000,
+        });
+      }
+    });
+  }
+  GenerateRollNoOnList() {
+    if (this.StudentClassList.length > 0) {
+      this.StudentClassList.sort((a, b) => {
+        const compareGender = a.GenderName.localeCompare(b.GenderName);
+        const compareName = a.StudentName.localeCompare(b.StudentName);
+        return compareGender || compareName;
+      })
+      this.StudentClassList.forEach((studcls,indx)=>{
+        studcls.RollNo = indx+1+"";
+        studcls.Action=true;
+      })
+      this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+  }
   GenerateRollNo() {
+
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     this.loading = true;
@@ -357,21 +407,25 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   CopyFromSameClassPreviousBatch() {
     if (this.PreviousBatchId == -1)
       this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
-    else
+    else {
+      this.HeaderTitle = 'Same Class Previous Batch'
       this.GetStudentClasses(this.SameClassPreviousBatch);
+    }
   }
   CopyFromPreviousClassAndBatch() {
     if (this.PreviousBatchId == -1)
       this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
-    else
+    else {
+      this.HeaderTitle = 'From Previous Class and Batch'
       this.GetStudentClasses(this.PreviousClassPreviousBatch)
+    }
   }
   GetStudentClasses(previousbatch) {
 
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
-
+    this.HeaderTitle = '';
     if (_classId == 0) {
       this.alert.info("Please select class.", this.optionsNoAutoClose);
       this.loading = false;
@@ -384,7 +438,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
         filterStr += " and ClassId eq " + _classId + " and Promoted eq 0";
       }
-      else if (previousbatch == this.PreviousClassPreviousBatch ) {
+      else if (previousbatch == this.PreviousClassPreviousBatch) {
         var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
         var previousClassId = 0;
         if (classIdIndex > 0)//means if first element
@@ -436,13 +490,17 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         result = [...StudentClassesdb.value];
 
         result.forEach(s => {
+          var _genderName = '';
+          var genderObj = this.Genders.filter(f => f.MasterDataId == s.Gender);
+          if (genderObj.length > 0)
+            _genderName = genderObj[0].MasterDataName;
           var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
           var _feetype = ''
           if (feetype.length > 0)
             _feetype = feetype[0].FeeTypeName;
 
           this.StudentClassList.push({
-            StudentClassId: previousbatch == '' ? s.StudentClassId:0,
+            StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + " " + s.Student.LastName,
@@ -452,15 +510,19 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             RollNo: s.RollNo,
             SectionId: s.SectionId,
             Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
-            Active: previousbatch == '' ? s.Active:0,
+            Active: previousbatch == '' ? s.Active : 0,
             Promote: 0,
+            GenderName: _genderName,
             Action: false
           });
         })
 
-        if (this.StudentClassList.length == 0)
+        if (this.StudentClassList.length == 0) {
+          this.HeaderTitle = '';
           this.alert.info("No record found!", this.optionAutoClose);
-        this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
+        }
+
+        this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a,b)=>+a.RollNo - +b.RollNo));
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.loading = false;
@@ -495,10 +557,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         });
   }
   SaveAll() {
+    debugger;
     var _toUpdate = this.StudentClassList.filter(f => f.Action);
     this.RowsToUpdate = _toUpdate.length;
     _toUpdate.forEach(e => {
-      this.RowsToUpdate--;
+     
       this.UpdateOrSave(e);
     })
   }
@@ -524,7 +587,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
+        //debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.alert.error("Record already exists!", this.optionsNoAutoClose);
@@ -570,14 +633,15 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.loading = false;
           row.StudentClassId = data.StudentClassId;
           row.Action = false;
-          if (row.Promote == 1)
-            this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
+          this.RowsToUpdate--;
+          // if (row.Promote == 1)
+          //   this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
 
           if (this.RowsToUpdate == 0) {
-            if (row.Promote == 1) {
-              this.alert.success("Student/s is promoted to next class without section and roll no.", this.optionsNoAutoClose);
-            }
-            else
+            // if (row.Promote == 1) {
+            //   this.alert.success("Student/s is promoted to next class without section and roll no.", this.optionsNoAutoClose);
+            // }
+            // else
               this.alert.success("Data saved successfully.", this.optionAutoClose);
             this.RowsToUpdate = -1;
           }
@@ -590,6 +654,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
+          this.RowsToUpdate--;
           if (this.RowsToUpdate == 0) {
             this.loading = false;
             this.alert.success("Data updated successfully.", this.optionAutoClose);
@@ -676,6 +741,7 @@ export interface IStudentClass {
   FeeTypeId: number;
   FeeType: string;
   Promote: number;
+  GenderName: string;
   Active: number;
   Action: boolean
 }

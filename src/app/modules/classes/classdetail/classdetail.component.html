@@ -4,7 +4,7 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <alert></alert>
 <form [formGroup]="searchForm">
-    <mat-form-field appearance="outline" [style.width.px]="200" style="margin-right: 5px;">
+    <mat-form-field appearance="outline" [style.width.px]="200" style="margin-right: 15px;">
         <mat-label>Class</mat-label>
         <mat-select formControlName="searchClassName">
             <mat-option [value]="0">select</mat-option>

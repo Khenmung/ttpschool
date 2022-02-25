@@ -11,6 +11,7 @@ import { RightComponent } from '../shared/components/right/right.component';
 import { MultiLevelMenuModule } from './dynamicMultiLevelMenu/MultiLevelMenu.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
+//import { MatConfirmDialogComponent } from '../shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 
 const sharedHomeComponent = [
   HomeComponent,
@@ -19,6 +20,7 @@ const sharedHomeComponent = [
   FooterComponent,
   AlertComponent,
   RightComponent,
+  //MatConfirmDialogComponent
 ]
 
 @NgModule({

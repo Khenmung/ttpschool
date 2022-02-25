@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -165,10 +166,8 @@ export class DashboardclassfeeComponent implements OnInit {
   UpdateSelectedBatchId(value) {
     this.SelectedBatchId = value;
   }
+  
   CreateInvoice() {
-    this.GetInvoice()
-  }
-  GetInvoice() {
     debugger;
     var selectedMonth = this.searchForm.get("searchMonth").value;
     var OrgIdAndbatchId = {
@@ -181,6 +180,7 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         console.log("invoices", data)
         var AmountAfterFormulaApplied = 0;
+        
         data.forEach(inv => {
           this.VariableObjList.push(inv)
           if (inv.Formula.length > 0) {
@@ -202,8 +202,14 @@ export class DashboardclassfeeComponent implements OnInit {
             TotalCredit: 0,
           });
         });
-        console.log("ledgerdata",this.LedgerData)
-        this.authservice.CallAPI(this.LedgerData, 'createinvoice')
+        var query ="select SUM(TotalDebit) TotalDebit,SUM(Balance) Balance, StudentClassId," +
+                    "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalCredit "+
+                    "FROM ? GROUP BY TotalCredit, StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId"; 
+        var sumFeeData = alasql(query,[this.LedgerData]);
+        
+
+        //console.log("sumFeeData",sumFeeData)
+        this.authservice.CallAPI(sumFeeData, 'createinvoice')
           .subscribe((data: any) => {
             this.alert.success("Invoice created successfully.", this.optionAutoClose);
             this.loading = false;

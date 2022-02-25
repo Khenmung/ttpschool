@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import alasql from 'alasql';
@@ -22,6 +23,7 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
 })
 export class FeecollectionreportComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   loading = false;
   options = {
     autoClose: true,
@@ -48,7 +50,7 @@ export class FeecollectionreportComponent implements OnInit {
     "Name",
     "ClassRollNoSection",
     "RollNo",
-    "MonthName",
+    //"MonthName",
 
 
   ]
@@ -139,42 +141,37 @@ export class FeecollectionreportComponent implements OnInit {
   }
 
   GetStudentFeePaymentReport() {
-    
+    debugger;
     this.ErrorMessage = '';
-    let filterstring = '';
+    let filterstring = '1 eq 1 ';
 
     var selectedMonth = this.SearchForm.get("searchMonth").value;
     var paidNotPaid = this.SearchForm.get("PaidNotPaid").value;
-    var studentclassId = this.SearchForm.get("searchStudentName").value.StudentClassId;
-    if (studentclassId == 0) {
-      if (selectedMonth == 0) {
-        this.loading = false;
-        this.alert.error("Please select month.", this.options.autoClose);
-        return;
-      }
-      else {
+    //var studentclassId = this.SearchForm.get("searchStudentName").value.StudentClassId;
+    var nestedFilter = '';
 
-       if (paidNotPaid == 'NotPaid')
-          filterstring += " and Month lt " + selectedMonth
-        else
-          filterstring += " and Month ge " + selectedMonth
-
-      }
+    if (selectedMonth == 0) {
+      this.loading = false;
+      this.alert.error("Please select month.", this.options.autoClose);
+      return;
     }
-    else
-      filterstring += " and StudentClassId eq " + studentclassId;
-
-    filterstring = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    if (paidNotPaid == '') {
+      this.loading = false;
+      this.alert.error("Please select paid or not paid option.", this.options.autoClose);
+      return;
+    }
+    nestedFilter = "$filter=Balance eq 0 and Month eq " + selectedMonth + ";";
+    filterstring += " and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
 
     let list: List = new List();
     list.fields = [
-      'StudentClassId',
-      'Month',
-      'TotalDebit'
+      'ClassId,RollNo,SectionId,StudentClassId'
     ];
-    list.PageName = "AccountingLedgerTrialBalances";
-    list.lookupFields = ["StudentClass($select=ClassId,RollNo,SectionId,StudentClassId;$expand=Student($select=FirstName,LastName))"];
+    list.PageName = "StudentClasses";//AccountingLedgerTrialBalances";
+    //StudentClassId','Month','TotalDebit','Balance'
+
+    list.lookupFields = ["Student($select=FirstName,LastName),AccountingLedgerTrialBalances(" + nestedFilter + "$select=StudentClassId,Month,TotalDebit,Balance)"];
     list.filter = [filterstring];
     this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
@@ -190,35 +187,31 @@ export class FeecollectionreportComponent implements OnInit {
           result = data.value.map((item, indx) => {
             _className = '';
             _sectionName = '';
-            var clsobj = this.Classes.filter(c => c.ClassId == item.StudentClass.ClassId)
+            var clsobj = this.Classes.filter(c => c.ClassId == item.ClassId)
             if (clsobj.length > 0)
               _className = clsobj[0].ClassName
-            var sectionObj = this.Sections.filter(s => s.MasterDataId == item.StudentClass.SectionId)
+            var sectionObj = this.Sections.filter(s => s.MasterDataId == item.SectionId)
             if (sectionObj.length > 0)
               _sectionName = sectionObj[0].MasterDataName
 
             return {
-              Name: item.StudentClass.Student.FirstName + " " + item.StudentClass.Student.LastName,
+              Name: item.Student.FirstName + " " + item.Student.LastName,
               ClassRollNoSection: _className + ' - ' + _sectionName,
-              RollNo: item.StudentClass.RollNo,
-              Month: item.Month
+              RollNo: item.RollNo,
+              Month: item.AccountingLedgerTrialBalances.length > 0 ? item.AccountingLedgerTrialBalances[0].Month : 0
             }
           });
           debugger;
           this.ELEMENT_DATA = alasql("select Name,ClassRollNoSection,RollNo,MAX(Month) month from ? group by Name,ClassRollNoSection,RollNo", [result]);
-          //console.log("elementdata",result)
-          this.ELEMENT_DATA.forEach(f => {
-
-            var monthobj = this.Months.filter(m => m.val === f.month);
-            if (monthobj.length > 0)
-              f.MonthName = monthobj[0].MonthName;
-
-          })
-          this.ELEMENT_DATA = this.ELEMENT_DATA.sort((a, b) => a.month - b.month)
+          if (paidNotPaid == 'NotPaid')
+            this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month == 0); //.sort((a, b) => a.month - b.month)
+          else
+            this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month > 0); //.sort((a, b) => a.month - b.month)
           this.loading = false;
           this.TotalPaidStudentCount = this.ELEMENT_DATA.length;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
         }
         else {
           this.alert.info("No record found.", this.options.autoClose);

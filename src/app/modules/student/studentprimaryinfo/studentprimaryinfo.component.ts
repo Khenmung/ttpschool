@@ -57,6 +57,7 @@ export class studentprimaryinfoComponent implements OnInit {
   Bloodgroup = [];
   Religion = [];
   //States = [];
+  Permission = '';
   PrimaryContact = [];
   Location = [];
   allMasterData = [];
@@ -82,10 +83,9 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     debugger;
     this.selectedFile = files[0];
-    if(this.selectedFile.size>60000)
-    {
-      this.loading=false;
-      this.alert.error("Image size should be less than 80kb",this.optionsNoAutoClose);
+    if (this.selectedFile.size > 60000) {
+      this.loading = false;
+      this.alert.error("Image size should be less than 80kb", this.optionsNoAutoClose);
       return;
     }
     var reader = new FileReader();
@@ -99,6 +99,12 @@ export class studentprimaryinfoComponent implements OnInit {
     debugger;
     let error: boolean = false;
     this.loading = true;
+    if(this.selectedFile==undefined)
+    {
+      this.loading=false;
+      this.alert.error("Please select a file.",this.optionsAutoClose);
+      return;
+    }
     this.formdata = new FormData();
     this.formdata.append("description", "Passport photo of student");
     this.formdata.append("fileOrPhoto", "0");
@@ -149,62 +155,62 @@ export class studentprimaryinfoComponent implements OnInit {
     //if (this.Genders.length == 0)
     //  this.route.navigate(["/edu"]);
     //else {
-      this.studentForm = this.fb.group({
-        ReasonForLeavingId: [0],
-        StudentId: [0],
-        FirstName: ['', [Validators.required]],
-        LastName: [''],
-        FatherName: ['', [Validators.required]],
-        FatherOccupation: ['', [Validators.required]],
-        MotherName: ['', [Validators.required]],
-        MotherOccupation: ['', [Validators.required]],
-        Gender: [0, [Validators.required]],
-        PresentAddress: ['', [Validators.required]],
-        PermanentAddress: ['', [Validators.required]],
-        DOB: [new Date(), [Validators.required]],
-        Bloodgroup: [0, [Validators.required]],
-        Category: [0, [Validators.required]],
-        BankAccountNo: [''],
-        IFSCCode: [''],
-        MICRNo: [''],
-        AadharNo: [''],
-        Photo: [''],
-        Religion: [''],
-        ContactNo: [''],
-        WhatsAppNumber: [''],
-        FatherContactNo: [''],
-        MotherContactNo: [''],
-        PrimaryContactFatherOrMother: [0],
-        NameOfContactPerson: [''],
-        RelationWithContactPerson: [''],
-        ContactPersonContactNo: [''],
-        AlternateContact: [''],
-        EmailAddress: [''],
-        ClassAdmissionSought: [0],
-        LastSchoolPercentage: [''],
-        TransferFromSchool: [''],
-        TransferFromSchoolBoard: [''],
-        Remarks: [''],
-        Active: [1]
-      });
-      this.StudentId = this.tokenService.getStudentId();
-      this.StudentClassId = this.tokenService.getStudentClassId()
-      // this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
+    this.studentForm = this.fb.group({
+      ReasonForLeavingId: [0],
+      StudentId: [0],
+      FirstName: ['', [Validators.required]],
+      LastName: [''],
+      FatherName: ['', [Validators.required]],
+      FatherOccupation: ['', [Validators.required]],
+      MotherName: ['', [Validators.required]],
+      MotherOccupation: ['', [Validators.required]],
+      Gender: [0, [Validators.required]],
+      PresentAddress: ['', [Validators.required]],
+      PermanentAddress: ['', [Validators.required]],
+      DOB: [new Date(), [Validators.required]],
+      Bloodgroup: [0, [Validators.required]],
+      Category: [0, [Validators.required]],
+      BankAccountNo: [''],
+      IFSCCode: [''],
+      MICRNo: [''],
+      AadharNo: [''],
+      Photo: [''],
+      Religion: [''],
+      ContactNo: [''],
+      WhatsAppNumber: [''],
+      FatherContactNo: [''],
+      MotherContactNo: [''],
+      PrimaryContactFatherOrMother: [0],
+      NameOfContactPerson: [''],
+      RelationWithContactPerson: [''],
+      ContactPersonContactNo: [''],
+      AlternateContact: [''],
+      EmailAddress: [''],
+      ClassAdmissionSought: [0],
+      LastSchoolPercentage: [''],
+      TransferFromSchool: [''],
+      TransferFromSchoolBoard: [''],
+      Remarks: [''],
+      Active: [1]
+    });
+    this.StudentId = this.tokenService.getStudentId();
+    this.StudentClassId = this.tokenService.getStudentClassId()
+    // this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
 
-      // this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
-      // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
-      // this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
-      // this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
-      // this.shareddata.CurrentStates.subscribe(st => (this.States = st));
-      // this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
-      // this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
+    // this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
+    // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
+    // this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
+    // this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
+    // this.shareddata.CurrentStates.subscribe(st => (this.States = st));
+    // this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
+    // this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
 
-      
-      // //console.log("this.StudentClassId",this.StudentClassId)
-      // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
-      // this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
-      // this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
-      
+
+    // //console.log("this.StudentClassId",this.StudentClassId)
+    // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
+    // this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
+    // this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
+
     //}
   }
 
@@ -213,14 +219,21 @@ export class studentprimaryinfoComponent implements OnInit {
     if (this.loginUserDetail.length == 0)
       this.route.navigate(['/auth/login'])
     else {
-      this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-      //var SelectedBatchId = this.tokenService.getSelectedBatchId();
-      this.GetMasterData();
-      if (this.StudentId > 0)
-        this.GetStudent();
-      this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
+      var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.STUDENTDETAIL);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+        //this.tabNames
+      }
+      if (this.Permission != 'deny') {
+        this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
+        //var SelectedBatchId = this.tokenService.getSelectedBatchId();
+        this.GetMasterData();
+        if (this.StudentId > 0)
+          this.GetStudent();
+        this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
+      }
     }
   }
   @ViewChildren("allTabs") allTabs: QueryList<any>
@@ -278,7 +291,7 @@ export class studentprimaryinfoComponent implements OnInit {
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-    //    this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+        //    this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
@@ -288,7 +301,7 @@ export class studentprimaryinfoComponent implements OnInit {
         //this.studentForm.patchValue({ Country: this.CountryId });
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
-  //      this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
+        //      this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
       });
 
@@ -311,29 +324,28 @@ export class studentprimaryinfoComponent implements OnInit {
 
   }
   SaveOrUpdate() {
-    var errorMessage ='';
-    if (this.studentForm.get("FirstName").value == 0) {      
+    var errorMessage = '';
+    if (this.studentForm.get("FirstName").value == 0) {
       errorMessage += "First Name is required.<br>";
     }
     if (this.studentForm.get("FatherName").value == 0) {
       errorMessage += "Father name is required.<br>";
-      
+
     }
     if (this.studentForm.get("Bloodgroup").value == 0) {
       errorMessage += "Please select blood group.<br>";
-      
+
     }
     if (this.studentForm.get("Gender").value == 0) {
       errorMessage += "Please select gender.<br>";
-      
+
     }
     if (this.studentForm.get("Category").value == 0) {
-      errorMessage += "Please select Category.<br>";    
+      errorMessage += "Please select Category.<br>";
     }
-    if(errorMessage.length>0)
-    {
-      this.loading=false;
-      this.alert.error(errorMessage,this.optionsNoAutoClose);
+    if (errorMessage.length > 0) {
+      this.loading = false;
+      this.alert.error(errorMessage, this.optionsNoAutoClose);
       return;
     }
     this.loading = true;
@@ -375,7 +387,7 @@ export class studentprimaryinfoComponent implements OnInit {
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
       OrgId: this.loginUserDetail[0]["orgId"]
     });
-    console.log("studentData", this.studentData)
+    //onsole.log("studentData", this.studentData)
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else
@@ -392,7 +404,7 @@ export class studentprimaryinfoComponent implements OnInit {
           this.studentForm.patchValue({
             StudentId: result.StudentId
           })
-          this.StudentId =result.StudentId;
+          this.StudentId = result.StudentId;
           this.loading = false;
           this.alert.success("Student's data saved successfully.", this.optionsAutoClose);
 
@@ -416,14 +428,14 @@ export class studentprimaryinfoComponent implements OnInit {
     return new Date(dateToAdjust.getTime() - offsetMs);
   }
   GetStudent() {
-    debugger;
-    this.loading=true;
+    //debugger;
+    this.loading = true;
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
     list.lookupFields = ["StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
     list.filter = ["StudentId eq " + this.StudentId];
-    //list.orderBy = "ParentId";
+
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -478,14 +490,14 @@ export class studentprimaryinfoComponent implements OnInit {
               this.imgURL = globalconstants.apiUrl + "/Uploads/" + this.loginUserDetail[0]["org"] +
                 "/StudentPhoto/" + fileNames[0].FileName;
             }
-            else if(this.StudentId>0)
+            else if (this.StudentId > 0)
               this.imgURL = 'assets/images/emptyimageholder.jpg'
           })
         }
         else {
           this.alert.error("No data found.", this.optionsAutoClose);
         }
-        this.loading=false;
+        this.loading = false;
       });
   }
 }

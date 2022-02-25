@@ -10,7 +10,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PromoteclassComponent } from './promoteclass/promoteclass.component';
-
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [StudentSubjectComponents, PromoteclassComponent],
@@ -21,12 +21,13 @@ import { PromoteclassComponent } from './promoteclass/promoteclass.component';
     ReactiveFormsModule,
     SharedModule,
     MaterialModule,
-    //MultiLevelMenuModule,
+    MatDialogModule,
     FlexLayoutModule,
     StudentSubjectRoutingModule,
     
     MatDatepickerModule
   ],
+  
   exports:[StudentSubjectComponents]
 })
 export class StudentSubjectModule { }

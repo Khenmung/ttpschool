@@ -19,9 +19,9 @@ export class ReportboardComponent implements AfterViewInit {
   components = [
     TodayCollectionComponent,
     FeecollectionreportComponent,
+    ChartReportComponent,
     ResultComponent,
-    ExamtimetableComponent,
-    ChartReportComponent
+    ExamtimetableComponent    
   ];
 
   tabNames = [

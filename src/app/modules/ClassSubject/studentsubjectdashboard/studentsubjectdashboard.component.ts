@@ -1,7 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -18,6 +21,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class studentsubjectdashboardComponent implements OnInit {
   //@Input() StudentClassId:number;
+  @ViewChild(MatPaginator) paginator:MatPaginator;
+  @ViewChild(MatSort) sort:MatSort;
   @ViewChild("table") mattable;
   StudentDetail:any ={};
   rowCount = 0;
@@ -66,9 +71,14 @@ export class studentsubjectdashboardComponent implements OnInit {
     OrgId: 0,
     Active: 1
   };
+  nameFilter = new FormControl('');
+  filterValues = {
+    Student: ''
+  };
+  
   Permission = '';
   displayedColumns = [];
-
+  filteredOptions: Observable<IStudentSubject[]>;
   constructor(
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
@@ -81,7 +91,13 @@ export class studentsubjectdashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    this.nameFilter.valueChanges
+    .subscribe(
+      name => {
+        this.filterValues.Student = name;
+        this.dataSource.filter = JSON.stringify(this.filterValues);
+      }
+    )
     this.PageLoad();
   }
   PageLoad() {
@@ -310,16 +326,30 @@ export class studentsubjectdashboardComponent implements OnInit {
         if (this.StudentSubjectList.length > 0) {
 
           this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this.dataSource.filterPredicate = this.createFilter();
         }
         else {
           this.dataSource = new MatTableDataSource<IStudentSubject>([]);
         }
+
         this.StudentDetailToDisplay = `${this.StudentSubjectList[0].Student} Class - ${this.StudentSubjectList[0].ClassName}, RollNo - ${this.StudentSubjectList[0].RollNo}`;
         this.loading = false;
 
 
         /////////////
       })
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.Student.toLowerCase().indexOf(searchTerms.Student) !== -1
+      // && data.id.toString().toLowerCase().indexOf(searchTerms.id) !== -1
+      // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
+      // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
+    }
+    return filterFunction;
   }
   formatData(clssubject) {
     var _subjectName = '';

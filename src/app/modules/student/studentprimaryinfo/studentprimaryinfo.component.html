@@ -36,11 +36,11 @@
                                 <img [src]="imgURL" height="150px" *ngIf="imgURL">
                             </div>
                             <div fxLayout="column" fxLayoutAlign="space-between center" style="margin: 5px;">
-                                <button [disabled]="loading" class="mat-flat-button" matTooltip="select file"
+                                <button [disabled]="loading || Permission=='read'" class="mat-flat-button" matTooltip="select file"
                                     (click)="inputfile.click()">
                                     <mat-icon aria-label="photo">photo</mat-icon>
                                 </button>&nbsp;&nbsp;
-                                <button [disabled]="loading" type="submit" (click)="uploadFile()"
+                                <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()"
                                     matTooltip="upload file" class="mat-flat-button">
                                     <mat-icon aria-label="file_upload">file_upload</mat-icon>
                                 </button>&nbsp;&nbsp;
@@ -143,18 +143,18 @@
                 </mat-grid-list>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="previous"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
+                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="next"
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
                 <button [disabled]="loading" (click)="back()" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
@@ -251,7 +251,7 @@
                 <button [disabled]="loading" (click)="back()" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
@@ -276,18 +276,18 @@
                 </mat-form-field>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="previous"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
+                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="next"
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" class="mat-raised-button">
+                <button [disabled]="loading" (click)="back()" matTooltip="back" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
@@ -338,14 +338,14 @@
                 </div>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="previous"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
                     <mat-icon>save</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" alt="save" class="mat-raised-button">
+                <button [disabled]="loading" (click)="back()" alt="back" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
             </mat-card-actions>
