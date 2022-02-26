@@ -315,12 +315,13 @@ export class searchstudentComponent implements OnInit {
       })
   }
   GetFeeTypes() {
+  debugger;
     this.loading = true;
     var filter = globalconstants.getStandardFilterWithBatchId(this.token);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = [filter];
+    list.filter = ["Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -400,7 +401,7 @@ export class searchstudentComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
     list.PageName = "StudentClasses";
-    list.filter = ["Active eq 1 and " + filterOrgIdNBatchId];
+    list.filter = [filterOrgIdNBatchId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

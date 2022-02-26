@@ -2,6 +2,8 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -27,6 +29,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   ],
 })
 export class AppuserdashboardComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild("container") container: ElementRef;
   @ViewChild("table") mattable;
   optionsNoAutoClose = {
@@ -264,6 +268,8 @@ export class AppuserdashboardComponent implements OnInit {
 
         //console.log("users", this.AppUsers)
         this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
+        this.datasource.paginator = this.paginator;
+        this.datasource.sort = this.sort;
         this.loading = false;
       });
 
@@ -298,7 +304,7 @@ export class AppuserdashboardComponent implements OnInit {
 
     let list = new List();
     list.fields = ["Id"];
-    list.PageName = "AuthManagement";
+    list.PageName = "AuthManagement/Register";
     list.filter = ["Active eq 1 and " + duplicatecheck]
     this.authservice.get(list).subscribe((data: any) => {
       if (data.length > 0) {
@@ -344,7 +350,7 @@ export class AppuserdashboardComponent implements OnInit {
   }
   update() {
 
-    this.authservice.edit(this.AppUsersData, this.AppUsersData.Id)
+    this.authservice.CallAPI(this.AppUsersData, this.AppUsersData.Id)
       .subscribe(
         (data: any) => {
           this.loading = false;

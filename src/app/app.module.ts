@@ -13,6 +13,7 @@ import { AuthService } from './_services/auth.service';
 import { AuthGuard } from './guards/auth.guard';
 import { authInterceptorProviders } from './_helpers/auth.interceptor';
 import { ChartsModule } from 'ng2-charts';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -38,9 +39,13 @@ import { ChartsModule } from 'ng2-charts';
     authInterceptorProviders,
     //SharedataService,
     AuthService, 
-    AuthGuard
+    AuthGuard,
+    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}
   
   ],
+  // providers: [
+  //   {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
+  // ],
   bootstrap: [AppComponent],
 
 })

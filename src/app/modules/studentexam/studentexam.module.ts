@@ -28,9 +28,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
   exports:[
     studentexamComponents,
     //MatFormFieldModule
-  ],
-  providers: [
-    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
-  ],
+  ]  
 })
 export class StudentexamModule { }

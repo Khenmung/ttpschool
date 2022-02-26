@@ -5,13 +5,14 @@ import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { DatePipe } from '@angular/common';
 import { employee } from './employee';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { StudentActivity } from './StudentActivity';
 
 @Component({
   selector: 'app-excel-data-management',
@@ -20,6 +21,7 @@ import { employee } from './employee';
 })
 export class ExcelDataManagementComponent implements OnInit {
   constructor(
+    private snackbar: MatSnackBar,
     private datepipe: DatePipe,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -27,13 +29,24 @@ export class ExcelDataManagementComponent implements OnInit {
     private alert: AlertService,
     private shareddata: SharedataService,
     private tokenservice: TokenStorageService,
-    private employee: employee) {
+    private employee: employee,
+    private studentActivity: StudentActivity,
+  ) {
 
   }
+  optionsNoAutoClose = {
+    autoClose: false,
+    keepAfterRouteChange: true
+  };
+  optionAutoClose = {
+    autoClose: true,
+    keepAfterRouteChange: true
+  };
+
   UploadType = {
     CLASSROLLNOMAPPING: 'rollno class mapping',
     STUDENTDATA: 'student upload',
-    STUDENTACTIVITY: 'student activity',
+    STUDENTACTIVITY: 'student profile',
     EMPLOYEEDETAIL: 'employee detail'
   }
   SelectedApplicationId = 0;
@@ -86,21 +99,18 @@ export class ExcelDataManagementComponent implements OnInit {
   NotMandatory = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
     "MotherContactNo", "AlternateContact", "EmailAddress",
     "TransferFromSchool", "TransferFromSchoolBoard", "Remarks"];
-  NoNeedToCheckBlank = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
+  NoNeedToCheckBlank = ["StudentId", "BatchId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
     "MotherContactNo", "AlternateContact", "EmailAddress",
     "TransferFromSchool", "TransferFromSchoolBoard",
     "Gender", "Religion", "Category", "Bloodgroup",
     "PrimaryContactFatherOrMother", "ClassAdmissionSought", "Remarks"];
-  options = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+
   ErrorMessage = '';
   StudentList = [];
   StudentClassList = [];
   displayedColumns: any[];
   ELEMENT_DATA = [];
-  dataSource: MatTableDataSource<any>;
+  //dataSource: MatTableDataSource<any>;
   uploadForm: FormGroup;
   AllMasterData: any[];
   UploadTypes: any[];
@@ -128,12 +138,11 @@ export class ExcelDataManagementComponent implements OnInit {
   PrimaryContactFatherOrMother = [];
   studentData: any[];
   SelectedUploadtype = '';
+
   onselectchange(event) {
-    ////debugger;
+    debugger;
     //    //console.log('event', event);
-    this.SelectedUploadtype = this.UploadTypes.filter(item => {
-      return item.MasterDataId == event.value
-    })[0].MasterDataName
+    this.SelectedUploadtype = this.UploadTypes.filter(item => item.MasterDataId == event.value)[0].MasterDataName
 
     if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING))
       this.displayedColumns = ["StudentId", "Class", "Section", "RollNo"];
@@ -227,8 +236,15 @@ export class ExcelDataManagementComponent implements OnInit {
       else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.EMPLOYEEDETAIL)) {
         this.ValidateEmployeeData();
       }
+      if (this.ErrorMessage.length == 0) {
+        this.snackbar.open("Data is ready for upload. Please click on file upload button.", 'Dismiss', {
+          duration: 5000,
+        });
+      }
     }
+    //this.dataSource = new MatTableDataSource<any>(this.jsonData);
     readFile.readAsArrayBuffer(this.fileUploaded);
+    
 
   }
 
@@ -240,7 +256,7 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'First name at row ' + indx + ' is required.\n';
       if (element.FatherName.length == 0)
         this.ErrorMessage += 'Father name at row ' + indx + ' is required.\n';
-        if (element.WorkAccountId == 0)
+      if (element.WorkAccountId == 0)
         this.ErrorMessage += 'Work Account at row ' + indx + ' is required.\n';
       if (element.GenderId == 0)
         this.ErrorMessage += 'GenderId at row ' + indx + ' is required.\n';
@@ -355,9 +371,12 @@ export class ExcelDataManagementComponent implements OnInit {
       let CategoryIdFilter = this.ActivityCategory.filter(g => g.MasterDataId == element.CategoryId);
       if (CategoryIdFilter.length == 0)
         this.ErrorMessage += "Invalid CategoryId at row " + slno + ":" + element.CategoryId + "<br>";
-      let SubCategoryIdFilter = this.ActivitySubCategory.filter(g => g.MasterDataId == element.SubCategoryId);
-      if (SubCategoryIdFilter.length == 0)
-        this.ErrorMessage += "Invalid Sub Category Id at row " + slno + ":" + element.SubCategoryId + "<br>";
+       let SubCategoryIdFilter = this.AllMasterData.filter(g => g.MasterDataId == element.SubCategoryId);
+       //validate only if greater than zero.
+       if (element.SubCategoryId > 0  && SubCategoryIdFilter.length == 0)
+       {
+          this.ErrorMessage += "Invalid Sub Category Id at row " + slno + ":" + element.SubCategoryId + "<br>";
+       }
       let StudentClsFilter = this.StudentClassList.filter(g => g.StudentClassId == element.StudentClassId);
       if (StudentClsFilter.length == 0)
         this.ErrorMessage += "Invalid StudentClassId at row " + slno + ":" + element.StudentClassId + "<br>";
@@ -431,7 +450,7 @@ export class ExcelDataManagementComponent implements OnInit {
             element[d] = new Date();
         }
 
-        if ((element.StudentId == '' || element.StudentId == 0) && element[d] == undefined && this.NoNeedToCheckBlank.filter(b => b == d).length == 0)
+        if (element[d] == undefined && this.NoNeedToCheckBlank.filter(b => b == d).length == 0)
           this.ErrorMessage += d + " is required at row " + slno + ".<br>";
       })
 
@@ -469,7 +488,7 @@ export class ExcelDataManagementComponent implements OnInit {
       this.ELEMENT_DATA.push(element);
 
     });
-    ////console.log('this.ELEMENT_DATA', this.ELEMENT_DATA);
+
   }
   readAsCSV() {
     this.csvData = XLSX.utils.sheet_to_csv(this.worksheet);
@@ -507,6 +526,9 @@ export class ExcelDataManagementComponent implements OnInit {
         }
         else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.EMPLOYEEDETAIL)) {
           this.employee.save(this.ELEMENT_DATA);
+        }
+        else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTACTIVITY)) {
+          this.studentActivity.save(this.ELEMENT_DATA);
         }
       }
     }
@@ -588,8 +610,15 @@ export class ExcelDataManagementComponent implements OnInit {
     this.dataservice.postPatch('Students', toInsert, 0, 'post')
       .subscribe((result: any) => {
         this.loading = false;
-        this.alert.error("Data uploaded successfully.", this.options.autoClose);
-      }, error => console.log(error))
+        this.ELEMENT_DATA = [];
+        this.alert.error("Data uploaded successfully.", this.optionAutoClose);
+      }, error => {
+        console.log("error from student upload:", error);
+        this.ErrorMessage = "Something went wrong. Please contact your administrator.";
+        this.alert.error("Something went wrong. Please contact your administrator.", this.optionAutoClose);
+      }
+
+      )
   }
   updateStudentClass() {
     this.dataservice.postPatch('StudentClasses', this.studentData[0].element, this.studentData[0].element.StudentClassId, 'patch')
@@ -614,7 +643,15 @@ export class ExcelDataManagementComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.StudentClassList = [...data.value];
+        if (data.value.length > 0) {
+          this.StudentClassList = [...data.value];
+        }
+        else {
+          this.snackbar.open("No class student found.", 'Dismiss', {
+            duration: 10000
+          })
+        }
+
         this.loading = false;
       })
   }
@@ -653,19 +690,19 @@ export class ExcelDataManagementComponent implements OnInit {
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
+        //this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         if (SelectedApplicationName == 'edu') {
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
           this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
           this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
           this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYCATEGORY);
-          this.ActivitySubCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYSUBCATEGORY);
+          //this.ActivitySubCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYSUBCATEGORY);
         }
         else if (SelectedApplicationName == 'employee') {
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
-          this.ActivitySubCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSUBCATEGORY);
+          //this.ActivitySubCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSUBCATEGORY);
         }
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();

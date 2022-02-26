@@ -45,15 +45,37 @@
 <div style="font-size: medium;">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="StudentId">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Id </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> 
+            <span style="display: flex;flex-direction: column;justify-content: start;">
+                <span style="justify-content: start;display: flex;">Id</span>
+                <mat-form-field style="width: 80px;">
+                    <mat-label>search Id</mat-label>
+                    <input matInput [formControl]="IdFilter" autocomplete="Off">
+                </mat-form-field>
+            </span>    
+        </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.StudentId}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StudentName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Student </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header>              
+            <span style="display: flex;flex-direction: column;justify-content: start;">
+                <span style="justify-content: start;display: flex;">Student</span>
+                <mat-form-field style="width: 150px;">
+                    <mat-label>search name</mat-label>
+                    <input matInput [formControl]="nameFilter" autocomplete="Off">
+                </mat-form-field>
+            </span>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.StudentName}}
+                {{element.StudentName}}                
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="GenderName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Gender </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.GenderName}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="RollNo">
@@ -126,4 +148,4 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
 </mat-table>
-<mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+<mat-paginator [pageSizeOptions]="[5,10,25,100]"></mat-paginator>

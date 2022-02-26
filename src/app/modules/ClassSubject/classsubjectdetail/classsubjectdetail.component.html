@@ -21,7 +21,7 @@
                 <mat-icon>copy_all</mat-icon>
             </button><br>
         </form>
-        <mat-table #table [dataSource]="dataSource">
+        <mat-table #table [dataSource]="dataSource" matSort>
             <!-- <ng-container matColumnDef="ClassName">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class/stream
                 </mat-header-cell>
@@ -30,7 +30,7 @@
                 </mat-cell>
             </ng-container> -->
             <ng-container matColumnDef="SubjectName">
-                <mat-header-cell *matHeaderCellDef> Subject </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Subject </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.SubjectName}}
                 </mat-cell>
@@ -98,5 +98,6 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" style="display:flex;align-items: baseline;"></mat-row>
         </mat-table>
+        <mat-paginator [pageSizeOptions]="[5,10,25,100]"></mat-paginator>
     </div>
 </div>

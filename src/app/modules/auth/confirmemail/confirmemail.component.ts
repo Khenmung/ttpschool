@@ -32,7 +32,7 @@ optionAutoClose = {
     this.aroute.paramMap.subscribe(params => {
       this.userId = params.get("id");
       var payload={"UserId":this.userId};
-      this.authservice.confirmEmail(payload).subscribe((data:any)=>{
+      this.authservice.CallAPI(payload,'ConfirmEmail').subscribe((data:any)=>{
         localStorage.setItem("orgId",data.OrgId);
         this.alert.success("Email confirmation success! Please login and select your plan.",this.optionsNoAutoClose);
         this.route.navigate(['/auth/selectplan']);

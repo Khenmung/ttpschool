@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
@@ -18,6 +20,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class ClassSubjectDetailComponent implements OnInit {
 
   @ViewChild("table") mattable;
+  @ViewChild(MatPaginator) paginator:MatPaginator;
+  @ViewChild(MatSort) sort:MatSort;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
@@ -293,6 +297,8 @@ export class ClassSubjectDetailComponent implements OnInit {
           //})
         })
         this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loading = false;
       });
   }
@@ -358,12 +364,12 @@ export class ClassSubjectDetailComponent implements OnInit {
       this.loading = false;
       return;
     }
-    var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
-    if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
-      this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
-      this.loading = false;
-      return;
-    }
+    // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
+    // if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
+    //   this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
+    //   this.loading = false;
+    //   return;
+    // }
     if (row.Credits > 100) {
       this.alert.error("Credits can not be greater than 100.", this.optionsNoAutoClose);
       this.loading = false;

@@ -53,7 +53,7 @@ export class AuthInterceptor implements HttpInterceptor {
         RefreshToken: refreshToken,
       };
       if (payload)
-        return this.authService.callRefershToken(payload).pipe(
+        return this.authService.CallAPI(payload,'RefershToken').pipe(
           switchMap((result: any) => {
 
             this.isRefreshing = false;

@@ -2,35 +2,48 @@
     <strong>Upload Data</strong>
 </div>
 <div style="min-height: 400px;">
-<form [formGroup]="uploadForm">
-    <div class="row">
-        <input [hidden]="true" #inputfile type="file" class="form-control" (change)="browseOnChange($event)"
-            placeholder="Upload file" accept=".xlsx">
-    </div>
-    <alert></alert>
-    <span>
-        <span style="margin-right: 15px;">{{selectedFile}}</span>
-        <mat-form-field appearance="outline" style="margin-right: 15px;">
-            <mat-label>Upload For</mat-label>
-            <mat-select formControlName="UploadTypeId" (selectionChange)="onselectchange($event)">
-                <mat-option *ngFor="let p of UploadTypes" [value]="p.MasterDataId">
-                    {{p.MasterDataName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button [disabled]="loading" class="mat-raised-button" matTooltip="select file" style="margin-right: 15px;"
-            (click)="inputfile.click()">
-            <mat-icon aria-label="photo">attach_file</mat-icon>
-        </button>
-        <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="readAsJson()" matTooltip="upload file"
-            class="mat-raised-button">
-            <mat-icon aria-label="file_upload">file_upload</mat-icon>
-        </button>&nbsp;&nbsp;
-    </span>
-    <mat-divider></mat-divider>
-    <span style="color:red" [innerHTML]="ErrorMessage">
-    </span>
-    <div *ngFor="let item of jsonData" fxLayout="row" fxLayoutAlign="space-between center">
+    <form [formGroup]="uploadForm">
+        <div class="row">
+            <input [hidden]="true" #inputfile type="file" class="form-control" (change)="browseOnChange($event)"
+                placeholder="Upload file" accept=".xlsx">
+        </div>
+        <alert></alert>
+        <span>
+            <span style="margin-right: 15px;">{{selectedFile}}</span>
+            <mat-form-field appearance="outline" style="margin-right: 15px;">
+                <mat-label>Upload For</mat-label>
+                <mat-select formControlName="UploadTypeId" (selectionChange)="onselectchange($event)">
+                    <mat-option *ngFor="let p of UploadTypes" [value]="p.MasterDataId">
+                        {{p.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" mat-mini-fab matTooltip="select file" style="margin-right: 15px;"
+                (click)="inputfile.click()">
+                <mat-icon aria-label="photo">attach_file</mat-icon>
+            </button>
+            <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="readAsJson()"
+                matTooltip="upload file" mat-mini-fab>
+                <mat-icon aria-label="file_upload">file_upload</mat-icon>
+            </button>&nbsp;&nbsp;
+        </span>
+        <mat-divider></mat-divider>
+
+        <!-- <mat-table #table [dataSource]="dataSource" style="min-width: 1400px;" matSort>
+        <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+            <mat-header-cell style="flex:1 1 100px" *matHeaderCellDef mat-sort-header>
+                {{disCol}}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element ">                
+                {{element[disCol]}}
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator> -->
+        <!-- <div *ngFor="let item of jsonData" fxLayout="row" fxLayoutAlign="space-between center">
         <div>{{item.StudentId}}</div>
         <div>{{item.Name}}</div>
         <div>{{item.FatherName}}</div>
@@ -42,7 +55,15 @@
         <div>{{item.PermanentAddress}}</div>
         <div>{{item.DOB}}</div>
         <div>{{item.Bloodgroup}}</div>
+    </div> -->
+
+    </form>
+    <div style="display: flex;flex-direction: column;">
+        <span style="color:red" [innerHTML]="ErrorMessage">
+        </span>
+        <span *ngIf="ErrorMessage.length==0 && ELEMENT_DATA.length>0"
+            style="padding: 15px 0px 15px 0px; font-weight: bold;">
+            Ready to Upload. Please click on upload button.
+        </span>
     </div>
-    
-</form>
 </div>

@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -47,7 +47,7 @@ export class AddstudentclassComponent implements OnInit {
     StudentId: 0,
     ClassId: 0,
     SectionId: 0,
-    HouseId:0,
+    HouseId: 0,
     RollNo: '',
     BatchId: 0,
     FeeTypeId: 0,
@@ -72,18 +72,18 @@ export class AddstudentclassComponent implements OnInit {
     this.studentclassForm = this.fb.group({
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
-      SectionId: [0, [Validators.required]],
+      SectionId: [0],
       HouseId: [0],
-      RollNo: ['', [Validators.required]],
-      FeeTypeId: [0, [Validators.required]],
+      RollNo: [''],
+      FeeTypeId: [0],
       Remarks: [''],
-      AdmissionDate: [new Date(), [Validators.required]],
+      AdmissionDate: [new Date()],
       Active: [1],
     });
     this.PageLoad();
   }
   PageLoad() {
-    //debugger;
+    debugger;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail.length == 0)
       this.nav.navigate(['/auth/login']);
@@ -96,7 +96,9 @@ export class AddstudentclassComponent implements OnInit {
 
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
       if (this.FeeType.length == 0) {
+        this.alert.info("Fee type is empty",this.optionsAutoClose);
         this.nav.navigate(["/edu"]);
+        return;
       }
       this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
       this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
@@ -147,7 +149,7 @@ export class AddstudentclassComponent implements OnInit {
     let list: List = new List();
     list.fields = ["StudentId", "FirstName", "LastName", "FatherName", "MotherName"];
     list.PageName = "Students";
-    list.filter = ["Active eq 1 and " + filterOrgId];
+    list.filter = [filterOrgId];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -175,57 +177,50 @@ export class AddstudentclassComponent implements OnInit {
   GetStudentClass() {
     //debugger;
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-    if (this.StudentId == 0 && this.StudentClassId == 0) {
-      this.alert.error("Invalid Student Id", this.optionsAutoClose);
-      return;
+
+    if (this.StudentId > 0 && this.StudentClassId > 0) {
+
+      let list: List = new List();
+      list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "HouseId", "BatchId", "FeeTypeId",
+        "AdmissionDate", "Remarks", "Active"];
+      list.PageName = "StudentClasses";
+      list.filter = ["StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
+
+      this.dataservice.get(list)
+        .subscribe((data: any) => {
+          if (data.value.length > 0) {
+
+            this.studentclassForm.patchValue({
+              StudentId: data.value[0].StudentId,
+              ClassId: data.value[0].ClassId,
+              SectionId: data.value[0].SectionId,
+              HouseId: data.value[0].HouseId,
+              RollNo: data.value[0].RollNo,
+              BatchId: data.value[0].BatchId,
+              FeeTypeId: data.value[0].FeeTypeId,
+              AdmissionDate: data.value[0].AdmissionDate,
+              Remarks: data.value[0].Remarks,
+              Active: data.value[0].Active,
+            });
+          }
+          else {
+            this.studentclassForm.patchValue({
+              StudentClassId: 0,
+              StudentName: this.StudentName,
+              ClassId: 0,
+              SectionId: 0,
+              HouseId: 0,
+              RollNo: '',
+              BatchId: this.SelectedBatchId,
+              FeeTypeId: 0,
+              AdmissionDate: new Date(),
+              Remarks: '',
+              Active: 1
+            });
+            this.alert.info("Class yet to be defined for this student", this.optionsAutoClose);
+          }
+        });
     }
-    // let studentId = 0;
-    // if (tempStudentClassId > 0)
-    //   studentId = tempStudentId;
-    // else
-    //   studentId = this.Id;
-
-    let list: List = new List();
-    list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "HouseId","BatchId", "FeeTypeId",
-      "AdmissionDate", "Remarks", "Active"];
-    list.PageName = "StudentClasses";
-    list.filter = ["Active eq 1 and StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        if (data.value.length > 0) {
-
-          this.studentclassForm.patchValue({
-            StudentId: data.value[0].StudentId,
-            ClassId: data.value[0].ClassId,
-            SectionId: data.value[0].SectionId,
-            HouseId: data.value[0].HouseId,
-            RollNo: data.value[0].RollNo,
-            BatchId: data.value[0].BatchId,
-            FeeTypeId: data.value[0].FeeTypeId,
-            AdmissionDate: data.value[0].AdmissionDate,
-            Remarks: data.value[0].Remarks,
-            Active: data.value[0].Active,
-          });
-        }
-        else {
-          this.studentclassForm.patchValue({
-            StudentClassId: 0,
-            StudentName: this.StudentName,
-            ClassId: 0,
-            SectionId: 0,
-            HouseId:0,
-            RollNo: '',
-            BatchId: this.SelectedBatchId,
-            FeeTypeId: 0,
-            AdmissionDate: new Date(),
-            Remarks: '',
-            Active: 1
-          });
-          this.alert.info("Class yet to be defined for this student", this.optionsAutoClose);
-        }
-      });
-
   }
   onResize(event) {
     this.breakpoint = (event.target.innerWidth <= 400) ? 1 : 3;
@@ -234,13 +229,13 @@ export class AddstudentclassComponent implements OnInit {
     this.nav.navigate(['/edu']);
   }
   UpdateOrSave() {
-    //debugger;
+    debugger;
     let ErrorMessage = '';
 
     if (this.studentclassForm.get("ClassId").value == 0) {
       ErrorMessage += "Please select class.<br>";
     }
-    if (this.studentclassForm.get("RollNo").value == 0) {
+    if (this.studentclassForm.get("RollNo").value == null) {
       ErrorMessage += "Roll no. is required.<br>";
     }
     if (this.studentclassForm.get("SectionId").value == 0) {

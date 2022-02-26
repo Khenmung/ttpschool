@@ -75,10 +75,10 @@ export class studentsubjectdashboardComponent implements OnInit {
   filterValues = {
     Student: ''
   };
-  
+  filteredOptions: Observable<IStudentSubject[]>;
   Permission = '';
   displayedColumns = [];
-  filteredOptions: Observable<IStudentSubject[]>;
+  
   constructor(
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
@@ -146,7 +146,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     //   this.alert.info("Please select subject", this.optionAutoClose);
     //   return;
     // }
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
       ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
 
 

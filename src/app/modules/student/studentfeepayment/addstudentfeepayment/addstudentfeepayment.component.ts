@@ -15,6 +15,7 @@ import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import { FeereceiptComponent } from '../feereceipt/feereceipt.component';
 import { ContentService } from 'src/app/shared/content.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-addstudentfeepayment',
@@ -173,7 +174,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
+    private snackbar: MatSnackBar,
     private nav: Router,
     private datepipe: DatePipe,
     private shareddata: SharedataService) { }
@@ -281,7 +282,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   GetStudentClass() {
     debugger;
     if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0) {
-      this.alert.info("Please define class for this student.", this.optionsNoAutoClose);
+      this.alert.info("Please define class for this student.",this.optionAutoClose);
       this.nav.navigate(["/edu"]);
     }
     else {
@@ -310,7 +311,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
           debugger;
           if (data.value.length > 0) {
             if (data.value[0].FeeType == undefined) {
-              this.alert.error("Fee Type not yet defined.", this.optionsNoAutoClose);
+              //this.alert.error("Fee Type not yet defined.", this.optionsNoAutoClose);
+              this.snackbar.open("Fee type not yet defined.",'Dimiss',{duration:10000});
               this.loading = false;
             }
             else {

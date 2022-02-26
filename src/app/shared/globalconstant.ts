@@ -463,15 +463,15 @@ export class globalconstants {
 
         //shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(t => checkBatchIdNSelectedId = t);
         //user is viewing old data
-        if (checkBatchIdNSelectedId == 0 && feature.toLowerCase().indexOf('promote') == -1)
-            return [{'permission':'read'}];
-        else {
+        // if (checkBatchIdNSelectedId == 0 && feature.toLowerCase().indexOf('promote') == -1)
+        //     return [{'permission':'read'}];
+        // else {
             var _permission = loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
             if (_permission.length > 0)
                 return [_permission[0]];
             else
                 return [];
-        }
+        //}
     }
     GetApplicationRolesPermission(tokenservice: TokenStorageService, Applications: any[]) {
 

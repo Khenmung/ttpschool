@@ -22,6 +22,6 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     
   ],
   exports:[employeesalaryComponents],
-  providers:[{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}]
+  //providers:[{provide: MAT_DATE_LOCALE, useValue: 'en-GB'}]
 })
 export class EmployeeManagementModule { }

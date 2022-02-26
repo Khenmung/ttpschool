@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -83,13 +83,20 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   displayedColumns = [
     'StudentId',
     'StudentName',
+    'GenderName',
     'SectionId',
     'RollNo',
     'FeeTypeId',
     'Action'
   ];
+  nameFilter = new FormControl('');
+  IdFilter = new FormControl('');
+  filterValues = {
+    StudentId:0,
+    StudentName: ''
+  };
   Students: IStudent[] = [];
-  filteredOptions: Observable<IStudent[]>;
+  filteredOptions: Observable<IStudentClass[]>;
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -110,6 +117,20 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       searchClassId: [0],
       // searchGenderId: [0],
     });
+    this.nameFilter.valueChanges
+    .subscribe(
+      name => {
+        this.filterValues.StudentName = name;
+        this.dataSource.filter = JSON.stringify(this.filterValues);
+      }
+    )
+    this.IdFilter.valueChanges
+    .subscribe(
+      StudentId => {
+        this.filterValues.StudentId = StudentId;
+        this.dataSource.filter = JSON.stringify(this.filterValues);
+      }
+    )
     this.PageLoad();
   }
   private _filter(name: string): IStudent[] {
@@ -152,6 +173,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           'Student',
           'ClassName',
           'RollNo',
+          'GenderName',
           'SectionId',
           'FeeTypeId',
           'Action'
@@ -167,7 +189,18 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       else {
         this.loading = false;
       }
+      //this.GetStudents();
     }
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.StudentName.toLowerCase().indexOf(searchTerms.StudentName) !== -1
+       && data.StudentId.toString().toLowerCase().indexOf(searchTerms.StudentId) !== -1
+      // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
+      // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
+    }
+    return filterFunction;
   }
   openDialog() {
     debugger;
@@ -197,19 +230,27 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     });
   }
   GenerateRollNoOnList() {
+    debugger;
     if (this.StudentClassList.length > 0) {
       this.StudentClassList.sort((a, b) => {
         const compareGender = a.GenderName.localeCompare(b.GenderName);
         const compareName = a.StudentName.localeCompare(b.StudentName);
         return compareGender || compareName;
       })
-      this.StudentClassList.forEach((studcls,indx)=>{
-        studcls.RollNo = indx+1+"";
-        studcls.Action=true;
+      this.StudentClassList.forEach((studcls, indx) => {
+        studcls.RollNo = indx + 1 + "";
+        studcls.Action = true;
       })
       this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      this.dataSource.filterPredicate = this.createFilter();
+    }
+    else
+    {
+      this.loading=false;
+      this.alert.info("No student to assign roll no.",this.optionAutoClose);
+      
     }
   }
   GenerateRollNo() {
@@ -219,9 +260,19 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.loading = true;
     if (this.searchForm.get("searchClassId").value > 0)
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
+    else {
+      this.loading = false;
+      this.alert.error("Please select class.", this.optionAutoClose);
+      return;
+    }
 
     if (this.searchForm.get("searchSectionId").value > 0)
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
+    else {
+      this.loading = false;
+      this.alert.error("Please select section.", this.optionAutoClose);
+      return;
+    }
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
@@ -324,6 +375,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
+          this.dataSource.filterPredicate = this.createFilter();
           this.loading = false;
         }
       })
@@ -391,11 +443,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   GetFeeTypes() {
     this.loading = true;
-    var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = [filter];
+    list.filter = ["Active eq 1"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -425,9 +477,15 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
     this.HeaderTitle = '';
     if (_classId == 0) {
       this.alert.info("Please select class.", this.optionsNoAutoClose);
+      this.loading = false;
+      return;
+    }
+    if (_sectionId == 0) {
+      this.alert.info("Please select section.", this.optionsNoAutoClose);
       this.loading = false;
       return;
     }
@@ -482,7 +540,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     list.PageName = "StudentClasses";
     list.lookupFields = ["Student($select=FirstName,LastName,Gender)"];
-    list.filter = [filterStr];
+    list.filter = ['Active eq 1 and ' + filterStr];
     this.StudentClassList = [];
     this.dataservice.get(list)
       .subscribe((StudentClassesdb: any) => {
@@ -491,7 +549,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
         result.forEach(s => {
           var _genderName = '';
-          var genderObj = this.Genders.filter(f => f.MasterDataId == s.Gender);
+          var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
           if (genderObj.length > 0)
             _genderName = genderObj[0].MasterDataName;
           var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
@@ -522,9 +580,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.alert.info("No record found!", this.optionAutoClose);
         }
 
-        this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a,b)=>+a.RollNo - +b.RollNo));
+        this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
+        this.dataSource.filterPredicate = this.createFilter();
         this.loading = false;
 
       })
@@ -561,7 +620,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     var _toUpdate = this.StudentClassList.filter(f => f.Action);
     this.RowsToUpdate = _toUpdate.length;
     _toUpdate.forEach(e => {
-     
+
       this.UpdateOrSave(e);
     })
   }
@@ -642,7 +701,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             //   this.alert.success("Student/s is promoted to next class without section and roll no.", this.optionsNoAutoClose);
             // }
             // else
-              this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.alert.success("Data saved successfully.", this.optionAutoClose);
             this.RowsToUpdate = -1;
           }
 
