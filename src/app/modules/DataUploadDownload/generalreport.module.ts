@@ -7,6 +7,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatDialogModule
 
   ],
   exports:[GeneralreportComponents]
