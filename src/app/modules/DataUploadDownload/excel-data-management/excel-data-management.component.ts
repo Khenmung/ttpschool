@@ -696,13 +696,11 @@ export class ExcelDataManagementComponent implements OnInit {
           this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
           this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
           this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-          this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYCATEGORY);
-          //this.ActivitySubCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.ACTIVITYSUBCATEGORY);
+          this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.PROFILECATEGORY);
         }
         else if (SelectedApplicationName == 'employee') {
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
-          this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
-          //this.ActivitySubCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSUBCATEGORY);
+          this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEPROFILECATEGORY);
         }
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();

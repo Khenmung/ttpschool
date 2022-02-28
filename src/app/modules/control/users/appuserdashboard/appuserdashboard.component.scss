@@ -1,7 +1,7 @@
 // .Container{
 //  box-shadow: 5px 10px grey;
 // }
-.mat-form-field{
+mat-form-field{
     margin-right: 15px;
     width: 98%;
 }
@@ -15,7 +15,7 @@ button{
     justify-content: center;
     flex:1 1 100px
 }
-.mat-column-ValidFrom,.mat-column-ValidTo,.mat-column-ContactNo{
+.mat-column-PhoneNumber,.mat-column-ValidFrom,.mat-column-ValidTo,.mat-column-ContactNo{
     flex:1 1 140px;
 }
 .mat-column-UserName,.mat-column-EmailAddress{
@@ -24,3 +24,6 @@ button{
 // .mat-column-Active,.mat-column-UserName,.mat-column-EmailAddress,.mat-column-ContactNo,.mat-column-ValidFrom,.mat-column-ValidTo{
 //     margin-right: 15px;
 // }
+mat-cell:first-of-type{
+    padding-left: 0px;
+}

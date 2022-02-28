@@ -64,7 +64,7 @@
                     <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ParentId"
                         [value]="element.ParentId">
                         <mat-option [value]="0">select</mat-option>
-                        <mat-option *ngFor="let item of RowParent" [value]="item.MasterDataId">
+                        <mat-option *ngFor="let item of SubMasters" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>
                 </mat-form-field>

@@ -47,7 +47,7 @@
                 <mat-select (selectionChange)='onBlur(element)' [(ngModel)]="element.ParentId"
                     [value]="element.ParentId">
                     <mat-option [value]="0">select</mat-option>
-                    <mat-option *ngFor="let item of ParentDropDown" [value]="item.PageId">{{item.label}}</mat-option>
+                    <mat-option *ngFor="let item of TopMenu" [value]="item.PageId">{{item.label}}</mat-option>
                 </mat-select>
             </mat-form-field>
         </mat-cell>

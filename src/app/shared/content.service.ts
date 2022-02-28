@@ -5,6 +5,7 @@ import { globalconstants } from './globalconstant';
 import { NaomitsuService } from './databaseService';
 import { List } from './interface';
 import { TokenStorageService } from '../_services/token-storage.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,12 +21,16 @@ export class ContentService implements OnInit {
     private tokenService: TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
+    private snackbar:MatSnackBar
   ) { }
   ngOnInit(): void {
     //debugger;
     //this.UserDetail = this.tokenService.getUserDetail();
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
 
+  }
+  openSnackBar(message: string, action: string, option:{}) {
+    this.snackbar.open(message, action, option);
   }
   AddUpdateContent(pagecontent: any) {
     ////debugger  

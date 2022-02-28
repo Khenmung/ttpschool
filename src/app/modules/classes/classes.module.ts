@@ -7,10 +7,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { StudentevaluationComponent } from './studentevaluation/studentevaluation.component';
 
 
 @NgModule({
-  declarations: [ClassesComponents],
+  declarations: [ClassesComponents, StudentevaluationComponent],
   imports: [
     CommonModule,
     ClassesRoutingModule,

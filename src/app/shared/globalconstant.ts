@@ -1,4 +1,5 @@
 //import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
 import { List } from "./interface";
@@ -10,6 +11,12 @@ export class globalconstants {
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
+    public static BlueAlert = {duration:3000,panelClass:'blue-snackbar'};
+    public static RedAlert = {duration:10000,panelClass:'red-snackbar'};
+    public static AddedAlert = 'Data saved sucessfully.';
+    public static UpdatedAlert = 'Data updated sucessfully.';
+    public static RecordAlreadyExistAlert = 'Record already exists!';
+    public static AlertCloseText = 'Dismiss';
     public static AppAndMenuAndFeatures =
         {
             'edu': {
@@ -128,7 +135,7 @@ export class globalconstants {
                     'STUDENTDETAIL': 'student detail',
                     'STUDENTCLASS': 'student class',
                     'GENERATECERTIFICATE': 'generate certificate',
-                    'DOCUMENT': 'documents',
+                    'DOCUMENT': 'documents',                    
                     'ATTENDANCEREPORT': 'student attendance',
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',
@@ -142,7 +149,8 @@ export class globalconstants {
                     'FEEDEFINITION': 'fee definition',
                     'FEETYPE': 'fee type',
                     'PREREQUISITE': 'pre-requisite',
-                    'CLASSMASTER': 'class master'
+                    'CLASSMASTER': 'class master',
+                    'STUDENTEVALUATION':'student evaluation'
                 },
                 'EXAM': {
                     'EXAM': 'Exam',
@@ -263,10 +271,11 @@ export class globalconstants {
                 "CLASSPROMOTION": "class promotion",
                 "FEEPAYMENTTYPE": "fee payment type",
                 "FEETYPE": "fee type",
-                "ACTIVITYCATEGORY": "profile category",
-                "ACTIVITYSUBCATEGORY": "profile sub category",
+                "PROFILECATEGORY": "profile category",
+                "PROFILESUBCATEGORY": "profile sub category",
                 "ROLE": "role",
-                "FEECATEGORY": "fee category"
+                "FEECATEGORY": "fee category",
+                "RATINGOPTION": "rating option"
 
             },
             "leave": {
@@ -294,8 +303,8 @@ export class globalconstants {
                 "DOCUMENTTYPE": "employee document type",
                 "FAMILYRELATIONSHIP": "family relationship",
                 "EMPLOYEESKILL": "employee skill",
-                "EMPLOYEEACTIVITYCATEGORY": "employee activity category",
-                "EMPLOYEEACTIVITYSUBCATEGORY": "employee activity sub category"
+                "EMPLOYEEPROFILECATEGORY": "employee profile category",
+                "EMPLOYEEPROFILESUBCATEGORY": "employee profile sub category"
             },
             "StudentVariableName": [
                 "Today",
@@ -402,7 +411,7 @@ export class globalconstants {
     //public static 
     constructor(
         private dataservice: NaomitsuService,
-        private shareddata: SharedataService
+        private snackbar:MatSnackBar
     ) {
 
     }
@@ -473,6 +482,7 @@ export class globalconstants {
                 return [];
         //}
     }
+    
     GetApplicationRolesPermission(tokenservice: TokenStorageService, Applications: any[]) {
 
         let list: List = new List();

@@ -41,21 +41,21 @@ body {
     height: 100%;
     overflow: hidden;
 }
-// div::-webkit-scrollbar {
-//     width               : 8px;
-//     //-webkit-appearance: none;
-//     //width: 7px;
-// }
+.blue-snackbar {
+    background: #2196F3;
+    color: white;
+    .mat-simple-snackbar-action {
+        color: white !important;
+    }
+}
 
-// div::-webkit-scrollbar-thumb {
-//     background   : #4678a0;
-//     border-radius: 1rem;
-
-// }
-
-// div::-webkit-scrollbar-track {
-//     background: #20639B;
-// }
+.red-snackbar {
+    background: #F44336;
+    color: black;
+    .mat-simple-snackbar-action {
+        color: black !important;
+    }
+}
 
 a .ng-star-inserted:hover {
     cursor          : pointer;

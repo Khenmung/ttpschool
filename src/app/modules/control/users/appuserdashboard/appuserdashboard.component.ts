@@ -1,14 +1,15 @@
 //import { DatePipe } from '@angular/common';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -29,6 +30,14 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   ],
 })
 export class AppuserdashboardComponent implements OnInit {
+  // @Output()
+  // dateChange: EventEmitter<MatDatepickerInputEvent<any>> = new EventEmitter();
+
+  // onDateChange(row): void {
+  //   this.dateChange.emit();
+  //   row.Action = true;
+  // }
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("container") container: ElementRef;
@@ -42,6 +51,7 @@ export class AppuserdashboardComponent implements OnInit {
     keepAfterRouteChange: true
   };
   loading = false;
+  errorMessage = '';
   Permission = '';
   Users: IUser[] = [];
   filteredOptions: Observable<IUser[]>;
@@ -53,14 +63,14 @@ export class AppuserdashboardComponent implements OnInit {
   Locations = [];
   Roles = [];
   LoginDetail = [];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   datasource: MatTableDataSource<IAppUser>;
   displayedColumns = [
-    'UserName',
+    //'UserName',
     'EmailAddress',
-    'ContactNo',
+    'PhoneNumber',
     'ValidFrom',
     'ValidTo',
     'Active',
@@ -71,11 +81,7 @@ export class AppuserdashboardComponent implements OnInit {
     UserName: '',
     Email: 0,
     PhoneNumber: '',
-    ValidFrom: Date,
-    ValidTo: Date,
-    OrgId: 0,
-    CreatedDate: new Date(),
-    CreatedBy: 0,
+    ValidTo: new Date(),
     Active: 1,
   }
   UserId = 0;
@@ -89,7 +95,8 @@ export class AppuserdashboardComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     //private dataservice: NaomitsuService,
     private authservice: AuthService,
-    private alert: AlertService) { }
+    private alert: MatSnackBar
+  ) { }
   ngOnInit() {
     this.searchForm = this.fb.group({
       searchUserName: [''],
@@ -131,7 +138,7 @@ export class AppuserdashboardComponent implements OnInit {
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
@@ -219,6 +226,10 @@ export class AppuserdashboardComponent implements OnInit {
         this.loading = false;
       })
   }
+  onBlur(row) {
+    debugger;
+    row.Action = true;
+  }
   GetAppUsers() {
     debugger;
     this.loading = true;
@@ -252,16 +263,17 @@ export class AppuserdashboardComponent implements OnInit {
               "Id": u.Id,
               "UserName": u.UserName,
               "EmailAddress": u.Email,
-              "ContactNo": u.PhoneNumber,
+              "PhoneNumber": u.PhoneNumber,
               "OrgId": u.OrgId,
               "ValidFrom": u.ValidFrom,
               "ValidTo": u.ValidTo,
-              "Active": u.Active
+              "Active": u.Active,
+              "Action": false
             }
           });
         }
         else
-          this.alert.error("No user found matching search criteria!", this.optionsAutoClose);
+          this.alert.open("No user found matching search criteria!", 'Dismiss', { duration: 10000 });
         //const rows = [];
 
         //this.AppUsers.forEach(element => rows.push(element, { detailRow: true, element }));
@@ -278,6 +290,43 @@ export class AppuserdashboardComponent implements OnInit {
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
   }
+  
+  onSave(row): void {
+    this.errorMessage = '';
+    //debugger;
+    var userDetail = {
+      ConfirmPassword: row.ConfirmPassword,
+      Email: row.Email,
+      Password: row.Password,
+      Username: row.UserName,
+      OrganizationName: this.LoginDetail[0]['org'],
+      ContactNo: row.ContactNo
+    }
+    this.authservice.CallAPI(userDetail, 'Register').subscribe(
+      data => {
+        //this.AddAppUsers()
+        this.contentservice.openSnackBar(globalconstants.AddedAlert, globalconstants.AlertCloseText, globalconstants.BlueAlert);
+      },
+      err => {
+        var modelState;
+        if (err.error.ModelState != null)
+          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+        else if (err.error != null)
+          modelState = JSON.parse(JSON.stringify(err.error));
+        else
+          modelState = JSON.parse(JSON.stringify(err));
+
+        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        for (var key in modelState) {
+          if (modelState.hasOwnProperty(key) && key == 'errors') {
+            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key];
+            //errors.push(modelState[key]);//list of error messages in an array
+          }
+        }
+
+      }
+    );
+  }
   UpdateOrSave(row) {
     //debugger;
 
@@ -286,49 +335,32 @@ export class AppuserdashboardComponent implements OnInit {
     //   ErrorMessage += "Please select contact.<br>";
     // }
     if (row.UserName.length == 0) {
-      ErrorMessage += "User name is required.<br>";
+      ErrorMessage += "User name is required.\n";
     }
     if (row.EmailAddress.length == 0) {
-      ErrorMessage += "Please email is required.<br>";
+      ErrorMessage += "Email is required.\n";
     }
 
     if (ErrorMessage.length > 0) {
-      this.alert.error(ErrorMessage, this.optionsNoAutoClose);
+      //this.alert.error(ErrorMessage, this.optionsNoAutoClose);
+      this.contentservice.openSnackBar(ErrorMessage, globalconstants.AlertCloseText, globalconstants.RedAlert);
       return;
     }
 
-    var duplicatecheck = "UserName eq '" + row.UserName + "' and OrgId eq " + this.LoginDetail[0]["orgId"]
+    this.AppUsersData.Active = row.Active;
+    this.AppUsersData.Id = row.Id;
+    this.AppUsersData.UserName = row.UserName;
+    this.AppUsersData.Email = row.EmailAddress;
+    this.AppUsersData.PhoneNumber = row.PhoneNumber;
+    //this.AppUsersData.ValidFrom = row.ValidFrom;
+    this.AppUsersData.ValidTo = new Date(row.ValidTo);
+    console.log('this.AppUsersData', this.AppUsersData)
+    if (row.Id == '')
+      this.insert(row);
+    else {
+      this.update();
+    }
 
-    if (row.Id.length > 0)
-      duplicatecheck += " and Id ne '" + row.Id + "'";
-
-    let list = new List();
-    list.fields = ["Id"];
-    list.PageName = "AuthManagement/Register";
-    list.filter = ["Active eq 1 and " + duplicatecheck]
-    this.authservice.get(list).subscribe((data: any) => {
-      if (data.length > 0) {
-        this.alert.error("User name already exists.", this.optionsAutoClose);
-        return;
-      }
-      else {
-        this.AppUsersData.Active = row.Active;
-        this.AppUsersData.Id = row.Id;
-        this.AppUsersData.UserName = row.UserName;
-        this.AppUsersData.Email = row.EmailAddress;
-        this.AppUsersData.PhoneNumber = row.ContactNo;
-        this.AppUsersData.ValidFrom = row.ValidFrom;
-        this.AppUsersData.ValidTo = row.ValidTo;
-        this.AppUsersData.OrgId = this.LoginDetail[0]["orgId"];
-        this.AppUsersData.CreatedBy = this.LoginDetail[0]["userId"];
-        if (row.Id == '')
-          this.insert(row);
-        else {
-          this.update();
-        }
-
-      }
-    })
   }
   tabChanged($event) {
 
@@ -336,25 +368,25 @@ export class AppuserdashboardComponent implements OnInit {
   insert(row) {
 
     //debugger;
-    this.authservice.CallAPI(this.AppUsersData,'Register')
+    this.authservice.CallAPI(this.AppUsersData, 'Register')
       .subscribe(
         (data: any) => {
 
           row.Id = data.Id;
           this.loading = false;
-          this.alert.success("Data saved successfully", this.optionsAutoClose);
-          //this.router.navigate(['/home/pages']);
+          this.contentservice.openSnackBar(globalconstants.AddedAlert, globalconstants.AlertCloseText, globalconstants.BlueAlert);
 
         });
 
   }
   update() {
 
-    this.authservice.CallAPI(this.AppUsersData, this.AppUsersData.Id)
+    this.authservice.CallAPI(this.AppUsersData, 'UpdateUser')
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully", this.optionsAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedAlert, globalconstants.AlertCloseText, globalconstants.BlueAlert)
+          //this.alert.open(globalconstants.,globalconstants.AlertCloseText,globalconstants.AlertDuration);
           //this.router.navigate(['/home/pages']);
         });
   }

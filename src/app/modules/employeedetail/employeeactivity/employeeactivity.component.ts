@@ -300,7 +300,7 @@ export class EmployeeactivityComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYCATEGORY);
+        this.EmployeeActivityCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEPROFILECATEGORY);
         //this.EmployeeActivitySubCategories = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEACTIVITYSUBCATEGORY);
         this.GetEmployees();
         this.GetEmployeeActivity();

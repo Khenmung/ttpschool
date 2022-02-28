@@ -9,6 +9,7 @@ import { ClassmasterdashboardComponent } from '../classsmastermapping/classmaste
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
 import { FeeDefinitionComponent } from '../feedefinition/feedefinition.component';
 import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
+import { StudentevaluationComponent } from '../studentevaluation/studentevaluation.component';
 
 @Component({
   selector: 'app-classboard',
@@ -22,6 +23,7 @@ export class ClassboardComponent implements AfterViewInit {
     DashboardclassfeeComponent,
     SchoolFeeTypesComponent,
     ClassmasterdashboardComponent,
+    StudentevaluationComponent,
     ClassprerequisiteComponent
   ];
 
@@ -30,6 +32,7 @@ export class ClassboardComponent implements AfterViewInit {
     { "label": "Fee", "faIcon": '' },
     { "label": "Pre-requisite", "faIcon": '' },
     { "label": "Class Master", "faIcon": '' },
+    { "label": "Fee Type", "faIcon": '' },
     { "label": "Fee Type", "faIcon": '' },
     { "label": "Fee Type", "faIcon": '' }
   ];
@@ -42,7 +45,8 @@ export class ClassboardComponent implements AfterViewInit {
       PreRequisitePermission: '',
       ClassMasterPermission: '',
       FeeTypePermission: '',
-      FeeDefinition: ''
+      FeeDefinition: '',
+      StudentEvaluation: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -52,7 +56,6 @@ export class ClassboardComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private contentservice:ContentService,
     private tokenStorage: TokenStorageService,
-    private shareddata: SharedataService,
     private componentFactoryResolver: ComponentFactoryResolver) {
   }
 
@@ -66,6 +69,10 @@ export class ClassboardComponent implements AfterViewInit {
     }
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
     var comindx = this.components.indexOf(ClassdetailComponent);
+    this.GetComponents(perObj, comindx)
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.STUDENTEVALUATION)
+    var comindx = this.components.indexOf(StudentevaluationComponent);
     this.GetComponents(perObj, comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE)

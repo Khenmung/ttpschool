@@ -1,0 +1,29 @@
+mat-form-field{
+    margin-right:15px;
+    width: 98%;
+}
+button{
+    margin-right:15px;
+}
+mat-cell:first-of-type {
+    padding-left: 0px;
+}
+
+.mat-column-Description{
+    flex:1 1 200px;
+}
+.mat-column-StudentEvalCategoryId,
+.mat-column-StudentEvalSubCategoryId,
+.mat-column-RatingOptionId
+{
+    flex:1 1 120px;
+}
+.mat-column-RatingOrSubjective,.mat-column-ClassId,
+.mat-column-Action,.mat-column-Active
+{   
+    flex:1 1 100px;
+}
+.mat-column-StudentEvaluationId
+{   
+    flex:1 1 60px;
+}

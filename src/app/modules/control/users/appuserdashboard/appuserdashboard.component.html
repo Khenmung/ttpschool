@@ -4,7 +4,7 @@
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <alert></alert>
-    <div #container [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;" fxLayout="row wrap">
+    <div #container [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;display: flex;flex-direction: column;">
         <!-- <div style="height:350px;width: 100%;"> -->
             <form [formGroup]="searchForm">
                 <mat-form-field class="example-full-width" appearance="outline" [style.width.px]="250">
@@ -30,7 +30,7 @@
                         </button>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="UserName">
+                <!-- <ng-container matColumnDef="UserName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> User </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
@@ -38,18 +38,25 @@
                                 [maxlength]="30">
                         </mat-form-field>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="EmailAddress">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.EmailAddress}}
+                        <mat-form-field appearance="outline">
+                            <input matInput [value]="element.EmailAddress"
+                            (blur)="onBlur(element)"
+                            [(ngModel)]="element.EmailAddress"
+                                autocomplete="Off" [maxlength]="20">
+                        </mat-form-field>                       
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ContactNo">
+                <ng-container matColumnDef="PhoneNumber">
                     <mat-header-cell *matHeaderCellDef> Contact No. </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <input matInput [value]="element.ContactNo" [(ngModel)]="element.ContactNo"
+                            <input matInput [value]="element.PhoneNumber" 
+                            (blur)="onBlur(element)"
+                            [(ngModel)]="element.PhoneNumber"
                                 autocomplete="Off" [maxlength]="20">
                         </mat-form-field>
                     </mat-cell>
@@ -69,7 +76,10 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Valid To </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <input matInput [value]="element.ValidTo" [matDatepicker]="ValidTo"
+                            <input matInput 
+                            [value]="element.ValidTo" 
+                            (blur)="onBlur(element)"
+                            [matDatepicker]="ValidTo"
                                 [(ngModel)]="element.ValidTo" autocomplete="Off">
                             <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
                             <mat-datepicker #ValidTo></mat-datepicker>
@@ -85,9 +95,10 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef>                        
+                    </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading || Permission=='read'" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || Permission=='read' || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon matTooltip="save">save</mat-icon>
                         </button>
                     </mat-cell>

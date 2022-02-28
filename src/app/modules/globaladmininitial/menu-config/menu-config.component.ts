@@ -137,6 +137,7 @@ export class MenuConfigComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.TopMenu = [...data.value].sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+        //this.ParentDropDown = [...this.TopMenu];
       })
 
     //console.log("topmenu", this.TopMenu)
@@ -434,15 +435,12 @@ export class MenuConfigComponent implements OnInit {
     filterStr = "ApplicationId eq " + this.searchForm.get("searchApplicationId").value
     var _ParentId = 0;
 
-    //Parent will be applied only if searchTopMenuId is selected otherwise zero. 
+    
     if (this.searchForm.get("searchTopMenuId").value > 0) {
-      this.ParentDropDown = [...this.TopMenu];
+      
       _ParentId = this.searchForm.get("searchTopMenuId").value
     }
-    else {
-      this.ParentDropDown = [];
-    }
-    //end
+    
 
     filterStr += " and ParentId eq " + _ParentId;
     let list: List = new List();
