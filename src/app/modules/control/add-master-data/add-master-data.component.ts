@@ -110,7 +110,7 @@ export class AddMasterDataComponent implements OnInit {
 
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails.length == 0) {
-      this.contentservice.openSnackBar("Please login to be able to add masters!",globalconstants.AlertCloseText,globalconstants.RedAlert);
+      this.contentservice.openSnackBar("Please login to be able to add masters!",globalconstants.AlertCloseText,globalconstants.RedBackground);
       //this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
       this.route.navigate(['auth/login']);
     }
@@ -118,7 +118,7 @@ export class AddMasterDataComponent implements OnInit {
 
 
     if (this.UserDetails == null) {
-      this.contentservice.openSnackBar("Application selected is not valid!",globalconstants.AlertCloseText,globalconstants.RedAlert);
+      this.contentservice.openSnackBar("Application selected is not valid!",globalconstants.AlertCloseText,globalconstants.RedBackground);
       
       this.route.navigate(['/dashboard']);
     }
@@ -317,7 +317,7 @@ export class AddMasterDataComponent implements OnInit {
     debugger;
     var subMasterId = this.searchForm.get("SubId").value;
     if (this.searchForm.get("ParentId").value == 0) {
-      this.contentservice.openSnackBar("Please select master name to add items to",globalconstants.AlertCloseText,globalconstants.RedAlert);
+      this.contentservice.openSnackBar("Please select master name to add items to",globalconstants.AlertCloseText,globalconstants.RedBackground);
       //this.alert.info("Please select master name to add items to", this.optionAutoClose);
       return;
     }
@@ -411,7 +411,7 @@ export class AddMasterDataComponent implements OnInit {
           }
         })
         if (this.MasterList.length == 0) {
-          this.contentservice.openSnackBar("No record found.",globalconstants.AlertCloseText,globalconstants.RedAlert);
+          this.contentservice.openSnackBar("No record found.",globalconstants.AlertCloseText,globalconstants.RedBackground);
           //this.alert.error("No record found.", this.optionAutoClose);
         }
         if (this.searchForm.get("SubId").value > 0) {
@@ -455,7 +455,7 @@ export class AddMasterDataComponent implements OnInit {
     this.loading = true;
     if (row.MasterDataName.length == 0 || row.MasterDataName.length > 50) {
       this.loading = false;
-      this.contentservice.openSnackBar("Character should not be empty or greater than 50!",globalconstants.AlertCloseText,globalconstants.RedAlert);
+      this.contentservice.openSnackBar("Character should not be empty or greater than 50!",globalconstants.AlertCloseText,globalconstants.RedBackground);
       //this.alert.error("Character should not be empty or greater than 50!", this.optionAutoClose);
       return;
     }
@@ -467,7 +467,7 @@ export class AddMasterDataComponent implements OnInit {
       if (duplicate.length > 0) {
         this.loading = false;
         //this.alert.error("Data already exists in this master", this.optionNoAutoClose);
-        this.contentservice.openSnackBar("Data already exists in this master",globalconstants.AlertCloseText,globalconstants.RedAlert);
+        this.contentservice.openSnackBar("Data already exists in this master",globalconstants.AlertCloseText,globalconstants.RedBackground);
         return;
       }
     }
@@ -476,7 +476,7 @@ export class AddMasterDataComponent implements OnInit {
         && item.MasterDataId != row.MasterDataId && item.ApplicationId == row.ApplicationId && item.OrgId == row.OrgId);
       if (duplicate.length > 0) {
         this.loading = false;
-        this.contentservice.openSnackBar("Data already exists!",globalconstants.AlertCloseText,globalconstants.RedAlert);
+        this.contentservice.openSnackBar("Data already exists!",globalconstants.AlertCloseText,globalconstants.RedBackground);
         return;
       }
     }
@@ -485,7 +485,7 @@ export class AddMasterDataComponent implements OnInit {
     if (parent.length > 0) {
       if (parent.toLowerCase() == "student grade") {
         if (row.Sequence == 0) {
-          this.contentservice.openSnackBar("Sequence is mandatory for Student Grade!",globalconstants.AlertCloseText,globalconstants.RedAlert);
+          this.contentservice.openSnackBar("Sequence is mandatory for Student Grade!",globalconstants.AlertCloseText,globalconstants.RedBackground);
           //this.alert.error("Sequence is mandatory for Student Grade");
           return;
         }
@@ -522,7 +522,7 @@ export class AddMasterDataComponent implements OnInit {
             if (this.DataToSaveCount == 0) {
               this.loading = false;
               this.DataToSaveCount = -1;
-              this.contentservice.openSnackBar(globalconstants.AddedAlert,globalconstants.AlertCloseText,globalconstants.BlueAlert);
+              this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.AlertCloseText,globalconstants.BlueBackground);
               //this.alert.success("Master data added!", this.optionAutoClose);
             }
           }
@@ -536,7 +536,7 @@ export class AddMasterDataComponent implements OnInit {
           if (this.DataToSaveCount == 0) {
             this.loading = false;
             this.DataToSaveCount = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedAlert,globalconstants.AlertCloseText,globalconstants.BlueAlert);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.AlertCloseText,globalconstants.BlueBackground);
           }
         });
     }

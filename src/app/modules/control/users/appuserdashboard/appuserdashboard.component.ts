@@ -305,7 +305,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.authservice.CallAPI(userDetail, 'Register').subscribe(
       data => {
         //this.AddAppUsers()
-        this.contentservice.openSnackBar(globalconstants.AddedAlert, globalconstants.AlertCloseText, globalconstants.BlueAlert);
+        this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground);
       },
       err => {
         var modelState;
@@ -343,7 +343,7 @@ export class AppuserdashboardComponent implements OnInit {
 
     if (ErrorMessage.length > 0) {
       //this.alert.error(ErrorMessage, this.optionsNoAutoClose);
-      this.contentservice.openSnackBar(ErrorMessage, globalconstants.AlertCloseText, globalconstants.RedAlert);
+      this.contentservice.openSnackBar(ErrorMessage, globalconstants.AlertCloseText, globalconstants.RedBackground);
       return;
     }
 
@@ -374,7 +374,7 @@ export class AppuserdashboardComponent implements OnInit {
 
           row.Id = data.Id;
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.AddedAlert, globalconstants.AlertCloseText, globalconstants.BlueAlert);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground);
 
         });
 
@@ -385,7 +385,7 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedAlert, globalconstants.AlertCloseText, globalconstants.BlueAlert)
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground)
           //this.alert.open(globalconstants.,globalconstants.AlertCloseText,globalconstants.AlertDuration);
           //this.router.navigate(['/home/pages']);
         });

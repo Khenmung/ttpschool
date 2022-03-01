@@ -237,11 +237,17 @@ export class searchstudentComponent implements OnInit {
   view(element) {
     debugger;
     this.generateDetail(element);
+    var _ClassId =0;
     if (element.StudentClasses.length > 0)
+    {
       this.StudentClassId = element.StudentClasses[0].StudentClassId;
+      _ClassId =element.StudentClasses[0].ClassId;
+    }
+      
     this.StudentId = element.StudentId;
 
     this.token.saveStudentClassId(this.StudentClassId + "");
+    this.token.saveClassId(_ClassId + "");
     this.token.saveStudentId(this.StudentId + "");
 
     this.route.navigate(['/edu/addstudent/' + element.StudentId]);

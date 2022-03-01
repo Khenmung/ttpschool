@@ -12,8 +12,8 @@ mat-cell:first-of-type {
 .mat-column-Description{
     flex:1 1 200px;
 }
-.mat-column-StudentEvalCategoryId,
-.mat-column-StudentEvalSubCategoryId,
+.mat-column-ClassEvalCategoryId,
+.mat-column-ClassEvalSubCategoryId,
 .mat-column-RatingOptionId
 {
     flex:1 1 120px;
@@ -23,7 +23,7 @@ mat-cell:first-of-type {
 {   
     flex:1 1 100px;
 }
-.mat-column-StudentEvaluationId
+.mat-column-ClassEvaluationId
 {   
     flex:1 1 60px;
 }

@@ -1,5 +1,5 @@
 <div style="padding:15px 15px 10px 15px;">
-    <div><strong>Student Evaluation</strong></div>
+    <div><strong>Class Evaluation</strong></div>
 </div>
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <alert></alert>
@@ -32,17 +32,17 @@
                 <input type="text" matInput formControlName="searchProfileName" autoComplete="Off" [maxlength]="256">
             </mat-form-field>
 
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentEvaluation()">
+            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassEvaluation()">
                 <mat-icon>search</mat-icon>
             </button>
         </form>
         <!-- <div style="width: 100%;"> -->
         <mat-table #table [dataSource]="dataSource" matSort style="width: 1280px;">
-            <ng-container matColumnDef="StudentEvaluationId">
+            <ng-container matColumnDef="ClassEvaluationId">
                 <mat-header-cell *matHeaderCellDef>Id
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.StudentEvaluationId}}
+                    {{element.ClassEvaluationId}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Description">
@@ -58,26 +58,27 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="StudentEvalCategoryId">
+            <ng-container matColumnDef="ClassEvalCategoryId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Category
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
+                    
                     <mat-form-field appearance="outline">
                         <mat-select (selectionChange)="CategoryChanged(element)"
-                            [(ngModel)]="element.StudentEvalCategoryId" [value]="element.StudentEvalCategoryId">
+                            [(ngModel)]="element.ClassEvalCategoryId" [value]="element.ClassEvalCategoryId">
                             <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="StudentEvalSubCategoryId">
+            <ng-container matColumnDef="ClassEvalSubCategoryId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Category
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.StudentEvalSubCategoryId"
-                            [value]="element.StudentEvalSubCategoryId">
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassEvalSubCategoryId"
+                            [value]="element.ClassEvalSubCategoryId">
                             <mat-option [value]="0">--sub category--</mat-option>
                             <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>
@@ -98,16 +99,17 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="RatingOrSubjective">
+            <!-- <ng-container matColumnDef="RatingOrSubjective">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Rating Or Subjective
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-radio-group [(ngModel)]="element.RatingOrSubjective" (blur)="onBlur(element)" [value]="element.RatingOrSubjective">
+                    <mat-radio-group [(ngModel)]="element.RatingOrSubjective" 
+                    (blur)="onBlur(element)" [value]="element.RatingOrSubjective">
                         <mat-radio-button value="0">Rating</mat-radio-button>
                         <mat-radio-button value="1">Subjective</mat-radio-button>
                     </mat-radio-group>
                 </mat-cell>
-            </ng-container>
+            </ng-container> -->
             <ng-container matColumnDef="ClassId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Class
                 </mat-header-cell>

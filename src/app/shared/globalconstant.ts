@@ -7,14 +7,15 @@ import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:5000";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
-    public static BlueAlert = {duration:3000,panelClass:'blue-snackbar'};
-    public static RedAlert = {duration:10000,panelClass:'red-snackbar'};
-    public static AddedAlert = 'Data saved sucessfully.';
-    public static UpdatedAlert = 'Data updated sucessfully.';
+    public static BlueBackground = {duration:3000,panelClass:'blue-snackbar'};
+    public static RedBackground = {duration:10000,panelClass:'red-snackbar'};
+    public static AddedMessage = 'Data saved sucessfully.';
+    public static UpdatedMessage = 'Data updated sucessfully.';
+    public static AlreadyExistMessage = 'Record already exists!';
     public static RecordAlreadyExistAlert = 'Record already exists!';
     public static AlertCloseText = 'Dismiss';
     public static AppAndMenuAndFeatures =

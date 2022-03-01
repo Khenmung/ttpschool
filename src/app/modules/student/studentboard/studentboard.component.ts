@@ -9,7 +9,7 @@ import { StudentattendancereportComponent } from '../studentattendancereport/stu
 import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudentdoc.component';
 import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimaryinfo.component';
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
-import { StudentactivityComponent } from '../studentactivity/studentactivity.component';
+import { StudentEvaluationComponent } from '../studentevaluation/studentevaluation.component';
 
 @Component({
   selector: 'app-studentboard',
@@ -24,7 +24,7 @@ export class StudentboardComponent implements AfterViewInit {
       GenerateCertificateComponent,
       StudentattendancereportComponent,
       StudentprogressreportComponent,
-      StudentactivityComponent
+      StudentEvaluationComponent
     ];
   
     tabNames = [
@@ -119,7 +119,7 @@ export class StudentboardComponent implements AfterViewInit {
           comindx =this.components.indexOf(StudentprogressreportComponent);
           break;
           case "student profile":
-          comindx =this.components.indexOf(StudentactivityComponent);
+          comindx =this.components.indexOf(StudentEvaluationComponent);
           break;  
       } 
       

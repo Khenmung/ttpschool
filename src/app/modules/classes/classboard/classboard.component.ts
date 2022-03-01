@@ -1,7 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassdetailComponent } from '../classdetail/classdetail.component';
 import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
@@ -9,7 +8,7 @@ import { ClassmasterdashboardComponent } from '../classsmastermapping/classmaste
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
 import { FeeDefinitionComponent } from '../feedefinition/feedefinition.component';
 import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
-import { StudentevaluationComponent } from '../studentevaluation/studentevaluation.component';
+import { ClassEvaluationComponent } from '../classevaluation/classevaluation.component';
 
 @Component({
   selector: 'app-classboard',
@@ -23,7 +22,7 @@ export class ClassboardComponent implements AfterViewInit {
     DashboardclassfeeComponent,
     SchoolFeeTypesComponent,
     ClassmasterdashboardComponent,
-    StudentevaluationComponent,
+    ClassEvaluationComponent,
     ClassprerequisiteComponent
   ];
 
@@ -72,7 +71,7 @@ export class ClassboardComponent implements AfterViewInit {
     this.GetComponents(perObj, comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.STUDENTEVALUATION)
-    var comindx = this.components.indexOf(StudentevaluationComponent);
+    var comindx = this.components.indexOf(ClassEvaluationComponent);
     this.GetComponents(perObj, comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE)

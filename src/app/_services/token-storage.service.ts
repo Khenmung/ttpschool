@@ -14,6 +14,7 @@ const PERMITTED_APPS='Permitted_Apps';
 const CURRENTBATCHSTARTEND='CurrentBatchStartEnd';
 const SELECTEDBATCHSTARTEND='SelectedBatchStartEnd';
 const STUDENTID='StudentId';
+const CLASSID='ClassId';
 const STUDENTCLASSID='StudentClassId';
 const EMPLOYEEID ='employeeId';
 const ROLEFILTER ='rolefilter';
@@ -99,6 +100,10 @@ export class TokenStorageService {
     localStorage.removeItem(STUDENTCLASSID);
     localStorage.setItem(STUDENTCLASSID, token);
   }
+  public saveClassId(token: string): void {
+    localStorage.removeItem(CLASSID);
+    localStorage.setItem(CLASSID, token);
+  }
   public saveStudentId(token: string): void {
     localStorage.removeItem(STUDENTID);
     localStorage.setItem(STUDENTID, token);
@@ -141,6 +146,9 @@ export class TokenStorageService {
   }
   public getStudentClassId(): number | null {
     return +localStorage.getItem(STUDENTCLASSID);
+  }
+  public getClassId(): number | null {
+    return +localStorage.getItem(CLASSID);
   }
   public saveSelectedAppId(token: string): void {
     localStorage.removeItem(SELECTEDAPPID);
