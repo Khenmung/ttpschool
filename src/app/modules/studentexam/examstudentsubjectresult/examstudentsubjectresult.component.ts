@@ -121,7 +121,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -130,7 +130,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     //debugger;   
     if (row.Marks > 1000) {
       this.loading = false;
-      this.alert.error("Marks cannot be greater than 1000.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Marks cannot be greater than 1000.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -155,7 +155,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
           let _examstatus = 0;
@@ -205,9 +205,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
             this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
-          //this.alert.success("Data saved successfully.", this.optionAutoClose);
+          //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -219,9 +219,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
             this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
-          //this.alert.success("Data updated successfully.", this.optionAutoClose);
+          //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   GetStudentSubjects() {
@@ -326,19 +326,19 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.alert.info("Please select exam", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.alert.info("Please select class", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchSectionId").value == 0) {
-      this.alert.info("Please select student section", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchSubjectId").value == 0) {
-      this.alert.info("Please select subject", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -373,7 +373,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         var forDisplay;
         if (filteredStudentSubjects.length == 0 || filteredStudentSubjects[0].Components.length == 0) {
           this.loading = false;
-          this.alert.info("Student Subject/Subject components not defined for this class subject!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Student Subject/Subject components not defined for this class subject!", globalconstants.ActionText,globalconstants.RedBackground);
           this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>([]);
           return;
         }

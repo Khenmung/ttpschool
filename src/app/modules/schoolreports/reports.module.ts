@@ -13,17 +13,13 @@ import { MatTableModule } from '@angular/material/table';
 import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
 import { NgxPrintModule } from 'ngx-print';
 import { ChartsModule } from 'ng2-charts';
-import { BrowserModule } from '@angular/platform-browser';
-
+import { MyFilterPipe } from 'src/app/shared/FilterPipe';
 
 @NgModule({
   declarations: [
-    SchoolReportsComponents
-    
+    SchoolReportsComponents,MyFilterPipe
   ],
   imports: [
-   // BrowserModule,
-   // NgModule,
     CommonModule,
     MaterialModule,
     SharedModule,
@@ -37,7 +33,6 @@ import { BrowserModule } from '@angular/platform-browser';
     MatTableModule,
     NgxPrintModule,    
     ChartsModule
-
   ],
   providers:[
     { provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },

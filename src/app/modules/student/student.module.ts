@@ -9,9 +9,10 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxPrintModule } from 'ngx-print';
 import { StudentprogressreportComponent } from './studentprogressreport/studentprogressreport.component';
+import { MyFilterPipe } from 'src/app/shared/FilterPipe';
 
 @NgModule({
-  declarations: [StudentComponents, StudentprogressreportComponent],
+  declarations: [StudentComponents,StudentprogressreportComponent],
   imports: [
     CommonModule,
     StudentRoutingModule,

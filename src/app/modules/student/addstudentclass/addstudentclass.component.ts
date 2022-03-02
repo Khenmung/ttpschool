@@ -96,7 +96,7 @@ export class AddstudentclassComponent implements OnInit {
 
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
       if (this.FeeType.length == 0) {
-        this.alert.info("Fee type is empty",this.optionsAutoClose);
+        this.contentservice.openSnackBar("Fee type is empty",globalconstants.ActionText,globalconstants.RedBackground);
         this.nav.navigate(["/edu"]);
         return;
       }
@@ -142,7 +142,8 @@ export class AddstudentclassComponent implements OnInit {
   GetStudent() {
     var filterOrgId = globalconstants.getStandardFilter(this.tokenstorage);
     if (this.StudentId == 0) {
-      this.alert.error("Invalid StudentId", this.optionsAutoClose);
+   
+      this.contentservice.openSnackBar("Invalid student Id",globalconstants.ActionText,globalconstants.RedBackground);
       this.invalidId = true;
       return;
     }
@@ -166,11 +167,11 @@ export class AddstudentclassComponent implements OnInit {
           }
           else {
             this.invalidId = true;
-            this.alert.error("Invalid student Id", this.optionsAutoClose);
+            this.contentservice.openSnackBar("Invalid student Id",globalconstants.ActionText,globalconstants.RedBackground);
           }
         }
         else
-          this.alert.error("Problem fetching students' data", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Problem fetching students' data",globalconstants.ActionText,globalconstants.RedBackground);
       });
 
   }
@@ -217,7 +218,7 @@ export class AddstudentclassComponent implements OnInit {
               Remarks: '',
               Active: 1
             });
-            this.alert.info("Class yet to be defined for this student", this.optionsAutoClose);
+            this.contentservice.openSnackBar("Class yet to be defined for this student",globalconstants.ActionText,globalconstants.RedBackground);
           }
         });
     }
@@ -248,7 +249,7 @@ export class AddstudentclassComponent implements OnInit {
       ErrorMessage += "Admission date is required.<br>";
     }
     if (ErrorMessage.length > 0) {
-      this.alert.error(ErrorMessage, this.optionsNoAutoClose);
+      this.contentservice.openSnackBar(ErrorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else {
@@ -281,7 +282,7 @@ export class AddstudentclassComponent implements OnInit {
         (data: any) => {
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
-          this.alert.success("Data saved successfully", this.optionsAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
 
   }
@@ -290,7 +291,7 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, this.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
-          this.alert.success("Data updated successfully", this.optionsAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
         });
   }

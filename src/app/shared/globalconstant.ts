@@ -15,9 +15,11 @@ export class globalconstants {
     public static RedBackground = {duration:10000,panelClass:'red-snackbar'};
     public static AddedMessage = 'Data saved sucessfully.';
     public static UpdatedMessage = 'Data updated sucessfully.';
+    public static DeletedMessage = 'Data deleted sucessfully.';
     public static AlreadyExistMessage = 'Record already exists!';
-    public static RecordAlreadyExistAlert = 'Record already exists!';
-    public static AlertCloseText = 'Dismiss';
+    public static RecordAlreadyExistMessage = 'Record already exists!';
+    public static NoRecordFoundMessage = 'No record found!';
+    public static ActionText = 'X';
     public static AppAndMenuAndFeatures =
         {
             'edu': {
@@ -186,7 +188,8 @@ export class globalconstants {
                     'RESULT': 'result',
                     'FEEPAYMENTSTATUS': 'Fee Payment Status',
                     'DATEWISECOLLECTION': 'date wise collection',
-                    'CHARTREPORT': 'Chart Report'
+                    'CHARTREPORT': 'Chart Report',
+                    'STUDENTPROFILEREPORT': 'student profile report'
                 },
                 'DATA': {
                     'DATA': 'data',

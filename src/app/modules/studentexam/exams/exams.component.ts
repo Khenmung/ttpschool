@@ -140,7 +140,7 @@ export class ExamsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -166,7 +166,7 @@ export class ExamsComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
           this.ExamsData.ExamId = row.ExamId;
@@ -213,7 +213,7 @@ export class ExamsComponent implements OnInit {
           this.loading = false;
           row.ExamId = data.ExamId;
           row.Action=false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -388,10 +388,10 @@ export class ExamsComponent implements OnInit {
             (data: any) => {
               this.loading = false;
               row.Action =false;
-              this.alert.success("Students result generated successfully.", this.optionAutoClose);
+              this.contentservice.openSnackBar("Students result generated successfully.", globalconstants.ActionText,globalconstants.RedBackground);
             }, error => {
               //console.log("error",error);
-              this.alert.error("Something went wrong. Please try again.");
+              this.contentservice.openSnackBar("Something went wrong. Please try again.",globalconstants.ActionText,globalconstants.RedBackground);
               this.loading = false;
             })
 

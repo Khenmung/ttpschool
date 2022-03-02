@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -57,10 +58,8 @@ export class SchoolFeeTypesComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
+    private contentservice: ContentService,
     private fb: FormBuilder
   ) { }
 
@@ -130,7 +129,7 @@ export class SchoolFeeTypesComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -170,7 +169,7 @@ export class SchoolFeeTypesComponent implements OnInit {
         (data: any) => {
           row.FeeTypeId = data.FeeTypeId;
           row.Action = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
         });
   }
@@ -180,7 +179,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -188,7 +187,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     //debugger;
     // if (this.searchForm.get("searchFeeTypeName").value.length < 3)
     // {
-    //   this.alert.info("Please enter atleast 3 characters.",this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please enter atleast 3 characters.",this.optionAutoClose);
     //   return;
     // }  
     this.loading = true;
@@ -217,7 +216,7 @@ export class SchoolFeeTypesComponent implements OnInit {
         }
         else
         {
-          this.alert.success("No data found.",this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource<IFeeType>(this.FeeTypeList);
         this.loadingFalse();

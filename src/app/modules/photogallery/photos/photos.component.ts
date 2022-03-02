@@ -6,6 +6,7 @@ import { DialogService } from '../../../shared/dialog.service';
 import { List } from '../../../shared/interface';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { globalconstants } from '../../../shared/globalconstant';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-photos',
@@ -34,7 +35,7 @@ export class PhotosComponent implements OnInit {
   constructor(private dataservice: NaomitsuService,
     private route: ActivatedRoute,
     private nav: Router,
-    private alert: AlertService,
+    private contentservice: ContentService,
     private dialog: DialogService,
     private tokenStorage:TokenStorageService) {
     this.route.paramMap.subscribe(item => {
@@ -55,7 +56,7 @@ export class PhotosComponent implements OnInit {
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-        this.alert.error("Access denied! login required.", options);
+        this.contentservice.openSnackBar("Access denied! login required.",globalconstants.ActionText,globalconstants.RedBackground);
         this.nav.navigate(['/home']);
     }
 }
@@ -119,7 +120,7 @@ export class PhotosComponent implements OnInit {
             .subscribe(res => {
 
               this.images.splice(this.images.findIndex((item)=>{item.PhotoId==button._elementRef.nativeElement.id}),1);
-              this.alert.success("Album name updated!", this.options);
+              this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
             },
               error => console.log(error));
 

@@ -119,7 +119,7 @@ export class TeacherAttendanceComponent implements OnInit {
 
     var _attendanceDate = this.searchForm.get("searchAttendanceDate").value;
     if (_attendanceDate == null) {
-      this.alert.error("Please select attendance date.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select attendance date.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
  
@@ -128,7 +128,7 @@ export class TeacherAttendanceComponent implements OnInit {
     var today = new Date(attendancedate);
     today.setHours(0, 0, 0, 0);
     if (attendancedate.getTime() > today.getTime()) {
-      this.alert.error("Attendance date cannot be greater than today's date", this.optionAutoClose);
+      this.contentservice.openSnackBar("Attendance date cannot be greater than today's date", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else if (_attendanceDate.getTime() != today.getTime()) {
@@ -246,7 +246,7 @@ export class TeacherAttendanceComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
           this.TeacherAttendanceData.TeacherId = row.TeacherId;
@@ -285,7 +285,7 @@ export class TeacherAttendanceComponent implements OnInit {
           if (this.NoOfRecordToUpdate > 0) {
             if (this.NoOfRecordToUpdate == indx + 1) {
               this.NoOfRecordToUpdate = 0;
-              this.alert.success("Data saved successfully.", this.optionAutoClose);
+              this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             }
           }
         });
@@ -298,7 +298,7 @@ export class TeacherAttendanceComponent implements OnInit {
           if (this.NoOfRecordToUpdate > 0) {
             if (this.NoOfRecordToUpdate == indx + 1) {
               this.NoOfRecordToUpdate = 0;
-              this.alert.success("Data saved successfully.", this.optionAutoClose);
+              this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             }
           }
         });

@@ -12,6 +12,7 @@ import { base64ToFile } from 'ngx-image-cropper';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { async } from '@angular/core/testing';
 import { globalconstants } from '../../../shared/globalconstant';
+import { ContentService } from 'src/app/shared/content.service';
 @Component({
   selector: 'app-file-drag-and-drop',
   templateUrl: './imgDragAndDrop.html',
@@ -36,7 +37,7 @@ export class ImgDragAndDropComponent implements OnInit {
     private naomitsuService: NaomitsuService,
     private alert: AlertService,
     private uploadService: FileUploadService,
-    private dialog: DialogService,
+    private contentservice: ContentService,
     private route: Router,
     //private ng2ImgMax: Ng2ImgMaxService,
     private tokenStorage: TokenStorageService
@@ -58,7 +59,7 @@ export class ImgDragAndDropComponent implements OnInit {
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.alert.error("Access denied! login required.", options);
+      this.contentservice.openSnackBar("Access denied! login required.", globalconstants.ActionText,globalconstants.RedBackground);
       this.route.navigate(['/home']);
     }
   }
@@ -74,7 +75,8 @@ export class ImgDragAndDropComponent implements OnInit {
       this.Requestsize += this.files[i].size;
       if (this.Requestsize + this.files[i].size > globalconstants.RequestLimit) {
         this.alert.error('File upload limit is 20mb!', this.options);
-        this.alert.info('File size is : ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb' )
+        this.contentservice.openSnackBar('File size is : ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb',globalconstants.ActionText,globalconstants.BlueBackground)
+        
         break;
       }
     //   this.ng2ImgMax.resizeImage(this.files[i], 2500, 1000)
@@ -114,11 +116,11 @@ export class ImgDragAndDropComponent implements OnInit {
   Upload() {
     //debugger;
     if (this.Requestsize > globalconstants.RequestLimit) {
-      this.alert.error("File upload limit is 20mb!", this.options);
+      this.contentservice.openSnackBar("File upload limit is 20mb!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.files.length > 15) {
-      this.alert.error("File count exceeded the maximum of 15");
+      this.contentservice.openSnackBar("File count exceeded the maximum of 15",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else if (this.errorMessage.length > 0) {
@@ -134,7 +136,7 @@ export class ImgDragAndDropComponent implements OnInit {
 
     if (selectedAlbum == '' && selectedAlbumId == 0) {
       error = true;
-      this.alert.error("Please enter album or existing album", this.options);
+      this.contentservice.openSnackBar("Please enter album or existing album",globalconstants.ActionText,globalconstants.RedBackground);
     }
     else {
       if (selectedAlbumId != 0) {
@@ -163,7 +165,7 @@ export class ImgDragAndDropComponent implements OnInit {
     };
     this.uploadService.postFiles(this.formData).subscribe(res => {
       ////console.log("Upload complete");
-      this.alert.success("Files Uploaded successfully.", options);
+      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText,globalconstants.RedBackground);
       this.formData = null;
       this.files = [];
       this.getAlbums();
@@ -177,7 +179,7 @@ export class ImgDragAndDropComponent implements OnInit {
 
     this.files.splice(this.files.indexOf(event), 1);
     this.Requestsize -= event.size;
-    this.alert.info('File size: ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb', this.options);
+    this.contentservice.openSnackBar('File size: ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb', globalconstants.ActionText,globalconstants.RedBackground);
 
   }
 

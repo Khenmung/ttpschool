@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -59,6 +60,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private alert: AlertService,
+    private contentservice: ContentService
+
   ) { }
 
   ngOnInit(): void {
@@ -238,7 +241,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
 
     var rolefilter = '';
     if (this.SelectedApplicationId == 0) {
-      this.alert.error("Please select Application", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select Application", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     // else
@@ -251,7 +254,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     //rolefilter += " and ParentId eq " + _ParentId;
 
     if (this.searchForm.get("RoleId").value == 0) {
-      this.alert.error("Please select role.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else
@@ -311,9 +314,9 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         })
         //const parents = ResultedPermittedPageFeatures.filter(x => !x.ParentId);
         this.ApplicationRoleList = ResultedPermittedPageFeatures.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
-
+        
         if (this.ApplicationRoleList.length == 0) {
-          this.alert.info("No feature found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("No feature found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
         console.log("this.ApplicationRoleList",this.ApplicationRoleList)
         this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
@@ -378,7 +381,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
   UpdateOrSave(row) {
 
     if (row.PermissionId == 0) {
-      this.alert.error("Please select permission", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select permission", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -400,7 +403,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText,globalconstants.RedBackground);
           this.loading = false;
         }
         else {
@@ -451,7 +454,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           row.ApplicationFeatureRoleId = data.ApplicationFeatureRoleId;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.NoOfRowsToUpdate = -1;
           }
         });
@@ -464,7 +467,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           this.loading = false;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
             this.NoOfRowsToUpdate = -1;
           }
         });

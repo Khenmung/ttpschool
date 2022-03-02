@@ -5,7 +5,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
@@ -67,6 +69,7 @@ export class ReportConfigItemComponent implements OnInit {
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
+    private contentservice: ContentService,    
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private nav: Router,
@@ -105,7 +108,7 @@ export class ReportConfigItemComponent implements OnInit {
     debugger;
     var appId = this.searchForm.get("searchApplicationId").value;
     if (appId == 0) {
-      this.alert.error("Please select application", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select application", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -150,7 +153,7 @@ export class ReportConfigItemComponent implements OnInit {
     var ReportNameId = this.searchForm.get("searchReportName").value
 
     if (this.ApplicationName.toLowerCase() != "ttp" && ReportNameId == 0) {
-      this.alert.error("Please select report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -178,7 +181,7 @@ export class ReportConfigItemComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -226,7 +229,7 @@ export class ReportConfigItemComponent implements OnInit {
           this.loading = false;
           if (this.ToUpdateCount == 0) {
             this.ToUpdateCount = -1;
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -239,7 +242,7 @@ export class ReportConfigItemComponent implements OnInit {
           row.Action = false;
           if (this.ToUpdateCount == 0) {
             this.ToUpdateCount = -1;
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }
@@ -289,7 +292,7 @@ export class ReportConfigItemComponent implements OnInit {
     var filterstr = 'Active eq 1 ';
     var searchApplicationId = this.searchForm.get("searchApplicationId").value;
     if (searchApplicationId == 0) {
-      this.alert.info("Please select application", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select application", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -349,7 +352,7 @@ export class ReportConfigItemComponent implements OnInit {
           this.GetReportNames();
         }
         else {
-          this.alert.error("Base report Id not found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.loading = false;
       });

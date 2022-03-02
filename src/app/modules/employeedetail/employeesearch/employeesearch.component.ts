@@ -343,7 +343,7 @@ export class EmployeesearchComponent implements OnInit {
         }
         else {
           this.EmployeeData = [];
-          this.alert.info("No Employee found!", this.options);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource<IEmployee>(this.EmployeeData);
         this.dataSource.paginator = this.paginator;

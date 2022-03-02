@@ -3,7 +3,8 @@ import { MediaObserver, MediaChange } from '@angular/flex-layout';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
@@ -34,7 +35,7 @@ export class ForgotpasswordComponent implements OnInit {
     private mediaObserver: MediaObserver,
     private fb: FormBuilder,
     private tokenService: TokenStorageService,
-    private alert: AlertService
+    private contentservice: ContentService
   ) { }
 
   ngOnInit(): void {
@@ -67,7 +68,7 @@ export class ForgotpasswordComponent implements OnInit {
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;
-        this.alert.success("Email sent to your register email address.", this.optionsNoAutoClose);        
+        this.contentservice.openSnackBar("Email sent to your register email address.",globalconstants.ActionText,globalconstants.RedBackground);        
       },
       err => {
         if (err.error) {

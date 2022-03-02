@@ -5,7 +5,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
@@ -68,6 +70,7 @@ export class UserconfigreportnameComponent implements OnInit {
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
+    private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private nav: Router,
@@ -107,7 +110,7 @@ export class UserconfigreportnameComponent implements OnInit {
     debugger;
     // var appId = this.searchForm.get("searchApplicationId").value;
     // if (appId == 0) {
-    //   this.alert.error("Please select application", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select application", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
 
@@ -138,7 +141,7 @@ export class UserconfigreportnameComponent implements OnInit {
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     var ApplicationId = this.SelectedApplicationId;
     if (ApplicationId == 0) {
-      this.alert.error("Please select application name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (AvailableReportId == 0) {
@@ -163,7 +166,7 @@ export class UserconfigreportnameComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -208,7 +211,7 @@ export class UserconfigreportnameComponent implements OnInit {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -217,7 +220,7 @@ export class UserconfigreportnameComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   ReSequence(editedrow) {
@@ -269,11 +272,11 @@ export class UserconfigreportnameComponent implements OnInit {
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     
     if (this.SelectedApplicationId == 0) {
-      this.alert.error("Please select application name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (AvailableReportId == 0) {
-      this.alert.error("Please select available report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -331,7 +334,7 @@ export class UserconfigreportnameComponent implements OnInit {
           this.GetReportNames();
         }
         else {
-          this.alert.error("Base report Id not found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.loading = false;
       });

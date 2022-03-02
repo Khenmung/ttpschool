@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 //import { EventEmitter } from 'events';
 //import { filter } from 'rxjs/operators';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -56,10 +57,10 @@ title ='';
     Active: 1,
   }
   selectedIndex = 0;
-  constructor(private dataservice: NaomitsuService,
-    private aRoute: ActivatedRoute,
+  constructor(
+    private dataservice: NaomitsuService,
+    private contentservice: ContentService,
     private alert: AlertService,
-    private nav: Router,
     private fb: FormBuilder,
     private sharedData: SharedataService) { }
 
@@ -134,7 +135,7 @@ title ='';
           });
         }
         else
-          this.alert.error("Problem fetching app users", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Problem fetching app users",globalconstants.ActionText,globalconstants.RedBackground);
       });
 
   }
@@ -179,7 +180,7 @@ title ='';
     }
 
     if (ErrorMessage.length > 0) {
-      this.alert.error(ErrorMessage, this.optionsNoAutoClose);
+      this.contentservice.openSnackBar(ErrorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else {
@@ -221,7 +222,7 @@ title ='';
       .subscribe(
         (data: any) => {
           this.UserIdOutput.emit(0);
-          this.alert.success("Data saved successfully", this.optionsAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
       
         });
@@ -233,7 +234,7 @@ title ='';
       .subscribe(
         (data: any) => {
           this.UserIdOutput.emit(0);
-          this.alert.success("Data updated successfully", this.optionsAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
         });
   }

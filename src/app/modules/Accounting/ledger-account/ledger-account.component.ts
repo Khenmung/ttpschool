@@ -139,8 +139,8 @@ export class GeneralLedgerComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
-
+          
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   AddNew() {
@@ -169,17 +169,19 @@ export class GeneralLedgerComponent implements OnInit {
     this.loading = true;
     if (row.AccountNatureId == 0) {
       this.loading = false;
-      this.alert.error("Please select account nature.", this.optionAutoClose);
+      //this.contentservice.openSnackBar("Please select account nature.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select account nature.",globalconstants.ActionText,globalconstants.RedBackground);
+      
       return;
     }
     if (row.AccountGroupId == 0) {
       this.loading = false;
-      this.alert.error("Please select account group.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select account group.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (row.GeneralLedgerName.length == 0) {
       this.loading = false;
-      this.alert.error("Please enter account name.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter account name.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     let checkFilterString = "GeneralLedgerName eq '" + row.GeneralLedgerName + "'";
@@ -198,7 +200,7 @@ export class GeneralLedgerComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
@@ -247,7 +249,7 @@ export class GeneralLedgerComponent implements OnInit {
         (data: any) => {
           row.GeneralLedgerId = data.GeneralLedgerId;
           row.Action = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
         });
   }
@@ -257,7 +259,7 @@ export class GeneralLedgerComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -302,7 +304,7 @@ export class GeneralLedgerComponent implements OnInit {
 
     if (AccountNatureId == 0 && AccountGroupId == 0 && LedgerAccountId == 0) {
       this.loading = false;
-      this.alert.info("Please select search criteria", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select search criteria", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (AccountNatureId > 0) {

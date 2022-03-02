@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
-//import { Calendar } from '@fullcalendar/core';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { CalendarOptions } from '@fullcalendar/angular';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { globalconstants } from 'src/app/shared/globalconstant';
+import { ContentService } from 'src/app/shared/content.service';
 
 
 @Component({
@@ -27,7 +27,8 @@ export class CalendarComponent implements OnInit {
   EventList=[];
   EventsListName ='Events';
   calendarOptions: CalendarOptions;
-  constructor(private alert:AlertService,
+  constructor(
+    private contentservice:ContentService,
     private dataservice:NaomitsuService,
     private tokenService:TokenStorageService) { }
 
@@ -88,7 +89,7 @@ export class CalendarComponent implements OnInit {
   eventMouseOver(value){
     debugger;
     //console.log("mouseover",value.detail)
-    this.alert.info(value,this.optionsNoAutoClose);
+    this.contentservice.openSnackBar(value,globalconstants.ActionText,globalconstants.BlueBackground);
   }
   TimeGridView()
   {

@@ -115,7 +115,7 @@ export class DashboardclassfeeComponent implements OnInit {
         this.SelectedBatchId = +this.token.getSelectedBatchId();
         this.PreviousBatchId = +this.token.getPreviousBatchId();
         if (this.SelectedBatchId == 0) {
-          //this.alert.error("Current batch not defined in master!", this.options);
+          //this.contentservice.openSnackBar("Current batch not defined in master!", this.options);
           this.route.navigate(['/admin']);
           this.loading = false;
         }
@@ -211,7 +211,7 @@ export class DashboardclassfeeComponent implements OnInit {
         //console.log("sumFeeData",sumFeeData)
         this.authservice.CallAPI(sumFeeData, 'createinvoice')
           .subscribe((data: any) => {
-            this.alert.success("Invoice created successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText,globalconstants.RedBackground);
             this.loading = false;
           })
       });
@@ -290,19 +290,19 @@ export class DashboardclassfeeComponent implements OnInit {
     if (row.Amount == 0) {
       row.Action = false;
       this.loading = false;
-      this.alert.error("Amount should be greater than zero.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Amount should be greater than zero.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else if (row.Amount > 100000) {
       row.Action = false;
       this.loading = false;
-      this.alert.error("Amount should be smaller than 100,000.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Amount should be smaller than 100,000.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else if (row.Month == 0) {
       row.Action = false;
       this.loading = false;
-      this.alert.error("Please select month.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select month.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -323,7 +323,7 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText,globalconstants.RedBackground);
         }
         else {
           this.classFeeData.Active = row.Active;
@@ -355,7 +355,7 @@ export class DashboardclassfeeComponent implements OnInit {
           row.ClassFeeId = data.ClassFeeId;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.alert.success("All data saved sucessfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar("All data saved sucessfully.", globalconstants.ActionText,globalconstants.RedBackground);
           }
         });
 
@@ -369,7 +369,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.loading = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.alert.success("All data saved sucessfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar("All data saved sucessfully.", globalconstants.ActionText,globalconstants.RedBackground);
           }
 
         });
@@ -411,19 +411,19 @@ export class DashboardclassfeeComponent implements OnInit {
   CopyFromPreviousBatch() {
     //console.log("here ", this.PreviousBatchId)
     if (this.PreviousBatchId == -1)
-      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
     else
       this.GetClassFee(this.StandardFilterWithPreviousBatchId, 1)
   }
   GetClassFee(OrgIdAndbatchId, previousbatch) {
     debugger;
     if (this.searchForm.get("ClassId").value == 0) {
-      this.alert.info("Please select class/course.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class/course.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
 
     }
     // if (this.searchForm.get("searchMonth").value == 0) {
-    //   this.alert.info("Please month year.", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please month year.", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
 

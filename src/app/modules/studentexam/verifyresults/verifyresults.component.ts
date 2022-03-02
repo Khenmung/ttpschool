@@ -207,16 +207,16 @@ export class VerifyResultsComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.alert.info("Please select exam", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId == 0) {
-      this.alert.info("Please select class.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     // if (this.searchForm.get("searchSectionId").value == 0) {
-    //   this.alert.info("Please select student section", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
 
@@ -315,7 +315,7 @@ export class VerifyResultsComponent implements OnInit {
               }
             })
             if (this.ExamStudentSubjectResult.length == 0) {
-              this.alert.info("No Result found for this class/section.")
+              this.contentservice.openSnackBar("No Result found for this class/section.",globalconstants.ActionText,globalconstants.RedBackground);
             }
             this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
             this.dataSource.sort = this.sort;

@@ -152,12 +152,12 @@ export class FeecollectionreportComponent implements OnInit {
 
     if (selectedMonth == 0) {
       this.loading = false;
-      this.alert.error("Please select month.", this.options.autoClose);
+      this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (paidNotPaid == '') {
       this.loading = false;
-      this.alert.error("Please select paid or not paid option.", this.options.autoClose);
+      this.contentservice.openSnackBar("Please select paid or not paid option.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     nestedFilter = "$filter=Balance eq 0 and Month eq " + selectedMonth + ";";
@@ -214,7 +214,7 @@ export class FeecollectionreportComponent implements OnInit {
           this.dataSource.sort = this.sort;
         }
         else {
-          this.alert.info("No record found.", this.options.autoClose);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText,globalconstants.RedBackground);
           this.loading = false;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;

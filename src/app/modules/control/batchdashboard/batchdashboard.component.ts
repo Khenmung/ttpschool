@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -62,7 +63,7 @@ export class BatchdashboardComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private nav: Router,
-    private shareddata: SharedataService,
+    private contentservice: ContentService,
   ) { }
 
   ngOnInit(): void {
@@ -94,7 +95,7 @@ export class BatchdashboardComponent implements OnInit {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     if (filterStr.length == 0) {
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -151,7 +152,7 @@ export class BatchdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
 
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -159,13 +160,13 @@ export class BatchdashboardComponent implements OnInit {
 
     //debugger;
     if (row.CurrentBatch == 1 && row.Active == 0) {
-      this.alert.error("Current batch should be active!", this.optionAutoClose);
+      this.contentservice.openSnackBar("Current batch should be active!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (row.CurrentBatch == 1) {
       var existingActive = this.BatchList.filter(b => b.CurrentBatch == 1 && b.BatchId != row.BatchId);
       if (existingActive.length > 0) {
-        this.alert.error("There is already another current batch!", this.optionAutoClose);
+        this.contentservice.openSnackBar("There is already another current batch!", globalconstants.ActionText,globalconstants.RedBackground);
         return;
       }
     }
@@ -184,7 +185,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
           row.Ative = 0;
           this.loading = false;
           return;
@@ -225,7 +226,7 @@ export class BatchdashboardComponent implements OnInit {
           this.loading = false;
           row.BatchId = data.BatchId;
           row.Action = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -235,7 +236,7 @@ export class BatchdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {

@@ -142,7 +142,7 @@ export class StudentAttendanceComponent implements OnInit {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //' and StudentClassId eq ' + this.StudentClassId;
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.alert.error("Please select class.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else {
@@ -152,7 +152,7 @@ export class StudentAttendanceComponent implements OnInit {
     var _sectionId = this.searchForm.get("searchSectionId").value;
     var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
     if (_sectionId == 0 && _classSubjectId == 0) {
-      this.alert.error("Please select either section or subject.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select either section or subject.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -164,7 +164,7 @@ export class StudentAttendanceComponent implements OnInit {
     _AttendanceDate.setHours(0, 0, 0, 0);
     if (_AttendanceDate.getTime() > today.getTime()) {
       this.loading=false;
-      this.alert.error("Attendance date cannot be greater than today's date.",this.optionAutoClose);
+      this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (_AttendanceDate.getTime() != today.getTime()) {
@@ -182,7 +182,7 @@ export class StudentAttendanceComponent implements OnInit {
 
 
     if (filterStr.length == 0) {
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.StudentAttendanceList = [];
@@ -205,7 +205,7 @@ export class StudentAttendanceComponent implements OnInit {
 
         if (studentclass.value.length == 0) {
           this.loading = false;
-          this.alert.error("No student exist in this class/section!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("No student exist in this class/section!",globalconstants.ActionText,globalconstants.RedBackground);
           return;
         }
 
@@ -296,7 +296,7 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -334,7 +334,7 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -375,7 +375,7 @@ export class StudentAttendanceComponent implements OnInit {
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -387,7 +387,7 @@ export class StudentAttendanceComponent implements OnInit {
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }

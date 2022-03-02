@@ -1,0 +1,106 @@
+<div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div><strong>Stduent Profile Report</strong></div>
+    </div>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <alert></alert>
+    <div style="padding: 15px;">
+        <div style="width: 100%;">
+            <form [formGroup]="searchForm">
+                <mat-form-field [style.width.px]="250" appearance="outline">
+                    <mat-label>Name-class-section-roll no</mat-label>
+                    <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                            {{option.Name}}
+                        </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentEvaluation()">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </form>
+            <!-- <div *ngFor="let item of Categories" ngIf="StudentEvaluationList.length>0">
+                <span style="font-size: large;">{{item.MasterDataName}}</span>
+                <li *ngFor="let inner of StudentEvaluationList|myfilter:item ">
+                    {{inner.Description}}
+                </li>
+            </div> -->
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="StudentEvaluationId">
+                    <mat-header-cell *matHeaderCellDef>Id
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.StudentEvaluationId}}
+                    </mat-cell>
+                </ng-container>
+                <!-- <ng-container matColumnDef="CategoryName">
+                    <mat-header-cell *matHeaderCellDef>Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.CategoryName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="SubCategoryName">
+                    <mat-header-cell *matHeaderCellDef>Sub Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.SubCategoryName}}
+                    </mat-cell>
+                </ng-container> -->
+                <ng-container matColumnDef="Description">
+                    <mat-header-cell *matHeaderCellDef>Description
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element"
+                        style="display: flex;flex-direction: column;justify-content:start;">
+                        <span style="font-size:x-large;margin: 15px;">{{element.Description}}</span>
+                        <div *ngIf="element.RatingId==0"
+                            style="border: 1px solid lightgray;padding: 15px;width:350px;height:50px">
+                            {{element.Detail}}
+                        </div>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="RatingId">
+                    <mat-header-cell *matHeaderCellDef>Rating
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-radio-group [(ngModel)]="element.RatingId" [value]="element.RatingId">
+                            <mat-radio-button *ngFor="let item of element.Ratings" (change)="onBlur(element)"
+                                [checked]="element.RatingId==item.MasterDataId" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="expandedDetail">
+                    <mat-cell *matCellDef="let row"
+                        style="display: flex;flex-direction: column;align-items: flex-start;">
+                        <!-- <div
+                            style="padding:5px;display:flex;flex-direction: row;background-color:lightgray;border-bottom:1px solid lightgray ;">
+                            <div class="mat-header-cell" style="width: 150px;">Fee Name</div>
+                            <div class="mat-header-cell" style="display: flex;justify-content: end; width: 150px;">
+                                Amount
+                            </div>
+                        </div> -->
+                        <div style="display:flex;flex-direction: row;"
+                            *ngFor="let voucher of row.element.AccountingVouchers">
+                            <div style="padding-bottom: 5px;border-bottom: 1px solid lightgray; width: 150px;">
+                                {{voucher.ClassFee.FeeDefinition.FeeName}}</div>
+                            <div
+                                style="display:flex;justify-content: end;border-bottom: 1px solid lightgray; padding-bottom: 5px;width: 150px;">
+                                {{voucher.Amount}}</div>
+                        </div>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
+                    [class.expanded]="expandedElement == row" (click)="expandedElement = row"></mat-row>
+                <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
+                    style="overflow: hidden" [@detailExpand]="(row.element == expandedElement || allRowsExpanded) ? 'expanded' : 'collapsed'">
+                </mat-row>
+            </mat-table>
+        </div>
+
+    </div>
+</div>

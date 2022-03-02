@@ -208,7 +208,7 @@ export class StudentattendancereportComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }

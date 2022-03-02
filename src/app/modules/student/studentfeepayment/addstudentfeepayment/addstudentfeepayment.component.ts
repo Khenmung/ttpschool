@@ -282,7 +282,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   GetStudentClass() {
     debugger;
     if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0) {
-      this.alert.info("Please define class for this student.",this.optionAutoClose);
+      this.contentservice.openSnackBar("Please define class for this student.",globalconstants.ActionText,globalconstants.RedBackground);
       this.nav.navigate(["/edu"]);
     }
     else {
@@ -311,7 +311,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           debugger;
           if (data.value.length > 0) {
             if (data.value[0].FeeType == undefined) {
-              //this.alert.error("Fee Type not yet defined.", this.optionsNoAutoClose);
+              //this.contentservice.openSnackBar("Fee Type not yet defined.",globalconstants.ActionText,globalconstants.RedBackground);
               this.snackbar.open("Fee type not yet defined.",'Dimiss',{duration:10000});
               this.loading = false;
             }
@@ -349,7 +349,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             }
           }
           else {
-            this.alert.error("No class defined for this student!", this.optionsNoAutoClose);
+            this.contentservice.openSnackBar("No class defined for this student!",globalconstants.ActionText,globalconstants.RedBackground);
 
           }
 
@@ -491,7 +491,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         }
         else {
           this.StudentLedgerList = [];
-          this.alert.warn("Fees not defined for this class", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Fees not defined for this class",globalconstants.ActionText,globalconstants.RedBackground);
         }
 
         this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
@@ -531,7 +531,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         if (MonthSelected.length == 0)//means not selected yet
         {
           row.Action = false;
-          this.alert.info("Previous balance must be cleared first.", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Previous balance must be cleared first.",globalconstants.ActionText,globalconstants.RedBackground);
           return;
         }
       }
@@ -624,7 +624,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       })
     }
     if (error.length > 0) {
-      this.alert.info("Previous balance must be cleared first.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Previous balance must be cleared first.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else {
@@ -632,7 +632,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       //var monthgreaterthanOne = howmanymonthSelected.filter(f=>f.Count>1);
 
       if (howmanymonthSelected.length > 1 && this.Balance > 0) {
-        this.alert.info("Previous balance must be cleared first before the next fee payment.", this.optionsNoAutoClose);
+        this.contentservice.openSnackBar("Previous balance must be cleared first before the next fee payment.",globalconstants.ActionText,globalconstants.RedBackground);
         return;
       }
       else {
@@ -659,7 +659,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     // if (ledgerObj.length == 0) {
     //   this.loading = false;
-    //   this.alert.error("Student Fee ledger not found in the general ledger master.");
+    //   this.contentservice.openSnackBar("Student Fee ledger not found in the general ledger master.");
     //   return;
     // }    
     // StudentFeeLedgerNameId = ledgerObj[0].GeneralLedgerId;
@@ -735,7 +735,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.loading = false;
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource([]);
-        this.alert.success("Payment done successfully!", this.optionAutoClose);
+        this.contentservice.openSnackBar("Payment done successfully!", globalconstants.ActionText,globalconstants.RedBackground);
         this.tabChanged(1);
       })
   }

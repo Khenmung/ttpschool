@@ -118,7 +118,7 @@ export class MenuConfigComponent implements OnInit {
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null) {
-      this.alert.error("Access denied! login required.", options);
+      this.contentservice.openSnackBar("Access denied! login required.",globalconstants.ActionText,globalconstants.RedBackground);
       this.navigate.navigate(['/auth/login']);
     }
     this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
@@ -288,7 +288,7 @@ export class MenuConfigComponent implements OnInit {
   AddNew() {
     if (this.searchForm.get("searchApplicationId").value == 0) {
       this.loading = false;
-      this.alert.error("Please select application.", this.optionsAutoClose);
+      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var newdata = {
@@ -332,7 +332,7 @@ export class MenuConfigComponent implements OnInit {
     }
 
     if (ErrorMessage.length > 0) {
-      this.alert.error(ErrorMessage, this.optionsNoAutoClose);
+      this.contentservice.openSnackBar(ErrorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     // var _ParentId = 0;
@@ -351,7 +351,7 @@ export class MenuConfigComponent implements OnInit {
     list.filter = ["Active eq 1 and " + duplicatecheck]
     this.dataservice.get(list).subscribe((data: any) => {
       if (data.value.length > 0) {
-        this.alert.error("Page already exists.", this.optionsAutoClose);
+        this.contentservice.openSnackBar("Page already exists.", globalconstants.ActionText,globalconstants.RedBackground);
         return;
       }
       else {
@@ -387,7 +387,7 @@ export class MenuConfigComponent implements OnInit {
           this.MenuConfigData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
           this.update(row);
         }
-
+        
       }
     })
   }
@@ -403,8 +403,9 @@ export class MenuConfigComponent implements OnInit {
           row.PageId = data.PageId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully", this.optionsAutoClose);
-
+          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          
+          this.GetTopMenu();
         });
 
   }
@@ -415,7 +416,9 @@ export class MenuConfigComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully", this.optionsAutoClose);
+          this.contentservice.openSnackBar("Data updated successfully", globalconstants.ActionText,globalconstants.RedBackground);
+          
+          this.GetTopMenu();
         });
   }
 
@@ -428,7 +431,7 @@ export class MenuConfigComponent implements OnInit {
   GetPages() {
     var filterStr = '';
     if (this.searchForm.get("searchApplicationId").value == 0) {
-      this.alert.info("Please select application.", this.optionsAutoClose);
+      this.contentservice.openSnackBar("Please select application.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;

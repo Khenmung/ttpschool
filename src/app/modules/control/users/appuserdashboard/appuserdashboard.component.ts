@@ -305,7 +305,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.authservice.CallAPI(userDetail, 'Register').subscribe(
       data => {
         //this.AddAppUsers()
-        this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground);
+        this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
       },
       err => {
         var modelState;
@@ -342,8 +342,8 @@ export class AppuserdashboardComponent implements OnInit {
     }
 
     if (ErrorMessage.length > 0) {
-      //this.alert.error(ErrorMessage, this.optionsNoAutoClose);
-      this.contentservice.openSnackBar(ErrorMessage, globalconstants.AlertCloseText, globalconstants.RedBackground);
+      //this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar(ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -374,7 +374,7 @@ export class AppuserdashboardComponent implements OnInit {
 
           row.Id = data.Id;
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
 
@@ -385,8 +385,8 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground)
-          //this.alert.open(globalconstants.,globalconstants.AlertCloseText,globalconstants.AlertDuration);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground)
+          //this.alert.open(globalconstants.,globalconstants.ActionText,globalconstants.AlertDuration);
           //this.router.navigate(['/home/pages']);
         });
   }

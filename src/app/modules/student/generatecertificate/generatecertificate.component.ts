@@ -138,7 +138,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.Permission = perObj[0].permission;
 
       if (this.StudentClassId == 0) {
-        this.alert.info("Please define class for this student.", this.optionAutoClose);
+        this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText,globalconstants.RedBackground);
         this.nav.navigate(['/edu']);
       }
       if (this.Permission != 'deny') {
@@ -354,7 +354,7 @@ export class GenerateCertificateComponent implements OnInit {
     var _certificateBody = this.allMasterData.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)
     if (_certificateBody.length == 0) {
       this.loading = false;
-      this.alert.error("Certificate not defined!", this.optionAutoClose);
+      this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     ////console.log("_certificateBody",_certificateBody);
@@ -391,11 +391,11 @@ export class GenerateCertificateComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.alert.info("Please select exam.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.alert.info("Please select class", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -469,12 +469,12 @@ export class GenerateCertificateComponent implements OnInit {
   GetCertificates() {
     //debugger;
     if (this.searchForm.get("searchCertificateTypeId").value == 0) {
-      this.alert.info("Please select certificate type!", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select certificate type!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     // var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     // if (_studentClassId == undefined) {
-    //   this.alert.info("Please select student!", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select student!", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
 

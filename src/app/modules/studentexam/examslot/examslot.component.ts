@@ -118,7 +118,7 @@ export class ExamslotComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -141,12 +141,12 @@ export class ExamslotComponent implements OnInit {
 
     if (row.ExamDate == null) {
       this.loading = false;
-      this.alert.error("Exam date is mandatory!", this.optionAutoClose);
+      this.contentservice.openSnackBar("Exam date is mandatory!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (row.StartTime.length == 0 || row.EndTime.length == 0) {
       this.loading = false;
-      this.alert.error("Start time and end time are mandatory!", this.optionAutoClose);
+      this.contentservice.openSnackBar("Start time and end time are mandatory!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate() + 1)
@@ -170,7 +170,7 @@ export class ExamslotComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
           //var _examdate =new Date(row.ExamDate).setDate(row.ExamDate.getDate()+1);
@@ -216,7 +216,7 @@ export class ExamslotComponent implements OnInit {
           row.Action = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -229,7 +229,7 @@ export class ExamslotComponent implements OnInit {
           row.Action = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }
@@ -270,7 +270,7 @@ export class ExamslotComponent implements OnInit {
     this.ExamSlots = [];
     if (this.searchForm.get("searchExamId").value == 0) {
 
-      this.alert.error("Please select exam", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else
@@ -289,7 +289,7 @@ export class ExamslotComponent implements OnInit {
       filterstr += " and ExamDate eq " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
 
       if (_filterExamDate.getTime() < new Date(_startDate).getTime() || _filterExamDate.getTime() > new Date(_endDate).getTime()) {
-        this.alert.error("Date should be between exam start date and end date.", this.optionsNoAutoClose);
+        this.contentservice.openSnackBar("Date should be between exam start date and end date.",globalconstants.ActionText,globalconstants.RedBackground);
         return;
       }
     }

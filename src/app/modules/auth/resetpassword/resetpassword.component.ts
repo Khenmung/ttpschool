@@ -72,7 +72,7 @@ export class ResetpasswordComponent implements OnInit {
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;
-        //this.alert.success("Password reset.", this.optionsAutoClose);
+        //this.contentservice.openSnackBar("Password reset.", this.optionsAutoClose);
         this.tokenService.signOut();
         //this.route.navigate(['/auth/login']);
       },

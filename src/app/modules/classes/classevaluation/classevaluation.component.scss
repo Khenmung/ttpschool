@@ -19,11 +19,11 @@ mat-cell:first-of-type {
     flex:1 1 120px;
 }
 .mat-column-RatingOrSubjective,.mat-column-ClassId,
-.mat-column-Action,.mat-column-Active
+.mat-column-DisplayOrder
 {   
     flex:1 1 100px;
 }
-.mat-column-ClassEvaluationId
+.mat-column-ClassEvaluationId,.mat-column-Action,.mat-column-Active
 {   
     flex:1 1 60px;
 }

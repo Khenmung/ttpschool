@@ -8,6 +8,7 @@ import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
+import { ContentService } from 'src/app/shared/content.service';
 //import { FormsModule} from '@angular/forms';
 @Component({
 
@@ -85,7 +86,7 @@ export class TextEditorComponent implements OnInit {
     private naomitsuService: NaomitsuService,
     private router: Router,
     private ar: ActivatedRoute,
-    private shareddata: SharedataService,
+    private contentservice: ContentService,
     protected alert: AlertService,
     private tokenStorage: TokenStorageService,
     private fileUploadService: FileUploadService,) {
@@ -160,7 +161,7 @@ export class TextEditorComponent implements OnInit {
     .subscribe(
       (data: any) => {
         this.imgURL ="";
-        this.alert.success("Photo deleted successfully.",this.options);
+        this.contentservice.openSnackBar("Photo deleted successfully.",globalconstants.ActionText,globalconstants.BlueBackground);
         this.processing=false;
       });
   }
@@ -189,7 +190,7 @@ export class TextEditorComponent implements OnInit {
       //let filename = this.selectedFile.name.substring(0,10).replace(' ','-').
       this.PageDetailForm.patchValue({"PhotoPath": res});
       ////console.log('res',res);
-      this.alert.success("Files Uploaded successfully.", options);
+      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
       this.imageCount =0;
       this.Edit = false;
       this.processing =false;      
@@ -247,7 +248,7 @@ export class TextEditorComponent implements OnInit {
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.alert.error("Access denied! login required.", options);
+      this.contentservice.openSnackBar("Access denied! login required.",globalconstants.ActionText,globalconstants.BlueBackground);
       this.router.navigate(['/home']);
     }
   }
@@ -326,7 +327,7 @@ export class TextEditorComponent implements OnInit {
             this.naomitsuService.postPatch('PageHistories', this.PageHistory, 0, 'post')
               .subscribe(
                 (history: any) => {
-                  this.alert.success("Data saved successfully", this.options);
+                  this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
                   //debugger;
                   if (this.PublishOrDraft == 1) {
                     if (this.PageDetailForm.value.PageTitle.toUpperCase().includes("NEWS"))
@@ -416,7 +417,7 @@ export class TextEditorComponent implements OnInit {
               .subscribe(
                 (data: any) => {
                   this.loading = false;
-                  this.alert.success("Data updated Successfully", this.options);
+                  this.contentservice.openSnackBar("Data updated Successfully", globalconstants.ActionText,globalconstants.BlueBackground);
                   this.router.navigate(['/home/pages']);
                 });
           });

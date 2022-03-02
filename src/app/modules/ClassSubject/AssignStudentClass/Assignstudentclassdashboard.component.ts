@@ -249,7 +249,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     else
     {
       this.loading=false;
-      this.alert.info("No student to assign roll no.",this.optionAutoClose);
+      this.contentservice.openSnackBar("No student to assign roll no.",globalconstants.ActionText,globalconstants.RedBackground);
       
     }
   }
@@ -262,7 +262,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
       this.loading = false;
-      this.alert.error("Please select class.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -270,14 +270,14 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
     else {
       this.loading = false;
-      this.alert.error("Please select section.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
       this.loading = false;
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -359,7 +359,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         })
         //var orderbyArr = this.RollNoGenerationSortBy.split(',');
         if (StudentClassRollNoGenList.length == 0)
-          this.alert.info("No record found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
         else {
           this.RollNoGenerationSortBy = 'Gender,StudentName';
           var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " +
@@ -370,7 +370,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             student.RollNo = (index + 1) + "";
           });
 
-          this.alert.info("New Roll Nos. has been generated. Please confirm and save it all.", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("New Roll Nos. has been generated. Please confirm and save it all.",globalconstants.ActionText,globalconstants.RedBackground);
 
           this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
           this.dataSource.sort = this.sort;
@@ -458,7 +458,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   CopyFromSameClassPreviousBatch() {
     if (this.PreviousBatchId == -1)
-      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
     else {
       this.HeaderTitle = 'Same Class Previous Batch'
       this.GetStudentClasses(this.SameClassPreviousBatch);
@@ -466,7 +466,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   CopyFromPreviousClassAndBatch() {
     if (this.PreviousBatchId == -1)
-      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
     else {
       this.HeaderTitle = 'From Previous Class and Batch'
       this.GetStudentClasses(this.PreviousClassPreviousBatch)
@@ -480,12 +480,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     var _sectionId = this.searchForm.get("searchSectionId").value;
     this.HeaderTitle = '';
     if (_classId == 0) {
-      this.alert.info("Please select class.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select class.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
     if (_sectionId == 0) {
-      this.alert.info("Please select section.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select section.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
@@ -506,7 +506,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         }
         else {
           this.loading = false;
-          this.alert.error("Previous class not defined.", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Previous class not defined.",globalconstants.ActionText,globalconstants.RedBackground);
           return;
         }
       }
@@ -523,7 +523,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     if (filterStr.length == 0) {
       this.loading = false;
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -577,7 +577,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
         if (this.StudentClassList.length == 0) {
           this.HeaderTitle = '';
-          this.alert.info("No record found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
 
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
@@ -611,7 +611,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -649,7 +649,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
           row.Ative = 0;
           return;
         }
@@ -698,10 +698,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
           if (this.RowsToUpdate == 0) {
             // if (row.Promote == 1) {
-            //   this.alert.success("Student/s is promoted to next class without section and roll no.", this.optionsNoAutoClose);
+            //   this.contentservice.openSnackBar("Student/s is promoted to next class without section and roll no.",globalconstants.ActionText,globalconstants.RedBackground);
             // }
             // else
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.RowsToUpdate = -1;
           }
 
@@ -716,7 +716,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.RowsToUpdate--;
           if (this.RowsToUpdate == 0) {
             this.loading = false;
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }

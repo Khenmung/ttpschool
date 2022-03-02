@@ -5,7 +5,9 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
@@ -70,6 +72,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
+    private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private nav: Router,
@@ -110,7 +113,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     debugger;
     // var appId = this.SelectedApplicationId;
     // if (appId == 0) {
-    //   this.alert.error("Please select application", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select application", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
 
@@ -156,15 +159,15 @@ export class UserReportConfigColumnsComponent implements OnInit {
     //var ApplicationId = this.SelectedApplicationId;
     var MyReportNameId = this.searchForm.get("searchReportName").value;
     // if (ApplicationId == 0) {
-    //   this.alert.error("Please select application name", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
     if (AvailableReportId == 0) {
-      this.alert.error("Please select available report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (MyReportNameId == 0) {
-      this.alert.error("Please select my report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -187,7 +190,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -234,7 +237,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
           this.loading = false;
           if (this.ToUpateCount == 0) {
             this.ToUpateCount = -1;
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -247,7 +250,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
           row.Action=false;
           if (this.ToUpateCount == 0) {
             this.ToUpateCount = -1;
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }
@@ -305,15 +308,15 @@ export class UserReportConfigColumnsComponent implements OnInit {
     var MyReportNameId = this.searchForm.get("searchReportName").value;
 
     if (ApplicationId == 0) {
-      this.alert.error("Please select application name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (AvailableReportId == undefined || AvailableReportId == 0) {
-      this.alert.error("Please select available report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (MyReportNameId == undefined || MyReportNameId == 0) {
-      this.alert.error("Please select my report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -390,7 +393,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
           this.GetReportNames();
         }
         else {
-          this.alert.error("Base report Id not found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.loading = false;
       });

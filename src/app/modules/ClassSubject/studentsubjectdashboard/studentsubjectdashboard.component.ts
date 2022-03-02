@@ -135,15 +135,15 @@ export class studentsubjectdashboardComponent implements OnInit {
     //debugger;
 
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.alert.info("Please select class", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchSectionId").value == 0) {
-      this.alert.info("Please select section", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select section", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     // if (this.searchForm.get("searchSubjectId").value == 0) {
-    //   this.alert.info("Please select subject", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
@@ -155,7 +155,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
 
     if (filterStr.length == 0) {
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -319,7 +319,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           if (cls.length > 0)
             _clsName = cls[0].ClassName;
 
-          this.alert.info("No student found for the selected class " + _clsName, this.optionAutoClose);
+          this.contentservice.openSnackBar("No student found for the selected class " + _clsName, globalconstants.ActionText,globalconstants.RedBackground);
           this.loading = false;
         }
         //console.log('this.StudentSubjectList', this.StudentSubjectList)
@@ -500,7 +500,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -521,7 +521,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText,globalconstants.RedBackground);
           return;
         }
         else {
@@ -571,7 +571,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           row.StudentClassSubjectId = data.StudentClassSubjectId;
           if (this.rowCount == Object.keys(row).length - 3) {
             this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }
@@ -584,9 +584,9 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.rowCount++;
           if (this.rowCount == Object.keys(row).length - 3) {
             this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
-          //this.alert.success("Data updated successfully.", this.optionAutoClose);
+          //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {

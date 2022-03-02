@@ -262,7 +262,7 @@ export class roleuserdashboardComponent implements OnInit {
             Role: '',
             Active: 0
           })
-          //this.alert.info("No user role has been defined!", this.optionsNoAutoClose);
+          //this.contentservice.openSnackBar("No user role has been defined!",globalconstants.ActionText,globalconstants.RedBackground);
         }
         //this.Applications = 
         this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
@@ -287,11 +287,11 @@ export class roleuserdashboardComponent implements OnInit {
     this.loading = true;
 
     if (row.RoleId == 0) {
-      this.alert.error("Please select role", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select role", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (row.CurrentBatch == 1 && row.Active == 0) {
-      this.alert.error("Current batch should be active!", this.optionAutoClose);
+      this.contentservice.openSnackBar("Current batch should be active!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -309,7 +309,7 @@ export class roleuserdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
           row.Ative = 0;
           this.loading = false;
           return;
@@ -349,7 +349,7 @@ export class roleuserdashboardComponent implements OnInit {
           row.RoleUserId = data.RoleUserId;
           this.loading = false;
 
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -359,7 +359,7 @@ export class roleuserdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {

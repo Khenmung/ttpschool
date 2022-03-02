@@ -114,7 +114,7 @@ export class OrganizationpaymentComponent implements OnInit {
     var orgId = this.searchForm.get("searchCustomerId").value
     if (orgId == 0) {
       this.loading = false;
-      this.alert.info("Please select customer.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select customer.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var customDetail = this.CustomerPlans.filter(f => f.CustomerPlanId == orgId);
@@ -147,13 +147,13 @@ export class OrganizationpaymentComponent implements OnInit {
   UpdateOrSave(row) {
 
     if (row.PaidMonths == 0) {
-      this.alert.error("Please payment for enter no. of months.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please payment for enter no. of months.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
     }
     if (row.PaymentMode == 0) {
-      this.alert.error("Please select payment mode.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select payment mode.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
@@ -191,9 +191,9 @@ export class OrganizationpaymentComponent implements OnInit {
           row.OrganizationPaymentId = data.OrganizationPaymentId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
-          this.alert.error("error occured. Please contact administrator.", this.optionAutoClose);
+          this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText,globalconstants.RedBackground);
         });
   }
   update(row) {
@@ -203,7 +203,7 @@ export class OrganizationpaymentComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   GetPaymentModes() {
@@ -271,7 +271,7 @@ export class OrganizationpaymentComponent implements OnInit {
     //var orgIdSearchstr = ' and OrgId eq ' + localStorage.getItem("orgId");// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchCustomerId").value == 0) {
-      this.alert.info("Please select organization", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -310,7 +310,7 @@ export class OrganizationpaymentComponent implements OnInit {
         });
 
         if (this.OrganizationPaymentList.length == 0)
-          this.alert.info("No record found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
 
         this.dataSource = new MatTableDataSource<any>(this.OrganizationPaymentList.sort((a, b) => new Date(b.PaymentDate).getTime() - new Date(a.PaymentDate).getTime()));
         this.dataSource.paginator = this.paginator;

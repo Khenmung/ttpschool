@@ -165,7 +165,7 @@ export class ClassdetailComponent implements OnInit {
       .subscribe(
         (data: any) => {
 
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -174,18 +174,18 @@ export class ClassdetailComponent implements OnInit {
     //debugger;
 
     if (row.Sequence > 250) {
-      this.alert.error("Sequence can not be greater than 250", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Sequence can not be greater than 250",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
     // if(row.MinStudent<1)
     // {
-    //   this.alert.error("Minimum can not be less than 1",this.optionsNoAutoClose);
+    //   this.contentservice.openSnackBar("Minimum can not be less than 1",this.optionsNoAutoClose);
     //   this.loading=false;
     //   return;
     // }
     if (row.MaxStudent > 1000) {
-      this.alert.error("Maximum can not be greater than 1000", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Maximum can not be greater than 1000",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
@@ -204,7 +204,7 @@ export class ClassdetailComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -252,7 +252,7 @@ export class ClassdetailComponent implements OnInit {
         (data: any) => {
           row.ClassId = data.ClassId;
           row.Action = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
         });
   }
@@ -262,7 +262,7 @@ export class ClassdetailComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }

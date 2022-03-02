@@ -1,7 +1,9 @@
 import { DatePipe } from "@angular/common";
 import { Injectable } from "@angular/core";
 import { AlertService } from "src/app/shared/components/alert/alert.service";
+import { ContentService } from "src/app/shared/content.service";
 import { NaomitsuService } from "src/app/shared/databaseService";
+import { globalconstants } from "src/app/shared/globalconstant";
 import { TokenStorageService } from "src/app/_services/token-storage.service";
 @Injectable({
     providedIn: 'root'
@@ -21,7 +23,7 @@ export class employee {
     constructor(
         private token: TokenStorageService,
         private dataservice: NaomitsuService,
-        private alert: AlertService,
+        private contentservice: ContentService,
 
     ) {
         this.loginUserDetail = this.token.getUserDetail();
@@ -91,7 +93,7 @@ export class employee {
         this.dataservice.postPatch('EmpEmployees', toInsert, 0, 'post')
             .subscribe((result: any) => {
                 this.loading = false;
-                this.alert.error("Data uploaded successfully.", this.optionAutoClose);
+                this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText,globalconstants.RedBackground);
             }, error => console.log(error))
     }
 }

@@ -30,6 +30,12 @@
                     <mat-icon>search</mat-icon>
                 </button>                
             </form>
+            <!-- <div *ngFor="let item in Categories">
+                   <span style="font-size: large;">{{item.MasterDataName}}</span>
+                   <li *ngFor="let inner of StudentEvaluationList|myfilter:item">
+                       {{inner.Description}}
+                   </li>
+            </div> -->
             <mat-table #table [dataSource]="dataSource">               
                 <ng-container matColumnDef="StudentEvaluationId">
                     <mat-header-cell *matHeaderCellDef>Id
@@ -38,7 +44,7 @@
                         {{element.StudentEvaluationId}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="CategoryName">
+                <!-- <ng-container matColumnDef="CategoryName">
                     <mat-header-cell *matHeaderCellDef>Category
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -51,7 +57,7 @@
                     <mat-cell *matCellDef="let element">
                         {{element.SubCategoryName}}
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="Description">
                     <mat-header-cell *matHeaderCellDef>Description
                     </mat-header-cell>
@@ -60,11 +66,12 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Detail">
-                    <mat-header-cell *matHeaderCellDef>Detail
+                    <mat-header-cell *matHeaderCellDef>Teacher's Comment
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <textarea matInput 
+                            <textarea matInput
+                            [disabled]="element.RatingId>0" 
                             [maxlength]="1000"
                             (blur)="onBlur(element)"
                             [value]="element.Detail"  
@@ -96,10 +103,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
+                    <mat-header-cell *matHeaderCellDef>                        
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
@@ -108,7 +112,7 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: start;"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: center;"></mat-row>
             </mat-table>
         </div>
 

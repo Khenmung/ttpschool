@@ -150,7 +150,7 @@ export class LoginComponent implements OnInit {
           if (data.value[0].Org.Active == 1)
             this.GetMasterData(data.value);
           else {
-            this.alert.info("User's Organization not active!, Please contact your administrator!", this.optionsNoAutoClose);
+            this.contentservice.openSnackBar("User's Organization not active!, Please contact your administrator!",globalconstants.ActionText,globalconstants.RedBackground);
           }
         }
         else {
@@ -202,7 +202,7 @@ export class LoginComponent implements OnInit {
                       _role = _roleobj[0].MasterDataName;
                     }
                     else {
-                      this.alert.error("No matching role found.", this.optionsNoAutoClose);
+                      this.contentservice.openSnackBar("No matching role found.",globalconstants.ActionText,globalconstants.RedBackground);
                     }
                     return {
                       roleId: roleuser.RoleId,
@@ -287,7 +287,7 @@ export class LoginComponent implements OnInit {
           this.route.navigate([gotoUrl]);
         }
         else {
-          this.alert.info("Initial minimal settings must be done.", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Initial minimal settings must be done.",globalconstants.ActionText,globalconstants.RedBackground);
           this.route.navigate(['edu/setting']);
         }
       })

@@ -2,6 +2,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
@@ -48,6 +49,7 @@ export class roleappAddComponent implements OnInit {
   };
   UserDetail = [];
   constructor(
+    private contentservice: ContentService,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private route: Router,
@@ -117,17 +119,17 @@ export class roleappAddComponent implements OnInit {
 
     if(this.AppRoleForm.get("ApplicationId").value ==0)
     {
-      this.alert.error("Please select application.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select application.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if(this.AppRoleForm.get("RoleId").value ==0)
     {
-      this.alert.error("Please select role", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select role",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if(this.AppRoleForm.get("PermissionId").value ==0)
     {
-      this.alert.error("Please select permission", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select permission",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     
@@ -148,7 +150,7 @@ export class roleappAddComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
           ////console.log(this.UserDetail);
@@ -183,7 +185,7 @@ export class roleappAddComponent implements OnInit {
     this.dataservice.postPatch('ApplicationRoles', this.AppRoleData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update() {
@@ -191,7 +193,7 @@ export class roleappAddComponent implements OnInit {
     this.dataservice.postPatch('ApplicationRoles', this.AppRoleData, this.AppRoleData.ApplicationRoleId, 'patch')
       .subscribe(
         (data: any) => {
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
+import { ContentService } from 'src/app/shared/content.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
@@ -15,7 +16,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   styleUrls: ['./filedrag-and-drop.component.scss']
 })
 export class FiledragAndDropComponent implements OnInit {
-  loading=false;
+  loading = false;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -39,7 +40,7 @@ export class FiledragAndDropComponent implements OnInit {
     private naomitsuService: NaomitsuService,
     private route: Router,
     private tokenStorage: TokenStorageService,
-    private alert: AlertService) { }
+    private contentservice: ContentService) { }
 
   ngOnInit(): void {
     this.formdata = new FormData();
@@ -47,11 +48,11 @@ export class FiledragAndDropComponent implements OnInit {
     this.getAlbums();
   }
   checklogin() {
-    
+
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.alert.error("Access denied! login required.", this.options);
+      this.contentservice.openSnackBar("Access denied! login required.", globalconstants.ActionText, globalconstants.RedBackground);
       this.route.navigate(['/home']);
     }
   }
@@ -72,7 +73,7 @@ export class FiledragAndDropComponent implements OnInit {
 
           if (this.Requestsize + file.size > globalconstants.RequestLimit) {
             let mb = (globalconstants.RequestLimit / (1024 * 1024)).toFixed(2);
-            this.alert.error('File upload limit is ${mb}mb!', this.optionsNoAutoClose);
+            this.contentservice.openSnackBar('File upload limit is ${mb}mb!', globalconstants.ActionText, globalconstants.RedBackground);
             return;
           }
           this.Requestsize += file.size
@@ -95,14 +96,14 @@ export class FiledragAndDropComponent implements OnInit {
       }
     }
     if (this.errorMessage.length > 0)
-      this.alert.error(this.errorMessage, this.options);
-    this.Processing =false;
-      ////console.log('this.formdata',this.filesForDisplayOnly);
+      this.contentservice.openSnackBar(this.errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    this.Processing = false;
+    ////console.log('this.formdata',this.filesForDisplayOnly);
   }
   Upload() {
 
     if (this.Requestsize > globalconstants.RequestLimit) {
-      this.alert.error("File upload limit is 20mb!", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("File upload limit is 20mb!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -114,12 +115,12 @@ export class FiledragAndDropComponent implements OnInit {
     ////console.log(this.Albums);//alert(selectedAlbum);
     if (this.files.length < 1) {
       error = true;
-      this.alert.warn("No image to upload", this.options);
+      this.contentservice.openSnackBar("No image to upload", globalconstants.ActionText, globalconstants.RedBackground);
     }
 
     if (selectedAlbum == '' && selectedAlbumId == 0) {
       error = true;
-      this.alert.error("Please enter folder or select existing folder", this.options);
+      this.contentservice.openSnackBar("Please enter folder or select existing folder", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
@@ -146,15 +147,15 @@ export class FiledragAndDropComponent implements OnInit {
     }
   }
   uploadFile() {
-      ////console.log('form dasta',this.formdata);
-    this.Processing =true;
+    ////console.log('form dasta',this.formdata);
+    this.Processing = true;
     this.uploadService.postFiles(this.formdata).subscribe(res => {
       ////console.log("Upload complete");
-      this.alert.success("Files Uploaded successfully.", this.options);
+      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
       this.formdata = null;
       this.files = [];
       this.getAlbums();
-      this.Processing =false;
+      this.Processing = false;
       this.route.navigate(['/home/managefile']);
 
     });

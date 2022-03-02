@@ -154,7 +154,7 @@ export class PlanandmasteritemComponent implements OnInit {
       .subscribe(
         (data: any) => {
 
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -179,7 +179,7 @@ export class PlanandmasteritemComponent implements OnInit {
     this.loading = true;
 
     if (row.PlanId == 0) {
-      this.alert.error("Please select plan name.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select plan name.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
@@ -201,7 +201,7 @@ export class PlanandmasteritemComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -233,7 +233,7 @@ export class PlanandmasteritemComponent implements OnInit {
           row.Action = false;
           if (this.RowToUpdateCount == 0) {
             this.RowToUpdateCount = -1;
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.loadingFalse()
           }
         });
@@ -246,7 +246,7 @@ export class PlanandmasteritemComponent implements OnInit {
           row.Action = false;
           if (this.RowToUpdateCount == 0) {
             this.RowToUpdateCount = -1;
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
             this.loadingFalse();
           }
         });
@@ -315,12 +315,12 @@ export class PlanandmasteritemComponent implements OnInit {
     var _PlanId = this.searchForm.get("searchPlanId").value;
 
     if (_PlanId == 0) {
-      this.alert.info("Please select plan.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select plan.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var _applicationId = this.searchForm.get("searchApplicationId").value;
     if (_applicationId == 0) {
-      this.alert.info("Please select application.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -370,7 +370,7 @@ export class PlanandmasteritemComponent implements OnInit {
           }
         })
         if (this.PlanAndMasterItemList.length == 0) {
-          this.alert.info("No record found.", this.optionAutoClose);
+          this.contentservice.openSnackBar("No record found.", globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.PlanAndMasterItemList.sort((a, b) => b.Active - a.Active);
         this.dataSource = new MatTableDataSource<IPlanMasterItem>(this.PlanAndMasterItemList);

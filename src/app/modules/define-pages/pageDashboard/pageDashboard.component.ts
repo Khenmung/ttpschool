@@ -12,6 +12,8 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 //import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from '../../../shared/dialog.service';
+import { globalconstants } from 'src/app/shared/globalconstant';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-pagecontent',
@@ -113,7 +115,7 @@ export class pageDashboardComponent implements OnInit {
     private route: ActivatedRoute,
     //private shareddata: SharedataService,
     private tokenStorage: TokenStorageService,
-    private alert: AlertService,
+    private contentservice: ContentService,
     private dialog: DialogService,
     //private messageService: MessageService
     ) {
@@ -150,7 +152,7 @@ export class pageDashboardComponent implements OnInit {
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.alert.error("Access denied! login required.", options);
+      this.contentservice.openSnackBar("Access denied! login required.", globalconstants.ActionText,globalconstants.RedBackground);
       this.navigate.navigate(['/home']);
     }
   }
@@ -179,7 +181,7 @@ export class pageDashboardComponent implements OnInit {
     value.stopPropagation();
     let confirmYesNo: Boolean = false;
     // if (value.length == 0 || value.length > 50) {
-    //   this.alert.error("Character should not be empty or less than 50!");
+    //   this.contentservice.openSnackBar("Character should not be empty or less than 50!");
     //   return;
     // }
     this.dialog.openConfirmDialog("Are you sure you want to delete all photos in ${value} album?")
@@ -199,7 +201,7 @@ export class pageDashboardComponent implements OnInit {
             .subscribe(
               (data: any) => {
                 this.getDetails(0);
-                this.alert.success('Item deleted successfully.',this.options);
+                this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
               })
         }
       });

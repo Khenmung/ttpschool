@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { AuthService } from '../../../_services/auth.service';
@@ -52,7 +54,7 @@ export class RegisterComponent implements OnInit {
     private shareddata: SharedataService,
     private authService: AuthService,
     private fb: FormBuilder,
-    private alert: AlertService,
+    private contentservice: ContentService,
     private route: Router,
     private dataservice: NaomitsuService,
     private mediaObserver: MediaObserver
@@ -112,7 +114,7 @@ export class RegisterComponent implements OnInit {
           this.dataservice.postPatch('AppUsers', AppUsersData, 0, 'post')
             .subscribe(
               (appuser: any) => {
-                this.alert.success("Congratulations! Your registration is successful.", this.optionsNoAutoClose);
+                this.contentservice.openSnackBar("Congratulations! Your registration is successful.",globalconstants.ActionText,globalconstants.RedBackground);
                 this.isSuccessful = true;
                 this.isSignUpFailed = false;
               }, (error) => {
@@ -142,7 +144,7 @@ export class RegisterComponent implements OnInit {
     this.authService.CallAPI(userDetail,'Register').subscribe(
       data => {
         //this.AddAppUsers()
-        this.alert.success("Congratulations! Your registration is successful.", this.optionsAutoClose);
+        this.contentservice.openSnackBar("Congratulations! Your registration is successful.",  globalconstants.ActionText,globalconstants.RedBackground);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
       },

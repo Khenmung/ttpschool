@@ -152,7 +152,7 @@ export class FeeDefinitionComponent implements OnInit {
       .subscribe(
         (data: any) => {
 
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -166,13 +166,13 @@ export class FeeDefinitionComponent implements OnInit {
     " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
     if (row.FeeCategoryId == 0) {
-      this.alert.error("Please select Fee Category.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select Fee Category.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
     }
     if (row.FeeName == '') {
-      this.alert.error("Please enter fee name.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please enter fee name.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
@@ -191,7 +191,7 @@ export class FeeDefinitionComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -240,7 +240,7 @@ export class FeeDefinitionComponent implements OnInit {
         (data: any) => {
           row.FeeDefinitionId = data.FeeDefinitionId;
           row.Action = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
         });
   }
@@ -250,7 +250,7 @@ export class FeeDefinitionComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }

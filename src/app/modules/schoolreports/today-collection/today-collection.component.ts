@@ -17,7 +17,6 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
-//import { IStudentFeePaymentReceipt } from '../../feereceipt/feereceipt.component';
 
 @Component({
   selector: 'app-today-collection',
@@ -37,14 +36,7 @@ export class TodayCollectionComponent implements OnInit {
   allRowsExpanded: boolean = false;
   expandedElement: any;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  
   loading = false;
   allMasterData = [];
   FeeDefinitions = [];
@@ -82,10 +74,7 @@ export class TodayCollectionComponent implements OnInit {
     private dataservice: NaomitsuService,
     private formatdate: DatePipe,
     private fb: FormBuilder,
-    private nav: Router,
-    private alert: AlertService,
-    private datepipe: DatePipe
-
+    private nav: Router  
   ) { }
 
   ngOnInit(): void {
@@ -143,16 +132,10 @@ export class TodayCollectionComponent implements OnInit {
     let filterstring = '';
     this.loading = true;
     filterstring = "Active eq 1 ";
-    // if ((fromDate != null || toDate != null) && this.SearchForm.get("searchStudentName").value == 0) {
-    //   this.loading = false;
-    //   this.alert.error("Please select student or enter both date.", this.optionsNoAutoClose);
-    //   return;
-    // }
-    // else if (fromDate != null && toDate != null) {
-      filterstring += " and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
+    
+    filterstring += " and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
         " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd');
-    //}
-
+    
     filterstring += " and BatchId eq " + this.SelectedBatchId +
       " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
@@ -214,7 +197,7 @@ export class TodayCollectionComponent implements OnInit {
 
         this.GroupByPaymentType = [...groupbyPaymentType];
         if (this.DateWiseCollection.length == 0)
-          this.alert.info("No collection found.", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("No collection found.",globalconstants.ActionText,globalconstants.RedBackground);
 
         const rows = [];
         this.DateWiseCollection.forEach(element => rows.push(element, { detailRow: true, element }));
@@ -249,8 +232,6 @@ export class TodayCollectionComponent implements OnInit {
 
   }
   GetStudents() {
-
-    ////console.log(this.LoginUserDetail);
 
     let list: List = new List();
     list.fields = [

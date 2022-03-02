@@ -56,6 +56,7 @@ export class ClassEvaluationComponent implements OnInit {
     RatingOptionId: 0,
     ClassId: 0,
     Description: '',
+    DisplayOrder:0,
     OrgId: 0,
     Active: 0,
   };
@@ -67,6 +68,7 @@ export class ClassEvaluationComponent implements OnInit {
     'ClassEvalCategoryId',
     'ClassEvalSubCategoryId',
     'RatingOptionId',
+    'DisplayOrder',
     'Active',
     'Action'
   ];
@@ -136,7 +138,7 @@ export class ClassEvaluationComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -148,6 +150,7 @@ export class ClassEvaluationComponent implements OnInit {
       SubCategories: [],
       ClassId: 0,
       Description: '',
+      DisplayOrder:0,
       RatingOptionId: 0,
       Active: 0,
       Action: false
@@ -179,8 +182,8 @@ export class ClassEvaluationComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistAlert, globalconstants.AddedMessage, globalconstants.RedBackground);
-          //this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
           //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
@@ -196,6 +199,7 @@ export class ClassEvaluationComponent implements OnInit {
               ClassEvalSubCategoryId: row.ClassEvalSubCategoryId,
               RatingOptionId: row.RatingOptionId,
               Description: row.Description,
+              DisplayOrder: row.DisplayOrder,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
           console.log('dta', this.ClassEvaluationForUpdate);
@@ -233,8 +237,8 @@ export class ClassEvaluationComponent implements OnInit {
         (data: any) => {
           row.ClassEvaluationId = data.ClassEvaluationId;
           row.Action = false;
-          //this.alert.success("Data saved successfully.", this.optionAutoClose);
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground);
+          //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
         });
   }
@@ -244,8 +248,8 @@ export class ClassEvaluationComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.AlertCloseText, globalconstants.BlueBackground);
-          //this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -264,7 +268,9 @@ export class ClassEvaluationComponent implements OnInit {
     if (_classId > 0)
       filterStr += " and ClassId eq " + _classId
     else {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.AlertCloseText, globalconstants.BlueBackground);
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.BlueBackground);
+      return;
     }
 
     if (_categoryId > 0)
@@ -284,6 +290,7 @@ export class ClassEvaluationComponent implements OnInit {
       'Description',
       'RatingOptionId',
       'ClassId',
+      'DisplayOrder',
       'Active'
     ];
 
@@ -305,6 +312,7 @@ export class ClassEvaluationComponent implements OnInit {
               SubCategories: this.allMasterData.filter(f => f.ParentId == item.ClassEvalCategoryId),
               RatingOptionId: item.RatingOptionId,
               ClassId: item.ClassId,
+              DisplayOrder: item.DisplayOrder,
               Active: item.Active,
               Action: false
             }
@@ -413,6 +421,7 @@ export interface IClassEvaluation {
   RatingOptionId: number;
   ClassId: number;
   Description: string;
+  DisplayOrder:number;
   Active: number;
   Action: boolean;
 }

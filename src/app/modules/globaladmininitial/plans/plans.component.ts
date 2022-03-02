@@ -144,7 +144,7 @@ export class PlansComponent implements OnInit {
       .subscribe(
         (data: any) => {
 
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -155,7 +155,7 @@ export class PlansComponent implements OnInit {
     let checkFilterString = "Title eq '" + row.Title + "'"
 
     if (row.Title == '') {
-      this.alert.error("Please enter plan name.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please enter plan name.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
@@ -174,7 +174,7 @@ export class PlansComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -211,7 +211,7 @@ export class PlansComponent implements OnInit {
         (data: any) => {
           row.PlanId = data.PlanId;
           row.Action = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
         });
   }
@@ -221,7 +221,7 @@ export class PlansComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }

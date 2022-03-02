@@ -4,7 +4,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { evaluate } from 'mathjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
@@ -64,6 +66,7 @@ export class CustomerPlansComponent implements OnInit {
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
+    private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
     private alert: AlertService,
     private nav: Router,
@@ -147,9 +150,10 @@ export class CustomerPlansComponent implements OnInit {
           row.CustomerPlanId = data.CustomerPlanId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         },error=>{        
-        this.alert.error("error occured. Please contact administrator.",this.optionAutoClose);
+        this.contentservice.openSnackBar("error occured. Please contact administrator.",globalconstants.ActionText,globalconstants.RedBackground);
+
         });
   }
   update(row) {
@@ -159,7 +163,7 @@ export class CustomerPlansComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   GetOrganizations() {
@@ -225,7 +229,7 @@ export class CustomerPlansComponent implements OnInit {
     //var orgIdSearchstr = ' and OrgId eq ' + localStorage.getItem("orgId");// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchCustomerId").value == 0) {
-      this.alert.info("Please select organization", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 

@@ -8,6 +8,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { globalconstants } from '../../../shared/globalconstant';
 import { MatTableDataSource } from '@angular/material/table';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-albums',
@@ -49,7 +50,7 @@ export class AlbumsComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
+    private contentservice: ContentService,
     private dialog: DialogService,
     private tokenStorage: TokenStorageService,
     //private globalconstants
@@ -80,7 +81,7 @@ export class AlbumsComponent implements OnInit {
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.alert.error("Access denied! login required.", options);
+      this.contentservice.openSnackBar("Access denied! login required.",globalconstants.ActionText,globalconstants.RedBackground);
       this.route.navigate(['/home']);
     }
   }
@@ -110,7 +111,7 @@ export class AlbumsComponent implements OnInit {
     }
   }
   message() {
-    this.alert.success("url copied", this.options);
+    this.contentservice.openSnackBar("url copied", globalconstants.ActionText,globalconstants.BlueBackground);
   }
   getFiles(album, mode) {
     //debugger;
@@ -127,7 +128,7 @@ export class AlbumsComponent implements OnInit {
       }
 
       if (album.FileId == undefined && this.searchForm.get("UpdatedFileFolderName").value == "") {
-        this.alert.error("Please enter folder name to search", this.options);
+        this.contentservice.openSnackBar("Please enter folder name to search", globalconstants.ActionText,globalconstants.BlueBackground);
         return;
       }
 
@@ -203,7 +204,7 @@ export class AlbumsComponent implements OnInit {
           this.dataservice.postPatch('StorageFnPs', albumtoUpdate, value._elementRef.nativeElement.id, 'patch')
             .subscribe(res => {
               this.getFiles(album,"");
-              this.alert.success("File/Folder deleted successfully.", this.options);
+              this.contentservice.openSnackBar("File/Folder deleted successfully.",globalconstants.ActionText,globalconstants.BlueBackground);
               //console.lothisg(res);
             });
         }
@@ -230,7 +231,7 @@ export class AlbumsComponent implements OnInit {
       return;
     let confirmYesNo: Boolean = false;
     if (value.length == 0 || value.length > 50) {
-      this.alert.error("Character should not be empty or less than 50!");
+      this.contentservice.openSnackBar("Character should not be empty or less than 50!",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -246,7 +247,7 @@ export class AlbumsComponent implements OnInit {
 
     this.dataservice.postPatch('StorageFnPs', albumtoUpdate, selectedAlbumId, 'patch')
       .subscribe(res => {
-        this.alert.success("File/Folder name updated!", this.options);
+        this.contentservice.openSnackBar("File/Folder name updated!", globalconstants.ActionText,globalconstants.BlueBackground);
       });
   }
   display(albumId) {
@@ -257,7 +258,7 @@ export class AlbumsComponent implements OnInit {
     value.stopPropagation();
     let confirmYesNo: Boolean = false;
     if (value.length == 0 || value.length > 50) {
-      this.alert.error("Character should not be empty or less than 50!");
+      this.contentservice.openSnackBar("Character should not be empty or less than 50!",globalconstants.ActionText,globalconstants.BlueBackground);
       return;
     }
     this.dialog.openConfirmDialog("Are you sure you want to delete all photos in ${value} album?")

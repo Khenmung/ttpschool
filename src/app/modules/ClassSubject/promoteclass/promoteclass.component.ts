@@ -260,7 +260,7 @@ export class PromoteclassComponent implements OnInit {
     let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     // if (this.searchForm.get("searchStudentName").value.StudentId == 0 && this.searchForm.get("searchClassId").value == 0) {
-    //   this.alert.error("Please select class/stream", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select class/stream", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
     this.loading = true;
@@ -273,7 +273,7 @@ export class PromoteclassComponent implements OnInit {
 
     if (filterStr.length == 0) {
       this.loading = false;
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -324,7 +324,7 @@ export class PromoteclassComponent implements OnInit {
         })
 
         if (this.StudentClassList.length == 0)
-          this.alert.info("No record found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
 
         this.loading = false;
@@ -354,7 +354,7 @@ export class PromoteclassComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -393,7 +393,7 @@ export class PromoteclassComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
           row.Ative = 0;
           return;
         }
@@ -441,10 +441,10 @@ export class PromoteclassComponent implements OnInit {
 
           if (this.RowsToUpdate == 0) {
             if (row.Promote == 1) {
-              this.alert.success("Student/s is promoted to next class without section and roll no.", this.optionsNoAutoClose);
+              this.contentservice.openSnackBar("Student/s is promoted to next class without section and roll no.",globalconstants.ActionText,globalconstants.RedBackground);
             }
             else
-              this.alert.success("Data saved successfully.", this.optionAutoClose);
+              this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.RowsToUpdate = -1;
           }
 
@@ -458,7 +458,7 @@ export class PromoteclassComponent implements OnInit {
           row.Action = false;
           if (this.RowsToUpdate == 0) {
             this.loading = false;
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }
@@ -521,7 +521,7 @@ export class PromoteclassComponent implements OnInit {
       this.ClassGradeCondition.push(newItem)
     }
     else {
-      this.alert.info("Item already exists.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Item already exists.",globalconstants.ActionText,globalconstants.RedBackground);
     }
     this.dataSource = new MatTableDataSource(this.ClassGradeCondition);
   }

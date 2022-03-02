@@ -611,11 +611,11 @@ export class ExcelDataManagementComponent implements OnInit {
       .subscribe((result: any) => {
         this.loading = false;
         this.ELEMENT_DATA = [];
-        this.alert.error("Data uploaded successfully.", this.optionAutoClose);
+        this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText,globalconstants.RedBackground);
       }, error => {
         console.log("error from student upload:", error);
         this.ErrorMessage = "Something went wrong. Please contact your administrator.";
-        this.alert.error("Something went wrong. Please contact your administrator.", this.optionAutoClose);
+        this.contentservice.openSnackBar("Something went wrong. Please contact your administrator.", globalconstants.ActionText,globalconstants.RedBackground);
       }
 
       )

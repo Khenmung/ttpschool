@@ -143,7 +143,7 @@ export class CustomerinvoiceComponent implements OnInit {
     //     //debugger;
     //     if (data.value.length > 0) {
     //       this.loading = false;
-    //       this.alert.error("Record already exists!", this.optionsNoAutoClose);
+    //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
     //     }
     //     else {
 
@@ -186,7 +186,7 @@ export class CustomerinvoiceComponent implements OnInit {
           row.CustomerInvoiceId = data.CustomerInvoiceId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -195,7 +195,7 @@ export class CustomerinvoiceComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   GetOrganizations() {
@@ -249,11 +249,11 @@ export class CustomerinvoiceComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchOrgId").value == 0) {
-      this.alert.info("Please select Customer", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select Customer", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchYearMonth").value == 0) {
-      this.alert.info("Please select year month", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select year month", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 

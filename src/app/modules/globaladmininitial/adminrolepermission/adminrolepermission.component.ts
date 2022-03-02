@@ -273,14 +273,14 @@ export class AdminrolepermissionComponent implements OnInit {
     var _customerId = this.searchForm.get("searchCustomerId").value
     if(_customerId==0)
     {
-      this.alert.info("Please select customer.",this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select customer.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading=false;
       return;
     }
 
     var rolefilter = '';
     if (this.SelectedApplicationId == 0) {
-      this.alert.error("Please select Application", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select Application", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.EmptyData();    
@@ -292,7 +292,7 @@ export class AdminrolepermissionComponent implements OnInit {
     //rolefilter += " and ParentId eq " + _ParentId;
 
     if (this.searchForm.get("RoleId").value == 0) {
-      this.alert.error("Please select role.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     else
@@ -354,7 +354,7 @@ export class AdminrolepermissionComponent implements OnInit {
         this.ApplicationRoleList = ResultedPermittedPageFeatures.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
 
         if (this.ApplicationRoleList.length == 0) {
-          this.alert.info("No feature found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("No feature found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
         this.datasource.sort = this.sort;
@@ -418,7 +418,7 @@ export class AdminrolepermissionComponent implements OnInit {
   UpdateOrSave(row) {
 
     if (row.PermissionId == 0) {
-      this.alert.error("Please select permission", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select permission", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -441,7 +441,7 @@ export class AdminrolepermissionComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.alert.error("Record already exists!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText,globalconstants.RedBackground);
           this.loading = false;
         }
         else {
@@ -492,7 +492,7 @@ export class AdminrolepermissionComponent implements OnInit {
           row.ApplicationFeatureRoleId = data.ApplicationFeatureRoleId;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.NoOfRowsToUpdate = -1;
           }
         });
@@ -505,7 +505,7 @@ export class AdminrolepermissionComponent implements OnInit {
           this.loading = false;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
             this.NoOfRowsToUpdate = -1;
           }
         });

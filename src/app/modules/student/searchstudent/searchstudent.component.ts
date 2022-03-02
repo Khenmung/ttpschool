@@ -391,7 +391,7 @@ export class searchstudentComponent implements OnInit {
         }
         else {
           this.ELEMENT_DATA = [];
-          this.alert.info("No student found!", this.options);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
         }
         //console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);

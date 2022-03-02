@@ -161,7 +161,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     //console.log("here ", this.PreviousBatchId)
     this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
     if (this.PreviousBatchId == -1)
-      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
     else
       this.GetClassTeacher(1)
   }
@@ -173,7 +173,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     var _classId = this.searchForm.get("searchClassId").value;
     if (_teacherId == undefined && _classId == 0) {
       this.loading = false;
-      this.alert.info("Please select atleast one of the options", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select atleast one of the options", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -189,7 +189,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
     // else {
     //   this.loading = false;
-    //   this.alert.error("Please select teacher", this.optionAutoClose);
+    //   this.contentservice.openSnackBar("Please select teacher", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
     //filterStr += ' and ' + ;
@@ -288,7 +288,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   //     .subscribe(
   //       (data: any) => {
   //         // this.GetApplicationRoles();
-  //         this.alert.success("Data deleted successfully.", this.optionAutoClose);
+  //         this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
   //       });
   // }
@@ -300,7 +300,7 @@ export class ClassmasterdashboardComponent implements OnInit {
 
     // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
     // if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
-    //   this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
+    //   this.contentservice.openSnackBar("Allowed no. subjects selected is exceeded for this subject type.",globalconstants.ActionText,globalconstants.RedBackground);
     //   this.loading = false;
     //   return;
     // }
@@ -325,7 +325,7 @@ export class ClassmasterdashboardComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
           row.Ative = 0;
           return;
         }
@@ -369,7 +369,7 @@ export class ClassmasterdashboardComponent implements OnInit {
           this.loading = false;
           row.TeacherClassMappingId = data.TeacherClassMappingId;
           row.Action = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -379,7 +379,7 @@ export class ClassmasterdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {

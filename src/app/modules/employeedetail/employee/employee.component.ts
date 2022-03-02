@@ -88,7 +88,7 @@ export class EmployeeComponent implements OnInit {
     if(this.selectedFile.size>60000)
     {
       this.loading=false;
-      this.alert.error("Image size should be less than 80kb",this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Image size should be less than 80kb",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var reader = new FileReader();
@@ -364,7 +364,7 @@ export class EmployeeComponent implements OnInit {
       errorMessage += "Work Account is required.<br>";
     }
     if (errorMessage.length > 0) {
-      this.alert.error(errorMessage, this.optionsNoAutoClose);
+      this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
@@ -451,7 +451,7 @@ export class EmployeeComponent implements OnInit {
             EmployeeId: result.EmployeeId
           })
           this.loading = false;
-          this.alert.success("Employee's data saved successfully.", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Employee's data saved successfully.",globalconstants.ActionText,globalconstants.RedBackground);
 
         }
 
@@ -468,10 +468,10 @@ export class EmployeeComponent implements OnInit {
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
-        this.alert.success("Employee's data updated successfully.", this.optionsNoAutoClose);
+        this.contentservice.openSnackBar("Employee's data updated successfully.",globalconstants.ActionText,globalconstants.RedBackground);
       }, error => {
         this.loading = false;
-        this.alert.error("Issue, Please contact your administrator.", this.optionsNoAutoClose.autoClose);
+        this.contentservice.openSnackBar("Issue, Please contact your administrator.", globalconstants.ActionText,globalconstants.RedBackground);
         throw error;
       })
   }
@@ -594,7 +594,7 @@ export class EmployeeComponent implements OnInit {
           })
         }
         else {
-          this.alert.error("No data found.", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("No data found.",globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.loading = false;
       }, error => {

@@ -63,7 +63,7 @@ export class ContactComponent implements OnInit {
     this.naomitsuService.postPatch('Messages', messageDetail, this.Id, 'patch')
       .subscribe(
         (data: any) => {
-          //this.alert.success("Message updated!", this.options);
+          //this.contentservice.openSnackBar("Message updated!", this.options);
         })
   }
   insert() {
@@ -71,7 +71,7 @@ export class ContactComponent implements OnInit {
     this.naomitsuService.postPatch('Messages', this.ContactForm.value, 0, 'post')
       .subscribe(
         (data: any) => {
-          //this.alert.success("Data saved Successfully", this.options);
+          //this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.SuccessMessage ="We have received your message! Thank you for contacting us.";
           //this.route.navigate(["/home"]);
         },

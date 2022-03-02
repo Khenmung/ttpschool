@@ -131,7 +131,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.options);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText,globalconstants.RedBackground);
         }
         else {
           this.classSubjectComponentData.Active = row.Active;// == true ? 1 : 0;
@@ -172,7 +172,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           this.loading = false;
           row.Action = false;
           row.ClassSubjectMarkComponentId = data.ClassSubjectMarkComponentId;
-          this.alert.success("Data saved successfully", this.options);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
         });
 
@@ -184,7 +184,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully", this.options);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
         });
 
@@ -275,14 +275,14 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //console.log("here ", this.PreviousBatchId)
     this.PreviousBatchId = +this.token.getPreviousBatchId();
     if (this.PreviousBatchId == -1)
-      this.alert.info("Previous batch not defined.", this.options.autoClose);
+      this.contentservice.openSnackBar("Previous batch not defined.",  globalconstants.ActionText,globalconstants.RedBackground);
     else
       this.GetClassSubjectComponent(1)
   }
   GetClassSubjectComponent(previousbatch) {
 
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.alert.error("Please select class.", this.options.autoClose);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var filterstr = '';
@@ -352,7 +352,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         })
 
         if (this.ELEMENT_DATA.length == 0)
-          this.alert.info("No record found!", this.options);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,  globalconstants.ActionText,globalconstants.RedBackground);
 
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;

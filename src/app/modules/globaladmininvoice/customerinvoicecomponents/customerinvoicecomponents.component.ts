@@ -117,7 +117,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
     //     //debugger;
     //     if (data.value.length > 0) {
     //       this.loading = false;
-    //       this.alert.error("Record already exists!", this.optionsNoAutoClose);
+    //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
     //     }
     //     else {
 
@@ -157,7 +157,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
           row.CustomerInvoiceComponentId = data.CustomerInvoiceComponentId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -166,7 +166,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
 
@@ -177,7 +177,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
     var filterstr = 'Active eq 1 ';
 
     if (_searchOrgId == 0) {
-      this.alert.info("Please select organization.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select organization.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 

@@ -198,7 +198,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     //console.log("here ", this.PreviousBatchId)
     this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
     if (this.PreviousBatchId == -1)
-      this.alert.info("Previous batch not defined.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
     else
       this.GetClassSubject(1)
   }
@@ -210,7 +210,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
       this.loading = false;
-      this.alert.error("Please select class/course", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -221,7 +221,7 @@ export class ClassSubjectDetailComponent implements OnInit {
 
     if (filterStr.length == 0) {
       this.loading = false;
-      this.alert.error("Please enter search criteria.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -325,7 +325,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     //   .subscribe(
     //     (data: any) => {
     //       // this.GetApplicationRoles();
-    //       this.alert.success("Data updated successfully.", this.optionAutoClose);
+    //       this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
     //     });
   }
@@ -337,7 +337,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -360,24 +360,24 @@ export class ClassSubjectDetailComponent implements OnInit {
     //debugger;
     this.loading = true;
     if (row.SubjectTypeId == 0) {
-      this.alert.error("Please select subject type.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select subject type.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
     // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
     // if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
-    //   this.alert.error("Allowed no. subjects selected is exceeded for this subject type.", this.optionsNoAutoClose);
+    //   this.contentservice.openSnackBar("Allowed no. subjects selected is exceeded for this subject type.",globalconstants.ActionText,globalconstants.RedBackground);
     //   this.loading = false;
     //   return;
     // }
     if (row.Credits > 100) {
-      this.alert.error("Credits can not be greater than 100.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Credits can not be greater than 100.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
     ////console.log("row.TeacherId", row.TeacherId);
     if (row.TeacherId == 0) {
-      this.alert.error("Please select teacher for the subject.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select teacher for the subject.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       return;
     }
@@ -401,7 +401,7 @@ export class ClassSubjectDetailComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
           row.Ative = 0;
           return;
         }
@@ -448,7 +448,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           if (this.DataCountToSave == 0) {
             this.loading = false;
             this.DataCountToSave = -1;
-            this.alert.success("Data saved successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -461,7 +461,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           if (this.DataCountToSave == 0) {
             this.loading = false;
             this.DataCountToSave = -1;
-            this.alert.success("Data updated successfully.", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }

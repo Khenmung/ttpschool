@@ -85,7 +85,7 @@ export class studentprimaryinfoComponent implements OnInit {
     this.selectedFile = files[0];
     if (this.selectedFile.size > 60000) {
       this.loading = false;
-      this.alert.error("Image size should be less than 80kb", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Image size should be less than 80kb",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     var reader = new FileReader();
@@ -102,7 +102,7 @@ export class studentprimaryinfoComponent implements OnInit {
     if(this.selectedFile==undefined)
     {
       this.loading=false;
-      this.alert.error("Please select a file.",this.optionsAutoClose);
+      this.contentservice.openSnackBar("Please select a file.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.formdata = new FormData();
@@ -345,7 +345,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     if (errorMessage.length > 0) {
       this.loading = false;
-      this.alert.error(errorMessage, this.optionsNoAutoClose);
+      this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -406,7 +406,7 @@ export class studentprimaryinfoComponent implements OnInit {
           })
           this.StudentId = result.StudentId;
           this.loading = false;
-          this.alert.success("Student's data saved successfully.", this.optionsAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         }
 
@@ -419,7 +419,7 @@ export class studentprimaryinfoComponent implements OnInit {
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
-        this.alert.success("Student's data updated successfully.", this.optionsAutoClose);
+        this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
       })
   }
   adjustDateForTimeOffset(dateToAdjust) {
@@ -495,7 +495,8 @@ export class studentprimaryinfoComponent implements OnInit {
           })
         }
         else {
-          this.alert.error("No data found.", this.optionsAutoClose);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+
         }
         this.loading = false;
       });

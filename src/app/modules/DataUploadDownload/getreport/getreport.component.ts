@@ -167,11 +167,11 @@ export class GetreportComponent implements OnInit {
     var MyReportNameId = this.searchForm.get("searchReportName").value;
 
     if (AvailableReportId == 0) {
-      this.alert.error("Please select available report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (MyReportNameId == 0) {
-      this.alert.error("Please select my report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -194,7 +194,7 @@ export class GetreportComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -239,7 +239,7 @@ export class GetreportComponent implements OnInit {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -248,7 +248,7 @@ export class GetreportComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   IfStudentActivityMethods() {
@@ -326,7 +326,7 @@ export class GetreportComponent implements OnInit {
           this.GetReportNames();
         }
         else {
-          this.alert.error("Base report Id not found!", this.optionAutoClose);
+          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
         this.loading = false;
       });
@@ -394,7 +394,7 @@ export class GetreportComponent implements OnInit {
     var MyReportNameId = this.searchForm.get("searchReportName").value;
 
     if (MyReportNameId == 0) {
-      this.alert.error("Please select report name", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select report name", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -441,7 +441,7 @@ export class GetreportComponent implements OnInit {
         list.PageName = _tableNames[0];
 
         if (_tableNames.length == 0) {
-          this.alert.error("Table name not present!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar("Table name not present!",globalconstants.ActionText,globalconstants.RedBackground);
           return;
         }
 
@@ -529,7 +529,7 @@ export class GetreportComponent implements OnInit {
             });
 
             if (this.ReportConfigItemList.length == 0) {
-              this.alert.info("No record matching search criteria found!", this.optionAutoClose);
+              this.contentservice.openSnackBar("No record matching search criteria found!", globalconstants.ActionText,globalconstants.RedBackground);
             }
             this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
             this.dataSource.paginator = this.paginator;

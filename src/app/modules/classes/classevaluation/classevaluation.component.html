@@ -99,17 +99,6 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <!-- <ng-container matColumnDef="RatingOrSubjective">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Rating Or Subjective
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-radio-group [(ngModel)]="element.RatingOrSubjective" 
-                    (blur)="onBlur(element)" [value]="element.RatingOrSubjective">
-                        <mat-radio-button value="0">Rating</mat-radio-button>
-                        <mat-radio-button value="1">Subjective</mat-radio-button>
-                    </mat-radio-group>
-                </mat-cell>
-            </ng-container> -->
             <ng-container matColumnDef="ClassId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Class
                 </mat-header-cell>
@@ -123,6 +112,19 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
+            <ng-container matColumnDef="DisplayOrder">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Display Order
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                   <mat-form-field appearance="outline">                   
+                    <input type="number" [max]="250" 
+                    matInput
+                    [(ngModel)]="element.DisplayOrder" 
+                    (blur)="onBlur(element)" 
+                    [value]="element.DisplayOrder">
+                </mat-form-field>                     
+                </mat-cell>
+            </ng-container>            
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
                 </mat-header-cell>

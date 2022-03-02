@@ -7,6 +7,7 @@ import { NaomitsuService } from '../../../shared/databaseService'
 import { globalconstants } from '../../../shared/globalconstant';
 import { Subscription } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-photobrowser',
@@ -44,7 +45,7 @@ export class PhotobrowserComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
+    private contentservice: ContentService,
     private el: ElementRef,
     private mediaObserver: MediaObserver
   ) { }
@@ -192,7 +193,7 @@ export class PhotobrowserComponent implements OnInit {
   }
   saveCost(value) {
     if (value.length == 0 || value.length > 50) {
-      this.alert.error("Character should not be empty or less than 50!");
+      this.contentservice.openSnackBar("Character should not be empty or less than 50!",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
@@ -146,7 +147,7 @@ export class OrganizationComponent implements OnInit {
   UpdateOrSave(row) {
 
     if (row.OrganizationName == '') {
-      this.alert.error("Please enter organization name.", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please enter organization name.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
@@ -188,9 +189,9 @@ export class OrganizationComponent implements OnInit {
           row.OrganizationId = data.OrganizationId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
-          this.alert.error("error occured. Please contact administrator.", this.optionAutoClose);
+          this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText,globalconstants.RedBackground);
         });
   }
   update(row) {
@@ -200,7 +201,7 @@ export class OrganizationComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
   GetOrganization() {

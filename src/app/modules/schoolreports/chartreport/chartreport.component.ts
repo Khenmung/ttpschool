@@ -6,6 +6,7 @@ import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsToolt
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 // import { NgChartsConfiguration} from 'ng2-charts'
@@ -129,7 +130,7 @@ export class ChartReportComponent {
     var selectedmonthId = this.SearchForm.get("searchMonth").value;
     if (selectedmonthId == 0) {
       this.loading = false;
-      this.alert.info('Please select payment month', this.optionAutoClose);
+      this.contentservice.openSnackBar('Please select payment month', globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;

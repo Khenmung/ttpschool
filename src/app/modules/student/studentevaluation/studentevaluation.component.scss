@@ -1,5 +1,5 @@
 mat-form-field{
-    margin-right:15px;
+    margin-right:30px;
     width: 99%;
 }
 button{
@@ -9,14 +9,15 @@ mat-cell:first-of-type {
     padding-left: 0px;
 }
 
-.mat-column-ActivityDate, .mat-column-CategoryId,.mat-column-SubCategoryId{
+.mat-column-RatingId //, .mat-column-CategoryId,.mat-column-SubCategoryId
+{
     flex:0 0 150px;
 }
-.mat-column-Action,.mat-column-Active
+.mat-column-Action,.mat-column-Active,.mat-column-StudentEvaluationId
 {
     justify-content: center;
     flex:0 0 100px;
 }
-.mat-column-Activity{
-    flex:0 0 400px;
+.mat-column-Detail,.mat-column-Description{
+    flex:1 1 350px;
 }

@@ -118,7 +118,7 @@ export class ClassperiodComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.alert.success("Data deleted successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         });
   }
@@ -129,17 +129,17 @@ export class ClassperiodComponent implements OnInit {
 
     if(row.PeriodTypeId==0)
     {
-      this.alert.error("Please select period type.",this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select period type.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if(row.FromToTime==0)
     {
-      this.alert.error("Please enter period time.",this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter period time.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if(row.Sequence==0)
     {
-      this.alert.error("Please enter sequence of period.",this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter sequence of period.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -164,7 +164,7 @@ export class ClassperiodComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.alert.error("Record already exists!", this.optionsNoAutoClose);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
 
@@ -210,7 +210,7 @@ export class ClassperiodComponent implements OnInit {
           if (this.DataToSave==0) {
             this.DataToSave =-1;
             this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
           
         });
@@ -225,7 +225,7 @@ export class ClassperiodComponent implements OnInit {
           if (this.DataToSave==0) {
             this.DataToSave =-1;
             this.loading = false;
-            this.alert.success("Data saved successfully", this.optionAutoClose);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
   }
@@ -238,7 +238,7 @@ export class ClassperiodComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.alert.info("Please select class", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -350,7 +350,7 @@ export class ClassperiodComponent implements OnInit {
   ReplicateToClasses() {
 
     if (this.searchForm.get("searchClassIdApplyAll").value == 0) {
-      this.alert.info("Please select classes to replicate to!", this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select classes to replicate to!",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.loading = true;

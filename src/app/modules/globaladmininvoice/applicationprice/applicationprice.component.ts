@@ -100,7 +100,7 @@ export class ApplicationpriceComponent implements OnInit {
     
     if(row.PCPM<1)
     {
-      this.alert.error("Please enter PCPM.",this.optionAutoClose);
+      this.contentservice.openSnackBar("Please enter PCPM.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -141,7 +141,7 @@ export class ApplicationpriceComponent implements OnInit {
           row.ApplicationPriceId = data.ApplicationPriceId;
           row.Action = false;
           this.loading = false;
-          this.alert.success("Data saved successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   update(row) {
@@ -150,7 +150,7 @@ export class ApplicationpriceComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.alert.success("Data updated successfully.", this.optionAutoClose);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
 

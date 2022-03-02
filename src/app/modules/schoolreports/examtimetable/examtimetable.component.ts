@@ -223,7 +223,7 @@ export class ExamtimetableComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.alert.error("Please select exam.", this.optionAutoClose);
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     this.SelectedExamName = this.Exams.filter(f=>f.ExamId == this.searchForm.get("searchExamId").value)[0].ExamName;

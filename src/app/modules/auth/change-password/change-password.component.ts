@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { ContentService } from 'src/app/shared/content.service';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AuthService } from '../../../_services/auth.service';
 
@@ -30,12 +32,13 @@ export class ChangePasswordComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
     private route: Router,
     private mediaObserver: MediaObserver,
     private fb: FormBuilder,
     private tokenService: TokenStorageService,
-    private alert: AlertService
+    private contentservice: ContentService
   ) { }
 
   ngOnInit(): void {
@@ -77,7 +80,7 @@ export class ChangePasswordComponent implements OnInit {
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;
-        this.alert.success("Password changed.", this.optionsAutoClose);
+        this.contentservice.openSnackBar("Password changed.",globalconstants.ActionText,globalconstants.BlueBackground);
         this.tokenService.signOut();
         this.route.navigate(['/auth/login']);
       },

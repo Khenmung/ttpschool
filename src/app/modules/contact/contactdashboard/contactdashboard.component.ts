@@ -11,6 +11,8 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatTable } from '@angular/material/table';
 import { AlertService } from '../../../shared/components/alert/alert.service';
 import { TokenStorageService } from '../../../_services/token-storage.service';
+import { globalconstants } from 'src/app/shared/globalconstant';
+import { ContentService } from 'src/app/shared/content.service';
 
 @Component({
   selector: 'app-contactdashboard',
@@ -43,9 +45,7 @@ export class ContactdashboardComponent implements OnInit {
   selection = new SelectionModel<IMessage>(true, []);
   constructor(private dataservice: NaomitsuService,
     private navigate: Router,
-    private route: ActivatedRoute,
-    private shareddata: SharedataService,
-    private alert: AlertService,
+    private contentservice: ContentService,
     private tokenStorage:TokenStorageService) {
     this.list = new List();
   }
@@ -57,7 +57,7 @@ export class ContactdashboardComponent implements OnInit {
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.alert.error("Access denied! login required.", this.options);
+      this.contentservice.openSnackBar("Access denied! login required.",globalconstants.ActionText,globalconstants.RedBackground);
       this.navigate.navigate(['/home']);
     }
   }
@@ -146,7 +146,7 @@ export class ContactdashboardComponent implements OnInit {
     this.dataservice.postPatch('Messages', messageDetail, element.MessageId, 'patch')
       .subscribe(
         (data: any) => {
-          this.alert.success("Message updated!", this.options);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         })
   }
   /** Selects all rows if they are not all selected; otherwise clear selection. */
