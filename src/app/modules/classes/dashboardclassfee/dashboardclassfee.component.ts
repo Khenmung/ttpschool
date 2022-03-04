@@ -75,7 +75,7 @@ export class DashboardclassfeeComponent implements OnInit {
     private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
-    private alert: AlertService,
+    
     private route: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }

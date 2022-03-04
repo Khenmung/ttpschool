@@ -79,7 +79,7 @@ export class AddMasterDataComponent implements OnInit {
     private route: Router,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
-    //private alert: AlertService,
+    //
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
@@ -334,7 +334,7 @@ export class AddMasterDataComponent implements OnInit {
       _ParentId = this.searchForm.get("ParentId").value.MasterDataId;
 
     _appId = this.MasterData.filter(f => f.MasterDataId == _ParentId)[0].ApplicationId;
-
+    this.MasterList=[];
     let newrow = {
       "MasterDataId": 0,
       "OldSequence": 0,
@@ -349,8 +349,8 @@ export class AddMasterDataComponent implements OnInit {
       "Action": false
     }
     //if add new button is clicked more than once.
-    let alreadyadded = this.MasterList.filter(item => item.MasterDataName == "");
-    if (alreadyadded.length == 0)
+    //let alreadyadded = this.MasterList.filter(item => item.MasterDataName == "");
+    //if (alreadyadded.length == 0)
       this.MasterList.push(newrow);
 
     this.datasource = new MatTableDataSource<IMaster>(this.MasterList);

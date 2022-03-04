@@ -62,7 +62,7 @@ export class AddstudentclassComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private aRoute: ActivatedRoute,
-    private alert: AlertService,
+    
     private nav: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }

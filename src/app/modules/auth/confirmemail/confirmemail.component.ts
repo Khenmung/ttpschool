@@ -12,36 +12,34 @@ import { AuthService } from 'src/app/_services/auth.service';
   styleUrls: ['./confirmemail.component.scss']
 })
 export class ConfirmemailComponent implements OnInit {
-userId='';
-optionsNoAutoClose = {
-  autoClose: false,
-  keepAfterRouteChange: true
-};
-optionAutoClose = {
-  autoClose: true,
-  keepAfterRouteChange: true
-};
+  userId = '';
+  code = '';
   constructor(
-    private route:Router,
-    private aroute:ActivatedRoute,
-    private authservice:AuthService,
-    private contentservice:ContentService
+    private route: Router,
+    private aroute: ActivatedRoute,
+    private authservice: AuthService,
+    private contentservice: ContentService
   ) {
-    
-   }
+
+  }
 
   ngOnInit(): void {
-    this.aroute.paramMap.subscribe(params => {
-      this.userId = params.get("id");
-      var payload={"UserId":this.userId};
-      this.authservice.CallAPI(payload,'ConfirmEmail').subscribe((data:any)=>{
-        localStorage.setItem("orgId",data.OrgId);
-        this.contentservice.openSnackBar("Email confirmation success! Please login and select your plan.",globalconstants.ActionText,globalconstants.BlueBackground);
-        this.route.navigate(['/auth/selectplan']);
-      },
-      err=>{
-        this.contentservice.openSnackBar("Email confirmation fail",globalconstants.ActionText,globalconstants.RedBackground);
-      });  
+    this.aroute.queryParamMap.subscribe(qparam => {
+      this.code = qparam.get("token");
+
+      this.aroute.paramMap.subscribe(params => {
+        this.userId = params.get("id");
+        var payload = { "code": this.code,"userId": this.userId };
+        this.authservice.CallAPI(payload, 'ConfirmEmail').subscribe((data: any) => {
+          localStorage.setItem("orgId", data.OrgId);
+          localStorage.setItem("userId", data.Id);
+          this.contentservice.openSnackBar("Email confirmation success! Please login and select your plan.", globalconstants.ActionText, globalconstants.BlueBackground);
+          this.route.navigate(['/auth/selectplan']);
+        },
+          err => {
+            this.contentservice.openSnackBar("Email confirmation fail", globalconstants.ActionText, globalconstants.RedBackground);
+          });
+      })
     })
   }
 }

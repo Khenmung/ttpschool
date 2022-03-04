@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { IMessage, IPage, List } from '../../../shared/interface';
+import { IMessage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
-import { SharedataService } from '../../../shared/sharedata.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatTable } from '@angular/material/table';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
@@ -25,9 +22,6 @@ export class ContactdashboardComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  //ParentPages: [{ PageId, PageTitle }];
-  //PageDetail: IPage;
-  //SelectedData:PageDetail[] = [];
   DATA: IMessage[] = [];
   messageDetail: IMessage;
   columns: Array<any>;

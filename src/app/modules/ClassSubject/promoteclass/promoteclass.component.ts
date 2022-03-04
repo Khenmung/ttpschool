@@ -89,7 +89,7 @@ export class PromoteclassComponent implements OnInit {
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,

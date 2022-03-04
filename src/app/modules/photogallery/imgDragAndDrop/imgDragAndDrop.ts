@@ -35,7 +35,7 @@ export class ImgDragAndDropComponent implements OnInit {
   Requestsize = 0;
   constructor(
     private naomitsuService: NaomitsuService,
-    private alert: AlertService,
+    
     private uploadService: FileUploadService,
     private contentservice: ContentService,
     private route: Router,
@@ -74,8 +74,7 @@ export class ImgDragAndDropComponent implements OnInit {
     for (var i = 0; i < this.files.length; i++) {
       this.Requestsize += this.files[i].size;
       if (this.Requestsize + this.files[i].size > globalconstants.RequestLimit) {
-        this.alert.error('File upload limit is 20mb!', this.options);
-        this.contentservice.openSnackBar('File size is : ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb',globalconstants.ActionText,globalconstants.BlueBackground)
+        this.contentservice.openSnackBar('File upload limit is 20mb! File size is : ' + (this.Requestsize/(1024*1024)).toFixed(2) + 'mb',globalconstants.ActionText,globalconstants.BlueBackground)
         
         break;
       }
@@ -131,7 +130,8 @@ export class ImgDragAndDropComponent implements OnInit {
     let selectedAlbumId = this.dragdropForm.get("parentId").value;
     if (this.files.length < 1) {
       error = true;
-      this.alert.warn("No image to upload", this.options);
+      //this.alert.warn("No image to upload", this.options);
+      this.contentservice.openSnackBar("No image to upload",globalconstants.ActionText,globalconstants.RedBackground);
     }
 
     if (selectedAlbum == '' && selectedAlbumId == 0) {

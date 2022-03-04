@@ -416,7 +416,7 @@ export class MenuConfigComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar("Data updated successfully", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
           
           this.GetTopMenu();
         });

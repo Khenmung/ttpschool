@@ -62,7 +62,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private dcr: ChangeDetectorRef,
     private nav: Router,
     private shareddata: SharedataService,

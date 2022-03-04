@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -84,7 +84,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -528,7 +528,8 @@ export class studentsubjectdashboardComponent implements OnInit {
           let subjectSelectedCount = this.StudentSubjectList.filter(s => s.SubjectTypeId == row.SubjectTypeId && s.Active == 1);
           if (row.SelectHowMany > 0 && row.SelectHowMany < subjectSelectedCount.length) {
             var str = `Only ${row.SelectHowMany} Subjects can be selected for ${row.SubjectType}`;
-            this.alert.warn(str, this.optionsNoAutoClose);
+            //this.alert.warn(str, this.optionsNoAutoClose);
+            this.contentservice.openSnackBar(str,globalconstants.ActionText,globalconstants.RedBackground);
             return;
           }
           this.StudentSubjectData.Active = row.Active;

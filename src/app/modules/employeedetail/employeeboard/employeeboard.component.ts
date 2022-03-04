@@ -39,14 +39,14 @@ export class EmployeeboardComponent implements AfterViewInit {
     { "label": "Employement History", "faIcon": '' },
     { "label": "Employement Activity", "faIcon": '' }
   ];
-  EmployeeName='';
+  EmployeeName = '';
   Permissions =
     {
       ParentPermission: '',
       DataDownloadPermission: '',
       DataUploadPermission: ''
     };
-    LoginUserDetail =[];
+  LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
@@ -61,13 +61,13 @@ export class EmployeeboardComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     debugger
     this.shareddata.CurrentEmployeeName.subscribe(s => (this.EmployeeName = s));
-    this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.emp.employee.EMPLOYEE)
     if (perObj.length > 0) {
-      this.Permissions.ParentPermission = perObj[0].permission;  
+      this.Permissions.ParentPermission = perObj[0].permission;
     }
-    
+
     this.GenerateComponent(globalconstants.Pages.emp.employee.EMPLOYEEDETAIL)
     this.GenerateComponent(globalconstants.Pages.emp.employee.EDUCATIONHISTORY)
     this.GenerateComponent(globalconstants.Pages.emp.employee.FAMILY)
@@ -96,38 +96,40 @@ export class EmployeeboardComponent implements AfterViewInit {
     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
     this.viewContainer.createComponent(factory);
   }
-  GenerateComponent(featureName){
-    
+  GenerateComponent(featureName) {
+
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
-    var comindx =0;
-    switch(featureName)
-    {
-      case "employee detail":
-        comindx =this.components.indexOf(EmployeeComponent);
+    var comindx = -1;
+    switch (featureName) {
+      case globalconstants.Pages.emp.employee.EMPLOYEEDETAIL:
+        comindx = this.components.indexOf(EmployeeComponent);
         break;
-      case "employee document":
-        comindx =this.components.indexOf(EmployeedocumentsComponent);
+      case globalconstants.Pages.emp.employee.DOCUMENT:
+        comindx = this.components.indexOf(EmployeedocumentsComponent);
         break;
-      case "family":
-        comindx =this.components.indexOf(FamilyComponent);
+      case globalconstants.Pages.emp.employee.FAMILY:
+        comindx = this.components.indexOf(FamilyComponent);
         break;
-      case "employee skill":
-        comindx =this.components.indexOf(EmployeeskillComponent);
+      case globalconstants.Pages.emp.employee.EMPLOYEESKILL:
+        comindx = this.components.indexOf(EmployeeskillComponent);
         break;
-      case "education history":
-        comindx =this.components.indexOf(EducationhistoryComponent);
+      case globalconstants.Pages.emp.employee.EDUCATIONHISTORY:
+        comindx = this.components.indexOf(EducationhistoryComponent);
         break;
-      case "work history":
-        comindx =this.components.indexOf(WorkhistoryComponent);
+      case globalconstants.Pages.emp.employee.WORKHISTORY:
+        comindx = this.components.indexOf(WorkhistoryComponent);
         break;
-      case "employment history":
-        comindx =this.components.indexOf(GradehistoryComponent);
+      case globalconstants.Pages.emp.employee.EMPLOYMENTHISTORY:
+        comindx = this.components.indexOf(GradehistoryComponent);
         break;
-      case "employee activity":
-        comindx =this.components.indexOf(EmployeeactivityComponent);
+      case globalconstants.Pages.emp.employee.EMPLOYEEPROFILE:
+        comindx = this.components.indexOf(EmployeeactivityComponent);
         break;
-    } 
-    
+      default:
+        comindx = -1;
+        break;
+    }
+
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);

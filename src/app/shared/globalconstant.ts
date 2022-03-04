@@ -7,7 +7,7 @@ import { SharedataService } from "./sharedata.service";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:5000";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 30;
@@ -153,7 +153,7 @@ export class globalconstants {
                     'FEETYPE': 'fee type',
                     'PREREQUISITE': 'pre-requisite',
                     'CLASSMASTER': 'class master',
-                    'STUDENTEVALUATION':'student evaluation'
+                    'CLASSEVALUATION':'class evaluation'
                 },
                 'EXAM': {
                     'EXAM': 'Exam',

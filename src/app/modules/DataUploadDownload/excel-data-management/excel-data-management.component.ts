@@ -26,7 +26,6 @@ export class ExcelDataManagementComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
-    private alert: AlertService,
     private shareddata: SharedataService,
     private tokenservice: TokenStorageService,
     private employee: employee,
@@ -34,25 +33,17 @@ export class ExcelDataManagementComponent implements OnInit {
   ) {
 
   }
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
 
   UploadType = {
     CLASSROLLNOMAPPING: 'rollno class mapping',
     STUDENTDATA: 'student upload',
-    STUDENTACTIVITY: 'student profile',
+    STUDENTPROFILE: 'student profile',
     EMPLOYEEDETAIL: 'employee detail'
   }
   SelectedApplicationId = 0;
   filterOrgIdNBatchId = '';
   filterOrgId = '';
-
+  ClassEvaluations = [];
   loading = false;
   SelectedBatchId = 0;
   loginDetail = [];
@@ -230,21 +221,20 @@ export class ExcelDataManagementComponent implements OnInit {
       else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTDATA)) {
         this.ValidateStudentData();
       }
-      else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTACTIVITY)) {
+      else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTPROFILE)) {
         this.ValidateStudentActivity();
       }
       else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.EMPLOYEEDETAIL)) {
         this.ValidateEmployeeData();
       }
-      if (this.ErrorMessage.length == 0) {
-        this.snackbar.open("Data is ready for upload. Please click on file upload button.", 'Dismiss', {
-          duration: 5000,
-        });
+      if (this.ErrorMessage.length == 0 && !this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTPROFILE)) {
+        this.snackbar.open("Data is ready for upload. Please click on file upload button.", globalconstants.ActionText,
+          globalconstants.BlueBackground);
       }
     }
     //this.dataSource = new MatTableDataSource<any>(this.jsonData);
     readFile.readAsArrayBuffer(this.fileUploaded);
-    
+
 
   }
 
@@ -365,27 +355,48 @@ export class ExcelDataManagementComponent implements OnInit {
     debugger;
     let slno: any = 0;
     this.ErrorMessage = '';
-    this.jsonData.map((element, indx) => {
-      slno = parseInt(indx) + 1;
+    this.GetClassEvaluations()
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.ClassEvaluations = [...data.value];
 
-      let CategoryIdFilter = this.ActivityCategory.filter(g => g.MasterDataId == element.CategoryId);
-      if (CategoryIdFilter.length == 0)
-        this.ErrorMessage += "Invalid CategoryId at row " + slno + ":" + element.CategoryId + "<br>";
-       let SubCategoryIdFilter = this.AllMasterData.filter(g => g.MasterDataId == element.SubCategoryId);
-       //validate only if greater than zero.
-       if (element.SubCategoryId > 0  && SubCategoryIdFilter.length == 0)
-       {
-          this.ErrorMessage += "Invalid Sub Category Id at row " + slno + ":" + element.SubCategoryId + "<br>";
-       }
-      let StudentClsFilter = this.StudentClassList.filter(g => g.StudentClassId == element.StudentClassId);
-      if (StudentClsFilter.length == 0)
-        this.ErrorMessage += "Invalid StudentClassId at row " + slno + ":" + element.StudentClassId + "<br>";
-      //if (this.ErrorMessage.length == 0) {
-      element.OrgId = this.loginDetail[0]["orgId"];
-      element.BatchId = this.SelectedBatchId;
-      this.ELEMENT_DATA.push(element);
-      //}
-    })
+          this.jsonData.map((element, indx) => {
+            slno = parseInt(indx) + 1;
+
+            var _ratingId = element.RatingId;
+            var _detail = element.Detail;
+
+            if (element.ClassEvaluationId == 0) {
+              this.ErrorMessage += "ClassEvaluationId cannot be blank or zero at row " + slno + ": " + element.ClassEvaluationId + "<br>";
+            }
+            else {
+              var checkexist = this.ClassEvaluations.filter(f => f.ClassEvaluationId == element.ClassEvaluationId);
+              if (checkexist.length == 0)
+                this.ErrorMessage += "ClassEvaluationId is not valid at row " + slno + ": " + element.ClassEvaluationId + "<br>";
+
+            }
+            if (_ratingId == 0 && _detail == '')
+              this.ErrorMessage += "Either rating or detail should be entered at row " + slno + ".<br>";
+
+            let StudentClsFilter = this.StudentClassList.filter(g => g.StudentId == element.StudentId);
+            if (StudentClsFilter.length == 0)
+              this.ErrorMessage += "Invalid StudentId at row " + slno + ":" + element.StudentId + "<br>";
+            else
+              element.StudentClassId = StudentClsFilter[0].StudentClassId;
+            element.CreatedDate = element.ActivityDate;
+            element.OrgId = this.loginDetail[0]["orgId"];
+            this.ELEMENT_DATA.push(element);
+            //}
+          })
+        }
+        else {
+          this.contentservice.openSnackBar("No class evaluation found.", globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        if (this.ErrorMessage.length > 0)
+          this.snackbar.open("Data is ready for upload. Please click on file upload button.", globalconstants.ActionText,
+            globalconstants.BlueBackground);
+        this.loading = false;
+      })
   }
   ValidateStudentClassData() {
     debugger;
@@ -527,7 +538,7 @@ export class ExcelDataManagementComponent implements OnInit {
         else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.EMPLOYEEDETAIL)) {
           this.employee.save(this.ELEMENT_DATA);
         }
-        else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTACTIVITY)) {
+        else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTPROFILE)) {
           this.studentActivity.save(this.ELEMENT_DATA);
         }
       }
@@ -611,11 +622,11 @@ export class ExcelDataManagementComponent implements OnInit {
       .subscribe((result: any) => {
         this.loading = false;
         this.ELEMENT_DATA = [];
-        this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.RedBackground);
       }, error => {
         console.log("error from student upload:", error);
         this.ErrorMessage = "Something went wrong. Please contact your administrator.";
-        this.contentservice.openSnackBar("Something went wrong. Please contact your administrator.", globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Something went wrong. Please contact your administrator.", globalconstants.ActionText, globalconstants.RedBackground);
       }
 
       )
@@ -647,13 +658,23 @@ export class ExcelDataManagementComponent implements OnInit {
           this.StudentClassList = [...data.value];
         }
         else {
-          this.snackbar.open("No class student found.", 'Dismiss', {
-            duration: 10000
-          })
+          this.contentservice.openSnackBar("No class student found.", globalconstants.ActionText, globalconstants.RedBackground);
         }
 
         this.loading = false;
       })
+  }
+  GetClassEvaluations() {
+    //this.filterOrgIdNBatchId = globalconstants.gt.getStandardFilterWithBatchId(this.tokenservice);
+
+    let list: List = new List();
+    list.fields = ["ClassEvaluationId", "Description", "ClassId"];
+    list.PageName = "ClassEvaluations";
+    list.filter = ["Active eq 1 and OrgId eq " + this.loginDetail[0]['orgId']];
+    //list.orderBy = "ParentId";
+
+    return this.dataservice.get(list);
+
   }
   GetStudents() {
 

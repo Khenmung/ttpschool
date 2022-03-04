@@ -53,7 +53,7 @@ export class roleappAddComponent implements OnInit {
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
+    
     private fb: FormBuilder,
     private tokenstorage: TokenStorageService
   ) {

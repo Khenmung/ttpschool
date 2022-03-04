@@ -60,7 +60,7 @@ title ='';
   constructor(
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private alert: AlertService,
+    
     private fb: FormBuilder,
     private sharedData: SharedataService) { }
 

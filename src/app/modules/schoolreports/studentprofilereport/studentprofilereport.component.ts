@@ -61,8 +61,7 @@ export class StudentprofilereportComponent implements OnInit {
   filteredOptions: Observable<IStudent[]>;
   StudentEvaluationForUpdate = [];
   displayedColumns = [
-    'Description',
-    'RatingId'
+    'CategoryName'
   ];
   searchForm: FormGroup;
   constructor(
@@ -186,7 +185,7 @@ export class StudentprofilereportComponent implements OnInit {
         this.Categories = this.Categories.filter(f => {
           return SelectedClassEvaluation.filter(s => s.ClassEvalCategoryId == f.MasterDataId).length > 0
         });
-
+        
         SelectedClassEvaluation.forEach(clseval => {
           var existing = data.value.filter(f => f.ClassEvaluationId == clseval.ClassEvaluationId);
           if (clseval.RatingOptionId > 0)
@@ -195,7 +194,7 @@ export class StudentprofilereportComponent implements OnInit {
             clseval.Ratings = [];
           clseval.StudentClassId = this.StudentClassId;
           clseval.CatSequence = clseval.Sequence;
-          clseval.ItemSequence = existing[0].Sequence;
+          //clseval.ItemSequence = existing[0].Sequence;
           if (existing.length > 0) {
             clseval.RatingId = existing[0].RatingId;
             clseval.Detail = existing[0].Detail;
@@ -210,11 +209,19 @@ export class StudentprofilereportComponent implements OnInit {
           }
           this.StudentEvaluationList.push(clseval);
         })
-        //console.log("this.StudentEvaluationList", this.StudentEvaluationList)
-        const rows = [];
-        this.StudentEvaluationList.forEach(element => rows.push(element, { detailRow: true, element }));
 
-        this.dataSource = new MatTableDataSource<IStudentEvaluation>(rows);
+        //preparing nested profile under category.
+        var result = this.Categories.map(m=>{
+          m.CategoryName = m.MasterDataName;
+          m.Profile = this.StudentEvaluationList.filter(f=>f.ClassEvalCategoryId == m.MasterDataId);
+           return m;
+        })
+        
+        console.log("this.StudentEvaluationList", result)
+        const rows = [];
+        result.forEach(element => rows.push(element, { detailRow: true, element }));
+
+        this.dataSource = new MatTableDataSource<any>(rows);
         this.loadingFalse();
       });
 

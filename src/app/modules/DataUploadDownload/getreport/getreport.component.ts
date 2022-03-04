@@ -101,7 +101,7 @@ export class GetreportComponent implements OnInit {
     private datepipe: DatePipe,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private fb: FormBuilder
   ) {

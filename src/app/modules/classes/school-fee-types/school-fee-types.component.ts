@@ -57,7 +57,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private contentservice: ContentService,
     private fb: FormBuilder

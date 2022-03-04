@@ -3,7 +3,6 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { ImageCropperComponent } from 'ngx-image-cropper';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -130,7 +129,8 @@ export class EmployeeComponent implements OnInit {
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.loading = false;
-      this.alertMessage.success("Files Uploaded successfully.", options);
+      this.contentservice.openSnackBar("Files Uploaded successfully.",globalconstants.ActionText,globalconstants.BlueBackground)
+      //this.alertMessage.success("Files Uploaded successfully.", options);
 
       this.Edit = false;
     });
@@ -140,9 +140,7 @@ export class EmployeeComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
     private fb: FormBuilder,
-    private alertMessage: AlertService,
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private tokenService: TokenStorageService,

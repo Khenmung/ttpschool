@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -74,7 +74,7 @@ export class EmployeesearchComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
+    
     private fb: FormBuilder,
     private shareddata: SharedataService,
     private token: TokenStorageService) { }

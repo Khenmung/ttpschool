@@ -68,7 +68,7 @@ export class ExamsComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private route: ActivatedRoute,
     private nav: Router,
     private contentservice: ContentService,

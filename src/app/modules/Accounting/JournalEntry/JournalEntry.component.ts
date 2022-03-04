@@ -85,7 +85,7 @@ export class JournalEntryComponent implements OnInit {
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private contentservice: ContentService,
   ) { }

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -69,7 +69,7 @@ export class StudentEvaluationComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private shareddata: SharedataService,
     private fb: FormBuilder
@@ -209,7 +209,7 @@ export class StudentEvaluationComponent implements OnInit {
             this.StudentEvaluationForUpdate[0]["UpdatedDate"] = new Date();
             delete this.StudentEvaluationForUpdate[0]["SubCategories"];
             delete this.StudentEvaluationForUpdate[0]["UpdatedBy"];
-            this.insert(row);
+            this.update(row);
           }
         }
       });
@@ -238,7 +238,7 @@ export class StudentEvaluationComponent implements OnInit {
         });
   }
   GetStudentEvaluation() {
-    //debugger;
+    debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     var _ClassId = +this.tokenstorage.getClassId();
@@ -280,8 +280,8 @@ export class StudentEvaluationComponent implements OnInit {
           else
             clseval.Ratings = [];
           clseval.StudentClassId = this.StudentClassId;
-          clseval.CatSequence = clseval.Sequence;
-          clseval.ItemSequence = existing[0].Sequence;
+          clseval.CatSequence = clseval.DisplayOrder;
+          //clseval.ItemSequence = existing[0].Sequence;
           if (existing.length > 0) {
             clseval.RatingId = existing[0].RatingId;
             clseval.Detail = existing[0].Detail;
@@ -362,6 +362,7 @@ export class StudentEvaluationComponent implements OnInit {
       'ClassEvaluationId',
       'ClassEvalCategoryId',
       'ClassEvalSubCategoryId',
+      'DisplayOrder',
       'ClassId',
       'Description',
       'RatingOptionId'

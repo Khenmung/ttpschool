@@ -69,7 +69,7 @@ export class PlansComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private fb: FormBuilder
   ) { }

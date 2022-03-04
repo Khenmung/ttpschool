@@ -76,7 +76,7 @@ export class roleuserdashboardComponent implements OnInit {
   currentRoute = '';
   constructor(private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private authservice: AuthService,
     private nav: Router,
     private shareddata: SharedataService,

@@ -173,7 +173,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private snackbar: MatSnackBar,
     private nav: Router,
     private datepipe: DatePipe,
@@ -395,7 +395,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
   GetClassFee(pclassId) {
     //debugger;
     if (pclassId == undefined || pclassId == 0 || this.SelectedBatchId == 0) {
-      this.alert.error('Invalid Id', this.optionsNoAutoClose);
+      //this.alert.error('Invalid Id', this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Invalid Id",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 

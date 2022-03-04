@@ -63,7 +63,7 @@ export class ClassperiodComponent implements OnInit {
     private datepipe:DatePipe,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private shareddata: SharedataService,
     private contentservice: ContentService,

@@ -3,7 +3,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { evaluate } from 'mathjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -53,11 +52,11 @@ export class CustomerPlansComponent implements OnInit {
   displayedColumns = [
     "PlanName",
     "PCPM",
-    "MinCount",
-    "MinPrice",
-    "LoginUserCount",
+    //"MinCount",
+    //"MinPrice",
+    //"LoginUserCount",
     "PersonOrItemCount",
-    "Formula",
+    //"Formula",
     "AmountPerMonth",
     "Active",
     "Action"
@@ -68,7 +67,7 @@ export class CustomerPlansComponent implements OnInit {
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+
     private nav: Router,
     private fb: FormBuilder
   ) {
@@ -96,9 +95,23 @@ export class CustomerPlansComponent implements OnInit {
       this.UserId = localStorage.getItem("userId");
       this.OrgId = +localStorage.getItem("orgId");
     }
-    console.log("orgid",this.OrgId)
-    //this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-    //this.GetMasterData();
+    var selectedApplicationId = this.tokenstorage.getSelectedAPPId();
+    var PermittedApplications = this.tokenstorage.getPermittedApplications();
+    var selectedAppName = PermittedApplications.filter(f => f.ApplicationId == selectedApplicationId)[0].appShortName;
+
+    if (selectedAppName.toLowerCase() == 'globaladmin') {
+      this.displayedColumns = ["PlanName",
+        "PCPM",
+        "MinCount",
+        "MinPrice",
+        "LoginUserCount",
+        "PersonOrItemCount",
+        "Formula",
+        "AmountPerMonth",
+        "Active",
+        "Action"
+      ]
+    }
     this.GetOrganizations();
     this.GetPlan();
   }
@@ -108,10 +121,10 @@ export class CustomerPlansComponent implements OnInit {
     row.Active = value.checked ? 1 : 0;
 
   }
-  login(){
+  login() {
     this.nav.navigate(['auth/login']);
   }
-  
+
   UpdateOrSave(row) {
 
 
@@ -151,8 +164,8 @@ export class CustomerPlansComponent implements OnInit {
           row.Action = false;
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-        },error=>{        
-        this.contentservice.openSnackBar("error occured. Please contact administrator.",globalconstants.ActionText,globalconstants.RedBackground);
+        }, error => {
+          this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
 
         });
   }
@@ -163,7 +176,7 @@ export class CustomerPlansComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   GetOrganizations() {
@@ -229,7 +242,7 @@ export class CustomerPlansComponent implements OnInit {
     //var orgIdSearchstr = ' and OrgId eq ' + localStorage.getItem("orgId");// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchCustomerId").value == 0) {
-      this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -268,7 +281,7 @@ export class CustomerPlansComponent implements OnInit {
               "CustomerPlanId": d[0].CustomerPlanId,
               "PlanId": d[0].PlanId,
               "PlanName": p.Title,
-              "Logic": p.Logic ==null?'':p.Logic,
+              "Logic": p.Logic == null ? '' : p.Logic,
               "Formula": d[0].Formula,
               "LoginUserCount": d[0].LoginUserCount,
               "PersonOrItemCount": d[0].PersonOrItemCount,
@@ -286,7 +299,7 @@ export class CustomerPlansComponent implements OnInit {
               "CustomerPlanId": 0,
               "PlanId": p.PlanId,
               "PlanName": p.Title,
-              "Logic": p.Logic ==null?'':p.Logic,
+              "Logic": p.Logic == null ? '' : p.Logic,
               "Formula": '',
               "LoginUserCount": 0,
               "PersonOrItemCount": 0,

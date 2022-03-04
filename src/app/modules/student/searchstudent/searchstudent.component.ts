@@ -73,7 +73,7 @@ export class searchstudentComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
+    
     private fb: FormBuilder,
     private shareddata: SharedataService,
     private token: TokenStorageService) { }

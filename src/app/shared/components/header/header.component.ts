@@ -31,7 +31,7 @@ debugger;
       this.loggedIn = true;
       this.userName = localStorage.getItem('username');    
       this.logoPath = this.LoginUserDetails[0].logoPath;
-      if(this.logoPath.length==0)
+      if(this.logoPath ==undefined)
       {
         this.logoPath = "assets/images/ttplogo1.png"
       }

@@ -68,7 +68,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private contentservice: ContentService,
     private nav: Router,
     private fb: FormBuilder

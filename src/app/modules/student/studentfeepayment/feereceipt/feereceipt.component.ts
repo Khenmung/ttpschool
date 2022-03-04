@@ -75,7 +75,7 @@ export class FeereceiptComponent implements OnInit {
   Balance = 0;
   constructor(private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService,
-    private alert: AlertService,
+    
     private shareddata: SharedataService,
     private contentservice: ContentService) { }
 

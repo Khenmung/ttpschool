@@ -2,7 +2,7 @@
     <mat-card-title style="margin-left: 30px;margin-top: 30px;">Sign up</mat-card-title>
     <mat-card-subtitle></mat-card-subtitle>
     <mat-card-content>
-        <alert></alert>
+        <!-- <alert></alert> -->
 
         <form style="display: flex;flex-direction: column;margin: 30px;" *ngIf="!isSuccessful"
             [formGroup]="RegistrationForm">
@@ -74,16 +74,14 @@
                     <mat-icon>cancel</mat-icon>
                 </button>
             </div>
-            <div>
+            <!-- <div>
                 <div style="margin-top:15px;padding: 15px;" class="alert alert-warning" *ngIf="errorMessage.length>0"
                     innerHTML="Signup failed!<br />{{ errorMessage }}">
                 </div>
-            </div>
+            </div> -->
         </form>
         <div class="alert alert-success" *ngIf="isSuccessful">
-            Please check and click on the link provided in your email for verification.
-            <button [disabled]="loading" style="margin: 15px;" class="mat-raised-button" (click)="selectplan()">Select
-                Plan</button>
+            Please check and click on the link provided in your email for verification.           
         </div>
     </mat-card-content>
 </mat-card>

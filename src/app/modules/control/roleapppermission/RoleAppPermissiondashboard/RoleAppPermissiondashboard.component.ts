@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -59,7 +59,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     private route: Router,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
-    private alert: AlertService,
+    
     private contentservice: ContentService
 
   ) { }
@@ -96,7 +96,8 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     this.loading = true;
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails == null) {
-      this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
+      //this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
+      this.contentservice.openSnackBar('Please login to be able to add masters!',globalconstants.ActionText,globalconstants.RedBackground);
       this.route.navigate(['auth/login']);
     }
     else {

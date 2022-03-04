@@ -5,7 +5,7 @@
   <mat-card-subtitle></mat-card-subtitle>
   <mat-card-content fxLayout="column">
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <alert></alert>
+    <!-- <alert></alert> -->
     <div>
       <mat-form-field>
         <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Search" autocomplete="Off">

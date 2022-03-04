@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
   //common: globalconstants;
   IsSubmitted = false;
   constructor(private authService: AuthService,
-    private alert: AlertService,
+    
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
     private route: Router,   
@@ -86,11 +86,11 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.username, password).subscribe(
       data => {
 
-        this.tokenStorage.saveToken(data.token);
+        this.tokenStorage.saveToken(data.Token);
         this.tokenStorage.saveRefreshToken(data.refreshToken);
         this.tokenStorage.saveUser(data);
 
-        const decodedUser = this.jwtHelper.decodeToken(data.token);
+        const decodedUser = this.jwtHelper.decodeToken(data.Token);
         this.userInfo = JSON.parse(JSON.stringify(decodedUser));
 
         localStorage.setItem('orgId', decodedUser.sid);
@@ -113,9 +113,26 @@ export class LoginComponent implements OnInit {
         }
       },
       err => {
+        debugger;
         this.loading = false;
         this.errorMessage = '';
-        err.error.errors.forEach(x => this.errorMessage += x);
+        var modelState;
+        if (err.error.ModelState != null)
+          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+        else if (err.error != null)
+          modelState = JSON.parse(JSON.stringify(err.error));
+        else
+          modelState = JSON.parse(JSON.stringify(err));
+
+        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        for (var key in modelState) {
+          if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+            for(var key1 in modelState[key])
+            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
+            //errors.push(modelState[key]);//list of error messages in an array
+          }
+        }
+        this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
         this.isLoginFailed = true;
       }
     );

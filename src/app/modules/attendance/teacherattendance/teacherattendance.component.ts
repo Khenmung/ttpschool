@@ -75,7 +75,7 @@ export class TeacherAttendanceComponent implements OnInit {
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private contentservice: ContentService,
     private datepipe: DatePipe

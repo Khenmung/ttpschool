@@ -143,7 +143,7 @@ export class studentprimaryinfoComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private alert: AlertService,
+    
     private fb: FormBuilder,
     private alertMessage: AlertService,
     private fileUploadService: FileUploadService,

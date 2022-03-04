@@ -30,7 +30,7 @@ export class ContactComponent implements OnInit {
   });
 
   constructor(private naomitsuService: NaomitsuService,
-    private alert: AlertService,
+    
     private route: Router,
     private activeUrl: ActivatedRoute) {
     this.activeUrl.paramMap.subscribe(params => {

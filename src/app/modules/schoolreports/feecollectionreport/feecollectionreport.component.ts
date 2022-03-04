@@ -73,7 +73,7 @@ export class FeecollectionreportComponent implements OnInit {
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private fb: FormBuilder,
-    private alert: AlertService,
+    
     private shareddata: SharedataService,
     private tokenservice: TokenStorageService,
     private nav: Router

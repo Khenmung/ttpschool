@@ -79,7 +79,7 @@ export class VerifyResultsComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,

@@ -74,7 +74,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
-    private alert: AlertService,
+    
     private nav: Router,
     private fb: FormBuilder
   ) {

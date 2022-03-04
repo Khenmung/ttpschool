@@ -70,7 +70,7 @@ export class ClassboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(ClassdetailComponent);
     this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.STUDENTEVALUATION)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSEVALUATION)
     var comindx = this.components.indexOf(ClassEvaluationComponent);
     this.GetComponents(perObj, comindx)
 

@@ -28,30 +28,28 @@ export class StudentActivity {
         this.loginUserDetail = this.token.getUserDetail();
         this.SelectedBatchId = +this.token.getSelectedBatchId();
     }
+
     save(ELEMENT_DATA) {
         var toInsert = [];
         debugger;
         ELEMENT_DATA.forEach(row => {
             toInsert.push({
-                //StudentActivityId: row.StudentActivityId,
+                StudentEvaluationId: 0,
                 StudentClassId: row.StudentClassId,
-                StudentId: row.StudentId,
-                Activity: row.Activity,
-                ActivityDate: row.ActivityDate,
+                ClassEvaluationId: +row.ClassEvaluationId,
+                RatingId: 4588,
+                Detail: row.Detail,
                 Active: 1,
-                CategoryId: row.CategoryId,
-                SubCategoryId: row.SubCategoryId,
-                Remarks: row.Remarks,
-                OrgId: this.loginUserDetail[0]['orgId'],
-                BatchId: this.SelectedBatchId,
-                CreatedDate: new Date()
+                OrgId: this.loginUserDetail[0]["orgId"],
+                ActivityDate: new Date(row.ActivityDate),
+                CreatedBy: this.loginUserDetail[0]["userId"],
             });
         });
-        ////console.log("toInsert", toInsert)
-        this.dataservice.postPatch('StudentActivities', toInsert, 0, 'post')
+        console.log("toInsert", toInsert)
+        this.dataservice.postPatch('StudentEvaluations', toInsert, 0, 'post')
             .subscribe((result: any) => {
                 this.loading = false;
-                this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.RedBackground);
+                this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
             }, error => console.log(error))
     }

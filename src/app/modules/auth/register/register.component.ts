@@ -3,7 +3,7 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -130,6 +130,7 @@ export class RegisterComponent implements OnInit {
   get f() { return this.RegistrationForm.controls; }
 
   onSave(): void {
+    debugger;
     this.errorMessage = '';
     const { UserName, ConfirmPassword, Email, Password, OrganizationName, ContactNo } = this.RegistrationForm.value;
     //debugger;
@@ -144,7 +145,7 @@ export class RegisterComponent implements OnInit {
     this.authService.CallAPI(userDetail,'Register').subscribe(
       data => {
         //this.AddAppUsers()
-        this.contentservice.openSnackBar("Congratulations! Your registration is successful.",  globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Congratulations! Your registration is successful.",  globalconstants.ActionText,globalconstants.BlueBackground);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
       },
@@ -159,12 +160,13 @@ export class RegisterComponent implements OnInit {
 
         //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
         for (var key in modelState) {
-          if (modelState.hasOwnProperty(key) && key == 'errors') {
-            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key];
+          if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+            for(var key1 in modelState[key])
+            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
             //errors.push(modelState[key]);//list of error messages in an array
           }
         }
-
+        this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
         this.isSignUpFailed = true;
         //console.log(err.error)
       }
