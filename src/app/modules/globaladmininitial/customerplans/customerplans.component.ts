@@ -17,14 +17,6 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class CustomerPlansComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   StandardFilterWithBatchId = '';
   loading = false;
   Applications = [];
@@ -48,15 +40,13 @@ export class CustomerPlansComponent implements OnInit {
     Active: 0,
   };
   OrgId = 0;
+  Org = '';
   UserId = '';
   displayedColumns = [
     "PlanName",
+    "Description",
     "PCPM",
-    //"MinCount",
-    //"MinPrice",
-    //"LoginUserCount",
     "PersonOrItemCount",
-    //"Formula",
     "AmountPerMonth",
     "Active",
     "Action"
@@ -90,28 +80,27 @@ export class CustomerPlansComponent implements OnInit {
     if (this.LoginUserDetail.length != 0) {
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
+      if (this.LoginUserDetail[0]['org'].toLowerCase() == 'ttp') {
+        this.displayedColumns = ["PlanName",
+          "PCPM",
+          'Description',
+          "MinCount",
+          "MinPrice",
+          "LoginUserCount",
+          "PersonOrItemCount",
+          "Formula",
+          "AmountPerMonth",
+          "Active",
+          "Action"
+        ]
+      }
     }
     else {
       this.UserId = localStorage.getItem("userId");
       this.OrgId = +localStorage.getItem("orgId");
-    }
-    var selectedApplicationId = this.tokenstorage.getSelectedAPPId();
-    var PermittedApplications = this.tokenstorage.getPermittedApplications();
-    var selectedAppName = PermittedApplications.filter(f => f.ApplicationId == selectedApplicationId)[0].appShortName;
 
-    if (selectedAppName.toLowerCase() == 'globaladmin') {
-      this.displayedColumns = ["PlanName",
-        "PCPM",
-        "MinCount",
-        "MinPrice",
-        "LoginUserCount",
-        "PersonOrItemCount",
-        "Formula",
-        "AmountPerMonth",
-        "Active",
-        "Action"
-      ]
     }
+
     this.GetOrganizations();
     this.GetPlan();
   }
@@ -127,7 +116,10 @@ export class CustomerPlansComponent implements OnInit {
 
   UpdateOrSave(row) {
 
-
+    if (row.PersonOrItemCount == 0) {
+      this.contentservice.openSnackBar("Please enter no. of users", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     this.CustomerPlansData.CustomerPlanId = row.CustomerPlanId;
     this.CustomerPlansData.PlanId = row.PlanId;
     this.CustomerPlansData.AmountPerMonth = row.AmountPerMonth;
@@ -164,9 +156,10 @@ export class CustomerPlansComponent implements OnInit {
           row.Action = false;
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          this.nav.navigate(['/auth/login']);
         }, error => {
           this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
-
+          console.log("customerplan insert error:", error.error);
         });
   }
   update(row) {
@@ -192,6 +185,7 @@ export class CustomerPlansComponent implements OnInit {
       .subscribe((data: any) => {
         this.Organizations = [...data.value];
         this.searchForm.patchValue({ "searchCustomerId": this.OrgId });
+        this.Org = this.Organizations.filter(f => f.OrganizationId == this.OrgId)[0].OrganizationName;
       })
   }
   GetPlan() {
@@ -215,27 +209,6 @@ export class CustomerPlansComponent implements OnInit {
         this.GetCustomerPlans();
       })
   }
-  // GetApplicationPricing() {
-
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "PlanId",
-  //     "MinCount",
-  //     "MinPrice",
-  //     "PCPM",
-  //     "ApplicationId",
-  //     "Description",
-  //     "CurrencyId",
-  //     "Active"
-
-  //   ];
-  //   list.PageName = "ApplicationPrices";
-  //   list.filter = ["Active eq 1"];
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       this.ApplicationPricing = [...data.value];
-  //     })
-  // }
   GetCustomerPlans() {
 
     this.CustomerPlansList = [];
@@ -312,6 +285,9 @@ export class CustomerPlansComponent implements OnInit {
             });
           }
         })
+        if (this.Org != 'ttp') {
+          this.CustomerPlansList = this.CustomerPlansList.filter(f => f.PlanName.toLowerCase() != 'delux');
+        }
         this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
         this.loading = false;
       })

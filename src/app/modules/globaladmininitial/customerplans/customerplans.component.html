@@ -10,14 +10,14 @@
                 <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
                     <mat-form-field appearance="outline">
                         <mat-label>Organisation</mat-label>
-                        <mat-select formControlName="searchCustomerId" [(ngModel)]="OrgId">
+                        <mat-select [disabled]="Org !='TTP'" formControlName="searchCustomerId" [(ngModel)]="OrgId">
                             <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
                                 {{item.OrganizationName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                    
-                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                    <button [disabled]="loading" *ngIf="Org=='TTP'" matTooltip="search" class="mat-raised-button"
                         (click)="GetCustomerPlans()">
                         <mat-icon>search</mat-icon>
                     </button>
@@ -29,7 +29,7 @@
                     <mat-header-cell *matHeaderCellDef>Plan name
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.PlanName}}
+                        <b>{{element.PlanName}}</b>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PCPM">
@@ -37,6 +37,13 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.PCPM}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Description">
+                    <mat-header-cell *matHeaderCellDef>Description
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.Description}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="MinCount">

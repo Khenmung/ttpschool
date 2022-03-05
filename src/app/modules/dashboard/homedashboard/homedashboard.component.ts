@@ -95,6 +95,9 @@ export class HomeDashboardComponent implements OnInit {
     this.tokenStorage.saveSelectedAppId(SelectedAppId);
     var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 
+    //this line is added because when batch is not defined for new user, selected batch name is null.
+    this.tokenStorage.saveSelectedBatchName('');
+    
     this.route.navigate(['/', selectedApp[0].appShortName])
 
   }

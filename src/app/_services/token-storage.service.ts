@@ -20,6 +20,7 @@ const EMPLOYEEID ='employeeId';
 const ROLEFILTER ='rolefilter';
 const SELECTEDBATCHNAME ='selectedbatchname';
 const CURRENTBATCHID ='currentbatchid';
+const SELECTEDAPPNAME ='selectedappname';
 
 @Injectable({
   providedIn: 'root'
@@ -62,6 +63,9 @@ export class TokenStorageService {
   }
   public getSelectedBatchName(): string | null {
     return localStorage.getItem(SELECTEDBATCHNAME);
+  }
+  public getSelectedAppName(): string | null {
+    return localStorage.getItem(SELECTEDAPPNAME);
   }
   public getNextBatchId(): string | null {
     return localStorage.getItem(NEXTBATCHID);
@@ -153,6 +157,10 @@ export class TokenStorageService {
   public saveSelectedAppId(token: string): void {
     localStorage.removeItem(SELECTEDAPPID);
     localStorage.setItem(SELECTEDAPPID, token);
+  }
+  public saveSelectedAppName(token: string): void {
+    localStorage.removeItem(SELECTEDAPPNAME);
+    localStorage.setItem(SELECTEDAPPNAME, token);
   }
   public getSelectedAPPId(): string | null {
     return localStorage.getItem(SELECTEDAPPID);

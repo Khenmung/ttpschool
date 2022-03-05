@@ -10,6 +10,7 @@ import { PlanFeatureComponent } from '../planfeature/planfeature.component';
 import { AdminrolepermissionComponent } from '../adminrolepermission/adminrolepermission.component';
 import { PlanandmasteritemComponent } from '../planandmasteritem/planandmasteritem.component';
 import { OrganizationpaymentComponent } from '../organizationpayment/organizationpayment.component';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -17,7 +18,7 @@ import { OrganizationpaymentComponent } from '../organizationpayment/organizatio
   styleUrls: ['./globaladminboard.component.scss']
 })
 export class GlobaladminboardComponent implements AfterViewInit {
-  
+
   components = [
     OrganizationpaymentComponent,
     MenuConfigComponent,
@@ -25,9 +26,9 @@ export class GlobaladminboardComponent implements AfterViewInit {
     PlanFeatureComponent,
     PlanandmasteritemComponent,
     AdminrolepermissionComponent,
-    CustomerPlansComponent   
+    CustomerPlansComponent
   ];
-  LoginUserDetail=[];
+  LoginUserDetail = [];
   tabNames = [
     { 'label': 'Plan', 'faIcon': '' },
     { 'label': 'Plan Feature', 'faIcon': '' },
@@ -54,6 +55,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private route: Router,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private contentservice: ContentService,
@@ -63,47 +65,52 @@ export class GlobaladminboardComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     debugger
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
-    this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-    
-    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.GLOBALADMIN)
-    if (perObj.length > 0) {
-      this.Permissions.ParentPermission = perObj[0].permission;
 
+    if (this.LoginUserDetail[0]['org'] != 'TTP') {
+      this.contentservice.openSnackBar("Access denied", globalconstants.ActionText, globalconstants.RedBackground);
+      this.route.navigate(['/dashboard']);    
     }
+    else {
+      this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.GLOBALADMIN)
+      if (perObj.length > 0) {
+        this.Permissions.ParentPermission = perObj[0].permission;
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLAN)
-    var comindx = this.components.indexOf(PlansComponent);
-    this.GetComponents(perObj,comindx)
+      }
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLANFEATURE)
-    var comindx = this.components.indexOf(PlanFeatureComponent);
-    this.GetComponents(perObj,comindx)
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLAN)
+      var comindx = this.components.indexOf(PlansComponent);
+      this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLANANDMASTERDATA)
-    var comindx = this.components.indexOf(PlanandmasteritemComponent);
-    this.GetComponents(perObj,comindx)
-    
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ADMINROLEFEATURE)
-    var comindx = this.components.indexOf(AdminrolepermissionComponent);
-    this.GetComponents(perObj,comindx)
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLANFEATURE)
+      var comindx = this.components.indexOf(PlanFeatureComponent);
+      this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERPLAN)
-    var comindx = this.components.indexOf(CustomerPlansComponent);
-    this.GetComponents(perObj,comindx)
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.PLANANDMASTERDATA)
+      var comindx = this.components.indexOf(PlanandmasteritemComponent);
+      this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.MENUCONFIG)
-    var comindx = this.components.indexOf(MenuConfigComponent);
-    this.GetComponents(perObj,comindx)
-    
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT)
-    var comindx = this.components.indexOf(OrganizationpaymentComponent);
-    this.GetComponents(perObj,comindx)
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ADMINROLEFEATURE)
+      var comindx = this.components.indexOf(AdminrolepermissionComponent);
+      this.GetComponents(perObj, comindx)
 
-    this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-    //if(1){ //(this.Permissions.ParentPermission != 'deny') {
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERPLAN)
+      var comindx = this.components.indexOf(CustomerPlansComponent);
+      this.GetComponents(perObj, comindx)
+
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.MENUCONFIG)
+      var comindx = this.components.indexOf(MenuConfigComponent);
+      this.GetComponents(perObj, comindx)
+
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT)
+      var comindx = this.components.indexOf(OrganizationpaymentComponent);
+      this.GetComponents(perObj, comindx)
+
+      this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
+      //if(1){ //(this.Permissions.ParentPermission != 'deny') {
       this.renderComponent(0);
       this.cdr.detectChanges();
-    //}
+    }
   }
   GetComponents(perObj, comindx) {
     if (perObj.length > 0) {

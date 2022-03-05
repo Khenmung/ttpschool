@@ -76,7 +76,7 @@ export class RegisterComponent implements OnInit {
     this.shareddata.CurrentCustomerPlan.subscribe(p => this.CustomerPlan = p);
   }
   gotohome() {
-    this.route.navigate(['/home']);
+    this.route.navigate(['/dashboard']);
   }
   gotologin() {
     this.route.navigate(['/auth/login']);

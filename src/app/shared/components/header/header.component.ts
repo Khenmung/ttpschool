@@ -49,7 +49,7 @@ debugger;
         if (apps.length > 0) {        
           
           this.SelectedBatchName = this.tokenStorage.getSelectedBatchName();
-          this.SelectedApplicationName = apps[0].applicationName + ' - ' + this.SelectedBatchName
+          this.SelectedApplicationName = apps[0].applicationName + (this.SelectedBatchName ==''?'':' - ' + this.SelectedBatchName)
         }
       }
     }
@@ -63,7 +63,7 @@ debugger;
     this.route.navigate(["/auth/login"]);
   }
   createlogin() {
-    this.route.navigate(["/auth/register"]);
+    this.route.navigate(["/auth/signup"]);
   }
   addUser() {
     this.route.navigate(["/auth/signup"]);

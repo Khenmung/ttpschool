@@ -24,22 +24,23 @@ export class ConfirmemailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.aroute.queryParamMap.subscribe(qparam => {
-      this.code = qparam.get("token");
+    //this.aroute.queryParamMap.subscribe(qparam => {
+      
 
       this.aroute.paramMap.subscribe(params => {
+        this.code = params.get("code");
         this.userId = params.get("id");
         var payload = { "code": this.code,"userId": this.userId };
         this.authservice.CallAPI(payload, 'ConfirmEmail').subscribe((data: any) => {
           localStorage.setItem("orgId", data.OrgId);
           localStorage.setItem("userId", data.Id);
-          this.contentservice.openSnackBar("Email confirmation success! Please login and select your plan.", globalconstants.ActionText, globalconstants.BlueBackground);
+          this.contentservice.openSnackBar("Email confirmation success! Please select your plan.", globalconstants.ActionText, globalconstants.BlueBackground);
           this.route.navigate(['/auth/selectplan']);
         },
           err => {
             this.contentservice.openSnackBar("Email confirmation fail", globalconstants.ActionText, globalconstants.RedBackground);
           });
       })
-    })
+  
   }
 }
