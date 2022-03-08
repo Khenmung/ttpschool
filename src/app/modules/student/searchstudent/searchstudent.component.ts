@@ -5,7 +5,6 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { TableUtil } from '../../../shared/TableUtil';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
@@ -55,11 +54,11 @@ export class searchstudentComponent implements OnInit {
   FeeDefinitions = [];
   Sections = [];
   Houses = [];
-  StudentClasses=[];
+  StudentClasses = [];
   UploadTypes = [];
   ReasonForLeaving = [];
   //StandardFilter ='';
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   SelectedBatchId = 0;
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
@@ -73,7 +72,7 @@ export class searchstudentComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    
+
     private fb: FormBuilder,
     private shareddata: SharedataService,
     private token: TokenStorageService) { }
@@ -88,7 +87,7 @@ export class searchstudentComponent implements OnInit {
     else {
       this.SelectedBatchId = +this.token.getSelectedBatchId();
       this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
-      this.SelectedApplicationId =  +this.token.getSelectedAPPId();
+      this.SelectedApplicationId = +this.token.getSelectedAPPId();
       this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
       this.studentSearchForm = this.fb.group({
@@ -124,7 +123,7 @@ export class searchstudentComponent implements OnInit {
 
       this.GetMasterData();
       this.GetFeeTypes();
-      
+
     }
     //this.GetStudents();
   }
@@ -156,9 +155,9 @@ export class searchstudentComponent implements OnInit {
     return stud && stud.MotherName ? stud.MotherName : '';
   }
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
-        
+
         this.shareddata.ChangeMasterData(data.value);
         this.allMasterData = [...data.value];
 
@@ -194,7 +193,7 @@ export class searchstudentComponent implements OnInit {
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
 
-        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"],1).subscribe((f: any) => {
+        this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((f: any) => {
           this.FeeDefinitions = [...f.value];
           this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
         });
@@ -237,13 +236,12 @@ export class searchstudentComponent implements OnInit {
   view(element) {
     debugger;
     this.generateDetail(element);
-    var _ClassId =0;
-    if (element.StudentClasses.length > 0)
-    {
+    var _ClassId = 0;
+    if (element.StudentClasses.length > 0) {
       this.StudentClassId = element.StudentClasses[0].StudentClassId;
-      _ClassId =element.StudentClasses[0].ClassId;
+      _ClassId = element.StudentClasses[0].ClassId;
     }
-      
+
     this.StudentId = element.StudentId;
 
     this.token.saveStudentClassId(this.StudentClassId + "");
@@ -321,13 +319,13 @@ export class searchstudentComponent implements OnInit {
       })
   }
   GetFeeTypes() {
-  debugger;
+    debugger;
     this.loading = true;
-    var filter = globalconstants.getStandardFilterWithBatchId(this.token);
+    //var filter = globalconstants.getStandardFilterWithBatchId(this.token);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
-    list.filter = ["Active eq 1"];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -338,7 +336,7 @@ export class searchstudentComponent implements OnInit {
   }
   GetStudent() {
     debugger;
-
+    this.loading = true;
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
     if (this.studentSearchForm.get("searchStudentId").value > 0)
@@ -391,19 +389,20 @@ export class searchstudentComponent implements OnInit {
         }
         else {
           this.ELEMENT_DATA = [];
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         //console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.loading=false;
       });
 
   }
   GetStudentClasses() {
     //debugger;
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
-    
+
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
     list.PageName = "StudentClasses";
@@ -414,7 +413,7 @@ export class searchstudentComponent implements OnInit {
         this.StudentClasses = [...data.value];
         this.GetStudents();
       })
-    }
+  }
   GetStudents() {
     this.loading = true;
     let list: List = new List();
@@ -445,7 +444,7 @@ export class searchstudentComponent implements OnInit {
             var _className = '';
             var _section = '';
             var _studentClassId = 0;
-            var studentclassobj= this.StudentClasses.filter(f=>f.StudentId == student.StudentId);
+            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
             if (studentclassobj.length > 0) {
               _studentClassId = studentclassobj[0].StudentClassId;
               var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
@@ -473,7 +472,7 @@ export class searchstudentComponent implements OnInit {
         this.loading = false;
       })
   }
-  
+
 }
 export interface IStudent {
   StudentId: number;

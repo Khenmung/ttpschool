@@ -10,7 +10,7 @@
                 <mat-label>Fee type</mat-label>
                 <input matInput formControlName="searchFeeTypeName" autocomplete="Off">
             </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetFeeTypes()">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetFeeTypes()">
                 <mat-icon>search</mat-icon>
             </button>
         </form>

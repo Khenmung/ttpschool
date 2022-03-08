@@ -5,7 +5,6 @@ import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
@@ -38,7 +37,7 @@ export class ExcelDataManagementComponent implements OnInit {
     CLASSROLLNOMAPPING: 'rollno class mapping',
     STUDENTDATA: 'student upload',
     STUDENTPROFILE: 'student profile',
-    EMPLOYEEDETAIL: 'employee detail'
+    EMPLOYEEDETAIL: 'employee'
   }
   SelectedApplicationId = 0;
   filterOrgIdNBatchId = '';
@@ -68,12 +67,10 @@ export class ExcelDataManagementComponent implements OnInit {
     this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
     this.shareddata.CurrentUploadType.subscribe(c => (this.UploadTypes = c));
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
 
     this.uploadForm = this.fb.group({
-      //BatchId:[this.SelectedBatchId],
       UploadTypeId: [0, [Validators.required]]
     })
     this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenservice);
@@ -501,6 +498,10 @@ export class ExcelDataManagementComponent implements OnInit {
     });
 
   }
+  clear(){
+    //this.fileUploaded=;
+    this.selectedFile ='';
+  }
   readAsCSV() {
     this.csvData = XLSX.utils.sheet_to_csv(this.worksheet);
     const data: Blob = new Blob([this.csvData], { type: 'text/csv;charset=utf-8;' });
@@ -626,7 +627,7 @@ export class ExcelDataManagementComponent implements OnInit {
       }, error => {
         console.log("error from student upload:", error);
         this.ErrorMessage = "Something went wrong. Please contact your administrator.";
-        this.contentservice.openSnackBar("Something went wrong. Please contact your administrator.", globalconstants.ActionText, globalconstants.RedBackground);
+        this.contentservice.openSnackBar(this.ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
 
       )
@@ -706,13 +707,13 @@ export class ExcelDataManagementComponent implements OnInit {
 
 
         this.AllMasterData = [...data.value];
-        this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
-
+        
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         //this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         if (SelectedApplicationName == 'edu') {
+          this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
           this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
           this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
@@ -721,7 +722,9 @@ export class ExcelDataManagementComponent implements OnInit {
         }
         else if (SelectedApplicationName == 'employee') {
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
+          this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEUPLOADTYPE);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEPROFILECATEGORY);
+          
         }
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();

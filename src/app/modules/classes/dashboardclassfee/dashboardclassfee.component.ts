@@ -211,7 +211,7 @@ export class DashboardclassfeeComponent implements OnInit {
         //console.log("sumFeeData",sumFeeData)
         this.authservice.CallAPI(sumFeeData, 'createinvoice')
           .subscribe((data: any) => {
-            this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
             this.loading = false;
           })
       });
@@ -355,7 +355,7 @@ export class DashboardclassfeeComponent implements OnInit {
           row.ClassFeeId = data.ClassFeeId;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.contentservice.openSnackBar("All data saved sucessfully.", globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
 
@@ -369,7 +369,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.loading = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.contentservice.openSnackBar("All data saved sucessfully.", globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
           }
 
         });

@@ -5,7 +5,6 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -30,12 +29,14 @@ export class ClassEvaluationComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  ClassEvaluationId=0;
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
   StandardFilter = '';
   loading = false;
   ClassEvaluationList: IClassEvaluation[] = [];
+  Sessions=[];
   SelectedBatchId = 0;
   Categories = [];
   SubCategories = [];
@@ -53,7 +54,8 @@ export class ClassEvaluationComponent implements OnInit {
     ClassEvaluationId: 0,
     ClassEvalCategoryId: 0,
     ClassEvalSubCategoryId: 0,
-    RatingOptionId: 0,
+    MultipleAnswer:0,
+    SessionId: 0,
     ClassId: 0,
     Description: '',
     DisplayOrder:0,
@@ -67,7 +69,8 @@ export class ClassEvaluationComponent implements OnInit {
     'ClassId',
     'ClassEvalCategoryId',
     'ClassEvalSubCategoryId',
-    'RatingOptionId',
+    'MultipleAnswer',
+    'SessionId',
     'DisplayOrder',
     'Active',
     'Action'
@@ -142,12 +145,18 @@ export class ClassEvaluationComponent implements OnInit {
 
         });
   }
+  viewchild(row)
+  {
+    this.ClassEvaluationId = row.ClassEvaluationId;
+  }
   AddNew() {
     var newItem = {
       ClassEvaluationId: 0,
       ClassEvalCategoryId: 0,
       ClassEvalSubCategoryId: 0,
       SubCategories: [],
+      MultipleAnswer:0,
+      SessionId:0,
       ClassId: 0,
       Description: '',
       DisplayOrder:0,
@@ -197,7 +206,8 @@ export class ClassEvaluationComponent implements OnInit {
               Active: row.Active,
               ClassEvalCategoryId: row.ClassEvalCategoryId,
               ClassEvalSubCategoryId: row.ClassEvalSubCategoryId,
-              RatingOptionId: row.RatingOptionId,
+              MultipleAnswer:row.MultipleAnswer,
+              SessionId: row.SessionId,
               Description: row.Description,
               DisplayOrder: row.DisplayOrder,
               OrgId: this.LoginUserDetail[0]["orgId"]
@@ -413,12 +423,14 @@ export class ClassEvaluationComponent implements OnInit {
   // }
 
 }
+
 export interface IClassEvaluation {
   ClassEvaluationId: number;
   ClassEvalCategoryId: number;
   ClassEvalSubCategoryId: number;
   SubCategories: any[];
-  RatingOptionId: number;
+  MultipleAnswer:number;
+  SessionId: number;
   ClassId: number;
   Description: string;
   DisplayOrder:number;

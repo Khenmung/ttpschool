@@ -33,7 +33,7 @@ export class employee {
         debugger;
         ELEMENT_DATA.forEach(row => {
             toInsert.push({
-                EmpEmployeeId: row.EmployeeId,
+                EmpEmployeeId: row.EmpEmployeeId,
                 ShortName: row.ShortName,
                 FirstName: row.FirstName,
                 LastName: row.LastName,
@@ -94,6 +94,9 @@ export class employee {
             .subscribe((result: any) => {
                 this.loading = false;
                 this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText,globalconstants.RedBackground);
-            }, error => console.log(error))
+            }, error => {
+                this.contentservice.openSnackBar("Error occured. Please contact your administrator.",globalconstants.ActionText,globalconstants.RedBackground);
+                console.log(error)
+            })
     }
 }

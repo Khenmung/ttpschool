@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
-import { DatePipe } from '@angular/common';
+import { DatePipe, HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NotfoundComponent } from './shared/components/notfound/notfound.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -39,8 +39,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     //SharedataService,
     AuthService, 
     AuthGuard,
-    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}
-  
+    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},
+    { provide: LocationStrategy, useClass: HashLocationStrategy}
   ],
   // providers: [
   //   {provide: MAT_DATE_LOCALE, useValue: 'en-GB'},

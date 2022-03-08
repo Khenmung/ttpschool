@@ -10,8 +10,8 @@ export class globalconstants {
     public static apiUrl: string = "https://api.ttpsolutions.in";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
-    public static TrialPeriod = 30;
-    public static BlueBackground = {duration:5000,panelClass:'blue-snackbar'};
+    public static TrialPeriod = 3;
+    public static BlueBackground = {duration:10000,panelClass:'blue-snackbar'};
     public static RedBackground = {duration:10000,panelClass:'red-snackbar'};
     public static AddedMessage = 'Data saved sucessfully.';
     public static UpdatedMessage = 'Data updated sucessfully.';
@@ -308,7 +308,9 @@ export class globalconstants {
                 "FAMILYRELATIONSHIP": "family relationship",
                 "EMPLOYEESKILL": "employee skill",
                 "EMPLOYEEPROFILECATEGORY": "employee profile category",
-                "EMPLOYEEPROFILESUBCATEGORY": "employee profile sub category"
+                "EMPLOYEEPROFILESUBCATEGORY": "employee profile sub category",
+                "EMPLOYEEUPLOADTYPE": "employee upload type"
+            
             },
             "StudentVariableName": [
                 "Today",

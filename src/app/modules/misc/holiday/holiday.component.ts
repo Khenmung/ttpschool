@@ -5,7 +5,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -67,8 +66,7 @@ export class HolidayComponent implements OnInit {
   constructor(
     private contentservice:ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
-    
+    private tokenstorage: TokenStorageService,    
     private nav: Router,
     private datepipe: DatePipe,
     private fb: FormBuilder
@@ -99,7 +97,6 @@ export class HolidayComponent implements OnInit {
       }
 
       if (this.Permission == 'deny') {
-
         //this.nav.navigate(['/edu'])
       }
       else {

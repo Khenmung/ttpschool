@@ -39,10 +39,10 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetStudent()">
+            <button [disabled]="loading" matTooltip="search student" mat-raised-button color="accent" (click)="GetStudent()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button [disabled]="loading" class="mat-raised-button" (click)="new()">
+            <button [disabled]="loading" matTooltip="new student" mat-raised-button color="accent" (click)="new()">
                 <mat-icon>fiber_new</mat-icon>
             </button>
         </form>

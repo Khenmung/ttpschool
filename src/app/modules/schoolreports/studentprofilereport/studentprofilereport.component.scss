@@ -4,3 +4,9 @@ mat-form-field{
 mat-cell:first-of-type{
     padding-left: 0px;
 }
+.minwidth{
+    display: flex;flex-direction: column;justify-content:space-between;min-width: 100%;
+}
+.normalwidth{
+    display: flex;flex-direction: column;justify-content:space-between;width: 100%;
+}

@@ -196,7 +196,7 @@ export class StudentprofilereportComponent implements OnInit {
           clseval.CatSequence = clseval.Sequence;
           //clseval.ItemSequence = existing[0].Sequence;
           if (existing.length > 0) {
-            clseval.RatingId = existing[0].RatingId;
+            clseval.RatingId = existing[0].RatingId==null?0:existing[0].RatingId;
             clseval.Detail = existing[0].Detail;
             clseval.StudentEvaluationId = existing[0].StudentEvaluationId;
             clseval.Active = existing[0].Active;

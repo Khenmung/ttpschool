@@ -24,7 +24,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button [disabled]="loading" class="mat-raised-button" (click)="GetCertificates()">
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetCertificates()">
                     <mat-icon>search</mat-icon>
                 </button>
                 <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
@@ -47,9 +47,9 @@
             </div>
             <br>
             <div fxLayout="row" fxLayoutAlign="center center">
-            <button (click)="UpdateStudentCertificates()" [disabled]="loading || Permission=='read'" 
+            <button (click)="UpdateStudentCertificates()" [disabled]="loading || Permission=='read' || CertificateElements.length==0" 
             matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
-                ngxPrint class="mat-raised-button">
+                ngxPrint mat-raised-button color="accent">
                 <mat-icon>print</mat-icon>
             </button>
         </div>

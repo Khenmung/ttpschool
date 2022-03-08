@@ -45,10 +45,8 @@ export class CustomerPlansComponent implements OnInit {
   displayedColumns = [
     "PlanName",
     "Description",
-    "PCPM",
     "PersonOrItemCount",
     "AmountPerMonth",
-    "Active",
     "Action"
   ];
   SelectedApplicationId = 0;
@@ -126,7 +124,7 @@ export class CustomerPlansComponent implements OnInit {
     this.CustomerPlansData.Formula = row.Formula;
     this.CustomerPlansData.LoginUserCount = row.LoginUserCount;
     this.CustomerPlansData.PersonOrItemCount = row.PersonOrItemCount;
-    this.CustomerPlansData.Active = row.Active;
+    this.CustomerPlansData.Active = 1;
     this.CustomerPlansData.OrgId = this.OrgId;//this.LoginUserDetail[0]["orgId"];
 
     //console.log('data', this.CustomerPlansData);

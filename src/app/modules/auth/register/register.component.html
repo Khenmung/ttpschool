@@ -67,7 +67,7 @@
                 </mat-form-field>
             </div>
             <div fxLayoutAlign="start" style="margin: 30px;">
-                <button [disabled]="loading" class="mat-raised-button" (click)="onSave()" matTooltip="create">
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="onSave()" matTooltip="create">
                     <mat-icon>create</mat-icon>
                 </button>
                 <button [disabled]="loading" (click)="gotohome()" class="mat-raised-button" matTooltip="cancel">

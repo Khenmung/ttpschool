@@ -33,7 +33,7 @@ debugger;
       this.logoPath = this.LoginUserDetails[0].logoPath;
       if(this.logoPath ==undefined)
       {
-        this.logoPath = "assets/images/ttplogo1.png"
+        this.logoPath = "assets/images/newttplogo.png"
       }
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
       debugger;

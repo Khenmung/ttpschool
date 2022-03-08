@@ -68,7 +68,7 @@ export class ForgotpasswordComponent implements OnInit {
       (data: any) => {
         ////console.log(data);
         this.isSuccessful = true;
-        this.contentservice.openSnackBar("Email sent to your register email address.",globalconstants.ActionText,globalconstants.RedBackground);        
+        this.contentservice.openSnackBar("Email sent to your register email address.",globalconstants.ActionText,globalconstants.BlueBackground);        
       },
       err => {
         if (err.error) {

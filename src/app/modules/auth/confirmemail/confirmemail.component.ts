@@ -39,6 +39,7 @@ export class ConfirmemailComponent implements OnInit {
         },
           err => {
             this.contentservice.openSnackBar("Email confirmation fail", globalconstants.ActionText, globalconstants.RedBackground);
+          console.log("confirm email error",err);
           });
       })
   

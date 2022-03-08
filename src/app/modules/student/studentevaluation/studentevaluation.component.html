@@ -26,7 +26,7 @@
                     <input type="text" matInput formControlName="searchProfileName" autoComplete="Off" [maxlength]="256">
                 </mat-form-field>
     
-                <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentEvaluation()">
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentEvaluation()">
                     <mat-icon>search</mat-icon>
                 </button>                
             </form>

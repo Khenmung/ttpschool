@@ -33,7 +33,7 @@
                 <input type="text" matInput formControlName="searchProfileName" autoComplete="Off" [maxlength]="256">
             </mat-form-field>
 
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetClassEvaluation()">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassEvaluation()">
                 <mat-icon>search</mat-icon>
             </button>
         </form>
@@ -87,14 +87,14 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="RatingOptionId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Rating Option
+            <ng-container matColumnDef="SessionId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Session
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.RatingOptionId"
-                            [value]="element.RatingOptionId">
-                            <mat-option *ngFor="let item of RatingOptions" [value]="item.MasterDataId">
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.SessionId"
+                            [value]="element.SessionId">
+                            <mat-option *ngFor="let item of Sessions" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}</mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -126,6 +126,15 @@
                 </mat-form-field>                     
                 </mat-cell>
             </ng-container>            
+            <ng-container matColumnDef="MultipleAnswer">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;">Multiple Answers
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                        [checked]="element.MultipleAnswer==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
                 </mat-header-cell>
@@ -142,6 +151,9 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button (click)="viewchild(element)">
+                        <mat-icon>pageview</mat-icon>
+                    </button>
                     <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
                         (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
@@ -153,5 +165,6 @@
             </mat-row>
         </mat-table>
         <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
+        <app-ClassEvaluationOption [ClassEvaluationId]="ClassEvaluationId"></app-ClassEvaluationOption>
     </div>
 </div>

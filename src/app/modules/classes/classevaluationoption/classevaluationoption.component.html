@@ -1,0 +1,77 @@
+<div style="padding:15px 15px 10px 15px;">
+    <div><strong>Class Evaluation Options</strong></div>
+</div>
+<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<div style="padding: 15px;" fxLayout="row wrap">
+    <div style="width: 100%;">
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="Title">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Title
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input [maxlength]="256" autocomplete="Off" matInput (blur)="onBlur(element)"
+                            [value]="element.Title" [(ngModel)]="element.Title">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Value">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Value
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input [maxlength]="30" autocomplete="Off" matInput (blur)="onBlur(element)"
+                            [value]="element.Value" [(ngModel)]="element.Value">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Point">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Point
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input type="number" autocomplete="Off" matInput (blur)="onBlur(element)"
+                            [value]="element.Point" [(ngModel)]="element.Point">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Correct">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;">right
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                        [checked]="element.Correct==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                        [checked]="element.Active==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="AddNew()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                        (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row">
+            </mat-row>
+        </mat-table>    
+    
+    </div>
+</div>

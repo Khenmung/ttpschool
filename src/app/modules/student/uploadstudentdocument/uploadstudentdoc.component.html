@@ -17,7 +17,8 @@
             </mat-form-field>
         </div>
         <span fxLayout="row" fxLayoutAlign="space-between center">
-            <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()" matTooltip="upload file" class="mat-raised-button">
+            <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()" matTooltip="upload file" 
+            mat-raised-button color="accent">
                 <mat-icon aria-label="file_upload">file_upload</mat-icon>
             </button>&nbsp;&nbsp;
         </span>

@@ -26,6 +26,10 @@
                 matTooltip="upload file" mat-mini-fab>
                 <mat-icon aria-label="file_upload">file_upload</mat-icon>
             </button>&nbsp;&nbsp;
+            <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="clear()"
+                matTooltip="upload file" mat-mini-fab>
+                <mat-icon aria-label="file_upload">clear</mat-icon>
+            </button>
         </span>
         <mat-divider></mat-divider>
 

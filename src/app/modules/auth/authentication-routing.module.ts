@@ -18,10 +18,10 @@ const routes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'changepassword', component: ChangePasswordComponent },
       { path: 'signup', component: RegisterComponent },
-      { path: 'selectplan', component: CustomerPlansComponent },      
-      { path: 'confirmemail/:id/:code', component: ConfirmemailComponent },      
+      { path: 'selectplan', component: CustomerPlansComponent },            
       { path: 'forgot', component: ForgotpasswordComponent },      
-      { path: 'reset', component: ResetpasswordComponent },      
+      { path: 'reset', component: ResetpasswordComponent },
+      { path: 'confirmemail/:id/:code', component: ConfirmemailComponent },            
     ]
   },
 ];

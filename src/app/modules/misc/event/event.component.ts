@@ -5,7 +5,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -23,14 +22,6 @@ export class EventComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   EventsListName = 'Events';
   Applications = [];
   loading = false;
@@ -69,11 +60,8 @@ export class EventComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
+    public datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
 
@@ -241,8 +229,13 @@ export class EventComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.EventsList = [...data.value];
+          this.EventsList =[...data.value]; 
+          // data.value.map(m=>{
+          //   m.EventStartDate = new Date(this.datepipe.transform(m.EventStartDate,'dd/MM/yyyy HH:mm'));
+          //   return m;
+          // });
         }
+        //console.log('ashdflk',this.EventsList);
         this.dataSource = new MatTableDataSource<IEvent>(this.EventsList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
