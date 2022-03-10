@@ -144,17 +144,17 @@
             </mat-grid-list>
 
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
-                    class="mat-raised-button">
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="save"
+                    mat-raised-button>
                     <mat-icon>navigate_before</mat-icon>
-                </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
-                    class="mat-raised-button">
-                    <mat-icon>save</mat-icon>
-                </button>
-                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
-                    class="mat-raised-button">
+                </button>                
+                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" matTooltip="save"
+                    mat-raised-button>
                     <mat-icon>navigate_next</mat-icon>
+                </button>
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" matTooltip="save"
+                    mat-raised-button color="accent">
+                    <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -283,16 +283,16 @@
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
                 <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex>0" (click)="previousStep()"
-                    alt="save" class="mat-raised-button">
+                    matTooltip="previous tab" mat-raised-button>
                     <mat-icon>navigate_before</mat-icon>
-                </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
-                    class="mat-raised-button">
-                    <mat-icon>save</mat-icon>
-                </button>
+                </button>                
                 <button [disabled]="loading || Permission=='read'" *ngIf="selectedIndex<4" (click)="nextStep()"
-                    alt="save" class="mat-raised-button">
+                    matTooltip="next tab" class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
+                </button>
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" matTooltip="save"
+                    mat-raised-button>
+                    <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -318,17 +318,17 @@
                 </mat-form-field>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="previous tab"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
-                </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
-                    class="mat-raised-button">
-                    <mat-icon>save</mat-icon>
-                </button>
-                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
+                </button>                
+                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" matTooltip="next tab"
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
+                </button>
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" matTooltip="save"
+                    mat-raised-button color="accent">
+                    <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -358,17 +358,17 @@
                 </mat-form-field>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="save"
-                    class="mat-raised-button">
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="previous tab"
+                    mat-raised-button>
                     <mat-icon>navigate_before</mat-icon>
-                </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save"
-                    class="mat-raised-button">
-                    <mat-icon>save</mat-icon>
-                </button>
-                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" alt="save"
-                    class="mat-raised-button">
+                </button>                
+                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" matTooltip="next tab"
+                    mat-raised-button>
                     <mat-icon>navigate_next</mat-icon>
+                </button>
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" matTooltip="save"
+                    mat-raised-button color="accent">
+                    <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -491,15 +491,15 @@
                 </mat-checkbox>&nbsp; Active
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="previous info"
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="previous tab"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
-                </button>
-                <button [disabled]="loading" (click)="SaveOrUpdate()" alt="save" class="mat-raised-button">
-                    <mat-icon>save</mat-icon>
-                </button>
-                <button [disabled]="loading" (click)="back()" alt="next info" class="mat-raised-button">
+                </button>                
+                <button [disabled]="loading" (click)="back()" matTooltip="next tab" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
+                </button>
+                <button [disabled]="loading" (click)="SaveOrUpdate()" matTooltip="save" mat-raised-button color="accent">
+                    <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -507,7 +507,8 @@
     </mat-tab-group>
 </form>
 <!-- </div> -->
-<div style="display: flex;justify-content: center;margin: 15px;"><button [disabled]="loading" (click)="back()" class="mat-raised-button">
+<div style="display: flex;justify-content: center;margin: 15px;">
+    <button [disabled]="loading" (click)="back()" class="mat-raised-button">
     <mat-icon>arrow_back</mat-icon>
 </button>
 </div>

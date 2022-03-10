@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./ClassEvaluationOption.component.scss']
 })
 export class ClassEvaluationOptionComponent implements OnInit {
-  @Input("ClassEvaluationId") ClassEvaluationId: number;
+  @Input() ClassEvaluationId: number;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   SelectedApplicationId = 0;
@@ -42,7 +42,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     Value: '',
     Point: 0,
     Correct: 0,
-    ClassEvaluationOptionId: 0,
+    ClassEvaluationId: 0,
     Active: 0
   };
   ClassEvaluationOptionForUpdate = [];
@@ -86,15 +86,8 @@ export class ClassEvaluationOptionComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-        //this.GetMasterData();
-        // if (this.Classes.length == 0) {
-        //   this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        //     this.Classes = [...data.value];
-
-        //   });
-
-        // }
-
+        this.loading=false;
+        
       }
     }
   }
@@ -120,7 +113,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       Value: '',
       Point: 0,
       Correct: 0,
-      ClassEvaluationOptionId: 0,
+      ClassEvaluationId: 0,
       Active: 0,
       Action: false
     }
@@ -132,15 +125,14 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and ClassEvaluationId eq " + row.ClassEvaluationId +
+    let checkFilterString = "ClassEvaluationId eq " + row.ClassEvaluationId +
       " and Title eq '" + row.Title + "'";
 
-    if (row.ClassEvaluationOptionId > 0)
-      checkFilterString += " and ClassEvaluationOptionId ne " + row.ClassEvaluationOptionId;
+    if (row.AnswerOptionsId > 0)
+      checkFilterString += " and AnswerOptionsId ne " + row.AnswerOptionsId;
     checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
-    list.fields = ["ClassEvaluationOptionId"];
+    list.fields = ["AnswerOptionsId"];
     list.PageName = "ClassEvaluationOptions";
     list.filter = [checkFilterString];
 
@@ -161,7 +153,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
               Value: row.Value,
               Point: row.Point,
               Correct: row.Correct,
-              ClassEvaluationId: row.ClassEvaluationId,
+              ClassEvaluationId: this.ClassEvaluationId,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
@@ -207,7 +199,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  GetClassEvaluationOption() {
+  GetClassEvaluationOption(pClassEvaluationId) {
     //debugger;
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -217,13 +209,13 @@ export class ClassEvaluationOptionComponent implements OnInit {
     //var _classId = this.searchForm.get("searchClassId").value;
     //var _title = this.searchForm.get("searchTitle").value;
 
-    if (this.ClassEvaluationId == 0) {
+    if (pClassEvaluationId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.BlueBackground);
       return;
     }
 
-    filterStr += " and ClassEvaluationId eq " + this.ClassEvaluationId
+    filterStr += " and ClassEvaluationId eq " + pClassEvaluationId
 
     let list: List = new List();
     list.fields = [
@@ -297,7 +289,7 @@ export interface IClassEvaluationOption {
   Value: string;
   Point: number;
   Correct: number;
-  ClassEvaluationOptionId: number;
+  ClassEvaluationId: number;
   Active: number;
   Action: boolean;
 }

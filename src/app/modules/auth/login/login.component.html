@@ -15,14 +15,15 @@
                     <input type="password" matInput formControlName="password" required minlength="6"
                         autocomplete="Off" />
                 </mat-form-field>                
-                <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">
+                <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">                    
+                   
                     <button [disabled]="loading" 
-                    class="mat-raised-button"
+                    mat-raised-button color="accent"
                     (click)="onSubmit()" 
                     matTooltip="login">
                         <mat-icon>login</mat-icon>
                     </button>
-                    <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" mat-raised-button color="accent">
+                    <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" mat-raised-button>
                         <mat-icon>cancel</mat-icon>
                     </button>
                 </div>

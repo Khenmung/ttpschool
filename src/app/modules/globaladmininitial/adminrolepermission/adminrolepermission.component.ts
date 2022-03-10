@@ -95,7 +95,7 @@ export class AdminrolepermissionComponent implements OnInit {
       //PermissionId: [0]
     })
   PageLoad() {
-    //debugger;
+    debugger;
     this.loading = true;
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails == null) {
@@ -105,10 +105,11 @@ export class AdminrolepermissionComponent implements OnInit {
     }
     else {
 
-      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ADMINROLEFEATURE);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-      if (this.Permission != 'deny') {
+        //this.Permission='rwd'
+        if (this.Permission != 'deny') {
         //this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
         this.Permissions = globalconstants.PERMISSIONTYPES;
         this.GetApplications();

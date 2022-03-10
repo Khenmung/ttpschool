@@ -113,32 +113,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
       }
     }
   }
-  // GetCustomerApps() {
-  //   debugger;
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "ApplicationPriceId",
-  //     "CustomerAppsId"];
-  //   list.PageName = "CustomerApps";
-  //   list.lookupFields = ["ApplicationPrice($select=ApplicationId)"]
-  //   list.filter = ["OrgId eq " + this.UserDetails[0]["orgId"] + " and Active eq 1"];//this.searchForm.get("ParentId").value];
-  //   //debugger;
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       if (data.value.length > 0) {
-  //         this.CustomerApplications = data.value.map(m => {
-  //           return {
-  //             ApplicationId: m.ApplicationPrice.ApplicationId,
-  //             ApplicationName: this.Applications.filter(f => f.MasterDataId == m.ApplicationPrice.ApplicationId)[0].Description
-  //           }
-  //         });
-
-  //         this.loading = false;
-
-  //       }
-  //     });
-  // }
-
+  
   GetTopMasters() {
     let list: List = new List();
     list.fields = [

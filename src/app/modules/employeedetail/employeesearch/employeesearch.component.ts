@@ -177,19 +177,7 @@ export class EmployeesearchComponent implements OnInit {
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
-        //this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.);
-        //this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
-
-        // this.contentservice.GetFeeDefinitions(this.SelectedBatchId, this.LoginUserDetail[0]["orgId"]).subscribe((f: any) => {
-        //   this.FeeDefinitions = [...f.value];
-        //   this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
-        // });
-        //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
-
-
-        // this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        // this.shareddata.ChangeSection(this.Sections);
-
+       
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 

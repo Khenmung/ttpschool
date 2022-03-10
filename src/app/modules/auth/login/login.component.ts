@@ -82,6 +82,16 @@ export class LoginComponent implements OnInit {
     this.username = this.loginForm.get("username").value;
     var password = this.loginForm.get("password").value;
     debugger;
+    if(this.username.length==0)
+    {
+      this.contentservice.openSnackBar("Please enter user name",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    if(password.length==0)
+    {
+      this.contentservice.openSnackBar("Please enter password",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     this.loading = true;
     this.authService.login(this.username, password).subscribe(
       data => {

@@ -3,11 +3,11 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
 import { List } from "./interface";
-import { SharedataService } from "./sharedata.service";
+
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "https://api.ttpsolutions.in";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:8020";//"https://ettest.ttpsolutions.in";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 3;
@@ -16,7 +16,6 @@ export class globalconstants {
     public static AddedMessage = 'Data saved sucessfully.';
     public static UpdatedMessage = 'Data updated sucessfully.';
     public static DeletedMessage = 'Data deleted sucessfully.';
-    //public static AlreadyExistMessage = 'Record already exists!';
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
     public static ActionText = 'X';
@@ -182,6 +181,12 @@ export class globalconstants {
                     'STUDENTATTENDANCE': 'student attendance',
                     'TEACHERATTENDANCE': 'employee attendance'
                 },
+                'EVALUATION': {
+                    'EVALUATION': 'evaluation',
+                    'EVALUATIONMASTER': 'evaluation master',
+                    'CLASSEVALUATION': 'class evaluation',
+                    'CLASSEVALUATIONOPTION': 'class evaluation option'
+                },
                 'REPORT': {
                     'REPORT': 'report',
                     'EXAMTIMETABLE': 'exam time table',
@@ -279,7 +284,8 @@ export class globalconstants {
                 "PROFILESUBCATEGORY": "profile sub category",
                 "ROLE": "role",
                 "FEECATEGORY": "fee category",
-                "RATINGOPTION": "rating option"
+                "RATINGOPTION": "rating option",
+                "EVALUATIONTYPE": "evaluation type"
 
             },
             "leave": {

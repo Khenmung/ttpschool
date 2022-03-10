@@ -50,6 +50,7 @@ export class CustomerPlansComponent implements OnInit {
     "Action"
   ];
   SelectedApplicationId = 0;
+  SelectedCustomer='';
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
@@ -98,7 +99,6 @@ export class CustomerPlansComponent implements OnInit {
       this.OrgId = +localStorage.getItem("orgId");
 
     }
-
     this.GetOrganizations();
     this.GetPlan();
   }
@@ -115,7 +115,7 @@ export class CustomerPlansComponent implements OnInit {
   UpdateOrSave(row) {
 
     if (row.PersonOrItemCount == 0) {
-      this.contentservice.openSnackBar("Please enter no. of users", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please enter no. of students", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.CustomerPlansData.CustomerPlanId = row.CustomerPlanId;
@@ -124,7 +124,7 @@ export class CustomerPlansComponent implements OnInit {
     this.CustomerPlansData.Formula = row.Formula;
     this.CustomerPlansData.LoginUserCount = row.LoginUserCount;
     this.CustomerPlansData.PersonOrItemCount = row.PersonOrItemCount;
-    this.CustomerPlansData.Active = 1;
+    this.CustomerPlansData.Active = row.Active;
     this.CustomerPlansData.OrgId = this.OrgId;//this.LoginUserDetail[0]["orgId"];
 
     //console.log('data', this.CustomerPlansData);
@@ -151,6 +151,7 @@ export class CustomerPlansComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.CustomerPlanId = data.CustomerPlanId;
+          this.GetCustomerPlans();
           row.Action = false;
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -165,9 +166,32 @@ export class CustomerPlansComponent implements OnInit {
     this.dataservice.postPatch(this.CustomerPlansListName, this.CustomerPlansData, this.CustomerPlansData.CustomerPlanId, 'patch')
       .subscribe(
         (data: any) => {
+          this.GetCustomerPlans();
           this.loading = false;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+        },
+        err=>{
+          this.loading=false;
+          var modelState;
+        var errmsg='';
+          if (err.error.ModelState != null)
+          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+        else if (err.error != null)
+          modelState = JSON.parse(JSON.stringify(err.error));
+        else
+          modelState = JSON.parse(JSON.stringify(err));
+
+        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        for (var key in modelState) {
+          if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+            for(var key1 in modelState[key])
+            errmsg += (errmsg == "" ? "" : errmsg + "<br/>") + modelState[key][key1];
+            //errors.push(modelState[key]);//list of error messages in an array
+          }
+        }
+          this.contentservice.openSnackBar(errmsg,globalconstants.ActionText,globalconstants.RedBackground);
+          this.GetCustomerPlans();
         });
   }
   GetOrganizations() {
@@ -211,7 +235,7 @@ export class CustomerPlansComponent implements OnInit {
 
     this.CustomerPlansList = [];
     //var orgIdSearchstr = ' and OrgId eq ' + localStorage.getItem("orgId");// + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    var filterstr = '';
     if (this.searchForm.get("searchCustomerId").value == 0) {
       this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -220,9 +244,9 @@ export class CustomerPlansComponent implements OnInit {
     this.loading = true;
 
     var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
-
+    this.SelectedCustomer = this.Organizations.filter(f=>f.OrganizationId== _searchCustomerId)[0].OrganizationName;
     if (_searchCustomerId > 0)
-      filterstr += " and OrgId eq " + _searchCustomerId;
+      filterstr += " OrgId eq " + _searchCustomerId;
 
     let list: List = new List();
     list.fields = [
@@ -241,7 +265,6 @@ export class CustomerPlansComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //var customerapp;
-
         this.Plans.forEach(p => {
           //customerapp = {};  
           var d = data.value.filter(db => db.PlanId == p.PlanId);
@@ -283,9 +306,10 @@ export class CustomerPlansComponent implements OnInit {
             });
           }
         })
-        if (this.Org != 'ttp') {
+        if (this.Org.toLowerCase() != 'ttp') {
           this.CustomerPlansList = this.CustomerPlansList.filter(f => f.PlanName.toLowerCase() != 'delux');
         }
+        console.log("customer list",this.CustomerPlansList)
         this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
         this.loading = false;
       })

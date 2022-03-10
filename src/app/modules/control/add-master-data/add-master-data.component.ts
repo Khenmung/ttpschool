@@ -8,9 +8,7 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
-import { DialogService } from '../../../shared/dialog.service';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 
@@ -110,7 +108,7 @@ export class AddMasterDataComponent implements OnInit {
 
     this.UserDetails = this.tokenStorage.getUserDetail();
     if (this.UserDetails.length == 0) {
-      this.contentservice.openSnackBar("Please login to be able to add masters!",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please login to be able to add masters!", globalconstants.ActionText, globalconstants.RedBackground);
       //this.alert.error('Please login to be able to add masters!', this.optionAutoClose);
       this.route.navigate(['auth/login']);
     }
@@ -118,8 +116,8 @@ export class AddMasterDataComponent implements OnInit {
 
 
     if (this.UserDetails == null) {
-      this.contentservice.openSnackBar("Application selected is not valid!",globalconstants.ActionText,globalconstants.RedBackground);
-      
+      this.contentservice.openSnackBar("Application selected is not valid!", globalconstants.ActionText, globalconstants.RedBackground);
+
       this.route.navigate(['/dashboard']);
     }
     else {
@@ -178,7 +176,7 @@ export class AddMasterDataComponent implements OnInit {
       data.value.forEach(d => {
         if (d.PlanAndMasterItems.length > 0) {
           result.push({
-            MasterDataId:d.MasterDataId,
+            MasterDataId: d.MasterDataId,
             MasterDataName: d.MasterDataName,
             ParentId: d.ParentId,
             ApplicationId: d.ApplicationId,
@@ -189,7 +187,7 @@ export class AddMasterDataComponent implements OnInit {
       })//.filter(f=>f.ApplicationId == this.SelectedApplicationId)
 
       this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);
-      console.log("my MasterData", this.MasterData);
+      //console.log("my MasterData", this.MasterData);
     })
 
   }
@@ -291,7 +289,7 @@ export class AddMasterDataComponent implements OnInit {
     debugger;
     this.loading = true;
     var _appId = this.MasterData.filter(f => f.MasterDataId == element.MasterDataId)[0].ApplicationId;
-    this.SubMasters=[];
+    this.SubMasters = [];
     this.contentservice.GetDropDownDataFromDB(element.MasterDataId, this.UserDetails[0]["orgId"], _appId, 0)
       .subscribe((data: any) => {
         this.SubMasters = [...data.value];
@@ -317,7 +315,7 @@ export class AddMasterDataComponent implements OnInit {
     debugger;
     var subMasterId = this.searchForm.get("SubId").value;
     if (this.searchForm.get("ParentId").value == 0) {
-      this.contentservice.openSnackBar("Please select master name to add items to",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select master name to add items to", globalconstants.ActionText, globalconstants.RedBackground);
       //this.contentservice.openSnackBar("Please select master name to add items to", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -333,8 +331,10 @@ export class AddMasterDataComponent implements OnInit {
     else
       _ParentId = this.searchForm.get("ParentId").value.MasterDataId;
 
-    _appId = this.MasterData.filter(f => f.MasterDataId == _ParentId)[0].ApplicationId;
-    this.MasterList=[];
+    var obj = this.MasterData.filter(f => f.MasterDataId == _ParentId)
+    if (obj.length > 0)
+      _appId = obj[0].ApplicationId;
+    this.MasterList = [];
     let newrow = {
       "MasterDataId": 0,
       "OldSequence": 0,
@@ -351,12 +351,12 @@ export class AddMasterDataComponent implements OnInit {
     //if add new button is clicked more than once.
     //let alreadyadded = this.MasterList.filter(item => item.MasterDataName == "");
     //if (alreadyadded.length == 0)
-      this.MasterList.push(newrow);
+    this.MasterList.push(newrow);
 
     this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
   }
   GetSearchMaster() {
-  
+
     this.loading = true;
     this.MasterList = [];
     this.Parent = '';
@@ -371,7 +371,7 @@ export class AddMasterDataComponent implements OnInit {
     //this.RowParent = [...this.SubMasters];
     if (this.searchForm.get("SubId").value > 0) {
       _searchParentId = this.searchForm.get("SubId").value;
-      
+
     }
     else if (this.searchForm.get("ParentId").value.MasterDataId != undefined) {
       _searchParentId = this.searchForm.get("ParentId").value.MasterDataId;
@@ -411,7 +411,7 @@ export class AddMasterDataComponent implements OnInit {
           }
         })
         if (this.MasterList.length == 0) {
-          this.contentservice.openSnackBar("No record found.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No record found.", globalconstants.ActionText, globalconstants.RedBackground);
           //this.contentservice.openSnackBar("No record found.", globalconstants.ActionText,globalconstants.RedBackground);
         }
         if (this.searchForm.get("SubId").value > 0) {
@@ -455,7 +455,7 @@ export class AddMasterDataComponent implements OnInit {
     this.loading = true;
     if (row.MasterDataName.length == 0 || row.MasterDataName.length > 50) {
       this.loading = false;
-      this.contentservice.openSnackBar("Character should not be empty or greater than 50!",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Character should not be empty or greater than 50!", globalconstants.ActionText, globalconstants.RedBackground);
       //this.contentservice.openSnackBar("Character should not be empty or greater than 50!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -467,7 +467,7 @@ export class AddMasterDataComponent implements OnInit {
       if (duplicate.length > 0) {
         this.loading = false;
         //this.contentservice.openSnackBar("Data already exists in this master", this.optionNoAutoClose);
-        this.contentservice.openSnackBar("Data already exists in this master",globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Data already exists in this master", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
     }
@@ -476,7 +476,7 @@ export class AddMasterDataComponent implements OnInit {
         && item.MasterDataId != row.MasterDataId && item.ApplicationId == row.ApplicationId && item.OrgId == row.OrgId);
       if (duplicate.length > 0) {
         this.loading = false;
-        this.contentservice.openSnackBar("Data already exists!",globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Data already exists!", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
     }
@@ -485,7 +485,7 @@ export class AddMasterDataComponent implements OnInit {
     if (parent.length > 0) {
       if (parent.toLowerCase() == "student grade") {
         if (row.Sequence == 0) {
-          this.contentservice.openSnackBar("Sequence is mandatory for Student Grade!",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Sequence is mandatory for Student Grade!", globalconstants.ActionText, globalconstants.RedBackground);
           //this.contentservice.openSnackBar("Sequence is mandatory for Student Grade");
           return;
         }
@@ -522,8 +522,8 @@ export class AddMasterDataComponent implements OnInit {
             if (this.DataToSaveCount == 0) {
               this.loading = false;
               this.DataToSaveCount = -1;
-              this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-              //this.contentservice.openSnackBar("Master data added!", globalconstants.ActionText,globalconstants.RedBackground);
+              this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+              this.GetMastersForAutoComplete();
             }
           }
         }, error => console.log('insert error', error));
@@ -536,7 +536,7 @@ export class AddMasterDataComponent implements OnInit {
           if (this.DataToSaveCount == 0) {
             this.loading = false;
             this.DataToSaveCount = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
     }

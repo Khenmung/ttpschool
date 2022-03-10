@@ -106,6 +106,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/LeaveManagement/leave-management.module').then(m => m.LeaveManagementModule)
   },
   {
+    path: 'edu/evaluation',
+    loadChildren: () => import('./modules/evaluation/evaluation.module').then(m => m.EvaluationModule)
+  },
+  {
     path: 'accounting',
     loadChildren: () => import('./modules/Accounting/accounting.module').then(m => m.AccountingModule)
   },  

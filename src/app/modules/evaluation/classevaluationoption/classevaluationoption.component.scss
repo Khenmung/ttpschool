@@ -1,0 +1,19 @@
+mat-form-field{
+    margin-right:15px;
+    width: 98%;
+}
+button{
+    margin-right:15px;
+}
+mat-cell:first-of-type {
+    padding-left: 0px;
+}
+.mat-column-AnswerOptionsId{
+    flex:1 0 60px;
+
+}
+.mat-column-Title,.mat-column-Value,
+.mat-column-Point,.mat-column-Correct,
+.mat-column-Active,.mat-column-Action{
+    flex:1 0 100px;
+}

@@ -68,7 +68,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
 
     if (this.LoginUserDetail[0]['org'] != 'TTP') {
       this.contentservice.openSnackBar("Access denied", globalconstants.ActionText, globalconstants.RedBackground);
-      this.route.navigate(['/dashboard']);    
+      this.route.navigate(['/dashboard']);
     }
     else {
       this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);

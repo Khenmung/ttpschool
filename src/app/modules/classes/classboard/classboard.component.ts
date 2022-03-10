@@ -8,7 +8,7 @@ import { ClassmasterdashboardComponent } from '../classsmastermapping/classmaste
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
 import { FeeDefinitionComponent } from '../feedefinition/feedefinition.component';
 import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
-import { ClassEvaluationComponent } from '../classevaluation/classevaluation.component';
+import { ClassEvaluationComponent } from '../../evaluation/classevaluation/classevaluation.component';
 
 @Component({
   selector: 'app-classboard',

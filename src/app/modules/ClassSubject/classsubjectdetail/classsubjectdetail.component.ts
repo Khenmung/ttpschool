@@ -175,7 +175,7 @@ export class ClassSubjectDetailComponent implements OnInit {
   GetClassSubjectId(event) {
     this.ClassSubjectId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
-    this.GetClassSubject(0);
+    this.GetClassSubject();
   }
 
   View(element) {
@@ -194,15 +194,15 @@ export class ClassSubjectDetailComponent implements OnInit {
     //   this.classSubjectAdd.PageLoad();
     // }, 50);
   }
-  CopyFromPreviousBatch() {
-    //console.log("here ", this.PreviousBatchId)
-    this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
-    if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
-    else
-      this.GetClassSubject(1)
-  }
-  GetClassSubject(previousbatch) {
+  // CopyFromPreviousBatch() {
+  //   //console.log("here ", this.PreviousBatchId)
+  //   this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
+  //   if (this.PreviousBatchId == -1)
+  //     this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
+  //   else
+  //     this.GetClassSubject(1)
+  // }
+  GetClassSubject() {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;
     this.loading = true;
@@ -214,10 +214,11 @@ export class ClassSubjectDetailComponent implements OnInit {
       return;
     }
 
-    if (previousbatch == 1)
-      filterStr += ' and ' + this.StandardFilterWithPreviousBatchId;
-    else
-      filterStr += ' and ' + this.StandardFilterWithBatchId;
+    filterStr += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    // if (previousbatch == 1)
+    //   filterStr += ' and ' + this.StandardFilterWithPreviousBatchId;
+    // else
+    //   filterStr += ' and ' + this.StandardFilterWithBatchId;
 
     if (filterStr.length == 0) {
       this.loading = false;
@@ -267,7 +268,8 @@ export class ClassSubjectDetailComponent implements OnInit {
           let existing = classSubjects.filter(e => e.SubjectId == s.MasterDataId);
           if (existing.length > 0) {
             this.ClassSubjectList.push({
-              ClassSubjectId: previousbatch==1?0:existing[0].ClassSubjectId,
+              //ClassSubjectId: previousbatch==1?0:existing[0].ClassSubjectId,
+              ClassSubjectId: existing[0].ClassSubjectId,
               SubjectId: existing[0].SubjectId,
               SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
               SubjectTypeId: existing[0].SubjectTypeId,
@@ -275,7 +277,7 @@ export class ClassSubjectDetailComponent implements OnInit {
               TeacherId: existing[0].TeacherId,
               Credits: existing[0].Credits,
               ClassId: existing[0].ClassId,
-              Active: previousbatch==1?0:existing[0].Active,
+              Active: existing[0].Active,
               Action: false
             });
           }

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
+import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -93,20 +92,20 @@ export class SubjectTypesComponent implements OnInit {
           this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage)
         this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
 
-        this.GetSubjectTypes(0);
+        this.GetSubjectTypes();
       }//    this.GetMasterData();      
     }
   }
   onBlur(row) {
     row.Action = true;
   }
-  CopyFromPreviousBatch() {
-    //console.log("here ", this.PreviousBatchId)
-    if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
-    else
-      this.GetSubjectTypes(1)
-  }
+  // CopyFromPreviousBatch() {
+  //   //console.log("here ", this.PreviousBatchId)
+  //   if (this.PreviousBatchId == -1)
+  //     this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
+  //   else
+  //     this.GetSubjectTypes(1)
+  // }
   addnew() {
 
     let toadd = {
@@ -170,7 +169,7 @@ export class SubjectTypesComponent implements OnInit {
           this.SubjectTypeData.SubjectTypeId = row.SubjectTypeId;
           this.SubjectTypeData.SelectHowMany = row.SelectHowMany;
           this.SubjectTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.SubjectTypeData.BatchId = this.SelectedBatchId;
+          //this.SubjectTypeData.BatchId = this.SelectedBatchId;
           ////console.log('data', this.ClassSubjectData);
           if (this.SubjectTypeData.SubjectTypeId == 0) {
             this.SubjectTypeData["CreatedDate"] = new Date();
@@ -213,13 +212,13 @@ export class SubjectTypesComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
-  GetSubjectTypes(previousbatch) {
+  GetSubjectTypes() {
 
-    var orgIdSearchstr = '';
-    if (previousbatch == 1)
-      orgIdSearchstr = this.StandardFilterWithPreviousBatchId;
-    else
-      orgIdSearchstr = this.StandardFilterWithBatchId;
+    var orgIdSearchstr = 'OrgId eq ' +  this.LoginUserDetail[0]["orgId"];
+    // if (previousbatch == 1)
+    //   orgIdSearchstr = this.StandardFilterWithPreviousBatchId;
+    // else
+    //   orgIdSearchstr = this.StandardFilterWithBatchId;
 
     let list: List = new List();
 
@@ -231,9 +230,9 @@ export class SubjectTypesComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SubjectTypes = data.value.map(m => {
-          m.SubjectTypeId =previousbatch ==1?0:m.SubjectTypeId
+          m.SubjectTypeId =m.SubjectTypeId
           m.Action = false;
-          m.Active= previousbatch ==1?0:m.Active
+          m.Active= m.Active
           return m;
         });
         this.dataSource = new MatTableDataSource<ISubjectType>(this.SubjectTypes);

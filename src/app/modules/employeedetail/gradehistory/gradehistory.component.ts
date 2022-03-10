@@ -235,12 +235,14 @@ export class GradehistoryComponent implements OnInit {
           this.EmploymentHistoryData.ManagerId = +row.ManagerId;
           this.EmploymentHistoryData.ReportingTo = +row.ReportingTo;
           this.EmploymentHistoryData.WorkAccountId = +row.WorkAccountId;
+          
           this.EmploymentHistoryData.CTC = row.CTC;
           this.EmploymentHistoryData.FromDate = row.FromDate;
           this.EmploymentHistoryData.ToDate = row.ToDate;
           this.EmploymentHistoryData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (this.EmploymentHistoryData.EmployeeGradeHistoryId == 0) {
+            this.EmploymentHistoryData.IsCurrent = 1;
             this.EmploymentHistoryData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             this.EmploymentHistoryData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.EmploymentHistoryData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
@@ -249,6 +251,7 @@ export class GradehistoryComponent implements OnInit {
             this.insert(row);
           }
           else {
+            this.EmploymentHistoryData.IsCurrent = +row.IsCurrent;
             delete this.EmploymentHistoryData["CreatedDate"];
             delete this.EmploymentHistoryData["CreatedBy"];
             this.EmploymentHistoryData["UpdatedDate"] = new Date();

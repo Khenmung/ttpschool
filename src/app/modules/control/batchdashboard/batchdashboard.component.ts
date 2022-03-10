@@ -225,6 +225,7 @@ export class BatchdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.BatchId = data.BatchId;
+          this.GetBatches();
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -236,6 +237,7 @@ export class BatchdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
+          this.GetBatches();
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }

@@ -13,13 +13,13 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassSubject(0)">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassSubject()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button" 
+            <!-- <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button" 
             (click)="CopyFromPreviousBatch()">
                 <mat-icon>copy_all</mat-icon>
-            </button><br>
+            </button><br> -->
         </form>
         <mat-table #table [dataSource]="dataSource" matSort>
             <!-- <ng-container matColumnDef="ClassName">
@@ -42,6 +42,7 @@
                         <mat-label>subject type</mat-label>
                         <mat-select (selectionChange)="updateSelectHowMany(element)" [value]="element.SubjectTypeId"
                             [(ngModel)]="element.SubjectTypeId">
+                            <mat-option value="0">select</mat-option>
                             <mat-option *ngFor="let item of SubjectTypes" [value]="item.SubjectTypeId">
                                 {{item.SubjectTypeName}}</mat-option>
                         </mat-select>

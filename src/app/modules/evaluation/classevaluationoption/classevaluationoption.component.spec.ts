@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ClassevaluationoptionComponent } from './classevaluationoption.component';
+import { ClassEvaluationOptionComponent } from './classevaluationoption.component';
 
 describe('ClassevaluationoptionComponent', () => {
-  let component: ClassevaluationoptionComponent;
-  let fixture: ComponentFixture<ClassevaluationoptionComponent>;
+  let component: ClassEvaluationOptionComponent;
+  let fixture: ComponentFixture<ClassEvaluationOptionComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ClassevaluationoptionComponent ]
+      declarations: [ ClassEvaluationOptionComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ClassevaluationoptionComponent);
+    fixture = TestBed.createComponent(ClassEvaluationOptionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

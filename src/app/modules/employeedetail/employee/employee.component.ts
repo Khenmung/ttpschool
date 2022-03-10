@@ -211,11 +211,10 @@ export class EmployeeComponent implements OnInit {
       PermanentAddressCountryId: [0],
       PresentAddressPincode: [''],
       PermanentAddressPincode: [''],
-      DepartmentId: [0],
-      DesignationId: [0],
-      WorkAccountId: [0],
-      EmpGradeId: [0]
-
+      DepartmentId: [0,Validators.required],
+      DesignationId: [0,Validators.required],
+      WorkAccountId: [0,Validators.required],
+      EmpGradeId: [0,Validators.required]
     });
     //}
   }
@@ -239,11 +238,6 @@ export class EmployeeComponent implements OnInit {
         this.GetMasterData();
       }
     }
-
-    // }
-    // else {
-    //   this.route.navigate(['/employee/info']);
-    // }
   }
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
@@ -367,6 +361,7 @@ export class EmployeeComponent implements OnInit {
       return;
     }
     this.loading = true;
+    var _active = this.EmployeeForm.get("Active").value;
 
     this.EmployeeData = [{
       EmpEmployeeId: this.EmployeeId,
@@ -376,8 +371,8 @@ export class EmployeeComponent implements OnInit {
       FatherName: this.EmployeeForm.get("FatherName").value,
       MotherName: this.EmployeeForm.get("MotherName").value,
       GenderId: this.EmployeeForm.get("GenderId").value,
-      DOB: this.EmployeeForm.get("DOB").value,
-      DOJ: this.EmployeeForm.get("DOJ").value,
+      DOB: new Date(this.EmployeeForm.get("DOB").value),
+      DOJ: new Date(this.EmployeeForm.get("DOJ").value),
       BloodgroupId: this.EmployeeForm.get("BloodgroupId").value,
       CategoryId: this.EmployeeForm.get("CategoryId").value,
       BankAccountNo: this.EmployeeForm.get("BankAccountNo").value,
@@ -400,11 +395,11 @@ export class EmployeeComponent implements OnInit {
       PassportNo: this.EmployeeForm.get("PassportNo").value,
       AadharNo: this.EmployeeForm.get("AadharNo").value,
       MaritalStatusId: this.EmployeeForm.get("MaritalStatusId").value,
-      MarriedDate: this.EmployeeForm.get("MarriedDate").value,
+      MarriedDate: new Date(this.EmployeeForm.get("MarriedDate").value),
       PFAccountNo: this.EmployeeForm.get("PFAccountNo").value,
       NatureId: this.EmployeeForm.get("NatureId").value,
       EmployeeCode: this.EmployeeForm.get("EmployeeCode").value,
-      Active: this.EmployeeForm.get("Active").value,
+      Active: _active?1:0,
       Remarks: this.EmployeeForm.get("Remarks").value,
       PresentAddress: this.EmployeeForm.get("PresentAddress").value,
       PresentAddressCityId: this.EmployeeForm.get("PresentAddressCityId").value,
@@ -422,6 +417,7 @@ export class EmployeeComponent implements OnInit {
       EmpGradeId: this.EmployeeForm.get("EmpGradeId").value,
       OrgId: this.loginUserDetail[0]["orgId"]
     }]
+   
     if (this.EmployeeData["MarriedDate"] == "") {
       //this.EmployeeData["MarriedDate"] = new Date();
       delete this.EmployeeData["MarriedDate"];
@@ -430,7 +426,7 @@ export class EmployeeComponent implements OnInit {
       //this.EmployeeData["ConfirmationDate"]= new Date();
       delete this.EmployeeData["ConfirmationDate"];
     }
-    //console.log('this.EmployeeData', this.EmployeeData)
+    console.log('this.EmployeeData', this.EmployeeData)
     if (this.EmployeeId == 0)
       this.save();
     else
@@ -444,12 +440,12 @@ export class EmployeeComponent implements OnInit {
       .subscribe((result: any) => {
         //debugger;
         if (result != undefined) {
-          this.EmployeeId = result.EmployeeId;
+          this.EmployeeId = result.EmpEmployeeId;
           this.EmployeeForm.patchValue({
-            EmployeeId: result.EmployeeId
+            EmployeeId: result.EmpEmployeeId
           })
           this.loading = false;
-          this.contentservice.openSnackBar("Employee's data saved successfully.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Employee's data saved successfully.",globalconstants.ActionText,globalconstants.BlueBackground);
 
         }
 
@@ -466,7 +462,7 @@ export class EmployeeComponent implements OnInit {
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
-        this.contentservice.openSnackBar("Employee's data updated successfully.",globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
       }, error => {
         this.loading = false;
         this.contentservice.openSnackBar("Issue, Please contact your administrator.", globalconstants.ActionText,globalconstants.RedBackground);
