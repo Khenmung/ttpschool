@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -26,12 +27,9 @@ export class ClassEvaluationOptionComponent implements OnInit {
   ClassEvaluationOptionList: IClassEvaluationOption[] = [];
   SelectedBatchId = 0;
   Categories = [];
-  SubCategories = [];
+  EvaluationOptionAutoComplete = [];
   Classes = [];
-  //Batches = [];
-  //Sections = [];
   RatingOptions = [];
-  //Students: IStudent[] = [];
   filteredOptions: Observable<IClassEvaluationOption[]>;
   dataSource: MatTableDataSource<IClassEvaluationOption>;
   allMasterData = [];
@@ -43,6 +41,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     Point: 0,
     Correct: 0,
     ClassEvaluationId: 0,
+    ParentId: 0,
     Active: 0
   };
   ClassEvaluationOptionForUpdate = [];
@@ -69,8 +68,8 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.PageLoad();
   }
 
-  displayFn(user: IStudent): string {
-    return user && user.Name ? user.Name : '';
+  displayFn(option: IClassEvaluationOption): string {
+    return option && option.Title ? option.Title : '';
   }
 
   PageLoad() {
@@ -84,16 +83,32 @@ export class ClassEvaluationOptionComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
+        this.searchForm = this.fb.group({
+          searchParent: ['']
+        })
+        this.GetEvaluationOptionAutoComplete();
+        this.filteredOptions = this.searchForm.get("searchParent").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.Title),
+          map(Title => Title ? this._filter(Title) : this.EvaluationOptionAutoComplete.slice())
+        );
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-        this.loading=false;
-        
+        this.loading = false;
+
       }
     }
   }
-  SelectSubCategory(pCategoryId) {
-    this.SubCategories = this.allMasterData.filter(f => f.ParentId == pCategoryId.value);
+  private _filter(name: string): IClassEvaluationOption[] {
+
+    const filterValue = name.toLowerCase();
+    return this.EvaluationOptionAutoComplete.filter(option => option.Title.toLowerCase().includes(filterValue));
+
   }
+  // SelectSubCategory(pCategoryId) {
+  //   this.SubCategories = this.allMasterData.filter(f => f.ParentId == pCategoryId.value);
+  // }
   delete(element) {
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
@@ -106,6 +121,19 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
         });
   }
+  AddParent() {
+    var parentItem = {
+      AnswerOptionsId: 0,
+      Title: this.searchForm.get("searchParent").value,
+      Value: '0',
+      Point: 0,
+      Correct: 0,
+      ClassEvaluationId: 0,
+      ParentId: 0,
+      Active: 1
+    }
+    this.UpdateOrSave(parentItem);
+  }
   AddNew() {
     var newItem = {
       AnswerOptionsId: 0,
@@ -114,6 +142,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       Point: 0,
       Correct: 0,
       ClassEvaluationId: 0,
+      ParentId: 0,
       Active: 0,
       Action: false
     }
@@ -154,6 +183,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
               Point: row.Point,
               Correct: row.Correct,
               ClassEvaluationId: this.ClassEvaluationId,
+              ParentId: row.ParentId,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
@@ -199,23 +229,24 @@ export class ClassEvaluationOptionComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  GetClassEvaluationOption(pClassEvaluationId) {
+  SearchAnswerOptions() {
+    this.GetClassEvaluationOption(0, 0, this.searchForm.get("searchParent").value);
+  }
+  GetClassEvaluationOption(pClassEvaluationId, pAnswerOptionId, ptitle) {
     //debugger;
     this.loading = true;
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    //var _classId = this.searchForm.get("searchClassId").value;
-    //var _title = this.searchForm.get("searchTitle").value;
-
-    if (pClassEvaluationId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.BlueBackground);
+    if (ptitle == '' && pAnswerOptionId == 0 && pClassEvaluationId == 0) {
+      this.contentservice.openSnackBar("Atleast one parameter should be provided.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
-    filterStr += " and ClassEvaluationId eq " + pClassEvaluationId
+    if (pAnswerOptionId > 0)
+      filterStr += " and ParentId eq " + pAnswerOptionId
+    if (pClassEvaluationId > 0)
+      filterStr += " and ClassEvaluationId eq " + pClassEvaluationId
+    if (ptitle.length > 0)
+      filterStr += " and contains(Title,'" + ptitle + "')";
 
     let list: List = new List();
     list.fields = [
@@ -224,6 +255,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       'Value',
       'Point',
       'Correct',
+      'ParentId',
       'Active',
     ];
 
@@ -241,21 +273,48 @@ export class ClassEvaluationOptionComponent implements OnInit {
             return item;
           })
         }
+        else {
+          this.contentservice.openSnackBar("No answer option found.", globalconstants.ActionText, globalconstants.BlueBackground);
+        }
 
         this.dataSource = new MatTableDataSource<IClassEvaluationOption>(this.ClassEvaluationOptionList);
-      
+
         this.loadingFalse();
       });
 
   }
+  GetEvaluationOptionAutoComplete() {
+    //debugger;
+    this.loading = true;
+    let filterStr = 'Parent eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let list: List = new List();
+    list.fields = [
+      'AnswerOptionsId',
+      'Title',
+      'Value',
+      'Point',
+      'Correct',
+      'ParentId',
+      'Active',
+    ];
 
+    list.PageName = "ClassEvaluationOptions";
+
+    list.filter = [filterStr];
+    this.ClassEvaluationOptionList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        this.EvaluationOptionAutoComplete = [...data.value]
+      })
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.PROFILECATEGORY);
-        this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
+        //this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.loading = false;
       });
   }
@@ -290,6 +349,7 @@ export interface IClassEvaluationOption {
   Point: number;
   Correct: number;
   ClassEvaluationId: number;
+  ParentId: number;
   Active: number;
   Action: boolean;
 }

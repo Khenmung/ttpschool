@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
-import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',

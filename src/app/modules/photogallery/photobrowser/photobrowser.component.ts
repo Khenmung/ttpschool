@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, VERSION } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { List } from '../../../shared/interface';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { globalconstants } from '../../../shared/globalconstant';
 import { Subscription } from 'rxjs';

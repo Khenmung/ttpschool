@@ -3,7 +3,6 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -54,11 +53,9 @@ export class EmployeedocumentsComponent implements OnInit {
   constructor(
     private contentservice:ContentService,
     private fileUploadService: FileUploadService,
-    private alertMessage: AlertService,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
-    private nav: Router,
     private tokenService: TokenStorageService,
 
   ) { }
@@ -73,7 +70,7 @@ export class EmployeedocumentsComponent implements OnInit {
 
     if (this.EmployeeId == 0) {
       
-      this.alertMessage.info("Please define employee first.",this.optionsAutoClose);
+      this.contentservice.openSnackBar("Please define employee first.",globalconstants.ActionText,globalconstants.RedBackground);
       //this.nav.navigate(['/employee/info']);
     }
     else {
@@ -106,11 +103,11 @@ export class EmployeedocumentsComponent implements OnInit {
   uploadFile() {
 
     if (this.selectedFile.length == 0) {
-      this.alertMessage.error('Please select a file!', this.optionsNoAutoClose);
+      this.contentservice.openSnackBar('Please select a file!', globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.uploadForm.get("DocTypeId").value == 0) {
-      this.alertMessage.error('Please select document type!', this.optionsNoAutoClose);
+      this.contentservice.openSnackBar('Please select document type!', globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     debugger;
@@ -127,7 +124,6 @@ export class EmployeedocumentsComponent implements OnInit {
     this.formdata.append("studentId", "0");
     this.formdata.append("EmployeeId", this.EmployeeId.toString());
     this.formdata.append("docTypeId", this.uploadForm.get("DocTypeId").value);
-    ////console.log('this.uploadForm.get("DocTypeId").value")',this.uploadForm.get("DocTypeId").value);
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
     this.uploadImage();
   }
@@ -137,9 +133,8 @@ export class EmployeedocumentsComponent implements OnInit {
       autoClose: true,
       keepAfterRouteChange: true
     };
-    //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.alertMessage.success("File uploaded successfully.", options);
+      this.contentservice.openSnackBar("File uploaded successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
       this.Edit = false;
     });
   }

@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { DialogService } from '../../../shared/dialog.service';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';

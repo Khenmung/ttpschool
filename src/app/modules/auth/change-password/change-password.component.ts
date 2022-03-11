@@ -3,7 +3,6 @@ import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';

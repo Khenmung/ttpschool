@@ -7,7 +7,6 @@ import { MatSort } from '@angular/material/sort';
 import { IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { TokenStorageService } from '../../../_services/token-storage.service';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
@@ -107,7 +106,7 @@ export class MenuConfigComponent implements OnInit {
     private navigate: Router,
     private route: ActivatedRoute,
     private tokenStorage: TokenStorageService,
-    private alert: AlertService) {
+    ) {
   }
 
   checklogin() {

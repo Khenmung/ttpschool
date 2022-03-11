@@ -3,13 +3,13 @@
 </div> -->
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 
-<mat-tab-group>
+<mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabchanged($event)">
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>note_add</mat-icon>Type
         </ng-template>
         <div style="padding:15px 15px 10px 15px;"><strong>Type</strong></div>
-        <form [formGroup]="searchForm">
+        <form [formGroup]="searchForm" style="display: flex;flex-direction: column;">
             <mat-form-field appearance="outline" [style.width.px]="150">
                 <mat-label>Type</mat-label>
                 <mat-select formControlName="searchEvaluationTypeId">
@@ -38,6 +38,9 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
+            <button mat-mini-fab matTooltip="continue" (click)="tabchanged(1)">
+                <mat-icon>navigate_next</mat-icon>
+            </button>
         </form>
     </mat-tab>
     <mat-tab>
@@ -68,7 +71,7 @@
                     </button>
                 </form>
                 <!-- <div style="width: 100%;"> -->
-                <mat-table #table [dataSource]="dataSource" matSort style="width: 1280px;">
+                <mat-table #table [dataSource]="dataSource" matSort style="max-width: 1200px;">
                     <ng-container matColumnDef="ClassEvaluationId">
                         <mat-header-cell *matHeaderCellDef>Id
                         </mat-header-cell>
@@ -100,8 +103,20 @@
                             </mat-form-field>
                         </mat-cell>
                     </ng-container>
-
-                    <ng-container matColumnDef="ClassId">
+                    <ng-container matColumnDef="AnswerOptionId">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Answer Option
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <mat-form-field appearance="outline">
+                                <mat-select
+                                    [(ngModel)]="element.AnswerOptionId" [value]="element.AnswerOptionId">
+                                    <mat-option *ngFor="let item of ClassEvaluationOptionList" [value]="item.AnswerOptionsId">
+                                        {{item.Title}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-cell>
+                    </ng-container>
+                    <!-- <ng-container matColumnDef="ClassId">
                         <mat-header-cell *matHeaderCellDef mat-sort-header>Class
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
@@ -114,7 +129,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </mat-cell>
-                    </ng-container>
+                    </ng-container> -->
                     <ng-container matColumnDef="DisplayOrder">
                         <mat-header-cell *matHeaderCellDef mat-sort-header>Display Order
                         </mat-header-cell>
@@ -151,7 +166,7 @@
                             </button>
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                            <button (click)="viewchild(element)" mat-mini-fab>
+                            <button (click)="viewchild(element)" mat-mini-fab matTooltip="view answer options">
                                 <mat-icon>pageview</mat-icon>
                             </button>
                             <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
@@ -161,9 +176,10 @@
                         </mat-cell>
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"
-                    [ngClass]="{'highlight': selectedRowIndex == row.id}"
-         (click)="highlight(row)">
+                    <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
+                    style="display: flex;justify-content: baseline;"
+                    [ngClass]="{'highlight': selectedRowIndex ==indx}"
+         (click)="highlight(indx)">
                     </mat-row>
                 </mat-table>
                 <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>

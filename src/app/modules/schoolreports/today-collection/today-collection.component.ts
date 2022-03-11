@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 import alasql from 'alasql';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';

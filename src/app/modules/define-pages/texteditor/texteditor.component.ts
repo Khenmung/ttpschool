@@ -3,8 +3,6 @@ import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List, IPage } from 'src/app/shared/interface';
-import { SharedataService } from '../../../shared/sharedata.service';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -87,7 +85,6 @@ export class TextEditorComponent implements OnInit {
     private router: Router,
     private ar: ActivatedRoute,
     private contentservice: ContentService,
-    protected alert: AlertService,
     private tokenStorage: TokenStorageService,
     private fileUploadService: FileUploadService,) {
     //this.PageDetail =[];
@@ -136,7 +133,7 @@ export class TextEditorComponent implements OnInit {
     
     if(this.selectedFile.size > this.OneMB)
     {
-      this.alert.error('Image size is too big! Please try to upload image size less than 1mb');
+      this.contentservice.openSnackBar('Image size is too big! Please try to upload image size less than 1mb',globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -287,7 +284,7 @@ export class TextEditorComponent implements OnInit {
         active = 0;
     }
     if (duplicate.length > 0) {
-      this.alert.error('There is already a page named ' + this.PageDetailForm.value.PageTitle, this.options);
+      this.contentservice.openSnackBar('There is already a page named ' + this.PageDetailForm.value.PageTitle,globalconstants.ActionText,globalconstants.RedBackground);
     }
     else {
       let PageTitle = this.PageDetailForm.get("PageTitle").value;
@@ -363,7 +360,7 @@ export class TextEditorComponent implements OnInit {
 
     })
     if (duplicate.length > 0) {
-      this.alert.error('There is already a page named ' + this.PageDetailForm.value.PageTitle, this.options);
+      this.contentservice.openSnackBar('There is already a page named ' + this.PageDetailForm.value.PageTitle,globalconstants.ActionText,globalconstants.RedBackground);
     }
     else {
       this.PageDetailForm.patchValue(

@@ -45,9 +45,9 @@
                     (click)="addnew()">
                     <mat-icon>add</mat-icon>
                 </button>&nbsp;
-                <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button" (click)="CopyFromPreviousBatch()">
+                <!-- <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button" (click)="CopyFromPreviousBatch()">
                     <mat-icon>copy_all</mat-icon>
-                </button><br>
+                </button><br> -->
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                 <button [disabled]="loading || !element.Action || Permission=='Read'" matTooltip="save"

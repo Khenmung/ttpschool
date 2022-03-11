@@ -6,7 +6,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AlertService } from '../../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';

@@ -50,7 +50,7 @@ export class CustomerPlansComponent implements OnInit {
     "Action"
   ];
   SelectedApplicationId = 0;
-  SelectedCustomer='';
+  SelectedCustomer = '';
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
@@ -100,7 +100,7 @@ export class CustomerPlansComponent implements OnInit {
 
     }
     this.GetOrganizations();
-    this.GetPlan();
+   
   }
   updateActive(row, value) {
 
@@ -171,26 +171,26 @@ export class CustomerPlansComponent implements OnInit {
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         },
-        err=>{
-          this.loading=false;
+        err => {
+          this.loading = false;
           var modelState;
-        var errmsg='';
+          var errmsg = '';
           if (err.error.ModelState != null)
-          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
-        else if (err.error != null)
-          modelState = JSON.parse(JSON.stringify(err.error));
-        else
-          modelState = JSON.parse(JSON.stringify(err));
+            modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+          else if (err.error != null)
+            modelState = JSON.parse(JSON.stringify(err.error));
+          else
+            modelState = JSON.parse(JSON.stringify(err));
 
-        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
-        for (var key in modelState) {
-          if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
-            for(var key1 in modelState[key])
-            errmsg += (errmsg == "" ? "" : errmsg + "<br/>") + modelState[key][key1];
-            //errors.push(modelState[key]);//list of error messages in an array
+          //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+          for (var key in modelState) {
+            if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+              for (var key1 in modelState[key])
+                errmsg += (errmsg == "" ? "" : errmsg + "<br/>") + modelState[key][key1];
+              //errors.push(modelState[key]);//list of error messages in an array
+            }
           }
-        }
-          this.contentservice.openSnackBar(errmsg,globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(errmsg, globalconstants.ActionText, globalconstants.RedBackground);
           this.GetCustomerPlans();
         });
   }
@@ -208,6 +208,7 @@ export class CustomerPlansComponent implements OnInit {
         this.Organizations = [...data.value];
         this.searchForm.patchValue({ "searchCustomerId": this.OrgId });
         this.Org = this.Organizations.filter(f => f.OrganizationId == this.OrgId)[0].OrganizationName;
+        this.GetPlan();
       })
   }
   GetPlan() {
@@ -244,7 +245,7 @@ export class CustomerPlansComponent implements OnInit {
     this.loading = true;
 
     var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
-    this.SelectedCustomer = this.Organizations.filter(f=>f.OrganizationId== _searchCustomerId)[0].OrganizationName;
+    this.SelectedCustomer = this.Organizations.filter(f => f.OrganizationId == _searchCustomerId)[0].OrganizationName;
     if (_searchCustomerId > 0)
       filterstr += " OrgId eq " + _searchCustomerId;
 
@@ -309,7 +310,7 @@ export class CustomerPlansComponent implements OnInit {
         if (this.Org.toLowerCase() != 'ttp') {
           this.CustomerPlansList = this.CustomerPlansList.filter(f => f.PlanName.toLowerCase() != 'delux');
         }
-        console.log("customer list",this.CustomerPlansList)
+        console.log("customer list", this.CustomerPlansList)
         this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
         this.loading = false;
       })

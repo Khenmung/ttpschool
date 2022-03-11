@@ -113,7 +113,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = " FeeTypeName eq '" + row.FeeTypeName + "'";
+    let checkFilterString = "OrgId eq "+ this.LoginUserDetail[0]["orgId"] + " and FeeTypeName eq '" + row.FeeTypeName + "'";
 
     if (row.FeeTypeId > 0)
       checkFilterString += " and FeeTypeId ne " + row.FeeTypeId;

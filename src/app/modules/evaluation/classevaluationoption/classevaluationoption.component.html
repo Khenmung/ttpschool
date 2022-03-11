@@ -4,6 +4,24 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="padding: 15px;" fxLayout="row wrap">
     <div style="width: 100%;">
+        <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline" style="width:300px">
+                <mat-label>parent</mat-label>
+                <input type="text" matInput formControlName="searchParent" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                        {{option.Title}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <button mat-raised-button color="accent" (click)="SearchAnswerOptions()">
+                <mat-icon>search</mat-icon>
+            </button>
+            <button mat-raised-button color="accent" (click)="AddParent()">
+                <mat-icon>add</mat-icon>
+            </button>
+
+        </form>
         <mat-table #table [dataSource]="dataSource" matSort>            
             <ng-container matColumnDef="AnswerOptionsId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Id
@@ -76,7 +94,7 @@
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row">
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="display: flex;justify-content: baseline;">
             </mat-row>
         </mat-table>    
     

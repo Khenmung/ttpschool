@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -283,10 +282,12 @@ export class ExamslotComponent implements OnInit {
     _endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
     _filterExamDate.setHours(0, 0, 0, 0);
+    var higherdate =new Date(_filterExamDate).setDate(_filterExamDate.getDate() +1);
 
     if (!_filterExamDate != null) {
 
-      filterstr += " and ExamDate eq " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
+      filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
+      filterstr += " and ExamDate le " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
 
       if (_filterExamDate.getTime() < new Date(_startDate).getTime() || _filterExamDate.getTime() > new Date(_endDate).getTime()) {
         this.contentservice.openSnackBar("Date should be between exam start date and end date.",globalconstants.ActionText,globalconstants.RedBackground);

@@ -24,6 +24,7 @@ export class ClassEvaluationComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
+  selectedIndex = 0;
   selectedRowIndex = -1;
   EvaluationTypes = [];
   ClassEvaluationIdTopass = 0;
@@ -32,6 +33,7 @@ export class ClassEvaluationComponent implements OnInit {
   Permission = '';
   StandardFilter = '';
   loading = false;
+  ClassEvaluationOptionList=[];
   ClassEvaluationList: IClassEvaluation[] = [];
   //Sessions = [];
   SelectedBatchId = 0;
@@ -53,8 +55,7 @@ export class ClassEvaluationComponent implements OnInit {
   //ExamId = 0;
   ClassEvaluationData = {
     ClassEvaluationId: 0,
-    ClassEvalCategoryId: 0,
-    ClassEvalSubCategoryId: 0,
+    ClassEvalCategoryId: 0,   
     MultipleAnswer: 0,
     EvaluationTypeId: 0,
     ExamId: 0,
@@ -62,6 +63,7 @@ export class ClassEvaluationComponent implements OnInit {
     ClassId: 0,
     Description: '',
     DisplayOrder: 0,
+    AnswerOptionId:0,
     OrgId: 0,
     Active: 0,
   };
@@ -71,6 +73,7 @@ export class ClassEvaluationComponent implements OnInit {
     'Description',
     'ClassEvalCategoryId',
     'DisplayOrder',
+    'AnswerOptionId',
     'MultipleAnswer',
     'Active',
     'Action'
@@ -173,15 +176,17 @@ export class ClassEvaluationComponent implements OnInit {
   }
   viewchild(row) {
     debugger;
-    this.option.GetClassEvaluationOption(row.ClassEvaluationId);
+    this.option.GetClassEvaluationOption(row.ClassEvaluationId,row.AnswerOptionId,'');
+  }
+  tabchanged(indx) {
+    this.selectedIndex += indx;
   }
 
-
-  highlight(row) {
-    if (this.selectedRowIndex == row.id)
+  highlight(rowId) {
+    if (this.selectedRowIndex == rowId)
       this.selectedRowIndex = -1;
     else
-      this.selectedRowIndex = row.id
+      this.selectedRowIndex = rowId
   }
   AddNew() {
     var newItem = {
@@ -194,7 +199,7 @@ export class ClassEvaluationComponent implements OnInit {
       ClassId: this.searchForm.get("searchClassId").value,
       SubjectId: this.searchForm.get("searchSubjectId").value,
       DisplayOrder: 0,
-      selected: 'highlight',
+      AnswerOptionId:0,
       Active: 0,
       Action: false
     }
@@ -266,6 +271,7 @@ export class ClassEvaluationComponent implements OnInit {
               ClassEvalCategoryId: row.ClassEvalCategoryId,
               //ClassEvalSubCategoryId: row.ClassEvalSubCategoryId,
               MultipleAnswer: row.MultipleAnswer,
+              AnswerOptionId:row.AnswerOptionId,
               ExamId: _examId,
               EvaluationTypeId: _evaluationTypeId,
               Description: row.Description,
@@ -367,6 +373,7 @@ export class ClassEvaluationComponent implements OnInit {
       'ClassId',
       'SubjectId',
       'MultipleAnswer',
+      'AnswerOptionId',
       'DisplayOrder',
       'Active'
     ];
@@ -381,16 +388,51 @@ export class ClassEvaluationComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.ClassEvaluationList = data.value.map(item => {
-            item.Action = false;
-            item.selected = 'highlight';
+            item.Action = false;            
             return item;
           })
+        }
+        else {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
 
         //console.log('ClassEvaluation', this.ClassEvaluationList)
         this.dataSource = new MatTableDataSource<IClassEvaluation>(this.ClassEvaluationList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.loadingFalse();
+      });
+
+  }
+  GetClassEvaluationOption() {
+    //debugger;
+    this.loading = true;
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    let filterStr = 'ParentId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let list: List = new List();
+    list.fields = [
+      'AnswerOptionsId',
+      'Title',
+      'Value',
+      'Point',
+      'Correct',
+      'ParentId',
+      'Active',
+    ];
+
+    list.PageName = "ClassEvaluationOptions";
+
+    list.filter = [filterStr];
+    this.ClassEvaluationOptionList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.ClassEvaluationOptionList = data.value.map(item => {
+            return item;
+          })
+        }        
+      
         this.loadingFalse();
       });
 
@@ -433,6 +475,7 @@ export class ClassEvaluationComponent implements OnInit {
         this.GetExams();
         this.loading = false;
         this.GetClassSubjects();
+        this.GetClassEvaluationOption();
       });
   }
   onBlur(row) {
@@ -471,42 +514,7 @@ export class ClassEvaluationComponent implements OnInit {
       return [];
 
   }
-  // GetStudents() {
-
-  //   ////console.log(this.LoginUserDetail);
-
-  //   let list: List = new List();
-  //   list.fields = [
-  //     'StudentClassId',
-  //     'StudentId',
-  //     'ClassId',
-  //     'RollNo',
-  //     'SectionId'
-  //   ];
-
-  //   list.PageName = "StudentClasses";
-  //   list.lookupFields = ["Student($select=FirstName,LastName)"]
-  //   list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       //debugger;
-  //       //  //console.log('data.value', data.value);
-  //       if (data.value.length > 0) {
-  //         this.Students = data.value.map(student => {
-  //           var _name = student.Student.FirstName + " " + student.Student.LastName;
-  //           var _fullDescription = _name; //+ " - " + _className + " - " + _Section + " - " + _RollNo;
-  //           return {
-  //             StudentClassId: student.StudentClassId,
-  //             StudentId: student.StudentId,
-  //             Name: _fullDescription
-  //           }
-  //         })
-  //       }
-  //       this.loadingFalse();
-  //     })
-  // }
-
+  
 }
 
 export interface IClassEvaluation {

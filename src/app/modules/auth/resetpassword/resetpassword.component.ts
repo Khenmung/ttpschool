@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
@@ -34,7 +33,6 @@ export class ResetpasswordComponent implements OnInit {
     private aroute:ActivatedRoute,
     private fb: FormBuilder,
     private tokenService: TokenStorageService,
-    private alert: AlertService
   ) { }
 
   ngOnInit(): void {

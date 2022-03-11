@@ -21,8 +21,10 @@ mat-cell:first-of-type {
 }
 .mat-column-DisplayOrder,
 .mat-column-MultipleAnswer,
+.mat-column-AnswerOptionId,
 .mat-column-ClassEvaluationId,
-.mat-column-Action,.mat-column-Active
+.mat-column-Action,
+.mat-column-Active
 {   
     justify-content: center;
     flex:1 1 60px;

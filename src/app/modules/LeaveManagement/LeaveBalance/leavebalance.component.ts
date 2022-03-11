@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { evaluate } from 'mathjs';
 import { observable, Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';

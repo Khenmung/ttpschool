@@ -6,7 +6,6 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import { ContentService } from 'src/app/shared/content.service';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AlertService } from '../../../shared/components/alert/alert.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
@@ -55,7 +54,6 @@ export class StudentDocumentComponent implements OnInit {
   constructor(
     private contentservice:ContentService,
     private fileUploadService: FileUploadService,
-    private alertMessage: AlertService,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private fb: FormBuilder,
@@ -73,7 +71,7 @@ export class StudentDocumentComponent implements OnInit {
     this.StudentClassId = this.tokenService.getStudentClassId();
 
     if (this.StudentClassId == 0) {
-      this.alertMessage.error("Student Class Id not found.",this.optionsAutoClose);
+      this.contentservice.openSnackBar("Student Class Id not found.",globalconstants.ActionText,globalconstants.RedBackground);
       setTimeout(() => {
         this.nav.navigate(['/edu']);  
       }, 2000);      
@@ -108,11 +106,11 @@ export class StudentDocumentComponent implements OnInit {
   uploadFile() {
 
     if (this.selectedFile.length == 0) {
-      this.alertMessage.error('Please select a file!', this.optionsNoAutoClose);
+      this.contentservice.openSnackBar('Please select a file!', globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (this.uploadForm.get("DocTypeId").value == 0) {
-      this.alertMessage.error('Please select document type!', this.optionsNoAutoClose);
+      this.contentservice.openSnackBar("Please select document type!", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     debugger;
@@ -143,7 +141,8 @@ export class StudentDocumentComponent implements OnInit {
     };
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.alertMessage.success("File uploaded successfully.", options);
+      //this.alertMessage.success("File uploaded successfully.", options);
+      this.contentservice.openSnackBar("File uploaded successfully.",globalconstants.ActionText,globalconstants.RedBackground);
       this.Edit = false;
     });
   }

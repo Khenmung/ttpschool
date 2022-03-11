@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChartType, ChartOptions } from 'chart.js';
 import { evaluate } from 'mathjs';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip } from 'ng2-charts';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -49,8 +48,7 @@ export class ChartReportComponent {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private fb: FormBuilder,
-    private alert: AlertService
+    private fb: FormBuilder
   ) {
     monkeyPatchChartJsTooltip();
     monkeyPatchChartJsLegend();

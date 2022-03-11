@@ -4,12 +4,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Subscription } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { AuthService } from '../../../_services/auth.service';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 

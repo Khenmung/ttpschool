@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { ImageCropperComponent } from 'ngx-image-cropper';
-import { AlertService } from '../../../shared/components/alert/alert.service';
+
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
@@ -133,7 +133,7 @@ export class studentprimaryinfoComponent implements OnInit {
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.loading = false;
-      this.alertMessage.success("Files Uploaded successfully.", options);
+      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
 
       this.Edit = false;
     });
@@ -143,9 +143,7 @@ export class studentprimaryinfoComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    
     private fb: FormBuilder,
-    private alertMessage: AlertService,
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private tokenService: TokenStorageService,
@@ -387,7 +385,7 @@ export class studentprimaryinfoComponent implements OnInit {
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
       OrgId: this.loginUserDetail[0]["orgId"]
     });
-    //onsole.log("studentData", this.studentData)
+    console.log("studentData", this.studentData)
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else

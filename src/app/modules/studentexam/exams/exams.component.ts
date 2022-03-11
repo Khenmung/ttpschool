@@ -4,7 +4,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -388,7 +387,7 @@ export class ExamsComponent implements OnInit {
             (data: any) => {
               this.loading = false;
               row.Action =false;
-              this.contentservice.openSnackBar("Students result generated successfully.", globalconstants.ActionText,globalconstants.RedBackground);
+              this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
             }, error => {
               //console.log("error",error);
               this.contentservice.openSnackBar("Something went wrong. Please try again.",globalconstants.ActionText,globalconstants.RedBackground);

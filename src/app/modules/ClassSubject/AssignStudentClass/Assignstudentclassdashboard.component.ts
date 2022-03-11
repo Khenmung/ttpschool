@@ -8,7 +8,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { Observable } from 'rxjs';
-import { AlertService } from 'src/app/shared/components/alert/alert.service';
 import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
