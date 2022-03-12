@@ -182,7 +182,7 @@ export class ExamsComponent implements OnInit {
             this.ExamsData.ReleaseDate = null;
 
           this.ExamsData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ExamsData.BatchId = this.SelectedBatchId;
+          //this.ExamsData.BatchId = this.SelectedBatchId;
           ////console.log('data', this.ClassSubjectData);
           if (this.ExamsData.ExamId == 0) {
             this.ExamsData["CreatedDate"] = new Date();
@@ -226,14 +226,14 @@ export class ExamsComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
     let list: List = new List();
 
     list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -256,7 +256,7 @@ export class ExamsComponent implements OnInit {
               ReleaseResult: 0,
               ReleaseDate: null,
               OrgId: 0,
-              BatchId: 0,
+              //BatchId: 0,
               Active: 0,
               Action: false
             }
@@ -287,7 +287,7 @@ export class ExamsComponent implements OnInit {
   }
   GetSubjectComponents() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
     this.loading = true;
     let list: List = new List();
 

@@ -11,6 +11,13 @@
         <div style="padding:15px 15px 10px 15px;"><strong>Type</strong></div>
         <form [formGroup]="searchForm" style="display: flex;flex-direction: column;">
             <mat-form-field appearance="outline" [style.width.px]="150">
+                <mat-label>Test/Exam</mat-label>
+                <mat-select formControlName="searchExamId">
+                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="150">
                 <mat-label>Type</mat-label>
                 <mat-select formControlName="searchEvaluationTypeId">
                     <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">{{item.MasterDataName}}
@@ -31,13 +38,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="150">
-                <mat-label>Test/Exam</mat-label>
-                <mat-select formControlName="searchExamId">
-                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            
             <button mat-mini-fab matTooltip="continue" (click)="tabchanged(1)">
                 <mat-icon>navigate_next</mat-icon>
             </button>
@@ -108,9 +109,9 @@
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             <mat-form-field appearance="outline">
-                                <mat-select
-                                    [(ngModel)]="element.AnswerOptionId" [value]="element.AnswerOptionId">
-                                    <mat-option *ngFor="let item of ClassEvaluationOptionList" [value]="item.AnswerOptionsId">
+                                <mat-select [(ngModel)]="element.AnswerOptionId" [value]="element.AnswerOptionId">
+                                    <mat-option *ngFor="let item of ClassEvaluationOptionList"
+                                        [value]="item.AnswerOptionsId">
                                         {{item.Title}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -177,9 +178,8 @@
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
-                    style="display: flex;justify-content: baseline;"
-                    [ngClass]="{'highlight': selectedRowIndex ==indx}"
-         (click)="highlight(indx)">
+                        style="display: flex;justify-content: baseline;"
+                        [ngClass]="{'highlight': selectedRowIndex ==indx}" (click)="highlight(indx)">
                     </mat-row>
                 </mat-table>
                 <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>

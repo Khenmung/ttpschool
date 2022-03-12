@@ -88,11 +88,11 @@ export class ClassEvaluationOptionComponent implements OnInit {
         })
         this.GetEvaluationOptionAutoComplete();
         this.filteredOptions = this.searchForm.get("searchParent").valueChanges
-        .pipe(
-          startWith(''),
-          map(value => typeof value === 'string' ? value : value.Title),
-          map(Title => Title ? this._filter(Title) : this.EvaluationOptionAutoComplete.slice())
-        );
+          .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.Title),
+            map(Title => Title ? this._filter(Title) : this.EvaluationOptionAutoComplete.slice())
+          );
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.loading = false;
@@ -135,6 +135,14 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.UpdateOrSave(parentItem);
   }
   AddNew() {
+    var _AnswerOptionId =this.searchForm.get("searchParent").value.AnswerOptionsId;
+    if(_AnswerOptionId==undefined)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select parent",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    
     var newItem = {
       AnswerOptionsId: 0,
       Title: '',
@@ -142,7 +150,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       Point: 0,
       Correct: 0,
       ClassEvaluationId: 0,
-      ParentId: 0,
+      ParentId: _AnswerOptionId,
       Active: 0,
       Action: false
     }
@@ -230,24 +238,24 @@ export class ClassEvaluationOptionComponent implements OnInit {
         });
   }
   SearchAnswerOptions() {
-    this.GetClassEvaluationOption(0, 0, this.searchForm.get("searchParent").value);
+    var AnswerOptionsId = this.searchForm.get("searchParent").value.AnswerOptionsId;
+    if (AnswerOptionsId != undefined)
+      this.GetClassEvaluationOption(0,AnswerOptionsId);
   }
-  GetClassEvaluationOption(pClassEvaluationId, pAnswerOptionId, ptitle) {
+  GetClassEvaluationOption(pClassEvaluationId, pAnswerOptionId) {
     //debugger;
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    if (ptitle == '' && pAnswerOptionId == 0 && pClassEvaluationId == 0) {
+    if (pAnswerOptionId == 0 && pClassEvaluationId == 0) {
       this.contentservice.openSnackBar("Atleast one parameter should be provided.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (pAnswerOptionId > 0)
       filterStr += " and ParentId eq " + pAnswerOptionId
-    if (pClassEvaluationId > 0)
+    else if (pClassEvaluationId > 0)
       filterStr += " and ClassEvaluationId eq " + pClassEvaluationId
-    if (ptitle.length > 0)
-      filterStr += " and contains(Title,'" + ptitle + "')";
-
+    
     let list: List = new List();
     list.fields = [
       'AnswerOptionsId',
@@ -286,7 +294,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   GetEvaluationOptionAutoComplete() {
     //debugger;
     this.loading = true;
-    let filterStr = 'Parent eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'ParentId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     let list: List = new List();
     list.fields = [
       'AnswerOptionsId',
@@ -323,6 +331,10 @@ export class ClassEvaluationOptionComponent implements OnInit {
   }
   UpdateActive(row, event) {
     row.Active = event.checked ? 1 : 0;
+    row.Action = true;
+  }
+  UpdateCorrect(row,event){
+    row.Correct = event.checked ? 1 : 0;
     row.Action = true;
   }
   getDropDownData(dropdowntype) {

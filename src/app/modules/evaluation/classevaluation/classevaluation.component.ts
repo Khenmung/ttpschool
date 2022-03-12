@@ -139,7 +139,7 @@ export class ClassEvaluationComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
 
@@ -176,7 +176,7 @@ export class ClassEvaluationComponent implements OnInit {
   }
   viewchild(row) {
     debugger;
-    this.option.GetClassEvaluationOption(row.ClassEvaluationId,row.AnswerOptionId,'');
+    this.option.GetClassEvaluationOption(row.ClassEvaluationId,row.AnswerOptionId);
   }
   tabchanged(indx) {
     this.selectedIndex += indx;

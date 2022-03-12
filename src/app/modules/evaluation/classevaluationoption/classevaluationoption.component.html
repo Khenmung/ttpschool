@@ -14,13 +14,12 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button mat-raised-button color="accent" (click)="SearchAnswerOptions()">
+            <button mat-raised-button color="accent" matTooltip="search" (click)="SearchAnswerOptions()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button mat-raised-button color="accent" (click)="AddParent()">
+            <button mat-raised-button matTooltip="add parent" color="accent" (click)="AddParent()">
                 <mat-icon>add</mat-icon>
             </button>
-
         </form>
         <mat-table #table [dataSource]="dataSource" matSort>            
             <ng-container matColumnDef="AnswerOptionsId">
@@ -62,10 +61,10 @@
             </ng-container>
 
             <ng-container matColumnDef="Correct">
-                <mat-header-cell *matHeaderCellDef style="justify-content: center;">right
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;">Correct Answer
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="justify-content: center;">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateCorrect(element,$event)"
                         [checked]="element.Correct==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
@@ -82,7 +81,7 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="AddNew()">
+                    <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>

@@ -284,6 +284,7 @@ export class searchstudentComponent implements OnInit {
     //var url = this.route.url;
     this.token.saveStudentId("0");
     this.token.saveStudentClassId("0");
+    this.shareddata.ChangeStudentName("");
     this.route.navigate(['/edu/addstudent']);
   }
   ExportTOExcel() {

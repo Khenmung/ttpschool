@@ -8,35 +8,43 @@
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline" [style.width.px]="150">
-                    <mat-label>Category</mat-label>
-                    <mat-select formControlName="searchCategoryId" (selectionChange)="SelectSubCategory($event)">
-                        <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">{{item.MasterDataName}}
+                    <mat-label>Evaluation Type</mat-label>
+                    <mat-select formControlName="searchEvaluationTypeId">
+                        <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+
+                <!-- <mat-form-field appearance="outline" [style.width.px]="150">
+                    <mat-label>Class</mat-label>
+                    <mat-select formControlName="searchClassId" (selectionChange)="GetSelectedClassSubject()">
+                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field> -->
                 <mat-form-field appearance="outline" [style.width.px]="150">
-                    <mat-label>Sub Category</mat-label>
-                    <mat-select formControlName="searchSubCategoryId">
-                        <mat-option *ngFor="let item of SubCategories" [value]="item.MasterDataId">{{item.MasterDataName}}
+                    <mat-label>Subject</mat-label>
+                    <mat-select formControlName="searchSubjectId">
+                        <mat-option value="0">select</mat-option>
+                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
+                            {{item.SubjectName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Profile Name</mat-label>
-                    <input type="text" matInput formControlName="searchProfileName" autoComplete="Off" [maxlength]="256">
+                    <mat-label>Exam/Test</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option value="0">select</mat-option>
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+                        </mat-option>
+                    </mat-select>
                 </mat-form-field>
-    
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentEvaluation()">
                     <mat-icon>search</mat-icon>
-                </button>                
+                </button>
             </form>
-            <!-- <div *ngFor="let item in Categories">
-                   <span style="font-size: large;">{{item.MasterDataName}}</span>
-                   <li *ngFor="let inner of StudentEvaluationList|myfilter:item">
-                       {{inner.Description}}
-                   </li>
-            </div> -->
-            <mat-table #table [dataSource]="dataSource">               
+            <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="StudentEvaluationId">
                     <mat-header-cell *matHeaderCellDef>Id
                     </mat-header-cell>
@@ -44,53 +52,42 @@
                         {{element.StudentEvaluationId}}
                     </mat-cell>
                 </ng-container>
-                <!-- <ng-container matColumnDef="CategoryName">
-                    <mat-header-cell *matHeaderCellDef>Category
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.CategoryName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="SubCategoryName">
-                    <mat-header-cell *matHeaderCellDef>Sub Category
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.SubCategoryName}}
-                    </mat-cell>
-                </ng-container> -->
                 <ng-container matColumnDef="Description">
                     <mat-header-cell *matHeaderCellDef>Description
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                           {{element.Description}}
+                    <mat-cell *matCellDef="let element" style="display:flex; flex-direction: column;justify-content: start;">
+                        <span style="width: 100%;padding: 15px 15px 10px 0px;"> {{element.Description}}</span>
+                        <span style="width: 100%;" *ngIf="element.ClassEvaluationOptions.length==0">
+                            <mat-form-field appearance="outline" style="width:100%">
+                                <textarea #input matInput [disabled]="element.RatingId>0" [maxlength]="1000"
+                                    (blur)="onBlur(element)" [value]="element.Detail"
+                                    [(ngModel)]="element.Detail"></textarea>
+                            </mat-form-field>
+                            <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/1000</mat-hint>
+                        </span>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Detail">
+                <!-- <ng-container matColumnDef="Detail">
                     <mat-header-cell *matHeaderCellDef>Teacher's Comment
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <textarea matInput
-                            [disabled]="element.RatingId>0" 
-                            [maxlength]="1000"
-                            (blur)="onBlur(element)"
-                            [value]="element.Detail"  
-                            [(ngModel)]="element.Detail"></textarea>
+                            <textarea matInput [disabled]="element.RatingId>0" [maxlength]="1000"
+                                (blur)="onBlur(element)" [value]="element.Detail"
+                                [(ngModel)]="element.Detail"></textarea>
                         </mat-form-field>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="RatingId">
-                    <mat-header-cell *matHeaderCellDef>Rating
+                    <mat-header-cell *matHeaderCellDef>Assessment
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                          <mat-radio-group [(ngModel)]="element.RatingId" [value]="element.RatingId">
-                              <mat-radio-button *ngFor="let item of element.Ratings" 
-                              (change)="onBlur(element)"
-                              [checked]="element.RatingId==item.MasterDataId" 
-                              [value]="item.MasterDataId">
-                                {{item.MasterDataName}}
-                                </mat-radio-button>
-                          </mat-radio-group>
+                        <mat-radio-group [(ngModel)]="element.RatingId">
+                            <mat-radio-button style="margin-right: 15px;" *ngFor="let item of element.ClassEvaluationOptions"
+                                (change)="onBlur(element)" [value]="item.AnswerOptionsId">
+                                {{item.Title}}
+                            </mat-radio-button>
+                        </mat-radio-group>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
@@ -103,16 +100,18 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>                        
+                    <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                            mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="align-items: center;"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
+                    style="align-items: center;"></mat-row>
             </mat-table>
         </div>
 

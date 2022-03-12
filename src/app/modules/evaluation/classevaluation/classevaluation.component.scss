@@ -12,7 +12,7 @@ mat-cell:first-of-type {
 .mat-column-Description{
     flex:1 1 200px;
 }
-.mat-column-ClassEvalCategoryId
+.mat-column-AnswerOptionId,.mat-column-ClassEvalCategoryId
 {
     flex:1 1 120px;
 }
@@ -27,7 +27,7 @@ mat-cell:first-of-type {
 .mat-column-Active
 {   
     justify-content: center;
-    flex:1 1 60px;
+    flex:1 1 80px;
 }
 .highlight{
     background-color: lightgray; /* green */

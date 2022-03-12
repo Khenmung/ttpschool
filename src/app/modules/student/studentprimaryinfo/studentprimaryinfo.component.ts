@@ -173,7 +173,7 @@ export class studentprimaryinfoComponent implements OnInit {
       MICRNo: [''],
       AadharNo: [''],
       Photo: [''],
-      Religion: [''],
+      Religion: [0,[Validators.required]],
       ContactNo: [''],
       WhatsAppNumber: [''],
       FatherContactNo: [''],
@@ -324,22 +324,26 @@ export class studentprimaryinfoComponent implements OnInit {
   SaveOrUpdate() {
     var errorMessage = '';
     if (this.studentForm.get("FirstName").value == 0) {
-      errorMessage += "First Name is required.<br>";
+      errorMessage += "First Name is required.\n";
     }
     if (this.studentForm.get("FatherName").value == 0) {
-      errorMessage += "Father name is required.<br>";
+      errorMessage += "Father name is required.\n";
 
     }
     if (this.studentForm.get("Bloodgroup").value == 0) {
-      errorMessage += "Please select blood group.<br>";
+      errorMessage += "Please select blood group.\n";
 
     }
     if (this.studentForm.get("Gender").value == 0) {
-      errorMessage += "Please select gender.<br>";
+      errorMessage += "Please select gender.\n";
+
+    }
+    if (this.studentForm.get("Religion").value == 0) {
+      errorMessage += "Please select religion.\n";
 
     }
     if (this.studentForm.get("Category").value == 0) {
-      errorMessage += "Please select Category.<br>";
+      errorMessage += "Please select Category.\n";
     }
     if (errorMessage.length > 0) {
       this.loading = false;
@@ -347,7 +351,9 @@ export class studentprimaryinfoComponent implements OnInit {
       return;
     }
     this.loading = true;
+    this.studentData =[];
     this.studentData.push({
+      StudentId:this.StudentId,
       FirstName: this.studentForm.get("FirstName").value,
       LastName: this.studentForm.get("LastName").value,
       FatherName: this.studentForm.get("FatherName").value,
@@ -385,6 +391,7 @@ export class studentprimaryinfoComponent implements OnInit {
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
       OrgId: this.loginUserDetail[0]["orgId"]
     });
+    debugger;
     console.log("studentData", this.studentData)
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
@@ -397,7 +404,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
     this.dataservice.postPatch('Students', this.studentData, 0, 'post')
       .subscribe((result: any) => {
-        //debugger;
+        debugger;
         if (result != undefined) {
           this.studentForm.patchValue({
             StudentId: result.StudentId
@@ -413,7 +420,7 @@ export class studentprimaryinfoComponent implements OnInit {
   update() {
     ////console.log('student', this.studentForm.value)
 
-    this.dataservice.postPatch('Students', this.studentData[0], +this.studentForm.get("StudentId").value, 'patch')
+    this.dataservice.postPatch('Students', this.studentData[0], this.StudentId, 'patch')
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
