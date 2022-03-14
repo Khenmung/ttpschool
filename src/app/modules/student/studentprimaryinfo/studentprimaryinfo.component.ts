@@ -389,7 +389,8 @@ export class studentprimaryinfoComponent implements OnInit {
       Remarks: this.studentForm.get("Remarks").value,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
-      OrgId: this.loginUserDetail[0]["orgId"]
+      OrgId: this.loginUserDetail[0]["orgId"],
+      BatchId:this.tokenService.getSelectedBatchId()
     });
     debugger;
     console.log("studentData", this.studentData)
@@ -441,7 +442,7 @@ export class studentprimaryinfoComponent implements OnInit {
     list.lookupFields = ["StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
     list.filter = ["StudentId eq " + this.StudentId];
 
-    //debugger;
+    debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
@@ -504,6 +505,9 @@ export class studentprimaryinfoComponent implements OnInit {
 
         }
         this.loading = false;
+      },
+      err=>{
+        console.log("error",err)
       });
   }
 }

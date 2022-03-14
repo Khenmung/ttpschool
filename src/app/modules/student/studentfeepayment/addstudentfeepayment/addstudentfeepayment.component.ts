@@ -310,8 +310,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
           debugger;
           if (data.value.length > 0) {
             if (data.value[0].FeeType == undefined) {
-              //this.contentservice.openSnackBar("Fee Type not yet defined.",globalconstants.ActionText,globalconstants.RedBackground);
-              this.snackbar.open("Fee type not yet defined.",'Dimiss',{duration:10000});
+              this.contentservice.openSnackBar("Fee Type not yet defined.",globalconstants.ActionText,globalconstants.RedBackground);
+              //this.snackbar.open("Fee type not yet defined.",'Dimiss',{duration:10000});
               this.loading = false;
             }
             else {
@@ -329,9 +329,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 _sectionName = obj[0].MasterDataName;
               this.studentInfoTodisplay.SectionName = _sectionName;
 
-              var clsObj = this.Classes.filter(cls => {
-                return cls.MasterDataId == this.studentInfoTodisplay.ClassId
-              })
+              var clsObj = this.Classes.filter(cls => cls.MasterDataId == this.studentInfoTodisplay.ClassId)
               if (clsObj.length > 0)
                 this.studentInfoTodisplay.StudentClassName = clsObj[0].ClassName;
 
@@ -735,7 +733,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.loading = false;
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource([]);
-        this.contentservice.openSnackBar("Payment done successfully!", globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Payment done successfully!", globalconstants.ActionText,globalconstants.BlueBackground);
         this.tabChanged(1);
       })
   }

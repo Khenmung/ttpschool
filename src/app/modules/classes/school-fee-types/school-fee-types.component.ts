@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
@@ -18,14 +17,6 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class SchoolFeeTypesComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   FeeTypeListName = 'SchoolFeeTypes';
   Applications = [];
   loading = false;
@@ -39,6 +30,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     FeeTypeName: '',
     Description: '',
     Formula: '',
+    DefaultType:0,
     Active: 0,
     OrgId: 0,
     BatchId: 0
@@ -48,14 +40,14 @@ export class SchoolFeeTypesComponent implements OnInit {
     'FeeTypeName',
     'Description',
     'Formula',
+    'DefaultType',    
     'Active',
     'Action'
   ];
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
-    
+    private tokenstorage: TokenStorageService,    
     private nav: Router,
     private contentservice: ContentService,
     private fb: FormBuilder
@@ -94,6 +86,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       FeeTypeName: '',
       Description: '',
       Formula: '',
+      DefaultType:0,
       Active: 0,
       Action: true
     };
@@ -108,7 +101,10 @@ export class SchoolFeeTypesComponent implements OnInit {
     row.Action = true;
     row.Active = value.checked ? 1 : 0;
   }
-
+  updateDefaultType(row,value){
+    row.Action = true;
+    row.DefaultType = value.checked ? 1 : 0;
+  }
   UpdateOrSave(row) {
 
     //debugger;
@@ -136,6 +132,7 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.FeeTypeData.Active = row.Active;
           this.FeeTypeData.Description = row.Description;
           this.FeeTypeData.Formula = row.Formula;
+          this.FeeTypeData.DefaultType = row.DefaultType;
           this.FeeTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.FeeTypeData.BatchId = this.SelectedBatchId;
           if (this.FeeTypeData.FeeTypeId == 0) {
@@ -168,7 +165,9 @@ export class SchoolFeeTypesComponent implements OnInit {
           row.FeeTypeId = data.FeeTypeId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          this.GetFeeTypes();
           this.loadingFalse()
+          
         });
   }
   update(row) {
@@ -178,6 +177,7 @@ export class SchoolFeeTypesComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.GetFeeTypes();
           this.loadingFalse();
         });
   }
@@ -200,6 +200,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       'FeeTypeName',
       'Description',
       'Formula',
+      'DefaultType',
       'Active'
     ];
 

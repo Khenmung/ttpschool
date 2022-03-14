@@ -11,7 +11,7 @@ export class globalconstants {
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 3;
-    public static BlueBackground = {duration:5000,panelClass:'blue-snackbar'};
+    public static BlueBackground = {duration:3000,panelClass:'blue-snackbar'};
     public static RedBackground = {duration:10000,panelClass:'red-snackbar'};
     public static AddedMessage = 'Data saved sucessfully.';
     public static UpdatedMessage = 'Data updated sucessfully.';

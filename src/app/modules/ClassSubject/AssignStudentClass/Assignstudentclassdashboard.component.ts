@@ -91,7 +91,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   nameFilter = new FormControl('');
   IdFilter = new FormControl('');
   filterValues = {
-    StudentId:0,
+    StudentId: 0,
     StudentName: ''
   };
   Students: IStudent[] = [];
@@ -103,7 +103,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -117,19 +117,19 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       // searchGenderId: [0],
     });
     this.nameFilter.valueChanges
-    .subscribe(
-      name => {
-        this.filterValues.StudentName = name;
-        this.dataSource.filter = JSON.stringify(this.filterValues);
-      }
-    )
+      .subscribe(
+        name => {
+          this.filterValues.StudentName = name;
+          this.dataSource.filter = JSON.stringify(this.filterValues);
+        }
+      )
     this.IdFilter.valueChanges
-    .subscribe(
-      StudentId => {
-        this.filterValues.StudentId = StudentId;
-        this.dataSource.filter = JSON.stringify(this.filterValues);
-      }
-    )
+      .subscribe(
+        StudentId => {
+          this.filterValues.StudentId = StudentId;
+          this.dataSource.filter = JSON.stringify(this.filterValues);
+        }
+      )
     this.PageLoad();
   }
   private _filter(name: string): IStudent[] {
@@ -195,7 +195,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);
       return data.StudentName.toLowerCase().indexOf(searchTerms.StudentName) !== -1
-       && data.StudentId.toString().toLowerCase().indexOf(searchTerms.StudentId) !== -1
+        && data.StudentId.toString().toLowerCase().indexOf(searchTerms.StudentId) !== -1
       // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
       // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
     }
@@ -245,11 +245,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.dataSource.sort = this.sort;
       this.dataSource.filterPredicate = this.createFilter();
     }
-    else
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("No student to assign roll no.",globalconstants.ActionText,globalconstants.RedBackground);
-      
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("No student to assign roll no.", globalconstants.ActionText, globalconstants.RedBackground);
+
     }
   }
   GenerateRollNo() {
@@ -261,22 +260,22 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     if (this.searchForm.get("searchSectionId").value > 0)
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
-    else {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText,globalconstants.RedBackground);
-      return;
-    }
+    // else {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText,globalconstants.RedBackground);
+    //   return;
+    // }
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -358,7 +357,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         })
         //var orderbyArr = this.RollNoGenerationSortBy.split(',');
         if (StudentClassRollNoGenList.length == 0)
-          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         else {
           this.RollNoGenerationSortBy = 'Gender,StudentName';
           var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " +
@@ -369,7 +368,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             student.RollNo = (index + 1) + "";
           });
 
-          this.contentservice.openSnackBar("New Roll Nos. has been generated. Please confirm and save it all.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("New Roll Nos. has been generated. Please confirm and save it all.", globalconstants.ActionText, globalconstants.RedBackground);
 
           this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
           this.dataSource.sort = this.sort;
@@ -457,7 +456,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   CopyFromSameClassPreviousBatch() {
     if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else {
       this.HeaderTitle = 'Same Class Previous Batch'
       this.GetStudentClasses(this.SameClassPreviousBatch);
@@ -465,7 +464,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   CopyFromPreviousClassAndBatch() {
     if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else {
       this.HeaderTitle = 'From Previous Class and Batch'
       this.GetStudentClasses(this.PreviousClassPreviousBatch)
@@ -476,44 +475,44 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
-    var _sectionId = this.searchForm.get("searchSectionId").value;
+    //var _sectionId = this.searchForm.get("searchSectionId").value;
     this.HeaderTitle = '';
     if (_classId == 0) {
-      this.contentservice.openSnackBar("Please select class.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;
     }
-    if (_sectionId == 0) {
-      this.contentservice.openSnackBar("Please select section.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
-      return;
+    // if (_sectionId == 0) {
+    //   this.contentservice.openSnackBar("Please select section.",globalconstants.ActionText,globalconstants.RedBackground);
+    //   this.loading = false;
+    //   return;
+    // }
+    // else {
+
+    filterStr = this.StandardFilterWithPreviousBatchId;
+
+    if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
+      filterStr += " and ClassId eq " + _classId + " and Promoted eq 0";
     }
-    else {
-
-      filterStr = this.StandardFilterWithPreviousBatchId;
-
-      if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
-        filterStr += " and ClassId eq " + _classId + " and Promoted eq 0";
-      }
-      else if (previousbatch == this.PreviousClassPreviousBatch) {
-        var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
-        var previousClassId = 0;
-        if (classIdIndex > 0)//means if first element
-        {
-          previousClassId = this.Classes[classIdIndex - 1]["ClassId"];
-          filterStr += " and ClassId eq " + previousClassId + " and Promoted eq 0";
-        }
-        else {
-          this.loading = false;
-          this.contentservice.openSnackBar("Previous class not defined.",globalconstants.ActionText,globalconstants.RedBackground);
-          return;
-        }
+    else if (previousbatch == this.PreviousClassPreviousBatch) {
+      var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
+      var previousClassId = 0;
+      if (classIdIndex > 0)//means if first element
+      {
+        previousClassId = this.Classes[classIdIndex - 1]["ClassId"];
+        filterStr += " and ClassId eq " + previousClassId + " and Promoted eq 0";
       }
       else {
-        filterStr = this.StandardFilterWithBatchId;
-        filterStr += " and ClassId eq " + _classId;
+        this.loading = false;
+        this.contentservice.openSnackBar("Previous class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
       }
     }
+    else {
+      filterStr = this.StandardFilterWithBatchId;
+      filterStr += " and ClassId eq " + _classId;
+    }
+    //}
 
 
     if (this.searchForm.get("searchSectionId").value > 0)
@@ -522,7 +521,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     if (filterStr.length == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -545,7 +544,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((StudentClassesdb: any) => {
         var result;
         result = [...StudentClassesdb.value];
-
+        var _defaultTypeId=0;
+        var defaultFeeTypeObj = this.FeeTypes.filter(f=>f.defaultType ==1);
+        if(defaultFeeTypeObj.length>0)
+        _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
         result.forEach(s => {
           var _genderName = '';
           var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
@@ -562,7 +564,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + " " + s.Student.LastName,
             ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
-            FeeTypeId: s.FeeTypeId,
+            FeeTypeId: (s.FeeTypeId==0 || s.FeeTypeId==null)?_defaultTypeId:s.FeeTypeId,
             FeeType: _feetype,
             RollNo: s.RollNo,
             SectionId: s.SectionId,
@@ -576,7 +578,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
         if (this.StudentClassList.length == 0) {
           this.HeaderTitle = '';
-          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
 
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
@@ -610,7 +612,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -624,7 +626,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     })
   }
   SaveRow(row) {
-    this.RowsToUpdate = 0;
+    this.RowsToUpdate = 1;
     this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
@@ -715,7 +717,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.RowsToUpdate--;
           if (this.RowsToUpdate == 0) {
             this.loading = false;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }

@@ -55,7 +55,8 @@
                 <ng-container matColumnDef="Description">
                     <mat-header-cell *matHeaderCellDef>Description
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" style="display:flex; flex-direction: column;justify-content: start;">
+                    <mat-cell *matCellDef="let element"
+                        style="display:flex; flex-direction: column;justify-content: start;">
                         <span style="width: 100%;padding: 15px 15px 10px 0px;"> {{element.Description}}</span>
                         <span style="width: 100%;" *ngIf="element.ClassEvaluationOptions.length==0">
                             <mat-form-field appearance="outline" style="width:100%">
@@ -63,7 +64,8 @@
                                     (blur)="onBlur(element)" [value]="element.Detail"
                                     [(ngModel)]="element.Detail"></textarea>
                             </mat-form-field>
-                            <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/1000</mat-hint>
+                            <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/1000
+                            </mat-hint>
                         </span>
                     </mat-cell>
                 </ng-container>
@@ -82,12 +84,25 @@
                     <mat-header-cell *matHeaderCellDef>Assessment
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-radio-group [(ngModel)]="element.RatingId">
-                            <mat-radio-button style="margin-right: 15px;" *ngFor="let item of element.ClassEvaluationOptions"
-                                (change)="onBlur(element)" [value]="item.AnswerOptionsId">
-                                {{item.Title}}
-                            </mat-radio-button>
-                        </mat-radio-group>
+                        <span *ngIf="element.MultipleAnswer==1">                            
+                            <mat-checkbox *ngFor="let item of element.ClassEvaluationOptions;let i=index"
+                                (click)="$event.stopPropagation()" 
+                                name="options_{{i}}" 
+                                [value]="item.AnswerOptionsId"
+                                [checked] ="item.checked"                                
+                                [(ngModel)]="item.AnswerOptionsId" 
+                                (change)="UpdateAnswers(element,item,$event,i)">
+                            </mat-checkbox>
+                        </span>
+                        <span *ngIf="element.MultipleAnswer==0">
+                            <mat-radio-group [(ngModel)]="element.RatingId">
+                                <mat-radio-button style="margin-right: 15px;"
+                                    *ngFor="let item of element.ClassEvaluationOptions;let i=index" (change)="UpdateRadio(element,item)"
+                                    [value]="item.AnswerOptionsId">
+                                    {{item.Title}}
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </span>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">

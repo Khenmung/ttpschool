@@ -74,7 +74,7 @@ export class FeereceiptComponent implements OnInit {
   Balance = 0;
   constructor(private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService,
-    
+
     private shareddata: SharedataService,
     private contentservice: ContentService) { }
 
@@ -109,11 +109,15 @@ export class FeereceiptComponent implements OnInit {
     'Active'
   ]
   PageLoad() {
+    debugger;
     this.loading = true;
     this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
       this.Classes = [...data.value];
+      var obj = this.Classes.filter(f => f.ClassId == this.studentInfoTodisplay.ClassId)
+      if (obj.length > 0)
+        this.studentInfoTodisplay.StudentClassName = obj[0].ClassName;
     })
     this.shareddata.CurrentBatch.subscribe(lo => (this.Batches = lo));
     this.shareddata.CurrentSection.subscribe(pr => (this.Sections = pr));
@@ -122,7 +126,8 @@ export class FeereceiptComponent implements OnInit {
     this.studentInfoTodisplay.StudentClassId = this.tokenservice.getStudentClassId();
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
-    this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
+    this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;    
+
     this.shareddata.CurrentFeeDefinitions.subscribe(b => (this.FeeDefinitions = b));
     debugger;
     this.GetMasterData();
@@ -153,11 +158,11 @@ export class FeereceiptComponent implements OnInit {
           this.loading = false;
           this.TotalAmount = 0;
           this.Balance = 0;
-          this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.RedBackground);
           this.CancelReceiptMode = false;
           this.BillDetail = [];
           this.dataSource = new MatTableDataSource<any>(this.BillDetail);
-          
+
         });
   }
   edit() {
@@ -194,9 +199,8 @@ export class FeereceiptComponent implements OnInit {
         this.StudentFeePaymentList = [];
         this.FeeReceipt.forEach(f => {
           f.AccountingVouchers.forEach(k => {
-            var _shortText ='';
-            if(k.ShortText.length>0)
-            {
+            var _shortText = '';
+            if (k.ShortText.length > 0) {
               _shortText = " (" + k.ShortText + ")"
             }
             var feeObj = this.StudentClassFees.filter(f => f.ClassFeeId == k.ClassFeeId);

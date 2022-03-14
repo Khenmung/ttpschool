@@ -123,21 +123,19 @@ export class StudentEvaluationComponent implements OnInit {
 
         });
   }
-  AddNew() {
-    var newItem = {
-      StudentEvaluationId: 0,
-      ClassEvaluationId: 0,
-      RatingId: 0,
-      Detail: '',
-      EvaluationTypeId: this.searchForm.get("searchEvaluationTypeId").value,
-      ExamId: this.searchForm.get("searchExamId").value,
-      StudentClassId: 0,
-      Active: 0,
-      Action: false
-    }
-    this.StudentEvaluationList = [];
-    this.StudentEvaluationList.push(newItem);
-    this.dataSource = new MatTableDataSource(this.StudentEvaluationList);
+  
+  UpdateAnswers(row, item, event, i) {
+    
+    if (event.target.checked)
+      row.StudentEvaluationAnswer.push(item);
+    else
+      row.StudentEvaluationAnswer.splice(i, 1);
+  }
+  UpdateRadio(row, item) {
+    row.StudentEvaluationAnswer=[];  
+      row.StudentEvaluationAnswer.push(item);
+    // else
+    //   row.StudentEvaluationAnswer.splice(i, 1);
   }
   UpdateOrSave(row) {
 
@@ -179,6 +177,7 @@ export class StudentEvaluationComponent implements OnInit {
               Detail: row.Detail,
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"],
+              StudentEvaluationAnswers:row.StudentEvaluationAnswers,
             });
 
           if (this.StudentEvaluationForUpdate[0].StudentEvaluationId == 0) {
@@ -239,7 +238,7 @@ export class StudentEvaluationComponent implements OnInit {
       this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
+    console.log("ClassEvaluations",this.ClassEvaluations)
     var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationTypeId == _searchEvaluationTypeId
       && (f.ClassId == 0 || f.ClassId == this.ClassId));
     if (_searchExamId > 0) {
@@ -261,44 +260,54 @@ export class StudentEvaluationComponent implements OnInit {
     ];
 
     list.PageName = "StudentEvaluations";
-    //list.lookupFields = ["StudentClass($select=ClassId)"];
+    list.lookupFields = ["StudentEvaluationAnswers($select=AnswerOptionsId)"];
 
     list.filter = [filterStr];
     this.StudentEvaluationList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        
+
         var item;
         _classEvaluations.forEach(clseval => {
           var existing = data.value.filter(f => f.ClassEvaluationId == clseval.ClassEvaluationId);
+          
           if (existing.length > 0) {
+            clseval.ClassEvaluationOptions.forEach(cls=>{
+              cls.checked=existing[0].StudentEvaluationAnswers.findIndex(stud=> stud.AnswerOptionsId == cls.AnswerOptionsId) >= 0
+            })
             item = {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentClassId: this.StudentClassId,
               CatSequence: clseval.DisplayOrder,
               RatingId: existing[0].RatingId,
-              Description:clseval.Description,
+              Description: clseval.Description,
               Detail: existing[0].Detail,
               StudentEvaluationId: existing[0].StudentEvaluationId,
               ClassEvaluationId: existing[0].ClassEvaluationId,
               Active: existing[0].Active,
               EvaluationTypeId: existing[0].EvaluationTypeId,
-              ExamId: existing[0].ExamId
+              ExamId: existing[0].ExamId,
+              MultipleAnswer: clseval.MultipleAnswer,
+              StudentEvaluationAnswers: existing[0].StudentEvaluationAnswers,
+              //Checked:StudentEvaluationAnswer.findIndex(f=>f.AnswerOptionsId===item.AnswerOptionsId) >= 0
             }
           }
           else {
+            clseval.ClassEvaluationOptions.forEach(f=>f.checked=false);
             item = {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentClassId: this.StudentClassId,
               CatSequence: clseval.DisplayOrder,
               RatingId: 0,
-              Description:clseval.Description,
+              Description: clseval.Description,
               Detail: '',
               StudentEvaluationId: 0,
-              ClassEvaluationId:clseval.ClassEvaluationId,
+              ClassEvaluationId: clseval.ClassEvaluationId,
               Active: 0,
               EvaluationTypeId: _searchEvaluationTypeId,
-              ExamId: 0
+              ExamId: 0,
+              MultipleAnswer: 0,
+              StudentEvaluationAnswers: []
             }
           }
           this.StudentEvaluationList.push(item);
@@ -424,6 +433,7 @@ export class StudentEvaluationComponent implements OnInit {
       'Description',
       'EvaluationTypeId',
       'AnswerOptionId',
+      'MultipleAnswer',
       'ExamId'
     ];
 

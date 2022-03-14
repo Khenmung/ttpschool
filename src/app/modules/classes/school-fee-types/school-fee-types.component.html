@@ -52,6 +52,15 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
+            <ng-container matColumnDef="DefaultType">
+                <mat-header-cell *matHeaderCellDef>Default Type
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateDefaultType(element,$event)"
+                        [checked]="element.DefaultType==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>            
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
                 </mat-header-cell>

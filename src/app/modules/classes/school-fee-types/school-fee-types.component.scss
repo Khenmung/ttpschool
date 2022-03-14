@@ -2,7 +2,8 @@
     width: 99%;
     margin-right: 15px;
 }
-.mat-column-Action{
+.mat-column-Action,.mat-column-DefaultType{
+    justify-content: center;
     flex:0 0 100px;
 }
 .mat-column-FeeTypeId,.mat-column-Active{
