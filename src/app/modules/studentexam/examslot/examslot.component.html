@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" [style.width.px]="300">
                     <mat-label>Exam</mat-label>
                     <mat-select formControlName="searchExamId" (selectionChange)="AssignExamDate($event)">
                         <mat-option *ngFor="let item of Exams" [value]="item.ExamId">

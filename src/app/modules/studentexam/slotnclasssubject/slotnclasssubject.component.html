@@ -3,69 +3,43 @@
         <div><strong>Subjects in slot</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
-    <div style="padding: 15px;" fxLayout="row wrap">
-        <div style="width: 100%;">
-            <form [formGroup]="searchForm">
-                <mat-form-field [style.width.pc]="30" appearance="outline">
-                    <mat-label>Exam Slot</mat-label>
-                    <mat-select formControlName="searchSlotId">
-                        <mat-option *ngFor="let item of ExamSlots" [value]="item.SlotId">
-                            {{item.SlotName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <!-- <mat-form-field appearance="outline" [style.width.pc]="20">
-                    <mat-label>Class</mat-label>
-                    <mat-select formControlName="searchClassId" multiple>
-                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
-                            {{item.ClassName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Subject</mat-label>
-                    <mat-select formControlName="searchSubjectId">
-                        <mat-option [value]="0">--subject--</mat-option>
-                        <mat-option *ngFor="let item of Subjects" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>                   -->
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSlotNClassSubjects()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </form>
-            <p>Record will be displayed if it is defined in class subject module.</p>
-            <!-- <div *ngIf="ClassWiseSubjectDisplay.length>0"
-                style="display:flex;padding-bottom: 10px;justify-content: end;width: 60%;">
-                <button [disabled]="loading || Permission=='read'" matTooltip="save" mat-mini-fab (click)="SaveAll()">
-                    <mat-icon>all_out</mat-icon>
-                </button>
-            </div> -->
-            <mat-divider></mat-divider>
-            <div style="place-items: center;border-bottom:1px solid lightgray;" fxLayout="row"
-                *ngFor="let row of ClassWiseSubjectDisplay; let indx=index;">
-                <div style="min-width: 130px;">{{row['ClassName']}}</div>
-                <div style="min-width: 900px;max-width: 900px; display:flex; flex-direction: row;padding: 10px 0px 5px 0px">
-                    <div *ngFor="let cell of row|keyvalue">
-                        <mat-checkbox matTooltip="select {{cell.key}}"
-                            *ngIf="cell.key!='ClassName' && cell.key!='Action' && cell.key!='Selected'"
-                            (click)="$event.stopPropagation()"                            
-                            (change)="updateActive(row,$event,cell.key)"
-                            [checked]="cell.value===1">
-                            <div style="padding-right: 25px;">{{cell.key}}</div>
-                        </mat-checkbox>
-                    </div>
+    <div style="width:auto;min-width: 1280px; overflow: auto;">
+        <form [formGroup]="searchForm">
+            <mat-form-field [style.width.pc]="30" appearance="outline">
+                <mat-label>Exam Slot</mat-label>
+                <mat-select formControlName="searchSlotId">
+                    <mat-option *ngFor="let item of ExamSlots" [value]="item.SlotId">
+                        {{item.SlotName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSlotNClassSubjects()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </form>
+        <p>Record will be displayed if it is defined in class subject module.</p>
+        <mat-divider></mat-divider>
+        
+        <div style="place-items: center;border-bottom:1px solid lightgray;" fxLayout="row"
+            *ngFor="let row of ClassWiseSubjectDisplay; let indx=index;">
+            <div style="min-width: 130px;">{{row['ClassName']}}</div>
+            <div style="min-width: 900px;display:flex; flex-direction: row;padding: 10px 0px 5px 0px">
+                <div *ngFor="let cell of row|keyvalue">
+                    <mat-checkbox matTooltip="select {{cell.key}}"
+                        *ngIf="cell.key!='ClassName' && cell.key!='Action' && cell.key!='Selected'"
+                        (click)="$event.stopPropagation()" (change)="updateActive(row,$event,cell.key)"
+                        [checked]="cell.value===1">
+                        <div style="padding-right: 25px;">{{cell.key}}</div>
+                    </mat-checkbox>
                 </div>
-
-                <button [disabled]="loading || Permission=='read' || !row.Action" matTooltip="save" mat-mini-fab
-                    (click)="SaveRow(row)">
-                    <mat-icon>save</mat-icon>
-                </button>
-
-
             </div>
+
+            <button [disabled]="loading || Permission=='read' || !row.Action" matTooltip="save" mat-mini-fab
+                (click)="SaveRow(row)">
+                <mat-icon>save</mat-icon>
+            </button>
+
+
         </div>
     </div>
 </div>

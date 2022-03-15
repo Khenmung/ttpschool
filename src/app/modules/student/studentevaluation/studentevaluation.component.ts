@@ -473,7 +473,7 @@ export interface IStudentEvaluation {
   StudentClassId: number;
   EvaluationTypeId: number;
   ExamId: number;
-  SubCategories: any[];
+  //SubCategories: any[];
   Active: number;
   Action: boolean;
 }

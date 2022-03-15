@@ -1,6 +1,6 @@
 mat-form-field{
     margin-right: 15px;
-    width:99%;
+    width:98%;
 }
 button {
     margin-right: 15px;
@@ -9,10 +9,13 @@ button {
 mat-cell:first-of-type {
     padding-left: 0px;
 }
-.mat-column-StartDate,.mat-column-EndDate,.mat-column-ReleaseDate{
-    flex:0 0 130px;
+.mat-column-ExamName,
+.mat-column-StartDate,
+.mat-column-EndDate,
+.mat-column-ReleaseDate{
+    flex:1 1 130px;
 }
 .mat-column-Active,.mat-column-ReleaseResult,.mat-column-ExamId {
     justify-content: center;
-    flex:0 0 70px;
+    flex:1 1 70px;
 }

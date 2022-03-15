@@ -291,7 +291,7 @@ export class SlotnclasssubjectComponent implements OnInit {
           return {
             SlotId: s.ExamSlotId,
             ExamDate: new Date(s.ExamDate),
-            SlotName: "<b>"+_examname + "</b> - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - (" + s.StartTime + " - " + s.EndTime + ") - " + this.SlotNames.filter(n => n.MasterDataId == s.SlotNameId)[0].MasterDataName
+            SlotName: _examname + " - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - (" + s.StartTime + " - " + s.EndTime + ") - " + this.SlotNames.filter(n => n.MasterDataId == s.SlotNameId)[0].MasterDataName
 
           }
         })

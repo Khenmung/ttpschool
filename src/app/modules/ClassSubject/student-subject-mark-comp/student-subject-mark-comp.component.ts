@@ -38,6 +38,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   ClassSubjects = [];
   ClassGroups = [];
   MarkComponents = [];
+  SelectedClassSubjects = [];
   Batches = [];
   ELEMENT_DATA: ISubjectMarkComponent[] = [];
   dataSource: MatTableDataSource<ISubjectMarkComponent>;
@@ -57,7 +58,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
-    
+
     private route: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }
@@ -89,20 +90,14 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.SelectedApplicationId = +this.token.getSelectedAPPId();
 
     this.GetMasterData();
-    if (this.Classes.length == 0) {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
 
-      });
-    }
   }
   //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   displayedColumns = ['ClassSubject', 'SubjectComponent', 'FullMark', 'PassMark', 'Active', 'Action'];
-  updateAlbum() {
 
-  }
-  getoldvalue() {
-
+  SelectClassSubject() {
+    debugger;
+    this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
   }
   UpdateSelectedBatchId(value) {
     this.SelectedBatchId = value;
@@ -129,7 +124,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.classSubjectComponentData.Active = row.Active;// == true ? 1 : 0;
@@ -170,7 +165,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           this.loading = false;
           row.Action = false;
           row.ClassSubjectMarkComponentId = data.ClassSubjectMarkComponentId;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
         });
 
@@ -182,7 +177,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
         });
 
@@ -199,7 +194,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
         this.shareddata.ChangeBatch(this.Batches);
 
-        this.GetClassSubject();
+        if (this.Classes.length == 0) {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+            this.Classes = [...data.value];
+            this.GetClassSubject();
+          });
+        }
+
         this.loading = false;
       });
   }
@@ -225,16 +226,9 @@ export class StudentSubjectMarkCompComponent implements OnInit {
       return s;
     })
   }
-  // GetCurrentBatchIDnAssign() {
-  //   let CurrentBatches = this.Batches.filter(b => b.MasterDataName == globalconstants.getCurrentBatch());
-  //   if (CurrentBatches.length > 0) {
-  //     this.SelectedBatchId = CurrentBatches[0].MasterDataId;
-  //   }
-  // }
   GetClassSubject() {
 
-
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
 
     let list: List = new List();
     list.fields = [
@@ -263,7 +257,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
             Active: cs.Active,
             SubjectId: cs.SubjectId,
             ClassId: cs.ClassId,
-            ClassSubject: _class + ' - ' + _subject
+            ClassSubject: _class + ' - ' + _subject,
+            SubjectName: _subject
           }
         })
         this.MergeSubjectnComponents();
@@ -273,14 +268,14 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     //console.log("here ", this.PreviousBatchId)
     this.PreviousBatchId = +this.token.getPreviousBatchId();
     if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.",  globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else
       this.GetClassSubjectComponent(1)
   }
   GetClassSubjectComponent(previousbatch) {
 
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var filterstr = '';
@@ -350,7 +345,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         })
 
         if (this.ELEMENT_DATA.length == 0)
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,  globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
 
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;

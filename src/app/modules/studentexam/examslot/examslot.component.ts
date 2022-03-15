@@ -278,11 +278,11 @@ export class ExamslotComponent implements OnInit {
     var dateObj = this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value);
     var _startDate = new Date(dateObj[0].StartDate);
     var _endDate = new Date(dateObj[0].EndDate);
-    _startDate.setHours(0, 0, 0, 0);
-    _endDate.setHours(0, 0, 0, 0);
+    //_startDate.setHours(0, 0, 0, 0);
+    //_endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
-    _filterExamDate.setHours(0, 0, 0, 0);
-    var higherdate =new Date(_filterExamDate).setDate(_filterExamDate.getDate() +1);
+    var higherdate = new Date(this.searchForm.get("searchExamDate").value);
+    higherdate.setDate(_filterExamDate.getDate() +1);
 
     if (!_filterExamDate != null) {
 
@@ -294,7 +294,6 @@ export class ExamslotComponent implements OnInit {
         return;
       }
     }
-
 
     this.loading = true;
     let list: List = new List();
@@ -313,29 +312,24 @@ export class ExamslotComponent implements OnInit {
     this.ExamSlots = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-
-
-
-        var _examDate = new Date(_startDate);
+        var _examDate = _startDate;
         var day = '';
 
         if (_filterExamDate != null) {
           _examDate = _filterExamDate;
-          _endDate = new Date(_filterExamDate.getFullYear(), _filterExamDate.getMonth(), _filterExamDate.getDate() + 1);
         }
-
-        while (_examDate < _endDate) {
+        //while (_examDate < higherdate) {
           day = this.weekday[_examDate.getDay()];
-          //dtstring =new Date(_examDate);
+
           this.SlotNames.forEach(e => {
-            let existing = data.value.filter(db => {
-              var same = this.datepipe.transform(db.ExamDate, 'dd/MM/yyyy') === this.datepipe.transform(_examDate, 'dd/MM/yyyy')
-              return db.SlotNameId == e.MasterDataId && same
+            let existing = data.value.filter(db => {                                     
+              return db.SlotNameId == e.MasterDataId
             });
             if (existing.length > 0) {
               existing[0].SlotName = e.MasterDataName;
               existing[0].WeekDay = day;
               existing[0].Action = false;
+              existing[0].ExamDate = new Date(existing[0].ExamDate),
               this.ExamSlots.push(existing[0]);
             }
             else {
@@ -356,8 +350,8 @@ export class ExamslotComponent implements OnInit {
               });
             }
           })
-          _examDate.setDate(_examDate.getDate() + 1);
-        }
+        //  _examDate.setDate(_examDate.getDate() + 1);
+        //}
         ////console.log('this', this.ExamSlots)
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
         this.loading = false;

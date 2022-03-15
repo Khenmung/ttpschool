@@ -17,14 +17,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   ResultReleased = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  ClassSubjects=[];
   AllowedSubjectIds = [];
   StandardFilterWithBatchId = '';
   loading = false;
@@ -44,6 +37,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   Exams = [];
   Batches = [];
   StudentSubjects = [];
+  SelectedClassSubjects =[];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
   Permission = 'deny';
@@ -277,6 +271,47 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.GetSubjectMarkComponents();
       });
   }
+  SelectClassSubject(){
+    this.SelectedClassSubjects= this.ClassSubjects.filter(f=>f.ClassId == this.searchForm.get("searchClassId").value);
+  }
+  GetClassSubject() {
+
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+
+    let list: List = new List();
+    list.fields = [
+      "ClassSubjectId",
+      "Active",
+      "SubjectId",
+      "ClassId"
+    ];
+    list.PageName = "ClassSubjects";
+    list.filter = [filterStr];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.ClassSubjects = data.value.map(cs => {
+          var _class = '';
+          var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
+          if (objclass.length > 0)
+            _class = objclass[0].ClassName;
+
+          var _subject = ''
+          var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId)
+          if (objsubject.length > 0)
+            _subject = objsubject[0].MasterDataName;
+          return {
+            ClassSubjectId: cs.ClassSubjectId,
+            Active: cs.Active,
+            SubjectId: cs.SubjectId,
+            ClassId: cs.ClassId,
+            ClassSubject: _class + ' - ' + _subject,
+            SubjectName: _subject
+          }
+        })
+   
+      })
+  }
   GetSubjectMarkComponents() {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -507,6 +542,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
+          this.GetClassSubject();
         })
         
         //if role is teacher, only their respective class and subject will be allowed.
@@ -529,7 +565,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects"
-    list.filter = ['Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId') + ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']];
+    list.filter = ['Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId') + 
+    ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllowedSubjectIds = [...data.value];

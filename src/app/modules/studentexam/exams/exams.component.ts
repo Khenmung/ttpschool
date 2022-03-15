@@ -145,11 +145,12 @@ export class ExamsComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     this.loading = true;
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
-      " and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd')
+      " and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
+      " and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
 
 
     if (row.ExamId > 0)
@@ -165,7 +166,7 @@ export class ExamsComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.ExamsData.ExamId = row.ExamId;
@@ -174,6 +175,7 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
           this.ExamsData.ReleaseResult = row.ReleaseResult;
+          this.ExamsData.BatchId = this.SelectedBatchId;
           if (row.ReleaseResult == 1) {
             row.ReleaseDate = this.datepipe.transform(new Date(), 'dd/MM/yyyy');
             this.ExamsData.ReleaseDate = new Date();
@@ -182,8 +184,6 @@ export class ExamsComponent implements OnInit {
             this.ExamsData.ReleaseDate = null;
 
           this.ExamsData.OrgId = this.LoginUserDetail[0]["orgId"];
-          //this.ExamsData.BatchId = this.SelectedBatchId;
-          ////console.log('data', this.ClassSubjectData);
           if (this.ExamsData.ExamId == 0) {
             this.ExamsData["CreatedDate"] = new Date();
             this.ExamsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -233,7 +233,8 @@ export class ExamsComponent implements OnInit {
     list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + 
+    " and BatchId eq " + this.SelectedBatchId];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -397,6 +398,10 @@ export class ExamsComponent implements OnInit {
 
         ////console.log("this.ExamStudentSubjectResult",this.ExamStudentSubjectResult);
       })
+  }
+  onBlur(element)
+  {
+    element.Action = true;
   }
   getDropDownData(dropdowntype) {
     let Id = 0;

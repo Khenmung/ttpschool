@@ -28,7 +28,11 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
                             <mat-label>Start Date</mat-label>
-                            <input [(ngModel)]="element.StartDate" [value]="element.StartDate" matInput [matDatepicker]="StartDate" autocomplete="off">
+                            <input [(ngModel)]="element.StartDate" 
+                            [value]="element.StartDate" 
+                            (dateChange)="onBlur(element)"
+                            matInput 
+                            [matDatepicker]="StartDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="StartDate"></mat-datepicker-toggle>
                             <mat-datepicker #StartDate></mat-datepicker>
                         </mat-form-field>
@@ -40,12 +44,24 @@
                         <mat-form-field appearance="outline">
                             <mat-label>End Date</mat-label>
                             <input [value]="element.EndDate" [(ngModel)]="element.EndDate" 
-                            matInput [matDatepicker]="EndDate" autocomplete="off">
+                            matInput [matDatepicker]="EndDate"
+                            (dateChange)="onBlur(element)"
+                            autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="EndDate"></mat-datepicker-toggle>
                             <mat-datepicker #EndDate></mat-datepicker>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
+                <!-- <ng-container matColumnDef="CategoryId">
+                    <mat-header-cell>Category</mat-header-cell>
+                    <mat-cell>
+                        <mat-form-field>
+                            <mat-select [(ngModel)]="element.CategoryId" [value]="element.">
+
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container> -->
                 <ng-container matColumnDef="ReleaseResult">
                     <mat-header-cell *matHeaderCellDef> Release Result </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -55,10 +71,10 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="ReleaseDate">
-                    <mat-header-cell *matHeaderCellDef>ReleaseDate
+                    <mat-header-cell *matHeaderCellDef>Release Date
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.ReleaseDate|date:'dd/MM/yyyy'}}
+                        {{element.ReleaseDate}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">

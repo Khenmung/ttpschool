@@ -43,6 +43,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   exceptionColumns: boolean;
   //isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   PaymentTypes = [];
+  FeeCategories = [];
   OffLineReceiptNo = '';
   PaymentTypeId = 0;
   expandedElement: any;
@@ -132,7 +133,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     PostingDate: new Date(),
     Reference: '',
     LedgerId: 0,
-    GeneralLedgerAccountId:0,    
+    GeneralLedgerAccountId: 0,
     FeeReceiptId: 0,
     DebitCreditId: 0,
     Amount: 0,
@@ -172,7 +173,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private snackbar: MatSnackBar,
     private nav: Router,
     private datepipe: DatePipe,
@@ -252,7 +253,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
           this.FeeDefinitions = [...f];
           if (this.FeeDefinitions.length == 0) {
-            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"],1).subscribe((d: any) => {
+            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
               this.FeeDefinitions = [...d.value];
             })
           }
@@ -262,6 +263,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
         this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
+        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
         //this.AccountGroup = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
         this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
         this.PaymentTypeId = this.PaymentTypes.filter(p => p.MasterDataName.toLowerCase() == "cash")[0].MasterDataId;
@@ -281,7 +283,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   GetStudentClass() {
     debugger;
     if (this.studentInfoTodisplay.StudentClassId == undefined || this.studentInfoTodisplay.StudentClassId == 0) {
-      this.contentservice.openSnackBar("Please define class for this student.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
       this.nav.navigate(["/edu"]);
     }
     else {
@@ -310,7 +312,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
           debugger;
           if (data.value.length > 0) {
             if (data.value[0].FeeType == undefined) {
-              this.contentservice.openSnackBar("Fee Type not yet defined.",globalconstants.ActionText,globalconstants.RedBackground);
+              this.contentservice.openSnackBar("Fee Type not yet defined.", globalconstants.ActionText, globalconstants.RedBackground);
               //this.snackbar.open("Fee type not yet defined.",'Dimiss',{duration:10000});
               this.loading = false;
             }
@@ -346,7 +348,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             }
           }
           else {
-            this.contentservice.openSnackBar("No class defined for this student!",globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar("No class defined for this student!", globalconstants.ActionText, globalconstants.RedBackground);
 
           }
 
@@ -393,7 +395,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     //debugger;
     if (pclassId == undefined || pclassId == 0 || this.SelectedBatchId == 0) {
       //this.alert.error('Invalid Id', this.optionsNoAutoClose);
-      this.contentservice.openSnackBar("Invalid Id",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Invalid Id", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -422,7 +424,17 @@ export class AddstudentfeepaymentComponent implements OnInit {
         if (data.value.length > 0) {
           this.StudentClassFees = data.value.map(f => {
             //f.FeeName = this.FeeDefinitions.filter(n => n.FeeDefinitionId == f.FeeDefinitionId)[0].FeeName;
+            var catObj = this.FeeCategories.filter(cat => cat.MasterDataId == f.FeeDefinition.FeeCategoryId);
+            var subcatObj = this.allMasterData.filter(cat => cat.MasterDataId == f.FeeDefinition.FeeSubCategoryId);
+            var catName = '';
+            if (catObj.length > 0)
+              catName = catObj[0].MasterDataName
+            var subcatName = '';
+            if (subcatObj.length > 0)
+              subcatName = subcatObj[0].MasterDataName
             f.FeeCategoryId = f.FeeDefinition.FeeCategoryId;
+            f.FeeCategory = catName;
+            f.FeeSubCategory = subcatName;
             f.FeeName = f.FeeDefinition.FeeName;
             f.AmountEditable = f.FeeDefinition.AmountEditable;
             var _monthObj = this.Months.filter(m => m.val == f.Month)
@@ -431,7 +443,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             else
               f.MonthName = '';
             return f;
-          }).sort((a,b)=>a.FeeCategoryId - b.FeeCategoryId);
+          }).sort((a, b) => a.FeeCategoryId - b.FeeCategoryId);
           let itemcount = 1;
           this.StudentLedgerList = [];
           this.StudentClassFees.forEach((studentClassFee) => {
@@ -444,11 +456,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   this.StudentLedgerList.push({
                     SlNo: itemcount++,
                     LedgerId: exitem.LedgerId,
-                    StudentClassId: exitem.StudentClassId,                    
+                    StudentClassId: exitem.StudentClassId,
                     Month: exitem.Month,
                     TotalDebit: exitem.TotalDebit,
                     TotalCredit: +exitem.TotalCredit,
-                    GeneralLedgerId:exitem.GeneralLedgerId,
+                    GeneralLedgerId: exitem.GeneralLedgerId,
                     Balance: exitem.Balance,
                     MonthName: studentClassFee.MonthName,
                     BatchId: exitem.BatchId,
@@ -476,7 +488,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   LedgerId: 0,
                   StudentClassId: this.studentInfoTodisplay.StudentClassId,
                   Month: studentClassFee.Month,
-                  GeneralLedgerId: 0,                  
+                  GeneralLedgerId: 0,
                   TotalDebit: 0,
                   TotalCredit: +AmountAfterFormulaApplied,
                   Balance: +AmountAfterFormulaApplied,
@@ -489,7 +501,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         }
         else {
           this.StudentLedgerList = [];
-          this.contentservice.openSnackBar("Fees not defined for this class",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Fees not defined for this class", globalconstants.ActionText, globalconstants.RedBackground);
         }
 
         this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
@@ -529,7 +541,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         if (MonthSelected.length == 0)//means not selected yet
         {
           row.Action = false;
-          this.contentservice.openSnackBar("Previous balance must be cleared first.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Previous balance must be cleared first.", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
       }
@@ -622,7 +634,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       })
     }
     if (error.length > 0) {
-      this.contentservice.openSnackBar("Previous balance must be cleared first.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous balance must be cleared first.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
@@ -630,7 +642,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       //var monthgreaterthanOne = howmanymonthSelected.filter(f=>f.Count>1);
 
       if (howmanymonthSelected.length > 1 && this.Balance > 0) {
-        this.contentservice.openSnackBar("Previous balance must be cleared first before the next fee payment.",globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Previous balance must be cleared first before the next fee payment.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
       else {
@@ -661,7 +673,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     //   return;
     // }    
     // StudentFeeLedgerNameId = ledgerObj[0].GeneralLedgerId;
-    
+
     var list = new List();
     list.fields = ["ReceiptNo"];
     list.PageName = this.FeeReceiptListName;
@@ -693,12 +705,12 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.StudentLedgerData.Active = 1;
       //this.StudentLedgerData.GeneralLedgerId = 0;//StudentFeeLedgerNameId;// row.AccountGroupId;
       this.StudentLedgerData.BatchId = this.SelectedBatchId;
-      
+
       this.StudentLedgerData.Balance = this.Balance;
       this.StudentLedgerData.Month = selectedMonthrow.Month;
       this.StudentLedgerData.StudentClassId = selectedMonthrow.StudentClassId;
       this.StudentLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
-      this.StudentLedgerData.TotalDebit =0;// monthAmount;
+      this.StudentLedgerData.TotalDebit = 0;// monthAmount;
       this.StudentLedgerData.TotalCredit = this.Balance == 0 ? monthAmount : selectedMonthrow.TotalCredit;
 
       this.FeePayment.LedgerAccount.push(JSON.parse(JSON.stringify(this.StudentLedgerData)));
@@ -733,7 +745,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.loading = false;
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource([]);
-        this.contentservice.openSnackBar("Payment done successfully!", globalconstants.ActionText,globalconstants.BlueBackground);
+        this.contentservice.openSnackBar("Payment done successfully!", globalconstants.ActionText, globalconstants.BlueBackground);
         this.tabChanged(1);
       })
   }

@@ -6,7 +6,7 @@
     <form [formGroup]="searchForm">
         <mat-form-field appearance="outline">
             <mat-label>Class/Course</mat-label>
-            <mat-select formControlName="searchClassId">
+            <mat-select formControlName="searchClassId" (selectionChange)="SelectClassSubject()">
                 <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
                     {{p.ClassName}}
                 </mat-option>
@@ -16,8 +16,8 @@
             <mat-label>Subject</mat-label>
             <mat-select formControlName="searchSubjectId" #SubjectId>
                 <mat-option value="0">All</mat-option>
-                <mat-option *ngFor="let p of Subjects" [value]="p.MasterDataId">
-                    {{p.MasterDataName}}
+                <mat-option *ngFor="let p of SelectedClassSubjects" [value]="p.SubjectId">
+                    {{p.SubjectName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>

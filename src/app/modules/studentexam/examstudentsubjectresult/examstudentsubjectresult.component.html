@@ -17,7 +17,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Class</mat-label>
-                    <mat-select formControlName="searchClassId">
+                    <mat-select formControlName="searchClassId" (selectionChange)="SelectClassSubject()">
                         <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
                             {{item.ClassName}}
                         </mat-option>
@@ -34,8 +34,8 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Subject</mat-label>
                     <mat-select formControlName="searchSubjectId">
-                        <mat-option *ngFor="let item of Subjects" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
+                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
+                            {{item.SubjectName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
