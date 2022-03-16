@@ -46,9 +46,9 @@ export class ExamslotComponent implements OnInit {
     ExamSlotId: 0,
     ExamId: 0,
     SlotNameId: 0,
-    StartTime: String,
-    EndTime: String,
-    ExamDate: Date,
+    StartTime: '',
+    EndTime: '',
+    ExamDate: '',
     Sequence:0,
     OrgId: 0,
     BatchId: 0,
@@ -172,7 +172,8 @@ export class ExamslotComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
-          //var _examdate =new Date(row.ExamDate).setDate(row.ExamDate.getDate()+1);
+          //var _date = new Date(this.datepipe.transform(row.ExamDate, 'yyyy-MM-dd'))
+
           this.ExamSlotsData.ExamSlotId = row.ExamSlotId;
           this.ExamSlotsData.ExamId = this.searchForm.get("searchExamId").value;
           this.ExamSlotsData.Active = row.Active;
@@ -278,8 +279,8 @@ export class ExamslotComponent implements OnInit {
     var dateObj = this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value);
     var _startDate = new Date(dateObj[0].StartDate);
     var _endDate = new Date(dateObj[0].EndDate);
-    //_startDate.setHours(0, 0, 0, 0);
-    //_endDate.setHours(0, 0, 0, 0);
+    _startDate.setHours(0, 0, 0, 0);
+    _endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
     var higherdate = new Date(this.searchForm.get("searchExamDate").value);
     higherdate.setDate(_filterExamDate.getDate() +1);
@@ -287,9 +288,9 @@ export class ExamslotComponent implements OnInit {
     if (!_filterExamDate != null) {
 
       filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
-      filterstr += " and ExamDate le " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
-
-      if (_filterExamDate.getTime() < new Date(_startDate).getTime() || _filterExamDate.getTime() > new Date(_endDate).getTime()) {
+      filterstr += " and ExamDate lt " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
+      //var startDate = new Date(_startDate)
+      if (_filterExamDate.getTime() < _startDate.getTime() || _filterExamDate.getTime() > _endDate.getTime()) {
         this.contentservice.openSnackBar("Date should be between exam start date and end date.",globalconstants.ActionText,globalconstants.RedBackground);
         return;
       }
@@ -338,7 +339,7 @@ export class ExamslotComponent implements OnInit {
                 ExamId: 0,
                 SlotNameId: e.MasterDataId,
                 SlotName: e.MasterDataName,
-                ExamDate: new Date(_examDate.getTime()),
+                ExamDate: this.datepipe.transform(_examDate,'yyyy-MM-dd'),
                 WeekDay: day,
                 StartTime: '',
                 EndTime: '',
@@ -392,7 +393,7 @@ export interface IExamSlots {
   ExamId: number;
   SlotNameId: number;
   SlotName: string;
-  ExamDate: Date;
+  ExamDate: string;
   WeekDay: string;
   StartTime: string;
   EndTime: string;

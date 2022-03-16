@@ -6,4 +6,10 @@ mat-cell:first-of-type{
 }
 .mat-column-Active,.mat-column-Sequence{
     justify-content: center;
+    flex: 1 1 100px;
+}
+.mat-column-PeriodTypeId,
+.mat-column-PeriodName,
+.mat-column-FromToTime{
+    flex: 1 1 150px;
 }

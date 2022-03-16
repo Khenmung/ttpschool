@@ -46,14 +46,14 @@
                 <ng-container matColumnDef="PeriodName">
                     <mat-header-cell *matHeaderCellDef>Period
                     </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         {{element.PeriodName}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PeriodTypeId">
                     <mat-header-cell *matHeaderCellDef>Period Type
                     </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field>
                             <mat-select (selectionChange)="onBlur(element,$event)" [(ngModel)]="element.PeriodTypeId"
                                 [value]="element.PeriodTypeId">
@@ -66,7 +66,7 @@
                 <ng-container matColumnDef="FromToTime">
                     <mat-header-cell *matHeaderCellDef>Start and End Time
                     </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field>
                             <input matInput [maxLength]="13" (blur)="onBlur(element,$event)"
                                 [(ngModel)]="element.FromToTime" autocomplete="Off" [value]="element.FromToTime">
@@ -76,7 +76,7 @@
                 <ng-container matColumnDef="Sequence">
                     <mat-header-cell *matHeaderCellDef>Sequence
                     </mat-header-cell>
-                    <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field [style.width.px]="50">
                             <input matInput type="number" [max]="100" (blur)="onBlur(element,$event)"
                                 [(ngModel)]="element.Sequence" autocomplete="Off" [value]="element.Sequence">

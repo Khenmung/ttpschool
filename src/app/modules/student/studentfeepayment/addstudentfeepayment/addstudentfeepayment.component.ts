@@ -422,28 +422,29 @@ export class AddstudentfeepaymentComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.StudentClassFees = data.value.map(f => {
+          this.StudentClassFees = data.value.map(studclsfee => {
             //f.FeeName = this.FeeDefinitions.filter(n => n.FeeDefinitionId == f.FeeDefinitionId)[0].FeeName;
-            var catObj = this.FeeCategories.filter(cat => cat.MasterDataId == f.FeeDefinition.FeeCategoryId);
-            var subcatObj = this.allMasterData.filter(cat => cat.MasterDataId == f.FeeDefinition.FeeSubCategoryId);
+            var catObj = this.FeeCategories.filter(cat => cat.MasterDataId == studclsfee.FeeDefinition.FeeCategoryId);
+            var subcatObj = this.allMasterData.filter(cat => cat.MasterDataId == studclsfee.FeeDefinition.FeeSubCategoryId);
             var catName = '';
             if (catObj.length > 0)
               catName = catObj[0].MasterDataName
             var subcatName = '';
             if (subcatObj.length > 0)
               subcatName = subcatObj[0].MasterDataName
-            f.FeeCategoryId = f.FeeDefinition.FeeCategoryId;
-            f.FeeCategory = catName;
-            f.FeeSubCategory = subcatName;
-            f.FeeName = f.FeeDefinition.FeeName;
-            f.AmountEditable = f.FeeDefinition.AmountEditable;
-            var _monthObj = this.Months.filter(m => m.val == f.Month)
+            studclsfee.FeeCategoryId = studclsfee.FeeDefinition.FeeCategoryId;
+            studclsfee.FeeCategory = catName;
+            studclsfee.FeeSubCategory = subcatName;
+            studclsfee.FeeName = studclsfee.FeeDefinition.FeeName;
+            studclsfee.AmountEditable = studclsfee.FeeDefinition.AmountEditable;
+            var _monthObj = this.Months.filter(m => m.val == studclsfee.Month)
             if (_monthObj.length > 0)
-              f.MonthName = _monthObj[0].MonthName;
+              studclsfee.MonthName = _monthObj[0].MonthName;
             else
-              f.MonthName = '';
-            return f;
+              studclsfee.MonthName = '';
+            return studclsfee;
           }).sort((a, b) => a.FeeCategoryId - b.FeeCategoryId);
+
           let itemcount = 1;
           this.StudentLedgerList = [];
           this.StudentClassFees.forEach((studentClassFee) => {
@@ -463,6 +464,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
                     GeneralLedgerId: exitem.GeneralLedgerId,
                     Balance: exitem.Balance,
                     MonthName: studentClassFee.MonthName,
+                    FeeCategory: studentClassFee.FeeCategory,
+                    FeeSubCategory: studentClassFee.FeeSubCategory,
                     BatchId: exitem.BatchId,
                     Action: false
                   })
@@ -493,6 +496,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   TotalCredit: +AmountAfterFormulaApplied,
                   Balance: +AmountAfterFormulaApplied,
                   MonthName: studentClassFee.MonthName,
+                  FeeCategory: studentClassFee.FeeCategory,
+                  FeeSubCategory: studentClassFee.FeeSubCategory,
                   BatchId: studentClassFee.BatchId,
                   Action: false
                 });
@@ -831,6 +836,8 @@ export interface ILedger {
   StudentClassId: number;
   Month: number;
   MonthName: string;
+  FeeCategory: string;
+  FeeSubCategory: string;
   GeneralLedgerId: number;
   TotalDebit: number;
   TotalCredit: number;

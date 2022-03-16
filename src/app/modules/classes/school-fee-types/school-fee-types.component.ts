@@ -168,6 +168,19 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.GetFeeTypes();
           this.loadingFalse()
           
+        },
+        err => {
+          if (err.error) {
+            var modelState = err.error.errors;
+            var errorMessage = '';
+            //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+            for (var key in modelState) {
+              if (modelState.hasOwnProperty(key)) {
+                errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key];
+              }
+            }
+            this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          }
         });
   }
   update(row) {
@@ -179,7 +192,20 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.GetFeeTypes();
           this.loadingFalse();
-        });
+        },
+        err => {
+          if (err.error) {
+            var modelState = err.error.errors;
+            var errorMessage = '';
+            //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+            for (var key in modelState) {
+              if (modelState.hasOwnProperty(key)) {
+                errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key];
+              }
+            }
+            this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          }
+        });        
   }
   GetFeeTypes() {
     //debugger;

@@ -35,6 +35,7 @@ export class studentprimaryinfoComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  SelectedBatchId=0;
   SelectedApplicationId = 0;
   loginUserDetail = [];
   StudentLeaving = false;
@@ -184,7 +185,7 @@ export class studentprimaryinfoComponent implements OnInit {
       ContactPersonContactNo: [''],
       AlternateContact: [''],
       EmailAddress: [''],
-      ClassAdmissionSought: [0],
+      ClassAdmissionSought: [0,[Validators.required]],
       LastSchoolPercentage: [''],
       TransferFromSchool: [''],
       TransferFromSchoolBoard: [''],
@@ -224,7 +225,8 @@ export class studentprimaryinfoComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-        //var SelectedBatchId = this.tokenService.getSelectedBatchId();
+
+        this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.GetMasterData();
         if (this.StudentId > 0)
           this.GetStudent();
@@ -345,6 +347,9 @@ export class studentprimaryinfoComponent implements OnInit {
     if (this.studentForm.get("Category").value == 0) {
       errorMessage += "Please select Category.\n";
     }
+    if (this.studentForm.get("ClassAdmissionSought").value == 0) {
+      errorMessage += "Please select Class for which admission is sought.\n";
+    }
     if (errorMessage.length > 0) {
       this.loading = false;
       this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
@@ -411,7 +416,11 @@ export class studentprimaryinfoComponent implements OnInit {
             StudentId: result.StudentId
           })
           this.StudentId = result.StudentId;
+          this.StudentClassId =this.studentForm.get("ClassAdmissionSought").value;
           this.loading = false;
+          this.tokenService.saveStudentId(this.StudentId+"")
+          this.tokenService.saveStudentClassId(this.StudentClassId+"");
+          this.GetStudent();
           this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
         }
@@ -439,7 +448,7 @@ export class studentprimaryinfoComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
-    list.lookupFields = ["StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
+    list.lookupFields = ["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId + ";$select=StudentClassId,StudentId),StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
     list.filter = ["StudentId eq " + this.StudentId];
 
     debugger;
@@ -447,7 +456,10 @@ export class studentprimaryinfoComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           data.value.forEach(stud => {
+            this.tokenService.saveStudentClassId(stud.StudentClasses[0].StudentClassId);
 
+            let StudentName = stud.StudentId + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName + ' ' + stud.MotherName + ',';
+            this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
               StudentId: stud.StudentId,
               FirstName: stud.FirstName,

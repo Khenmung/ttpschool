@@ -36,8 +36,8 @@
                                 <img [src]="imgURL" height="150px" *ngIf="imgURL">
                             </div>
                             <div fxLayout="column" fxLayoutAlign="space-between center" style="margin: 5px;">
-                                <button [disabled]="loading || Permission=='read'" class="mat-flat-button" matTooltip="select file"
-                                    (click)="inputfile.click()">
+                                <button [disabled]="loading || Permission=='read'" class="mat-flat-button"
+                                    matTooltip="select file" (click)="inputfile.click()">
                                     <mat-icon aria-label="photo">photo</mat-icon>
                                 </button>&nbsp;&nbsp;
                                 <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()"
@@ -140,6 +140,17 @@
                             <mat-datepicker #picker></mat-datepicker>
                         </mat-form-field>
                     </mat-grid-tile>
+                    <mat-grid-tile [colspan]="1" [rowspan]="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Class for which admission is sought</mat-label>
+                            <mat-select formControlName="ClassAdmissionSought">
+                                <mat-option value="0">---</mat-option>
+                                <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                                    {{p.ClassName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
                 </mat-grid-list>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
@@ -154,7 +165,8 @@
                 <button [disabled]="loading" (click)="back()" class="mat-raised-button" matTooltip="go to search">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" matTooltip="save" mat-raised-button color="accent">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" matTooltip="save"
+                    mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
@@ -251,7 +263,8 @@
                 <button [disabled]="loading" (click)="back()" class="mat-raised-button" matTooltip="back to search">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" mat-raised-button color="accent">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" mat-raised-button
+                    color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
@@ -284,17 +297,19 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" matTooltip="go to search student" class="mat-raised-button">
+                <button [disabled]="loading" (click)="back()" matTooltip="go to search student"
+                    class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" mat-raised-button color="accent">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" mat-raised-button
+                    color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
         <mat-tab>
             <ng-template mat-tab-label>
-                <mat-icon>note_add</mat-icon>Additional Info. & Save
+                <mat-icon>note_add</mat-icon>Additional Info.
             </ng-template>
             <div style="padding:15px 15px 10px 15px;"><strong>Additional Info.</strong></div>
             <div fxLayout="column" fxLayoutAlign="space-around">
@@ -311,15 +326,7 @@
                     </mat-form-field>
                 </div>
                 <div style="padding: 15px 15px 0px 15px">
-                    <mat-form-field appearance="outline">
-                        <mat-label>Class for which admission is sought</mat-label>
-                        <mat-select formControlName="ClassAdmissionSought">
-                            <mat-option value="0">---</mat-option>
-                            <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
-                                {{p.ClassName}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+
                     <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
                         <input formControlName="Remarks" autocomplete="Off" #Pincode matInput [maxlength]="250">
@@ -341,11 +348,12 @@
                 <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" alt="previous"
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
-                </button>                
+                </button>
                 <button [disabled]="loading" (click)="back()" alt="back" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" mat-raised-button color="accent">
+                <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" alt="save" mat-raised-button
+                    color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>

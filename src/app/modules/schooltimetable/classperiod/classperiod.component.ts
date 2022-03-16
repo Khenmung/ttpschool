@@ -15,19 +15,12 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classperiod.component.html',
   styleUrls: ['./classperiod.component.scss']
 })
+
 export class ClassperiodComponent implements OnInit {
 
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
@@ -206,6 +199,7 @@ export class ClassperiodComponent implements OnInit {
           row.SchoolClassPeriodId = data.SchoolClassPeriodId;
           row.Action = false;
           this.loading = false;
+          this.DataToSave--;
           if (this.DataToSave==0) {
             this.DataToSave =-1;
             this.loading = false;
@@ -221,6 +215,7 @@ export class ClassperiodComponent implements OnInit {
         (data: any) => {
           this.rowCount++;
           row.Action = false;
+          this.DataToSave--;
           if (this.DataToSave==0) {
             this.DataToSave =-1;
             this.loading = false;
@@ -362,6 +357,7 @@ export class ClassperiodComponent implements OnInit {
     this.DataToSave = filteredAction.length * selectedClassIds.length;
     var existInDB = [];
 
+    //this.DataToSave = filteredAction.length;
     filteredAction.forEach(toReplicate => {
       selectedClassIds.forEach(toSelectedClassId => {
         existInDB = this.AllClassPeriods.filter(d => d.ClassId == toSelectedClassId && d.PeriodId == toReplicate.PeriodId)

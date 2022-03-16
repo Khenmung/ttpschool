@@ -100,15 +100,15 @@ export class StudentprofilereportComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
-    this.StudentClassId = this.tokenstorage.getStudentClassId();
-    if (this.StudentClassId == 0) {
-      this.contentservice.openSnackBar("Student class Id is zero", globalconstants.ActionText, globalconstants.RedBackground);
+    // this.StudentClassId = this.tokenstorage.getStudentClassId();
+    // if (this.StudentClassId == 0) {
+    //   this.contentservice.openSnackBar("Student class Id is zero", globalconstants.ActionText, globalconstants.RedBackground);
 
-    }
-    else {
-      this.ClassId = this.tokenstorage.getClassId();
+    // }
+    // else {
+    //   this.ClassId = this.tokenstorage.getClassId();
       this.PageLoad();
-    }
+    //}
   }
 
   PageLoad() {

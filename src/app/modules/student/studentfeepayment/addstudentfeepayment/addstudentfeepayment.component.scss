@@ -10,14 +10,20 @@ svg {
     padding-bottom: 0px !important;
 }
 
-.mat-column-SlNo {
-    flex : none;
-    width: 60px;
+.mat-column-MonthName{
+    flex: 1 1 70px;
 }
-
-.mat-column-Paid {
-    flex : none;
-    width: 40px;
+.mat-column-SlNo
+{
+    flex:1 1 50px;
+}
+.mat-column-Paid,
+.mat-column-Action,
+.mat-column-TotalCredit,
+.mat-column-TotalDebit,
+.mat-column-Balance {
+    justify-content: flex-end;
+    flex:1 1 60px;
 }
 
 .example-container {
@@ -28,7 +34,7 @@ svg {
 }
 
 .mat-table {
-    overflow  : auto;
+    overflow    : auto;
     //max-height: 500px;
 }
 
@@ -49,19 +55,20 @@ svg {
 }
 
 table {
-    width  : 80%;
-    padding: 10px;
+    width        : 80%;
+    padding      : 10px;
     margin-bottom: 5px;
 }
 
 td {
-    padding:5px;
+    padding        : 5px;
     border-collapse: collapse;
     border         : 1px solid lightgray;
-    text-align: center;
+    text-align     : center;
 }
-.mat-column-PaymentAmt{
-    display: flex;
+
+.mat-column-PaymentAmt {
+    display        : flex;
     //padding: 21px 0;
     justify-content: flex-end;
 }

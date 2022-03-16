@@ -61,7 +61,7 @@ export class AddstudentclassComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private aRoute: ActivatedRoute,
-    
+
     private nav: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }
@@ -95,20 +95,18 @@ export class AddstudentclassComponent implements OnInit {
 
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
       if (this.FeeType.length == 0) {
-        this.contentservice.openSnackBar("Fee type is empty",globalconstants.ActionText,globalconstants.RedBackground);
-        this.nav.navigate(["/edu"]);
-        return;
+        this.GetFeeTypes();
       }
-      this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
-      this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
-
-      //this.shareddata.CurrentStudentId.subscribe(id => this.StudentId = id);
-      this.StudentId = this.tokenstorage.getStudentId();
-      this.StudentClassId = this.tokenstorage.getStudentClassId()
-      //this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
-      this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.GetStudentClass();
+      else {
+        this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
+        this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
+        this.StudentId = this.tokenstorage.getStudentId();
+        this.StudentClassId = this.tokenstorage.getStudentClassId()
+        //this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
+        this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.GetStudentClass();
+      }
     }
   }
   get f() { return this.studentclassForm.controls }
@@ -138,11 +136,27 @@ export class AddstudentclassComponent implements OnInit {
     this.GetStudentClass();
 
   }
+  GetFeeTypes() {
+    debugger;
+    this.loading = true;
+    //var filter = globalconstants.getStandardFilterWithBatchId(this.token);
+    let list: List = new List();
+    list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
+    list.PageName = "SchoolFeeTypes";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.FeeType = [...data.value];
+        this.shareddata.ChangeFeeType(this.FeeType);
+        this.loading = false;
+      })
+  }
   GetStudent() {
     var filterOrgId = globalconstants.getStandardFilter(this.tokenstorage);
     if (this.StudentId == 0) {
-   
-      this.contentservice.openSnackBar("Invalid student Id",globalconstants.ActionText,globalconstants.RedBackground);
+
+      this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
       this.invalidId = true;
       return;
     }
@@ -166,11 +180,11 @@ export class AddstudentclassComponent implements OnInit {
           }
           else {
             this.invalidId = true;
-            this.contentservice.openSnackBar("Invalid student Id",globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
           }
         }
         else
-          this.contentservice.openSnackBar("Problem fetching students' data",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Problem fetching students' data", globalconstants.ActionText, globalconstants.RedBackground);
       });
 
   }
@@ -217,7 +231,7 @@ export class AddstudentclassComponent implements OnInit {
               Remarks: '',
               Active: 1
             });
-            this.contentservice.openSnackBar("Class yet to be defined for this student",globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar("Class yet to be defined for this student", globalconstants.ActionText, globalconstants.RedBackground);
           }
         });
     }
@@ -248,7 +262,7 @@ export class AddstudentclassComponent implements OnInit {
       ErrorMessage += "Admission date is required.<br>";
     }
     if (ErrorMessage.length > 0) {
-      this.contentservice.openSnackBar(ErrorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar(ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
@@ -281,7 +295,7 @@ export class AddstudentclassComponent implements OnInit {
         (data: any) => {
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
-          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
 
   }
@@ -290,7 +304,7 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, this.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.router.navigate(['/home/pages']);
         });
   }
