@@ -97,7 +97,8 @@
                         <span *ngIf="element.MultipleAnswer==0">
                             <mat-radio-group [(ngModel)]="element.RatingId">
                                 <mat-radio-button style="margin-right: 15px;"
-                                    *ngFor="let item of element.ClassEvaluationOptions;let i=index" (change)="UpdateRadio(element,item)"
+                                    *ngFor="let item of element.ClassEvaluationOptions;let i=index" 
+                                    (change)="UpdateRadio(element,item)"
                                     [value]="item.AnswerOptionsId">
                                     {{item.Title}}
                                 </mat-radio-button>

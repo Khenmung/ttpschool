@@ -2,13 +2,14 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-examslot',
@@ -48,7 +49,7 @@ export class ExamslotComponent implements OnInit {
     SlotNameId: 0,
     StartTime: '',
     EndTime: '',
-    ExamDate: '',
+    ExamDate: moment(),
     Sequence:0,
     OrgId: 0,
     BatchId: 0,
@@ -178,13 +179,13 @@ export class ExamslotComponent implements OnInit {
           this.ExamSlotsData.ExamId = this.searchForm.get("searchExamId").value;
           this.ExamSlotsData.Active = row.Active;
           this.ExamSlotsData.SlotNameId = row.SlotNameId;
-          this.ExamSlotsData.ExamDate = row.ExamDate;
+          this.ExamSlotsData.ExamDate = row.ExamDate;//.format('yyyy/MM/dd');
           this.ExamSlotsData.StartTime = row.StartTime;
           this.ExamSlotsData.EndTime = row.EndTime;
           this.ExamSlotsData.Sequence = row.Sequence;
           this.ExamSlotsData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ExamSlotsData.BatchId = this.SelectedBatchId;
-          ////console.log('data', this.ClassSubjectData);
+          
           if (this.ExamSlotsData.ExamSlotId == 0) {
             this.ExamSlotsData["CreatedDate"] = new Date();
             this.ExamSlotsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -198,6 +199,7 @@ export class ExamslotComponent implements OnInit {
             delete this.ExamSlotsData["CreatedBy"];
             this.ExamSlotsData["UpdatedDate"] = new Date();
             this.ExamSlotsData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            console.log('ExamSlotsData', this.ExamSlotsData);
             this.update(row);
           }
         }
@@ -330,7 +332,7 @@ export class ExamslotComponent implements OnInit {
               existing[0].SlotName = e.MasterDataName;
               existing[0].WeekDay = day;
               existing[0].Action = false;
-              existing[0].ExamDate = new Date(existing[0].ExamDate),
+              existing[0].ExamDate = moment(existing[0].ExamDate),
               this.ExamSlots.push(existing[0]);
             }
             else {
@@ -339,7 +341,7 @@ export class ExamslotComponent implements OnInit {
                 ExamId: 0,
                 SlotNameId: e.MasterDataId,
                 SlotName: e.MasterDataName,
-                ExamDate: this.datepipe.transform(_examDate,'yyyy-MM-dd'),
+                ExamDate: _examDate,
                 WeekDay: day,
                 StartTime: '',
                 EndTime: '',
@@ -393,7 +395,7 @@ export interface IExamSlots {
   ExamId: number;
   SlotNameId: number;
   SlotName: string;
-  ExamDate: string;
+  ExamDate: Date;
   WeekDay: string;
   StartTime: string;
   EndTime: string;

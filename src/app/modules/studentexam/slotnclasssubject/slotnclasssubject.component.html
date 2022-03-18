@@ -3,43 +3,92 @@
         <div><strong>Subjects in slot</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <div style="width:auto;min-width: 1280px; overflow: auto;">
-        <form [formGroup]="searchForm">
-            <mat-form-field [style.width.pc]="30" appearance="outline">
-                <mat-label>Exam Slot</mat-label>
-                <mat-select formControlName="searchSlotId">
-                    <mat-option *ngFor="let item of ExamSlots" [value]="item.SlotId">
-                        {{item.SlotName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSlotNClassSubjects()">
-                <mat-icon>search</mat-icon>
-            </button>
-        </form>
-        <p>Record will be displayed if it is defined in class subject module.</p>
-        <mat-divider></mat-divider>
-        
-        <div style="place-items: center;border-bottom:1px solid lightgray;" fxLayout="row"
-            *ngFor="let row of ClassWiseSubjectDisplay; let indx=index;">
-            <div style="min-width: 130px;">{{row['ClassName']}}</div>
-            <div style="min-width: 900px;display:flex; flex-direction: row;padding: 10px 0px 5px 0px">
-                <div *ngFor="let cell of row|keyvalue">
-                    <mat-checkbox matTooltip="select {{cell.key}}"
-                        *ngIf="cell.key!='ClassName' && cell.key!='Action' && cell.key!='Selected'"
-                        (click)="$event.stopPropagation()" (change)="updateActive(row,$event,cell.key)"
-                        [checked]="cell.value===1">
-                        <div style="padding-right: 25px;">{{cell.key}}</div>
-                    </mat-checkbox>
-                </div>
-            </div>
-
-            <button [disabled]="loading || Permission=='read' || !row.Action" matTooltip="save" mat-mini-fab
-                (click)="SaveRow(row)">
-                <mat-icon>save</mat-icon>
-            </button>
-
-
+    <!-- <div style="width:auto;min-width: 1280px; overflow: auto;"> -->
+    <form [formGroup]="searchForm">
+        <mat-form-field appearance="outline">
+            <mat-label>Exam</mat-label>
+            <mat-select formControlName="searchExamId" (selectionChange)="GetSelectedExamSlot()">
+                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                    {{item.ExamName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline" [style.width.px]="400">
+            <mat-label>Exam Date</mat-label>
+            <mat-select formControlName="searchSlotId">
+                <mat-option *ngFor="let item of SelectedExamSlots" [value]="item.ExamSlotId">
+                    {{item.ExamDateDetail}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSlotNClassSubjects()">
+            <mat-icon>search</mat-icon>
+        </button>
+    </form>
+    <p>Record will be displayed if it is defined in class subject module.</p>
+    <mat-divider></mat-divider>
+    <mat-table #table [dataSource]="dataSource">                
+        <ng-container matColumnDef="ClassName">
+            <mat-header-cell *matHeaderCellDef>Class
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.ClassName}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SlotClassSubjectId">
+            <mat-header-cell *matHeaderCellDef>Subjects
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-radio-group style="margin: 15px 15px 15px 0px;" [name]="element.ClassName">
+                    <mat-radio-button style="margin-right: 15px;"
+                    *ngFor="let cell of element.Subject;"
+                        [name]="element.ClassName"
+                        [value]="cell.ClassSubjectId"
+                        (change)="updateActive(element,$event,cell.SubjectName)" 
+                        [checked]="cell.value===1"
+                        [disabled]="cell.value===2">
+                        {{cell.SubjectName}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </mat-cell>
+        </ng-container>        
+        <ng-container matColumnDef="Action">
+            <mat-header-cell *matHeaderCellDef>
+                <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                    <mat-icon>all_out</mat-icon>
+                </button>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="Save(element)">
+                    <mat-icon>save</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
+    <!-- <div style="margin:10px; border-bottom:1px solid lightgray;overflow: hidden;" fxLayout="row wrap"
+        *ngFor="let row of ClassWiseSubjectDisplay;let indx=index;">
+        <div style="padding:10px; min-width: 130px;">{{row['ClassName']}}</div>
+        <div style="max-width:600px;display:flex; flex-direction: row;flex-wrap: wrap;padding: 10px 0px 5px 0px">
+             *ngIf="cell.key!='ClassName' && cell.key!='Action' && cell.key!='Selected'"
+            <mat-radio-group *ngFor="let cell of row|keyvalue" [name]="'gname'+indx">
+                <mat-radio-button style="margin-right: 15px;"
+                    
+                    [name]="'gname'+indx"
+                    [value]="cell"
+                    (change)="updateActive(row,$event,cell.key)" 
+                    [checked]="cell.value===1" 
+                    >
+                    {{cell.key}}
+                </mat-radio-button>
+            </mat-radio-group>
+           
         </div>
-    </div>
+
+        <button [disabled]="loading || Permission=='read' || !row.Action" matTooltip="save" mat-mini-fab
+            (click)="SaveRow(row)">
+            <mat-icon>save</mat-icon>
+        </button>
+    </div> -->
 </div>

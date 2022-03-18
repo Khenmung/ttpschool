@@ -59,6 +59,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
     "JobTitleId": 0,
     "DesignationId": 0,
     "CTC": 0,
+    "IsCurrent": 0,
     "FromDate": new Date(),
     "ToDate": new Date(),
     "Active": 0,
@@ -133,6 +134,11 @@ export class EmployeeGradehistoryComponent implements OnInit {
     row.Action = !row.Action;
     row.Active = row.Active == 1 ? 0 : 1;
   }
+  updateIsCurrent(row, value) {
+    //if(!row.Action)
+    row.Action = true;
+    row.IsCurrent = value.checked ? 1 : 0;
+  }
   delete(element) {
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
@@ -186,6 +192,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
           this.EmployeeGradeHistoryData.FromDate = row.FromDate;
           this.EmployeeGradeHistoryData.ToDate = row.ToDate;
           this.EmployeeGradeHistoryData.CTC = row.CTC.toString();
+          this.EmployeeGradeHistoryData.IsCurrent = row.isCurrent;
           this.EmployeeGradeHistoryData.JobTitleId = row.JobTitleId;
           if (this.EmployeeGradeHistoryData.EmployeeGradeHistoryId == 0) {
             this.EmployeeGradeHistoryData["CreatedDate"] = new Date();
@@ -295,6 +302,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
       "JobTitleId": 0,
       "DesignationId": 0,
       "CTC": 0,
+      "IsCurrent":0,
       "FromDate": new Date(),
       "ToDate": new Date(),
       "Active": 0,
@@ -376,6 +384,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
       "JobTitleId",
       "DesignationId",
       "CTC",
+      "IsCurrent",
       "FromDate",
       "ToDate",
       "Active",
@@ -386,34 +395,19 @@ export class EmployeeGradehistoryComponent implements OnInit {
     list.filter = ["Active eq 1 and " + filterstr + orgIdSearchstr];
     list.orderBy = "EmployeeGradeHistoryId desc";
     //list.orderBy = "ParentId";
-    this.EmployeeGradeHistoryList = [
-      {
-        "EmployeeGradeHistoryId": 0,
-        "EmpEmployeeId": 0,
-        "DepartmentId": 0,
-        "EmpGradeId": 0,
-        "WorkAccountId": 0,
-        "JobTitleId": 0,
-        "DesignationId": 0,
-        "CTC": 0,
-        "FromDate": new Date(),
-        "ToDate": new Date(),
-        "Active": 0,
-        "Action": false
-      }
-    ];
+    this.EmployeeGradeHistoryList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0)
           this.EmployeeGradeHistoryList = data.value.map((h, indx) => {
-            if (indx == 0)
+            //if (indx == 0)
               h.Action = true;
-            else
-              h.Action = false;
+            // else
+            //   h.Action = false;
             return h;
           });
-
+          console.log("this.EmployeeGradeHistoryList",this.EmployeeGradeHistoryList)
         this.loading = false;
         this.dataSource = new MatTableDataSource<IEmployeeGradeHistory>(this.EmployeeGradeHistoryList);
       })
@@ -468,6 +462,7 @@ export interface IEmployeeGradeHistory {
   WorkAccountId: number;
   JobTitleId: number;
   DesignationId: number;
+  IsCurrent: number;
   CTC: number;
   FromDate: Date;
   ToDate: Date;

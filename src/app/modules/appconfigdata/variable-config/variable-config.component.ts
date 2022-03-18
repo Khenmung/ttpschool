@@ -297,7 +297,7 @@ export class VariableConfigComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.CONFIGTYPE);
+        this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
         this.GetVariables();
       });
   }

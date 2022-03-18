@@ -280,7 +280,7 @@ export class EmpComponentsComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.CONFIGTYPE);
+        this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
         //this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
         //this.SalaryComponents = this.getDropDownData(globalconstants.MasterDefinitions.employee.SALARYCOMPONENT);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);

@@ -115,6 +115,14 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="IsCurrent">
+                    <mat-header-cell *matHeaderCellDef> Current </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateIsCurrent(element,$event)"
+                            [checked]="element.IsCurrent==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
                     <mat-cell *matCellDef="let element">

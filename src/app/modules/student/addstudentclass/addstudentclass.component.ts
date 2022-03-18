@@ -249,9 +249,9 @@ export class AddstudentclassComponent implements OnInit {
     if (this.studentclassForm.get("ClassId").value == 0) {
       ErrorMessage += "Please select class.<br>";
     }
-    if (this.studentclassForm.get("RollNo").value == null) {
-      ErrorMessage += "Roll no. is required.<br>";
-    }
+    // if (this.studentclassForm.get("RollNo").value == null) {
+    //   ErrorMessage += "Roll no. is required.<br>";
+    // }
     if (this.studentclassForm.get("SectionId").value == 0) {
       ErrorMessage += "Please select Section.<br>";
     }

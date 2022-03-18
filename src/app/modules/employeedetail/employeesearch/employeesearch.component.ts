@@ -290,7 +290,7 @@ export class EmployeesearchComponent implements OnInit {
       "EmpEmployeeId", "ShortName", "FirstName", "LastName", "EmployeeCode", "Active"
     ];
     list.PageName = "EmpEmployees";
-    list.lookupFields = ["EmpEmployeeGradeSalHistoryEmployees($filter=Active eq 1;$select=ManagerId,EmployeeId,EmpGradeId,DepartmentId,DesignationId,Active)"];
+    list.lookupFields = ["EmpEmployeeGradeSalHistoryEmployees($filter=IsCurrent eq 1 and Active eq 1;$select=ManagerId,EmployeeId,EmpGradeId,DepartmentId,DesignationId,Active)"];
     list.filter = [this.filterOrgIdOnly + checkFilterString];
 
     this.dataservice.get(list)

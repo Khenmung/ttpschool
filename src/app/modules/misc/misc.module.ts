@@ -26,7 +26,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
   parse: {
-    dateInput: "DD-MM-YYYY HH:MM"
+    dateInput: "DD/MM/YYYY HH:MM"
   },
   display: {
     dateInput: "l, LTS",

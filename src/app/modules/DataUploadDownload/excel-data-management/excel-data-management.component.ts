@@ -91,7 +91,7 @@ export class ExcelDataManagementComponent implements OnInit {
     "MotherContactNo", "AlternateContact", "EmailAddress",
     "TransferFromSchool", "TransferFromSchoolBoard",
     "Gender", "Religion", "Category", "Bloodgroup",
-    "PrimaryContactFatherOrMother", "ClassAdmissionSought", "Remarks"];
+    "PrimaryContactFatherOrMother", "Remarks"];
 
   ErrorMessage = '';
   StudentList = [];

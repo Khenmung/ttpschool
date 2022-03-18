@@ -18,6 +18,7 @@ export class globalconstants {
     public static DeletedMessage = 'Data deleted sucessfully.';
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
+    public static SomethingWentWrong = 'There is a technical issue! Please contact your administrator.';
     public static ActionText = 'X';
     public static AppAndMenuAndFeatures =
         {
@@ -228,6 +229,8 @@ export class globalconstants {
                 "CATEGORY": "category",
                 "BLOODGROUP": "blood group",
                 "HOLIDAYLIST": "holiday type",
+                "CONFIGTYPE": "Variable config type"
+                
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",
@@ -308,7 +311,6 @@ export class globalconstants {
                 "SALARYCOMPONENT": "salary component",
                 "GRADE": "grade",
                 "GENDER": "employee gender",
-                "CONFIGTYPE": "Variable config type",
                 "COMPONENTTYPE": "salary component type",
                 "DOCUMENTTYPE": "employee document type",
                 "FAMILYRELATIONSHIP": "family relationship",

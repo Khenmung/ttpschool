@@ -36,7 +36,7 @@
                     <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                         {{element.ExamSlotId}}
                     </mat-cell>
-                </ng-container>localhost
+                </ng-container>
                 <ng-container matColumnDef="ExamName">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Exam
                     </mat-header-cell>
@@ -47,7 +47,7 @@
                 <ng-container matColumnDef="ExamDate">
                     <mat-header-cell *matHeaderCellDef> Exam Date </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.ExamDate|date:'dd-MM-yyyy'}} - {{element.WeekDay}}   
+                        {{element.ExamDate|date:'dd/MM/yyyy'}} - {{element.WeekDay}}   
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="SlotName">

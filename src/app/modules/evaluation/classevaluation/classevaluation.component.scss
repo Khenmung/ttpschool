@@ -2,6 +2,9 @@ mat-form-field{
     margin-right:15px;
     width: 98%;
 }
+::ng-deep .mat-form-field-infix{
+    width: auto !important;
+}
 button{
     margin-right:15px;
 }
@@ -12,7 +15,8 @@ mat-cell:first-of-type {
 .mat-column-Description{
     flex:1 1 200px;
 }
-.mat-column-AnswerOptionId,.mat-column-ClassEvalCategoryId
+.mat-column-AnswerOptionId,
+.mat-column-ClassEvalCategoryId
 {
     flex:1 1 120px;
 }
@@ -21,7 +25,6 @@ mat-cell:first-of-type {
 }
 .mat-column-DisplayOrder,
 .mat-column-MultipleAnswer,
-.mat-column-AnswerOptionId,
 .mat-column-ClassEvaluationId,
 .mat-column-Action,
 .mat-column-Active

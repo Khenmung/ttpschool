@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -41,7 +42,7 @@ export class TeacherAttendanceComponent implements OnInit {
   Teachers = [];
   WorkAccounts = [];
   SelectedBatchId = 0;
-  SelectedApplicationId = 0;  
+  SelectedApplicationId = 0;
   Batches = [];
   AttendanceStatus = [];
   Permission = 'deny';
@@ -57,7 +58,7 @@ export class TeacherAttendanceComponent implements OnInit {
     AttendanceId: 0,
     TeacherId: 0,
     AttendanceStatus: 0,
-    AttendanceDate: Date,
+    AttendanceDate: new Date(),
     Remarks: '',
     BatchId: 0,
     OrgId: 0
@@ -73,7 +74,7 @@ export class TeacherAttendanceComponent implements OnInit {
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private contentservice: ContentService,
     private datepipe: DatePipe
@@ -113,20 +114,22 @@ export class TeacherAttendanceComponent implements OnInit {
   }
 
   GetEmployeeAttendance() {
-    //debugger;
-
-    var _attendanceDate = this.searchForm.get("searchAttendanceDate").value;
+    debugger;
+    this.TeacherAttendanceList = [];
+    this.dataSource = new MatTableDataSource<any>(this.TeacherAttendanceList);
+    
+    var _attendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value);
     if (_attendanceDate == null) {
-      this.contentservice.openSnackBar("Please select attendance date.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select attendance date.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
- 
-    var attendancedate = new Date(this.searchForm.get("searchAttendanceDate").value);
-    attendancedate.setHours(0, 0, 0, 0);
-    var today = new Date(attendancedate);
+
+    //var attendancedate = new Date(this.searchForm.get("searchAttendanceDate").value);
+    _attendanceDate.setHours(0, 0, 0, 0);
+    var today = new Date();
     today.setHours(0, 0, 0, 0);
-    if (attendancedate.getTime() > today.getTime()) {
-      this.contentservice.openSnackBar("Attendance date cannot be greater than today's date", globalconstants.ActionText,globalconstants.RedBackground);
+    if (_attendanceDate.getTime() > today.getTime()) {
+      this.contentservice.openSnackBar("Attendance date cannot be greater than today's date", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else if (_attendanceDate.getTime() != today.getTime()) {
@@ -156,7 +159,7 @@ export class TeacherAttendanceComponent implements OnInit {
           })
         })
 
-
+        
         list = new List();
         list.fields = [
           "AttendanceId",
@@ -168,9 +171,10 @@ export class TeacherAttendanceComponent implements OnInit {
           "BatchId"
         ];
         list.PageName = "Attendances";
-        //list.lookupFields = ["EmpEmployee"];
-        list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          " and AttendanceDate eq " + this.datepipe.transform(attendancedate, 'yyyy-MM-dd')];
+        var datefilterStr = ' and AttendanceDate ge ' + moment(_attendanceDate).format('yyyy-MM-DD')
+        datefilterStr += ' and AttendanceDate lt ' + moment(_attendanceDate).add(1, 'day').format('yyyy-MM-DD')
+
+        list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + datefilterStr];
 
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
@@ -308,7 +312,7 @@ export class TeacherAttendanceComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);

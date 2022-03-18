@@ -14,8 +14,8 @@ import { ClassEvaluationOptionComponent } from '../classevaluationoption/classev
 
 @Component({
   selector: 'app-ClassEvaluation',
-  templateUrl: './ClassEvaluation.component.html',
-  styleUrls: ['./ClassEvaluation.component.scss']
+  templateUrl: './classevaluation.component.html',
+  styleUrls: ['./classevaluation.component.scss']
 })
 export class ClassEvaluationComponent implements OnInit {
   @ViewChild("table") mattable;

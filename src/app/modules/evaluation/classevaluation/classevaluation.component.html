@@ -94,7 +94,6 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header>Category
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-
                             <mat-form-field appearance="outline">
                                 <mat-select (selectionChange)="CategoryChanged(element)"
                                     [(ngModel)]="element.ClassEvalCategoryId" [value]="element.ClassEvalCategoryId">
@@ -116,21 +115,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </mat-cell>
-                    </ng-container>
-                    <!-- <ng-container matColumnDef="ClassId">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Class
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <mat-form-field appearance="outline">
-                                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassId"
-                                    [value]="element.ClassId">
-                                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
-                                        {{item.ClassName}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </mat-cell>
-                    </ng-container> -->
+                    </ng-container>                   
                     <ng-container matColumnDef="DisplayOrder">
                         <mat-header-cell *matHeaderCellDef mat-sort-header>Display Order
                         </mat-header-cell>

@@ -362,7 +362,7 @@ export class LeaveBalanceComponent implements OnInit {
         this.Natures = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
         this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
-        this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.CONFIGTYPE);
+        this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
 
         this.GetEmployees();
         this.GetLeavePolicy();

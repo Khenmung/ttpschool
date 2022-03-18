@@ -67,6 +67,7 @@ export class GradehistoryComponent implements OnInit {
   displayedColumns = [
     "Action",
     "Active",
+    "IsCurrent",
     "EmployeeGradeHistoryId",
     "EmpGradeId",
     "DesignationId",
@@ -74,7 +75,7 @@ export class GradehistoryComponent implements OnInit {
     "DepartmentId",
     "WorkAccountId",
     "ManagerName",
-    "ReportingToName",
+    "ReportingToName",   
     "FromDate",
     "ToDate",
     "Remarks",
@@ -156,6 +157,7 @@ export class GradehistoryComponent implements OnInit {
       JobTitleId: 0,
       DesignationId: 0,
       WorkAccountId: 0,
+      IsCurrent: 0,
       Remarks: '',
       Active: 0,
       Action: false
@@ -217,7 +219,7 @@ export class GradehistoryComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        debugger;
         if (data.value.length > 0) {
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
@@ -234,6 +236,7 @@ export class GradehistoryComponent implements OnInit {
           this.EmploymentHistoryData.ManagerId = +row.ManagerId;
           this.EmploymentHistoryData.ReportingTo = +row.ReportingTo;
           this.EmploymentHistoryData.WorkAccountId = +row.WorkAccountId;
+          this.EmploymentHistoryData.IsCurrent = +row.IsCurrent;
           
           this.EmploymentHistoryData.CTC = row.CTC;
           this.EmploymentHistoryData.FromDate = row.FromDate;
@@ -318,13 +321,17 @@ export class GradehistoryComponent implements OnInit {
           f.ManagerName = _ManagerName;
           return f;
         }).sort((a, b) => b.EmployeeGradeHistoryId - a.EmployeeGradeHistoryId)
-        //console.log("EmploymentHistoryList",this.EmploymentHistoryList)
+        console.log("EmploymentHistoryList1",this.EmploymentHistoryList)
         this.dataSource = new MatTableDataSource<IEmployeementHistory>(this.EmploymentHistoryList);
         this.loadingFalse();
       });
 
   }
-
+  updateIsCurrent(row,value)
+  {
+    row.Action =true;
+    row.IsCurrent =value.checked ? 1:0;
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)

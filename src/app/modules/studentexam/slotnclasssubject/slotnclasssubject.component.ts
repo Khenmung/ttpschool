@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -27,6 +27,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  DistinctExamDate = [];
   Permission = 'deny';
   StandardFilterWithBatchId = '';
   loading = false;
@@ -34,7 +35,8 @@ export class SlotnclasssubjectComponent implements OnInit {
   StoreForUpdate: ISlotNClassSubject[] = [];
   ClassWiseSubjectDisplay = [];
   SelectedBatchId = 0;
-  SelectedApplicationId =0;
+  SelectedApplicationId = 0;
+  AllSelectedSubjects = [];
   ExamSlots = [];
   Classes = [];
   Subjects = [];
@@ -42,8 +44,9 @@ export class SlotnclasssubjectComponent implements OnInit {
   SlotNames = [];
   Batches = [];
   ClassSubjectList = [];
+  Exams = [];
   ClassWiseDatasource: MatTableDataSource<any>[] = [];
-  dataSource: MatTableDataSource<ISlotNClassSubject>;
+  dataSource: MatTableDataSource<any>;
   allMasterData = [];
   rowCount = 0;
   ExamId = 0;
@@ -55,14 +58,17 @@ export class SlotnclasssubjectComponent implements OnInit {
     BatchId: 0,
     Active: 0
   };
-  displayedColumns = [[]];
+  SelectedExamSlots = [];
+  displayedColumns = [
+    "ClassName",
+    "SlotClassSubjectId",
+    "Action"
+  ];
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
-    private dcr: ChangeDetectorRef,
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
@@ -73,19 +79,16 @@ export class SlotnclasssubjectComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchSlotId: [0],
-      searchClassId: [0],
+      searchExamId: [0],
       searchSubjectId: [0],
     });
     this.PageLoad();
   }
-  //   ngAfterContentChecked(){
-  //   this.dcr.detectChanges();
-  // }
   PageLoad() {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
- 
+
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
@@ -102,19 +105,26 @@ export class SlotnclasssubjectComponent implements OnInit {
       }
     }
   }
-
-  updateActive(row, value, selectedSubjectname) {
+  public trackItem(index: number, item: any) {
+    return item.ClassName;
+  }
+  updateActive(item, value, selectedSubjectname) {
     debugger;
-    row.Action = true;
-    var item = this.ClassWiseSubjectDisplay.filter(f => f.ClassName == row.ClassName);
-    if (value.checked)
-      item[0][selectedSubjectname] = 1
-    else
-      item[0][selectedSubjectname] = 0;
-    // item[0]["Action"] = true;
-    //this.dcr.detectChanges();
-    //this.dataSource = new MatTableDataSource(this.ClassWiseSubjectDisplay);
-    //return true;
+    this.ClassWiseSubjectDisplay.filter(f => {
+      if (f.ClassName == item.ClassName) {
+        f.Subject.forEach(sub => {
+          if (sub.SubjectName == selectedSubjectname) {
+            if (value.source._checked)
+              sub.value = 1;
+          }
+          else {
+            sub.value = 0;
+          }
+        })
+      }
+    })
+
+    item.Action = true;
   }
   delete(element) {
     let toupdate = {
@@ -124,7 +134,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -132,21 +142,43 @@ export class SlotnclasssubjectComponent implements OnInit {
     this.loading = false;
   }
 
-  UpdateOrSave(row) {
-
+  Save(row) {
+    this.DataToUpdateCount = 0;
+    this.UpdateOrSave(row);
+  }
+  SaveRow(element) {
+    debugger;
     this.loading = true;
 
-    // var duplicate = this.StoreForUpdate.filter(s => s.SlotId == row.SlotId
-    //   && s.ClassSubjectId == row.ClassSubjectId
-    //   && s.SlotClassSubjectId != row.SlotClassSubjectId)
-    // if (duplicate.length > 0) {
-    //   this.loadingFalse();
-    //   this.contentservice.openSnackBar("Two subjects of one class cannot be assigned in the same slot.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
-    let checkFilterString = "SlotId eq " + this.searchForm.get("searchSlotId").value +
-      " and ClassSubjectId eq " + row.ClassSubjectId;
+    var classSujects = this.StoreForUpdate.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value
+      && s.ClassName.toLowerCase() == element.ClassName.toLowerCase());
 
+    this.DataToUpdateCount = 0;
+
+    Object.keys(element).forEach(subjectname => {
+      var subjectdetail = classSujects.filter(f => f.Subject == subjectname)
+
+      subjectdetail.forEach(row => {
+        row.Active = element[subjectname];
+        this.UpdateOrSave(row);
+      })
+      if (subjectdetail.length == 0) {
+        this.loading = false;
+      }
+      element.Action = false;
+    })
+  }
+  UpdateOrSave(row) {
+    //console.log("row", row)
+    this.loading = true;
+
+    var subobject = row.Subject.filter(sub => sub.value == 1)
+    if (subobject.length > 0)
+      row.SelectedSubject = subobject[0];
+    else
+      row.Subject = {};
+    let checkFilterString = "SlotId eq " + this.searchForm.get("searchSlotId").value +
+      " and ClassSubjectId eq " + row.SelectedSubject.ClassSubjectId;
 
     if (row.SlotClassSubjectId > 0)
       checkFilterString += " and SlotClassSubjectId ne " + row.SlotClassSubjectId;
@@ -160,18 +192,17 @@ export class SlotnclasssubjectComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        if (data.value.length > 0) {
+        if (data.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.SlotNClassSubjectData.SlotClassSubjectId = row.SlotClassSubjectId;
           this.SlotNClassSubjectData.SlotId = this.searchForm.get("searchSlotId").value;
-          this.SlotNClassSubjectData.Active = row.Active;
-          this.SlotNClassSubjectData.ClassSubjectId = row.ClassSubjectId;
+          this.SlotNClassSubjectData.Active = 1;
+          this.SlotNClassSubjectData.ClassSubjectId = row.SelectedSubject.ClassSubjectId;
           this.SlotNClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.SlotNClassSubjectData.BatchId = this.SelectedBatchId;
-          ////console.log('data', this.ClassSubjectData);
           if (this.SlotNClassSubjectData.SlotClassSubjectId == 0) {
             this.SlotNClassSubjectData["CreatedDate"] = new Date();
             this.SlotNClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -203,6 +234,10 @@ export class SlotnclasssubjectComponent implements OnInit {
             this.DataToUpdateCount = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
+        }, err => {
+          this.loadingFalse();
+          console.log("slot and subject insert", err);
+          this.contentservice.openSnackBar(globalconstants.SomethingWentWrong, globalconstants.ActionText, globalconstants.RedBackground);
         });
   }
   update(row) {
@@ -214,8 +249,12 @@ export class SlotnclasssubjectComponent implements OnInit {
           row.Action = false;
           if (this.DataToUpdateCount == 0) {
             this.DataToUpdateCount = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
+        }, err => {
+          this.loadingFalse();
+          console.log("slot and subject update", err);
+          this.contentservice.openSnackBar(globalconstants.SomethingWentWrong, globalconstants.ActionText, globalconstants.RedBackground);
         });
   }
   onBlur(element) {
@@ -257,7 +296,56 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.loading = false;
       });
   }
+  GetExams() {
 
+    //var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+
+    let list: List = new List();
+
+    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate",
+      "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
+    list.PageName = "Exams";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and BatchId eq " + this.SelectedBatchId];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //this.Exams = [...data.value];
+        this.Exams = this.ExamNames.map(e => {
+          let existing = data.value.filter(db => db.ExamNameId == e.MasterDataId);
+          if (existing.length > 0) {
+            existing[0].ExamName = this.ExamNames.filter(f => f.MasterDataId == existing[0].ExamNameId)[0].MasterDataName;
+            existing[0].Action = false;
+            return existing[0];
+          }
+          else {
+            return {
+              ExamId: 0,
+              ExamNameId: e.MasterDataId,
+              ExamName: e.MasterDataName,
+              StartDate: new Date(),
+              EndDate: new Date(),
+              ReleaseResult: 0,
+              ReleaseDate: null,
+              OrgId: 0,
+              //BatchId: 0,
+              Active: 0,
+              Action: false
+            }
+          }
+        })
+        ////console.log('this', this.Exams)
+        this.Exams.sort((a, b) => {
+          return this.getTime(a.StartDate) - this.getTime(b.StartDate)
+        })
+        this.loading = false;
+      })
+  }
+  private getTime(date?: Date) {
+    var std = new Date(date);
+    return std != null ? std.getTime() : 0;
+  }
   GetExamSlots() {
 
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -265,7 +353,8 @@ export class SlotnclasssubjectComponent implements OnInit {
     //filterstr = " and ExamDate ge datetime'" + new Date().toISOString() + "'";
     this.loading = true;
     let list: List = new List();
-    list.fields = ["ExamSlotId",
+    list.fields = [
+      "ExamSlotId",
       "ExamId",
       "SlotNameId",
       "ExamDate",
@@ -289,27 +378,55 @@ export class SlotnclasssubjectComponent implements OnInit {
           if (exams.length > 0)
             _examname = exams[0].MasterDataName;
           return {
-            SlotId: s.ExamSlotId,
-            ExamDate: new Date(s.ExamDate),
-            SlotName: _examname + " - " + this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - (" + s.StartTime + " - " + s.EndTime + ") - " + this.SlotNames.filter(n => n.MasterDataId == s.SlotNameId)[0].MasterDataName
+            ExamId: s.ExamId,
+            ExamSlotId: s.ExamSlotId,
+            ExamDate: this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy'),
+            ExamDateDetail: this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - (" + s.StartTime + " - " + s.EndTime + ")"
 
           }
         })
-        this.ExamSlots = result.sort((a, b) => a.ExamDate.getTime() - b.ExamDate.getTime())
+        this.ExamSlots = [...result];//.sort((a, b) => a.ExamDate.getTime() - b.ExamDate.getTime())
+        //this.DistinctExamDate = alasql("select DISTINCT ExamId,ExamDate,ExamDateDetail from ? group by ExamId,ExamDate,ExamDateDetail",[result]);        
+        //console.log("this.DistinctExamDate",this.DistinctExamDate)
+      })
+  }
+  GetSelectedExamSlot() {
+    this.SelectedExamSlots = this.ExamSlots.filter(f => f.ExamId == this.searchForm.get("searchExamId").value);
+    this.GetSelectedSubjectsForSelectedExam();
+  }
+  GetSelectedSubjectsForSelectedExam() {
 
+    var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
+    filterstr += ' and ExamId eq ' + this.searchForm.get("searchExamId").value;
+
+    let list: List = new List();
+    list.fields = [
+      "ExamId",
+      "SlotNameId"
+    ];
+    list.PageName = "Examslots";
+    list.filter = [filterstr];
+    list.lookupFields = ["SlotAndClassSubjects($select=SlotId,ClassSubjectId)"];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.AllSelectedSubjects = data.value.map(m => {
+          m.SlotName = this.SlotNames.filter(name => name.MasterDataId == m.SlotNameId);
+          return m;
+        });
+        //console.log("all",this.AllSelectedSubjects)
       })
   }
   GetSlotNClassSubjects() {
 
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    var filterstr = 'Active eq 1';
     if (this.searchForm.get("searchSlotId").value == 0) {
-      this.contentservice.openSnackBar("Please select exam slot", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select exam slot", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
-    filterstr = 'SlotId eq ' + this.searchForm.get("searchSlotId").value;
+    filterstr += ' and SlotId eq ' + this.searchForm.get("searchSlotId").value;
 
     let list: List = new List();
     list.fields = [
@@ -326,29 +443,37 @@ export class SlotnclasssubjectComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        ////console.log("data", data);
-        //var _MaxSubjectCount = 0;
-        //this.displayedColumns = ["ClassName"];
         this.StoreForUpdate = [];
         this.Classes.forEach(cls => {
           this.ClassWiseSubjectDisplay.push({
             ClassName: cls.ClassName,
-            //ClassId: cls.ClassId
+            Subject: []
           });
         })
-        debugger;
-        this.ClassWiseSubjectDisplay.forEach(displayrow => {
 
-          var _currentClassSubjectlist = this.ClassSubjectList.filter(f => f.ClassName == displayrow.ClassName).sort((a, b) => a.Subject - b.Subject);
+        this.ClassWiseSubjectDisplay.forEach(displayrow => {
+          displayrow["Subject"] = [];
+          displayrow["SlotClassSubjectId"] = 0;
+          var _currentClassSubjectlist = this.ClassSubjectList.filter(f => f.ClassName == displayrow.ClassName)
+            .sort((a, b) => a.Subject - b.Subject);
           _currentClassSubjectlist.forEach((clssub) => {
 
             let existing = data.value.filter(db => db.ClassSubjectId == clssub.ClassSubjectId);
+
             if (existing.length > 0) {
-              displayrow[clssub.Subject] = +existing[0].Active;
+              displayrow["SlotClassSubjectId"] = existing[0].SlotClassSubjectId;
+              displayrow["Subject"].push(
+                {
+                  ClassSubjectId: existing[0].ClassSubjectId,
+                  SubjectName: clssub.Subject,
+                  value: 1
+                });
+              // displayrow["Subject"][clssub.Subject] = +existing[0].Active;
+              //displayrow['Selected'] = selected;
               this.StoreForUpdate.push({
                 SlotClassSubjectId: existing[0].SlotClassSubjectId,
                 SlotId: existing[0].SlotId,
-                Slot: this.ExamSlots.filter(s => s.SlotId == existing[0].SlotId)[0].SlotName,
+                Slot: this.ExamSlots.filter(s => s.ExamSlotId == existing[0].SlotId)[0].ExamSlotName,
                 ClassSubjectId: existing[0].ClassSubjectId,
                 ClassSubject: clssub.ClassSubject,
                 Subject: clssub.Subject,
@@ -360,11 +485,24 @@ export class SlotnclasssubjectComponent implements OnInit {
               });
             }
             else {
-              displayrow[clssub.Subject] = +0;
+              var selected = 0;
+              let existingsubject = this.AllSelectedSubjects
+                .filter(f => f.SlotAndClassSubjects.filter(c => c.ClassSubjectId == clssub.ClassSubjectId).length > 0)
+              if (existingsubject.length > 0)
+                selected = 2;
+              // else
+              //displayrow["SlotClassSubjectId"] = displayrow["SlotClassSubjectId"]==;
+              displayrow["Subject"].push(
+                {
+                  ClassSubjectId: clssub.ClassSubjectId,
+                  SubjectName: clssub.Subject,
+                  value: selected
+                });
+
               this.StoreForUpdate.push({
                 SlotClassSubjectId: 0,
                 SlotId: this.searchForm.get("searchSlotId").value,
-                Slot: this.ExamSlots.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value)[0].SlotName,
+                Slot: this.ExamSlots.filter(s => s.ExamSlotId == this.searchForm.get("searchSlotId").value)[0].ExamSlotName,
                 ClassSubjectId: clssub.ClassSubjectId,
                 ClassSubject: clssub.ClassSubject,
                 Subject: clssub.Subject,
@@ -379,10 +517,10 @@ export class SlotnclasssubjectComponent implements OnInit {
           displayrow["Action"] = false;
         })
         if (this.StoreForUpdate.length == 0) {
-          this.contentservice.openSnackBar("No record found! Subject not defined in class subject module.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No record found! Subject not defined in class subject module.", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        //console.log('this', this.ClassWiseSubjectDisplay)
-        //this.dataSource = new MatTableDataSource<ISlotNClassSubject>(this.ClassWiseDatasource);
+        console.log('ClassWiseSubjectDisplay', this.ClassWiseSubjectDisplay)
+        this.dataSource = new MatTableDataSource<any>(this.ClassWiseSubjectDisplay);
         this.loading = false;
       })
   }
@@ -409,32 +547,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       this.SaveRow(element);
     })
   }
-  Save(row) {
-    this.DataToUpdateCount = 0;
-    this.UpdateOrSave(row);
-  }
-  SaveRow(element) {
-    debugger;
-    this.loading = true;
 
-    var classSujects = this.StoreForUpdate.filter(s => s.SlotId == this.searchForm.get("searchSlotId").value
-      && s.ClassName.toLowerCase() == element.ClassName.toLowerCase());
-
-    this.DataToUpdateCount = 0;
-
-    Object.keys(element).forEach(subjectname => {
-      var subjectdetail = classSujects.filter(f => f.Subject == subjectname)
-      
-      subjectdetail.forEach(row => {
-        row.Active = element[subjectname];
-        this.UpdateOrSave(row);
-      })
-      if (subjectdetail.length == 0) {
-        this.loading = false;
-      }
-      element.Action = false;
-    })
-  }
 
   IsEquivalent(a, b) {
     // Create arrays of property names
@@ -463,7 +576,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);
@@ -472,6 +585,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
+          this.GetExams();
           this.GetExamSlots();
           this.GetClassSubject();
         })

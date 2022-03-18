@@ -3,13 +3,16 @@ button {
     margin-right: 15px;
 }
 
-button {
-    margin-right: 15px;
-}
-
+//mat-header-cell:first-of-type,
 mat-cell:first-of-type {
     padding-left: 0px;
 }
 .mat-column-Action{
-    justify-content: center;
+    flex:1 1 100px
+}
+.mat-column-Subject{
+    flex:1 1 500px
+}
+.mat-column-ClassName{
+    flex:1 1 100px
 }

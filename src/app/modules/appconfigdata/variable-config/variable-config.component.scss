@@ -1,7 +1,15 @@
-.mat-column-Active{
-    display: flex;
-    justify-content: center;
+mat-form-field{
+    padding-right: 15px;
+    width: 98%;
 }
-.mat-form-field{
-    margin-right: 15px;
+.mat-column-VariableName,
+.mat-column-VariableDescription,
+.mat-column-VariableFormula,
+.mat-column-VariableAmount,
+.mat-column-DisplayOrder
+{
+    flex:1 1 150px;
+}
+.mat-column-Active,.mat-column-Action{
+    flex: 1 1 150px;
 }

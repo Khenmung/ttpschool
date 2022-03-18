@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -178,7 +179,7 @@ export class StudentAttendanceComponent implements OnInit {
     }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
+    
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
@@ -218,8 +219,9 @@ export class StudentAttendanceComponent implements OnInit {
             StudentRollNo: item.Student.FirstName + " " + item.Student.LastName + "-" + item.RollNo
           }
         })
-        var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-
+        //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+        var datefilterStr = ' and AttendanceDate ge ' + moment(_AttendanceDate).format('yyyy-MM-DD')
+        datefilterStr += ' and AttendanceDate lt ' + moment(_AttendanceDate).add(1,'day').format('yyyy-MM-DD')
         let list: List = new List();
         list.fields = [
           "AttendanceId",
@@ -234,7 +236,7 @@ export class StudentAttendanceComponent implements OnInit {
         list.PageName = "Attendances";
         //list.lookupFields = ["StudentClass"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          " and AttendanceDate eq " + date + "" + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
+        datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
