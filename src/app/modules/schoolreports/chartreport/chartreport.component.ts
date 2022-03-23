@@ -174,9 +174,9 @@ export class ChartReportComponent {
 
         var noofUnpaid = studentCount - paymentcount;
         this.pieChartLabels = ['Payment %', 'Non-payment %']
-        var PaymentPercent = (paymentcount * 100) / studentCount
-        var NonPaymentPercent = (noofUnpaid * 100) / studentCount
-        this.pieChartData = [PaymentPercent, NonPaymentPercent];
+        var PaymentPercent = ((paymentcount * 100) / studentCount).toFixed(2);
+        var NonPaymentPercent = ((noofUnpaid * 100) / studentCount).toFixed(2)
+        this.pieChartData = [+PaymentPercent, +NonPaymentPercent];
         this.loading = false;
       })
   }

@@ -14,8 +14,9 @@ button{
 }
 .mat-column-Active{
     justify-content: center;
-    flex:0 0 100px;
+    flex:1 1 100px;
 }
-.mat-column-Action,.mat-column-SubjectTypeName{
+.mat-column-Action,
+.mat-column-SubjectTypeName{
     flex:1 1 150px;
 }

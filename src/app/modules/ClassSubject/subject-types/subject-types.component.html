@@ -45,14 +45,15 @@
                     (click)="addnew()">
                     <mat-icon>add</mat-icon>
                 </button>&nbsp;
-                <!-- <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button" (click)="CopyFromPreviousBatch()">
-                    <mat-icon>copy_all</mat-icon>
-                </button><br> -->
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                 <button [disabled]="loading || !element.Action || Permission=='Read'" matTooltip="save"
                     mat-mini-fab (click)="UpdateOrSave(element)">
                     <mat-icon>save</mat-icon>
+                </button>
+                <button [disabled]="loading || !element.Action || Permission!='rwd'" matTooltip="delete"
+                    mat-mini-fab (click)="openDialog(element)">
+                    <mat-icon>delete</mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

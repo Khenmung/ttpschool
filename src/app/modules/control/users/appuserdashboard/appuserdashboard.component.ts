@@ -327,6 +327,27 @@ export class AppuserdashboardComponent implements OnInit {
       }
     );
   }
+  // Delete(row) {
+  //   this.contentservice.openDialog({},0)
+  //     .subscribe((confirmed: boolean) => {
+  //       if (confirmed) {
+  //         this.contentservice.SoftDelete('AuthManagement',{}, row.MasterDataId)
+  //           .subscribe((data: any) => {
+  //             row.Action = false;
+  //             this.loading = false;
+  //             var idx = this.AppUsers.findIndex(x => x.MasterDataId == row.MasterDataId)
+  //             this.AppUsers.splice(idx, 1);
+  //             this.datasource = new MatTableDataSource<any>(this.AppUsers);
+  //             this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+  //           },
+  //             err => {
+  //               this.contentservice.openSnackBar("error in data deletion: " + err, globalconstants.ActionText, globalconstants.RedBackground);
+  //             }
+  //           )
+  //       }
+
+  //     });
+  // }
   UpdateOrSave(row) {
     //debugger;
 

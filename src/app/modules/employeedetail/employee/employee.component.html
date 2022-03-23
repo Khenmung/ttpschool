@@ -144,11 +144,11 @@
             </mat-grid-list>
 
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="save"
+                <button [disabled]="loading" *ngIf="selectedIndex>0" (click)="previousStep()" matTooltip="previous"
                     mat-raised-button>
                     <mat-icon>navigate_before</mat-icon>
                 </button>                
-                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" matTooltip="save"
+                <button [disabled]="loading" *ngIf="selectedIndex<4" (click)="nextStep()" matTooltip="next"
                     mat-raised-button>
                     <mat-icon>navigate_next</mat-icon>
                 </button>
@@ -291,7 +291,7 @@
                     <mat-icon>navigate_next</mat-icon>
                 </button>
                 <button [disabled]="loading || Permission=='read'" (click)="SaveOrUpdate()" matTooltip="save"
-                    mat-raised-button>
+                    mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>

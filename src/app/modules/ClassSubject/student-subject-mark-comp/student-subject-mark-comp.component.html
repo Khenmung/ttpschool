@@ -78,10 +78,15 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading || Permission=='read'" *ngIf="ELEMENT_DATA.length>0" matTooltip="save all" mat-mini-fab
+                        (click)="SaveAll()">
+                        <mat-icon>all_out</mat-icon>
+                    </button>
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <button [disabled]="loading || !element.Action || Permission == 'read'" matTooltip="save"
-                        mat-mini-fab (click)="UpdateOrSave(element)">
+                        mat-mini-fab (click)="Save(element)">
                         <mat-icon>save</mat-icon>
                     </button>
                 </mat-cell>

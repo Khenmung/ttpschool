@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -16,14 +18,6 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class SubjectTypesComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   CheckBatchIdForEdit = 1;
   StandardFilterWithBatchId = '';
   loading = false;
@@ -42,9 +36,9 @@ export class SubjectTypesComponent implements OnInit {
     SubjectTypeId: 0,
     SubjectTypeName: '',
     OrgId: 0,
-    BatchId: 0,
     SelectHowMany: 0,
-    Active: 1
+    Active: 1,
+    Deleted:0,
   };
   displayedColumns = [
     'SubjectTypeId',
@@ -58,7 +52,7 @@ export class SubjectTypesComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+    private dialog: MatDialog,
     private contentservice: ContentService,
     private nav: Router,
     private shareddata: SharedataService,
@@ -112,9 +106,9 @@ export class SubjectTypesComponent implements OnInit {
       SubjectTypeId: 0,
       SubjectTypeName: 'new subject type',
       OrgId: 0,
-      BatchId: 0,
       SelectHowMany: 0,
       Active: 1,
+      Deleted:0,
       Action: false
     };
     this.SubjectTypes.push(toadd);
@@ -126,18 +120,20 @@ export class SubjectTypesComponent implements OnInit {
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
   }
-  delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-
-        });
-  }
+  // delete(element) {
+  //   debugger;
+  //   this.openDialog(element)
+  //   let toupdate = {
+  //     Active:0,
+  //     Deleted: true,
+  //     UpdatedDate:new Date()
+  //   }
+  //   this.dataservice.postPatch('SubjectTypes', toupdate, element.SubjectTypeId, 'patch')
+  //     .subscribe(
+  //       (data: any) => {
+  //         this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+  //       });
+  // }
   UpdateOrSave(row) {
 
     //debugger;
@@ -149,18 +145,18 @@ export class SubjectTypesComponent implements OnInit {
     if (row.SubjectTypeId > 0)
       checkFilterString += " and SubjectTypeId ne " + row.SubjectTypeId;
 
-    this.StandardFilterWithBatchId += checkFilterString;
+    //this.StandardFilterWithBatchId += checkFilterString;
     let list: List = new List();
     list.fields = ["SubjectTypeId"];
     list.PageName = "SubjectTypes";
-    list.filter = [this.StandardFilterWithBatchId];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + checkFilterString];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
 
@@ -169,8 +165,7 @@ export class SubjectTypesComponent implements OnInit {
           this.SubjectTypeData.SubjectTypeId = row.SubjectTypeId;
           this.SubjectTypeData.SelectHowMany = row.SelectHowMany;
           this.SubjectTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          //this.SubjectTypeData.BatchId = this.SelectedBatchId;
-          ////console.log('data', this.ClassSubjectData);
+          this.SubjectTypeData.Deleted = 0;
           if (this.SubjectTypeData.SubjectTypeId == 0) {
             this.SubjectTypeData["CreatedDate"] = new Date();
             this.SubjectTypeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -212,13 +207,48 @@ export class SubjectTypesComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch('SubjectTypes', toUpdate, row.SubjectTypeId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false;
+        var idx = this.SubjectTypes.findIndex(x => x.SubjectTypeId == row.MasterDataId)
+        this.SubjectTypes.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.SubjectTypes);
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
   GetSubjectTypes() {
 
     var orgIdSearchstr = 'OrgId eq ' +  this.LoginUserDetail[0]["orgId"];
-    // if (previousbatch == 1)
-    //   orgIdSearchstr = this.StandardFilterWithPreviousBatchId;
-    // else
-    //   orgIdSearchstr = this.StandardFilterWithBatchId;
 
     let list: List = new List();
 
@@ -274,6 +304,5 @@ export interface ISubjectType {
   SelectHowMany: number;
   SubjectTypeId: number;
   OrgId: number;
-  BatchId: number;
   Active: number;
 }

@@ -46,7 +46,9 @@
                         [value]="cell.ClassSubjectId"
                         (change)="updateActive(element,$event,cell.SubjectName)" 
                         [checked]="cell.value===1"
-                        [disabled]="cell.value===2">
+                        [disabled]="cell.value===2"
+                        [matTooltip]="cell.Tooltip"
+                        >
                         {{cell.SubjectName}}
                     </mat-radio-button>
                 </mat-radio-group>
@@ -54,7 +56,8 @@
         </ng-container>        
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                <button [disabled]="loading" matTooltip="save all" *ngIf="ClassWiseSubjectDisplay.length>0"
+                     mat-mini-fab (click)="SaveAll()">
                     <mat-icon>all_out</mat-icon>
                 </button>
             </mat-header-cell>

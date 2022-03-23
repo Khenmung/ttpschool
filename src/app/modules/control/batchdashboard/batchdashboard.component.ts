@@ -92,7 +92,7 @@ export class BatchdashboardComponent implements OnInit {
     row.Action = true;
   }
   GetBatches() {
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     if (filterStr.length == 0) {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);

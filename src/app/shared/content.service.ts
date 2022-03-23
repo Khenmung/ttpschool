@@ -6,6 +6,9 @@ import { NaomitsuService } from './databaseService';
 import { List } from './interface';
 import { TokenStorageService } from '../_services/token-storage.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from './components/mat-confirm-dialog/mat-confirm-dialog.component';
+import { observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
@@ -18,10 +21,11 @@ export class ContentService implements OnInit {
   url: any;
   SelectedApplicationId = 0;
   constructor(
+    private dialog: MatDialog,
     private tokenService: TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
-    private snackbar:MatSnackBar
+    private snackbar: MatSnackBar
   ) { }
   ngOnInit(): void {
     //debugger;
@@ -29,7 +33,7 @@ export class ContentService implements OnInit {
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
 
   }
-  openSnackBar(message: string, action: string, option:{}) {
+  openSnackBar(message: string, action: string, option: {}) {
     this.snackbar.open(message, action, option);
   }
   AddUpdateContent(pagecontent: any) {
@@ -51,10 +55,10 @@ export class ContentService implements OnInit {
     list.PageName = "ClassMasters";
     return this.dataservice.get(list);
   }
-  GetFeeDefinitions(orgId,active) {
+  GetFeeDefinitions(orgId, active) {
     //Fee definition is not batch wise.      
     //let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;
-    var activefilter = active==1? ' and Active eq 1':'';
+    var activefilter = active == 1 ? ' and Active eq 1' : '';
     let filterStr = 'OrgId eq ' + orgId + activefilter;
     let list: List = new List();
     list.fields = [
@@ -108,7 +112,7 @@ export class ContentService implements OnInit {
 
     var _StartYear = new Date(_sessionStartEnd["StartDate"]).getFullYear();
     var _EndYear = new Date(_sessionStartEnd["EndDate"]).getFullYear();
-    var startMonth = new Date(_sessionStartEnd["StartDate"]).getMonth() + 1;
+    var startMonth = new Date(_sessionStartEnd["StartDate"]).getMonth();
 
     for (var month = 0; month < 12; month++, startMonth++) {
       monthArray.push({
@@ -233,6 +237,32 @@ export class ContentService implements OnInit {
         }
       })
   }
+  // openDialog(model, Id) {
+  //   debugger;
+  //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+  //     data: {
+  //       message: 'Are you sure want to delete?',
+  //       buttonText: {
+  //         ok: 'Save',
+  //         cancel: 'No'
+  //       }
+  //     }
+  //   });
+
+  //   dialogRef.afterClosed()
+  //     .subscribe((confirmed: boolean) => {
+  //       if (confirmed) {
+  //         var toDelete = {
+  //           Active: 0,
+  //           Deleted: true,
+  //           UpdatedDate: new Date()
+  //         }
+  //         return this.dataservice.postPatch(model, toDelete, Id, 'patch');
+  //       }
+  //       else
+  //         return null;
+  //     });
+  // }
 
   private GetMasterData(UserRole) {
     var applicationtext = globalconstants.MasterDefinitions.ttpapps.bang;
@@ -365,6 +395,7 @@ export class ContentService implements OnInit {
       appId = commonAppobj[0].applicationId;
     return appId;
   }
+
   GetCommonMasterData(orgId, appIds) {
     var applicationparam = '';
     (appIds + "").split(',').forEach(id => {

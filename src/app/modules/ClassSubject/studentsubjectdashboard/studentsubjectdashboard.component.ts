@@ -195,7 +195,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   }
   GetExistingStudentClassSubjects(ParamstudentClassExisting) {
 
-    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    var orgIdSearchstr =  "OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
     orgIdSearchstr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
     //orgIdSearchstr += ' and SectionId eq ' + this.searchForm.get("searchSectionId").value;
@@ -385,7 +385,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   }
   GetClassSubjects() {
 
-    var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+    //var orgIdSearchstr = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
     //orgIdSearchstr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
 
@@ -400,7 +400,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     list.PageName = "ClassSubjects";
     list.lookupFields = ["SubjectType($select=SubjectTypeName,SelectHowMany)"];
 
-    list.filter = ["Active eq 1 and " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     //list.orderBy = "ParentId";
     this.ClassSubjectList = [];
     this.dataservice.get(list)

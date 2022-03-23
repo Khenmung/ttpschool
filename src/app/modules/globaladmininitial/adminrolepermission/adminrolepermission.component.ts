@@ -76,14 +76,6 @@ export class AdminrolepermissionComponent implements OnInit {
   enableTopEdit = false;
   loading: boolean = false;
   error: string = '';
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  optionNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
   Applications = [];
   //CustomerApplications = [];
   searchForm = this.fb.group(

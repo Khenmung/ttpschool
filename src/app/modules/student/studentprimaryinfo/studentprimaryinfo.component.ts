@@ -35,7 +35,7 @@ export class studentprimaryinfoComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedBatchId=0;
+  SelectedBatchId = 0;
   SelectedApplicationId = 0;
   loginUserDetail = [];
   StudentLeaving = false;
@@ -86,7 +86,7 @@ export class studentprimaryinfoComponent implements OnInit {
     this.selectedFile = files[0];
     if (this.selectedFile.size > 60000) {
       this.loading = false;
-      this.contentservice.openSnackBar("Image size should be less than 80kb",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var reader = new FileReader();
@@ -100,10 +100,9 @@ export class studentprimaryinfoComponent implements OnInit {
     debugger;
     let error: boolean = false;
     this.loading = true;
-    if(this.selectedFile==undefined)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select a file.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (this.selectedFile == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.formdata = new FormData();
@@ -134,7 +133,7 @@ export class studentprimaryinfoComponent implements OnInit {
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.loading = false;
-      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
+      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
 
       this.Edit = false;
     });
@@ -174,7 +173,7 @@ export class studentprimaryinfoComponent implements OnInit {
       MICRNo: [''],
       AadharNo: [''],
       Photo: [''],
-      Religion: [0,[Validators.required]],
+      Religion: [0, [Validators.required]],
       ContactNo: [''],
       WhatsAppNumber: [''],
       FatherContactNo: [''],
@@ -185,7 +184,7 @@ export class studentprimaryinfoComponent implements OnInit {
       ContactPersonContactNo: [''],
       AlternateContact: [''],
       EmailAddress: [''],
-      ClassAdmissionSought: [0,[Validators.required]],
+      ClassAdmissionSought: [0, [Validators.required]],
       LastSchoolPercentage: [''],
       TransferFromSchool: [''],
       TransferFromSchoolBoard: [''],
@@ -352,13 +351,13 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     if (errorMessage.length > 0) {
       this.loading = false;
-      this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
-    this.studentData =[];
+    this.studentData = [];
     this.studentData.push({
-      StudentId:this.StudentId,
+      StudentId: this.StudentId,
       FirstName: this.studentForm.get("FirstName").value,
       LastName: this.studentForm.get("LastName").value,
       FatherName: this.studentForm.get("FatherName").value,
@@ -395,7 +394,7 @@ export class studentprimaryinfoComponent implements OnInit {
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
       OrgId: this.loginUserDetail[0]["orgId"],
-      BatchId:this.tokenService.getSelectedBatchId()
+      BatchId: this.tokenService.getSelectedBatchId()
     });
     debugger;
     console.log("studentData", this.studentData)
@@ -416,12 +415,17 @@ export class studentprimaryinfoComponent implements OnInit {
             StudentId: result.StudentId
           })
           this.StudentId = result.StudentId;
-          this.StudentClassId =this.studentForm.get("ClassAdmissionSought").value;
+          if (result != null && result.UserId != "")
+            this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
+          else
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+          this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
           this.loading = false;
-          this.tokenService.saveStudentId(this.StudentId+"")
-          this.tokenService.saveStudentClassId(this.StudentClassId+"");
+          this.tokenService.saveStudentId(this.StudentId + "")
+          this.tokenService.saveStudentClassId(this.StudentClassId + "");
           this.GetStudent();
-          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+
 
         }
 
@@ -432,9 +436,11 @@ export class studentprimaryinfoComponent implements OnInit {
 
     this.dataservice.postPatch('Students', this.studentData[0], this.StudentId, 'patch')
       .subscribe((result: any) => {
-        //if (result.value.length > 0 )
         this.loading = false;
-        this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+        if (result != null && result.UserId != "")
+          this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
+        else
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
       })
   }
   adjustDateForTimeOffset(dateToAdjust) {
@@ -448,7 +454,7 @@ export class studentprimaryinfoComponent implements OnInit {
     let list: List = new List();
     list.fields = ["*"];//"StudentId", "Name", "FatherName", "MotherName", "FatherContactNo", "MotherContactNo", "Active"];
     list.PageName = "Students";
-    list.lookupFields = ["StudentClasses($filter=BatchId eq "+ this.SelectedBatchId + ";$select=StudentClassId,StudentId),StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId),StorageFnPs($select=FileId,FileName;$filter=StudentId eq " + this.StudentId + ")"]
     list.filter = ["StudentId eq " + this.StudentId];
 
     debugger;
@@ -513,13 +519,13 @@ export class studentprimaryinfoComponent implements OnInit {
           })
         }
         else {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
 
         }
         this.loading = false;
       },
-      err=>{
-        console.log("error",err)
-      });
+        err => {
+          console.log("error", err)
+        });
   }
 }

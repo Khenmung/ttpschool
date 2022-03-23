@@ -98,8 +98,12 @@
                     <mat-header-cell *matHeaderCellDef>                        
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading || Permission=='read' || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || Permission=='read' 
+                                                    || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon matTooltip="save">save</mat-icon>
+                        </button>
+                        <button [disabled]="loading || Permission!='rwd' || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon matTooltip="delete">delete</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>

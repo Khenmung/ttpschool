@@ -29,7 +29,9 @@ export class TokenStorageService {
   constructor() { }
 
   signOut(): void {
+    var username = localStorage.getItem("username");
     localStorage.clear();
+    localStorage.setItem("username",username);
   }
 
   

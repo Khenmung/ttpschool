@@ -128,7 +128,7 @@ export class EvaluationComponent implements OnInit {
     list.PageName = "ClassSubjects";
     list.fields = ["ClassSubjectId,ClassId,SubjectId"];
     list.lookupFields = ["ClassMaster($select=ClassId,ClassName)"];
-    list.filter = ['Active eq 1'];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassSubjects = data.value.map(m => {

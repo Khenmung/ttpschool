@@ -4,7 +4,7 @@
 <mat-card>
     <mat-card-title style="margin:30px 0px 0px 30px;">Login</mat-card-title>
     <mat-card-content>
-        <!-- <div class="container" fxLayout="row wrap" fxLayoutAlign="space-around center"> -->
+        <mat-spinner *ngIf="loading" diameter="25" style="margin:15px;position:relative;margin-left: 50%;"></mat-spinner>
             <form [formGroup]="loginForm" novalidate style="margin:30px;display: flex;flex-direction: column;">
                 <mat-form-field>
                     <mat-label for="username">Username</mat-label>

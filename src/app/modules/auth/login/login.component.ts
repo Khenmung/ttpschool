@@ -61,8 +61,9 @@ export class LoginComponent implements OnInit {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       ////console.log("authlogin",this.deviceXs);
     });
+    var username = this.tokenStorage.getUser();
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
+      username: [username, Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]]
     })
 

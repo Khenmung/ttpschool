@@ -212,7 +212,7 @@ export class SchooltimetableComponent implements OnInit {
   }
 
   GetSchoolTimeTable() {
-
+debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
@@ -312,11 +312,12 @@ export class SchooltimetableComponent implements OnInit {
 
             })
             forDisplay["Action"] = false;
-            //forDisplay["Active"] = 0;
+            forDisplay["Sequence"] = p.Sequence;
             this.SchoolTimeTableList.push(forDisplay);
 
           })
         }
+        this.SchoolTimeTableList.sort((a,b)=>a.Sequence - b.Sequence)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
         this.loading = false;
@@ -360,7 +361,8 @@ export class SchooltimetableComponent implements OnInit {
   }
   GetClassSubject() {
 
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
     list.fields = [

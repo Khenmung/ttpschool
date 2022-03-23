@@ -76,14 +76,14 @@ export class StudentAttendanceComponent implements OnInit {
     'Remarks',
     'Action'
   ];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
 
   constructor(
     private fb: FormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -142,7 +142,7 @@ export class StudentAttendanceComponent implements OnInit {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //' and StudentClassId eq ' + this.StudentClassId;
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
@@ -152,24 +152,26 @@ export class StudentAttendanceComponent implements OnInit {
     var _sectionId = this.searchForm.get("searchSectionId").value;
     var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
     if (_sectionId == 0 && _classSubjectId == 0) {
-      this.contentservice.openSnackBar("Please select either section or subject.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select either section or subject.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     this.loading = true;
     var today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
     _AttendanceDate.setHours(0, 0, 0, 0);
     if (_AttendanceDate.getTime() > today.getTime()) {
-      this.loading=false;
-      this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false;
+      this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (_AttendanceDate.getTime() != today.getTime()) {
       this.EnableSave = false;
     }
+    else
+      this.EnableSave = true;
 
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
@@ -179,10 +181,10 @@ export class StudentAttendanceComponent implements OnInit {
     }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-    
+
 
     if (filterStr.length == 0) {
-      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.StudentAttendanceList = [];
@@ -205,7 +207,7 @@ export class StudentAttendanceComponent implements OnInit {
 
         if (studentclass.value.length == 0) {
           this.loading = false;
-          this.contentservice.openSnackBar("No student exist in this class/section!",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
 
@@ -221,7 +223,9 @@ export class StudentAttendanceComponent implements OnInit {
         })
         //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
         var datefilterStr = ' and AttendanceDate ge ' + moment(_AttendanceDate).format('yyyy-MM-DD')
-        datefilterStr += ' and AttendanceDate lt ' + moment(_AttendanceDate).add(1,'day').format('yyyy-MM-DD')
+        datefilterStr += ' and AttendanceDate lt ' + moment(_AttendanceDate).add(1, 'day').format('yyyy-MM-DD')
+        datefilterStr += ' and StudentClassId gt 0'
+
         let list: List = new List();
         list.fields = [
           "AttendanceId",
@@ -236,7 +240,7 @@ export class StudentAttendanceComponent implements OnInit {
         list.PageName = "Attendances";
         //list.lookupFields = ["StudentClass"];
         list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-        datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
+          datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
         this.dataservice.get(list)
           .subscribe((attendance: any) => {
@@ -297,7 +301,7 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -319,7 +323,8 @@ export class StudentAttendanceComponent implements OnInit {
 
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate eq " + this.datepipe.transform(today, 'yyyy-MM-dd')
+      " and AttendanceDate gt " + moment(today).format('yyyy-MM-dd')
+      " and AttendanceDate lt " + moment(today).add(1,'day').format('yyyy-MM-DD')
     if (clssubjectid > 0)
       checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
@@ -407,17 +412,18 @@ export class StudentAttendanceComponent implements OnInit {
     ];
 
     list.PageName = "ClassSubjects";
-    list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    //list.filter = ["Active eq 1 and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.ClassSubjects = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
         this.ClassSubjects = data.value.map(item => {
-          var _classname = ''
-          var objCls = this.Classes.filter(f => f.ClassId == item.ClassId)
-          if (objCls.length > 0)
-            _classname = objCls[0].ClassName;
+          // var _classname = ''
+          // var objCls = this.Classes.filter(f => f.ClassId == item.ClassId)
+          // if (objCls.length > 0)
+          //   _classname = objCls[0].ClassName;
 
           var _subjectName = '';
           var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
@@ -426,7 +432,7 @@ export class StudentAttendanceComponent implements OnInit {
 
           return {
             ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _classname + "-" + _subjectName,
+            ClassSubject: _subjectName,
             ClassId: item.ClassId
           }
         })
@@ -434,7 +440,7 @@ export class StudentAttendanceComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

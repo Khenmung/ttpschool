@@ -105,6 +105,19 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   onBlur(element) {
     element.Action = element.PassMark < 1000 && element.FullMark < 1000 ? true : false;
   }
+  ToUpdateCount=-1;
+  SaveAll(){
+    debugger;
+    var toUpdate = this.ELEMENT_DATA.filter(all=>all.Action)
+    this.ToUpdateCount = toUpdate.length;
+    toUpdate.forEach(item=>{
+       this.UpdateOrSave(item); 
+    })
+  }
+  Save(element){
+    this.ToUpdateCount =1;
+    this.UpdateOrSave(element);
+  }
   UpdateOrSave(row) {
     //debugger;
     this.loading = true;
@@ -164,8 +177,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
+          this.ToUpdateCount--;
           row.ClassSubjectMarkComponentId = data.ClassSubjectMarkComponentId;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          if(this.ToUpdateCount==0)
+          {
+            this.loading=false;
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          }
           //this.router.navigate(['/home/pages']);
         });
 
@@ -177,10 +195,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          //this.router.navigate(['/home/pages']);
+          this.ToUpdateCount--;
+          if(this.ToUpdateCount==0)
+          {
+            this.loading=false;
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          }
         });
-
   }
   GetMasterData() {
 
@@ -272,6 +293,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     else
       this.GetClassSubjectComponent(1)
   }
+  
   GetClassSubjectComponent(previousbatch) {
 
     if (this.searchForm.get("searchClassId").value == 0) {
@@ -324,6 +346,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
               existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active;
               existing[0].ClassSubject = subj.ClassSubject;
               existing[0].SubjectComponent = this.MarkComponents.filter(m => m.MasterDataId == component.MasterDataId)[0].MasterDataName;
+              existing[0].Action=false;
               this.ELEMENT_DATA.push(existing[0]);
             }
             else {
@@ -336,7 +359,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
                 FullMark: 0,
                 PassMark: 0,
                 BatchId: 0,
-                Active: 0
+                Active: 0,
+                Action:false
               }
               this.ELEMENT_DATA.push(item);
             }
@@ -383,5 +407,6 @@ export interface ISubjectMarkComponent {
   FullMark: number,
   PassMark: number,
   Active: number;
+  Action: boolean;
 }
 

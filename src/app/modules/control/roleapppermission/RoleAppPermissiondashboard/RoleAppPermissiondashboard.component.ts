@@ -448,6 +448,27 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
           }
         });
   }
+  Delete(row) {
+    // this.contentservice.openDialog()
+    //   .subscribe((confirmed: boolean) => {
+    //     if (confirmed) {
+    //       this.contentservice.SoftDelete('ApplicationFeatureRolesPerms',{}, row.MasterDataId)
+    //         .subscribe((data: any) => {
+    //           row.Action = false;
+    //           this.loading = false;
+    //           var idx = this.ApplicationRoleList.findIndex(x => x.MasterDataId == row.MasterDataId)
+    //           this.ApplicationRoleList.splice(idx, 1);
+    //           this.datasource = new MatTableDataSource<any>(this.ApplicationRoleList);
+    //           this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+    //         },
+    //           err => {
+    //             this.contentservice.openSnackBar("error in data deletion: " + err, globalconstants.ActionText, globalconstants.RedBackground);
+    //           }
+    //         )
+    //     }
+
+    //   });
+  }
   selected(event) {
     this.selectedData = event.target.value;
   }

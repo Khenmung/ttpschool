@@ -158,7 +158,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   }
   insert(row) {
 
-    //debugger;
+    debugger;
     this.dataservice.postPatch(this.FeeTypeListName, this.FeeTypeData, 0, 'post')
       .subscribe(
         (data: any) => {
@@ -170,8 +170,9 @@ export class SchoolFeeTypesComponent implements OnInit {
           
         },
         err => {
+          this.loading=false;
           if (err.error) {
-            var modelState = err.error.errors;
+            var modelState = err.error.Errors;
             var errorMessage = '';
             //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
             for (var key in modelState) {

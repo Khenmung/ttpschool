@@ -298,7 +298,7 @@ export class VerifyResultsComponent implements OnInit {
             })
             this.displayedColumns.push("Total", "Rank", "Division");
             ////console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult)
-
+            
             this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
             this.StudentGrades.sort((a, b) => a.Sequence - b.Sequence);
             this.ExamStudentSubjectResult.forEach((r: any, index) => {
@@ -348,7 +348,7 @@ export class VerifyResultsComponent implements OnInit {
 
     list.fields = ["ExamId", "ExamNameId"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and ReleaseResult eq 1 " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and (ReleaseResult eq 0 or ReleaseResult eq null) " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -73,11 +76,12 @@ export class AddMasterDataComponent implements OnInit {
   searchForm: FormGroup;
 
   constructor(
+    private snackbar: MatSnackBar,
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private route: Router,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
-    //
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
@@ -245,41 +249,46 @@ export class AddMasterDataComponent implements OnInit {
     });
   }
   ReSequence(editedrow) {
-    //debugger;
-    var diff = 0;
-    if (editedrow.Sequence != editedrow.OldSequence) {
+    debugger;
+    var diff = editedrow.OldSequence - editedrow.Sequence;
+    var newSequence = editedrow.Sequence;
+    this.MasterList = this.MasterList.sort((a, b) => a.Sequence - b.Sequence)
 
-      if (editedrow.Sequence > editedrow.OldSequence) {
-        var filteredData = this.MasterList.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
-          && currentrow.Sequence > editedrow.OldSequence
-          && currentrow.Sequence <= editedrow.Sequence)
-
-        filteredData.forEach(currentrow => {
-
-          currentrow.Sequence -= 1;
-          currentrow.OldSequence -= 1;
-          currentrow.Action = true;
-
-        });
+    if (diff > 0) {
+      var indx = -1;
+      //search in loop using ">=" since the new sequence may not exist in the list.
+      for (var i = 0; i < this.MasterList.length; i++) {
+        if (this.MasterList[i].OldSequence >= editedrow.Sequence) {
+          indx = i;
+          break;
+        }
       }
-      else if (editedrow.Sequence < editedrow.OldSequence) {
-        var filteredData = this.MasterList.filter(currentrow => currentrow.MasterDataId != editedrow.MasterDataId
-          && currentrow.Sequence >= editedrow.Sequence
-          && currentrow.Sequence < editedrow.OldSequence)
+      //var indx = this.MasterList.findIndex(x => x.OldSequence == editedrow.Sequence);
 
-        filteredData.forEach(currentrow => {
-          currentrow.Sequence += 1;
-          currentrow.OldSequence += 1;
-          currentrow.Action = true;
-        })
+      for (var start = indx; start < this.MasterList.length; start++) {
+        newSequence += 1;
+        //if (start != newSequence)
+        this.MasterList[start].Sequence = newSequence;
+        this.MasterList[start].Action = true;
       }
-      editedrow.Action = true;
-      editedrow.OldSequence = editedrow.Sequence;
-      this.MasterList.sort((a, b) => a.Sequence - b.Sequence);
-      this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
-      this.datasource.sort = this.sort;
-      this.datasource.paginator = this.paginator;
     }
+    else {
+      var indx = this.MasterList.findIndex(x => x.Sequence == editedrow.Sequence);
+      for (var start = indx + 1; start < this.MasterList.length; start++) {
+        newSequence += 1;
+        this.MasterList[start].Sequence = newSequence;
+        this.MasterList[start].Action = true;
+      }
+    }
+
+
+    // editedrow.Action = true;
+    editedrow.OldSequence = editedrow.Sequence;
+    this.MasterList.sort((a, b) => a.Sequence - b.Sequence);
+    this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
+    this.datasource.sort = this.sort;
+    this.datasource.paginator = this.paginator;
+
   }
   onBlur(element) {
     //debugger;
@@ -298,19 +307,6 @@ export class AddMasterDataComponent implements OnInit {
     this.emptyresult();
 
   }
-  // GetMasters(ParentId, OrgId,AppId) {
-  //   debugger;
-  //   var applicationFilter = '';
-  //   applicationFilter = "OrgId eq " + OrgId + " and ApplicationId eq " + AppId
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId"
-  //   ];
-  //   list.PageName = "MasterItems";
-  //   list.filter = ["ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
-  //   return this.dataservice.get(list)
-
-  // }
   AddData() {
     debugger;
     var subMasterId = this.searchForm.get("SubId").value;
@@ -319,10 +315,6 @@ export class AddMasterDataComponent implements OnInit {
       //this.contentservice.openSnackBar("Please select master name to add items to", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
-    // else if (this.SubMasters.length > 0 && subMasterId == 0) {
-    //   this.contentservice.openSnackBar("Please select submaster.", globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
     var _ParentId = 0;
     var _appId = 0;
 
@@ -348,13 +340,54 @@ export class AddMasterDataComponent implements OnInit {
       "ApplicationId": _appId,
       "Action": false
     }
-    //if add new button is clicked more than once.
-    //let alreadyadded = this.MasterList.filter(item => item.MasterDataName == "");
-    //if (alreadyadded.length == 0)
     this.MasterList.push(newrow);
 
     this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
   }
+  Delete(row) {
+
+    this.openDialog(row)
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: 0,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch('MasterItems', toUpdate, row.MasterDataId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false;
+        var idx = this.MasterList.findIndex(x => x.MasterDataId == row.MasterDataId)
+        this.MasterList.splice(idx, 1);
+        this.datasource = new MatTableDataSource<any>(this.MasterList);
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
+
   GetSearchMaster() {
 
     this.loading = true;
@@ -362,8 +395,6 @@ export class AddMasterDataComponent implements OnInit {
     this.Parent = '';
     this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
 
-    // if (this.SelectedApplicationName.toLowerCase().includes("admin"))
-    //   this.OrgId = this.searchForm.get("OrgId").value;
     debugger;
     var _searchParentId = 0;
     var _OrgId = 0;
@@ -412,7 +443,6 @@ export class AddMasterDataComponent implements OnInit {
         })
         if (this.MasterList.length == 0) {
           this.contentservice.openSnackBar("No record found.", globalconstants.ActionText, globalconstants.RedBackground);
-          //this.contentservice.openSnackBar("No record found.", globalconstants.ActionText,globalconstants.RedBackground);
         }
         if (this.searchForm.get("SubId").value > 0) {
           var obj = this.SubMasters.filter(f => f.MasterDataId == _searchParentId)
@@ -423,6 +453,8 @@ export class AddMasterDataComponent implements OnInit {
           this.Parent = this.searchForm.get("ParentId").value.MasterDataName;
 
         ////console.log("parent", this.Parent)
+        this.MasterList.sort((a, b) => a.Sequence - b.Sequence);
+
         this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
@@ -501,8 +533,8 @@ export class AddMasterDataComponent implements OnInit {
       MasterDataId: row.MasterDataId,
       MasterDataName: row.MasterDataName,
       Description: row.Description,
-      Logic: row.Logic,
-      Sequence: row.Sequence,
+      Logic: row.Logic == null ? '' : row.Logic,
+      Sequence: row.Sequence == null ? 0 : row.Sequence,
       ParentId: _ParentId,// this.SearchParentId,
       ApplicationId: row.ApplicationId,
       Active: row.Active == true ? 1 : 0

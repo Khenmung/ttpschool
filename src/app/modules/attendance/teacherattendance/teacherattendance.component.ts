@@ -117,7 +117,7 @@ export class TeacherAttendanceComponent implements OnInit {
     debugger;
     this.TeacherAttendanceList = [];
     this.dataSource = new MatTableDataSource<any>(this.TeacherAttendanceList);
-    
+
     var _attendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value);
     if (_attendanceDate == null) {
       this.contentservice.openSnackBar("Please select attendance date.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -135,7 +135,9 @@ export class TeacherAttendanceComponent implements OnInit {
     else if (_attendanceDate.getTime() != today.getTime()) {
       this.EnableSave = false;
     }
-
+    else
+      this.EnableSave = true;
+      
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
     var _workAccountId = 0;
@@ -159,7 +161,7 @@ export class TeacherAttendanceComponent implements OnInit {
           })
         })
 
-        
+
         list = new List();
         list.fields = [
           "AttendanceId",

@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
+import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -243,6 +244,8 @@ export class ExamsComponent implements OnInit {
         this.Exams = this.ExamNames.map(e => {
           let existing = data.value.filter(db => db.ExamNameId == e.MasterDataId);
           if (existing.length > 0) {
+            if(existing[0].ReleaseDate!=null)
+            existing[0].ReleaseDate = moment(existing[0].ReleaseDate).format("DD/MM/yyyy");
             existing[0].ExamName = this.ExamNames.filter(f => f.MasterDataId == existing[0].ExamNameId)[0].MasterDataName;
             existing[0].Action = false;
             return existing[0];

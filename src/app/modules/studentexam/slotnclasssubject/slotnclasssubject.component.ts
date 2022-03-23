@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -118,7 +119,8 @@ export class SlotnclasssubjectComponent implements OnInit {
               sub.value = 1;
           }
           else {
-            sub.value = 0;
+            if (sub.value != 2)
+              sub.value = 0;
           }
         })
       }
@@ -263,7 +265,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   GetClassSubject() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
+    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
     list.fields = [
       'ClassSubjectId',
@@ -359,6 +361,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       "SlotNameId",
       "ExamDate",
       "StartTime",
+      "Sequence",
       "EndTime"
     ];
     list.PageName = "ExamSlots";
@@ -377,12 +380,16 @@ export class SlotnclasssubjectComponent implements OnInit {
           var _examname = '';
           if (exams.length > 0)
             _examname = exams[0].MasterDataName;
+          var _slotName = '';
+          var obj = this.SlotNames.filter(f => f.MasterDataId == s.SlotNameId);
+          if (obj.length > 0)
+            _slotName = obj[0].MasterDataName;
           return {
             ExamId: s.ExamId,
             ExamSlotId: s.ExamSlotId,
             ExamDate: this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy'),
-            ExamDateDetail: this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - (" + s.StartTime + " - " + s.EndTime + ")"
-
+            ExamDateDetail: this.datepipe.transform(s.ExamDate, 'dd/MM/yyyy') + " - " + day + " - (" + s.StartTime + " - " + s.EndTime + "), " + _slotName,
+            Sequence: s.Sequence
           }
         })
         this.ExamSlots = [...result];//.sort((a, b) => a.ExamDate.getTime() - b.ExamDate.getTime())
@@ -391,7 +398,16 @@ export class SlotnclasssubjectComponent implements OnInit {
       })
   }
   GetSelectedExamSlot() {
-    this.SelectedExamSlots = this.ExamSlots.filter(f => f.ExamId == this.searchForm.get("searchExamId").value);
+    this.SelectedExamSlots = this.ExamSlots.filter(f => f.ExamId == this.searchForm.get("searchExamId").value)
+      .sort((a, b) => moment.utc(a.ExamDate).diff(moment.utc(b.ExamDate)));
+    // {
+    //   //a.gsize == b.gsize ? a.glow - b.glow : a.gsize - b.gsize
+    //   var datediff =moment.utc(a.ExamDate).diff(moment.utc(b.ExamDate));
+    //   return datediff==0? a.Sequence - b.Sequence:0;
+
+    // });
+    console.log("this.SelectedExamSlots", this.SelectedExamSlots);
+
     this.GetSelectedSubjectsForSelectedExam();
   }
   GetSelectedSubjectsForSelectedExam() {
@@ -403,7 +419,9 @@ export class SlotnclasssubjectComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       "ExamId",
-      "SlotNameId"
+      "SlotNameId",
+      "Sequence",
+      "ExamDate"
     ];
     list.PageName = "Examslots";
     list.filter = [filterstr];
@@ -411,7 +429,9 @@ export class SlotnclasssubjectComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllSelectedSubjects = data.value.map(m => {
-          m.SlotName = this.SlotNames.filter(name => name.MasterDataId == m.SlotNameId);
+          var _slotName = this.SlotNames.filter(name => name.MasterDataId == m.SlotNameId)[0].MasterDataName;
+          m.SlotName = _slotName;
+          m.Tooltip = moment(m.ExamDate).format('DD/MM/yyyy') + " - " + _slotName;
           return m;
         });
         //console.log("all",this.AllSelectedSubjects)
@@ -458,15 +478,24 @@ export class SlotnclasssubjectComponent implements OnInit {
             .sort((a, b) => a.Subject - b.Subject);
           _currentClassSubjectlist.forEach((clssub) => {
 
+            var selected = 0;
+            var toolTip = '';
             let existing = data.value.filter(db => db.ClassSubjectId == clssub.ClassSubjectId);
 
             if (existing.length > 0) {
+              let existingsubject = this.AllSelectedSubjects
+                .filter(f => f.SlotAndClassSubjects.filter(c => c.SlotId != existing[0].SlotId && c.ClassSubjectId == clssub.ClassSubjectId).length > 0)
+              if (existingsubject.length > 0) {
+                toolTip = existingsubject[0].Tooltip;
+                selected = 2;
+              }
               displayrow["SlotClassSubjectId"] = existing[0].SlotClassSubjectId;
               displayrow["Subject"].push(
                 {
                   ClassSubjectId: existing[0].ClassSubjectId,
                   SubjectName: clssub.Subject,
-                  value: 1
+                  value: selected == 2 ? 2 : 1,
+                  Tooltip: toolTip
                 });
               // displayrow["Subject"][clssub.Subject] = +existing[0].Active;
               //displayrow['Selected'] = selected;
@@ -485,18 +514,19 @@ export class SlotnclasssubjectComponent implements OnInit {
               });
             }
             else {
-              var selected = 0;
+              var toopTip = '';
               let existingsubject = this.AllSelectedSubjects
                 .filter(f => f.SlotAndClassSubjects.filter(c => c.ClassSubjectId == clssub.ClassSubjectId).length > 0)
-              if (existingsubject.length > 0)
+              if (existingsubject.length > 0) {
+                toopTip = existingsubject[0].Tooltip;
                 selected = 2;
-              // else
-              //displayrow["SlotClassSubjectId"] = displayrow["SlotClassSubjectId"]==;
+              }
               displayrow["Subject"].push(
                 {
                   ClassSubjectId: clssub.ClassSubjectId,
                   SubjectName: clssub.Subject,
-                  value: selected
+                  value: selected,
+                  Tooltip: toopTip
                 });
 
               this.StoreForUpdate.push({
@@ -534,7 +564,8 @@ export class SlotnclasssubjectComponent implements OnInit {
     })
   }
   SaveAll() {
-    var toUpdate = this.StoreForUpdate.filter(f => f.Action);
+    debugger;
+    var toUpdate = this.ClassWiseSubjectDisplay.filter(f => f.Action == true);
     this.DataToUpdateCount = toUpdate.length;
     toUpdate.forEach(record => {
       this.DataToUpdateCount--;

@@ -67,7 +67,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     ClassId: 0,
     Credits: 0,
     OrgId: 0,
-    BatchId: 0,
+  //  BatchId: 0,
     TeacherId: 0,
     SubjectId: 0,
     SubjectTypeId: 0,
@@ -83,7 +83,10 @@ export class ClassSubjectDetailComponent implements OnInit {
   ];
   filteredOptions: any;
   Students: any;
-
+  nameFilter = new FormControl('');
+  filterValues = {
+    SubjectName: ''
+  };
   constructor(
     private contentservice: ContentService,
     private fb: FormBuilder,
@@ -108,7 +111,13 @@ export class ClassSubjectDetailComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-
+      this.nameFilter.valueChanges
+      .subscribe(
+        name => {
+          this.filterValues.SubjectName = name;
+          this.dataSource.filter = JSON.stringify(this.filterValues);
+        }
+      )
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
@@ -126,6 +135,16 @@ export class ClassSubjectDetailComponent implements OnInit {
         });
       }
     }
+  }
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.SubjectName.toLowerCase().indexOf(searchTerms.SubjectName) !== -1
+      // && data.id.toString().toLowerCase().indexOf(searchTerms.id) !== -1
+      // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
+      // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
+    }
+    return filterFunction;
   }
   GetSessionFormattedMonths() {
     var _sessionStartEnd = {
@@ -297,9 +316,12 @@ export class ClassSubjectDetailComponent implements OnInit {
           }
           //})
         })
+        this.ClassSubjectList.sort((a,b)=> b.Active - a.Active);
+
         this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.dataSource.filterPredicate = this.createFilter();
         this.loading = false;
       });
   }
@@ -390,7 +412,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     if (row.ClassSubjectId > 0)
       checkFilterString += " and ClassSubjectId ne " + row.ClassSubjectId;
 
-    checkFilterString += ' and ' + this.StandardFilterWithBatchId;
+    checkFilterString += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = ["ClassSubjectId"];
@@ -416,7 +438,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
           this.ClassSubjectData.TeacherId = row.TeacherId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.ClassSubjectData.BatchId = this.SelectedBatchId;
+          //this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {
             this.ClassSubjectData["CreatedDate"] = new Date();
             this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -479,7 +501,7 @@ export class ClassSubjectDetailComponent implements OnInit {
 
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
-    list.filter = [this.StandardFilterWithBatchId + " and Active eq 1 "];
+    list.filter = ["OrgId eq "+ this.LoginUserDetail[0]["orgId"] + " and Active eq 1 "];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

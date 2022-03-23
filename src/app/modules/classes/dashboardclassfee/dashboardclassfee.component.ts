@@ -103,6 +103,7 @@ export class DashboardclassfeeComponent implements OnInit {
         this.Permission = perObj[0].permission;
 
       this.Months = this.contentservice.GetSessionFormattedMonths();
+      //console.log("this.Months",this.Months);
 
       if (this.Permission == 'deny') {
       }
@@ -141,14 +142,10 @@ export class DashboardclassfeeComponent implements OnInit {
       }
     }
   }
-  //displayedColumns = ['position', 'name', 'weight', 'symbol'];
   displayedColumns = [
-    //'SlNo',
     'ClassFeeId',
     'FeeName',
     'Amount',
-    //'PaymentOrder',
-    //'Recurring',
     'Month',
     'Active',
     'Action'];
@@ -261,6 +258,7 @@ export class DashboardclassfeeComponent implements OnInit {
     var monthArray = [];
     var selectedBatch = this.token.getSelectedBatchStartEnd();
     var b = JSON.parse(selectedBatch);
+    debugger;
     if (b.length != 0) {
       _sessionStartEnd = { ...b };
       var _Year = new Date(_sessionStartEnd.StartDate).getFullYear();

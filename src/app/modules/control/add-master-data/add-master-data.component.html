@@ -121,8 +121,15 @@
             <mat-cell *matCellDef="let element">
                 <button [disabled]="loading 
                 || !element.Action 
-                || Permission=='read'" matTooltip="view/edit" mat-mini-fab (click)="SaveRow(element)">
+                || Permission=='read'" 
+                style="margin-right:15px;"
+                matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
                     <mat-icon>save</mat-icon>
+                </button>
+                <button [disabled]="loading 
+                || !element.Action 
+                || Permission !='rwd'" matTooltip="delete" mat-mini-fab (click)="Delete(element)">
+                    <mat-icon>delete</mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

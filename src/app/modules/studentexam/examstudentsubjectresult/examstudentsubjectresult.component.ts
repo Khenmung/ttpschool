@@ -38,6 +38,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   Batches = [];
   StudentSubjects = [];
   SelectedClassSubjects =[];
+  Students=[];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
   Permission = 'deny';
@@ -92,9 +93,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-
-        this.GetMasterData();
-
+        this.GetStudents();
+        
+        
       }
     }
   }
@@ -218,7 +219,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         });
   }
   GetStudentSubjects() {
-
+    debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
@@ -240,9 +241,14 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         var _class = '';
         var _subject = '';
         var _section = '';
+        var _studname = '';
         this.StudentSubjects = data.value.map(s => {
           _class = '';
           _subject = '';
+          _studname ='';
+          let _studentObj = this.Students.filter(c => c.StudentId == s.StudentClass.StudentId);
+          if (_studentObj.length > 0)
+          _studname = _studentObj[0].FirstName + " " + _studentObj[0].LastName;
 
           let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
           if (_stdClass.length > 0)
@@ -259,7 +265,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             StudentClassSubjectId: s.StudentClassSubjectId,
             ClassSubjectId: s.ClassSubjectId,
             StudentClassId: s.StudentClassId,
-            StudentClassSubject: s.StudentClass.RollNo + ' - ' + _class + ' - ' + _section + ' - ' + _subject,
+            StudentClassSubject: s.StudentClass.RollNo + ' - ' + _studname + ' - ' + _class + ' - ' + _section + ' - ' + _subject,
             SubjectId: s.ClassSubject.SubjectId,
             ClassId: s.ClassSubject.ClassId,
             StudentId: s.StudentClass.StudentId,
@@ -274,6 +280,25 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   SelectClassSubject(){
     this.SelectedClassSubjects= this.ClassSubjects.filter(f=>f.ClassId == this.searchForm.get("searchClassId").value);
   }
+  GetStudents() {
+
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+
+    let list: List = new List();
+    list.fields = [
+      "StudentId",
+      "FirstName",
+      "LastName"
+    ];
+    list.PageName = "Students";
+    list.filter = [filterStr];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.Students =[...data.value];
+        this.GetMasterData();
+      });
+    }
   GetClassSubject() {
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
@@ -549,7 +574,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         if (this.LoginUserDetail[0]['RoleUsers'][0].role == 'Teacher') {
           this.GetAllowedSubjects();
         }
-        
+  
         this.GetExams();
 
       });
