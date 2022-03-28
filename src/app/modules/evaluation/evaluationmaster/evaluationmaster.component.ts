@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -10,49 +10,52 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-evaluation',
-  templateUrl: './evaluation.component.html',
-  styleUrls: ['./evaluation.component.scss']
+  selector: 'app-evaluationmaster',
+  templateUrl: './evaluationmaster.component.html',
+  styleUrls: ['./evaluationmaster.component.scss']
 })
-export class EvaluationComponent implements OnInit {
-
+export class EvaluationMasterComponent implements OnInit {
+  @Output() NotifyParent: EventEmitter<number> = new EventEmitter();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  EvaluationTypeId = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  OnlineEvaluationId = 0;
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
   StandardFilter = '';
   loading = false;
-  OnlineEvaluationList: IOnlineEvaluation[] = [];
+  EvaluationMasterList: IEvaluationMaster[] = [];
   Sessions = [];
   SelectedBatchId = 0;
-  SelectedClassSubjects=[];
+  SelectedClassSubjects = [];
   ClassSubjects = [];
   Classes = [];
   RatingOptions = [];
-  filteredOptions: Observable<IOnlineEvaluation[]>;
-  dataSource: MatTableDataSource<IOnlineEvaluation>;
+  filteredOptions: Observable<IEvaluationMaster[]>;
+  dataSource: MatTableDataSource<IEvaluationMaster>;
   allMasterData = [];
-  EvaluationTypes =[];
+  EvaluationTypes = [];
   //ExamId = 0;
-  OnlineEvaluationData = {
-    OnlineEvaluationId: 0,
+  EvaluationMasterData = {
+    EvaluationMasterId: 0,
     ClassId: 0,
-    SubjectId: 0,
-    Topic: 0,
+    ClassSubjectId: 0,
+    Title: 0,
     EvaluationTypeId: 0,
     OrgId: 0,
     Active: 0,
   };
-  OnlineEvaluationForUpdate = [];
+  EvaluationMasterForUpdate = [];
   displayedColumns = [
-    'OnlineEvaluationId',
-    'Topic',
+    'EvaluationMasterId',
+    'Title',
+    'ClassId',
+    'ClassSubjectId',
     'Active',
     'Action'
   ];
@@ -61,7 +64,6 @@ export class EvaluationComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
     private nav: Router,
     private fb: FormBuilder
   ) { }
@@ -69,23 +71,21 @@ export class EvaluationComponent implements OnInit {
   ngOnInit(): void {
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({
-      // searchProfileName: [''],
-      // searchCategoryId: [0],
-      // searchSubCategoryId: [0],
-      // searchClassId: [0]
+      searchEvaluationTypeId: [0],
+      searchSubjectId: [0],
+      searchClassId: [0]
     })
     this.PageLoad();
   }
-  // private _filter(name: string): IStudent[] {
 
-  //   const filterValue = name.toLowerCase();
-  //   return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
-
-  // }
   displayFn(user: IStudent): string {
     return user && user.Name ? user.Name : '';
   }
-
+  PassParent(value: number) {
+    debugger;
+    this.NotifyParent.emit(value);
+  
+  }
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
@@ -108,9 +108,6 @@ export class EvaluationComponent implements OnInit {
       }
     }
   }
-  // SelectSubCategory(pCategoryId) {
-  //   this.SubCategories = this.allMasterData.filter(f => f.ParentId == pCategoryId.value);
-  // }
   delete(element) {
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
@@ -118,7 +115,6 @@ export class EvaluationComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
       .subscribe(
         (data: any) => {
-          // this.GetApplicationRoles();
           this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
@@ -127,7 +123,7 @@ export class EvaluationComponent implements OnInit {
     let list = new List();
     list.PageName = "ClassSubjects";
     list.fields = ["ClassSubjectId,ClassId,SubjectId"];
-    list.lookupFields = ["ClassMaster($select=ClassId,ClassName)"];
+    list.lookupFields = ["Class($select=ClassId,ClassName)"];
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -136,56 +132,65 @@ export class EvaluationComponent implements OnInit {
           var subjectobj = this.allMasterData.filter(f => f.MasterDataId == m.SubjectId);
           if (subjectobj.length > 0)
             _subjectname = subjectobj[0].MasterDataName;
-          m.ClassSubject = m.ClassMaster.ClassName + "-" + _subjectname;
+          m.ClassSubject = _subjectname;
 
           return m;
 
         });
       });
   }
-  viewchild(row) {
-    this.OnlineEvaluationId = row.OnlineEvaluationId;
-  }
+  // viewchild(row) {
+  //   this.evaluationMasterId = row.EvaluationMasterId;
+  // }
   AddNew() {
     var newItem = {
-      OnlineEvaluationId: 0,
+      EvaluationMasterId: 0,
       ClassId: 0,
-      SubjectId: 0,
-      Topic: 0,
-      EvaluationTypeId: 0,      
+      ClassSubjectId: 0,
+      Title: '',
+      EvaluationTypeId: 0,
       Active: 0,
+      Deleted: "false",
       Action: false
     }
-    this.OnlineEvaluationList = [];
-    this.OnlineEvaluationList.push(newItem);
-    this.dataSource = new MatTableDataSource(this.OnlineEvaluationList);
+    this.EvaluationMasterList = [];
+    this.EvaluationMasterList.push(newItem);
+    this.dataSource = new MatTableDataSource(this.EvaluationMasterList);
   }
   UpdateOrSave(row) {
 
     //debugger;
     var _classId = this.searchForm.get("searchClassId").value;
     var _subjectId = this.searchForm.get("searchSubjectId").value;
-    var _topic = this.searchForm.get("searchTopic").value;
-    var _examId = this.searchForm.get("searchExamId").value;
+    //var _title = this.searchForm.get("searchTitle").value;
+    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
 
     this.loading = true;
     let checkFilterString = '';
-
+    if (row.Title.length > 0)
+      checkFilterString = "Title eq '" + row.Title + "'";
+    else {
+      this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_evaluationTypeId > 0)
+      checkFilterString += " and EvaluationTypeId eq " + _evaluationTypeId;
+    else {
+      this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (_classId > 0)
-      checkFilterString = "ClassId eq " + _classId;
-    if (_examId > 0)
-      checkFilterString = " and ExamId eq " + _examId;
-    if (_subjectId > 0)
-      checkFilterString += " and SubjectId eq " + _subjectId;
-    if (_topic.length > 0)
-      checkFilterString += " and contains(Topic,'" + _topic + "')";
+      checkFilterString += " and ClassId eq " + _classId;
 
-    if (row.OnlineEvaluationId > 0)
-      checkFilterString += " and OnlineEvaluationId ne " + row.OnlineEvaluationId;
+    if (_subjectId > 0)
+      checkFilterString += " and ClassSubjectId eq " + _subjectId;
+
+    if (row.EvaluationMasterId > 0)
+      checkFilterString += " and EvaluationMasterId ne " + row.EvaluationMasterId;
     checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
-    list.fields = ["OnlineEvaluationId"];
-    list.PageName = "OnlineEvaluations";
+    list.fields = ["EvaluationMasterId"];
+    list.PageName = "EvaluationMasters";
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -193,40 +198,40 @@ export class EvaluationComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.OnlineEvaluationForUpdate = [];;
-          this.OnlineEvaluationForUpdate.push(
+          this.EvaluationMasterForUpdate = [];
+          this.EvaluationMasterForUpdate.push(
             {
-              OnlineEvaluationId: row.OnlineEvaluationId,
+              EvaluationMasterId: row.EvaluationMasterId,
               ClassId: _classId,
-              SubjectId: _subjectId,
-              Topic: row.Topic,
-              EvaluationTypeId: row.EvaluationTypeId,
-              ExamId: _examId,
+              ClassSubjectId: _subjectId,
+              Title: row.Title,
+              EvaluationTypeId: this.searchForm.get("searchEvaluationTypeId").value,
               Active: row.Active,
+              Deleted: 0,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
-          console.log('dta', this.OnlineEvaluationForUpdate);
 
-          if (this.OnlineEvaluationForUpdate[0].OnlineEvaluationId == 0) {
-            this.OnlineEvaluationForUpdate[0]["CreatedDate"] = new Date();
-            this.OnlineEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.OnlineEvaluationForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.OnlineEvaluationForUpdate[0]["UpdatedBy"];
-            delete this.OnlineEvaluationForUpdate[0]["SubCategories"];
-            ////console.log("inserting1",this.OnlineEvaluationForUpdate);
+
+          if (this.EvaluationMasterForUpdate[0].EvaluationMasterId == 0) {
+            this.EvaluationMasterForUpdate[0]["CreatedDate"] = new Date();
+            this.EvaluationMasterForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EvaluationMasterForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.EvaluationMasterForUpdate[0]["UpdatedBy"];
+            delete this.EvaluationMasterForUpdate[0]["SubCategories"];
+            console.log("inserting1", this.EvaluationMasterForUpdate);
             this.insert(row);
           }
           else {
-            this.OnlineEvaluationForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
-            this.OnlineEvaluationForUpdate[0]["CreatedBy"] = row.CreatedBy;
-            this.OnlineEvaluationForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.OnlineEvaluationForUpdate[0]["SubCategories"];
-            delete this.OnlineEvaluationForUpdate[0]["UpdatedBy"];
-            //this.OnlineEvaluationForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EvaluationMasterForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
+            this.EvaluationMasterForUpdate[0]["CreatedBy"] = row.CreatedBy;
+            this.EvaluationMasterForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.EvaluationMasterForUpdate[0]["SubCategories"];
+            delete this.EvaluationMasterForUpdate[0]["UpdatedBy"];
+            //this.EvaluationMasterForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             //this.insert(row);
             this.update(row);
           }
@@ -237,12 +242,12 @@ export class EvaluationComponent implements OnInit {
     this.loading = false;
   }
   insert(row) {
-    //console.log("inserting",this.OnlineEvaluationForUpdate);
+    //console.log("inserting",this.EvaluationMasterForUpdate);
     //debugger;
-    this.dataservice.postPatch('OnlineEvaluations', this.OnlineEvaluationForUpdate[0], 0, 'post')
+    this.dataservice.postPatch('EvaluationMasters', this.EvaluationMasterForUpdate[0], 0, 'post')
       .subscribe(
         (data: any) => {
-          row.OnlineEvaluationId = data.OnlineEvaluationId;
+          row.EvaluationMasterId = data.EvaluationMasterId;
           row.Action = false;
           //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -250,8 +255,8 @@ export class EvaluationComponent implements OnInit {
         });
   }
   update(row) {
-    //console.log("updating",this.OnlineEvaluationForUpdate);
-    this.dataservice.postPatch('OnlineEvaluations', this.OnlineEvaluationForUpdate[0], this.OnlineEvaluationForUpdate[0].OnlineEvaluationId, 'patch')
+    //console.log("updating",this.EvaluationMasterForUpdate);
+    this.dataservice.postPatch('EvaluationMasters', this.EvaluationMasterForUpdate[0], this.EvaluationMasterForUpdate[0].EvaluationMasterId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -260,7 +265,7 @@ export class EvaluationComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  GetOnlineEvaluation() {
+  GetEvaluationMaster() {
     //debugger;
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -269,53 +274,51 @@ export class EvaluationComponent implements OnInit {
 
     var _classId = this.searchForm.get("searchClassId").value;
     var _subjectId = this.searchForm.get("searchSubjectId").value;
-    var _topic = this.searchForm.get("searchTopic").value;
-    var _examId = this.searchForm.get("searchExamId").value;
+    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
+    //var _examId = this.searchForm.get("searchExamId").value;
 
-
-    if (_classId > 0)
-      filterStr += " and ClassId eq " + _classId
-    else {
+    if (_evaluationTypeId == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.BlueBackground);
+      this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.BlueBackground);
       return;
+    }
+    else {
+      filterStr += " and EvaluationTypeId eq " + _evaluationTypeId;
     }
 
     if (_classId > 0)
-      filterStr = "ClassId eq " + _classId;
-    if (_examId > 0)
-      filterStr = " and ExamId eq " + _examId;
+      filterStr += " and ClassId eq " + _classId;
     if (_subjectId > 0)
-      filterStr += " and SubjectId eq " + _subjectId;
-    if (_topic.length > 0)
-      filterStr += " and Topic eq '" + _topic + "'";
+      filterStr += " and ClassSubjectId eq " + _subjectId;
 
     let list: List = new List();
     list.fields = [
-      'OnlineEvaluationId',
+      'EvaluationMasterId',
       'ClassId',
-      'SubjectId',
-      'Topic',
+      'ClassSubjectId',
+      'Title',
       'EvaluationTypeId',
-      'ExamId',
       'Active',
     ];
 
-    list.PageName = "OnlineEvaluations";
+    list.PageName = "EvaluationMasters";
 
     list.filter = [filterStr];
-    this.OnlineEvaluationList = [];
+    this.EvaluationMasterList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.OnlineEvaluationList = data.value.map(item => {
+          this.EvaluationMasterList = data.value.map(item => {
             item.Action = false;
             return item;
           })
         }
-
-        this.dataSource = new MatTableDataSource<IOnlineEvaluation>(this.OnlineEvaluationList);
+        else {
+          this.EvaluationMasterList = [];
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+        }
+        this.dataSource = new MatTableDataSource<IEvaluationMaster>(this.EvaluationMasterList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loadingFalse();
@@ -336,12 +339,15 @@ export class EvaluationComponent implements OnInit {
   onBlur(row) {
     row.Action = true;
   }
+
   getClassSubjects() {
     debugger;
-    
-    this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("ClassId").value);
 
+    this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
 
+  }
+  GetEvaluationTypeId() {
+    this.EvaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
   }
   UpdateActive(row, event) {
     row.Active = event.checked ? 1 : 0;
@@ -364,13 +370,14 @@ export class EvaluationComponent implements OnInit {
   }
 }
 
-export interface IOnlineEvaluation {
-  OnlineEvaluationId: number;
+export interface IEvaluationMaster {
+  EvaluationMasterId: number;
+  Title: string;
   ClassId: number;
-  SubjectId: number;
-  Topic: number;
+  ClassSubjectId: number;
   EvaluationTypeId: number;
   Active: number;
+  Deleted: string;
   Action: boolean;
 }
 

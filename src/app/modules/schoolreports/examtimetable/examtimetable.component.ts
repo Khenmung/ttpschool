@@ -209,7 +209,7 @@ export class ExamtimetableComponent implements OnInit {
             SlotId: s.ExamSlotId,
             SlotName: _slotName + " - (" + s.StartTime + " - " + s.EndTime + ")",
             ExamName: _examname,
-            ExamDate: moment(s.ExamDate).format('DD-MM-yyyy'),
+            ExamDate: moment(s.ExamDate).format('DD/MM/yyyy'),
             StartTime: s.StartTime,
             EndTime: s.EndTime
           }
@@ -281,14 +281,18 @@ export class ExamtimetableComponent implements OnInit {
 
           var header = {};
           var SlotRow = {};
-          var _examDate = moment(edate.ExamDate);
+          var _examDate = edate.ExamDate;
           //_examDate.setHours(0,0,0,0);
-          var day = this.weekday[_examDate.day()]
-          var _dateHeader = "<b>" + _examDate.format('DD/MM/yyyy') + " - " + day + "</b>";
+          var daynumber = moment(_examDate,'DD/MM/YYYY').day()
+          var day = this.weekday[daynumber]
+          var _dateHeader = "<b>" + _examDate + " - " + day + "</b>";
           var timeTableRow = [];
           //this.SlotNClassSubjects.push(timeTableRow);
-
-          var examDateSlot = this.ExamSlots.filter(f => moment(f.ExamDate).format('DD/MM/yyyy')==moment(_examDate).format('DD/MM/yyyy'));
+          //var _examDatestring = this.datepipe.transform(_examDate,'dd/MM/yyyy');
+          var examDateSlot = this.ExamSlots.filter(f => {
+            //var slotexamdate = this.datepipe.transform(f.ExamDate,'dd/MM/yyyy');
+            return f.ExamDate ==_examDate
+          });
           //timeTableRow = {};
           SubjectRow = {};
           examDateSlot.forEach((slot, index) => {

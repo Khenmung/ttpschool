@@ -18,7 +18,6 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class EmployeeComponent implements OnInit {
 
-  Edit = false;
   optionsNoAutoClose = {
     autoClose: false,
     keepAfterRouteChange: true
@@ -27,6 +26,7 @@ export class EmployeeComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
+  Edited=false;
   SelectedApplicationId = 0;
   loginUserDetail = [];
   EmployeeLeaving = false;
@@ -132,7 +132,7 @@ export class EmployeeComponent implements OnInit {
       this.contentservice.openSnackBar("Files Uploaded successfully.",globalconstants.ActionText,globalconstants.BlueBackground)
       //this.alertMessage.success("Files Uploaded successfully.", options);
 
-      this.Edit = false;
+      this.Edited = false;
     });
   }
 
@@ -247,8 +247,8 @@ export class EmployeeComponent implements OnInit {
 
   get f() { return this.EmployeeForm.controls }
 
-  edit() {
-    this.Edit = true;
+  OnBlur() {
+    this.Edited = true;
   }
 
   tabChanged(tabChangeEvent: number) {
@@ -326,6 +326,7 @@ export class EmployeeComponent implements OnInit {
 
   }
   SaveOrUpdate() {
+    debugger;
     var errorMessage = '';
     if (this.EmployeeForm.get("FirstName").value == '') {
       errorMessage += "First name is required.<br>";
@@ -426,7 +427,7 @@ export class EmployeeComponent implements OnInit {
       //this.EmployeeData["ConfirmationDate"]= new Date();
       delete this.EmployeeData["ConfirmationDate"];
     }
-    console.log('this.EmployeeData', this.EmployeeData)
+    //console.log('this.EmployeeData', this.EmployeeData)
     if (this.EmployeeId == 0)
       this.save();
     else
@@ -440,16 +441,19 @@ export class EmployeeComponent implements OnInit {
       .subscribe((result: any) => {
         //debugger;
         if (result != undefined) {
+          this.Edited=false;
           this.EmployeeId = result.EmpEmployeeId;
           this.EmployeeForm.patchValue({
             EmployeeId: result.EmpEmployeeId
           })
           this.loading = false;
+          this.GetEmployee();
           this.contentservice.openSnackBar("Employee's data saved successfully.",globalconstants.ActionText,globalconstants.BlueBackground);
 
         }
 
       }, error => {
+        this.Edited=false;
         this.loading = false;
         console.log(error)
       })
@@ -462,9 +466,11 @@ export class EmployeeComponent implements OnInit {
       .subscribe((result: any) => {
         //if (result.value.length > 0 )
         this.loading = false;
+        this.Edited=false;
         this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
       }, error => {
         this.loading = false;
+        this.Edited=false;
         this.contentservice.openSnackBar("Issue, Please contact your administrator.", globalconstants.ActionText,globalconstants.RedBackground);
         throw error;
       })
@@ -480,6 +486,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PresentState = [...data.value];
+        this.Edited=true;
       })
   }
   SelectPresentCity(value) {
@@ -487,6 +494,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PresentCity = [...data.value];
+        this.Edited=true;
       })
   }
   SelectPermanentState(value) {
@@ -494,6 +502,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PermanentState = [...data.value];
+        this.Edited=true;
       })
   }
   SelectPermanentCity(value) {
@@ -501,6 +510,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PermanentCity = [...data.value];
+        this.Edited=true;
       })
   }
   GetEmployee() {
@@ -521,7 +531,10 @@ export class EmployeeComponent implements OnInit {
             this.SelectPermanentCity(stud.PermanentAddressStateId);
 
             this.EmployeeId = stud.EmpEmployeeId;
-
+            let EmployeeName = stud.EmployeeCode + ' ' + stud.Name;
+            this.shareddata.ChangeEmployeeName(EmployeeName);
+            this.tokenService.saveEmployeeId(stud.EmpEmployeeId);
+        
             this.EmployeeForm.patchValue({
               "ShortName": stud.ShortName,
               "FirstName": stud.FirstName,

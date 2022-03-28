@@ -38,7 +38,7 @@ export class SubjectTypesComponent implements OnInit {
     OrgId: 0,
     SelectHowMany: 0,
     Active: 1,
-    Deleted:0,
+    Deleted:false,
   };
   displayedColumns = [
     'SubjectTypeId',
@@ -165,7 +165,7 @@ export class SubjectTypesComponent implements OnInit {
           this.SubjectTypeData.SubjectTypeId = row.SubjectTypeId;
           this.SubjectTypeData.SelectHowMany = row.SelectHowMany;
           this.SubjectTypeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.SubjectTypeData.Deleted = 0;
+          this.SubjectTypeData.Deleted = false;
           if (this.SubjectTypeData.SubjectTypeId == 0) {
             this.SubjectTypeData["CreatedDate"] = new Date();
             this.SubjectTypeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];

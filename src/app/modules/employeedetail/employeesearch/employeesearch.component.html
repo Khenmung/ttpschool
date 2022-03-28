@@ -17,7 +17,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="250">
                 <mat-label>employee code</mat-label>
-                <input type="text" matInput formControlName="EmployeeCode" [matAutocomplete]="autoF">
+                <input type="text" matInput formControlName="searchEmployeeCode" [matAutocomplete]="autoF">
                 <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnC">
                     <mat-option *ngFor="let option of filteredEmployeeCode | async" [value]="option">
                         {{option.EmployeeCode}}

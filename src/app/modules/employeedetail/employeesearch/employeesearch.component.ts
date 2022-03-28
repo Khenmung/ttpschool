@@ -74,7 +74,7 @@ export class EmployeesearchComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    
+
     private fb: FormBuilder,
     private shareddata: SharedataService,
     private token: TokenStorageService) { }
@@ -88,7 +88,7 @@ export class EmployeesearchComponent implements OnInit {
     this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
     this.EmployeeSearchForm = this.fb.group({
       searchemployeeName: [''],
-      EmployeeCode: ['']
+      searchEmployeeCode: ['']
     })
     this.SelectedApplicationId = +this.token.getSelectedAPPId();
     this.filteredEmployees = this.EmployeeSearchForm.get("searchemployeeName").valueChanges
@@ -97,7 +97,7 @@ export class EmployeesearchComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Employees.slice())
       );
-    this.filteredEmployeeCode = this.EmployeeSearchForm.get("EmployeeCode").valueChanges
+    this.filteredEmployeeCode = this.EmployeeSearchForm.get("searchEmployeeCode").valueChanges
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.EmployeeCode),
@@ -177,7 +177,7 @@ export class EmployeesearchComponent implements OnInit {
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
-       
+
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
@@ -282,6 +282,9 @@ export class EmployeesearchComponent implements OnInit {
 
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var EmployeeName = this.EmployeeSearchForm.get("searchemployeeName").value.Name;
+    var EmployeeCode = this.EmployeeSearchForm.get("searchEmployeeCode").value.EmployeeCode;
+    if (EmployeeCode != undefined && EmployeeCode.trim().length > 0)
+      checkFilterString += " and  EmployeeCode eq '" + this.EmployeeSearchForm.get("searchEmployeeCode").value.EmployeeCode + "'";
     if (EmployeeName != undefined && EmployeeName.trim().length > 0)
       checkFilterString += " and  EmpEmployeeId eq " + this.EmployeeSearchForm.get("searchemployeeName").value.EmployeeId;
 
@@ -299,27 +302,30 @@ export class EmployeesearchComponent implements OnInit {
         if (data.value.length > 0) {
 
           this.EmployeeData = data.value.map(item => {
-            var gradeObj = this.Grades.filter(g => g.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].EmpGradeId);
             var _gradeName = '';
-            if (gradeObj.length > 0)
-              _gradeName = gradeObj[0].MasterDataName;
-            
-              var designationObj = this.Designations.filter(d => d.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].DesignationId);
             var _designationName = '';
-            if (designationObj.length > 0)
-            _designationName = designationObj[0].MasterDataName;
-            
-            var departmentObj = this.Departments.filter(d => d.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].DepartmentId);
             var _departmentName = '';
-            if (departmentObj.length > 0)
-            _departmentName = departmentObj[0].MasterDataName;
-            
-            var managerObj = this.Employees.filter(d => d.EmployeeId == item.EmpEmployeeGradeSalHistoryEmployees[0].ManagerId);
             var _managerName = '';
-            if (managerObj.length > 0)
-            _managerName = managerObj[0].Name;
 
-            
+            if (item.EmpEmployeeGradeSalHistoryEmployees.length > 0) {
+              var gradeObj = this.Grades.filter(g => g.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].EmpGradeId);
+
+              if (gradeObj.length > 0)
+                _gradeName = gradeObj[0].MasterDataName;
+
+              var designationObj = this.Designations.filter(d => d.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].DesignationId);
+              if (designationObj.length > 0)
+                _designationName = designationObj[0].MasterDataName;
+
+              var departmentObj = this.Departments.filter(d => d.MasterDataId == item.EmpEmployeeGradeSalHistoryEmployees[0].DepartmentId);
+              if (departmentObj.length > 0)
+                _departmentName = departmentObj[0].MasterDataName;
+
+              var managerObj = this.Employees.filter(d => d.EmployeeId == item.EmpEmployeeGradeSalHistoryEmployees[0].ManagerId);
+              if (managerObj.length > 0)
+                _managerName = managerObj[0].Name;
+            }
+
             item.EmployeeCode = item.EmployeeCode;
             item.Name = item.FirstName + " " + item.LastName;
             item.Grade = _gradeName;
@@ -331,7 +337,7 @@ export class EmployeesearchComponent implements OnInit {
         }
         else {
           this.EmployeeData = [];
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource<IEmployee>(this.EmployeeData);
         this.dataSource.paginator = this.paginator;

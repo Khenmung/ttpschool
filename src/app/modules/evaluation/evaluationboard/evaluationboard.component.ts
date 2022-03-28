@@ -5,7 +5,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassEvaluationComponent } from '../classevaluation/classevaluation.component';
 import { ClassEvaluationOptionComponent } from '../classevaluationoption/classevaluationoption.component';
-import { EvaluationComponent } from '../evaluation/evaluation.component';
+import { EvaluationandExamComponent } from '../evaluationandexam/evaluationandexam.component';
 
 @Component({
   selector: 'app-evaluationboard',
@@ -14,23 +14,24 @@ import { EvaluationComponent } from '../evaluation/evaluation.component';
 })
 export class EvaluationboardComponent implements AfterViewInit {
 
-  components = [
-    //EvaluationComponent,
+  components = [    
     ClassEvaluationComponent,
-    ClassEvaluationOptionComponent    
+    ClassEvaluationOptionComponent,
+    EvaluationandExamComponent  
   ];
 
   tabNames = [
     { 'label': '1Exam Time Table', 'faIcon': '' },
+    { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
   ];
 
   Permissions =
     {
       ParentPermission: '',
-      EvaluationMasterPermission: '',
       ClassEvaluationPermission: '',
       EvaluationOptionPermission: '',
+      EvaluationExamPermission: '',
     };
   LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -54,7 +55,10 @@ export class EvaluationboardComponent implements AfterViewInit {
       this.Permissions.ParentPermission = perObj[0].permission;
     }
 
-    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONANDEXAM)
+    var comindx = this.components.indexOf(EvaluationandExamComponent);
+    this.AddRemoveComponent(perObj, comindx);
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.CLASSEVALUATION)
     var comindx = this.components.indexOf(ClassEvaluationComponent);
     this.AddRemoveComponent(perObj, comindx);

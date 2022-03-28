@@ -74,7 +74,7 @@ export class DashboardclassfeeComponent implements OnInit {
     private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
-    
+
     private route: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }
@@ -124,7 +124,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
             this.FeeDefinitions = [...f];
             if (this.FeeDefinitions.length == 0) {
-              this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"],1).subscribe((d: any) => {
+              this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
                 this.FeeDefinitions = [...d.value];
               })
             }
@@ -156,13 +156,31 @@ export class DashboardclassfeeComponent implements OnInit {
       row.Active = 0;
     row.Action = true;
   }
+  SelectAll(value) {
+
+    if (value.checked) {
+      this.ELEMENT_DATA.forEach(s => {
+        s.Active = 1;
+        s.Action =true;
+      })
+    }
+    else {
+      this.ELEMENT_DATA.forEach(s => {
+        s.Active = 0;
+        s.Action =true;
+      })
+    }
+    this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
+    this.dataSource.paginator = this.paginator
+    this.dataSource.sort = this.sort;
+  }
   onBlur(element) {
     element.Action = true;
   }
   UpdateSelectedBatchId(value) {
     this.SelectedBatchId = value;
   }
-  
+
   CreateInvoice() {
     debugger;
     var selectedMonth = this.searchForm.get("searchMonth").value;
@@ -176,7 +194,7 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         console.log("invoices", data)
         var AmountAfterFormulaApplied = 0;
-        
+
         data.forEach(inv => {
           this.VariableObjList.push(inv)
           if (inv.Formula.length > 0) {
@@ -198,16 +216,16 @@ export class DashboardclassfeeComponent implements OnInit {
             TotalCredit: 0,
           });
         });
-        var query ="select SUM(TotalDebit) TotalDebit,SUM(Balance) Balance, StudentClassId," +
-                    "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalCredit "+
-                    "FROM ? GROUP BY TotalCredit, StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId"; 
-        var sumFeeData = alasql(query,[this.LedgerData]);
-        
+        var query = "select SUM(TotalDebit) TotalDebit,SUM(Balance) Balance, StudentClassId," +
+          "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalCredit " +
+          "FROM ? GROUP BY TotalCredit, StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
+        var sumFeeData = alasql(query, [this.LedgerData]);
+
 
         //console.log("sumFeeData",sumFeeData)
         this.authservice.CallAPI(sumFeeData, 'createinvoice')
           .subscribe((data: any) => {
-            this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
             this.loading = false;
           })
       });
@@ -287,19 +305,19 @@ export class DashboardclassfeeComponent implements OnInit {
     if (row.Amount == 0) {
       row.Action = false;
       this.loading = false;
-      this.contentservice.openSnackBar("Amount should be greater than zero.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Amount should be greater than zero.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else if (row.Amount > 100000) {
       row.Action = false;
       this.loading = false;
-      this.contentservice.openSnackBar("Amount should be smaller than 100,000.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Amount should be smaller than 100,000.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else if (row.Month == 0) {
       row.Action = false;
       this.loading = false;
-      this.contentservice.openSnackBar("Please select month.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -320,7 +338,7 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.classFeeData.Active = row.Active;
@@ -352,7 +370,7 @@ export class DashboardclassfeeComponent implements OnInit {
           row.ClassFeeId = data.ClassFeeId;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
 
@@ -366,7 +384,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.loading = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
 
         });
@@ -408,14 +426,14 @@ export class DashboardclassfeeComponent implements OnInit {
   CopyFromPreviousBatch() {
     //console.log("here ", this.PreviousBatchId)
     if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else
       this.GetClassFee(this.StandardFilterWithPreviousBatchId, 1)
   }
   GetClassFee(OrgIdAndbatchId, previousbatch) {
     debugger;
     if (this.searchForm.get("ClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class/course.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class/course.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
 
     }

@@ -27,14 +27,6 @@ export class studentprimaryinfoComponent implements OnInit {
   // @ViewChild(StudentDocumentComponent) studentDocument: StudentDocumentComponent;
   // @ViewChild(GenerateCertificateComponent) gencertificate: GenerateCertificateComponent;
   Edit = false;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionsAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   SelectedBatchId = 0;
   SelectedApplicationId = 0;
   loginUserDetail = [];
@@ -69,7 +61,7 @@ export class studentprimaryinfoComponent implements OnInit {
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
   studentForm: FormGroup;
-
+  Edited =false;
   public files: NgxFileDropEntry[] = [];
   @ViewChild(ImageCropperComponent, { static: true }) imageCropper: ImageCropperComponent;
 
@@ -130,10 +122,9 @@ export class studentprimaryinfoComponent implements OnInit {
       autoClose: true,
       keepAfterRouteChange: true
     };
-    //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.loading = false;
-      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+      this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
 
       this.Edit = false;
     });
@@ -286,21 +277,15 @@ export class studentprimaryinfoComponent implements OnInit {
         ////console.log(data.value);
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-        //this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
-        //    this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-        //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
-        //this.CountryId = this.Country.filter(country => country.MasterDataName.toLowerCase() == "india")[0].MasterDataId;
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
         this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
-        //this.studentForm.patchValue({ Country: this.CountryId });
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.studentForm.patchValue({ PrimaryContactFatherOrMother: this.PrimaryContactDefaultId });
-        //      this.studentForm.patchValue({ State: this.States.filter(state => state.MasterDataName.toUpperCase() == "MANIPUR")[0].MasterDataId });
         this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
       });
 
@@ -321,6 +306,10 @@ export class studentprimaryinfoComponent implements OnInit {
       this.displayContactPerson = false;
     }
 
+  }
+  OnBlur()
+  {
+    this.Edited=true;
   }
   SaveOrUpdate() {
     var errorMessage = '';
@@ -396,8 +385,8 @@ export class studentprimaryinfoComponent implements OnInit {
       OrgId: this.loginUserDetail[0]["orgId"],
       BatchId: this.tokenService.getSelectedBatchId()
     });
-    debugger;
-    console.log("studentData", this.studentData)
+    //debugger;
+    //console.log("studentData", this.studentData)
     if (this.studentForm.get("StudentId").value == 0)
       this.save();
     else
@@ -425,7 +414,7 @@ export class studentprimaryinfoComponent implements OnInit {
           this.tokenService.saveStudentId(this.StudentId + "")
           this.tokenService.saveStudentClassId(this.StudentClassId + "");
           this.GetStudent();
-
+          this.Edited=false;
 
         }
 
@@ -437,6 +426,7 @@ export class studentprimaryinfoComponent implements OnInit {
     this.dataservice.postPatch('Students', this.studentData[0], this.StudentId, 'patch')
       .subscribe((result: any) => {
         this.loading = false;
+        this.Edited=false;
         if (result != null && result.UserId != "")
           this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
         else

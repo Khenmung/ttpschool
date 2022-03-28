@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -16,21 +17,11 @@ import { SharedataService } from '../../../shared/sharedata.service';
 export class AddstudentclassComponent implements OnInit {
   loading = false;
   breakpoint = 0;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionsAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   SaveDisable = false;
   StudentId = 0;
   StudentClassId = 0;
-  //BatchId = 0;
   SelectedBatchId = 0;
   invalidId = false;
-  //BatchId = 0;
   allMasterData = [];
   Students = [];
   Classes = [];
@@ -61,13 +52,13 @@ export class AddstudentclassComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private aRoute: ActivatedRoute,
-
     private nav: Router,
     private fb: FormBuilder,
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
+    var today = new Date();
     this.studentclassForm = this.fb.group({
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
@@ -76,7 +67,7 @@ export class AddstudentclassComponent implements OnInit {
       RollNo: [''],
       FeeTypeId: [0],
       Remarks: [''],
-      AdmissionDate: [new Date()],
+      AdmissionDate: [today],
       Active: [1],
     });
     this.PageLoad();
@@ -94,19 +85,17 @@ export class AddstudentclassComponent implements OnInit {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
 
       this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
-      if (this.FeeType.length == 0) {
+      if (this.FeeType.length == 0)
         this.GetFeeTypes();
-      }
-      else {
-        this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
-        this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
-        this.StudentId = this.tokenstorage.getStudentId();
-        this.StudentClassId = this.tokenstorage.getStudentClassId()
-        //this.shareddata.CurrentStudentClassId.subscribe(scid => this.StudentClassId = scid);
-        this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
-        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.GetStudentClass();
-      }
+      this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
+      this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
+      this.StudentId = this.tokenstorage.getStudentId();
+      this.StudentClassId = this.tokenstorage.getStudentClassId()
+      this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+      this.GetMasterData();
+      this.GetStudentClass();
+
     }
   }
   get f() { return this.studentclassForm.controls }
@@ -115,10 +104,8 @@ export class AddstudentclassComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
-
         this.aRoute.paramMap.subscribe(param => {
           this.GetStudent();
         })
@@ -139,7 +126,6 @@ export class AddstudentclassComponent implements OnInit {
   GetFeeTypes() {
     debugger;
     this.loading = true;
-    //var filter = globalconstants.getStandardFilterWithBatchId(this.token);
     let list: List = new List();
     list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
     list.PageName = "SchoolFeeTypes";
@@ -153,9 +139,9 @@ export class AddstudentclassComponent implements OnInit {
       })
   }
   GetStudent() {
-    var filterOrgId = globalconstants.getStandardFilter(this.tokenstorage);
+debugger;
+    var filterOrgId = globalconstants.getStandardFilter(this.LoginUserDetail);
     if (this.StudentId == 0) {
-
       this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
       this.invalidId = true;
       return;
@@ -189,7 +175,7 @@ export class AddstudentclassComponent implements OnInit {
 
   }
   GetStudentClass() {
-    //debugger;
+    debugger;
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
     if (this.StudentId > 0 && this.StudentClassId > 0) {
@@ -203,7 +189,7 @@ export class AddstudentclassComponent implements OnInit {
       this.dataservice.get(list)
         .subscribe((data: any) => {
           if (data.value.length > 0) {
-
+            var admissiondate = moment(data.value[0].AdmissionDate).isBefore("1970-01-01")
             this.studentclassForm.patchValue({
               StudentId: data.value[0].StudentId,
               ClassId: data.value[0].ClassId,
@@ -212,7 +198,7 @@ export class AddstudentclassComponent implements OnInit {
               RollNo: data.value[0].RollNo,
               BatchId: data.value[0].BatchId,
               FeeTypeId: data.value[0].FeeTypeId,
-              AdmissionDate: data.value[0].AdmissionDate,
+              AdmissionDate: admissiondate?moment():data.value[0].AdmissionDate,
               Remarks: data.value[0].Remarks,
               Active: data.value[0].Active,
             });
@@ -227,7 +213,7 @@ export class AddstudentclassComponent implements OnInit {
               RollNo: '',
               BatchId: this.SelectedBatchId,
               FeeTypeId: 0,
-              AdmissionDate: new Date(),
+              AdmissionDate: moment(),
               Remarks: '',
               Active: 1
             });

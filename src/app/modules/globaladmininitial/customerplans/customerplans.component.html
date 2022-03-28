@@ -42,7 +42,7 @@
                 <ng-container matColumnDef="Description">
                     <mat-header-cell *matHeaderCellDef>Description
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
+                    <mat-cell *matCellDef="let element" style="padding:15px;" >
                         {{element.Description}}
                     </mat-cell>
                 </ng-container>
@@ -104,7 +104,7 @@
                 <ng-container matColumnDef="AmountPerMonth">
                     <mat-header-cell *matHeaderCellDef>Amount Per Month
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" style="justify-content: end;">
+                    <mat-cell *matCellDef="let element" style="padding:15px; justify-content: end;">
                        {{element.AmountPerMonth}}
                     </mat-cell>
                 </ng-container>

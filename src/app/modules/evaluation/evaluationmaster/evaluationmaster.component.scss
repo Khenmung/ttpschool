@@ -1,0 +1,13 @@
+mat-form-field{
+    margin-right: 15px;
+    width:98%;
+}
+.mat-column-Action,.mat-column-Active,.mat-column-EvaluationMasterId{
+    flex:1 1 100px;
+}
+.mat-column-Title,
+.mat-column-ClassId,
+.mat-column-ClassSubjectId{
+    
+    flex:1 1 200px;
+}

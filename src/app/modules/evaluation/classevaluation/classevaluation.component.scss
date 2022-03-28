@@ -20,13 +20,12 @@ mat-cell:first-of-type {
 {
     flex:1 1 120px;
 }
-.mat-column-ClassId{   
+.mat-column-ClassId,.mat-column-Action{   
     flex:1 1 100px;
 }
 .mat-column-DisplayOrder,
 .mat-column-MultipleAnswer,
-.mat-column-ClassEvaluationId,
-.mat-column-Action,
+.mat-column-ClassEvaluationId
 .mat-column-Active
 {   
     justify-content: center;
