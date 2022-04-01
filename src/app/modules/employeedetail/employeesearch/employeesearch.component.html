@@ -24,10 +24,10 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetEmployee()">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEmployee()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button [disabled]="loading" class="mat-raised-button" (click)="addNew()">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="addNew()">
                 <mat-icon>fiber_new</mat-icon>
             </button>
         </form>

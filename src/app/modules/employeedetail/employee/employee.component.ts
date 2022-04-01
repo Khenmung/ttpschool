@@ -26,7 +26,7 @@ export class EmployeeComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  Edited=false;
+  Edited = false;
   SelectedApplicationId = 0;
   loginUserDetail = [];
   EmployeeLeaving = false;
@@ -84,10 +84,9 @@ export class EmployeeComponent implements OnInit {
       return;
     }
     this.selectedFile = files[0];
-    if(this.selectedFile.size>60000)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Image size should be less than 80kb",globalconstants.ActionText,globalconstants.RedBackground);
+    if (this.selectedFile.size > 60000) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var reader = new FileReader();
@@ -126,11 +125,9 @@ export class EmployeeComponent implements OnInit {
       autoClose: true,
       keepAfterRouteChange: true
     };
-    //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.loading = false;
-      this.contentservice.openSnackBar("Files Uploaded successfully.",globalconstants.ActionText,globalconstants.BlueBackground)
-      //this.alertMessage.success("Files Uploaded successfully.", options);
+      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground)
 
       this.Edited = false;
     });
@@ -147,23 +144,13 @@ export class EmployeeComponent implements OnInit {
 
   ) {
 
-    // this.shareddata.CurrentGenders.subscribe(genders => (this.Genders = genders));
-    // if (this.Genders.length == 0)
-    //   this.route.navigate(['/employee/']);
-    // else {
     this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
-
-    //this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
     this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
     this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
     this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
-    //this.shareddata.CurrentStates.subscribe(st => (this.States = st));
     this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
-    //this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
-
     this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
 
-    //this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
     this.EmployeeForm = this.fb.group({
       ShortName: [''],
       FirstName: ['', [Validators.required]],
@@ -211,10 +198,10 @@ export class EmployeeComponent implements OnInit {
       PermanentAddressCountryId: [0],
       PresentAddressPincode: [''],
       PermanentAddressPincode: [''],
-      DepartmentId: [0,Validators.required],
-      DesignationId: [0,Validators.required],
-      WorkAccountId: [0,Validators.required],
-      EmpGradeId: [0,Validators.required]
+      DepartmentId: [0, Validators.required],
+      DesignationId: [0, Validators.required],
+      WorkAccountId: [0, Validators.required],
+      EmpGradeId: [0, Validators.required]
     });
     //}
   }
@@ -242,7 +229,6 @@ export class EmployeeComponent implements OnInit {
   @ViewChildren("allTabs") allTabs: QueryList<any>
 
   ngAfterViewInit() {
-    ////console.log('total tabs: ' + this.allTabs.first._tabs.length);
   }
 
   get f() { return this.EmployeeForm.controls }
@@ -254,7 +240,6 @@ export class EmployeeComponent implements OnInit {
   tabChanged(tabChangeEvent: number) {
     this.selectedIndex = tabChangeEvent;
     this.navigateTab(this.selectedIndex);
-    //   //console.log('tab selected: ' + tabChangeEvent);
   }
   public nextStep() {
     this.selectedIndex += 1;
@@ -282,7 +267,6 @@ export class EmployeeComponent implements OnInit {
 
     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
-        ////console.log(data.value);
         this.allMasterData = [...data.value];
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGENDER);
         this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
@@ -298,8 +282,6 @@ export class EmployeeComponent implements OnInit {
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-
-
       });
 
   }
@@ -357,7 +339,7 @@ export class EmployeeComponent implements OnInit {
       errorMessage += "Work Account is required.<br>";
     }
     if (errorMessage.length > 0) {
-      this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;
     }
@@ -394,13 +376,12 @@ export class EmployeeComponent implements OnInit {
       ProbationPeriodDays: this.EmployeeForm.get("ProbationPeriodDays").value,
       PAN: this.EmployeeForm.get("PAN").value,
       PassportNo: this.EmployeeForm.get("PassportNo").value,
-      AadharNo: this.EmployeeForm.get("AadharNo").value,
       MaritalStatusId: this.EmployeeForm.get("MaritalStatusId").value,
       MarriedDate: new Date(this.EmployeeForm.get("MarriedDate").value),
       PFAccountNo: this.EmployeeForm.get("PFAccountNo").value,
       NatureId: this.EmployeeForm.get("NatureId").value,
       EmployeeCode: this.EmployeeForm.get("EmployeeCode").value,
-      Active: _active?1:0,
+      Active: _active ? 1 : 0,
       Remarks: this.EmployeeForm.get("Remarks").value,
       PresentAddress: this.EmployeeForm.get("PresentAddress").value,
       PresentAddressCityId: this.EmployeeForm.get("PresentAddressCityId").value,
@@ -418,60 +399,73 @@ export class EmployeeComponent implements OnInit {
       EmpGradeId: this.EmployeeForm.get("EmpGradeId").value,
       OrgId: this.loginUserDetail[0]["orgId"]
     }]
-   
+
     if (this.EmployeeData["MarriedDate"] == "") {
-      //this.EmployeeData["MarriedDate"] = new Date();
       delete this.EmployeeData["MarriedDate"];
     }
     if (this.EmployeeData["ConfirmationDate"] == "") {
-      //this.EmployeeData["ConfirmationDate"]= new Date();
       delete this.EmployeeData["ConfirmationDate"];
     }
-    //console.log('this.EmployeeData', this.EmployeeData)
-    if (this.EmployeeId == 0)
-      this.save();
-    else
-      this.update();
+    var filterstr = '';
+    var _employeeCode = this.EmployeeForm.get("EmployeeCode").value;
+    if (this.EmployeeId > 0) {
+      filterstr = "EmpEmployeeId ne " + this.EmployeeId + " and "
+    }
+    if (_employeeCode.length > 0) {
+      filterstr += "EmployeeCode eq '" + _employeeCode + "' and "
+    }
+    let list: List = new List();
+    list.fields = ["EmpEmployeeId"];
+    list.PageName = "EmpEmployees";
+    list.filter = [filterstr + "OrgId eq " + this.loginUserDetail[0]["orgId"]];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        if (data.value.length > 0) {
+          this.loading = false;
+          this.contentservice.openSnackBar("Employee code already exists!", globalconstants.ActionText, globalconstants.RedBackground);
+          return;
+        }
+        else {
+          if (this.EmployeeId == 0)
+            this.save();
+          else
+            this.update();
+        }
+      })
   }
 
   save() {
-    //this.EmployeeForm.patchValue({ AlternateContactNo: "" });
 
     this.dataservice.postPatch('EmpEmployees', this.EmployeeData, 0, 'post')
       .subscribe((result: any) => {
         //debugger;
         if (result != undefined) {
-          this.Edited=false;
+          this.Edited = false;
           this.EmployeeId = result.EmpEmployeeId;
           this.EmployeeForm.patchValue({
             EmployeeId: result.EmpEmployeeId
           })
           this.loading = false;
           this.GetEmployee();
-          this.contentservice.openSnackBar("Employee's data saved successfully.",globalconstants.ActionText,globalconstants.BlueBackground);
-
+          this.contentservice.openSnackBar("Employee's data saved successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
         }
-
       }, error => {
-        this.Edited=false;
+        this.Edited = false;
         this.loading = false;
         console.log(error)
       })
   }
   update() {
-    ////console.log('Employee', this.EmployeeForm.value)
-    //console.log('update data',this.EmployeeData)
-    //this.EmployeeForm.patchValue({ AlternateContactNo: "" });
     this.dataservice.postPatch('EmpEmployees', this.EmployeeData[0], this.EmployeeId, 'patch')
       .subscribe((result: any) => {
-        //if (result.value.length > 0 )
         this.loading = false;
-        this.Edited=false;
-        this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+        this.Edited = false;
+        this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
       }, error => {
         this.loading = false;
-        this.Edited=false;
-        this.contentservice.openSnackBar("Issue, Please contact your administrator.", globalconstants.ActionText,globalconstants.RedBackground);
+        this.Edited = false;
+        this.contentservice.openSnackBar("Issue, Please contact your administrator.", globalconstants.ActionText, globalconstants.RedBackground);
         throw error;
       })
   }
@@ -486,7 +480,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PresentState = [...data.value];
-        this.Edited=true;
+        this.Edited = true;
       })
   }
   SelectPresentCity(value) {
@@ -494,7 +488,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PresentCity = [...data.value];
-        this.Edited=true;
+        this.Edited = true;
       })
   }
   SelectPermanentState(value) {
@@ -502,7 +496,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PermanentState = [...data.value];
-        this.Edited=true;
+        this.Edited = true;
       })
   }
   SelectPermanentCity(value) {
@@ -510,7 +504,7 @@ export class EmployeeComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(value, this.loginUserDetail[0]["orgId"], commonId)
       .subscribe((data: any) => {
         this.PermanentCity = [...data.value];
-        this.Edited=true;
+        this.Edited = true;
       })
   }
   GetEmployee() {
@@ -531,10 +525,10 @@ export class EmployeeComponent implements OnInit {
             this.SelectPermanentCity(stud.PermanentAddressStateId);
 
             this.EmployeeId = stud.EmpEmployeeId;
-            let EmployeeName = stud.EmployeeCode + ' ' + stud.Name;
+            let EmployeeName = stud.EmployeeCode + ' ' + stud.FirstName + ' ' + (stud.LastName==null?'':stud.LastName);
             this.shareddata.ChangeEmployeeName(EmployeeName);
             this.tokenService.saveEmployeeId(stud.EmpEmployeeId);
-        
+
             this.EmployeeForm.patchValue({
               "ShortName": stud.ShortName,
               "FirstName": stud.FirstName,
@@ -601,7 +595,7 @@ export class EmployeeComponent implements OnInit {
           })
         }
         else {
-          this.contentservice.openSnackBar("No data found.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No data found.", globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.loading = false;
       }, error => {

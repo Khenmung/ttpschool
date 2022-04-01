@@ -127,7 +127,7 @@ export class ContentService implements OnInit {
     return monthArray;
   }
   GetDropDownDataFromDB(ParentId, OrgId, AppIds, activeMaster = 1) {
-    debugger;
+    //debugger;
     var _active = activeMaster == 0 ? '' : "Active eq 1 and ";
     var applicationparam = '';
     (AppIds + "").split(',').forEach(id => {

@@ -235,6 +235,7 @@ export class SlotnclasssubjectComponent implements OnInit {
           if (this.DataToUpdateCount == 0) {
             this.DataToUpdateCount = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.GetSelectedSubjectsForSelectedExam();
           }
         }, err => {
           this.loadingFalse();
@@ -252,6 +253,7 @@ export class SlotnclasssubjectComponent implements OnInit {
           if (this.DataToUpdateCount == 0) {
             this.DataToUpdateCount = -1;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.GetSelectedSubjectsForSelectedExam();
           }
         }, err => {
           this.loadingFalse();
@@ -278,24 +280,30 @@ export class SlotnclasssubjectComponent implements OnInit {
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        debugger;
         //  //console.log('data.value', data.value);
-        this.ClassSubjectList = data.value.map(item => {
+        this.ClassSubjectList = [];
+        data.value.forEach(item => {
           var _class = '';
+          var _subject = '';
           var clsobj = this.Classes.filter(c => c.ClassId == item.ClassId)
-          if (clsobj.length > 0)
+          var subjobj = this.Subjects.filter(c => c.MasterDataId == item.SubjectId)
+
+          if (clsobj.length > 0 && subjobj.length > 0) {
             _class = clsobj[0].ClassName;
-          var _subject = this.Subjects.filter(c => c.MasterDataId == item.SubjectId)[0].MasterDataName;
-          return {
-            ClassSubjectId: item.ClassSubjectId,
-            ClassSubject: _class + " - " + _subject,
-            Subject: _subject,
-            ClassName: _class,
-            SubjectId: item.SubjectId,
-            ClassId: item.ClassId
+            _subject = subjobj[0].MasterDataName;
+            this.ClassSubjectList.push({
+              ClassSubjectId: item.ClassSubjectId,
+              ClassSubject: _class + " - " + _subject,
+              Subject: _subject,
+              ClassName: _class,
+              SubjectId: item.SubjectId,
+              ClassId: item.ClassId
+            })
           }
         })
         this.loading = false;
+        console.log("this.ClassSubjectList", this.ClassSubjectList);
       });
   }
   GetExams() {
@@ -470,7 +478,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             Subject: []
           });
         })
-
+        debugger;
         this.ClassWiseSubjectDisplay.forEach(displayrow => {
           displayrow["Subject"] = [];
           displayrow["SlotClassSubjectId"] = 0;
@@ -549,7 +557,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         if (this.StoreForUpdate.length == 0) {
           this.contentservice.openSnackBar("No record found! Subject not defined in class subject module.", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        console.log('ClassWiseSubjectDisplay', this.ClassWiseSubjectDisplay)
+        //console.log('ClassWiseSubjectDisplay', this.ClassWiseSubjectDisplay)
         this.dataSource = new MatTableDataSource<any>(this.ClassWiseSubjectDisplay);
         this.loading = false;
       })

@@ -23,6 +23,7 @@ import {
   NGX_MAT_DATE_FORMATS
 } from '@angular-material-components/datetime-picker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { NoOfStudentComponent } from './no-of-student/no-of-student.component';
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
   parse: {
@@ -42,7 +43,7 @@ FullCalendarModule.registerPlugins([
 ]);
 
 @NgModule({
-  declarations: [MiscComponents],
+  declarations: [MiscComponents, NoOfStudentComponent],
   imports: [
     CommonModule,
     FormsModule,

@@ -109,7 +109,7 @@ export class StudentAttendanceComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
-        this.GetClassSubject();
+        
       }
     }
 
@@ -323,8 +323,8 @@ export class StudentAttendanceComponent implements OnInit {
 
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate gt " + moment(today).format('yyyy-MM-dd')
-      " and AttendanceDate lt " + moment(today).add(1,'day').format('yyyy-MM-DD')
+      " and AttendanceDate ge " + moment(today).format('YYYY-MM-DD')
+      " and AttendanceDate lt " + moment(today).add(1,'day').format('YYYY-MM-DD')
     if (clssubjectid > 0)
       checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
@@ -447,7 +447,9 @@ export class StudentAttendanceComponent implements OnInit {
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
         this.shareddata.ChangeSubjects(this.Subjects);
+        this.GetClassSubject();
         this.loading = false;
+  
       });
   }
   getDropDownData(dropdowntype) {

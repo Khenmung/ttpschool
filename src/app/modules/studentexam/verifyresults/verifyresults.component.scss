@@ -1,10 +1,17 @@
-mat-form-field,
-button {
+mat-form-field{
     margin-right: 15px;
+    width: 98%;
 }
 
 .mat-row {
     height: auto;
+}
+mat-cell,mat-header-cell{
+    border-right: 1px solid lightgray;
+    padding: 10px;
+    width: 100px;
+    justify-content: center;
+    align-self: stretch;
 }
 
 .mat-cell {
@@ -12,4 +19,10 @@ button {
 }
 .mat-column-Division{
     justify-content:center;
+}
+.mat-footer-row,
+.mat-header-row,
+.mat-row {
+    display: inline-flex;
+    min-width: 100%;
 }

@@ -49,7 +49,7 @@ export class ExamslotComponent implements OnInit {
     SlotNameId: 0,
     StartTime: '',
     EndTime: '',
-    ExamDate: moment(),
+    ExamDate: Date,
     Sequence:0,
     OrgId: 0,
     BatchId: 0,
@@ -136,7 +136,7 @@ export class ExamslotComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     this.loading = true;
 
     if (row.ExamDate == null) {
@@ -152,7 +152,7 @@ export class ExamslotComponent implements OnInit {
     var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate() + 1)
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
       " and SlotNameId eq " + row.SlotNameId +
-      " and ExamDate gt " + this.datepipe.transform(row.ExamDate, 'yyyy-MM-dd') +
+      " and ExamDate ge " + this.datepipe.transform(row.ExamDate, 'yyyy-MM-dd') +
       " and ExamDate lt " + this.datepipe.transform(dateplusone, 'yyyy-MM-dd')
 
 
@@ -173,13 +173,13 @@ export class ExamslotComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
-          //var _date = new Date(this.datepipe.transform(row.ExamDate, 'yyyy-MM-dd'))
+          //new Date(row.ExamDate).toISOString().slice(0, 19).replace('T', ' ')
 
           this.ExamSlotsData.ExamSlotId = row.ExamSlotId;
           this.ExamSlotsData.ExamId = this.searchForm.get("searchExamId").value;
           this.ExamSlotsData.Active = row.Active;
           this.ExamSlotsData.SlotNameId = row.SlotNameId;
-          this.ExamSlotsData.ExamDate = row.ExamDate;//.format('yyyy/MM/dd');
+          this.ExamSlotsData.ExamDate = row.ExamDate;
           this.ExamSlotsData.StartTime = row.StartTime;
           this.ExamSlotsData.EndTime = row.EndTime;
           this.ExamSlotsData.Sequence = row.Sequence;
@@ -191,7 +191,7 @@ export class ExamslotComponent implements OnInit {
             this.ExamSlotsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.ExamSlotsData["UpdatedDate"] = new Date();
             delete this.ExamSlotsData["UpdatedBy"];
-            //console.log('exam slot', this.ExamSlotsData)
+            console.log('exam slot', this.ExamSlotsData)
             this.insert(row);
           }
           else {
@@ -332,7 +332,8 @@ export class ExamslotComponent implements OnInit {
               existing[0].SlotName = e.MasterDataName;
               existing[0].WeekDay = day;
               existing[0].Action = false;
-              existing[0].ExamDate = moment(existing[0].ExamDate),
+              //existing[0].ExamDate = moment(existing[0].ExamDate).utc(false).format('DD/MM/YYYY hh:mm:ss')
+              existing[0].ExamDate = existing[0].ExamDate
               this.ExamSlots.push(existing[0]);
             }
             else {

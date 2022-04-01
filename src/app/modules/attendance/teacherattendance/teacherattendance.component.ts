@@ -235,7 +235,9 @@ export class TeacherAttendanceComponent implements OnInit {
   UpdateOrSave(row, indx) {
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and TeacherId eq " + row.TeacherId +
-      " and AttendanceDate eq " + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') +
+      //" and AttendanceDate eq " + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') +
+      " and AttendanceDate ge " + moment(row.AttendanceDate).format('YYYY-MM-DD')
+      " and AttendanceDate lt " + moment(row.AttendanceDate).add(1,'day').format('YYYY-MM-DD')
       " and " + this.StandardFilter;
 
     if (row.AttendanceId > 0)

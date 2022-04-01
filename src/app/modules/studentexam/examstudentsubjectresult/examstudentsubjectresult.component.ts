@@ -234,7 +234,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)", "StudentClass($select=StudentId,RollNo,SectionId)"]
+    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId)", "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -242,7 +242,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         var _subject = '';
         var _section = '';
         var _studname = '';
-        this.StudentSubjects = data.value.map(s => {
+        this.StudentSubjects = data.value.filter(x=>x.ClassSubject.Active==1)
+        this.StudentSubjects = this.StudentSubjects.map(s => {
           _class = '';
           _subject = '';
           _studname ='';
@@ -354,13 +355,14 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ClassSubjectMarkComponents";
-    list.lookupFields = ["ClassSubject($select=ClassId,SubjectId)"];
+    list.lookupFields = ["ClassSubject($select=Active,ClassId,SubjectId)"];
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.SubjectMarkComponents = data.value.map(c => {
+        this.SubjectMarkComponents = data.value.filter(x=>x.ClassSubject.Active==1)
+        this.SubjectMarkComponents = this.SubjectMarkComponents.map(c => {
           return {
             "ClassSubjectMarkComponentId": c.ClassSubjectMarkComponentId,
             "ClassId": c.ClassSubject.ClassId,

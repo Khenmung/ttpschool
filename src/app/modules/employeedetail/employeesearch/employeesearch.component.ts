@@ -104,13 +104,7 @@ export class EmployeesearchComponent implements OnInit {
         map(EmployeeCode => EmployeeCode ? this._filterC(EmployeeCode) : this.Employees.slice())
       );
 
-    // this.contentservice.GetGrades(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-    //   this.Grades = [...data.value];
-    // });
-
-
     this.GetMasterData();
-    //this.GetFeeTypes();
     this.GetEmployees();
     this.loading = false;
   }
@@ -262,21 +256,6 @@ export class EmployeesearchComponent implements OnInit {
         }
       })
   }
-  // GetFeeTypes() {
-  //   this.loading = true;
-  //   var filter = globalconstants.getStandardFilterWithBatchId(this.token);
-  //   let list: List = new List();
-  //   list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
-  //   list.PageName = "SchoolFeeTypes";
-  //   list.filter = [filter];
-
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       this.FeeType = [...data.value];
-  //       this.shareddata.ChangeFeeType(this.FeeType);
-  //       this.loading = false;
-  //     })
-  // }
   GetEmployee() {
     debugger;
 
@@ -327,7 +306,7 @@ export class EmployeesearchComponent implements OnInit {
             }
 
             item.EmployeeCode = item.EmployeeCode;
-            item.Name = item.FirstName + " " + item.LastName;
+            item.Name = item.FirstName + " " + (item.LastName == null?'': item.LastName);
             item.Grade = _gradeName;
             item.Designation = _designationName;
             item.Department = _departmentName;
@@ -358,8 +337,8 @@ export class EmployeesearchComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
-
-            var _name = Employee.FirstName + " " + Employee.LastName;
+            var _lastname = Employee.LastName == null?'': Employee.LastName
+            var _name = Employee.FirstName + " " + _lastname;
             var _fullDescription = _name + "-" + Employee.ContactNo;
             return {
               EmployeeId: Employee.EmpEmployeeId,

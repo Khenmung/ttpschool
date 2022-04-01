@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Class Time Table</strong></div>
+        <div><strong>Daily Time Table</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
@@ -31,39 +31,28 @@
                 </div>
             </form>
 
-            <mat-table #table [dataSource]="dataSource" style="overflow: auto;">
+            <mat-table #table [dataSource]="dataSource" id="printSection">
 
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
-                        <span style="align-self: flex-start;">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>
-                        <div *ngIf="SchoolTimeTableList.length>0">
-                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
-                                matTooltip="save all" mat-mini-fab (click)="SaveAll()">
-                                <mat-icon>all_out</mat-icon>
-                            </button>
-                        </div>
+                        <span>{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>                        
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
-                         <span *ngIf="disCol !='Day' && !disCol.includes('f_') && disCol !='Action'">
-                            <mat-form-field>
-                                <mat-select (selectionChange)="onBlur(element,$event,disCol)" [(ngModel)]="element[disCol]"
-                                    [value]="element[disCol]">
-                                    <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.ClassSubjectId">
-                                        {{item.SubjectName}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
+                    <mat-cell *matCellDef="let element"
+                        [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
+                        <span *ngIf="disCol !='Day' && !disCol.includes('f_') && disCol !='Action'">
+                            {{element[disCol]}}
                         </span>
-                        <button *ngIf="disCol=='Action'" [disabled]="loading || !element['Action'] || Permission=='read'"
-                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                        <span style="margin-right: 15px;">{{ disCol.includes('f_')?(disCol|slice:2):disCol =='Day'?element[disCol]:''}}</span>
+                        <span style="margin-right: 15px;">{{ disCol.includes('f_')?(disCol|slice:2):disCol
+                            =='Day'?element[disCol]:''}}</span>
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
+            <button *ngIf="SchoolTimeTableList.length>0" style="margin: 15px;" [disabled]="loading" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
+                ngxPrint class="mat-raised-button">
+                <mat-icon>print</mat-icon>
+            </button>
         </div>
     </div>
 </div>

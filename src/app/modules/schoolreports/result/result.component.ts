@@ -32,7 +32,7 @@ export class ResultComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
@@ -76,14 +76,14 @@ export class ResultComponent implements OnInit {
     "Percent",
     "Rank",
     "Grade",
-    
+
   ];
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -210,12 +210,13 @@ export class ResultComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var _classId = this.searchForm.get("searchClassId").value;
+    var _sectionId = this.searchForm.get("searchSectionId").value;
     if (_classId == 0) {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -241,42 +242,47 @@ export class ResultComponent implements OnInit {
         var classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
         if (classMarks.length > 0)
           this.ClassFullMark = alasql("select ClassId,sum(FullMark) as FullMark from ? group by ClassId", [classMarks]);
-          
-        this.ExamStudentResult = data.value.map(d => {
+        //  console.log("data.value",data.value)
+        if (_sectionId > 0)
+          this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId && f["StudentClass"].SectionId == _sectionId);
+        else
+          this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId);
+
+        this.ExamStudentResult = this.ExamStudentResult.map(d => {
           var _section = '';
-          var _sectionObj = this.Sections.filter(s => s.SectionId == d.StudentClass.SectionId);
+          var _sectionObj = this.Sections.filter(s => s.SectionId == d.StudentClass["SectionId"]);
           if (_sectionObj.length > 0)
             _section = _sectionObj[0].MasterDataName;
-          d.Section = _section;
+          d["Section"] = _section;
           var _className = '';
-          var _classObj = this.Classes.filter(s => s.ClassId == d.StudentClass.ClassId);
+          var _classObj = this.Classes.filter(s => s.ClassId == d.StudentClass["ClassId"]);
           if (_classObj.length > 0)
             _className = _classObj[0].MasterDataName;
-          d.Section = _section;
-          d.ClassName = _className;
-          d.RollNo = d.StudentClass.RollNo
-          d.Student = d.StudentClass.RollNo + "-"+ d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName
-          d.Grade = this.StudentGrades.filter(f=>f.MasterDataId == d.Grade)[0].MasterDataName;
-          d.Percent =  (d.TotalMarks / this.ClassFullMark[0].FullMark)*100;
+          d["Section"] = _section;
+          d["ClassName"] = _className;
+          d["RollNo"] = d.StudentClass["RollNo"]
+          d["Student"] = d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
+          d.Grade = this.StudentGrades.filter(f => f.MasterDataId == d.Grade)[0].MasterDataName;
+          d["Percent"] = d.Grade == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
           return d;
 
         })
 
-        this.ExamStudentResult = this.ExamStudentResult.sort((a,b)=>b.TotalMarks-a.TotalMarks)
-        .map((m,indx)=>{
-            m.Rank = indx +1;
-            return m;
-        })
+        this.ExamStudentResult = this.ExamStudentResult.sort((a, b) => b.TotalMarks - a.TotalMarks)
+          // .map((m, indx) => {
+          //   m.Rank = (m.Grade + "" == 'Fail') ? 0 : indx + 1;
+          //   return m;
+          // })
 
         this.dataSource = new MatTableDataSource(this.ExamStudentResult);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading=false;
+        this.loading = false;
       })
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -291,7 +297,7 @@ export class ResultComponent implements OnInit {
         this.GetStudentSubjects();
       });
   }
-  
+
   GetExams() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -357,8 +363,10 @@ export interface IExamStudentResult {
   ExamStudentResultId: number;
   ExamId: number;
   StudentClassId: number;
+  StudentClass: {},
   TotalMarks: number;
-  Grade: number;
+  Grade: string;
+  GradeId: number;
   Rank: number;
   OrgId: number;
   BatchId: number;

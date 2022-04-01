@@ -194,11 +194,12 @@ export class globalconstants {
                 'REPORT': {
                     'REPORT': 'report',
                     'EXAMTIMETABLE': 'exam time table',
-                    'RESULT': 'result',
+                    'RESULT': 'exam result',
                     'FEEPAYMENTSTATUS': 'Fee Payment Status',
                     'DATEWISECOLLECTION': 'date wise collection',
                     'CHARTREPORT': 'Chart Report',
-                    'STUDENTPROFILEREPORT': 'student profile report'
+                    'STUDENTPROFILEREPORT': 'student profile report',
+                    'DAILYTIMETABLEREPORT': 'daily time table'
                 },
                 'DATA': {
                     'DATA': 'data',
