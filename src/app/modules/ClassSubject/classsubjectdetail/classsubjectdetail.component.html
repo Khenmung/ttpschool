@@ -60,6 +60,7 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Credits </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
+                        <mat-label>credits</mat-label>
                         <input matInput type="number" max="100" [value]="element.Credits" (blur)="onBlur(element)"
                             [(ngModel)]="element.Credits" autocomplete="Off">
                     </mat-form-field>

@@ -210,7 +210,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-
+        this.StudentClassSubjects=[];
         data.value.forEach(m => {
           if (m.StudentClassSubjects.length > 0) {
             m.StudentClassSubjects.forEach(n => {
@@ -256,6 +256,7 @@ export class studentsubjectdashboardComponent implements OnInit {
 
             var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClassId);
             var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
+            //console.log("specificclasssubjects",specificclasssubjects)
             specificclasssubjects.forEach(subjectTypes => {
 
               var clssubject = takensubjects.filter(c => c.ClassSubjectId == subjectTypes.ClassSubjectId)
@@ -344,7 +345,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       "Student": this.StudentDetail["Student"],
       "RollNo": this.StudentDetail["RollNo"],
       "SubjectTypeId": clssubject.SubjectTypeId,
-      "SubjectType": clssubject.SubjectTypeName,
+      "SubjectType": clssubject.SubjectType,
       "SelectHowMany": clssubject.SelectHowMany,
       "SubjectId": clssubject.SubjectId,
       "Subject": _subjectName,
@@ -357,7 +358,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     this.StudentDetail[_subjectName] = clssubject.Active;
     topush[_subjectName] = clssubject.Active;
     this.StoreForUpdate.push(topush)
-    ////console.log('topush',topush)
+    //console.log('this.StoreForUpdate',this.StoreForUpdate)
   }
   GetClassSubjects() {
 
@@ -388,7 +389,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             'SelectHowMany': fromdb.SubjectType.SelectHowMany
           })
         })
-
+        // console.log("this.ClassSubjectList",this.ClassSubjectList)
       });
 
   }
@@ -428,7 +429,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       }
     }
     else {
-      var currentrow = this.StoreForUpdate.filter(f => f.Subject == colName);
+      var currentrow = this.StoreForUpdate.filter(f => f.Subject == colName && f.StudentClassId == element.StudentClassId);
       if (event.checked) {
         currentrow[colName] = 1;
         element[colName] = 1;
@@ -436,47 +437,74 @@ export class studentsubjectdashboardComponent implements OnInit {
       else {
         currentrow[colName] = 0;
         element[colName] = 0;
+        currentrow[0].SubjectCount =0;
       }
       element.Action = true;
     }
   }
   SaveRow(element) {
-    debugger;
+    //debugger;
     this.loading = true;
     this.rowCount = 0;
     this.SelectedStudentSubjectCount = [];
     ////////
     //console.log("this.StudentSubjectList", this.StudentSubjectList);
-    let StudentSubjects = this.StoreForUpdate.filter(s => s.StudentClassId == element.StudentClassId)
-      .sort((a, b) => a.SubjectTypeId - b.SubjectTypeId);
-    var _tempsubjectId = 0;
-    StudentSubjects.forEach(x => {
-      if (_tempsubjectId != x.SubjectTypeId && _tempsubjectId != 0) {
-              
-      }
-
-      _tempsubjectId = x.SubjectTypeId;
-    })
-    // for (var prop in element) {
-    //   //var row1 = StudentSubjects.filter(s => s.Subject == prop && s.SubjectTypeId == );
-
-    // }
-    /////////
-
+    let StudentSubjects =this.StoreForUpdate.filter(s => s.StudentClassId == element.StudentClassId); 
+    var groupbySubjectType = alasql("select SubjectTypeId,SubjectType,SelectHowMany from ? group by SubjectTypeId,SubjectType,SelectHowMany"
+      , [StudentSubjects])
+    var matchrow;
     for (var prop in element) {
-      var row: any = StudentSubjects.filter(s => s.Subject == prop);
-
-      if (row.length > 0 && prop != 'Student' && prop != 'Action') {
-        var data = {
-          Active: element[prop],
-          StudentClassSubjectId: row[0].StudentClassSubjectId,
-          StudentClassId: row[0].StudentClassId,
-          ClassSubjectId: row[0].ClassSubjectId,
-          SubjectId: row[0].SubjectId
+      matchrow = StudentSubjects.filter(x => x.Subject == prop)
+      if (matchrow.length > 0) {
+        var resultarray = groupbySubjectType.filter(f => f.SubjectTypeId == matchrow[0].SubjectTypeId);
+        if (element[prop] == 1) {
+          //assuming greater than 20 means compulsory subject types
+          if (resultarray[0].SelectHowMany > 30)
+            matchrow[0].SubjectCount = resultarray[0].SelectHowMany;
+          //resultarray[0].SubjectCount = resultarray[0].SelectHowMany;
+          else
+            resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 1 : resultarray[0].SubjectCount+1;
         }
-        ////console.log('data to update',data)
-        if (row.length > 0)
-          this.UpdateOrSave(data);
+        else {
+          resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 0 : resultarray[0].SubjectCount;
+        }
+      }
+    }
+    //console.log("groupbySubjectType", groupbySubjectType)
+    //console.log("StudentSubjects", StudentSubjects)
+    var subjectCounterr = '';
+    groupbySubjectType.forEach(element => {
+      //element.SelectHowMany =0 meeans optional
+      //element.SelectHowMany >20 means compulsory 
+      if (element.SelectHowMany>0 && element.SelectHowMany < 30 && element.SubjectCount != element.SelectHowMany)
+        subjectCounterr += " Subject type " + element.SubjectType + " must have " + element.SelectHowMany + " subject(s) selected.";
+    });
+    StudentSubjects.forEach(s => {
+      if (s.SelectHowMany > 30 && s.SubjectCount != s.SelectHowMany)
+        subjectCounterr += " Subject type " + s.SubjectType + " must have " + s.SelectHowMany + " subject(s) selected.";
+    })
+    /////////
+    if (subjectCounterr.length > 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar(subjectCounterr, globalconstants.ActionText, globalconstants.RedBackground);
+
+    }
+    else {
+      for (var prop in element) {
+        var row: any = StudentSubjects.filter(s => s.Subject == prop);
+
+        if (row.length > 0 && prop != 'Student' && prop != 'Action') {
+          var data = {
+            Active: element[prop],
+            StudentClassSubjectId: row[0].StudentClassSubjectId,
+            StudentClassId: row[0].StudentClassId,
+            ClassSubjectId: row[0].ClassSubjectId,
+            SubjectId: row[0].SubjectId
+          }
+          ////console.log('data to update',data)
+          if (row.length > 0)
+            this.UpdateOrSave(data);
+        }
       }
     }
   }
@@ -493,7 +521,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         });
   }
   UpdateOrSave(row) {
-    debugger;
+    //debugger;
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
       " and StudentClassId eq " + row.StudentClassId
 
@@ -552,8 +580,10 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.edited = false;
           this.rowCount++;
           row.StudentClassSubjectId = data.StudentClassSubjectId;
+          
           if (this.rowCount == Object.keys(row).length - 3) {
             this.loading = false;
+            //this.GetStudentClassSubject();
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -567,6 +597,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.rowCount++;
           if (this.rowCount == Object.keys(row).length - 3) {
             this.loading = false;
+            //this.GetStudentClassSubject();
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

@@ -29,14 +29,15 @@
         </button>
     </form>
     Subject can be assigned to student defined in student class.
-    <mat-table #table [dataSource]="dataSource" style="min-width: 1200px;" matSort>
+    <mat-table #table [dataSource]="dataSource" matSort>
+        
         <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
             <mat-header-cell *matHeaderCellDef mat-sort-header>
                 <div style="display: flex;flex-direction: column;">
                     <span style="display: flex;justify-content: start;">{{disCol!='Action'?disCol:''}}</span>
                     <div *ngIf="StudentSubjectList.length>0" fxLayoutAlign="center center">
                         <span *ngIf="disCol=='Student'">
-                            <mat-form-field style="width: 150px;">
+                            <mat-form-field style="width: 120px;">
                                 <mat-label>Search</mat-label>
                                 <input matInput [formControl]="nameFilter" autocomplete="Off">
                             </mat-form-field>
@@ -52,8 +53,8 @@
                     </div>
                 </div>
             </mat-header-cell>
-            <mat-cell *matCellDef="let element ">
-                <mat-checkbox matTooltip="select all in row" *ngIf="disCol !='Student'"
+            <mat-cell *matCellDef="let element">
+                <mat-checkbox matTooltip="select {{disCol}}" *ngIf="disCol !='Student'"
                     (click)="$event.stopPropagation()" (change)="SelectAllInRow(element,$event,disCol)"
                     [checked]="element[disCol]==1?true:false">
                 </mat-checkbox>
@@ -66,7 +67,6 @@
                 {{disCol=='Student'?element[disCol]:''}}
             </mat-cell>
         </ng-container>
-
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
     </mat-table>

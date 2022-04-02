@@ -138,7 +138,7 @@ export class ChartReportComponent {
     //var paymentObj = this.MonthlyPayments.filter(f => f.Month == selectedmonthId);
     this.GetMonthlyPayments(selectedmonthId)
       .subscribe((data: any) => {
-
+debugger;
         var paymentObj =[...data.value];
         var paymentcount = paymentObj.length;
 
@@ -163,7 +163,9 @@ export class ChartReportComponent {
               "StudentClassId": studcls.StudentClassId
             };
             this.VariableObjList.push(StudentInfoVariable);
-            this.ExpectedAmount += evaluate(this.ApplyVariables(studcls.Formula));
+            var result = evaluate(this.ApplyVariables(studcls.Formula))
+            
+            this.ExpectedAmount += result;
 
             this.VariableObjList = [];
           }

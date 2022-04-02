@@ -110,16 +110,16 @@ export class LoginComponent implements OnInit {
 
         //console.log("decodedUser.iss",decodedUser.iss)
         //if PlanId is zero, redirect to select plan.
-        if (+decodedUser.iss == 0)
-          this.route.navigate(['/auth/selectplan']);
-        else {
+        // if (+decodedUser.iss == 0)
+        //   this.route.navigate(['/auth/selectplan']);
+        // else {
           //  localStorage.setItem('userInfo',decodedUser);
           this.isLoginFailed = false;
           this.isLoggedIn = true;
           //this.roles = this.tokenStorage.getUser().roles;
           this.GetApplicationRoleUser();
           //this.reloadPage();
-        }
+        //}
       },
       err => {
         debugger;

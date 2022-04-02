@@ -6,6 +6,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { CalendarComponent } from '../calendar/calendar.component';
 import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
+import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
 
 @Component({
   selector: 'app-miscboard',
@@ -17,10 +18,12 @@ export class MiscboardComponent implements AfterViewInit {
   components = [
     CalendarComponent,
     EventComponent,
-    HolidayComponent
+    HolidayComponent,
+    NoOfStudentComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -56,6 +59,7 @@ export class MiscboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.common.misc.CALENDAR)
     this.GenerateComponent(globalconstants.Pages.common.misc.HOLIDAY)
     this.GenerateComponent(globalconstants.Pages.common.misc.EVENT)
+    this.GenerateComponent(globalconstants.Pages.common.misc.NOOFSTUDENT)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -91,6 +95,9 @@ export class MiscboardComponent implements AfterViewInit {
         break;     
       case "holiday":
         comindx =this.components.indexOf(HolidayComponent);
+        break;     
+      case "no. of students":
+        comindx =this.components.indexOf(NoOfStudentComponent);
         break;     
     } 
     

@@ -9,7 +9,7 @@
       <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <button [disabled]="loading" mat-raised-button (click)="GetReport()">
+  <button [disabled]="loading" mat-raised-button color="accent" (click)="GetReport()">
     <mat-icon>search</mat-icon>
   </button>
   <!-- </div> -->

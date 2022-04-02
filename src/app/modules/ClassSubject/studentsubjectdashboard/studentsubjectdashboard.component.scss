@@ -2,9 +2,27 @@
 //     //position: absolute;
 //     margin-top: 100px;
 // }
+
 mat-form-field,mat-checkbox{
     margin-right:15px;
 }
 button{
     margin-right:15px;
 }
+
+mat-cell,mat-header-cell{
+    border-right: 1px solid lightgray;
+    min-width: 100px;
+    flex:1;    
+    justify-content: center;
+    align-self: stretch;
+}
+.mat-column-Student{
+    justify-content: flex-start;
+    flex:1 0 150px;
+}
+.mat-column-Action{
+    justify-content: center;
+    flex:1 0 150px;
+}
+
