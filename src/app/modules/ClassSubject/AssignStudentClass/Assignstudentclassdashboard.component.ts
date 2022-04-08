@@ -83,6 +83,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     'StudentId',
     'StudentName',
     'GenderName',
+    'ClassName',
     'SectionId',
     'RollNo',
     'FeeTypeId',
@@ -111,10 +112,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      //searchStudentName: [0],
+      searchFeeTypeId: [0],
       searchSectionId: [0],
-      searchClassId: [0],
-      // searchGenderId: [0],
+      searchClassId: [0]
     });
     this.nameFilter.valueChanges
       .subscribe(
@@ -475,13 +475,14 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
+    var _FeeTypeId = this.searchForm.get("searchFeeTypeId").value;
     //var _sectionId = this.searchForm.get("searchSectionId").value;
     this.HeaderTitle = '';
-    if (_classId == 0) {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
-      return;
-    }
+    // if (_classId == 0) {
+    //   this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   this.loading = false;
+    //   return;
+    // }
     // if (_sectionId == 0) {
     //   this.contentservice.openSnackBar("Please select section.",globalconstants.ActionText,globalconstants.RedBackground);
     //   this.loading = false;
@@ -510,10 +511,13 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     }
     else {
       filterStr = this.StandardFilterWithBatchId;
-      filterStr += " and ClassId eq " + _classId;
-    }
-    //}
 
+    }
+    if (_classId > 0)
+      filterStr += " and ClassId eq " + _classId;
+
+    if (_FeeTypeId > 0)
+      filterStr += " and FeeTypeId eq " + _FeeTypeId;
 
     if (this.searchForm.get("searchSectionId").value > 0)
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
@@ -544,10 +548,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((StudentClassesdb: any) => {
         var result;
         result = [...StudentClassesdb.value];
-        var _defaultTypeId=0;
-        var defaultFeeTypeObj = this.FeeTypes.filter(f=>f.defaultType ==1);
-        if(defaultFeeTypeObj.length>0)
-        _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
+        var _defaultTypeId = 0;
+        var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
+        if (defaultFeeTypeObj.length > 0)
+          _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
         result.forEach(s => {
           var _genderName = '';
           var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
@@ -564,7 +568,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + " " + s.Student.LastName,
             ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
-            FeeTypeId: (s.FeeTypeId==0 || s.FeeTypeId==null)?_defaultTypeId:s.FeeTypeId,
+            FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
             FeeType: _feetype,
             RollNo: s.RollNo,
             SectionId: s.SectionId,

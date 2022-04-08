@@ -48,7 +48,7 @@ export class globalconstants {
                 'attendance': {
                     'studentattendance': 'studentattendance'
                 },
-                'student': {
+                'student/Fee': {
                     'detail': 'detail',
                     'feepayment': 'feepayment'
                 },
@@ -111,12 +111,12 @@ export class globalconstants {
                     'ORGANIZATION': 'organization'
                 },
                 "misc": {
-                    "MISC": "misc",
+                    "FRONTOFFICE": "front office",
                     "CALENDAR": "calendar",
                     "NEWS": "news",
                     "EVENT": "event",
                     "HOLIDAY": "holiday",
-                    "NOOFSTUDENT": "No. Of Students"
+                    "NOOFSTUDENT": "no of students"
                 }
             },
             "emp": {
@@ -187,8 +187,9 @@ export class globalconstants {
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',
-                    'EVALUATIONMASTER': 'evaluation master',
+                    'EVALUATIONCLASSSUBJECTMAP': 'evaluation class subject exam',
                     'CLASSEVALUATION': 'class evaluation',
+                    'EXECUTEEVALUATION': 'execute evaluation',
                     'CLASSEVALUATIONOPTION': 'answer option',
                     'EVALUATIONANDEXAM': 'evaluation and exam'
                 },
@@ -288,8 +289,8 @@ export class globalconstants {
                 "CLASSPROMOTION": "class promotion",
                 "FEEPAYMENTTYPE": "fee payment type",
                 "FEETYPE": "fee type",
-                "PROFILECATEGORY": "profile category",
-                "PROFILESUBCATEGORY": "profile sub category",
+                "EVALUATIONCATEGORY": "evaluation category",
+                "EVALUATIONSUBCATEGORY": "evaluation sub category",
                 "ROLE": "role",
                 "FEECATEGORY": "fee category",
                 "RATINGOPTION": "rating option",

@@ -13,11 +13,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-evaluationmaster',
-  templateUrl: './evaluationmaster.component.html',
-  styleUrls: ['./evaluationmaster.component.scss']
+  selector: 'app-EvaluationClassSubjectMap',
+  templateUrl: './EvaluationClassSubjectMap.component.html',
+  styleUrls: ['./EvaluationClassSubjectMap.component.scss']
 })
-export class EvaluationMasterComponent implements OnInit {
+export class EvaluationClassSubjectMapComponent implements OnInit {
   @Output() NotifyParent: EventEmitter<number> = new EventEmitter();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -29,33 +29,35 @@ export class EvaluationMasterComponent implements OnInit {
   Permission = '';
   StandardFilter = '';
   loading = false;
-  EvaluationMasterList: IEvaluationMaster[] = [];
+  EvaluationClassSubjectMapList: IEvaluationClassSubjectMap[] = [];
+  ExamNames = [];
   Sessions = [];
   SelectedBatchId = 0;
   SelectedClassSubjects = [];
   ClassSubjects = [];
   Classes = [];
   RatingOptions = [];
-  filteredOptions: Observable<IEvaluationMaster[]>;
-  dataSource: MatTableDataSource<IEvaluationMaster>;
+  filteredOptions: Observable<IEvaluationClassSubjectMap[]>;
+  dataSource: MatTableDataSource<IEvaluationClassSubjectMap>;
   allMasterData = [];
   EvaluationTypes = [];
-  //ExamId = 0;
-  EvaluationMasterData = {
-    EvaluationMasterId: 0,
+  Exams = [];
+  EvaluationClassSubjectMapData = {
+    EvaluationClassSubjectMapId: 0,
     ClassId: 0,
     ClassSubjectId: 0,
-    Title: 0,
     EvaluationTypeId: 0,
+    ExamId: 0,
     OrgId: 0,
     Active: 0,
   };
-  EvaluationMasterForUpdate = [];
+  EvaluationClassSubjectMapForUpdate = [];
   displayedColumns = [
-    'EvaluationMasterId',
-    'Title',
+    'EvaluationClassSubjectMapId',
+    'EvaluationType',
     'ClassId',
     'ClassSubjectId',
+    'ExamId',
     'Active',
     'Action'
   ];
@@ -73,7 +75,8 @@ export class EvaluationMasterComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchEvaluationTypeId: [0],
       searchSubjectId: [0],
-      searchClassId: [0]
+      searchClassId: [0],
+      searchExamId: [0]
     })
     this.PageLoad();
   }
@@ -84,7 +87,7 @@ export class EvaluationMasterComponent implements OnInit {
   PassParent(value: number) {
     debugger;
     this.NotifyParent.emit(value);
-  
+
   }
   PageLoad() {
     this.loading = true;
@@ -92,7 +95,7 @@ export class EvaluationMasterComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONMASTER)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONCLASSSUBJECTMAP)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -140,57 +143,50 @@ export class EvaluationMasterComponent implements OnInit {
       });
   }
   // viewchild(row) {
-  //   this.evaluationMasterId = row.EvaluationMasterId;
+  //   this.EvaluationClassSubjectMapId = row.EvaluationClassSubjectMapId;
   // }
   AddNew() {
+    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value
     var newItem = {
-      EvaluationMasterId: 0,
+      EvaluationClassSubjectMapId: 0,
       ClassId: 0,
       ClassSubjectId: 0,
-      Title: '',
-      EvaluationTypeId: 0,
-      Active: 0,
+      ExamId: 0,
+      EvaluationTypeId: _evaluationTypeId,
+      EvaluationType: this.EvaluationTypes.filter(f => f.MasterDataId == _evaluationTypeId)[0].MasterDataName,
+      Active: false,
       Deleted: "false",
       Action: false
     }
-    this.EvaluationMasterList = [];
-    this.EvaluationMasterList.push(newItem);
-    this.dataSource = new MatTableDataSource(this.EvaluationMasterList);
+    this.EvaluationClassSubjectMapList = [];
+    this.EvaluationClassSubjectMapList.push(newItem);
+    this.dataSource = new MatTableDataSource(this.EvaluationClassSubjectMapList);
   }
   UpdateOrSave(row) {
 
-    //debugger;
-    var _classId = this.searchForm.get("searchClassId").value;
-    var _subjectId = this.searchForm.get("searchSubjectId").value;
-    //var _title = this.searchForm.get("searchTitle").value;
     var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
 
     this.loading = true;
-    let checkFilterString = '';
-    if (row.Title.length > 0)
-      checkFilterString = "Title eq '" + row.Title + "'";
-    else {
-      this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    let checkFilterString = this.StandardFilter;
+    if (row.ExamId > 0)
+      checkFilterString = " and ExamId eq " + row.ExamId;
     if (_evaluationTypeId > 0)
       checkFilterString += " and EvaluationTypeId eq " + _evaluationTypeId;
     else {
       this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_classId > 0)
-      checkFilterString += " and ClassId eq " + _classId;
+    if (row.ClassId > 0)
+      checkFilterString += " and ClassId eq " + row.ClassId;
 
-    if (_subjectId > 0)
-      checkFilterString += " and ClassSubjectId eq " + _subjectId;
+    if (row.ClassSubjectId > 0)
+      checkFilterString += " and ClassSubjectId eq " + row.ClassSubjectId;
 
-    if (row.EvaluationMasterId > 0)
-      checkFilterString += " and EvaluationMasterId ne " + row.EvaluationMasterId;
-    checkFilterString += " and " + this.StandardFilter;
+    if (row.EvaluationClassSubjectMapId > 0)
+      checkFilterString += " and EvaluationClassSubjectMapId ne " + row.EvaluationClassSubjectMapId;
     let list: List = new List();
-    list.fields = ["EvaluationMasterId"];
-    list.PageName = "EvaluationMasters";
+    list.fields = ["EvaluationClassSubjectMapId"];
+    list.PageName = "EvaluationClassSubjectMaps";
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -202,37 +198,35 @@ export class EvaluationMasterComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.EvaluationMasterForUpdate = [];
-          this.EvaluationMasterForUpdate.push(
+          this.EvaluationClassSubjectMapForUpdate = [];
+          this.EvaluationClassSubjectMapForUpdate.push(
             {
-              EvaluationMasterId: row.EvaluationMasterId,
-              ClassId: _classId,
-              ClassSubjectId: _subjectId,
-              Title: row.Title,
+              EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
+              ClassId: row.ClassId,
+              ClassSubjectId: row.ClassSubjectId,
+              ExamId: row.ExamId==null?0:row.ExamId,
               EvaluationTypeId: this.searchForm.get("searchEvaluationTypeId").value,
               Active: row.Active,
-              Deleted: 0,
+              Deleted: false,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
 
-
-          if (this.EvaluationMasterForUpdate[0].EvaluationMasterId == 0) {
-            this.EvaluationMasterForUpdate[0]["CreatedDate"] = new Date();
-            this.EvaluationMasterForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.EvaluationMasterForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.EvaluationMasterForUpdate[0]["UpdatedBy"];
-            delete this.EvaluationMasterForUpdate[0]["SubCategories"];
-            console.log("inserting1", this.EvaluationMasterForUpdate);
+            //console.log("for udpate",this.EvaluationClassSubjectMapForUpdate[0])
+          if (this.EvaluationClassSubjectMapForUpdate[0].EvaluationClassSubjectMapId == 0) {
+            this.EvaluationClassSubjectMapForUpdate[0]["CreatedDate"] = new Date();
+            this.EvaluationClassSubjectMapForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.EvaluationClassSubjectMapForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.EvaluationClassSubjectMapForUpdate[0]["UpdatedBy"];
+            delete this.EvaluationClassSubjectMapForUpdate[0]["SubCategories"];
+            console.log("inserting1", this.EvaluationClassSubjectMapForUpdate);
             this.insert(row);
           }
           else {
-            this.EvaluationMasterForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
-            this.EvaluationMasterForUpdate[0]["CreatedBy"] = row.CreatedBy;
-            this.EvaluationMasterForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.EvaluationMasterForUpdate[0]["SubCategories"];
-            delete this.EvaluationMasterForUpdate[0]["UpdatedBy"];
-            //this.EvaluationMasterForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            //this.insert(row);
+            delete this.EvaluationClassSubjectMapForUpdate[0]["CreatedDate"];
+            this.EvaluationClassSubjectMapForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.EvaluationClassSubjectMapForUpdate[0]["CreatedBy"];            
+            delete this.EvaluationClassSubjectMapForUpdate[0]["SubCategories"];
+            delete this.EvaluationClassSubjectMapForUpdate[0]["UpdatedBy"];
             this.update(row);
           }
         }
@@ -242,12 +236,12 @@ export class EvaluationMasterComponent implements OnInit {
     this.loading = false;
   }
   insert(row) {
-    //console.log("inserting",this.EvaluationMasterForUpdate);
+    //console.log("inserting",this.EvaluationClassSubjectMapForUpdate);
     //debugger;
-    this.dataservice.postPatch('EvaluationMasters', this.EvaluationMasterForUpdate[0], 0, 'post')
+    this.dataservice.postPatch('EvaluationClassSubjectMaps', this.EvaluationClassSubjectMapForUpdate[0], 0, 'post')
       .subscribe(
         (data: any) => {
-          row.EvaluationMasterId = data.EvaluationMasterId;
+          row.EvaluationClassSubjectMapId = data.EvaluationClassSubjectMapId;
           row.Action = false;
           //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -255,8 +249,8 @@ export class EvaluationMasterComponent implements OnInit {
         });
   }
   update(row) {
-    //console.log("updating",this.EvaluationMasterForUpdate);
-    this.dataservice.postPatch('EvaluationMasters', this.EvaluationMasterForUpdate[0], this.EvaluationMasterForUpdate[0].EvaluationMasterId, 'patch')
+    //console.log("updating",this.EvaluationClassSubjectMapForUpdate);
+    this.dataservice.postPatch('EvaluationClassSubjectMaps', this.EvaluationClassSubjectMapForUpdate[0], this.EvaluationClassSubjectMapForUpdate[0].EvaluationClassSubjectMapId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -265,7 +259,7 @@ export class EvaluationMasterComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  GetEvaluationMaster() {
+  GetEvaluationClassSubjectMap() {
     //debugger;
     this.loading = true;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -275,6 +269,7 @@ export class EvaluationMasterComponent implements OnInit {
     var _classId = this.searchForm.get("searchClassId").value;
     var _subjectId = this.searchForm.get("searchSubjectId").value;
     var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
+    var _searchExamId = this.searchForm.get("searchExamId").value;
     //var _examId = this.searchForm.get("searchExamId").value;
 
     if (_evaluationTypeId == 0) {
@@ -290,49 +285,75 @@ export class EvaluationMasterComponent implements OnInit {
       filterStr += " and ClassId eq " + _classId;
     if (_subjectId > 0)
       filterStr += " and ClassSubjectId eq " + _subjectId;
+    if (_searchExamId > 0)
+      filterStr += " and ExamId eq " + _searchExamId;
 
     let list: List = new List();
     list.fields = [
-      'EvaluationMasterId',
+      'EvaluationClassSubjectMapId',
       'ClassId',
       'ClassSubjectId',
-      'Title',
+      'ExamId',
       'EvaluationTypeId',
       'Active',
     ];
 
-    list.PageName = "EvaluationMasters";
+    list.PageName = "EvaluationClassSubjectMaps";
 
     list.filter = [filterStr];
-    this.EvaluationMasterList = [];
+    this.EvaluationClassSubjectMapList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.EvaluationMasterList = data.value.map(item => {
+          this.EvaluationClassSubjectMapList = data.value.map(item => {
+            item.EvaluationType = this.EvaluationTypes.filter(f => f.MasterDataId == item.EvaluationTypeId)[0].MasterDataName
             item.Action = false;
             return item;
           })
         }
         else {
-          this.EvaluationMasterList = [];
+          this.EvaluationClassSubjectMapList = [];
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
-        this.dataSource = new MatTableDataSource<IEvaluationMaster>(this.EvaluationMasterList);
+        this.dataSource = new MatTableDataSource<IEvaluationClassSubjectMap>(this.EvaluationClassSubjectMapList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loadingFalse();
       });
 
   }
+  GetExams() {
 
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
+
+    let list: List = new List();
+
+    list.fields = ["ExamId", "ExamNameId"];
+    list.PageName = "Exams";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.Exams = data.value.map(e => {
+          return {
+            ExamId: e.ExamId,
+            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
+          }
+        })
+        this.loading = false;
+      })
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
+        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.GetClassSubjects();
+        this.GetExams();
         this.loading = false;
       });
   }
@@ -370,13 +391,13 @@ export class EvaluationMasterComponent implements OnInit {
   }
 }
 
-export interface IEvaluationMaster {
-  EvaluationMasterId: number;
-  Title: string;
+export interface IEvaluationClassSubjectMap {
+  EvaluationClassSubjectMapId: number;
+  ExamId: number;
   ClassId: number;
   ClassSubjectId: number;
   EvaluationTypeId: number;
-  Active: number;
+  Active: boolean;
   Deleted: string;
   Action: boolean;
 }

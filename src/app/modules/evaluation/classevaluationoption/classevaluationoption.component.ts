@@ -33,7 +33,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   filteredOptions: Observable<IClassEvaluationOption[]>;
   dataSource: MatTableDataSource<IClassEvaluationOption>;
   allMasterData = [];
-
+  AnswerOptionsId = 0;
   ClassEvaluationOptionData = {
     AnswerOptionsId: 0,
     Title: '',
@@ -135,14 +135,13 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.UpdateOrSave(parentItem);
   }
   AddNew() {
-    var _AnswerOptionId =this.searchForm.get("searchParent").value.AnswerOptionsId;
-    if(_AnswerOptionId==undefined)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select parent",globalconstants.ActionText,globalconstants.RedBackground);
+    var _AnswerOptionId = this.searchForm.get("searchParent").value.AnswerOptionsId;
+    if (_AnswerOptionId == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select parent", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
+
     var newItem = {
       AnswerOptionsId: 0,
       Title: '',
@@ -160,14 +159,21 @@ export class ClassEvaluationOptionComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     this.loading = true;
-    let checkFilterString = "ClassEvaluationId eq " + row.ClassEvaluationId +
-      " and Title eq '" + row.Title + "'";
+    if (row.Title.length == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Title is required.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    let checkFilterString = this.StandardFilter;
+    if (row.ClassEvaluationId != null)
+      checkFilterString = "ClassEvaluationId eq " + row.ClassEvaluationId
+    checkFilterString += " and Title eq '" + row.Title + "'";
 
     if (row.AnswerOptionsId > 0)
       checkFilterString += " and AnswerOptionsId ne " + row.AnswerOptionsId;
-    checkFilterString += " and " + this.StandardFilter;
+    //checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
     list.fields = ["AnswerOptionsId"];
     list.PageName = "ClassEvaluationOptions";
@@ -178,14 +184,14 @@ export class ClassEvaluationOptionComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.ClassEvaluationOptionForUpdate = [];;
           this.ClassEvaluationOptionForUpdate.push(
             {
-              AnswerOptionsId: 0,
+              AnswerOptionsId: row.AnswerOptionsId,
               Title: row.Title,
               Value: row.Value,
               Point: row.Point,
@@ -213,6 +219,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
           }
         }
       });
+
   }
   loadingFalse() {
     this.loading = false;
@@ -224,6 +231,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
           row.AnswerOptionsId = data.AnswerOptionsId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          this.GetEvaluationOptionAutoComplete();
           this.loadingFalse()
         });
   }
@@ -234,16 +242,19 @@ export class ClassEvaluationOptionComponent implements OnInit {
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.GetEvaluationOptionAutoComplete();
           this.loadingFalse();
         });
   }
   SearchAnswerOptions() {
-    var AnswerOptionsId = this.searchForm.get("searchParent").value.AnswerOptionsId;
-    if (AnswerOptionsId != undefined)
-      this.GetClassEvaluationOption(0,AnswerOptionsId);
+    this.AnswerOptionsId = this.searchForm.get("searchParent").value.AnswerOptionsId;
+    if (this.AnswerOptionsId != undefined)
+      this.GetClassEvaluationOption(0, this.AnswerOptionsId);
+    else
+      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
   }
   GetClassEvaluationOption(pClassEvaluationId, pAnswerOptionId) {
-    //debugger;
+    debugger;
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
@@ -255,7 +266,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       filterStr += " and ParentId eq " + pAnswerOptionId
     else if (pClassEvaluationId > 0)
       filterStr += " and ClassEvaluationId eq " + pClassEvaluationId
-    
+
     let list: List = new List();
     list.fields = [
       'AnswerOptionsId',
@@ -264,6 +275,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       'Point',
       'Correct',
       'ParentId',
+      'ClassEvaluationId',
       'Active',
     ];
 
@@ -271,6 +283,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
     list.filter = [filterStr];
     this.ClassEvaluationOptionList = [];
+    this.dataSource = new MatTableDataSource<any>([]);
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
@@ -303,6 +316,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       'Point',
       'Correct',
       'ParentId',
+      'ClassEvaluationId',
       'Active',
     ];
 
@@ -321,7 +335,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.PROFILECATEGORY);
+        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
         //this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.loading = false;
       });
@@ -333,7 +347,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     row.Active = event.checked ? 1 : 0;
     row.Action = true;
   }
-  UpdateCorrect(row,event){
+  UpdateCorrect(row, event) {
     row.Correct = event.checked ? 1 : 0;
     row.Action = true;
   }

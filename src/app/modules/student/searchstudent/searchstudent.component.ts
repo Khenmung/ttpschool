@@ -25,11 +25,6 @@ export class searchstudentComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
-  options = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  //ApplicationId = 0;
   filterOrgIdNBatchId = '';
   filterOrgIdOnly = '';
   filterBatchIdNOrgId = '';
@@ -464,9 +459,7 @@ export class searchstudentComponent implements OnInit {
             return {
               StudentClassId: _studentClassId,
               StudentId: student.StudentId,
-              Name: _fullDescription,
-              FatherName: student.FatherName,// + "-" + student.FatherContactNo,
-              MotherName: student.MotherName,// + "-" + student.MotherContactNo,
+              Name: _fullDescription
             }
           })
         }

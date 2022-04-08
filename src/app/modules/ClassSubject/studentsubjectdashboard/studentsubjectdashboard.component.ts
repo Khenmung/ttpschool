@@ -257,8 +257,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClassId);
             var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
             //console.log("specificclasssubjects",specificclasssubjects)
-            specificclasssubjects.forEach(subjectTypes => {
-
+            specificclasssubjects.forEach((subjectTypes,indx) => {
               var clssubject = takensubjects.filter(c => c.ClassSubjectId == subjectTypes.ClassSubjectId)
               if (clssubject.length > 0) {
                 clssubject[0].SubjectId = subjectTypes.SubjectId;
@@ -331,7 +330,7 @@ export class studentsubjectdashboardComponent implements OnInit {
   formatData(clssubject) {
     var _subjectName = '';
     var topush = {};
-    var subjectTypes = [];
+    //var subjectTypes = [];
 
     topush = this.StudentDetail;
 
@@ -389,7 +388,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             'SelectHowMany': fromdb.SubjectType.SelectHowMany
           })
         })
-        // console.log("this.ClassSubjectList",this.ClassSubjectList)
+         console.log("this.ClassSubjectList",this.ClassSubjectList)
       });
 
   }

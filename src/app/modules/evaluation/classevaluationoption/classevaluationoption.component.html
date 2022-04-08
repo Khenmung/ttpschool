@@ -17,7 +17,7 @@
             <button mat-raised-button color="accent" matTooltip="search" (click)="SearchAnswerOptions()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button mat-raised-button matTooltip="add parent" color="accent" (click)="AddParent()">
+            <button mat-raised-button *ngIf="AnswerOptionsId==0" matTooltip="add parent" color="accent" (click)="AddParent()">
                 <mat-icon>add</mat-icon>
             </button>
         </form>

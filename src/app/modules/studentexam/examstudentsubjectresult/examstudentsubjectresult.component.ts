@@ -243,6 +243,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         var _section = '';
         var _studname = '';
         this.StudentSubjects = data.value.filter(x=>x.ClassSubject.Active==1)
+        console.log("this.StudentSubjects",this.StudentSubjects);
         this.StudentSubjects = this.StudentSubjects.map(s => {
           _class = '';
           _subject = '';

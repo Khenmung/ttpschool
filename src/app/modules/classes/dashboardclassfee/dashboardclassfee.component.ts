@@ -161,13 +161,13 @@ export class DashboardclassfeeComponent implements OnInit {
     if (value.checked) {
       this.ELEMENT_DATA.forEach(s => {
         s.Active = 1;
-        s.Action =true;
+        s.Action = true;
       })
     }
     else {
       this.ELEMENT_DATA.forEach(s => {
         s.Active = 0;
-        s.Action =true;
+        s.Action = true;
       })
     }
     this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
@@ -182,14 +182,18 @@ export class DashboardclassfeeComponent implements OnInit {
   }
 
   CreateInvoice() {
-    debugger;
     var selectedMonth = this.searchForm.get("searchMonth").value;
+    if (selectedMonth == 0) {
+      this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.BlueBackground);
+      return;
+    }
     var OrgIdAndbatchId = {
       OrgId: this.LoginUserDetail[0]["orgId"],
       BatchId: this.SelectedBatchId,
       Month: selectedMonth
     }
-
+    this.loading=true;
+    
     this.authservice.CallAPI(OrgIdAndbatchId, 'getinvoice')
       .subscribe((data: any) => {
         console.log("invoices", data)
@@ -212,17 +216,16 @@ export class DashboardclassfeeComponent implements OnInit {
             Month: inv.Month,
             StudentClassId: inv.StudentClassId,
             OrgId: this.LoginUserDetail[0]["orgId"],
-            TotalDebit: AmountAfterFormulaApplied,
-            TotalCredit: 0,
+            TotalDebit: 0,
+            TotalCredit: AmountAfterFormulaApplied,
           });
         });
-        var query = "select SUM(TotalDebit) TotalDebit,SUM(Balance) Balance, StudentClassId," +
-          "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalCredit " +
-          "FROM ? GROUP BY TotalCredit, StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
+        var query = "select SUM(TotalCredit) TotalCredit, SUM(Balance) Balance, StudentClassId," +
+          "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalDebit " +
+          "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
         var sumFeeData = alasql(query, [this.LedgerData]);
 
-
-        //console.log("sumFeeData",sumFeeData)
+        console.log("sumFeeData",sumFeeData)
         this.authservice.CallAPI(sumFeeData, 'createinvoice')
           .subscribe((data: any) => {
             this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);

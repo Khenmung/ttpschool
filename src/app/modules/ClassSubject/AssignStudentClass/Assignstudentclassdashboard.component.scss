@@ -4,11 +4,14 @@ mat-form-field,button{
 .mat-column-StudentId{
     flex:1 1 70px;
 }
-.mat-column-Active,.mat-column-Action{
+.mat-column-Active,.mat-column-Action,.mat-column-RollNo,.mat-column-SectionId{
     justify-content: center;
     flex:1 1 100px;
 }
-.mat-column-StudentName,.mat-column-FeeTypeId,.mat-column-RollNo,.mat-column-SectionId{
+.mat-column-ClassName{
+    flex: 1 1 120px;
+}
+.mat-column-StudentName,.mat-column-FeeTypeId{
     flex: 1 1 150px;
 }
 .mat-cell:first-of-type{

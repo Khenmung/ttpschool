@@ -208,6 +208,10 @@ export class FeecollectionreportComponent implements OnInit {
             this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month > 0); //.sort((a, b) => a.month - b.month)
           this.loading = false;
           this.TotalPaidStudentCount = this.ELEMENT_DATA.length;
+          if(this.ELEMENT_DATA.length==0)
+          {            
+            this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText,globalconstants.RedBackground);
+          }
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -218,6 +222,8 @@ export class FeecollectionreportComponent implements OnInit {
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }
+        this.loading=false;
+
       })
   }
   getStudentClasses() {

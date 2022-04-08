@@ -336,7 +336,7 @@ export class StudentprofilereportComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.PROFILECATEGORY);
+        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
         this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);

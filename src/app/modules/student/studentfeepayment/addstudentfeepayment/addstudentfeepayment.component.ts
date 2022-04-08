@@ -63,6 +63,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   studentInfoTodisplay = {
     StudentFeeReceiptId: 0,
     BatchId: 0,
+    RollNo:0,
     StudentFeeType: '',
     StudentName: '',
     StudentClassName: '',
@@ -322,6 +323,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
               this.studentInfoTodisplay.FeeType = data.value[0].FeeType.FeeTypeName;
               this.studentInfoTodisplay.Formula = data.value[0].FeeType.Formula;
+              this.studentInfoTodisplay.RollNo = data.value[0].RollNo;
               this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + " " + data.value[0].Student.LastName;
 
               var _sectionName = '';
@@ -553,31 +555,31 @@ export class AddstudentfeepaymentComponent implements OnInit {
       row.Action = true;
       var SelectedMonthFees = this.StudentClassFees.filter(f => f.Month == row.Month);
       //var newdata = [];
-      if (row.LedgerId > 0) {
+      // if (row.LedgerId > 0) {
 
-        this.NewDataCount++;
-        this.MonthlyDueDetail.push({
-          SlNo: this.NewDataCount,
-          AccountingVoucherId: 0,
-          PostingDate: new Date(),
-          Reference: '',
-          LedgerId: row.LedgerId,
-          DebitCreditId: 0,
-          FeeName: SelectedMonthFees[0].FeeName,
-          BaseAmountForCalc: +row.Balance,
-          Amount: +row.Balance,
-          ClassFeeId: SelectedMonthFees[0].ClassFeeId,//balanceClassFeeId,
-          AmountEditable: SelectedMonthFees[0].AmountEditable,
-          ShortText: '',
-          Month: row.Month,
-          //PaymentOrder: row.PaymentOrder,
-          OrgId: this.LoginUserDetail[0]["orgId"],
-          SubOrgId: 0,
-          Active: 1,
-          Action: true
-        });
-      }
-      else {
+      //   this.NewDataCount++;
+      //   this.MonthlyDueDetail.push({
+      //     SlNo: this.NewDataCount,
+      //     AccountingVoucherId: 0,
+      //     PostingDate: new Date(),
+      //     Reference: '',
+      //     LedgerId: row.LedgerId,
+      //     DebitCreditId: 0,
+      //     FeeName: SelectedMonthFees[0].FeeName,
+      //     BaseAmountForCalc: +row.Balance,
+      //     Amount: +row.Balance,
+      //     ClassFeeId: SelectedMonthFees[0].ClassFeeId,//balanceClassFeeId,
+      //     AmountEditable: SelectedMonthFees[0].AmountEditable,
+      //     ShortText: '',
+      //     Month: row.Month,
+      //     //PaymentOrder: row.PaymentOrder,
+      //     OrgId: this.LoginUserDetail[0]["orgId"],
+      //     SubOrgId: 0,
+      //     Active: 1,
+      //     Action: true
+      //   });
+      // }
+      // else {
         debugger;
         var AmountAfterFormulaApplied = 0;
         SelectedMonthFees.forEach(f => {
@@ -606,7 +608,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             Action: true
           })
         })
-      }
+      //}
     }
     else {
       //debugger;
@@ -715,8 +717,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
       this.StudentLedgerData.Month = selectedMonthrow.Month;
       this.StudentLedgerData.StudentClassId = selectedMonthrow.StudentClassId;
       this.StudentLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
-      this.StudentLedgerData.TotalDebit = 0;// monthAmount;
-      this.StudentLedgerData.TotalCredit = this.Balance == 0 ? monthAmount : selectedMonthrow.TotalCredit;
+      this.StudentLedgerData.TotalDebit = this.Balance == 0 ?monthAmount:selectedMonthrow.TotalDebit;
+      this.StudentLedgerData.TotalCredit = selectedMonthrow.TotalCredit;
 
       this.FeePayment.LedgerAccount.push(JSON.parse(JSON.stringify(this.StudentLedgerData)));
 

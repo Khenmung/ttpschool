@@ -40,6 +40,7 @@ export class EventComponent implements OnInit {
     EventStartDate: new Date(),
     EventEndDate: new Date(),
     Venue: '',
+    BatchId:0,
     OrgId: 0,
     Active: 0,
     Broadcasted: 0
@@ -77,7 +78,7 @@ export class EventComponent implements OnInit {
 
     debugger;
     this.loading = true;
-
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.EmployeeId = +this.tokenstorage.getEmployeeId();
     if (this.LoginUserDetail == null)
@@ -166,6 +167,7 @@ export class EventComponent implements OnInit {
           this.EventsData.Description = row.Description;
           this.EventsData.EventStartDate = row.EventStartDate;
           this.EventsData.EventEndDate = row.EventEndDate;
+          this.EventsData.BatchId = this.SelectedBatchId;
           this.EventsData.Broadcasted = 0;
           this.EventsData.Venue = row.Venue;
           this.EventsData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -183,6 +185,7 @@ export class EventComponent implements OnInit {
             delete this.EventsData["CreatedBy"];
             this.EventsData["UpdatedDate"] = new Date();
             this.EventsData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            console.log('this.EventsData', this.EventsData)
             this.update(row);
           }
         }

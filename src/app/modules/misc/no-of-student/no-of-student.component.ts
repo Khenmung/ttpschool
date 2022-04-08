@@ -7,7 +7,6 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
-import { Observable } from 'rxjs';
 import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -25,9 +24,7 @@ export class NoOfStudentComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
-  //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   RowsToUpdate = -1;
-  //RowsT = 0;
   RollNoGenerationSortBy = '';
   SearchSectionId = 0;
   Permission = '';
@@ -50,7 +47,6 @@ export class NoOfStudentComponent implements OnInit {
   HeaderTitle = '';
   loading = false;
   RollNoGeneration = [];
-  //  ClassPromotion =[];
   Genders = [];
   Classes = [];
   FeeTypes = [];
@@ -65,7 +61,6 @@ export class NoOfStudentComponent implements OnInit {
   dataSource: MatTableDataSource<IStudentClass>;
   allMasterData = [];
   searchForm: FormGroup;
-
   SelectedApplicationId = 0;
   checkBatchIdNSelectedIdEqual = 0;
   StudentClassData = {
@@ -79,23 +74,11 @@ export class NoOfStudentComponent implements OnInit {
     FeeTypeId: 0,
     Active: 1
   };
+  TotalStudent = 0;
   displayedColumns = [
-    'StudentId',
-    'StudentName',
-    'GenderName',
-    'SectionId',
-    'RollNo',
-    'FeeTypeId',
-    'Action'
+    'ClassName',
+    'MaxStudent'
   ];
-  nameFilter = new FormControl('');
-  IdFilter = new FormControl('');
-  filterValues = {
-    StudentId: 0,
-    StudentName: ''
-  };
-  Students: IStudent[] = [];
-  filteredOptions: Observable<IStudentClass[]>;
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -111,35 +94,9 @@ export class NoOfStudentComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      //searchStudentName: [0],
-      searchSectionId: [0],
       searchClassId: [0],
-      // searchGenderId: [0],
     });
-    this.nameFilter.valueChanges
-      .subscribe(
-        name => {
-          this.filterValues.StudentName = name;
-          this.dataSource.filter = JSON.stringify(this.filterValues);
-        }
-      )
-    this.IdFilter.valueChanges
-      .subscribe(
-        StudentId => {
-          this.filterValues.StudentId = StudentId;
-          this.dataSource.filter = JSON.stringify(this.filterValues);
-        }
-      )
     this.PageLoad();
-  }
-  private _filter(name: string): IStudent[] {
-
-    const filterValue = name.toLowerCase();
-    return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
-
-  }
-  displayFn(user: IStudent): string {
-    return user && user.Name ? user.Name : '';
   }
   PageLoad() {
     //debugger;
@@ -228,217 +185,7 @@ export class NoOfStudentComponent implements OnInit {
       }
     });
   }
-  GenerateRollNoOnList() {
-    debugger;
-    if (this.StudentClassList.length > 0) {
-      this.StudentClassList.sort((a, b) => {
-        const compareGender = a.GenderName.localeCompare(b.GenderName);
-        const compareName = a.StudentName.localeCompare(b.StudentName);
-        return compareGender || compareName;
-      })
-      this.StudentClassList.forEach((studcls, indx) => {
-        studcls.RollNo = indx + 1 + "";
-        studcls.Action = true;
-      })
-      this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.dataSource.filterPredicate = this.createFilter();
-    }
-    else {
-      this.loading = false;
-      this.contentservice.openSnackBar("No student to assign roll no.", globalconstants.ActionText, globalconstants.RedBackground);
 
-    }
-  }
-  GenerateRollNo() {
-
-    let filterStr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    this.loading = true;
-    if (this.searchForm.get("searchClassId").value > 0)
-      filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
-    else {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-
-    if (this.searchForm.get("searchSectionId").value > 0)
-      filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
-    // else {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
-    if (filterStr.length == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-
-    let list: List = new List();
-    list.fields = [
-      'StudentClassId',
-      'StudentId',
-      'FeeTypeId',
-      'ClassId',
-      'RollNo',
-      'SectionId',
-      'Active'
-    ];
-
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=*)"];
-    list.filter = [filterStr];
-    this.StudentClassList = [];
-    this.dataservice.get(list)
-      .subscribe((StudentClassesdb: any) => {
-        var result;
-        result = [...StudentClassesdb.value];
-        var StudentClassRollNoGenList = [];
-        result.forEach(stud => {
-          var feetype = this.FeeTypes.filter(t => t.FeeTypeId == stud.FeeTypeId);
-          var _feetype = ''
-          if (feetype.length > 0)
-            _feetype = feetype[0].FeeTypeName;
-
-
-          StudentClassRollNoGenList.push({
-            StudentClassId: stud.StudentClassId,
-            ClassId: stud.ClassId,
-            StudentId: stud.StudentId,
-            StudentName: stud.Student.FirstName + " " + stud.Student.LastName,
-            ClassName: this.Classes.filter(c => c.ClassId == stud.ClassId)[0].ClassName,
-            FeeTypeId: stud.FeeTypeId,
-            FeeType: _feetype,
-            SectionId: stud.SectionId,
-            Section: stud.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == stud.SectionId)[0].MasterDataName : '',
-            RollNo: stud.RollNo,
-            Active: stud.Active,
-            FirstName: stud.Student.FirstName,
-            LastName: stud.Student.LastName,
-            FatherName: stud.Student.FatherName,
-            MotherName: stud.Student.MotherName,
-            FatherOccupation: stud.Student.FatherOccupation,
-            MotherOccupation: stud.Student.MotherOccupation,
-            PresentAddress: stud.Student.PresentAddress,
-            PermanentAddress: stud.Student.PermanentAddress,
-            Gender: stud.Student.Gender,
-            DOB: new Date(stud.Student.DOB),//this.formatdate.transform(stud.Student.DOB,'dd/MM/yyyy'),
-            Bloodgroup: stud.Student.Bloodgroup,
-            Category: stud.Student.Category,
-            BankAccountNo: stud.Student.BankAccountNo,
-            IFSCCode: stud.Student.IFSCCode,
-            MICRNo: stud.Student.MICRNo,
-            AadharNo: stud.Student.AadharNo,
-            Photo: stud.Student.Photo,
-            Religion: stud.Student.Religion,
-            ContactNo: stud.Student.ContactNo,
-            WhatsAppNumber: stud.Student.WhatsAppNumber,
-            FatherContactNo: stud.Student.FatherContactNo,
-            MotherContactNo: stud.Student.MotherContactNo,
-            PrimaryContactFatherOrMother: stud.Student.PrimaryContactFatherOrMother,
-            NameOfContactPerson: stud.Student.NameOfContactPerson,
-            RelationWithContactPerson: stud.Student.RelationWithContactPerson,
-            ContactPersonContactNo: stud.Student.ContactPersonContactNo,
-            AlternateContact: stud.Student.AlternateContact,
-            EmailAddress: stud.Student.EmailAddress,
-            LastSchoolPercentage: stud.Student.LastSchoolPercentage,
-            ClassAdmissionSought: stud.Student.ClassAdmissionSought,
-            TransferFromSchool: stud.Student.TransferFromSchool,
-            TransferFromSchoolBoard: stud.Student.TransferFromSchoolBoard,
-            Promote: 0,
-            Action: true
-          });
-
-        })
-        //var orderbyArr = this.RollNoGenerationSortBy.split(',');
-        if (StudentClassRollNoGenList.length == 0)
-          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
-        else {
-          this.RollNoGenerationSortBy = 'Gender,StudentName';
-          var orderbystatement = "select StudentClassId,StudentId,StudentName,ClassId,SectionId,RollNo,Gender,FeeTypeId,Promote,Active,[Action] from ? order by " +
-            this.RollNoGenerationSortBy;
-
-          this.StudentClassList = alasql(orderbystatement, [StudentClassRollNoGenList]);
-          this.StudentClassList.forEach((student, index) => {
-            student.RollNo = (index + 1) + "";
-          });
-
-          this.contentservice.openSnackBar("New Roll Nos. has been generated. Please confirm and save it all.", globalconstants.ActionText, globalconstants.RedBackground);
-
-          this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.filterPredicate = this.createFilter();
-          this.loading = false;
-        }
-      })
-  }
-  sortMultiple(a, b) {
-
-  }
-  PromoteAll() {
-    var _rowstoupdate = this.StudentClassList.filter(f => f.Promote == 1);
-    this.RowsToUpdate = _rowstoupdate.length;
-    _rowstoupdate.forEach(s => {
-      this.RowsToUpdate--;
-      s.StudentClassId = 0;
-      delete s.SectionId;
-      s.RollNo = '';
-      this.SelectedBatchId = this.CurrentBatchId;
-      s.ClassId = this.Classes[this.Classes.findIndex(i => s.ClassId) + 1].MasterDataId;
-      this.UpdateOrSave(s);
-    })
-  }
-  PromoteRow(row) {
-    if (row.Promote == 1) {
-      row.StudentClassId = 0;
-      delete row.SectionId;
-      row.RollNo = '';
-      this.SelectedBatchId = this.CurrentBatchId;
-      row.ClassId = this.Classes[this.Classes.findIndex(i => row.ClassId) + 1].MasterDataId;
-      this.UpdateOrSave(row);
-    }
-  }
-  CheckPromoteAll(event) {
-    //debugger;
-    var _promote = 0;
-    if (event.checked) {
-      _promote = 1;
-    }
-
-    this.StudentClassList.forEach(s => {
-      s.Promote = _promote;
-    })
-
-  }
-  EnablePromote(row, control) {
-    if (control.checked) {
-      row.Promote = 1;
-      row.Action = true;
-    }
-    else {
-      row.Promote = 0;
-      row.Action = false;
-    }
-
-  }
-  promotePreviousBatch() {
-    //debugger;
-    var previousBatchId = +this.tokenstorage.getPreviousBatchId();
-    this.SelectedBatchId = previousBatchId;
-    this.GetStudentClasses(0);
-  }
-  onBlur(row) {
-    row.Action = true;
-  }
-  UploadExcel() {
-
-  }
   GetFeeTypes() {
     this.loading = true;
     //var filter = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
@@ -454,134 +201,88 @@ export class NoOfStudentComponent implements OnInit {
         this.loading = false;
       })
   }
-  CopyFromSameClassPreviousBatch() {
-    if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-    else {
-      this.HeaderTitle = 'Same Class Previous Batch'
-      this.GetStudentClasses(this.SameClassPreviousBatch);
-    }
-  }
-  CopyFromPreviousClassAndBatch() {
-    if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-    else {
-      this.HeaderTitle = 'From Previous Class and Batch'
-      this.GetStudentClasses(this.PreviousClassPreviousBatch)
-    }
-  }
-  GetStudentClasses(previousbatch) {
 
+  GetStudentClasses() {
+    debugger;
+    this.TotalStudent = 0;
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
-    //var _sectionId = this.searchForm.get("searchSectionId").value;
-    this.HeaderTitle = '';
-    if (_classId == 0) {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
-      return;
-    }
-    // if (_sectionId == 0) {
-    //   this.contentservice.openSnackBar("Please select section.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   this.loading = false;
-    //   return;
-    // }
-    // else {
-
-    filterStr = this.StandardFilterWithPreviousBatchId;
-
-    if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
-      filterStr += " and ClassId eq " + _classId + " and Promoted eq 0";
-    }
-    else if (previousbatch == this.PreviousClassPreviousBatch) {
-      var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
-      var previousClassId = 0;
-      if (classIdIndex > 0)//means if first element
-      {
-        previousClassId = this.Classes[classIdIndex - 1]["ClassId"];
-        filterStr += " and ClassId eq " + previousClassId + " and Promoted eq 0";
-      }
-      else {
-        this.loading = false;
-        this.contentservice.openSnackBar("Previous class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-        return;
-      }
-    }
-    else {
-      filterStr = this.StandardFilterWithBatchId;
+    filterStr = this.StandardFilterWithBatchId;
+    if (_classId > 0)
       filterStr += " and ClassId eq " + _classId;
-    }
-    //}
-
-
-    if (this.searchForm.get("searchSectionId").value > 0)
-      filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
-    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
-    if (filterStr.length == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
 
     let list: List = new List();
     list.fields = [
       'StudentClassId',
-      'StudentId',
-      'FeeTypeId',
       'ClassId',
-      'RollNo',
       'SectionId',
+      'StudentId',
       'Active'
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName,Gender)"];
+    list.lookupFields = ["Class($select=ClassName,ClassId,Sequence,MaxStudent)"]
     list.filter = ['Active eq 1 and ' + filterStr];
     this.StudentClassList = [];
     this.dataservice.get(list)
       .subscribe((StudentClassesdb: any) => {
-        var result;
-        result = [...StudentClassesdb.value];
-        var _defaultTypeId=0;
-        var defaultFeeTypeObj = this.FeeTypes.filter(f=>f.defaultType ==1);
-        if(defaultFeeTypeObj.length>0)
-        _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
-        result.forEach(s => {
-          var _genderName = '';
-          var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
-          if (genderObj.length > 0)
-            _genderName = genderObj[0].MasterDataName;
-          var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
-          var _feetype = ''
-          if (feetype.length > 0)
-            _feetype = feetype[0].FeeTypeName;
-
-          this.StudentClassList.push({
-            StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
-            ClassId: s.ClassId,
-            StudentId: s.StudentId,
-            StudentName: s.Student.FirstName + " " + s.Student.LastName,
-            ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
-            FeeTypeId: (s.FeeTypeId==0 || s.FeeTypeId==null)?_defaultTypeId:s.FeeTypeId,
-            FeeType: _feetype,
-            RollNo: s.RollNo,
-            SectionId: s.SectionId,
-            Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
-            Active: previousbatch == '' ? s.Active : 0,
-            Promote: 0,
-            GenderName: _genderName,
-            Action: false
-          });
+        //console.log("Studenclass no.", StudentClassesdb.value)
+        var errormsg = '';
+        this.StudentClassList = StudentClassesdb.value.map(student => {
+          var _sectionname = ''
+          var sectionobj = this.Sections.filter(s => s.MasterDataId == student.SectionId)
+          if (sectionobj.length > 0)
+            _sectionname = sectionobj[0].MasterDataName
+          else {
+            errormsg += student.StudentId + ",";
+          }
+          student.ClassName = student.Class.ClassName;
+          student.Section = _sectionname;
+          student.Sequence = student.Class.Sequence;
+          student.MaxStudent = student.Class.MaxStudent;
+          return student;
         })
+        if (errormsg.length > 0) {
+          errormsg = "Section not defined for student Id: " + errormsg;
+          this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);          
+        }
+        var _classStudentCount = alasql("select ClassId,ClassName,Section,MaxStudent,sum(1) NoOfStudent from ? group by ClassId,ClassName,Section,MaxStudent",
+          [this.StudentClassList])
+        var pivottedClass = [];
+        var _filteredClasses = [];
+        if (_classId > 0)
+          _filteredClasses = this.Classes.filter(c => c.ClassId == _classId);
+        else
+          _filteredClasses = [...this.Classes]
 
+        _filteredClasses.forEach(c => {
+          var newClassRow = [];
+
+          this.Sections.forEach(s => {
+            var sectionRow = _classStudentCount.filter(cls => cls.Section == s.MasterDataName && cls.ClassId == c.ClassId)
+
+            if (sectionRow.length > 0) {
+              if (this.displayedColumns.indexOf(s.MasterDataName) == -1)
+                this.displayedColumns.push(s.MasterDataName)
+              if (newClassRow.length == 0)
+                newClassRow.push(sectionRow[0]);
+              newClassRow[0][s.MasterDataName] = sectionRow[0].NoOfStudent;
+              newClassRow[0].Total = newClassRow[0].Total == undefined ? sectionRow[0].NoOfStudent : newClassRow[0].Total + sectionRow[0].NoOfStudent;
+
+            }
+          })
+          this.TotalStudent += newClassRow[0].Total;
+          pivottedClass.push(newClassRow[0]);
+        })
+        if (this.displayedColumns.indexOf('Total') == -1)
+          this.displayedColumns.push("Total");
         if (this.StudentClassList.length == 0) {
           this.HeaderTitle = '';
           this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
-
-        this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
+        //console.log("pivottedClass", pivottedClass);
+        this.dataSource = new MatTableDataSource<IStudentClass>(pivottedClass.sort((a, b) => +a.Sequence - +b.Sequence));
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.dataSource.filterPredicate = this.createFilter();
@@ -616,15 +317,7 @@ export class NoOfStudentComponent implements OnInit {
 
         });
   }
-  SaveAll() {
-    debugger;
-    var _toUpdate = this.StudentClassList.filter(f => f.Action);
-    this.RowsToUpdate = _toUpdate.length;
-    _toUpdate.forEach(e => {
 
-      this.UpdateOrSave(e);
-    })
-  }
   SaveRow(row) {
     this.RowsToUpdate = 1;
     this.UpdateOrSave(row);
@@ -727,34 +420,34 @@ export class NoOfStudentComponent implements OnInit {
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
 
-  GetStudents() {
+  // GetStudents() {
 
-    let list: List = new List();
-    list.fields = [
-      'StudentId',
-      'FirstName',
-      'LastName'
-    ];
+  //   let list: List = new List();
+  //   list.fields = [
+  //     'StudentId',
+  //     'FirstName',
+  //     'LastName'
+  //   ];
 
-    list.PageName = "Students";
-    //list.lookupFields = ["Student"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+  //   list.PageName = "Students";
+  //   //list.lookupFields = ["Student"]
+  //   list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
-            return {
-              StudentId: student.StudentId,
-              Name: student.StudentId + '-' + student.FirstName + '-' + student.LastName
-            }
-          })
-        }
-        this.loading = false;
-      })
-  }
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       //debugger;
+  //       //  //console.log('data.value', data.value);
+  //       if (data.value.length > 0) {
+  //         this.Students = data.value.map(student => {
+  //           return {
+  //             StudentId: student.StudentId,
+  //             Name: student.StudentId + '-' + student.FirstName + '-' + student.LastName
+  //           }
+  //         })
+  //       }
+  //       this.loading = false;
+  //     })
+  // }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -793,17 +486,10 @@ export interface IStudentClass {
   StudentClassId: number;
   ClassId: number;
   ClassName: string;
-  StudentId: number;
-  StudentName: string;
-  RollNo: string;
   SectionId: number;
+  Sequence: number;
   Section: string;
-  FeeTypeId: number;
-  FeeType: string;
-  Promote: number;
-  GenderName: string;
   Active: number;
-  Action: boolean
 }
 export interface IStudent {
   StudentClassId: number;

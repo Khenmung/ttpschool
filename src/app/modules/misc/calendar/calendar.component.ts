@@ -4,7 +4,6 @@ import { CalendarOptions } from '@fullcalendar/angular';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
 
 
@@ -20,7 +19,7 @@ export class CalendarComponent implements OnInit {
   EventsListName = 'Events';
   HolidayListName = 'Holidays';
   CalendarList = [];
-
+  SelectedBatchId=0;
   calendarOptions: CalendarOptions;
   constructor(
     private contentservice: ContentService,
@@ -29,6 +28,7 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit(): void {
     this.LoginUserDetail = this.tokenService.getUserDetail();
+    this.SelectedBatchId =  +this.tokenService.getSelectedBatchId();
     this.GetHoliday();
   }
   GetHoliday() {
@@ -66,7 +66,7 @@ export class CalendarComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
 
     let list: List = new List();
     list.fields = ["*"];
@@ -76,15 +76,14 @@ export class CalendarComponent implements OnInit {
     this.EventList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        //console.log("events", data.value);
         if (data.value.length > 0) {
           data.value.forEach(e => {
             this.CalendarList.push(
               {
                 Id: e.EventId,
-                title: e.Title,
-                start: e.StartDate
+                title: e.EventName,
+                start: e.EventStartDate,
+                end:e.EventEndDate
               }
             );
           })
@@ -98,12 +97,10 @@ export class CalendarComponent implements OnInit {
               center: 'title',
               right: 'prevYear,prev,next,nextYear'
             },
-
-            //displayEventTime:false,
+            
             dayMaxEvents: true,
             selectable: true,
-            //slotEventOverlap: false,
-            //eventMouseEnter: (event) => this.eventMouseOver(event),        
+            eventMouseEnter: (event) => this.eventMouseOver(event),        
             initialView: 'timeGridWeek',
             dateClick: this.handleDateClick.bind(this), // bind is important!
             events: this.CalendarList
@@ -117,10 +114,13 @@ export class CalendarComponent implements OnInit {
     //console.log("arg",arg)
     //alert('date click! ' + arg)
   }
+  
   eventMouseOver(value) {
-    debugger;
+    //debugger;
+   // value.el.innerHTML
+
     //console.log("mouseover",value.detail)
-    this.contentservice.openSnackBar(value, globalconstants.ActionText, globalconstants.BlueBackground);
+    //this.contentservice.openSnackBar(value, globalconstants.ActionText, globalconstants.BlueBackground);
   }
   TimeGridView() {
     this.calendarOptions = {

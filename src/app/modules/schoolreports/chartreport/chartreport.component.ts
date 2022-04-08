@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import alasql from 'alasql';
 import { ChartType, ChartOptions } from 'chart.js';
 import { evaluate } from 'mathjs';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip } from 'ng2-charts';
@@ -71,7 +72,7 @@ export class ChartReportComponent {
   GetMonthlyPayments(pMonth) {
     let list = new List();
     list.PageName = "AccountingLedgerTrialBalances";
-    list.fields = ["Month,StudentClassId,TotalDebit,TotalCredit"];
+    list.fields = ["Month,StudentClassId,TotalDebit,TotalCredit,Balance"];
     list.filter = ["Active eq 1 and Month eq " + pMonth + " and BatchId eq " + this.SelectedBatchId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     return this.dataservice.get(list);
     // .subscribe((data: any) => {
@@ -128,7 +129,7 @@ export class ChartReportComponent {
     var selectedmonthId = this.SearchForm.get("searchMonth").value;
     if (selectedmonthId == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar('Please select payment month', globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar('Please select payment month', globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -138,47 +139,49 @@ export class ChartReportComponent {
     //var paymentObj = this.MonthlyPayments.filter(f => f.Month == selectedmonthId);
     this.GetMonthlyPayments(selectedmonthId)
       .subscribe((data: any) => {
-debugger;
-        var paymentObj =[...data.value];
-        var paymentcount = paymentObj.length;
+        debugger;
+        var paymentObj = [...data.value];
+        var paymentcount = 0;
+        var paymentCountobj = alasql("select sum(1) as PaidCount from ? where Balance=0 group by Month", [paymentObj]);
+        if (paymentCountobj.length > 0)
+          paymentcount = paymentCountobj[0].PaidCount;
+        // this.VariableObjList = [];
+        // this.ReceiptAmount = 0;
+        // this.ExpectedAmount = 0;
+        // var StudentInfoVariable;
+        // this.StudentClasses.forEach(studcls => {
+        //   var classfeeobj = this.ClassFees.filter(f => f.Month == selectedmonthId && f.ClassId == studcls.ClassId);
+        //   if (classfeeobj.length > 0 && studcls.Formula.length > 0) {
+        //     StudentInfoVariable = {
+        //       "RollNo": studcls.RollNo,
+        //       "Section": studcls.SectionId,
+        //       "ClassId": studcls.ClassId,
+        //       "Amount": classfeeobj[0].Amount,
+        //       "BatchId": studcls.BatchId,
+        //       "Month": classfeeobj[0].Month,
+        //       "FeeName": classfeeobj[0].FeeDefinition.FeeName,
+        //       "StudentId": studcls.StudentId,
+        //       "StudentClassId": studcls.StudentClassId
+        //     };
+        //     this.VariableObjList.push(StudentInfoVariable);
+        //     var result = evaluate(this.ApplyVariables(studcls.Formula))
 
-        //var classfeeObjForSelectedMonth = alasql("select sum(Amount) AS TotalAmount, ClassId from ? GROUP BY ClassId",[classfeeobj]);
-        //var studentClassObj = alasql("select sum(1) AS NoOfStudent, ClassId from ? GROUP BY ClassId", [this.StudentClasses]);
-        this.VariableObjList = [];
-        this.ReceiptAmount = 0;
-        this.ExpectedAmount = 0;
-        var StudentInfoVariable;
-        this.StudentClasses.forEach(studcls => {
-          var classfeeobj = this.ClassFees.filter(f => f.Month == selectedmonthId && f.ClassId == studcls.ClassId);
-          if (classfeeobj.length > 0 && studcls.Formula.length > 0) {
-            StudentInfoVariable = {
-              "RollNo": studcls.RollNo,
-              "Section": studcls.SectionId,
-              "ClassId": studcls.ClassId,
-              "Amount": classfeeobj[0].Amount,
-              "BatchId": studcls.BatchId,
-              "Month": classfeeobj[0].Month,
-              "FeeName": classfeeobj[0].FeeDefinition.FeeName,
-              "StudentId": studcls.StudentId,
-              "StudentClassId": studcls.StudentClassId
-            };
-            this.VariableObjList.push(StudentInfoVariable);
-            var result = evaluate(this.ApplyVariables(studcls.Formula))
-            
-            this.ExpectedAmount += result;
+        //     this.ExpectedAmount += result;
 
-            this.VariableObjList = [];
-          }
-        })
+        //     this.VariableObjList = [];
+        //   }
+        // })
 
         //this.ExpectedAmount =  classfeeobj.reduce((acc,current)=> acc + current.Amount,0);
-        this.ReceiptAmount = paymentObj.reduce((acc, current) => acc + current.TotalCredit, 0);
+        this.ExpectedAmount = paymentObj.reduce((acc, current) => acc + current.TotalCredit, 0);
+        this.ReceiptAmount = paymentObj.reduce((acc, current) => acc + current.TotalDebit, 0);
 
         var noofUnpaid = studentCount - paymentcount;
-        this.pieChartLabels = ['Payment %', 'Non-payment %']
+        this.pieChartLabels = ['Non-payment %', 'Payment %']
         var PaymentPercent = ((paymentcount * 100) / studentCount).toFixed(2);
-        var NonPaymentPercent = ((noofUnpaid * 100) / studentCount).toFixed(2)
-        this.pieChartData = [+PaymentPercent, +NonPaymentPercent];
+        var NonPaymentPercent = ((noofUnpaid * 100) / studentCount).toFixed(2);
+        console.log("paymentcount", paymentcount);
+        this.pieChartData = [+NonPaymentPercent, +PaymentPercent];
         this.loading = false;
       })
   }

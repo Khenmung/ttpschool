@@ -1,5 +1,5 @@
 <div style="padding:15px 15px 10px 15px;">
-    <div><strong>Class Student</strong></div>
+    <div><strong>No. Of Student</strong></div>
 </div>
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
@@ -13,139 +13,27 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
-            <mat-label>Section</mat-label>
-            <mat-select formControlName="searchSectionId">
-                <mat-option value="0">--section--</mat-option>
-                <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
-                    {{item.MasterDataName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentClasses('')">
+        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentClasses()">
             <mat-icon>search</mat-icon>
-        </button>
-        <button [disabled]="loading" matTooltip="copy from previous class & previous batch" class="mat-raised-button"
-            (click)="CopyFromPreviousClassAndBatch()">
-            <mat-icon>copy_all</mat-icon>
-        </button>
-        <button [disabled]="loading" matTooltip="copy from same class & previous batch" class="mat-raised-button"
-            (click)="CopyFromSameClassPreviousBatch()">
-            <mat-icon>content_copy</mat-icon>
-        </button>
-    </div>
-    <div style="padding:15px;border:1px solid lightgray">
-        <span style="padding: 15px;">{{RollNoGenerationSortBy}}</span>
-        <button matTooltip="generate roll no" [disabled]="loading || StudentClassList.length==0 || Permission=='read'"
-            class="mat-raised-button" (click)="GenerateRollNoOnList()">
-            <mat-icon>hdr_auto</mat-icon>
         </button>
     </div>
 </form>
 <div style="font-size: medium;">{{ HeaderTitle }}</div>
-<mat-table #table [dataSource]="dataSource" matSort>
-    <ng-container matColumnDef="StudentId">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> 
-            <span style="display: flex;flex-direction: column;justify-content: start;">
-                <span style="justify-content: start;display: flex;">Id</span>
-                <mat-form-field style="width: 80px;">
-                    <mat-label>search Id</mat-label>
-                    <input matInput [formControl]="IdFilter" autocomplete="Off">
-                </mat-form-field>
-            </span>    
+<mat-table #table style="overflow: auto;" [dataSource]="dataSource" matSort>
+    <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+        <mat-header-cell *matHeaderCellDef mat-sort-header="">{{disCol!='Action'?disCol:''}}            
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.StudentId}}
+        <mat-cell *matCellDef="let element">            
+            {{element[disCol]}}
         </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="StudentName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>              
-            <span style="display: flex;flex-direction: column;justify-content: start;">
-                <span style="justify-content: start;display: flex;">Student</span>
-                <mat-form-field style="width: 150px;">
-                    <mat-label>search name</mat-label>
-                    <input matInput [formControl]="nameFilter" autocomplete="Off">
-                </mat-form-field>
+        <mat-footer-cell *matFooterCellDef>
+            <span *ngIf="disCol=='Total'">
+               Total: {{TotalStudent}}
             </span>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-                {{element.StudentName}}                
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="GenderName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Gender </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.GenderName}}
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="RollNo">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>RollNo
-        </mat-header-cell>
-        <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-            <mat-form-field [style.width.px]="50">
-                <input matInput (blur)="onBlur(element)" [value]="element.RollNo" [(ngModel)]="element.RollNo"
-                    autocomplete="Off" [maxlength]="10">
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="SectionId">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Section
-        </mat-header-cell>
-        <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
-            <mat-form-field [style.width.px]="50">
-                <mat-select (selectionChange)="onBlur(element)" [value]="element.SectionId"
-                    [(ngModel)]="element.SectionId">
-                    <!-- <mat-option value="0">--section--</mat-option> -->
-                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">{{item.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="FeeTypeId">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Fee Type </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            <mat-form-field [style.width.px]="250">
-                <mat-select (selectionChange)="onBlur(element)" [value]="element.FeeTypeId"
-                    [(ngModel)]="element.FeeTypeId">
-                    <mat-option *ngFor="let item of FeeTypes" [value]="item.FeeTypeId">{{item.FeeTypeName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </mat-cell>
-    </ng-container>
-    <!-- <ng-container matColumnDef="Promote">
-            <mat-header-cell *matHeaderCellDef> Promote&nbsp;
-                <mat-checkbox *ngIf="PromotePermission!='read' && StudentClassList.length>0"
-                    (click)="$event.stopPropagation()" (change)="CheckPromoteAll($event)">
-                </mat-checkbox>
-            </mat-header-cell>
-            <mat-cell style="text-align: center;" *matCellDef="let element">
-                <mat-checkbox *ngIf="PromotePermission!='read'" (click)="$event.stopPropagation()"
-                    (change)="EnablePromote(element,$event)" [checked]="element.Promote==1?true:false">
-                </mat-checkbox>
-            </mat-cell>
-        </ng-container> -->
-    <ng-container matColumnDef="Action">
-        <mat-header-cell *matHeaderCellDef>
-            <button [disabled]="loading || StudentClassList.length==0 || Permission=='read'" matTooltip="save all"
-                mat-mini-fab (click)="SaveAll()">
-                <mat-icon>all_out</mat-icon>
-            </button>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
-                (click)="SaveRow(element)">
-                <mat-icon>save</mat-icon>
-            </button>
-            <!-- <button
-                    [disabled]="loading|| PromotePermission=='read'|| PromotePermission=='deny' || checkBatchIdNSelectedIdEqual==0"
-                    matTooltip="promote" mat-mini-fab (click)="PromoteRow(element)">
-                    <mat-icon>loupe</mat-icon>
-                </button> -->
-        </mat-cell>
+        </mat-footer-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
 </mat-table>
 <mat-paginator [pageSizeOptions]="[5,10,25,100]"></mat-paginator>

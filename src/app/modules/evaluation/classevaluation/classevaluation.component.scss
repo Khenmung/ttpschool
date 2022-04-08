@@ -16,16 +16,17 @@ mat-cell:first-of-type {
     flex:1 1 200px;
 }
 .mat-column-AnswerOptionId,
-.mat-column-ClassEvalCategoryId
+.mat-column-ClassEvalCategoryId,
+.mat-column-ClassEvalSubCategoryId
 {
     flex:1 1 120px;
 }
 .mat-column-ClassId,.mat-column-Action{   
-    flex:1 1 100px;
+    flex:1 1 120px;
 }
 .mat-column-DisplayOrder,
 .mat-column-MultipleAnswer,
-.mat-column-ClassEvaluationId
+.mat-column-ClassEvaluationId,
 .mat-column-Active
 {   
     justify-content: center;

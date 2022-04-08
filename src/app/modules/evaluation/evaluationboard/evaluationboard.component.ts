@@ -4,8 +4,8 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassEvaluationComponent } from '../classevaluation/classevaluation.component';
-import { ClassEvaluationOptionComponent } from '../classevaluationoption/classevaluationoption.component';
-import { EvaluationandExamComponent } from '../evaluationandexam/evaluationandexam.component';
+import { EvaluationClassSubjectMapComponent } from '../evaluationclasssubjectmap/EvaluationClassSubjectMap.component';
+import { StudentEvaluationComponent } from '../studentevaluation/studentevaluation.component';
 
 @Component({
   selector: 'app-evaluationboard',
@@ -16,8 +16,8 @@ export class EvaluationboardComponent implements AfterViewInit {
 
   components = [    
     ClassEvaluationComponent,
-    ClassEvaluationOptionComponent,
-    EvaluationandExamComponent  
+    EvaluationClassSubjectMapComponent,
+    StudentEvaluationComponent
   ];
 
   tabNames = [
@@ -30,8 +30,8 @@ export class EvaluationboardComponent implements AfterViewInit {
     {
       ParentPermission: '',
       ClassEvaluationPermission: '',
-      EvaluationOptionPermission: '',
-      EvaluationExamPermission: '',
+      // EvaluationOptionPermission: '',
+      // EvaluationExamPermission: '',
     };
   LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -46,25 +46,25 @@ export class EvaluationboardComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-
+debugger;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-
+    
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATION)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
     }
-
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONANDEXAM)
-    var comindx = this.components.indexOf(EvaluationandExamComponent);
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION);
+    var comindx = this.components.indexOf(StudentEvaluationComponent);
     this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.CLASSEVALUATION)
     var comindx = this.components.indexOf(ClassEvaluationComponent);
     this.AddRemoveComponent(perObj, comindx);
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.CLASSEVALUATIONOPTION)
-    var comindx = this.components.indexOf(ClassEvaluationOptionComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONCLASSSUBJECTMAP)
+    var comindx = this.components.indexOf(EvaluationClassSubjectMapComponent);
     this.AddRemoveComponent(perObj, comindx);
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

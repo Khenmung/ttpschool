@@ -34,7 +34,7 @@ export class MiscboardComponent implements AfterViewInit {
       DataDownloadPermission: '',
       DataUploadPermission: ''
     };
-    LoginUserDetail =[];
+  LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
@@ -44,18 +44,18 @@ export class MiscboardComponent implements AfterViewInit {
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private componentFactoryResolver: ComponentFactoryResolver
-    ) {
+  ) {
   }
 
   public ngAfterViewInit(): void {
     debugger
-    this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.misc.MISC)
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.misc.FRONTOFFICE)
     if (perObj.length > 0) {
-      this.Permissions.ParentPermission = perObj[0].permission;  
+      this.Permissions.ParentPermission = perObj[0].permission;
     }
-    
+
     this.GenerateComponent(globalconstants.Pages.common.misc.CALENDAR)
     this.GenerateComponent(globalconstants.Pages.common.misc.HOLIDAY)
     this.GenerateComponent(globalconstants.Pages.common.misc.EVENT)
@@ -81,26 +81,25 @@ export class MiscboardComponent implements AfterViewInit {
     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
     this.viewContainer.createComponent(factory);
   }
-  GenerateComponent(featureName){
-    
+  GenerateComponent(featureName) {
+
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
-    var comindx =0;
-    switch(featureName)
-    {
+    var comindx = 0;
+    switch (featureName) {
       case "calendar":
-        comindx =this.components.indexOf(CalendarComponent);
+        comindx = this.components.indexOf(CalendarComponent);
         break;
       case "event":
-        comindx =this.components.indexOf(EventComponent);
-        break;     
+        comindx = this.components.indexOf(EventComponent);
+        break;
       case "holiday":
-        comindx =this.components.indexOf(HolidayComponent);
-        break;     
-      case "no. of students":
-        comindx =this.components.indexOf(NoOfStudentComponent);
-        break;     
-    } 
-    
+        comindx = this.components.indexOf(HolidayComponent);
+        break;
+      case "no of students":
+        comindx = this.components.indexOf(NoOfStudentComponent);
+        break;
+    }
+
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);

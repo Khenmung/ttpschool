@@ -1,29 +1,22 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Stduent Profile</strong></div>
+        <div><strong>Student Profile</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
     <div style="padding: 15px;">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
-                <mat-form-field appearance="outline" [style.width.px]="150">
-                    <mat-label>Evaluation Type</mat-label>
-                    <mat-select formControlName="searchEvaluationTypeId">
-                        <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}
+                <mat-form-field appearance="outline" [style.width.px]="350">
+                    <mat-label>Student</mat-label>
+                    <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                        <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                            {{option.Name}}
                         </mat-option>
-                    </mat-select>
+                    </mat-autocomplete>
                 </mat-form-field>
-
                 <!-- <mat-form-field appearance="outline" [style.width.px]="150">
-                    <mat-label>Class</mat-label>
-                    <mat-select formControlName="searchClassId" (selectionChange)="GetSelectedClassSubject()">
-                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field> -->
-                <mat-form-field appearance="outline" [style.width.px]="150">
                     <mat-label>Subject</mat-label>
                     <mat-select formControlName="searchSubjectId">
                         <mat-option value="0">select</mat-option>
@@ -39,11 +32,44 @@
                         <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentEvaluation()">
                     <mat-icon>search</mat-icon>
                 </button>
             </form>
+            <mat-table #table [dataSource]="AssessmentTypeDatasource">
+                <ng-container matColumnDef="ExamName">
+                    <mat-header-cell *matHeaderCellDef>Exam
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ExamName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="EvaluationType">
+                    <mat-header-cell *matHeaderCellDef>Evaluation
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.EvaluationType}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ClassName">
+                    <mat-header-cell *matHeaderCellDef>Class
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ClassName}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Subject">
+                    <mat-header-cell *matHeaderCellDef>Subject
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.Subject}}
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="EvaluationPlanColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: EvaluationPlanColumns;let indx=index" class="element-row"
+                    style="align-items: center;"></mat-row>
+            </mat-table>
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="StudentEvaluationId">
                     <mat-header-cell *matHeaderCellDef>Id
@@ -69,37 +95,22 @@
                         </span>
                     </mat-cell>
                 </ng-container>
-                <!-- <ng-container matColumnDef="Detail">
-                    <mat-header-cell *matHeaderCellDef>Teacher's Comment
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <textarea matInput [disabled]="element.RatingId>0" [maxlength]="1000"
-                                (blur)="onBlur(element)" [value]="element.Detail"
-                                [(ngModel)]="element.Detail"></textarea>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container> -->
                 <ng-container matColumnDef="RatingId">
                     <mat-header-cell *matHeaderCellDef>Assessment
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <span *ngIf="element.MultipleAnswer==1">                            
+                        <span *ngIf="element.MultipleAnswer==1">
                             <mat-checkbox *ngFor="let item of element.ClassEvaluationOptions;let i=index"
-                                (click)="$event.stopPropagation()" 
-                                name="options_{{i}}" 
-                                [value]="item.AnswerOptionsId"
-                                [checked] ="item.checked"                                
-                                [(ngModel)]="item.AnswerOptionsId" 
+                                (click)="$event.stopPropagation()" name="options_{{i}}" [value]="item.AnswerOptionsId"
+                                [checked]="item.checked" [(ngModel)]="item.AnswerOptionsId"
                                 (change)="UpdateAnswers(element,item,$event,i)">
                             </mat-checkbox>
                         </span>
                         <span *ngIf="element.MultipleAnswer==0">
                             <mat-radio-group [(ngModel)]="element.RatingId">
                                 <mat-radio-button style="margin-right: 15px;"
-                                    *ngFor="let item of element.ClassEvaluationOptions;let i=index" 
-                                    (change)="UpdateRadio(element,item)"
-                                    [value]="item.AnswerOptionsId">
+                                    *ngFor="let item of element.ClassEvaluationOptions;let i=index"
+                                    (change)="UpdateRadio(element,item)" [value]="item.AnswerOptionsId">
                                     {{item.Title}}
                                 </mat-radio-button>
                             </mat-radio-group>

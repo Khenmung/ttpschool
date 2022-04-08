@@ -4,34 +4,22 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 
 <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabchanged($event)">
+    
     <mat-tab>
         <ng-template mat-tab-label>
-            <mat-icon>note_add</mat-icon>Type
+            <mat-icon>note_add</mat-icon>Questionaire
         </ng-template>
-        <div style="padding:15px 15px 10px 15px;"><strong>Type</strong></div>
-        <app-evaluationmaster (NotifyParent)="Detail($event)"></app-evaluationmaster>
-    </mat-tab>
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>note_add</mat-icon>Detail
-        </ng-template>
-        <div style="padding:15px 15px 10px 15px;"><strong>Detail</strong></div>
+        <!-- <div style="padding:15px 15px 10px 15px;"><strong>Detail</strong></div> -->
         <div style="padding: 15px;" fxLayout="row wrap">
             <div style="width: 100%;">
-                <form [formGroup]="searchForm1">
+                <form [formGroup]="searchForm">
                     <mat-form-field appearance="outline" [style.width.px]="150">
-                        <mat-label>Category</mat-label>
-                        <mat-select formControlName="searchCategoryId">
-                            <mat-option [value]="0">select</mat-option>
-                            <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">
+                        <mat-label>Evaluation Name</mat-label>
+                        <mat-select formControlName="searchEvaluationTypeId">
+                            <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">
                                 {{item.MasterDataName}}
                             </mat-option>
                         </mat-select>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline" [style.width.px]="200">
-                        <mat-label>Questionaire</mat-label>
-                        <input type="text" matInput formControlName="searchDescription" autoComplete="Off"
-                            [maxlength]="256">
                     </mat-form-field>
                     <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassEvaluation()">
                         <mat-icon>search</mat-icon>
@@ -62,8 +50,23 @@
                         <mat-cell *matCellDef="let element">
                             <mat-form-field appearance="outline">
                                 <mat-select (selectionChange)="CategoryChanged(element)"
+                                        (selectionChange)="onBlur(element)"
                                     [(ngModel)]="element.ClassEvalCategoryId" [value]="element.ClassEvalCategoryId">
                                     <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">
+                                        {{item.MasterDataName}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="ClassEvalSubCategoryId">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Category
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <mat-form-field appearance="outline">
+                                <mat-select
+                                (selectionChange)="onBlur(element)"
+                                    [(ngModel)]="element.ClassEvalSubCategoryId" [value]="element.ClassEvalSubCategoryId">
+                                    <mat-option *ngFor="let item of SubCategories" [value]="item.MasterDataId">
                                         {{item.MasterDataName}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
@@ -74,8 +77,10 @@
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="element.AnswerOptionId" [value]="element.AnswerOptionId">
-                                    <mat-option *ngFor="let item of ClassEvaluationOptionList"
+                                <mat-select [(ngModel)]="element.AnswerOptionId" 
+                                (selectionChange)="onBlur(element)"
+                                [value]="element.AnswerOptionId">                                
+                                <mat-option *ngFor="let item of ClassEvaluationOptionList"
                                         [value]="item.AnswerOptionsId">
                                         {{item.Title}}</mat-option>
                                 </mat-select>
@@ -134,8 +139,20 @@
                     </mat-row>
                 </mat-table>
                 <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
-                <app-ClassEvaluationOption></app-ClassEvaluationOption>
+                
             </div>
         </div>
     </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>rule</mat-icon>Options
+        </ng-template>
+        <app-ClassEvaluationOption></app-ClassEvaluationOption>
+    </mat-tab>
+    <!-- <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>note_add</mat-icon>Evaluation Class Subject Mapping
+        </ng-template>
+        <app-EvaluationClassSubjectMap (NotifyParent)="Detail($event)"></app-EvaluationClassSubjectMap>
+    </mat-tab> -->
 </mat-tab-group>

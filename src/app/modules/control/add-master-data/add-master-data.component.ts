@@ -65,14 +65,7 @@ export class AddMasterDataComponent implements OnInit {
   //enableAddNew = false;
   loading: boolean = false;
   error: string = '';
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  optionNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
+  
   searchForm: FormGroup;
 
   constructor(
