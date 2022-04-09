@@ -86,13 +86,15 @@
                                 <div><b>Total:</b> {{ calculateTotal() }}</div>
                             </mat-footer-cell>
                         </ng-container>
-
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: displayedColumns;let i=index;" class="element-row">
                         </mat-row>
                         <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
                         </mat-footer-row>
-                    </mat-table>            
+                    </mat-table> 
+                    <div style="display: flex;justify-content: flex-end;height: 50px;align-items:flex-end;padding: 5px;">                         
+                         <div>Accountant</div>   
+                    </div>           
             </div>
         </div>
         <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
@@ -103,10 +105,6 @@
                         class="mat-raised-button">
                         <mat-icon>cancel</mat-icon>
                     </button>
-                    <!-- <button [disabled]="loading" matTooltip="done" (click)="done()"
-                        class="mat-raised-button">
-                        <mat-icon>checked</mat-icon>
-                    </button> -->
                     <button [disabled]="loading" matTooltip="print" printSectionId="printSection"
                         [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
                         <mat-icon>print</mat-icon>

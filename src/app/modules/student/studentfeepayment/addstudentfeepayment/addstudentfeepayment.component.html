@@ -18,7 +18,7 @@
                             <div style="margin-top:15px;display: flex;flex-direction: column;border: 1px solid lightgray;">
                                 <div style="width:50%" id="printSection">
                                     <mat-table #table [dataSource]="dataSource" style="min-width: 400px;">
-                                        <ng-container matColumnDef="SlNo">
+                                        <ng-container matColumnDef="SlNo1">
                                             <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                                             <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
                                         </ng-container>
@@ -82,7 +82,7 @@
                                         <mat-cell *matCellDef="let element">
                                             {{element.FeeName}}
                                             <div *ngIf="element.AmountEditable==1">
-                                                <mat-form-field>
+                                                <mat-form-field style="width: 100px;">
                                                     <input style="text-align: right" matInput
                                                         [(ngModel)]="element.ShortText" [value]="element.ShortText"
                                                         autocomplete="Off">

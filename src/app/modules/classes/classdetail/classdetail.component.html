@@ -17,7 +17,7 @@
         <mat-icon>search</mat-icon>
     </button>
 </form>
-<mat-table #table [dataSource]="dataSource">
+<mat-table #table [dataSource]="dataSource" style="overflow: auto;">
     <ng-container matColumnDef="ClassId">
         <mat-header-cell *matHeaderCellDef>Id
         </mat-header-cell>

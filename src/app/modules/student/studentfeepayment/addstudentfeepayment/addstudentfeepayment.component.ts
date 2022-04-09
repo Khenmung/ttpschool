@@ -148,7 +148,6 @@ export class AddstudentfeepaymentComponent implements OnInit {
     LedgerId: 0,
     StudentClassId: 0,
     Month: 0,
-    //GeneralLedgerId: 0,
     TotalDebit: 0,
     TotalCredit: 0,
     Balance: 0,
@@ -158,7 +157,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   };
 
   displayedColumns = [
-    'SlNo',
+    'SlNo1',
     'MonthName',
     'TotalCredit',
     'TotalDebit',
@@ -457,7 +456,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
                 existing.forEach(exitem => {
                   //itemcount += 1;
                   this.StudentLedgerList.push({
-                    SlNo: itemcount++,
+                    SlNo1: itemcount++,
                     LedgerId: exitem.LedgerId,
                     StudentClassId: exitem.StudentClassId,
                     Month: exitem.Month,
@@ -489,7 +488,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               }
               else
                 this.StudentLedgerList.push({
-                  SlNo: itemcount++,
+                  SlNo1: itemcount++,
                   LedgerId: 0,
                   StudentClassId: this.studentInfoTodisplay.StudentClassId,
                   Month: studentClassFee.Month,
@@ -833,7 +832,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
 }
 export interface ILedger {
-  SlNo: number,
+  SlNo1: number,
   LedgerId: number;
   StudentClassId: number;
   Month: number;

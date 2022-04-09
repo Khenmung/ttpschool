@@ -265,12 +265,7 @@ export class FeecollectionreportComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.FeeDefinitions = this.getDropDownData(globalconstants.MasterDefinitions.school.FEENAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-
-        //since only one current batch is accepted
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-
 
       });
 

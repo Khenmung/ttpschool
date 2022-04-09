@@ -61,7 +61,7 @@ export class studentprimaryinfoComponent implements OnInit {
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
   studentForm: FormGroup;
-  Edited =false;
+  Edited = false;
   public files: NgxFileDropEntry[] = [];
   @ViewChild(ImageCropperComponent, { static: true }) imageCropper: ImageCropperComponent;
 
@@ -307,9 +307,8 @@ export class studentprimaryinfoComponent implements OnInit {
     }
 
   }
-  OnBlur()
-  {
-    this.Edited=true;
+  OnBlur() {
+    this.Edited = true;
   }
   SaveOrUpdate() {
     var errorMessage = '';
@@ -414,7 +413,7 @@ export class studentprimaryinfoComponent implements OnInit {
           this.tokenService.saveStudentId(this.StudentId + "")
           this.tokenService.saveStudentClassId(this.StudentClassId + "");
           this.GetStudent();
-          this.Edited=false;
+          this.Edited = false;
 
         }
 
@@ -426,7 +425,7 @@ export class studentprimaryinfoComponent implements OnInit {
     this.dataservice.postPatch('Students', this.studentData[0], this.StudentId, 'patch')
       .subscribe((result: any) => {
         this.loading = false;
-        this.Edited=false;
+        this.Edited = false;
         if (result != null && result.UserId != "")
           this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
         else
@@ -452,9 +451,11 @@ export class studentprimaryinfoComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           data.value.forEach(stud => {
-            this.tokenService.saveStudentClassId(stud.StudentClasses[0].StudentClassId);
+            if (stud.StudentClasses.length > 0)
+              this.tokenService.saveStudentClassId(stud.StudentClasses[0].StudentClassId);
 
-            let StudentName = stud.StudentId + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName + ' ' + stud.MotherName + ',';
+            let StudentName = stud.StudentId + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName + 
+            ' ' + stud.MotherName + ',';
             this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
               StudentId: stud.StudentId,

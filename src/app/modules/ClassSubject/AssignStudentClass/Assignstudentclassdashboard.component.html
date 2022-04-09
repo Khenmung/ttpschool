@@ -129,18 +129,16 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <!-- <ng-container matColumnDef="Promote">
-            <mat-header-cell *matHeaderCellDef> Promote&nbsp;
-                <mat-checkbox *ngIf="PromotePermission!='read' && StudentClassList.length>0"
-                    (click)="$event.stopPropagation()" (change)="CheckPromoteAll($event)">
-                </mat-checkbox>
-            </mat-header-cell>
-            <mat-cell style="text-align: center;" *matCellDef="let element">
-                <mat-checkbox *ngIf="PromotePermission!='read'" (click)="$event.stopPropagation()"
-                    (change)="EnablePromote(element,$event)" [checked]="element.Promote==1?true:false">
-                </mat-checkbox>
-            </mat-cell>
-        </ng-container> -->
+    <ng-container matColumnDef="Remarks">
+        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Remarks
+        </mat-header-cell>
+        <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+            <mat-form-field [style.width.px]="150">
+                <input matInput (blur)="onBlur(element)" [value]="element.Remarks" [(ngModel)]="element.Remarks"
+                    autocomplete="Off" [maxlength]="250">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
     <ng-container matColumnDef="Action">
         <mat-header-cell *matHeaderCellDef>
             <button [disabled]="loading || StudentClassList.length==0 || Permission=='read'" matTooltip="save all"

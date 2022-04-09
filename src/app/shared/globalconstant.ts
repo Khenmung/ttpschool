@@ -365,7 +365,10 @@ export class globalconstants {
                 "RelationWithContactPerson",
                 "ContactPersonContactNo",
                 "Location",
-                "ReasonForLeaving"
+                "ReasonForLeaving",
+                "Attendance",
+                "FeePaidTill"
+                
             ],
             "EmployeeVariableName": [
                 "Grade",

@@ -20,8 +20,8 @@ export class StudentboardComponent implements AfterViewInit {
      components = [
       studentprimaryinfoComponent,
       AddstudentclassComponent,
-      StudentDocumentComponent,
       GenerateCertificateComponent,
+      StudentDocumentComponent,      
       StudentattendancereportComponent,
       StudentprogressreportComponent,
       StudentEvaluationComponent

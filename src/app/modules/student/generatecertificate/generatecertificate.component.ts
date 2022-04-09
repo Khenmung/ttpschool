@@ -3,6 +3,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import alasql from 'alasql';
+import { evaluate } from 'mathjs';
 import { Observable } from 'rxjs';
 import { IStudent } from 'src/app/modules/ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
 import { ContentService } from 'src/app/shared/content.service';
@@ -21,14 +23,6 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class GenerateCertificateComponent implements OnInit {
   loading = false;
   LoginUserDetail = [];
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   Permission = '';
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
@@ -38,6 +32,7 @@ export class GenerateCertificateComponent implements OnInit {
   MarkComponents = [];
   StudentGrades = [];
   StudentForVariables = [];
+  FeePaidLastMonth = 0;
   Students = [];
   Genders = [];
   Classes = [];
@@ -61,12 +56,14 @@ export class GenerateCertificateComponent implements OnInit {
   CommonStyles = [];
   CommonHeader = [];
   CommonFooter = [];
+  StudentAttendanceList = [];
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   filteredOptions: Observable<IStudent[]>;
+  AttendanceStatusSum = [];
   ExamId = 0;
   StudentClassId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     ExamId: 0,
@@ -87,7 +84,7 @@ export class GenerateCertificateComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -121,10 +118,9 @@ export class GenerateCertificateComponent implements OnInit {
   }
 
   PageLoad() {
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    this.StudentClassId = this.tokenstorage.getStudentClassId();
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -136,7 +132,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.Permission = perObj[0].permission;
 
       if (this.StudentClassId == 0) {
-        this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
         this.nav.navigate(['/edu']);
       }
       if (this.Permission != 'deny') {
@@ -147,6 +143,8 @@ export class GenerateCertificateComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
+        this.GetStudentAttendance();
+        this.getPaymentStatus();
       }
     }
   }
@@ -206,13 +204,12 @@ export class GenerateCertificateComponent implements OnInit {
         this.loading = false;
       });
   }
-  GetStudents(pStudentClassId) {
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+  GetStudentAndGenerateCerts() {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1';
     let list: List = new List();
 
-    if (pStudentClassId == 0) {
+    if (this.StudentClassId == 0) {
       list.fields = [
         "StudentClassId",
         "ClassId",
@@ -221,7 +218,7 @@ export class GenerateCertificateComponent implements OnInit {
     }
     else {
 
-      filterstr += " and StudentClassId eq " + pStudentClassId;
+      filterstr += " and StudentClassId eq " + this.StudentClassId;
       list.fields = [
         "StudentClassId",
         "ClassId",
@@ -232,7 +229,7 @@ export class GenerateCertificateComponent implements OnInit {
       ];
     }
     list.PageName = "StudentClasses";
-    if (pStudentClassId == 0) {
+    if (this.StudentClassId == 0) {
       list.lookupFields = ["Student($select=FirstName,LastName)"];
     }
     else
@@ -241,10 +238,6 @@ export class GenerateCertificateComponent implements OnInit {
         "FatherName,MotherName,Gender,PermanentAddress," +
         "PresentAddress," +
         "WhatsAppNumber," +
-        //"City," +
-        //"Pincode," +
-        //"State," +
-        //"Country," +
         "DOB," +
         "Bloodgroup," +
         "Category," +
@@ -271,7 +264,7 @@ export class GenerateCertificateComponent implements OnInit {
     list.filter = [filterstr + orgIdSearchstr];
 
     this.dataservice.get(list).subscribe((data: any) => {
-      if (pStudentClassId == 0) {
+      if (this.StudentClassId == 0) {
         this.Students = data.value.map(d => {
           var _lastName = d.Student.LastName == null ? '' : d.Student.LastName;
           d.Name = d.Student.FirstName + " " + _lastName;
@@ -286,6 +279,7 @@ export class GenerateCertificateComponent implements OnInit {
       else {
         ////console.log('data.value',data.value)
         debugger;
+        this.StudentForVariables = [];
         data.value.forEach(d => {
 
           var _studentClass = '';
@@ -312,9 +306,6 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "PermanentAddress", val: d.Student.PermanentAddress },
             { name: "PresentAddress", val: d.Student.PresentAddress },
             { name: "WhatsAppNumber", val: d.Student.WhatsAppNumber },
-            // { name: "City", val: _city },
-            // { name: "State", val: _state },
-            // { name: "Country", val: _country },
             { name: "PinCode", val: d.Student.Pincode },
             { name: "DOB", val: this.datepipe.transform(d.Student.DOB, 'dd/MM/yyyy') },
             { name: "BloodGroup", val: _bloodgroup },
@@ -340,6 +331,10 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "ReasonForLeaving", val: _reason }
           )
         })
+        this.StudentForVariables.push(
+          { name: "FeePaidTill", val: this.FeePaidLastMonth },
+          { name: "Attendance", val: this.AttendanceStatusSum }
+        )
         ////console.log('this.StudentForVariables',this.StudentForVariables);
         this.GenerateCertificate();
 
@@ -349,12 +344,36 @@ export class GenerateCertificateComponent implements OnInit {
 
   }
   GenerateCertificate() {
+    debugger;
     var _certificateBody = this.allMasterData.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)
     if (_certificateBody.length == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+
+    var certificateavailable = true;
+    var _certificateFormula = this.allMasterData.filter(a => a.MasterDataId == this.searchForm.get("searchCertificateTypeId").value)
+    if (_certificateFormula.length > 0) {
+      for (var i = 0; i < _certificateFormula.length; i++) {
+        if (_certificateFormula[i].Logic.length > 0) {
+          this.StudentForVariables.forEach(s => {
+            if (_certificateFormula[i].Logic.includes('[' + s.name.trim() + ']'))
+              _certificateFormula[i].Logic = _certificateFormula[i].Logic.replaceAll('[' + s.name.trim() + ']', s.val);
+          });
+          if (!evaluate(_certificateFormula[i].Logic)) {
+            certificateavailable = false;
+            break;
+          }
+        }
+      }
+      if (!certificateavailable) {
+        this.loading = false;
+        this.contentservice.openSnackBar(_certificateFormula[0].MasterDataName + " not available for this student.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+    }
+
     ////console.log("_certificateBody",_certificateBody);
     _certificateBody.forEach(c => {
       this.StudentForVariables.forEach(s => {
@@ -389,11 +408,11 @@ export class GenerateCertificateComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -412,34 +431,26 @@ export class GenerateCertificateComponent implements OnInit {
     ];
     list.PageName = "ExamStudentSubjectResults";
     list.filter = [filterstr + orgIdSearchstr];
-    //list.orderBy = "ParentId";
     this.displayedColumns = [
       'Student',
     ];
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {
-        //debugger;
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
-
         this.loading = false;
       })
 
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        // this.City = this.getDropDownData(globalconstants.MasterDefinitions.common.CITY);
-        // this.State = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
-        // this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
-
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
-
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
@@ -454,33 +465,70 @@ export class GenerateCertificateComponent implements OnInit {
         this.CommonFooter = this.getDropDownData(globalconstants.MasterDefinitions.school.COMMONFOOTER);
         this.CommonHeader.sort((a, b) => a.Sequence - b.Sequence)
         this.CommonFooter.sort((a, b) => a.Sequence - b.Sequence)
-        ////console.log('cer type',this.CertificateTypes)
         this.shareddata.ChangeBatch(this.Batches);
-        this.GetStudents(0);
-        //this.GetExams();
-        //this.GetStudentSubjects();
       });
   }
   clear() {
 
   }
   GetCertificates() {
-    //debugger;
+
     if (this.searchForm.get("searchCertificateTypeId").value == 0) {
-      this.contentservice.openSnackBar("Please select certificate type!", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select certificate type!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    // var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
-    // if (_studentClassId == undefined) {
-    //   this.contentservice.openSnackBar("Please select student!", globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
 
     this.loading = true;
-    this.GetStudents(this.StudentClassId);
+    this.GetStudentAndGenerateCerts();
+
 
   }
 
+  GetStudentAttendance() {
+
+    let list: List = new List();
+    list.fields = [
+      "AttendanceId",
+      "StudentClassId",
+      "AttendanceStatus"
+    ];
+    list.PageName = "Attendances";
+    //list.lookupFields = ["StudentClass($select=RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and StudentClassId eq " + this.StudentClassId + " and BatchId eq " + this.SelectedBatchId];
+
+    this.dataservice.get(list)
+      .subscribe((attendance: any) => {
+        this.StudentAttendanceList = [...attendance.value]
+        var groupbyPresentAbsent = alasql("select sum(AttendanceStatus) Total from ? where AttendanceStatus = 1 group by AttendanceStatus",
+          [this.StudentAttendanceList])
+        if (groupbyPresentAbsent.length > 0)
+          this.AttendanceStatusSum = groupbyPresentAbsent[0].Total
+
+        this.loading = false;
+      });
+  }
+  getPaymentStatus() {
+
+    let list: List = new List();
+    list.fields = [
+      "LedgerId",
+      "Month"
+    ];
+    list.PageName = "AccountingLedgerTrialBalances";
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and StudentClassId eq " + this.StudentClassId + " and BatchId eq " + this.SelectedBatchId];
+    list.limitTo = 1;
+    list.orderBy = "Month Desc";
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.FeePaidLastMonth = data.value[0].Month;
+        }
+        this.loading = false;
+        console.log("this.FeePaidLastMonth", this.FeePaidLastMonth);
+      });
+  }
   GetExams() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;

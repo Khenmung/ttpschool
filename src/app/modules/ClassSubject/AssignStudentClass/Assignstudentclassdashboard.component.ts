@@ -87,6 +87,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     'SectionId',
     'RollNo',
     'FeeTypeId',
+    'Remarks',
     'Action'
   ];
   nameFilter = new FormControl('');
@@ -476,20 +477,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
     var _FeeTypeId = this.searchForm.get("searchFeeTypeId").value;
-    //var _sectionId = this.searchForm.get("searchSectionId").value;
     this.HeaderTitle = '';
-    // if (_classId == 0) {
-    //   this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   this.loading = false;
-    //   return;
-    // }
-    // if (_sectionId == 0) {
-    //   this.contentservice.openSnackBar("Please select section.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   this.loading = false;
-    //   return;
-    // }
-    // else {
-
+    
     filterStr = this.StandardFilterWithPreviousBatchId;
 
     if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
@@ -537,6 +526,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       'ClassId',
       'RollNo',
       'SectionId',
+      'Remarks',
       'Active'
     ];
 
@@ -575,6 +565,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
             Active: previousbatch == '' ? s.Active : 0,
             Promote: 0,
+            Remarks:'',
             GenderName: _genderName,
             Action: false
           });
@@ -806,6 +797,7 @@ export interface IStudentClass {
   FeeType: string;
   Promote: number;
   GenderName: string;
+  Remarks: string;
   Active: number;
   Action: boolean
 }

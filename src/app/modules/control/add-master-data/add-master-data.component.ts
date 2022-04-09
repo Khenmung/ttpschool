@@ -114,7 +114,6 @@ export class AddMasterDataComponent implements OnInit {
 
     if (this.UserDetails == null) {
       this.contentservice.openSnackBar("Application selected is not valid!", globalconstants.ActionText, globalconstants.RedBackground);
-
       this.route.navigate(['/dashboard']);
     }
     else {
@@ -127,13 +126,6 @@ export class AddMasterDataComponent implements OnInit {
         this.StudentVariableNames = globalconstants.MasterDefinitions.StudentVariableName;
         this.OrgId = this.UserDetails[0]["orgId"];
         this.searchForm.patchValue({ "OrgId": this.OrgId });
-        // if (this.UserDetails[0]["org"].toLowerCase() != "ttp")
-        //   this.searchForm.controls['OrgId'].disable();
-
-        // this.GetMasters(0, 0).subscribe((data: any) => {
-        //   this.TopMasters = [...data.value];
-        //   this.loading = false;
-        // });
         this.GetMastersForAutoComplete();
         this.GetOrganizations();
       }
