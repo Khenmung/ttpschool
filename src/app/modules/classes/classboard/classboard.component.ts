@@ -22,7 +22,6 @@ export class ClassboardComponent implements AfterViewInit {
     DashboardclassfeeComponent,
     SchoolFeeTypesComponent,
     ClassmasterdashboardComponent,
-    ClassEvaluationComponent,
     ClassprerequisiteComponent
   ];
 
@@ -31,7 +30,6 @@ export class ClassboardComponent implements AfterViewInit {
     { "label": "Fee", "faIcon": '' },
     { "label": "Pre-requisite", "faIcon": '' },
     { "label": "Class Master", "faIcon": '' },
-    { "label": "Fee Type", "faIcon": '' },
     { "label": "Fee Type", "faIcon": '' },
     { "label": "Fee Type", "faIcon": '' }
   ];
@@ -45,7 +43,6 @@ export class ClassboardComponent implements AfterViewInit {
       ClassMasterPermission: '',
       FeeTypePermission: '',
       FeeDefinition: '',
-      StudentEvaluation: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -68,10 +65,6 @@ export class ClassboardComponent implements AfterViewInit {
     }
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
     var comindx = this.components.indexOf(ClassdetailComponent);
-    this.GetComponents(perObj, comindx)
-
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSEVALUATION)
-    var comindx = this.components.indexOf(ClassEvaluationComponent);
     this.GetComponents(perObj, comindx)
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE)

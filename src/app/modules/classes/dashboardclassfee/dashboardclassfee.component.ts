@@ -109,10 +109,12 @@ export class DashboardclassfeeComponent implements OnInit {
       }
       else {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
+        //console.log("this.StandardFilterWithBatchId",this.StandardFilterWithBatchId);
         if (+this.token.getPreviousBatchId() > 0)
           this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.token)
 
         this.SelectedBatchId = +this.token.getSelectedBatchId();
+        //console.log("this.SelectedBatchId",this.SelectedBatchId);
         this.PreviousBatchId = +this.token.getPreviousBatchId();
         if (this.SelectedBatchId == 0) {
           //this.contentservice.openSnackBar("Current batch not defined in master!", this.options);
@@ -177,10 +179,7 @@ export class DashboardclassfeeComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
   }
-  UpdateSelectedBatchId(value) {
-    this.SelectedBatchId = value;
-  }
-
+  
   CreateInvoice() {
     var selectedMonth = this.searchForm.get("searchMonth").value;
     if (selectedMonth == 0) {
@@ -225,7 +224,7 @@ export class DashboardclassfeeComponent implements OnInit {
           "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
         var sumFeeData = alasql(query, [this.LedgerData]);
 
-        console.log("sumFeeData",sumFeeData)
+        //console.log("sumFeeData",sumFeeData)
         this.authservice.CallAPI(sumFeeData, 'createinvoice')
           .subscribe((data: any) => {
             this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
@@ -324,7 +323,7 @@ export class DashboardclassfeeComponent implements OnInit {
       return;
     }
     this.loading = true;
-    let checkFilterString = "1 eq 1 " +
+    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
       " and ClassId eq " + row.ClassId +
       " and Month eq " + row.Month +
@@ -427,7 +426,6 @@ export class DashboardclassfeeComponent implements OnInit {
       })
   }
   CopyFromPreviousBatch() {
-    //console.log("here ", this.PreviousBatchId)
     if (this.PreviousBatchId == -1)
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else
@@ -440,10 +438,6 @@ export class DashboardclassfeeComponent implements OnInit {
       return;
 
     }
-    // if (this.searchForm.get("searchMonth").value == 0) {
-    //   this.contentservice.openSnackBar("Please month year.", globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
 
     this.loading = true;
     let filterstr = "";
@@ -484,6 +478,7 @@ export class DashboardclassfeeComponent implements OnInit {
               existing[0].ClassFeeId = previousbatch == 1 ? 0 : existing[0].ClassFeeId
               existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active
               existing[0].Month = previousbatch == 1 ? 0 : existing[0].Month;
+              existing[0].BatchId = this.SelectedBatchId;
 
               return existing[0];
             }

@@ -24,14 +24,7 @@ export class StudentprogressreportComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
@@ -221,8 +214,8 @@ export class StudentprogressreportComponent implements OnInit {
           examEolumns.forEach(exam => {
             //subject["'"+exam + "'"] = ''
             subject[exam] = ''
-            if (this.DisplayColumns.indexOf(exam) == -1)
-              this.DisplayColumns.push(exam)
+            // if (this.DisplayColumns.indexOf(exam) == -1)
+            //   this.DisplayColumns.push(exam)
           })
         })
 
@@ -230,10 +223,10 @@ export class StudentprogressreportComponent implements OnInit {
 
           var current = marksum.filter(c => c.SubjectId == report.SubjectId);
           current.forEach(exam => {
-            // report["'"+exam.ExamName+ "'"] = exam.Mark
+            if (this.DisplayColumns.indexOf(exam.ExamName) == -1)
+              this.DisplayColumns.push(exam.ExamName)
             report[exam.ExamName] = exam.Mark
           })
-
         })
 
         ////console.log("shd", progressreport);
@@ -244,27 +237,7 @@ export class StudentprogressreportComponent implements OnInit {
         this.loading = false;
       });
   }
-  // GetStudents(classId) {
-  //   //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-  //   var filterstr = 'Active eq 1';
-  //   if (classId != undefined)
-  //     filterstr += ' and ClassId eq ' + classId
-
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "StudentClassId",
-  //     "ClassId",
-  //     "StudentId"
-  //   ];
-  //   list.PageName = "StudentClasses";
-  //   list.lookupFields = ["Student($select=FirstName,LastName)"];
-  //   list.filter = [filterstr + orgIdSearchstr];
-
-  //   return this.dataservice.get(list);
-
-  // }
-
+  
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)

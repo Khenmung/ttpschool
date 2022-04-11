@@ -35,7 +35,7 @@
 
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
-                        <span style="align-self: flex-start;">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>
+                        <span style="padding-left: 10px;">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>
                         <div *ngIf="SchoolTimeTableList.length>0">
                             <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
                                 matTooltip="save all" mat-mini-fab (click)="SaveAll()">
@@ -62,7 +62,7 @@
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 40px;"></mat-row>
             </mat-table>
         </div>
     </div>

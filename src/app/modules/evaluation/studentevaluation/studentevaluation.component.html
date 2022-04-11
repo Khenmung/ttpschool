@@ -16,7 +16,15 @@
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>
-                <!-- <mat-form-field appearance="outline" [style.width.px]="150">
+                <mat-form-field appearance="outline" [style.width.px]="150">
+                    <mat-label>Type</mat-label>
+                    <mat-select formControlName="searchEvaluationTypeId">
+                        <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" [style.width.px]="150">
                     <mat-label>Subject</mat-label>
                     <mat-select formControlName="searchSubjectId">
                         <mat-option value="0">select</mat-option>
@@ -32,8 +40,8 @@
                         <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field> -->
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentEvaluation()">
+                </mat-form-field>
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
                     <mat-icon>search</mat-icon>
                 </button>
             </form>
@@ -64,6 +72,16 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.Subject}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container>
+                    <mat-header-cell *matHeaderCellDef>Subject
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="start"
+                            mat-mini-fab (click)="StartEvaluation(element)">
+                            <mat-icon>start</mat-icon>
+                        </button>
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="EvaluationPlanColumns"></mat-header-row>

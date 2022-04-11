@@ -88,6 +88,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     'RollNo',
     'FeeTypeId',
     'Remarks',
+    'Active',
     'Action'
   ];
   nameFilter = new FormControl('');
@@ -143,7 +144,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     return user && user.Name ? user.Name : '';
   }
   PageLoad() {
-    //debugger;
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
 
@@ -178,7 +179,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           'FeeTypeId',
           'Action'
         ];
-      this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
+      //this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
       //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
       this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
       this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
@@ -456,19 +457,152 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       })
   }
   CopyFromSameClassPreviousBatch() {
+    if(this.searchForm.get("searchClassId").value==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select class.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     if (this.PreviousBatchId == -1)
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else {
-      this.HeaderTitle = 'Same Class Previous Batch'
-      this.GetStudentClasses(this.SameClassPreviousBatch);
+      var SameClassPreviousBatchData = [];
+      var ExistingData = [];
+      this.StudentClassList = [];
+      this.HeaderTitle = 'Same Class From Previous Batch'
+      this.GetStudentClasses(this.SameClassPreviousBatch)
+        .subscribe((data: any) => {
+          //SameClassPreviousBatchData = [...data.value];
+          var _classId = this.searchForm.get("searchClassId").value
+          var result;
+          result = [...data.value];
+          var _defaultTypeId = 0;
+          var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
+          if (defaultFeeTypeObj.length > 0)
+            _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
+          result.forEach(s => {
+            var _genderName = '';
+            var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
+            if (genderObj.length > 0)
+              _genderName = genderObj[0].MasterDataName;
+            var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
+            var _feetype = ''
+            if (feetype.length > 0)
+              _feetype = feetype[0].FeeTypeName;
+
+              SameClassPreviousBatchData.push({
+              StudentClassId: 0,
+              ClassId: _classId,
+              StudentId: s.StudentId,
+              StudentName: s.Student.FirstName + " " + s.Student.LastName,
+              ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
+              FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
+              FeeType: _feetype,
+              RollNo: s.RollNo,
+              SectionId: s.SectionId,
+              Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
+              Active: 0,
+              Promote: 0,
+              Remarks: '',
+              GenderName: _genderName,
+              Action: false
+            });
+          })
+          this.GetStudentClasses('')
+            .subscribe((data: any) => {
+              ExistingData =[...data.value];
+              SameClassPreviousBatchData.forEach(spb => {
+                var promoted = ExistingData.filter(f => f.StudentId == spb.StudentId);
+                if (promoted.length == 0) {
+                  this.StudentClassList.push(spb);
+                }
+              })
+              if (this.StudentClassList.length == 0) {
+                this.contentservice.openSnackBar("No data from " + this.HeaderTitle, globalconstants.ActionText, globalconstants.RedBackground);
+              }
+              this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
+              this.dataSource.sort = this.sort;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.filterPredicate = this.createFilter();
+              this.loading = false;
+
+            })
+        })
     }
   }
   CopyFromPreviousClassAndBatch() {
+    debugger;
+    if(this.searchForm.get("searchClassId").value==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select class.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     if (this.PreviousBatchId == -1)
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else {
-      this.HeaderTitle = 'From Previous Class and Batch'
+      this.HeaderTitle = 'From Previous Class and Previous Batch'
+      var PreviousClassAndPreviousBatchData = [];
+      this.StudentClassList = [];
+      var ExistingData = [];
       this.GetStudentClasses(this.PreviousClassPreviousBatch)
+        .subscribe((data: any) => {
+
+          var result;
+          var _classId = this.searchForm.get("searchClassId").value
+          result = [...data.value];
+          //console.log('result',result)
+          var _defaultTypeId = 0;
+          var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
+          if (defaultFeeTypeObj.length > 0)
+            _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
+          result.forEach(s => {
+            var _genderName = '';
+            var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
+            if (genderObj.length > 0)
+              _genderName = genderObj[0].MasterDataName;
+            var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
+            var _feetype = ''
+            if (feetype.length > 0)
+              _feetype = feetype[0].FeeTypeName;
+
+            PreviousClassAndPreviousBatchData.push({
+              StudentClassId: 0,
+              ClassId: _classId,
+              StudentId: s.StudentId,
+              StudentName: s.Student.FirstName + " " + s.Student.LastName,
+              ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
+              FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
+              FeeType: _feetype,
+              RollNo: s.RollNo,
+              SectionId: s.SectionId,
+              Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
+              Active: 0,
+              Promote: 0,
+              Remarks: '',
+              GenderName: _genderName,
+              Action: false
+            });
+          })
+          this.GetStudentClasses('')
+            .subscribe((data: any) => {
+              ExistingData = [...data.value]
+              PreviousClassAndPreviousBatchData.forEach(spb => {
+                var promoted = ExistingData.filter(f => f.StudentId == spb.StudentId);
+                if (promoted.length == 0) {
+                  this.StudentClassList.push(spb);
+                }
+              })
+              if (this.StudentClassList.length == 0) {
+                this.contentservice.openSnackBar("No data from " + this.HeaderTitle, globalconstants.ActionText, globalconstants.RedBackground);
+              }
+              this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList.sort((a, b) => +a.RollNo - +b.RollNo));
+              this.dataSource.sort = this.sort;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.filterPredicate = this.createFilter();
+              this.loading = false;
+            })
+        })
     }
   }
   GetStudentClasses(previousbatch) {
@@ -477,33 +611,32 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
     var _FeeTypeId = this.searchForm.get("searchFeeTypeId").value;
-    this.HeaderTitle = '';
-    
-    filterStr = this.StandardFilterWithPreviousBatchId;
+    //this.HeaderTitle = '';
 
     if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
-      filterStr += " and ClassId eq " + _classId + " and Promoted eq 0";
+      filterStr = this.StandardFilterWithPreviousBatchId;
+      filterStr += " and ClassId eq " + _classId;
     }
     else if (previousbatch == this.PreviousClassPreviousBatch) {
+      filterStr = this.StandardFilterWithPreviousBatchId;
       var classIdIndex = this.Classes.findIndex(s => s.ClassId == _classId);
       var previousClassId = 0;
-      if (classIdIndex > 0)//means if first element
+      if (classIdIndex > 0)//means not if first element
       {
         previousClassId = this.Classes[classIdIndex - 1]["ClassId"];
-        filterStr += " and ClassId eq " + previousClassId + " and Promoted eq 0";
+        filterStr += " and ClassId eq " + previousClassId;
       }
       else {
         this.loading = false;
         this.contentservice.openSnackBar("Previous class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-        return;
+        //return;
       }
     }
     else {
       filterStr = this.StandardFilterWithBatchId;
-
+      if (_classId > 0)
+        filterStr += " and ClassId eq " + _classId;
     }
-    if (_classId > 0)
-      filterStr += " and ClassId eq " + _classId;
 
     if (_FeeTypeId > 0)
       filterStr += " and FeeTypeId eq " + _FeeTypeId;
@@ -515,26 +648,30 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     if (filterStr.length == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+      return null;
     }
+    else {
+      let list: List = new List();
+      list.fields = [
+        'StudentClassId',
+        'StudentId',
+        'FeeTypeId',
+        'ClassId',
+        'RollNo',
+        'SectionId',
+        'Remarks',
+        'Active'
+      ];
 
-    let list: List = new List();
-    list.fields = [
-      'StudentClassId',
-      'StudentId',
-      'FeeTypeId',
-      'ClassId',
-      'RollNo',
-      'SectionId',
-      'Remarks',
-      'Active'
-    ];
-
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName,Gender)"];
-    list.filter = ['Active eq 1 and ' + filterStr];
-    this.StudentClassList = [];
-    this.dataservice.get(list)
+      list.PageName = "StudentClasses";
+      list.lookupFields = ["Student($select=FirstName,LastName,Gender)"];
+      list.filter = ['Active eq 1 and ' + filterStr];
+      this.StudentClassList = [];
+      return this.dataservice.get(list);
+    }
+  }
+  GetData(previousbatch) {
+    this.GetStudentClasses('')
       .subscribe((StudentClassesdb: any) => {
         var result;
         result = [...StudentClassesdb.value];
@@ -565,7 +702,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
             Active: previousbatch == '' ? s.Active : 0,
             Promote: 0,
-            Remarks:'',
+            Remarks: '',
             GenderName: _genderName,
             Action: false
           });
@@ -583,16 +720,24 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.loading = false;
 
       })
-
-    //set current batch id back to the actual one.
-    //this.shareddata.CurrentSelectedBatchId.subscribe(s => this.SelectedBatchId = s);
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
   }
   clear() {
     this.searchForm.patchValue({
       searchClassId: 0,
 
     });
+  }
+  SelectALL(event) {
+    if (event.checked)
+      this.StudentClassList.forEach(f => {
+        f.Active = 1;
+        f.Action = true;
+      })
+    else
+      this.StudentClassList.forEach(f => {
+        f.Active = 0;
+        f.Action = true;
+      })
   }
   updateActive(row, value) {
 
@@ -621,6 +766,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     })
   }
   SaveRow(row) {
+    debugger;
     this.RowsToUpdate = 1;
     this.UpdateOrSave(row);
   }
@@ -645,7 +791,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
         }

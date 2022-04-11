@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class SchooltimetableComponent implements OnInit {
   //weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  SelectedApplicationId =0;
+  SelectedApplicationId = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -67,7 +67,7 @@ export class SchooltimetableComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private shareddata: SharedataService,
     private fb: FormBuilder
@@ -189,7 +189,7 @@ export class SchooltimetableComponent implements OnInit {
           if (this.rowCount == 0) {
             this.rowCount = -1;
             this.loading = false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -205,25 +205,25 @@ export class SchooltimetableComponent implements OnInit {
           if (this.rowCount == 0) {
             this.rowCount = -1;
             this.loading = false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
 
   GetSchoolTimeTable() {
-debugger;
+    debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchSectionId").value == 0) {
-      this.contentservice.openSnackBar("Please select section", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select section", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -265,7 +265,7 @@ debugger;
         ////console.log('this.WeekDays',this.WeekDays);
         var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
         if (filterPeriods.length == 0) {
-          this.contentservice.openSnackBar("Period not yet defined for this class.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Period not yet defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
 
         }
         else {
@@ -317,7 +317,7 @@ debugger;
 
           })
         }
-        this.SchoolTimeTableList.sort((a,b)=>a.Sequence - b.Sequence)
+        this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
         this.loading = false;
@@ -349,8 +349,11 @@ debugger;
           var _PeriodType = '';
           if (m.PeriodTypeId != null && m.PeriodTypeId != 0)
             _PeriodType = this.PeriodTypes.filter(p => p.MasterDataId == m.PeriodTypeId)[0].MasterDataName;
+          var obj = this.Periods.filter(p => p.MasterDataId == m.PeriodId);
+          m.Period ='';
+          if (obj.length > 0)
+            m.Period = obj[0].MasterDataName + " - " + m.FromToTime;
 
-          m.Period = this.Periods.filter(p => p.MasterDataId == m.PeriodId)[0].MasterDataName;
           m.PeriodType = _PeriodType;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
@@ -403,7 +406,7 @@ debugger;
   ReplicateToClasses() {
 
     if (this.searchForm.get("searchClassIdApplyAll").value == 0) {
-      this.contentservice.openSnackBar("Please select classes to replicate to!",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select classes to replicate to!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -452,7 +455,7 @@ debugger;
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
     if (validated.length > 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Subject must be selected for periods",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.rowCount = _toUpdate.length;
@@ -468,7 +471,7 @@ debugger;
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
     if (validated.length > 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Subject must be selected for periods",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -500,7 +503,7 @@ debugger;
   }
 
   GetMasterData() {
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);
