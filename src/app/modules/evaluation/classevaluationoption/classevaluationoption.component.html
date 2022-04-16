@@ -22,11 +22,11 @@
             </button>
         </form>
         <mat-table #table [dataSource]="dataSource" matSort>            
-            <ng-container matColumnDef="AnswerOptionsId">
+            <ng-container matColumnDef="ClassEvaluationAnswerOptionsId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Id
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                   {{element.AnswerOptionsId}}
+                   {{element.ClassEvaluationAnswerOptionsId}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Title">

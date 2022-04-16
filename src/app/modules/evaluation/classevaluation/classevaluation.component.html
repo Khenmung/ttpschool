@@ -13,7 +13,7 @@
         <div style="padding: 15px;" fxLayout="row wrap">
             <div style="width: 100%;">
                 <form [formGroup]="searchForm">
-                    <mat-form-field appearance="outline" [style.width.px]="150">
+                    <mat-form-field appearance="outline" [style.width.px]="250">
                         <mat-label>Evaluation Name</mat-label>
                         <mat-select formControlName="searchEvaluationTypeId">
                             <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">
@@ -72,16 +72,17 @@
                             </mat-form-field>
                         </mat-cell>
                     </ng-container>
-                    <ng-container matColumnDef="AnswerOptionId">
+                    <ng-container matColumnDef="ClassEvaluationAnswerOptionParentId">
                         <mat-header-cell *matHeaderCellDef mat-sort-header>Answer Option
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="element.AnswerOptionId" 
+                                <mat-select [(ngModel)]="element.ClassEvaluationAnswerOptionParentId" 
                                 (selectionChange)="onBlur(element)"
-                                [value]="element.AnswerOptionId">                                
+                                [value]="element.ClassEvaluationAnswerOptionParentId">
+                                <mat-option [value]="0">--Answer option--</mat-option>                                
                                 <mat-option *ngFor="let item of ClassEvaluationOptionList"
-                                        [value]="item.AnswerOptionsId">
+                                        [value]="item.ClassEvaluationAnswerOptionsId">
                                         {{item.Title}}</mat-option>
                                 </mat-select>
                             </mat-form-field>

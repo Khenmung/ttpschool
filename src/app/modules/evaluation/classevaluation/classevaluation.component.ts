@@ -47,17 +47,16 @@ export class ClassEvaluationComponent implements OnInit {
   filteredOptions: Observable<IClassEvaluation[]>;
   dataSource: MatTableDataSource<IClassEvaluation>;
   allMasterData = [];
+  
   ClassEvaluationData = {
     ClassEvaluationId: 0,
     ClassEvalCategoryId: 0,
+    ClassEvalSubCategoryId:0,
     MultipleAnswer: 0,
     EvaluationTypeId: 0,
-    ExamId: 0,
-    SubjectId: 0,
-    ClassId: 0,
     Description: '',
     DisplayOrder: 0,
-    AnswerOptionId: 0,
+    ClassEvaluationAnswerOptionParentId: 0,
     OrgId: 0,
     Active: 0,
   };
@@ -68,7 +67,7 @@ export class ClassEvaluationComponent implements OnInit {
     'ClassEvalCategoryId',
     'ClassEvalSubCategoryId',
     'DisplayOrder',
-    'AnswerOptionId',
+    'ClassEvaluationAnswerOptionParentId',
     'MultipleAnswer',
     'Active',
     'Action'
@@ -91,12 +90,6 @@ export class ClassEvaluationComponent implements OnInit {
     })
     this.PageLoad();
   }
-  // private _filter(name: string): IStudent[] {
-
-  //   const filterValue = name.toLowerCase();
-  //   return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
-
-  // }
   displayFn(user: IStudent): string {
     return user && user.Name ? user.Name : '';
   }
@@ -165,7 +158,7 @@ export class ClassEvaluationComponent implements OnInit {
   }
   viewchild(row) {
     debugger;
-    this.option.GetClassEvaluationOption(row.ClassEvaluationId, row.AnswerOptionId);
+    this.option.GetClassEvaluationOption(row.ClassEvaluationId, row.ClassEvaluationAnswerOptionParentId);
     this.tabchanged(1);
   }
   tabchanged(indx) {
@@ -194,8 +187,8 @@ export class ClassEvaluationComponent implements OnInit {
       Description: '',
       MultipleAnswer: 0,
       EvaluationTypeId: _evaluationTypeId,
+      ClassEvaluationAnswerOptionParentId:0,
       DisplayOrder: 0,
-      AnswerOptionId: 0,
       Active: 0,
       Action: false
     }
@@ -238,7 +231,7 @@ export class ClassEvaluationComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
         }
         else {
@@ -253,14 +246,16 @@ export class ClassEvaluationComponent implements OnInit {
               ClassEvalCategoryId: row.ClassEvalCategoryId,
               ClassEvalSubCategoryId: row.ClassEvalSubCategoryId,
               MultipleAnswer: row.MultipleAnswer,
-              AnswerOptionId: row.AnswerOptionId,
+              ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
               EvaluationTypeId: row.EvaluationTypeId,
               Description: row.Description,
-              DisplayOrder: row.DisplayOrder,
+              DisplayOrder: row.DisplayOrder,             
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
-          console.log('dta', this.ClassEvaluationForUpdate);
-
+          //console.log('dta', this.ClassEvaluationForUpdate);
+          if(this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId==0)
+            this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId ==null;
+            
           if (this.ClassEvaluationForUpdate[0].ClassEvaluationId == 0) {
             this.ClassEvaluationForUpdate[0]["CreatedDate"] = new Date();
             this.ClassEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -332,7 +327,7 @@ export class ClassEvaluationComponent implements OnInit {
       'Description',
       'EvaluationTypeId',
       'MultipleAnswer',
-      'AnswerOptionId',
+      'ClassEvaluationAnswerOptionParentId',
       'DisplayOrder',
       'Active'
     ];
@@ -371,7 +366,7 @@ export class ClassEvaluationComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      'AnswerOptionsId',
+      'ClassEvaluationAnswerOptionsId',
       'Title',
       'Value',
       'Point',
@@ -391,7 +386,7 @@ export class ClassEvaluationComponent implements OnInit {
             return item;
           })
         }
-
+        //console.log("ClassEvaluationAnswerOptionsId",this.ClassEvaluationOptionList)
         this.loadingFalse();
       });
 
@@ -479,6 +474,7 @@ export interface IClassEvaluation {
   ClassEvalSubCategoryId: number;
   MultipleAnswer: number;
   Description: string;
+  ClassEvaluationAnswerOptionParentId:number;
   DisplayOrder: number;
   Active: number;
   Action: boolean;

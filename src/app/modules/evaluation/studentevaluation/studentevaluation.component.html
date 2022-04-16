@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Student Profile</strong></div>
+        <div><strong>Execute Evaluation</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
@@ -45,7 +45,7 @@
                     <mat-icon>search</mat-icon>
                 </button>
             </form>
-            <mat-table #table [dataSource]="AssessmentTypeDatasource">
+            <mat-table #table [dataSource]="AssessmentTypeDatasource" *ngIf="AssessmentTypeList.length>0">
                 <ng-container matColumnDef="ExamName">
                     <mat-header-cell *matHeaderCellDef>Exam
                     </mat-header-cell>
@@ -74,13 +74,23 @@
                         {{element.Subject}}
                     </mat-cell>
                 </ng-container>
-                <ng-container>
-                    <mat-header-cell *matHeaderCellDef>Subject
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="start"
-                            mat-mini-fab (click)="StartEvaluation(element)">
+                        <button style="margin-right: 15px;"
+                        [disabled]="loading || !element.Action || Permission=='read' || EvaluationStarted" 
+                        matTooltip="start"
+                        mat-mini-fab color="accent"
+                        (click)="StartEvaluation(element)">
                             <mat-icon>start</mat-icon>
+                        </button>
+                        <button
+                        [disabled]="loading || !element.Action || Permission=='read' || EvaluationSubmitted || !EvaluationStarted" 
+                        matTooltip="submit"
+                        mat-mini-fab color="accent"
+                        (click)="SubmitEvaluation()">
+                            <mat-icon>done_all</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>
@@ -88,12 +98,12 @@
                 <mat-row *matRowDef="let row; columns: EvaluationPlanColumns;let indx=index" class="element-row"
                     style="align-items: center;"></mat-row>
             </mat-table>
-            <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="StudentEvaluationId">
+            <mat-table #table [dataSource]="dataSource" *ngIf="StudentEvaluationList.length>0">
+                <ng-container matColumnDef="StudentEvaluationResultId">
                     <mat-header-cell *matHeaderCellDef>Id
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.StudentEvaluationId}}
+                        {{element.StudentEvaluationResultId}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Description">
@@ -102,33 +112,40 @@
                     <mat-cell *matCellDef="let element"
                         style="display:flex; flex-direction: column;justify-content: start;">
                         <span style="width: 100%;padding: 15px 15px 10px 0px;"> {{element.Description}}</span>
-                        <span style="width: 100%;" *ngIf="element.ClassEvaluationOptions.length==0">
+                        <span style="width: 100%;" *ngIf="element.ClassEvaluationAnswerOptionParentId==0">
                             <mat-form-field appearance="outline" style="width:100%">
-                                <textarea #input matInput [disabled]="element.RatingId>0" [maxlength]="1000"
-                                    (blur)="onBlur(element)" [value]="element.Detail"
-                                    [(ngModel)]="element.Detail"></textarea>
+                                <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
+                                    (blur)="onBlur(element)" [value]="element.AnswerText"
+                                    [(ngModel)]="element.AnswerText"></textarea>
                             </mat-form-field>
                             <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/1000
                             </mat-hint>
                         </span>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="RatingId">
+                <ng-container matColumnDef="AnswerOptionsId">
                     <mat-header-cell *matHeaderCellDef>Assessment
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <span *ngIf="element.MultipleAnswer==1">
-                            <mat-checkbox *ngFor="let item of element.ClassEvaluationOptions;let i=index"
-                                (click)="$event.stopPropagation()" name="options_{{i}}" [value]="item.AnswerOptionsId"
-                                [checked]="item.checked" [(ngModel)]="item.AnswerOptionsId"
+                        <span style="padding: 15px 15px 15px 0px;" *ngIf="element.MultipleAnswer==1 && element.ClassEvaluationAnswerOptionParentId>0">
+                            <mat-checkbox 
+                            style="margin-right: 15px;" 
+                            *ngFor="let item of element.ClassEvaluationOptions;let i=index"
+                                (click)="$event.stopPropagation()" name="options_{{i}}" 
+                                [value]="item.ClassEvaluationAnswerOptionsId"                            
+                                [checked]="item.checked" 
                                 (change)="UpdateAnswers(element,item,$event,i)">
+                                {{item.Title}}
                             </mat-checkbox>
                         </span>
-                        <span *ngIf="element.MultipleAnswer==0">
-                            <mat-radio-group [(ngModel)]="element.RatingId">
-                                <mat-radio-button style="margin-right: 15px;"
+                        <span style="padding: 15px 15px 15px 0px;" *ngIf="element.ClassEvaluationAnswerOptionParentId>0 && (element.MultipleAnswer==0 || element.MultipleAnswer==null)">
+                            <mat-radio-group [name]="'options_'+element.ClassEvaluationId">
+                                <mat-radio-button style="margin: 10px 10px 0px 0px;" 
+                                    [name]="'options_'+element.ClassEvaluationId"
                                     *ngFor="let item of element.ClassEvaluationOptions;let i=index"
-                                    (change)="UpdateRadio(element,item)" [value]="item.AnswerOptionsId">
+                                    (change)="UpdateRadio(element,item)" 
+                                    [value]="item.ClassEvaluationAnswerOptionsId"
+                                    [checked]="item.checked">                                   
                                     {{item.Title}}
                                 </mat-radio-button>
                             </mat-radio-group>
@@ -158,6 +175,7 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
                     style="align-items: center;"></mat-row>
             </mat-table>
+            <mat-paginator [pageSizeOptions]="[3,5,10,20]"></mat-paginator>
         </div>
 
     </div>

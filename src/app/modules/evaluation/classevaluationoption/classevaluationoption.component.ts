@@ -12,8 +12,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-ClassEvaluationOption',
-  templateUrl: './ClassEvaluationOption.component.html',
-  styleUrls: ['./ClassEvaluationOption.component.scss']
+  templateUrl: './classevaluationoption.component.html',
+  styleUrls: ['./classevaluationoption.component.scss']
 })
 export class ClassEvaluationOptionComponent implements OnInit {
   @Input() ClassEvaluationId: number;
@@ -35,7 +35,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   allMasterData = [];
   AnswerOptionsId = 0;
   ClassEvaluationOptionData = {
-    AnswerOptionsId: 0,
+    ClassEvaluationAnswerOptionsId: 0,
     Title: '',
     Value: '',
     Point: 0,
@@ -46,7 +46,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   };
   ClassEvaluationOptionForUpdate = [];
   displayedColumns = [
-    'AnswerOptionsId',
+    'ClassEvaluationAnswerOptionsId',
     'Title',
     'Value',
     'Point',
@@ -123,7 +123,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   }
   AddParent() {
     var parentItem = {
-      AnswerOptionsId: 0,
+      ClassEvaluationAnswerOptionsId: 0,
       Title: this.searchForm.get("searchParent").value,
       Value: '0',
       Point: 0,
@@ -143,7 +143,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     }
 
     var newItem = {
-      AnswerOptionsId: 0,
+      ClassEvaluationAnswerOptionsId: 0,
       Title: '',
       Value: '',
       Point: 0,
@@ -167,15 +167,15 @@ export class ClassEvaluationOptionComponent implements OnInit {
       return;
     }
     let checkFilterString = this.StandardFilter;
-    if (row.ClassEvaluationId != null)
-      checkFilterString = "ClassEvaluationId eq " + row.ClassEvaluationId
+    if (row.ParentId != null)
+      checkFilterString = "ParentId eq " + row.ParentId
     checkFilterString += " and Title eq '" + row.Title + "'";
 
-    if (row.AnswerOptionsId > 0)
-      checkFilterString += " and AnswerOptionsId ne " + row.AnswerOptionsId;
-    //checkFilterString += " and " + this.StandardFilter;
+    if (row.ClassEvaluationAnswerOptionsId > 0)
+      checkFilterString += " and ClassEvaluationAnswerOptionsId ne " + row.ClassEvaluationAnswerOptionsId;
+    checkFilterString += " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     let list: List = new List();
-    list.fields = ["AnswerOptionsId"];
+    list.fields = ["ClassEvaluationAnswerOptionsId"];
     list.PageName = "ClassEvaluationOptions";
     list.filter = [checkFilterString];
 
@@ -191,7 +191,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
           this.ClassEvaluationOptionForUpdate = [];;
           this.ClassEvaluationOptionForUpdate.push(
             {
-              AnswerOptionsId: row.AnswerOptionsId,
+              ClassEvaluationAnswerOptionsId: row.ClassEvaluationAnswerOptionsId,
               Title: row.Title,
               Value: row.Value,
               Point: row.Point,
@@ -203,7 +203,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
             });
           console.log('dta', this.ClassEvaluationOptionForUpdate);
 
-          if (this.ClassEvaluationOptionForUpdate[0].AnswerOptionsId == 0) {
+          if (this.ClassEvaluationOptionForUpdate[0].ClassEvaluationAnswerOptionsId == 0) {
             this.ClassEvaluationOptionForUpdate[0]["CreatedDate"] = new Date();
             this.ClassEvaluationOptionForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.ClassEvaluationOptionForUpdate[0]["UpdatedDate"] = new Date();
@@ -236,7 +236,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
         });
   }
   update(row) {
-    this.dataservice.postPatch('ClassEvaluationOptions', this.ClassEvaluationOptionForUpdate[0], this.ClassEvaluationOptionForUpdate[0].AnswerOptionsId, 'patch')
+    this.dataservice.postPatch('ClassEvaluationOptions', this.ClassEvaluationOptionForUpdate[0], this.ClassEvaluationOptionForUpdate[0].ClassEvaluationAnswerOptionsId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -269,7 +269,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      'AnswerOptionsId',
+      'ClassEvaluationAnswerOptionsId',
       'Title',
       'Value',
       'Point',
@@ -310,7 +310,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     let filterStr = 'ParentId eq 0 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     let list: List = new List();
     list.fields = [
-      'AnswerOptionsId',
+      'ClassEvaluationAnswerOptionsId',
       'Title',
       'Value',
       'Point',
@@ -369,7 +369,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
 }
 export interface IClassEvaluationOption {
-  AnswerOptionsId: number;
+  ClassEvaluationAnswerOptionsId: number;
   Title: string;
   Value: string;
   Point: number;

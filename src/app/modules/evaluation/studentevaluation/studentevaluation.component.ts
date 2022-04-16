@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -17,6 +17,10 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./studentevaluation.component.scss']
 })
 export class StudentEvaluationComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  RowsToUpdate = -1;
+  EvaluationStarted = false;
+  EvaluationSubmitted = false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   ClassSubjects = [];
@@ -45,12 +49,14 @@ export class StudentEvaluationComponent implements OnInit {
   StudentClasses = [];
   Students = [];
   EvaluationPlanColumns = [
-    'ExamName',
     'EvaluationType',
-    'ClassName',
-    'Subject'
+    //'ClassName',
+    'Subject',
+    'ExamName',
+    'Action'
 
   ];
+  ClassEvaluationOptionList = [];
   filteredStudents: Observable<IStudent[]>;
   StudentEvaluationData = {
     StudentEvaluationId: 0,
@@ -65,11 +71,11 @@ export class StudentEvaluationComponent implements OnInit {
   };
   StudentEvaluationForUpdate = [];
   displayedColumns = [
-    'StudentEvaluationId',
+    //'StudentEvaluationResultId',
     'Description',
-    'RatingId',
-    'Active',
-    'Action'
+    'AnswerOptionsId',
+    // 'Active',
+    // 'Action'
   ];
   searchForm: FormGroup;
   constructor(
@@ -121,17 +127,13 @@ export class StudentEvaluationComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
-
+        this.GetEvaluationOption();
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
-
           });
-
         }
-
         this.GetStudentClasses();
-
       }
     }
   }
@@ -150,32 +152,77 @@ export class StudentEvaluationComponent implements OnInit {
   }
 
   UpdateAnswers(row, item, event, i) {
-
-    if (event.target.checked)
-      row.StudentEvaluationAnswer.push(item);
-    else
-      row.StudentEvaluationAnswer.splice(i, 1);
+    debugger;
+    var exItem = row.StudentEvaluationAnswers.filter(f => f.StudentEvaluationAnswerId == item.StudentEvaluationAnswerId);
+    if (exItem.length > 0) {
+      if (event.checked)
+        exItem[0].Active = 1;
+      else
+        exItem[0].Active = 0;
+    }
+    else {
+      item.Active = 1;
+      row.StudentEvaluationAnswers.push({
+        Active: 1,
+        StudentEvaluationAnswerId: 0,
+        StudentEvaluationResultId: row.StudentEvaluationResultId,
+        ClassEvaluationAnswerOptionsId: item.ClassEvaluationAnswerOptionsId
+      });
+    }
+    row.Action = true;
   }
   UpdateRadio(row, item) {
-    row.StudentEvaluationAnswer = [];
-    row.StudentEvaluationAnswer.push(item);
+    //row.StudentEvaluationAnswers = [];
+    debugger;
+    var exItem = row.StudentEvaluationAnswers.filter(f => f.StudentEvaluationAnswerId == item.StudentEvaluationAnswerId);
+    if (exItem.length > 0) {
+      row.StudentEvaluationAnswers.forEach(answer => {
+        if (item.StudentEvaluationAnswerId == answer.StudentEvaluationAnswerId)
+          answer.Active = 1;
+        else
+          answer.Active = 0;
+      })
+    }
+    else {
+      row.StudentEvaluationAnswers.forEach(answer => {
+        answer.Active = 0;
+      })
+      row.StudentEvaluationAnswers.push(
+        {
+          Active: 1,
+          StudentEvaluationAnswerId: 0,
+          StudentEvaluationResultId: row.StudentEvaluationResultId,
+          ClassEvaluationAnswerOptionsId: item.ClassEvaluationAnswerOptionsId
+        })
+    }
+    row.Action = true;
+    // this.dataSource = new MatTableDataSource<IStudentEvaluation>(this.StudentEvaluationList);
+    // this.dataSource.paginator = this.paginator;
     // else
     //   row.StudentEvaluationAnswer.splice(i, 1);
+  }
+  SubmitEvaluation() {
+    this.RowsToUpdate = this.StudentEvaluationList.length;
+    this.EvaluationSubmitted = true;
+    this.StudentEvaluationList.forEach(question => {
+      this.RowsToUpdate--;
+      this.UpdateOrSave(question);
+    })
   }
   UpdateOrSave(row) {
 
     debugger;
     this.loading = true;
     let checkFilterString = "StudentClassId eq " + this.StudentClassId +
+      " and EvaluationClassSubjectMapId eq " + row.EvaluationClassSubjectMapId +
       " and ClassEvaluationId eq " + row.ClassEvaluationId;
 
-
-    if (row.StudentEvaluationId > 0)
-      checkFilterString += " and StudentEvaluationId ne " + row.StudentEvaluationId;
+    if (row.StudentEvaluationResultId > 0)
+      checkFilterString += " and StudentEvaluationResultId ne " + row.StudentEvaluationResultId;
     checkFilterString += " and " + this.StandardFilter;
     let list: List = new List();
-    list.fields = ["StudentEvaluationId"];
-    list.PageName = "StudentEvaluations";
+    list.fields = ["StudentEvaluationResultId"];
+    list.PageName = "StudentEvaluationResults";
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -183,44 +230,39 @@ export class StudentEvaluationComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+          this.EvaluationSubmitted = false;
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.StudentEvaluationForUpdate = [];;
-          ////console.log("inserting-1",this.StudentEvaluationForUpdate);
           this.StudentEvaluationForUpdate.push(
             {
-              StudentEvaluationId: row.StudentEvaluationId,
+              StudentEvaluationResultId: row.StudentEvaluationResultId,
               StudentClassId: row.StudentClassId,
               ClassEvaluationId: row.ClassEvaluationId,
-              EvaluationTypeId: row.EvaluationTypeId,
-              ExamId: row.ExamId,
-              RatingId: row.RatingId,
-              Detail: row.Detail,
-              Active: row.Active,
-              OrgId: this.LoginUserDetail[0]["orgId"],
+              AnswerText: row.AnswerText,
+              EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
               StudentEvaluationAnswers: row.StudentEvaluationAnswers,
+              Active: row.Active,
+              OrgId: this.LoginUserDetail[0]["orgId"]
             });
 
-          if (this.StudentEvaluationForUpdate[0].StudentEvaluationId == 0) {
+          if (this.StudentEvaluationForUpdate[0].StudentEvaluationResultId == 0) {
             this.StudentEvaluationForUpdate[0]["CreatedDate"] = new Date();
             this.StudentEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.StudentEvaluationForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.StudentEvaluationForUpdate[0]["UpdatedDate"];
             delete this.StudentEvaluationForUpdate[0]["UpdatedBy"];
-            delete this.StudentEvaluationForUpdate[0]["SubCategories"];
-            ////console.log("inserting1",this.StudentEvaluationForUpdate);
+            //console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
             this.insert(row);
           }
           else {
-            this.StudentEvaluationForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
-            this.StudentEvaluationForUpdate[0]["CreatedBy"] = row.CreatedBy;
+            //console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
             this.StudentEvaluationForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.StudentEvaluationForUpdate[0]["SubCategories"];
-            delete this.StudentEvaluationForUpdate[0]["UpdatedBy"];
-            this.update(row);
+            this.StudentEvaluationForUpdate[0]["UpdatedBy"];
+            delete this.StudentEvaluationForUpdate[0]["CreatedDate"];
+            delete this.StudentEvaluationForUpdate[0]["CreatedBy"];
+            this.insert(row);
           }
         }
       });
@@ -229,21 +271,30 @@ export class StudentEvaluationComponent implements OnInit {
     this.loading = false;
   }
   insert(row) {
-    this.dataservice.postPatch('StudentEvaluations', this.StudentEvaluationForUpdate, 0, 'post')
+    this.dataservice.postPatch('StudentEvaluationResults', this.StudentEvaluationForUpdate, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.StudentEvaluationId = data.StudentEvaluationId;
+          row.StudentEvaluationResultId = data.StudentEvaluationResultId;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse()
+          if (this.RowsToUpdate == 0) {
+            this.RowsToUpdate = -1;
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.loadingFalse();
+          }
+        }, error => {
+          this.EvaluationSubmitted = false;
+          this.loadingFalse();
+          console.log("error on student evaluation insert",error);
         });
   }
   update(row) {
     //console.log("updating",this.StudentEvaluationForUpdate);
-    this.dataservice.postPatch('StudentEvaluations', this.StudentEvaluationForUpdate[0], this.StudentEvaluationForUpdate[0].StudentEvaluationId, 'patch')
+    this.dataservice.postPatch('StudentEvaluationResults', this.StudentEvaluationForUpdate[0], this.StudentEvaluationForUpdate[0].StudentEvaluationResultId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
+          console.log("data update", data.value);
+          //this.StartEvaluation(row);
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
@@ -251,22 +302,15 @@ export class StudentEvaluationComponent implements OnInit {
   StartEvaluation(row) {
     debugger;
     this.loading = true;
+    this.StudentEvaluationList = [];
+    this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    this.StudentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     filterStr += ' and StudentClassId eq ' + this.StudentClassId
+    filterStr += ' and EvaluationClassSubjectMapId eq ' + row.EvaluationClassSubjectMapId
 
-    this.StudentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
-    //var _searchEvaluationTypeId = row.EvaluationTypeId; //this.searchForm.get("searchEvaluationTypeId").value;
-    //var _searchExamId =  row.ExamId;// this.searchForm.get("searchExamId").value;
-    //var _searchSubjectId = row. this.searchForm.get("searchSubjectId").value;
-    if (row.EvaluationTypeId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    //console.log("ClassEvaluations", this.ClassEvaluations)
-    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationTypeId == row.EvaluationTypeId
-      && (f.ClassId == 0 || f.ClassId == this.ClassId));
+    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationTypeId == row.EvaluationTypeId);
     if (row.ExamId > 0) {
       _classEvaluations = _classEvaluations.filter(f => f.ExamId == row.ExamId);
     }
@@ -275,47 +319,57 @@ export class StudentEvaluationComponent implements OnInit {
     }
     let list: List = new List();
     list.fields = [
-      'StudentEvaluationId',
+      'StudentEvaluationResultId',
       'StudentClassId',
       'ClassEvaluationId',
-      'RatingId',
-      'Detail',
-      'EvaluationTypeId',
-      'ExamId',
+      'EvaluationClassSubjectMapId',
+      //'ClassEvaluationAnswerOptionParentId',
+      'AnswerText',
       'Active'
     ];
 
     list.PageName = "StudentEvaluationResults";
-    list.lookupFields = ["ClassEvaluation($select=AnswerOptionsId)"];
+    list.lookupFields = ["StudentEvaluationAnswers($select=StudentEvaluationAnswerId,StudentEvaluationResultId,ClassEvaluationAnswerOptionsId,Active)"];
 
     list.filter = [filterStr];
     this.StudentEvaluationList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-
+        debugger
+        //console.log("data.value", data.value);
         var item;
         _classEvaluations.forEach(clseval => {
           var existing = data.value.filter(f => f.ClassEvaluationId == clseval.ClassEvaluationId);
 
           if (existing.length > 0) {
             clseval.ClassEvaluationOptions.forEach(cls => {
-              cls.checked = existing[0].StudentEvaluationAnswers.findIndex(stud => stud.AnswerOptionsId == cls.AnswerOptionsId) >= 0
+              var selectedorNot = existing[0].StudentEvaluationAnswers.filter(stud => stud.ClassEvaluationAnswerOptionsId == cls.ClassEvaluationAnswerOptionsId)
+              if (selectedorNot.length > 0) {
+                selectedorNot.forEach(answer => {
+                  if (answer.Active == 1)
+                    cls.checked = true;
+                  cls.StudentEvaluationAnswerId = answer.StudentEvaluationAnswerId
+                })
+              }
+              else {
+                cls.checked = false;
+                cls.StudentEvaluationAnswerId = 0;
+              }
             })
             item = {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
+              StudentEvaluationAnswers: existing[0].StudentEvaluationAnswers,
               StudentClassId: this.StudentClassId,
               CatSequence: clseval.DisplayOrder,
-              RatingId: existing[0].RatingId,
+              ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
+              EvaluationClassSubjectMapId: existing[0].EvaluationClassSubjectMapId,
               Description: clseval.Description,
-              Detail: existing[0].Detail,
-              StudentEvaluationId: existing[0].StudentEvaluationId,
-              ClassEvaluationId: existing[0].ClassEvaluationId,
+              AnswerText: existing[0].AnswerText,
+              StudentEvaluationResultId: existing[0].StudentEvaluationResultId,
+              ClassEvaluationId: clseval.ClassEvaluationId,
               Active: existing[0].Active,
-              EvaluationTypeId: existing[0].EvaluationTypeId,
-              ExamId: existing[0].ExamId,
+              EvaluationTypeId: row.EvaluationTypeId,
               MultipleAnswer: clseval.MultipleAnswer,
-              StudentEvaluationAnswers: existing[0].StudentEvaluationAnswers,
-              //Checked:StudentEvaluationAnswer.findIndex(f=>f.AnswerOptionsId===item.AnswerOptionsId) >= 0
             }
           }
           else {
@@ -324,22 +378,26 @@ export class StudentEvaluationComponent implements OnInit {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentClassId: this.StudentClassId,
               CatSequence: clseval.DisplayOrder,
-              RatingId: 0,
+              AnswerOptionsId: 0,
               Description: clseval.Description,
-              Detail: '',
-              StudentEvaluationId: 0,
+              AnswerText: '',
+              StudentEvaluationResultId: 0,
+              ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
+              EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
               ClassEvaluationId: clseval.ClassEvaluationId,
               Active: 0,
               EvaluationTypeId: row.EvaluationTypeId,
-              ExamId: 0,
-              MultipleAnswer: 0,
+              MultipleAnswer: clseval.MultipleAnswer,
               StudentEvaluationAnswers: []
             }
           }
-          this.StudentEvaluationList.push(item);
+          this.StudentEvaluationList.push(JSON.parse(JSON.stringify(item)));
         })
         //console.log("this.StudentEvaluationList", this.StudentEvaluationList)
+        //var firstrow =[];
+        this.EvaluationStarted = true;
         this.dataSource = new MatTableDataSource<IStudentEvaluation>(this.StudentEvaluationList);
+        this.dataSource.paginator = this.paginator;
         this.loadingFalse();
       });
 
@@ -443,7 +501,6 @@ export class StudentEvaluationComponent implements OnInit {
     ];
 
     list.PageName = "EvaluationClassSubjectMaps";
-    //list.lookupFields = ["ClassEvaluationOptions($filter=Active eq 1;$select=AnswerOptionsId,Title,Value,Correct,Point)"]
     list.filter = ['(ClassId eq 0 or ClassId eq ' + this.ClassId + ') and Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
@@ -462,13 +519,51 @@ export class StudentEvaluationComponent implements OnInit {
             m.ExamName = _examObj[0].ExamName
           else
             m.ExamName = '';
-
+          m.Action = true;
           return m;
         });
-        console.log("this.AssessmentTypeList", this.AssessmentTypeList)
-
+        //console.log("this.AssessmentTypeList", this.AssessmentTypeList)
+        this.EvaluationStarted=false;
+        this.EvaluationSubmitted=false;
         this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.AssessmentTypeList);
+        this.StudentEvaluationList =[];
+        this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
+        this.dataSource.paginator = this.paginator;
+
       })
+  }
+  GetEvaluationOption() {
+    let list: List = new List();
+    list.fields = [
+      'ClassEvaluationAnswerOptionsId',
+      'Title',
+      'Value',
+      'Point',
+      'Correct',
+      'ParentId',
+      'ClassEvaluationId',
+      'Active',
+    ];
+
+    list.PageName = "ClassEvaluationOptions";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    this.ClassEvaluationOptionList = [];
+    this.dataSource = new MatTableDataSource<any>([]);
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.ClassEvaluationOptionList = data.value.map(item => {
+            item.Active = 0;
+            return item;
+          })
+        }
+        else {
+          this.contentservice.openSnackBar("No answer option found.", globalconstants.ActionText, globalconstants.BlueBackground);
+        }
+
+        this.loadingFalse();
+      });
+
   }
   GetClassEvaluations() {
 
@@ -480,19 +575,15 @@ export class StudentEvaluationComponent implements OnInit {
       'EvaluationTypeId',
       'DisplayOrder',
       'Description',
-      'AnswerOptionId',
+      'ClassEvaluationAnswerOptionParentId',
       'MultipleAnswer',
     ];
 
     list.PageName = "ClassEvaluations";
-    list.lookupFields = ["ClassEvaluationOptions($filter=Active eq 1;$select=AnswerOptionsId,Title,Value,Correct,Point)"]
-
     list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.ClassEvaluations = data.value.map(clseval => {
             var _categoryName = ''
@@ -505,9 +596,11 @@ export class StudentEvaluationComponent implements OnInit {
               _subCategoryName = subcatobj[0].MasterDataName;
             clseval.CategoryName = _categoryName;
             clseval.SubCategoryName = _subCategoryName;
+            clseval.ClassEvaluationOptions = this.ClassEvaluationOptionList.filter(f => f.ParentId == clseval.ClassEvaluationAnswerOptionParentId)
             return clseval;
           })
         }
+        console.log("this.ClassEvaluations", this.ClassEvaluations)
         this.loadingFalse();
       })
   }
@@ -581,12 +674,12 @@ export class StudentEvaluationComponent implements OnInit {
 export interface IStudentEvaluation {
   StudentEvaluationId: number;
   ClassEvaluationId: number;
-  RatingId: number;
-  Detail: string;
+  EvaluationClassSubjectMapId: number;
+  ClassEvaluationAnswerOptionParentId: number;
+  StudentEvaluationResultId: number;
+  AnswerText: string;
   StudentClassId: number;
   EvaluationTypeId: number;
-  ExamId: number;
-  //SubCategories: any[];
   Active: number;
   Action: boolean;
 }

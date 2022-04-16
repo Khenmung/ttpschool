@@ -13,10 +13,13 @@ mat-cell:first-of-type {
 {
     flex:0 0 150px;
 }
+.mat-column-ClassName,.mat-column-ExamName,.mat-column-Subject{
+    flex:1 1 150px;
+}
 .mat-column-Action,.mat-column-Active,.mat-column-StudentEvaluationId
 {
     justify-content: center;
-    flex:0 0 100px;
+    flex:1 1 100px;
 }
 .mat-column-Detail,.mat-column-Description{
     flex:1 1 350px;
