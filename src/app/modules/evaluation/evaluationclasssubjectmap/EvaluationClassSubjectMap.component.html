@@ -7,9 +7,9 @@
     <div style="width: 100%;">
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline" [style.width.px]="150">
-                <mat-label>Type</mat-label>
-                <mat-select formControlName="searchEvaluationTypeId" (selectionChange)="GetEvaluationTypeId()">
-                    <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">{{item.MasterDataName}}
+                <mat-label>Evaluation</mat-label>
+                <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="GetEvaluationMasterId()">
+                    <mat-option *ngFor="let item of EvaluationNames" [value]="item.EvaluationMasterId">{{item.EvaluationName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -50,11 +50,11 @@
                     {{element.EvaluationClassSubjectMapId}}
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="EvaluationType">
+            <ng-container matColumnDef="EvaluationName">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Evaluation Name
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.EvaluationType}}
+                    {{element.EvaluationName}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="ClassId">
@@ -101,13 +101,13 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="justify-content: center;">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
-                        [checked]="element.Active==1?true:false">
+                        [checked]="element.Active">
                     </mat-checkbox>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button *ngIf="EvaluationTypeId!=0" [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                    <button *ngIf="EvaluationMasterId!=0" [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>

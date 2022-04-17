@@ -188,8 +188,9 @@ export class globalconstants {
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',
                     'EVALUATIONCLASSSUBJECTMAP': 'evaluation class subject exam',
-                    'CLASSEVALUATION': 'class evaluation',
+                    'EVALUATIONQUESTIONNAIRE': 'evaluation questionnaire',
                     'EXECUTEEVALUATION': 'execute evaluation',
+                    'EVALUATIONMASTER': 'evaluation master',
                     'CLASSEVALUATIONOPTION': 'answer option',
                     'EVALUATIONANDEXAM': 'evaluation and exam'
                 },

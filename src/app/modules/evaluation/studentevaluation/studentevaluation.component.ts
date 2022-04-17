@@ -42,14 +42,14 @@ export class StudentEvaluationComponent implements OnInit {
   RatingOptions = [];
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
-  EvaluationTypes = [];
+  EvaluationMaster = [];
   Exams = [];
   ExamNames = [];
   SelectedClassSubjects = [];
   StudentClasses = [];
   Students = [];
   EvaluationPlanColumns = [
-    'EvaluationType',
+    'EvaluationName',
     //'ClassName',
     'Subject',
     'ExamName',
@@ -63,7 +63,7 @@ export class StudentEvaluationComponent implements OnInit {
     ClassEvaluationId: 0,
     RatingId: 0,
     Detail: '',
-    EvaluationTypeId: 0,
+    EvaluationMasterId: 0,
     ExamId: 0,
     StudentClassId: 0,
     OrgId: 0,
@@ -71,11 +71,8 @@ export class StudentEvaluationComponent implements OnInit {
   };
   StudentEvaluationForUpdate = [];
   displayedColumns = [
-    //'StudentEvaluationResultId',
     'Description',
     'AnswerOptionsId',
-    // 'Active',
-    // 'Action'
   ];
   searchForm: FormGroup;
   constructor(
@@ -90,7 +87,7 @@ export class StudentEvaluationComponent implements OnInit {
     debugger;
     this.searchForm = this.fb.group({
       searchStudentName: [0],
-      searchEvaluationTypeId: [0],
+      searchEvaluationMasterId: [0],
       searchSubjectId: [0],
       searchExamId: [0]
     });
@@ -126,6 +123,7 @@ export class StudentEvaluationComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetEvaluationNames();
         this.GetMasterData();
         this.GetEvaluationOption();
         if (this.Classes.length == 0) {
@@ -310,7 +308,7 @@ export class StudentEvaluationComponent implements OnInit {
     filterStr += ' and StudentClassId eq ' + this.StudentClassId
     filterStr += ' and EvaluationClassSubjectMapId eq ' + row.EvaluationClassSubjectMapId
 
-    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationTypeId == row.EvaluationTypeId);
+    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
     if (row.ExamId > 0) {
       _classEvaluations = _classEvaluations.filter(f => f.ExamId == row.ExamId);
     }
@@ -368,7 +366,7 @@ export class StudentEvaluationComponent implements OnInit {
               StudentEvaluationResultId: existing[0].StudentEvaluationResultId,
               ClassEvaluationId: clseval.ClassEvaluationId,
               Active: existing[0].Active,
-              EvaluationTypeId: row.EvaluationTypeId,
+              EvaluationMasterId: row.EvaluationMasterId,
               MultipleAnswer: clseval.MultipleAnswer,
             }
           }
@@ -386,7 +384,7 @@ export class StudentEvaluationComponent implements OnInit {
               EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
               ClassEvaluationId: clseval.ClassEvaluationId,
               Active: 0,
-              EvaluationTypeId: row.EvaluationTypeId,
+              EvaluationMasterId: row.EvaluationMasterId,
               MultipleAnswer: clseval.MultipleAnswer,
               StudentEvaluationAnswers: []
             }
@@ -449,7 +447,7 @@ export class StudentEvaluationComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
-        this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
+        //this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -488,12 +486,46 @@ export class StudentEvaluationComponent implements OnInit {
       return [];
 
   }
+  GetEvaluationNames() {
+    //debugger;
+    this.loading = true;
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let list: List = new List();
+    list.fields = [
+      'EvaluationMasterId',
+      'EvaluationName',
+      'Description',
+      'Duration',
+      'DisplayResult',
+      'ProvideCertificate',
+      'FullMark',
+      'PassMark',
+      'Active'
+    ];
+
+    list.PageName = "EvaluationMasters";
+
+    list.filter = [filterStr];
+    this.EvaluationMaster = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.EvaluationMaster = data.value.map(item => {
+            return item;
+          })
+        }
+        this.loadingFalse();
+      });
+
+  }
   GetEvaluationMapping() {
 
     let list: List = new List();
     list.fields = [
       'EvaluationClassSubjectMapId',
-      'EvaluationTypeId',
+      'EvaluationMasterId',
       'ClassId',
       'ClassSubjectId',
       'ExamId',
@@ -506,7 +538,7 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AssessmentTypeList = data.value.map(m => {
-          m.EvaluationType = this.EvaluationTypes.filter(f => f.MasterDataId == m.EvaluationTypeId)[0].MasterDataName;
+          m.EvaluationType = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId)[0].EvaluationName;
 
           var _clsObj = this.Classes.filter(f => f.ClassId == m.ClassId);
           if (_clsObj.length > 0)
@@ -572,7 +604,7 @@ export class StudentEvaluationComponent implements OnInit {
       'ClassEvaluationId',
       'ClassEvalCategoryId',
       'ClassEvalSubCategoryId',
-      'EvaluationTypeId',
+      'EvaluationMasterId',
       'DisplayOrder',
       'Description',
       'ClassEvaluationAnswerOptionParentId',
@@ -679,7 +711,7 @@ export interface IStudentEvaluation {
   StudentEvaluationResultId: number;
   AnswerText: string;
   StudentClassId: number;
-  EvaluationTypeId: number;
+  EvaluationMasterId: number;
   Active: number;
   Action: boolean;
 }

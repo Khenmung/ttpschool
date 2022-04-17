@@ -6,6 +6,7 @@ import { ClassEvaluationOptionComponent } from './classevaluationoption/classeva
 import { EvaluationClassSubjectMapComponent } from './evaluationclasssubjectmap/EvaluationClassSubjectMap.component';
 import { EvaluationboardComponent } from './evaluationboard/evaluationboard.component';
 import { EvaluationandExamComponent } from './evaluationandexam/evaluationandexam.component';
+import { EvaluationMasterComponent } from './evaluationmaster/evaluationmaster.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,7 @@ export const EvaluationComponents = [
   ClassEvaluationOptionComponent,
   EvaluationClassSubjectMapComponent,
   EvaluationboardComponent,  
-  EvaluationandExamComponent
+  EvaluationandExamComponent,  
+  EvaluationMasterComponent
 ];
 

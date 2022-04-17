@@ -16,10 +16,10 @@ import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
 export class MiscboardComponent implements AfterViewInit {
 
   components = [
+    NoOfStudentComponent,
     CalendarComponent,
     EventComponent,
-    HolidayComponent,
-    NoOfStudentComponent
+    HolidayComponent
   ];
 
   tabNames = [

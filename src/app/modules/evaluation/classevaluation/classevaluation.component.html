@@ -14,10 +14,10 @@
             <div style="width: 100%;">
                 <form [formGroup]="searchForm">
                     <mat-form-field appearance="outline" [style.width.px]="250">
-                        <mat-label>Evaluation Name</mat-label>
-                        <mat-select formControlName="searchEvaluationTypeId">
-                            <mat-option *ngFor="let item of EvaluationTypes" [value]="item.MasterDataId">
-                                {{item.MasterDataName}}
+                        <mat-label>Evaluation</mat-label>
+                        <mat-select formControlName="searchEvaluationMasterId">
+                            <mat-option *ngFor="let item of EvaluationNames" [value]="item.EvaluationMasterId">
+                                {{item.EvaluationName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

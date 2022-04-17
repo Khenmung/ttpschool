@@ -26,7 +26,7 @@ export class ClassEvaluationComponent implements OnInit {
   CurrentRow: any = {};
   selectedIndex = 0;
   selectedRowIndex = -1;
-  EvaluationTypes = [];
+  EvaluationNames = [];
   ClassEvaluationIdTopass = 0;
   SelectedApplicationId = 0;
   StudentClassId = 0;
@@ -35,7 +35,7 @@ export class ClassEvaluationComponent implements OnInit {
   loading = false;
   ClassEvaluationOptionList = [];
   ClassEvaluationList: IClassEvaluation[] = [];
-  //EvaluationTypeId = 0;
+  //EvaluationMasterId = 0;
   SelectedBatchId = 0;
   Categories = [];
   SubCategories = [];
@@ -47,13 +47,13 @@ export class ClassEvaluationComponent implements OnInit {
   filteredOptions: Observable<IClassEvaluation[]>;
   dataSource: MatTableDataSource<IClassEvaluation>;
   allMasterData = [];
-  
+
   ClassEvaluationData = {
     ClassEvaluationId: 0,
     ClassEvalCategoryId: 0,
-    ClassEvalSubCategoryId:0,
+    ClassEvalSubCategoryId: 0,
     MultipleAnswer: 0,
-    EvaluationTypeId: 0,
+    EvaluationMasterId: 0,
     Description: '',
     DisplayOrder: 0,
     ClassEvaluationAnswerOptionParentId: 0,
@@ -86,7 +86,7 @@ export class ClassEvaluationComponent implements OnInit {
     debugger;
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({
-      searchEvaluationTypeId: [0],     
+      searchEvaluationMasterId: [0],
     })
     this.PageLoad();
   }
@@ -108,6 +108,7 @@ export class ClassEvaluationComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -167,7 +168,7 @@ export class ClassEvaluationComponent implements OnInit {
   }
   // Detail(value) {
   //   debugger;
-  //   this.EvaluationTypeId = value.EvaluationTypeId;
+  //   this.EvaluationMasterId = value.EvaluationMasterId;
   //   this.selectedIndex += 1;
   //   this.PageLoad();
   // }
@@ -178,7 +179,7 @@ export class ClassEvaluationComponent implements OnInit {
       this.selectedRowIndex = rowId
   }
   AddNew() {
-    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
+    var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
 
     var newItem = {
       ClassEvaluationId: 0,
@@ -186,8 +187,8 @@ export class ClassEvaluationComponent implements OnInit {
       ClassEvalSubCategoryId: 0,
       Description: '',
       MultipleAnswer: 0,
-      EvaluationTypeId: _evaluationTypeId,
-      ClassEvaluationAnswerOptionParentId:0,
+      EvaluationMasterId: _EvaluationMasterId,
+      ClassEvaluationAnswerOptionParentId: 0,
       DisplayOrder: 0,
       Active: 0,
       Action: false
@@ -205,8 +206,8 @@ export class ClassEvaluationComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter description", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    //this.EvaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value
-    if (row.EvaluationTypeId == 0) {
+    //this.EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
+    if (row.EvaluationMasterId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("No Evaluation type Id selected.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -247,15 +248,15 @@ export class ClassEvaluationComponent implements OnInit {
               ClassEvalSubCategoryId: row.ClassEvalSubCategoryId,
               MultipleAnswer: row.MultipleAnswer,
               ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
-              EvaluationTypeId: row.EvaluationTypeId,
+              EvaluationMasterId: row.EvaluationMasterId,
               Description: row.Description,
-              DisplayOrder: row.DisplayOrder,             
+              DisplayOrder: row.DisplayOrder,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
           //console.log('dta', this.ClassEvaluationForUpdate);
-          if(this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId==0)
-            this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId ==null;
-            
+          if (this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId == 0)
+            this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId == null;
+
           if (this.ClassEvaluationForUpdate[0].ClassEvaluationId == 0) {
             this.ClassEvaluationForUpdate[0]["CreatedDate"] = new Date();
             this.ClassEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -311,12 +312,12 @@ export class ClassEvaluationComponent implements OnInit {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
+    var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
 
     // if (this.EvaluationMasterId > 0)
     //   filterStr += " and EvaluationMasterId eq " + this.EvaluationMasterId;
-    if (_evaluationTypeId > 0)
-      filterStr += " and EvaluationTypeId eq " + _evaluationTypeId
+    if (_EvaluationMasterId > 0)
+      filterStr += " and EvaluationMasterId eq " + _EvaluationMasterId
 
     //filterStr += ' and StudentClassId eq ' + this.StudentClassId
     let list: List = new List();
@@ -325,7 +326,7 @@ export class ClassEvaluationComponent implements OnInit {
       'ClassEvalCategoryId',
       'ClassEvalSubCategoryId',
       'Description',
-      'EvaluationTypeId',
+      'EvaluationMasterId',
       'MultipleAnswer',
       'ClassEvaluationAnswerOptionParentId',
       'DisplayOrder',
@@ -354,6 +355,40 @@ export class ClassEvaluationComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IClassEvaluation>(this.ClassEvaluationList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.loadingFalse();
+      });
+
+  }
+  GetEvaluationNames() {
+    //debugger;
+    this.loading = true;
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let list: List = new List();
+    list.fields = [
+      'EvaluationMasterId',
+      'EvaluationName',
+      'Description',
+      'Duration',
+      'DisplayResult',
+      'ProvideCertificate',
+      'FullMark',
+      'PassMark',
+      'Active'
+    ];
+
+    list.PageName = "EvaluationMasters";
+
+    list.filter = [filterStr];
+    this.EvaluationNames = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.EvaluationNames = data.value.map(item => {
+            return item;
+          })
+        }
         this.loadingFalse();
       });
 
@@ -424,7 +459,7 @@ export class ClassEvaluationComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
+        //this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
         this.GetExams();
@@ -474,7 +509,7 @@ export interface IClassEvaluation {
   ClassEvalSubCategoryId: number;
   MultipleAnswer: number;
   Description: string;
-  ClassEvaluationAnswerOptionParentId:number;
+  ClassEvaluationAnswerOptionParentId: number;
   DisplayOrder: number;
   Active: number;
   Action: boolean;

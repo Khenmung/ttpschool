@@ -1,0 +1,24 @@
+mat-form-field{
+    margin-right: 15px;
+    width:98%;
+}
+.mat-column-FullMark,
+.mat-column-PassMark,
+.mat-column-Duration,
+.mat-column-EvaluationMasterId{
+    flex:1 1 100px;
+    //justify-content: center;
+}
+.mat-column-ProvideCertificate,
+.mat-column-DisplayResult,
+.mat-column-Action,
+.mat-column-Active
+{
+    flex:1 1 100px;
+    justify-content: center;
+}
+.mat-column-EvaluationName,
+.mat-column-Description
+{
+    flex:1 1 150px;
+}

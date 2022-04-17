@@ -21,7 +21,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   @Output() NotifyParent: EventEmitter<number> = new EventEmitter();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  EvaluationTypeId = 0;
+  EvaluationMasterId = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   SelectedApplicationId = 0;
@@ -40,13 +40,13 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   filteredOptions: Observable<IEvaluationClassSubjectMap[]>;
   dataSource: MatTableDataSource<IEvaluationClassSubjectMap>;
   allMasterData = [];
-  EvaluationTypes = [];
+  EvaluationNames = [];
   Exams = [];
   EvaluationClassSubjectMapData = {
     EvaluationClassSubjectMapId: 0,
     ClassId: 0,
     ClassSubjectId: 0,
-    EvaluationTypeId: 0,
+    EvaluationMasterId: 0,
     ExamId: 0,
     OrgId: 0,
     Active: 0,
@@ -54,7 +54,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   EvaluationClassSubjectMapForUpdate = [];
   displayedColumns = [
     'EvaluationClassSubjectMapId',
-    'EvaluationType',
+    'EvaluationName',
     'ClassId',
     'ClassSubjectId',
     'ExamId',
@@ -73,7 +73,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   ngOnInit(): void {
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({
-      searchEvaluationTypeId: [0],
+      searchEvaluationMasterId: [0],
       searchSubjectId: [0],
       searchClassId: [0],
       searchExamId: [0]
@@ -102,6 +102,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetEvaluationNames();
         this.GetMasterData();
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -146,14 +147,14 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   //   this.EvaluationClassSubjectMapId = row.EvaluationClassSubjectMapId;
   // }
   AddNew() {
-    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value
+    var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
     var newItem = {
       EvaluationClassSubjectMapId: 0,
       ClassId: 0,
       ClassSubjectId: 0,
       ExamId: 0,
-      EvaluationTypeId: _evaluationTypeId,
-      EvaluationType: this.EvaluationTypes.filter(f => f.MasterDataId == _evaluationTypeId)[0].MasterDataName,
+      EvaluationMasterId: _EvaluationMasterId,
+      EvaluationName: this.EvaluationNames.filter(f => f.EvaluationMasterId == _EvaluationMasterId)[0].EvaluationName,
       Active: false,
       Deleted: "false",
       Action: false
@@ -164,14 +165,14 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
+    var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
 
     this.loading = true;
     let checkFilterString = this.StandardFilter;
     if (row.ExamId > 0)
       checkFilterString = " and ExamId eq " + row.ExamId;
-    if (_evaluationTypeId > 0)
-      checkFilterString += " and EvaluationTypeId eq " + _evaluationTypeId;
+    if (_EvaluationMasterId > 0)
+      checkFilterString += " and EvaluationMasterId eq " + _EvaluationMasterId;
     else {
       this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -205,7 +206,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
               ClassId: row.ClassId,
               ClassSubjectId: row.ClassSubjectId,
               ExamId: row.ExamId==null?0:row.ExamId,
-              EvaluationTypeId: this.searchForm.get("searchEvaluationTypeId").value,
+              EvaluationMasterId: this.searchForm.get("searchEvaluationMasterId").value,
               Active: row.Active,
               Deleted: false,
               OrgId: this.LoginUserDetail[0]["orgId"]
@@ -259,6 +260,40 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
           this.loadingFalse();
         });
   }
+  GetEvaluationNames() {
+    //debugger;
+    this.loading = true;
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let list: List = new List();
+    list.fields = [
+      'EvaluationMasterId',
+      'EvaluationName',
+      'Description',
+      'Duration',
+      'DisplayResult',
+      'ProvideCertificate',
+      'FullMark',
+      'PassMark',
+      'Active'
+    ];
+
+    list.PageName = "EvaluationMasters";
+
+    list.filter = [filterStr];
+    this.EvaluationNames = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.EvaluationNames = data.value.map(item => {
+            return item;
+          })
+        }
+        this.loadingFalse();
+      });
+
+  }
   GetEvaluationClassSubjectMap() {
     //debugger;
     this.loading = true;
@@ -268,17 +303,17 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
 
     var _classId = this.searchForm.get("searchClassId").value;
     var _subjectId = this.searchForm.get("searchSubjectId").value;
-    var _evaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
+    var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     var _searchExamId = this.searchForm.get("searchExamId").value;
     //var _examId = this.searchForm.get("searchExamId").value;
 
-    if (_evaluationTypeId == 0) {
+    if (_EvaluationMasterId == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.BlueBackground);
+      this.contentservice.openSnackBar("Please select evaluation.", globalconstants.ActionText, globalconstants.BlueBackground);
       return;
     }
     else {
-      filterStr += " and EvaluationTypeId eq " + _evaluationTypeId;
+      filterStr += " and EvaluationMasterId eq " + _EvaluationMasterId;
     }
 
     if (_classId > 0)
@@ -294,7 +329,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
       'ClassId',
       'ClassSubjectId',
       'ExamId',
-      'EvaluationTypeId',
+      'EvaluationMasterId',
       'Active',
     ];
 
@@ -307,7 +342,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           this.EvaluationClassSubjectMapList = data.value.map(item => {
-            item.EvaluationType = this.EvaluationTypes.filter(f => f.MasterDataId == item.EvaluationTypeId)[0].MasterDataName
+            item.EvaluationName = this.EvaluationNames.filter(f => f.EvaluationMasterId == item.EvaluationMasterId)[0].EvaluationName
             item.Action = false;
             return item;
           })
@@ -350,7 +385,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
+        //this.EvaluationNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EvaluationName);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.GetClassSubjects();
         this.GetExams();
@@ -367,11 +402,11 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
 
   }
-  GetEvaluationTypeId() {
-    this.EvaluationTypeId = this.searchForm.get("searchEvaluationTypeId").value;
+  GetEvaluationMasterId() {
+    this.EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
   }
   UpdateActive(row, event) {
-    row.Active = event.checked ? 1 : 0;
+    row.Active = event.checked;
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
@@ -396,7 +431,7 @@ export interface IEvaluationClassSubjectMap {
   ExamId: number;
   ClassId: number;
   ClassSubjectId: number;
-  EvaluationTypeId: number;
+  EvaluationMasterId: number;
   Active: boolean;
   Deleted: string;
   Action: boolean;
