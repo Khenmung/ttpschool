@@ -26,6 +26,7 @@ export class ClassEvaluationComponent implements OnInit {
   CurrentRow: any = {};
   selectedIndex = 0;
   selectedRowIndex = -1;
+  RowToUpdate = -1;
   EvaluationNames = [];
   ClassEvaluationIdTopass = 0;
   SelectedApplicationId = 0;
@@ -197,6 +198,14 @@ export class ClassEvaluationComponent implements OnInit {
     this.ClassEvaluationList.push(newItem);
     this.dataSource = new MatTableDataSource(this.ClassEvaluationList);
   }
+  SaveAll() {
+    var _toUpdate = this.ClassEvaluationList.filter(f => f.Action);
+    this.RowToUpdate = _toUpdate.length;
+    _toUpdate.forEach(question => {
+      this.RowToUpdate--;
+      this.UpdateOrSave(question);
+    })
+  }
   UpdateOrSave(row) {
 
     debugger;
@@ -210,6 +219,12 @@ export class ClassEvaluationComponent implements OnInit {
     if (row.EvaluationMasterId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("No Evaluation type Id selected.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    
+    if(this.contentservice.checkSpecialChar(row.Description)){
+      this.loading=false;
+      this.contentservice.openSnackBar("Special characters not allowed in questionnaire!",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
 
@@ -290,9 +305,11 @@ export class ClassEvaluationComponent implements OnInit {
         (data: any) => {
           row.ClassEvaluationId = data.ClassEvaluationId;
           row.Action = false;
-          //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse()
+          if (this.RowToUpdate == 0) {
+            this.RowToUpdate = -1;
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.loadingFalse()
+          }
         });
   }
   update(row) {
@@ -301,11 +318,17 @@ export class ClassEvaluationComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          if (this.RowToUpdate == 0) {
+            this.RowToUpdate = -1;
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.loadingFalse()
+          }
+          //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
+ 
   GetClassEvaluation() {
     debugger;
     this.loading = true;
@@ -344,6 +367,7 @@ export class ClassEvaluationComponent implements OnInit {
         if (data.value.length > 0) {
           this.ClassEvaluationList = data.value.map(item => {
             item.Action = false;
+            item.SubCategories = this.allMasterData.filter(f => f.ParentId == item.ClassEvalCategoryId);
             return item;
           })
         }
@@ -351,7 +375,7 @@ export class ClassEvaluationComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
 
-        //console.log('ClassEvaluation', this.ClassEvaluationList)
+        console.log('ClassEvaluation', this.ClassEvaluationList)
         this.dataSource = new MatTableDataSource<IClassEvaluation>(this.ClassEvaluationList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -450,10 +474,10 @@ export class ClassEvaluationComponent implements OnInit {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
   }
-  SelectCategory() {
-    debugger;
-    this.Categories = this.allMasterData.filter(f => f.ParentId == this.searchForm.get("searchSubjectId").value);
-  }
+  // SelectCategory() {
+  //   debugger;
+  //   this.Categories = this.allMasterData.filter(f => f.ParentId == this.searchForm.get("searchSubjectId").value);
+  // }
   GetMasterData() {
     debugger;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -475,7 +499,7 @@ export class ClassEvaluationComponent implements OnInit {
   CategoryChanged(row) {
     debugger;
     row.Action = true;
-    this.SubCategories = this.allMasterData.filter(f => f.ParentId == row.ClassEvalCategoryId);
+    row.SubCategories = this.allMasterData.filter(f => f.ParentId == row.ClassEvalCategoryId);
   }
   UpdateMultiAnswer(row, event) {
     row.MultipleAnswer = event.checked ? 1 : 0;

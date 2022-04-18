@@ -16,7 +16,10 @@ mat-cell:first-of-type {
 .mat-column-ClassName,.mat-column-ExamName,.mat-column-Subject{
     flex:1 1 150px;
 }
-.mat-column-Action,.mat-column-Active,.mat-column-StudentEvaluationId
+.mat-column-AutoId{
+    flex:1 1 80px;
+}
+.mat-column-Action,.mat-column-Active
 {
     justify-content: center;
     flex:1 1 100px;

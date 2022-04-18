@@ -14,6 +14,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { authInterceptorProviders } from './_helpers/auth.interceptor';
 import { ChartsModule } from 'ng2-charts';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+//import { MyFilterPipe } from './shared/FilterPipe';
 
 @NgModule({
   declarations: [

@@ -124,7 +124,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   AddParent() {
     var parentItem = {
       ClassEvaluationAnswerOptionsId: 0,
-      Title: this.searchForm.get("searchParent").value,
+      Title: this.searchForm.get("searchParent").value.Title,
       Value: '0',
       Point: 0,
       Correct: 0,
@@ -135,7 +135,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.UpdateOrSave(parentItem);
   }
   AddNew() {
-    var _AnswerOptionId = this.searchForm.get("searchParent").value.AnswerOptionsId;
+    var _AnswerOptionId = this.searchForm.get("searchParent").value.ClassEvaluationAnswerOptionsId;
     if (_AnswerOptionId == undefined) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select parent", globalconstants.ActionText, globalconstants.RedBackground);
@@ -247,7 +247,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
         });
   }
   SearchAnswerOptions() {
-    this.AnswerOptionsId = this.searchForm.get("searchParent").value.AnswerOptionsId;
+    this.AnswerOptionsId = this.searchForm.get("searchParent").value.ClassEvaluationAnswerOptionsId;
     if (this.AnswerOptionsId != undefined)
       this.GetClassEvaluationOption(0, this.AnswerOptionsId);
     else

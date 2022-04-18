@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { rightArithShift } from 'mathjs';
 import { Observable } from 'rxjs';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -64,6 +65,7 @@ export class EvaluationMasterComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private nav: Router,
     private datepipe: DatePipe,
+    private dialog: MatDialog,
     private fb: FormBuilder
   ) { }
 
@@ -215,6 +217,49 @@ export class EvaluationMasterComponent implements OnInit {
           this.loadingFalse();
         });
   }
+  Delete(row) {
+
+    this.openDialog(row)
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Active: false,
+      Deleted: true,
+      UpdatedDate: new Date()
+    }
+
+    this.dataservice.postPatch('EvaluationMasters', toUpdate, row.EvaluationMasterId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false;
+        var idx = this.EvaluationMasterList.findIndex(x => x.EvaluationMasterId == row.EvaluationMasterId)
+        this.EvaluationMasterList.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.EvaluationMasterList);
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }  
   GetEvaluationMaster() {
     debugger;
 
@@ -246,7 +291,7 @@ export class EvaluationMasterComponent implements OnInit {
             return d;
           })
         }
-        console.log("this.EvaluationMasterList",this.EvaluationMasterList)
+        //console.log("this.EvaluationMasterList",this.EvaluationMasterList)
         this.dataSource = new MatTableDataSource<IEvaluationMaster>(this.EvaluationMasterList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();

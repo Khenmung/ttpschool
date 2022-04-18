@@ -24,7 +24,9 @@ mat-cell:first-of-type {
 .mat-column-ClassId,.mat-column-Action{   
     flex:1 1 120px;
 }
-.mat-column-DisplayOrder,
+.mat-column-DisplayOrder{
+    flex:1 1 80px;
+}
 .mat-column-MultipleAnswer,
 .mat-column-ClassEvaluationId,
 .mat-column-Active

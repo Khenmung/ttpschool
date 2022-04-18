@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-    name: 'myfilter',
+    name: 'Catfilter',
     pure: false
 })
 export class MyFilterPipe implements PipeTransform {
@@ -11,6 +11,6 @@ export class MyFilterPipe implements PipeTransform {
         }
         // filter items array, items which match and return true will be
         // kept, false will be filtered out
-        return items.filter(item => item.Categories.indexOf(filter["CategoryName"]) !== -1);
+        return items.filter(item => item.ParentId==filter["MasterDataId"]);
     }
 }

@@ -36,6 +36,13 @@ export class ContentService implements OnInit {
   openSnackBar(message: string, action: string, option: {}) {
     this.snackbar.open(message, action, option);
   }
+  checkSpecialChar(str) {
+    var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    if (format.test(str)) 
+      return true;    
+    else
+      return false;
+  }
   AddUpdateContent(pagecontent: any) {
     ////debugger  
     this.url = globalconstants.apiUrl + '/odata/Pages';

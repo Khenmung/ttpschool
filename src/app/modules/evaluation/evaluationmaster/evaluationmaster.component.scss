@@ -11,14 +11,16 @@ mat-form-field{
 }
 .mat-column-ProvideCertificate,
 .mat-column-DisplayResult,
-.mat-column-Action,
 .mat-column-Active
 {
     flex:1 1 100px;
     justify-content: center;
 }
+.mat-column-Action{
+    flex:1 1 120px;
+}
 .mat-column-EvaluationName,
 .mat-column-Description
 {
-    flex:1 1 150px;
+    flex:1 1 200px;
 }

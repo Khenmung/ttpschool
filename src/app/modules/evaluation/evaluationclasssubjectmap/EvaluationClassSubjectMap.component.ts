@@ -174,7 +174,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     if (_EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId eq " + _EvaluationMasterId;
     else {
-      this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select evaluation.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.ClassId > 0)

@@ -191,6 +191,7 @@ export class globalconstants {
                     'EVALUATIONQUESTIONNAIRE': 'evaluation questionnaire',
                     'EXECUTEEVALUATION': 'execute evaluation',
                     'EVALUATIONMASTER': 'evaluation master',
+                    'EVALUATIONRESULT': 'evaluation result',
                     'CLASSEVALUATIONOPTION': 'answer option',
                     'EVALUATIONANDEXAM': 'evaluation and exam'
                 },
