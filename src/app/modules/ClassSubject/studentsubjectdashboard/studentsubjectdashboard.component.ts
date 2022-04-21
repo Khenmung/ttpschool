@@ -486,7 +486,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     if (subjectCounterr.length > 0) {
       this.loading = false;
       this.contentservice.openSnackBar(subjectCounterr, globalconstants.ActionText, globalconstants.RedBackground);
-
+      return;
     }
     else {
       for (var prop in element) {

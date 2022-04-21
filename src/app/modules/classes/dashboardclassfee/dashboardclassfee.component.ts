@@ -326,8 +326,8 @@ export class DashboardclassfeeComponent implements OnInit {
     let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
       " and ClassId eq " + row.ClassId +
-      " and Month eq " + row.Month +
-      " and BatchId eq " + row.BatchId
+      " and Month eq " + row.Month 
+      //" and BatchId eq " + row.BatchId
     if (row.ClassFeeId > 0)
       checkFilterString += " and ClassFeeId ne " + row.ClassFeeId;
 

@@ -414,6 +414,10 @@ export class EmployeeComponent implements OnInit {
     if (_employeeCode.length > 0) {
       filterstr += "EmployeeCode eq '" + _employeeCode + "' and "
     }
+    var _shortName = this.EmployeeForm.get("ShortName").value;
+    if(_shortName.length>0)
+      filterstr += "ShortName eq '" + _shortName + "' and "
+
     let list: List = new List();
     list.fields = ["EmpEmployeeId"];
     list.PageName = "EmpEmployees";
@@ -423,7 +427,7 @@ export class EmployeeComponent implements OnInit {
         debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar("Employee code already exists!", globalconstants.ActionText, globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Employee code or short name already exists!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
         else {

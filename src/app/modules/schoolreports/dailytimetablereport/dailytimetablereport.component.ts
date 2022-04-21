@@ -98,14 +98,13 @@ export class DailytimetablereportComponent implements OnInit {
       }
     }
   }
-
   GetSchoolTimeTable() {
     debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    var filterstr = 'Active eq 1';
     if (this.searchForm.get("searchClassId").value == 0) {
       this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -115,7 +114,7 @@ export class DailytimetablereportComponent implements OnInit {
       return;
     }
     this.loading = true;
-    filterstr = 'ClassId eq ' + this.searchForm.get("searchClassId").value +
+    filterstr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value +
       ' and SectionId eq ' + this.searchForm.get("searchSectionId").value
 
     let list: List = new List();
@@ -129,7 +128,7 @@ export class DailytimetablereportComponent implements OnInit {
       "Active"
     ];
     list.PageName = this.SchoolTimeTableListName;
-    //list.lookupFields = ["SchoolClassPeriod"]
+    list.lookupFields = ["ClassSubject($select=TeacherId),SchoolClassPeriod($select=PeriodId)"]
     list.filter = [filterstr + orgIdSearchstr];
     this.displayedColumns = [
       'Day'
@@ -152,12 +151,14 @@ export class DailytimetablereportComponent implements OnInit {
 
         ////console.log('this.WeekDays',this.WeekDays);
         var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
+        console.log("filterPeriods", filterPeriods)
         if (filterPeriods.length == 0) {
           this.contentservice.openSnackBar("Period not yet defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
 
         }
         else {
-          this.WeekDays.forEach(p => {
+          var usedWeekDays = this.WeekDays.filter(f => dbTimeTable.filter(db => db.DayId == f.MasterDataId).length > 0)
+          usedWeekDays.forEach(p => {
             forDisplay = [];
             forDisplay["Day"] = p.MasterDataName;
             forDisplay["DayId"] = p.MasterDataId;
@@ -167,55 +168,180 @@ export class DailytimetablereportComponent implements OnInit {
 
             forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
 
-            forSelectedClsPeriods.forEach(c => {
-              var _period = c.PeriodType.includes('Free Time') ? 'f_' + c.Period : c.Period;
-
+            forSelectedClsPeriods.forEach(clsperiod => {
+              var _period = clsperiod.PeriodType.includes('Free Time') ? 'f_' + clsperiod.Period : clsperiod.Period;
               if (!this.displayedColumns.includes(_period))
                 this.displayedColumns.push(_period);
 
-              var existing = dbTimeTable.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId && d.DayId == p.MasterDataId)
+              var existing = dbTimeTable.filter(d => d.SchoolClassPeriod.PeriodId == clsperiod.PeriodId && d.DayId == p.MasterDataId)
               if (existing.length > 0) {
+                existing[0].PeriodId = clsperiod.PeriodId;
                 existing[0].Period = _period;
                 existing[0].Action = false;
+                existing[0].TeacherId = existing[0].ClassSubject.TeacherId;
+                existing[0].Sequence = clsperiod.Sequence;
+
                 this.StoredForUpdate.push(existing[0]);
-                forDisplay[c.Period] = this.ClassSubjects.filter(s=>s.ClassSubjectId == existing[0].ClassSubjectId)[0].SubjectName;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
-                forDisplay["Active"] = existing[0].Active;
+                var objcls = this.ClassWiseSubjects.filter(s => s.ClassSubjectId == existing[0].ClassSubjectId);
+                if (objcls.length > 0) {
+
+                  forDisplay[clsperiod.Period] = objcls[0].SubjectName
+
+                }
+                // else
+                //   forDisplay[clsperiod.Period] = '';
+                //this.ClassWiseSubjects = this.ClassWiseSubjects.filter(f=>f.TeacherId != existing[0].TeacherId) 
+                //forDisplay["Active"] = existing[0].Active;
               }
               else {
-                forDisplay[c.Period] = '';
-
-                this.StoredForUpdate.push({
-                  "TimeTableId": 0,
-                  "DayId": p.MasterDataId,
-                  "Day": p.MasterDataName,
-                  "ClassId": c.ClassId,
-                  "SectionId": this.searchForm.get("searchSectionId").value,
-                  "SchoolClassPeriodId": c.SchoolClassPeriodId,
-                  "ClassSubjectId": 0,
-                  "Period": _period,
-                  "Active": 0,
-                  "Action": false
-                })
+                forDisplay[clsperiod.Period] = 0;
+                //   this.StoredForUpdate.push({
+                //     "TimeTableId": 0,
+                //     "DayId": p.MasterDataId,
+                //     "Day": p.MasterDataName,
+                //     "ClassId": clsperiod.ClassId,
+                //     "SectionId": this.searchForm.get("searchSectionId").value,
+                //     "SchoolClassPeriodId": clsperiod.SchoolClassPeriodId,
+                //     "ClassSubjectId": 0,
+                //     "TeacherId": 0,
+                //     "Sequence": clsperiod.Sequence,
+                //     "Period": _period,
+                //     "PeriodId": clsperiod.PeriodId,
+                //     "Active": 0,
+                //     "Action": false
+                //   })
               }
 
             })
-            forDisplay["Action"] = false;
+            //forDisplay["Action"] = false;
             forDisplay["Sequence"] = p.Sequence;
             this.SchoolTimeTableList.push(forDisplay);
 
           })
         }
         this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
-        this.displayedColumns.push("Action");
+        //this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
         this.loading = false;
       })
   }
+  // GetSchoolTimeTable() {
+  //   debugger;
+  //   //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+  //   this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+  //   this.SchoolTimeTableList = [];
+  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+  //   var filterstr = 'Active eq 1 ';
+  //   if (this.searchForm.get("searchClassId").value == 0) {
+  //     this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
+  //     return;
+  //   }
+  //   if (this.searchForm.get("searchSectionId").value == 0) {
+  //     this.contentservice.openSnackBar("Please select section", globalconstants.ActionText, globalconstants.RedBackground);
+  //     return;
+  //   }
+  //   this.loading = true;
+  //   filterstr = 'ClassId eq ' + this.searchForm.get("searchClassId").value +
+  //     ' and SectionId eq ' + this.searchForm.get("searchSectionId").value
+
+  //   let list: List = new List();
+  //   list.fields = [
+  //     "TimeTableId",
+  //     "DayId",
+  //     "ClassId",
+  //     "SectionId",
+  //     "SchoolClassPeriodId",
+  //     "ClassSubjectId",
+  //     "Active"
+  //   ];
+  //   list.PageName = this.SchoolTimeTableListName;
+  //   //list.lookupFields = ["SchoolClassPeriod"]
+  //   list.filter = [filterstr + orgIdSearchstr];
+  //   this.displayedColumns = [
+  //     'Day'
+  //   ];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       //debugger;
+  //       var dbTimeTable = data.value.map((d => {
+  //         d.Day = this.WeekDays.filter(w => w.MasterDataId == d.DayId)[0].MasterDataName;
+  //         return d;
+  //       }))
+  //       var forDisplay: any[] = [];
+  //       var _classId = this.searchForm.get("searchClassId").value;
+  //       //this is used in html for subject dropdown.
+  //       this.ClassWiseSubjects = this.ClassSubjects.filter(f => f.ClassId == _classId);
+
+  //       //iterrate through class
+  //       //iterrate through weekdays
+  //       // iterate through class periods
+
+  //       ////console.log('this.WeekDays',this.WeekDays);
+  //       var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
+  //       if (filterPeriods.length == 0) {
+  //         this.contentservice.openSnackBar("Period not yet defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
+
+  //       }
+  //       else {
+  //         this.WeekDays.forEach(p => {
+  //           forDisplay = [];
+  //           forDisplay["Day"] = p.MasterDataName;
+  //           forDisplay["DayId"] = p.MasterDataId;
+
+  //           var forSelectedClsPeriods;
+
+
+  //           forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
+
+  //           forSelectedClsPeriods.forEach(c => {
+  //             var _period = c.PeriodType.includes('Free Time') ? 'f_' + c.Period : c.Period;
+
+  //             if (!this.displayedColumns.includes(_period))
+  //               this.displayedColumns.push(_period);
+
+  //             var existing = dbTimeTable.filter(d => d.SchoolClassPeriodId == c.SchoolClassPeriodId && d.DayId == p.MasterDataId)
+  //             if (existing.length > 0) {
+  //               existing[0].Period = _period;
+  //               existing[0].Action = false;
+  //               this.StoredForUpdate.push(existing[0]);
+  //               forDisplay[c.Period] = this.ClassSubjects.filter(s=>s.ClassSubjectId == existing[0].ClassSubjectId)[0].SubjectName;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
+  //               forDisplay["Active"] = existing[0].Active;
+  //             }
+  //             else {
+  //               forDisplay[c.Period] = '';
+
+  //               this.StoredForUpdate.push({
+  //                 "TimeTableId": 0,
+  //                 "DayId": p.MasterDataId,
+  //                 "Day": p.MasterDataName,
+  //                 "ClassId": c.ClassId,
+  //                 "SectionId": this.searchForm.get("searchSectionId").value,
+  //                 "SchoolClassPeriodId": c.SchoolClassPeriodId,
+  //                 "ClassSubjectId": 0,
+  //                 "Period": _period,
+  //                 "Active": 0,
+  //                 "Action": false
+  //               })
+  //             }
+
+  //           })
+  //           forDisplay["Action"] = false;
+  //           forDisplay["Sequence"] = p.Sequence;
+  //           this.SchoolTimeTableList.push(forDisplay);
+
+  //         })
+  //       }
+  //       this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
+  //       this.displayedColumns.push("Action");
+  //       this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
+  //       this.loading = false;
+  //     })
+  // }
   GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
-    var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    //var filterstr = '';// 'Active eq 1 ';
+    var orgIdSearchstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    //var filterstr = 'Active eq 1';
 
     this.loading = true;
 
@@ -237,8 +363,11 @@ export class DailytimetablereportComponent implements OnInit {
           var _PeriodType = '';
           if (m.PeriodTypeId != null && m.PeriodTypeId != 0)
             _PeriodType = this.PeriodTypes.filter(p => p.MasterDataId == m.PeriodTypeId)[0].MasterDataName;
-
-          m.Period = this.Periods.filter(p => p.MasterDataId == m.PeriodId)[0].MasterDataName;
+          var obj = this.Periods.filter(p => p.MasterDataId == m.PeriodId);
+          if (obj.length > 0) {
+            m.PeriodWithTime = obj[0].MasterDataName + " - " + m.FromToTime;
+            m.Period = obj[0].MasterDataName;
+          }
           m.PeriodType = _PeriodType;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
@@ -288,7 +417,7 @@ export class DailytimetablereportComponent implements OnInit {
         this.loading = false;
       })
   }
-  
+
 
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)

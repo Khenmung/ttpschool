@@ -10,6 +10,7 @@ import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudent
 import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimaryinfo.component';
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
 import { StudentEvaluationComponent } from '../../evaluation/studentevaluation/studentevaluation.component';
+import { StudentfamilynfriendComponent } from '../studentfamilynfriend/studentfamilynfriend.component';
 
 @Component({
   selector: 'app-studentboard',
@@ -19,12 +20,12 @@ import { StudentEvaluationComponent } from '../../evaluation/studentevaluation/s
 export class StudentboardComponent implements AfterViewInit {
      components = [
       studentprimaryinfoComponent,
+      StudentfamilynfriendComponent,
       AddstudentclassComponent,
       GenerateCertificateComponent,
       StudentDocumentComponent,      
       StudentattendancereportComponent,
-      StudentprogressreportComponent,
-      StudentEvaluationComponent
+      StudentprogressreportComponent      
     ];
   
     tabNames = [
@@ -72,7 +73,7 @@ export class StudentboardComponent implements AfterViewInit {
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.DOCUMENT)
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT)
       this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
-      this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTAPROFILE)
+      this.GenerateComponent(globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS)
 
       this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
       if (this.Permissions.ParentPermission != 'deny') {
@@ -118,8 +119,8 @@ export class StudentboardComponent implements AfterViewInit {
         case "progress report":
           comindx =this.components.indexOf(StudentprogressreportComponent);
           break;
-          case "student profile":
-          comindx =this.components.indexOf(StudentEvaluationComponent);
+          case "siblings n friends":
+          comindx =this.components.indexOf(StudentfamilynfriendComponent);
           break;  
       } 
       

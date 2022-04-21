@@ -29,7 +29,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     HttpClientModule,
     NgbModule,
     MaterialModule,
-    ChartsModule
+    ChartsModule,
+    
   ],
   exports: [
     NotfoundComponent

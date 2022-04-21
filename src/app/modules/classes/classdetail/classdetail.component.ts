@@ -203,7 +203,7 @@ export class ClassdetailComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
 

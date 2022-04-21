@@ -122,6 +122,12 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;   
+    if(row.Marks > row.FullMark)
+    {
+      this.loading = false;
+      this.contentservice.openSnackBar("Marks cannot be greater than FullMark (" + row.FullMark +").", globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     if (row.Marks > 1000) {
       this.loading = false;
       this.contentservice.openSnackBar("Marks cannot be greater than 1000.", globalconstants.ActionText,globalconstants.RedBackground);
@@ -149,7 +155,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.AddedMessage, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           let _examstatus = 0;
@@ -419,7 +425,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       "Active"
     ];
     list.PageName = "ExamStudentSubjectResults";
-    list.lookupFields = ["ClassSubjectMarkComponent($select=ClassSubjectId,SubjectComponentId)"];
+    list.lookupFields = ["ClassSubjectMarkComponent($select=ClassSubjectId,SubjectComponentId,FullMark)"];
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
     this.displayedColumns = [

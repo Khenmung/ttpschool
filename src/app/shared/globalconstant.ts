@@ -146,7 +146,8 @@ export class globalconstants {
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',
                     'FEERECEIPT': 'fee receipt',
-                    'STUDENTAPROFILE': 'student profile'
+                    'STUDENTAPROFILE': 'student profile',
+                    'SIBLINGSNFRIENDS': 'siblings n friends'
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
@@ -296,7 +297,8 @@ export class globalconstants {
                 "ROLE": "role",
                 "FEECATEGORY": "fee category",
                 "RATINGOPTION": "rating option",
-                "EVALUATIONTYPE": "evaluation type"
+                "EVALUATIONTYPE": "evaluation type",
+                "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship"
 
             },
             "leave": {

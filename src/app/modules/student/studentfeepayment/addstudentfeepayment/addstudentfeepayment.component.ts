@@ -541,6 +541,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     if (event.checked) {
       var previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < row.Month && +f.Balance > 0);
       var MonthSelected = [];
+      
       //checking if previous balance exist
       if (previousBalanceMonthObj.length > 0) {
         MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == previousBalanceMonthObj[0].Month)

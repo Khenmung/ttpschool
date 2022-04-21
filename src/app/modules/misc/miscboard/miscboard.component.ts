@@ -3,7 +3,8 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { CalendarComponent } from '../calendar/calendar.component';
+import { DemoComponent } from '../calendar/calendar.component';
+//import { CalendarComponent } from '../calendar/calendar.component';
 import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
 import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
@@ -17,7 +18,7 @@ export class MiscboardComponent implements AfterViewInit {
 
   components = [
     NoOfStudentComponent,
-    CalendarComponent,
+    DemoComponent,
     EventComponent,
     HolidayComponent
   ];
@@ -87,7 +88,7 @@ export class MiscboardComponent implements AfterViewInit {
     var comindx = 0;
     switch (featureName) {
       case "calendar":
-        comindx = this.components.indexOf(CalendarComponent);
+        comindx = this.components.indexOf(DemoComponent);
         break;
       case "event":
         comindx = this.components.indexOf(EventComponent);

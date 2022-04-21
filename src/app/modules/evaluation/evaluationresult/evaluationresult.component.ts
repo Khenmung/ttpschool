@@ -413,6 +413,17 @@ export class EvaluationresultComponent implements OnInit {
   }
   GetEvaluationMapping() {
     debugger;
+
+    var _evaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
+    
+    if(_evaluationMasterId==0)
+    {
+      this.contentservice.openSnackBar("Please select evaluation name.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading=false;
+      return;
+    }
+    this.ClassId = this.searchForm.get("searchStudentName").value.ClassId;
+    
     let list: List = new List();
     list.fields = [
       'EvaluationClassSubjectMapId',
@@ -422,9 +433,10 @@ export class EvaluationresultComponent implements OnInit {
       'ExamId',
       'Active'
     ];
-    this.ClassId = this.searchForm.get("searchStudentName").value.ClassId;
     list.PageName = "EvaluationClassSubjectMaps";
-    list.filter = ['(ClassId eq 0 or ClassId eq ' + this.ClassId + ') and Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ['(ClassId eq 0 or ClassId eq ' + this.ClassId + 
+    ') and Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"]+
+    ' and EvaluationMasterId eq ' + this.searchForm.get("searchStudentName").value];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

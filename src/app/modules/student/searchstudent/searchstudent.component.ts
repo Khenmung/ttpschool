@@ -459,7 +459,9 @@ export class searchstudentComponent implements OnInit {
             return {
               StudentClassId: _studentClassId,
               StudentId: student.StudentId,
-              Name: _fullDescription
+              Name: _fullDescription,
+              FatherName:student.FatherName,
+              MotherName:student.MotherName
             }
           })
         }

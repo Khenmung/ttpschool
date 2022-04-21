@@ -8,22 +8,24 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { FlatpickrModule } from 'angularx-flatpickr';
+import { CalendarModule,DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 // import {
 //   NgxMatDatetimePickerModule,
 //   NgxMatNativeDateModule,
 //   NgxMatTimepickerModule
 // } from '@angular-material-components/datetime-picker';
 import {
-  NgxMatDateAdapter,
+  //NgxMatDateAdapter,
   NgxMatDateFormats,
   NgxMatDatetimePickerModule,
   NgxMatNativeDateModule,
   NgxMatTimepickerModule,
-  NGX_MAT_DATE_FORMATS
+  //NGX_MAT_DATE_FORMATS
 } from '@angular-material-components/datetime-picker';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { NoOfStudentComponent } from './no-of-student/no-of-student.component';
+//import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
   parse: {
@@ -43,7 +45,7 @@ FullCalendarModule.registerPlugins([
 ]);
 
 @NgModule({
-  declarations: [MiscComponents, NoOfStudentComponent],
+  declarations: [MiscComponents],
   imports: [
     CommonModule,
     FormsModule,
@@ -56,11 +58,17 @@ FullCalendarModule.registerPlugins([
     NgbModule,
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
-    NgxMatNativeDateModule
+    NgxMatNativeDateModule,
+    NgbModalModule,
+    FlatpickrModule.forRoot(),
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
   ],
   providers:[
     //{ provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },
-    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+    //{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ],
   exports:[MiscComponents]
 })

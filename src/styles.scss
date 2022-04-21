@@ -3,6 +3,8 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 @import '~@angular/material/theming';
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
+
 @include mat-core();
 $bv-brand: (
     50: #ffffff,
