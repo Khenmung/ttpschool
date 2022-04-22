@@ -280,7 +280,7 @@ get f(){
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
         this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
         this.LeaveStatus = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVESTATUS);
         this.loading = false;

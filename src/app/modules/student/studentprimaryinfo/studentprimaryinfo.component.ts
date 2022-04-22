@@ -44,7 +44,7 @@ export class studentprimaryinfoComponent implements OnInit {
   StudentId = 0;
   loading = false;
   Classes = [];
-  //Country = [];
+  Clubs = [];
   Genders = [];
   Category = [];
   Bloodgroup = [];
@@ -159,12 +159,13 @@ export class studentprimaryinfoComponent implements OnInit {
       DOB: [new Date(), [Validators.required]],
       Bloodgroup: [0, [Validators.required]],
       Category: [0, [Validators.required]],
+      ClassAdmissionSought: [0, [Validators.required]],
+      Religion: [0, [Validators.required]],
       BankAccountNo: [''],
       IFSCCode: [''],
       MICRNo: [''],
       AadharNo: [''],
-      Photo: [''],
-      Religion: [0, [Validators.required]],
+      Photo: [''],      
       ContactNo: [''],
       WhatsAppNumber: [''],
       FatherContactNo: [''],
@@ -174,11 +175,11 @@ export class studentprimaryinfoComponent implements OnInit {
       RelationWithContactPerson: [''],
       ContactPersonContactNo: [''],
       AlternateContact: [''],
-      EmailAddress: [''],
-      ClassAdmissionSought: [0, [Validators.required]],
+      EmailAddress: [''],      
       LastSchoolPercentage: [''],
       TransferFromSchool: [''],
       TransferFromSchoolBoard: [''],
+      ClubId: [0],
       Remarks: [''],
       Active: [1]
     });
@@ -281,6 +282,8 @@ export class studentprimaryinfoComponent implements OnInit {
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
+        this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
         this.PrimaryContactOtherId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "other")[0].MasterDataId;
@@ -378,6 +381,7 @@ export class studentprimaryinfoComponent implements OnInit {
       LastSchoolPercentage: this.studentForm.get("LastSchoolPercentage").value,
       TransferFromSchool: this.studentForm.get("TransferFromSchool").value,
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
+      ClubId: this.studentForm.get("ClubId").value,
       Remarks: this.studentForm.get("Remarks").value,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
@@ -491,6 +495,7 @@ export class studentprimaryinfoComponent implements OnInit {
               ClassAdmissionSought: stud.ClassAdmissionSought,
               TransferFromSchool: stud.TransferFromSchool,
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
+              ClubId:stud.ClubId,
               Remarks: stud.Remarks,
               Active: stud.Active,
               ReasonForLeavingId: stud.ReasonForLeavingId

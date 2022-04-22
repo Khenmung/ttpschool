@@ -91,7 +91,7 @@ export class employee {
         this.dataservice.postPatch('EmpEmployees', toInsert, 0, 'post')
             .subscribe((result: any) => {
                 this.loading = false;
-                this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText,globalconstants.RedBackground);
+                this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
             }, error => {
                 this.contentservice.openSnackBar("Error occured. Please contact your administrator.",globalconstants.ActionText,globalconstants.RedBackground);
                 console.log(error)

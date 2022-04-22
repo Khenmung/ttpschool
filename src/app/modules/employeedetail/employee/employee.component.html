@@ -53,16 +53,18 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Employee Code</mat-label>
-                        <input formControlName="EmployeeCode" (blur)="OnBlur()"
+                        <input formControlName="EmployeeCode" (blur)="CheckDuplicate('EmployeeCode')"
                          autocomplete="Off" #input matInput [maxlength]="30">
                     </mat-form-field>
+                    <span style="color:#F44336;font-size:x-small">{{EmployeeCodeDuplicate}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Short Name</mat-label>
-                        <input formControlName="ShortName" (blur)="OnBlur()"
+                        <input formControlName="ShortName" (blur)="CheckDuplicate('ShortName')"
                          autocomplete="Off" #input matInput [maxlength]="10">
                     </mat-form-field>
+                    <span style="color:#F44336;font-size:x-small">{{ShortNameDuplicate}}</span>
                 </mat-grid-tile>
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
@@ -160,7 +162,11 @@
                     mat-raised-button>
                     <mat-icon>navigate_next</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save"
+                <button [disabled]="loading 
+                || Permission=='read' 
+                || !Edited 
+                || EmployeeCodeDuplicate.length>0
+                || ShortNameDuplicate.length>0" (click)="SaveOrUpdate()" matTooltip="save"
                     mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                 </button>

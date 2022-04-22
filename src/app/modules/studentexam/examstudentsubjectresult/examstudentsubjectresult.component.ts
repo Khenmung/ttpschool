@@ -201,6 +201,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.ExamStudentSubjectResultId = data.ExamStudentSubjectResultId;
+          row.Action=false;
           this.loading = false;
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
@@ -216,6 +217,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe(
         (data: any) => {
           //this.loading = false;
+          row.Action=false;
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
             this.loading = false;

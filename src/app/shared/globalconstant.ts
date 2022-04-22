@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "https://api.ttpsolutions.in";//"http://localhost:8020";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:5000";//"http://localhost:8020";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 3;
@@ -269,6 +269,7 @@ export class globalconstants {
                 "RECEIPTHEADING": "receipt heading",
                 "SCHOOLGENDER": "school gender",
                 "PRIMARYCONTACT": "primary contact",
+                "CLUBS": "student club",
                 "BATCH": "batch",
                 "SECTION": "section",
                 "HOUSE": "house",
@@ -319,7 +320,7 @@ export class globalconstants {
                 "DESIGNATION": "designation",
                 "DEPARTMENT": "department",
                 "SALARYCOMPONENT": "salary component",
-                "GRADE": "grade",
+                "EMPLOYEEGRADE": "employee grade",
                 "GENDER": "employee gender",
                 "COMPONENTTYPE": "salary component type",
                 "DOCUMENTTYPE": "employee document type",

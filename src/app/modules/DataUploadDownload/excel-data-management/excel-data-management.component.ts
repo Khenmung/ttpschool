@@ -78,6 +78,7 @@ export class ExcelDataManagementComponent implements OnInit {
     this.PageLoad();
   }
   PageLoad() {
+    debugger;
     this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
     if (this.UploadTypes.length == 0)
       this.GetMasterData();
@@ -110,6 +111,7 @@ export class ExcelDataManagementComponent implements OnInit {
   fileUploaded: File;
   worksheet: any;
   selectedFile: string;
+  Clubs = [];
   Classes = [];
   Batches = [];
   Sections = [];
@@ -118,12 +120,21 @@ export class ExcelDataManagementComponent implements OnInit {
   Category = [];
   Bloodgroup = [];
   Religion = [];
+  EmployeeTypes = [];
   States = [];
+  Country = [];
   PrimaryContact = [];
   Location = [];
   ActivityCategory = [];
   ActivitySubCategory = [];
   PrimaryContactFatherOrMother = [];
+  EmployeeStatus = [];
+  MaritalStatus = [];
+  Departments = [];
+  EmployeeGrades = [];
+  Designations = [];
+  WorkNatures = [];
+  WorkAccounts = [];
   studentData: any[];
   SelectedUploadtype = '';
 
@@ -182,6 +193,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "ParentDeclaration",
         "LocationId",
         "ReasonForLeavingId",
+        "Club",
         "OrgId",
         "CreatedDate",
         "CreatedBy",
@@ -239,97 +251,249 @@ export class ExcelDataManagementComponent implements OnInit {
     debugger;
     this.ErrorMessage = '';
     this.jsonData.map((element, indx) => {
-      if (element.FirstName.length == 0)
+
+      element.Active = +element.Active;
+      element.EmpEmployeeId = +element.EmpEmployeeId;
+      element.NoticePeriodDays = +element.NoticePeriodDays;
+      element.ProbationPeriodDays = +element.ProbationPeriodDays;
+
+      if (element.FirstName == undefined || element.FirstName.length == 0)
         this.ErrorMessage += 'First name at row ' + indx + ' is required.\n';
-      if (element.FatherName.length == 0)
+      if (element.FatherName == undefined || element.FatherName.length == 0)
         this.ErrorMessage += 'Father name at row ' + indx + ' is required.\n';
-      if (element.WorkAccountId == 0)
+      if (element.WorkAccountId == '')
         this.ErrorMessage += 'Work Account at row ' + indx + ' is required.\n';
-      if (element.GenderId == 0)
+      else {
+        var workaccountobj = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == element.WorkAccountId.toLowerCase())
+        if (workaccountobj.length > 0) {
+          element.WorkAccountId = workaccountobj[0].MasterDataId;
+        }
+        else
+          this.ErrorMessage += 'Invalid work account at row ' + indx + '.\n';
+      }
+
+      if (element.GenderId == '')
         this.ErrorMessage += 'GenderId at row ' + indx + ' is required.\n';
-      if (element.BloodgroupId != '' && isNaN(element.BloodgroupId))
-        this.ErrorMessage += 'BloodgroupId at row ' + indx + ' must be numeric.\n';
-      if (element.CategoryId != '' && isNaN(element.CategoryId))
-        this.ErrorMessage += 'CategoryId at row ' + indx + ' must be numeric.\n';
-      if (element.EmploymentStatusId != '' && isNaN(element.EmploymentStatusId))
-        this.ErrorMessage += 'EmploymentStatusId at row ' + indx + ' must be numeric.\n';
-      if (element.ReligionId != '' && isNaN(element.ReligionId))
-        this.ErrorMessage += 'ReligionId at row ' + indx + ' must be numeric.\n';
-      if (element.EmploymentTypeId != '' && isNaN(element.EmploymentTypeId))
-        this.ErrorMessage += 'EmploymentTypeId at row ' + indx + ' must be numeric.\n';
+      else {
+        var Genderobj = this.Genders.filter(f => f.MasterDataName.toLowerCase() == element.GenderId.toLowerCase())
+        if (Genderobj.length > 0) {
+          element.GenderId = Genderobj[0].MasterDataId;
+        }
+        else
+          this.ErrorMessage += 'Invalid gender at row ' + indx + '.\n';
+      }
+      if (element.BloodgroupId != '') {
+        var bloodgroupobj = this.Bloodgroup.filter(f => f.MasterDataName.toLowerCase() == element.BloodgroupId.toLowerCase())
+        if (bloodgroupobj.length == 0)
+          this.ErrorMessage += 'Invalid blood group at row ' + indx + '.\n';
+        else
+          element.BloodgroupId = bloodgroupobj[0].MasterDataId;
+      }
+      if (element.CategoryId != '') {
+        var categoryobj = this.Category.filter(f => f.MasterDataName.toLowerCase() == element.CategoryId.toLowerCase())
+        if (categoryobj.length == 0)
+          this.ErrorMessage += 'Invalid category at row ' + indx + '.\n';
+        else
+          element.CategoryId = categoryobj[0].MasterDataId;
+      }
+      if (element.EmploymentStatusId != '') {
+        var EmploymentStatusIdobj = this.EmployeeStatus.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentStatusId.toLowerCase())
+        if (EmploymentStatusIdobj.length == 0)
+          this.ErrorMessage += 'Invalid employee status at row ' + indx + '.\n';
+        else
+          element.EmploymentStatusId = EmploymentStatusIdobj[0].MasterDataId;
+      }
+      if (element.ReligionId != '') {
+        var ReligionIdobj = this.Religion.filter(f => f.MasterDataName.toLowerCase() == element.ReligionId.toLowerCase())
+        if (ReligionIdobj.length == 0)
+          this.ErrorMessage += 'Invalid religion at row ' + indx + '.\n';
+        else
+          element.ReligionId = ReligionIdobj[0].MasterDataId;
+      }
+      if (element.EmploymentTypeId != '') {
+        var EmploymentTypeIdobj = this.EmployeeTypes.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentTypeId.toLowerCase())
+        if (EmploymentTypeIdobj.length == 0)
+          this.ErrorMessage += 'Invalid employment type at row ' + indx + '.\n';
+        else
+          element.EmploymentTypeId = EmploymentTypeIdobj[0].MasterDataId;
+      }
+      if (element.MaritalStatusId != '') {
+        var MaritalStatusobj = this.MaritalStatus.filter(f => f.MasterDataName.toLowerCase() == element.MaritalStatusId.toLowerCase())
+        if (MaritalStatusobj.length == 0)
+          this.ErrorMessage += 'Invalid marital status at row ' + indx + '.\n';
+        else
+          element.MaritalStatusId = MaritalStatusobj[0].MasterDataId;
+      }
+      if (element.NatureId != '') {
+        var Natureobj = this.WorkNatures.filter(f => f.MasterDataName.toLowerCase() == element.NatureId.toLowerCase())
+        if (Natureobj.length == 0)
+          this.ErrorMessage += 'Invalid work nature at row ' + indx + '.\n';
+        else
+          element.NatureId = Natureobj[0].MasterDataId;
+      }
+
+      if (element.PermanentAddressCountryId != '') {
+        var PermanentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressCountryId.toLowerCase())
+        if (PermanentAddressCountryIdobj.length == 0)
+          this.ErrorMessage += 'Invalid permament country at row ' + indx + '.\n';
+        else {
+          element.PermanentAddressCountryId = PermanentAddressCountryIdobj[0].MasterDataId;
+          if (element.PermanentAddressStateId != '') {
+            var PermanentAddressStateobj = this.AllMasterData.filter(f => f.ParentId == element.PermanentAddressCountryId)
+            if (PermanentAddressStateobj.length > 0) {
+              var listOfStates = PermanentAddressStateobj.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressStateId.toLowerCase());
+              if (listOfStates.length == 0)
+                this.ErrorMessage += 'Invalid permament state at row ' + indx + '.\n';
+              else {
+                element.PermanentAddressStateId = +listOfStates[0].MasterDataId;
+                if (element.PermanentAddressCityId != '') {
+                  var ListPermanentAddressCityobj = this.AllMasterData.filter(f => f.ParentId == element.PermanentAddressStateId)
+                  if (ListPermanentAddressCityobj.length > 0) {
+                    var CityObj = ListPermanentAddressCityobj.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressCityId.toLowerCase());
+                    if (CityObj.length == 0)
+                      this.ErrorMessage += 'Invalid permament city at row ' + indx + '.\n';
+                    else
+                      element.PermanentAddressCityId = +CityObj[0].MasterDataId;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      if (element.PresentAddressCountryId != '') {
+        var PresentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressCountryId.toLowerCase())
+        if (PresentAddressCountryIdobj.length == 0)
+          this.ErrorMessage += 'Invalid present country at row ' + indx + '.\n';
+        else {
+          element.PresentAddressCountryId = +PresentAddressCountryIdobj[0].MasterDataId;
+          if (element.PresentAddressStateId != '') {
+            var PresentAddressStateobj = this.AllMasterData.filter(f => f.ParentId == element.PresentAddressCountryId)
+            if (PresentAddressStateobj.length > 0) {
+              var listOfStates = PresentAddressStateobj.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressStateId.toLowerCase());
+              if (listOfStates.length == 0)
+                this.ErrorMessage += 'Invalid present state at row ' + indx + '.\n';
+              else {
+                element.PresentAddressStateId = +listOfStates[0].MasterDataId;
+                if (element.PresentAddressCityId != '') {
+                  var ListPresentAddressCityobj = this.AllMasterData.filter(f => f.ParentId == element.PresentAddressStateId)
+                  if (ListPresentAddressCityobj.length > 0) {
+                    var CityObj = ListPresentAddressCityobj.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressCityId.toLowerCase());
+                    if (CityObj.length == 0)
+                      this.ErrorMessage += 'Invalid present city at row ' + indx + '.\n';
+                    else
+                      element.PresentAddressCityId = +CityObj[0].MasterDataId;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      if (element.DepartmentId != '') {
+        var DepartmentIdobj = this.Departments.filter(f => f.MasterDataName.toLowerCase() == element.DepartmentId.toLowerCase())
+        if (DepartmentIdobj.length == 0)
+          this.ErrorMessage += 'Invalid department at row ' + indx + '.\n';
+        else
+          element.DepartmentId = DepartmentIdobj[0].MasterDataId;
+      }
+      if (element.DesignationId != '') {
+        var DesignationIdobj = this.Designations.filter(f => f.MasterDataName.toLowerCase() == element.DesignationId.toLowerCase())
+        if (DesignationIdobj.length == 0)
+          this.ErrorMessage += 'Invalid designation at row ' + indx + '.\n';
+        else
+          element.DesignationId = DesignationIdobj[0].MasterDataId;
+      }
+      if (element.EmpGradeId != '') {
+        var EmpGradeIdobj = this.EmployeeGrades.filter(f => f.MasterDataName.toLowerCase() == element.EmpGradeId.toLowerCase())
+        if (EmpGradeIdobj.length == 0)
+          this.ErrorMessage += 'Invalid grade at row ' + indx + '.\n';
+        else
+          element.EmpGradeId = EmpGradeIdobj[0].MasterDataId;
+      }
       if (element.NoticePeriodDays != '' && isNaN(element.NoticePeriodDays))
         this.ErrorMessage += 'NoticePeriodDays at row ' + indx + ' must be numeric.\n';
       if (element.ProbationPeriodDays != '' && isNaN(element.ProbationPeriodDays))
         this.ErrorMessage += 'ProbationPeriodDays at row ' + indx + ' must be numeric.\n';
-      if (element.MaritalStatusId != '' && isNaN(element.MaritalStatusId))
-        this.ErrorMessage += 'MaritalStatusId at row ' + indx + ' must be numeric.\n';
-      if (element.NatureId != '' && isNaN(element.NatureId))
-        this.ErrorMessage += 'NatureId at row ' + indx + ' must be numeric.\n';
 
-      if (element.PermanentAddressStateId != '' && isNaN(element.PermanentAddressStateId))
-        this.ErrorMessage += 'PermanentAddressStateId at row ' + indx + ' must be numeric.\n';
-      if (element.PermanentAddressCountryId != '' && isNaN(element.PermanentAddressCountryId))
-        this.ErrorMessage += 'PermanentAddressCountryId at row ' + indx + ' must be numeric.\n';
-      if (element.DepartmentId != '' && isNaN(element.DepartmentId))
-        this.ErrorMessage += 'DepartmentId at row ' + indx + ' must be numeric.\n';
-      if (element.DesignationId != '' && isNaN(element.DesignationId))
-        this.ErrorMessage += 'DesignationId at row ' + indx + ' must be numeric.\n';
-      if (element.EmpGradeId != '' && isNaN(element.EmpGradeId))
-        this.ErrorMessage += 'EmpGradeId at row ' + indx + ' must be numeric.\n';
-
-      if (element.DOB != '' && isNaN(Date.parse(element.DOB)))
+      if (element.DOB != undefined && isNaN(Date.parse(element.DOB)))
         this.ErrorMessage += 'Invalid DOB at row ' + indx;
-      if (element.DOJ != '' && isNaN(Date.parse(element.DOJ)))
+      else if (element.DOB != undefined)
+        element.DOB = new Date(element.DOB);
+
+      if (element.DOJ != undefined && isNaN(Date.parse(element.DOJ)))
         this.ErrorMessage += 'Invalid DOJ at row ' + indx;
-      if (element.ConfirmationDate != '' && isNaN(Date.parse(element.ConfirmationDate)))
+      else if (element.DOJ != undefined)
+        element.DOJ = new Date(element.DOJ);
+
+      if (element.ConfirmationDate != undefined && isNaN(Date.parse(element.ConfirmationDate)))
         this.ErrorMessage += 'Invalid ConfirmationDate at row ' + indx;
-      if (element.MarriedDate != '' && isNaN(Date.parse(element.MarriedDate)))
+      else if (element.ConfirmationDate != undefined)
+        element.ConfirmationDate = new Date(element.ConfirmationDate);
+
+      if (element.MarriedDate != undefined && isNaN(Date.parse(element.MarriedDate)))
         this.ErrorMessage += 'Invalid MarriedDate at row ' + indx;
+      else if (element.MarriedDate != undefined)
+        element.MarriedDate = new Date(element.MarriedDate);
 
-
-      if (element.ShortName.length > 10)
+      if (element.ShortName != undefined && element.ShortName.length > 10)
         this.ErrorMessage += 'ShortName must be less than 11 characters at row ' + indx + '.\n';
-      if (element.FirstName.length > 30)
+      if (element.FirstName != undefined && element.FirstName.length > 30)
         this.ErrorMessage += 'FirstName must be less than 31 characters at row ' + indx + '.\n';
-      if (element.LastName.length > 30)
+      if (element.LastName != undefined && element.LastName.length > 30)
         this.ErrorMessage += 'LastName must be less than 31 characters at row ' + indx + '.\n';
 
-      if (element.MotherName.length > 30)
+      if (element.MotherName != undefined && element.MotherName.length > 30)
         this.ErrorMessage += 'MotherName must be less than 31 characters at row ' + indx + '.\n';
-      if (element.FatherName.length > 30)
+      if (element.FatherName != undefined && element.FatherName.length > 30)
         this.ErrorMessage += 'FatherName must be less than 31 characters at row ' + indx + '.\n';
-      if (element.MICRNo.length > 20)
+      if (element.MICRNo != undefined && element.MICRNo.length > 20)
         this.ErrorMessage += 'MICRNo must be less than 21 characters at row ' + indx + '.\n';
 
-      if (element.BankAccountNo.length > 20)
+      if (element.BankAccountNo != undefined && element.BankAccountNo.length > 20)
         this.ErrorMessage += 'BankAccountNo must be less than 21 characters at row ' + indx + '.\n';
-      if (element.IFSCcode.length > 15)
+      if (element.IFSCCode != undefined && element.IFSCcode.length > 15)
         this.ErrorMessage += 'IFSCcode must be less than 16 characters at row ' + indx + '.\n';
-      if (element.MICRNo.length > 20)
+      if (element.MICRNo != undefined && element.MICRNo.length > 20)
         this.ErrorMessage += 'MICRNo must be less than 21 characters at row ' + indx + '.\n';
 
-      if (element.AdhaarNo.length > 15)
+      if (element.AdhaarNo != undefined && element.AdhaarNo.length > 15)
         this.ErrorMessage += 'AdhaarNo must be less than 16 characters at row ' + indx + '.\n';
-      if (element.PhotoPath.length > 50)
+      if (element.PhotoPath != undefined && element.PhotoPath.length > 50)
         this.ErrorMessage += 'PhotoPath must be less than 51 characters at row ' + indx + '.\n';
-      if (element.ContactNo.length > 12)
+      if (element.ContactNo != undefined && element.ContactNo.length > 12)
         this.ErrorMessage += 'ContactNo must be less than 13 characters at row ' + indx + '.\n';
-      if (element.WhatsappNo.length > 12)
+      if (element.WhatsappNo != undefined && element.WhatsappNo.length > 12)
         this.ErrorMessage += 'WhatsappNo must be less than 13 characters at row ' + indx + '.\n';
-      if (element.AlternateContactNo.length > 12)
+      if (element.AlternateContactNo != undefined && element.AlternateContactNo.length > 12)
         this.ErrorMessage += 'AlternateContactNo should be less than 13 characters at row ' + indx + '.\n';
 
 
-      if (element.EmailAddress.length > 30)
+      if (element.EmailAddress != undefined && element.EmailAddress.length > 30)
         this.ErrorMessage += 'EmailAddress must be less than 31 characters at row ' + indx + '.\n';
-      if (element.EmergencyContactNo.length > 12)
+      else if (element.EmailAddress == undefined)
+        element.EmailAddress = '';
+
+      if (element.EmergencyContactNo != undefined && element.EmergencyContactNo.length > 12)
         this.ErrorMessage += 'EmergencyContactNo must be less than 13 characters at row ' + indx + '.\n';
-      if (element.PassportNo.length > 12)
+      else if (element.EmergencyContactNo == undefined)
+        element.EmergencyContactNo = ''
+
+      if (element.PassportNo != undefined && element.PassportNo.length > 12)
         this.ErrorMessage += 'PassportNo must be less than 13 characters at row ' + indx + '.\n';
-      if (element.PAN.length > 12)
+      else if (element.PassportNo == undefined)
+        element.PassportNo = ''
+
+      if (element.PAN != undefined && element.PAN.length > 12)
         this.ErrorMessage += 'PAN must be less 13 characters than 12 at row ' + indx + '.\n';
-      if (element.PFAccountNo.length > 20)
+      else if (element.PAN == undefined)
+        element.PAN = ''
+
+      if (element.PFAccountNo != undefined && element.PFAccountNo.length > 20)
         this.ErrorMessage += 'PFAccountNo must be less 21 characters at row ' + indx + '.\n';
+      else if (element.PFAccountNo == undefined)
+        element.PFAccountNo = '';
+
       if (element["Remarks"] == undefined) {
         element["Remarks"] = '';
       }
@@ -337,16 +501,24 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'Remarks must be less 21 characters at row ' + indx + '.\n';
       if (element.PresentAddress.length > 256)
         this.ErrorMessage += 'PresentAddress must be less 257 characters at row ' + indx + '.\n';
+      else if (element.PresentAddress == undefined)
+        element.PresentAddress = '';
 
       if (element.PresentAddressPincode.length > 10)
         this.ErrorMessage += 'PresentAddressPincode must be less 11 characters at row ' + indx + '.\n';
+      else if (element.PresentAddressPincode == undefined)
+        element.PresentAddressPincode = '';
+
       if (element.PermanentAddressPincode.length > 10)
         this.ErrorMessage += 'PermanentAddressPincode must be less 11 characters at row ' + indx + '.\n';
-
-      element.OrgId = this.loginDetail[0]["orgId"];
+      else if (element.PermanentAddressPincode == undefined)
+        element.PermanentAddressPincode = '';
+      
+        element.OrgId = this.loginDetail[0]["orgId"];
       if (this.ErrorMessage.length == 0)
         this.ELEMENT_DATA.push(element);
     });
+    //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA)
   }
   ValidateStudentActivity() {
     debugger;
@@ -462,33 +634,52 @@ export class ExcelDataManagementComponent implements OnInit {
           this.ErrorMessage += d + " is required at row " + slno + ".<br>";
       })
 
-      if (element.StudentId == undefined || element.StudentId == '' || element.StudentId == 0) {
-        let GenderFilter = this.Genders.filter(g => g.MasterDataId == element.Gender);
-        if (GenderFilter.length == 0)
-          this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
-
-        let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataId == element.Bloodgroup);
-        if (BloodgroupFilter.length == 0)
-          this.ErrorMessage += "Invalid Bloodgroup at row " + slno + ":" + element.Bloodgroup + "<br>";
-
-        let Categoryfilter = this.Category.filter(g => g.MasterDataId == element.Category);
-        if (Categoryfilter.length == 0)
-          this.ErrorMessage += "Invalid Category at row " + slno + ":" + element.Category + "<br>";
-
-        let ReligionFilter = this.Religion.filter(g => g.MasterDataId == element.Religion);
-        if (ReligionFilter.length == 0)
-          this.ErrorMessage += "Invalid Religion at row " + slno + ":" + element.Religion + "<br>";
-
-        let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataId == element.PrimaryContactFatherOrMother);
-        if (PrimaryContactFatherOrMotherFilter.length == 0)
-          this.ErrorMessage += "Invalid PrimaryContactFatherOrMother at row " + slno + ":" + element.PrimaryContactFatherOrMother + "<br>";
-
-        let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.ClassId == element.ClassAdmissionSought);
-        if (ClassAdmissionSoughtFilter.length == 0)
-          this.ErrorMessage += "Invalid ClassAdmissionSought at row " + slno + ":" + element.ClassAdmissionSought + "<br>";
-      }
+      //if (element.StudentId == undefined || element.StudentId == '' || element.StudentId == 0) {
+      let GenderFilter = this.Genders.filter(g => g.MasterDataName.toLowerCase() == element.Gender.toLowerCase());
+      if (GenderFilter.length == 0)
+        this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
       else
-        element.StudentId = +element.StudentId;
+        element.Gender = GenderFilter[0].MasterDataId;
+
+      let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase());
+      if (BloodgroupFilter.length == 0)
+        this.ErrorMessage += "Invalid Bloodgroup at row " + slno + ":" + element.Bloodgroup + "<br>";
+      else
+        element.Bloodgroup = BloodgroupFilter[0].MasterDataId;
+
+      let Categoryfilter = this.Category.filter(g => g.MasterDataName.toLowerCase() == element.Category.toLowerCase());
+      if (Categoryfilter.length == 0)
+        this.ErrorMessage += "Invalid Category at row " + slno + ":" + element.Category + "<br>";
+      else
+        element.Category = Categoryfilter[0].MasterDataId;
+
+      let ReligionFilter = this.Religion.filter(g => g.MasterDataName.toLowerCase() == element.Religion.toLowerCase());
+      if (ReligionFilter.length == 0)
+        this.ErrorMessage += "Invalid Religion at row " + slno + ":" + element.Religion + "<br>";
+      else
+        element.ReligionFilter = ReligionFilter[0].MasterDataId;
+
+      let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName.toLowerCase() == element.PrimaryContactFatherOrMother.toLowerCase());
+      if (PrimaryContactFatherOrMotherFilter.length == 0)
+        this.ErrorMessage += "Invalid PrimaryContactFatherOrMother at row " + slno + ":" + element.PrimaryContactFatherOrMother + "<br>";
+      else
+        element.PrimaryContactFatherOrMother = PrimaryContactFatherOrMotherFilter[0].MasterDataId;
+
+      let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.ClassName.toLowerCase() == element.ClassAdmissionSought.toLowerCase());
+      if (ClassAdmissionSoughtFilter.length == 0)
+        this.ErrorMessage += "Invalid ClassAdmissionSought at row " + slno + ":" + element.ClassAdmissionSought + "<br>";
+      else
+        element.ClassAdmissionSought = ClassAdmissionSoughtFilter[0].MasterDataId;
+
+      if (element.Club.length > 0) {
+        let ClubObj = this.Clubs.filter(g => g.MasterDataName.toLowerCase() == element.Club.toLowerCase());
+        if (ClubObj.length == 0)
+          this.ErrorMessage += "Invalid Club at row " + slno + ":" + element.Club + "<br>";
+        else
+          element.ClubId = ClubObj[0].MasterDataId;
+      }
+
+      element.StudentId = +element.StudentId;
 
       element.OrgId = this.loginDetail[0]["orgId"];
       element.BatchId = this.SelectedBatchId;
@@ -498,9 +689,9 @@ export class ExcelDataManagementComponent implements OnInit {
     });
 
   }
-  clear(){
+  clear() {
     //this.fileUploaded=;
-    this.selectedFile ='';
+    this.selectedFile = '';
   }
   readAsCSV() {
     this.csvData = XLSX.utils.sheet_to_csv(this.worksheet);
@@ -614,6 +805,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "CreatedBy": row["CreatedBy"],
         "CreatedDate": this.datepipe.transform(row["CreatedDate"], 'yyyy/MM/dd'),
         "WhatsAppNumber": row["WhatsAppNumber"],
+        "ClubId": +row["ClubId"],
         "BatchId": +row["BatchId"]
 
       });
@@ -623,7 +815,7 @@ export class ExcelDataManagementComponent implements OnInit {
       .subscribe((result: any) => {
         this.loading = false;
         this.ELEMENT_DATA = [];
-        this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
       }, error => {
         console.log("error from student upload:", error);
         this.ErrorMessage = "Something went wrong. Please contact your administrator.";
@@ -707,7 +899,7 @@ export class ExcelDataManagementComponent implements OnInit {
 
 
         this.AllMasterData = [...data.value];
-        
+
         this.Bloodgroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
@@ -718,13 +910,24 @@ export class ExcelDataManagementComponent implements OnInit {
           this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
           this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
           this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+          this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
         }
         else if (SelectedApplicationName == 'employee') {
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
+
           this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEUPLOADTYPE);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEPROFILECATEGORY);
-          
+          this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
+          this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
+          this.EmployeeGrades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
+          this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
+          this.EmployeeStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
+          this.EmployeeTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);
+          this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
+          this.WorkNatures = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
+          this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
+
         }
         this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();

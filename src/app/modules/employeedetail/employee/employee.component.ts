@@ -17,15 +17,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./employee.component.scss']
 })
 export class EmployeeComponent implements OnInit {
-
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  ShortNameDuplicate = '';
+  EmployeeCodeDuplicate = '';
   Edited = false;
   SelectedApplicationId = 0;
   loginUserDetail = [];
@@ -160,14 +153,14 @@ export class EmployeeComponent implements OnInit {
       GenderId: [0, [Validators.required]],
       DOB: ['', [Validators.required]],
       DOJ: ['', [Validators.required]],
-      BloodgroupId: [0],
-      CategoryId: [0],
+      BloodgroupId: [0,[Validators.required]],
+      CategoryId: [0,[Validators.required]],
+      ReligionId: [0,[Validators.required]],
+      AdhaarNo: [''],
       BankAccountNo: [''],
       IFSCcode: [''],
-      MICRNo: [''],
-      AdhaarNo: [''],
-      PhotoPath: [''],
-      ReligionId: [0],
+      MICRNo: [''],      
+      PhotoPath: [''],      
       ContactNo: [''],
       WhatsappNo: [''],
       AlternateContactNo: [''],
@@ -279,7 +272,7 @@ export class EmployeeComponent implements OnInit {
         this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);
         this.EmploymentStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTSTATUS);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.employee.DEPARTMENT);
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
       });
@@ -406,22 +399,23 @@ export class EmployeeComponent implements OnInit {
     if (this.EmployeeData["ConfirmationDate"] == "") {
       delete this.EmployeeData["ConfirmationDate"];
     }
-    var filterstr = '';
+    var filterstr = "OrgId eq " + this.loginUserDetail[0]["orgId"];
     var _employeeCode = this.EmployeeForm.get("EmployeeCode").value;
     if (this.EmployeeId > 0) {
-      filterstr = "EmpEmployeeId ne " + this.EmployeeId + " and "
-    }
-    if (_employeeCode.length > 0) {
-      filterstr += "EmployeeCode eq '" + _employeeCode + "' and "
+      filterstr += " and EmpEmployeeId ne " + this.EmployeeId
     }
     var _shortName = this.EmployeeForm.get("ShortName").value;
-    if(_shortName.length>0)
-      filterstr += "ShortName eq '" + _shortName + "' and "
+    if (_employeeCode.length > 0) {
+      filterstr += " and EmployeeCode eq '" + _employeeCode + "'"
+    }
+
+    if (_shortName.length > 0)
+      filterstr += " or ShortName eq '" + _shortName + "'"
 
     let list: List = new List();
     list.fields = ["EmpEmployeeId"];
     list.PageName = "EmpEmployees";
-    list.filter = [filterstr + "OrgId eq " + this.loginUserDetail[0]["orgId"]];
+    list.filter = [filterstr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
@@ -438,7 +432,42 @@ export class EmployeeComponent implements OnInit {
         }
       })
   }
+  CheckDuplicate(fieldName) {
+    debugger;
+    var filterstr = "OrgId eq " + this.loginUserDetail[0]["orgId"];
+    //var _employeeCode = this.EmployeeForm.get("EmployeeCode").value;
+    if (this.EmployeeId > 0) {
+      filterstr += " and EmpEmployeeId ne " + this.EmployeeId
+    }
+    var _checkvalue = this.EmployeeForm.get(fieldName).value;
+    if (_checkvalue.length == 0)
+      return;
 
+    filterstr += " and " + fieldName + " eq '" + _checkvalue + "'"
+    this.ShortNameDuplicate = '';
+    this.EmployeeCodeDuplicate = '';
+    let list: List = new List();
+    list.fields = ["EmpEmployeeId"];
+    list.PageName = "EmpEmployees";
+    list.filter = [filterstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+
+        if (data.value.length > 0) {
+          this.loading = false;
+          if (fieldName == 'EmployeeCode')
+            this.EmployeeCodeDuplicate = "Employee code already exists. Please try another.";
+          else if (fieldName == 'ShortName')
+            this.ShortNameDuplicate = "Short name already exists. Please try another.";
+        }
+        else {
+          this.ShortNameDuplicate = '';
+          this.EmployeeCodeDuplicate = '';
+          this.OnBlur()
+        }
+
+      });
+  }
   save() {
 
     this.dataservice.postPatch('EmpEmployees', this.EmployeeData, 0, 'post')
@@ -529,7 +558,7 @@ export class EmployeeComponent implements OnInit {
             this.SelectPermanentCity(stud.PermanentAddressStateId);
 
             this.EmployeeId = stud.EmpEmployeeId;
-            let EmployeeName = stud.EmployeeCode + ' ' + stud.FirstName + ' ' + (stud.LastName==null?'':stud.LastName);
+            let EmployeeName = stud.EmployeeCode + ' ' + stud.FirstName + ' ' + (stud.LastName == null ? '' : stud.LastName);
             this.shareddata.ChangeEmployeeName(EmployeeName);
             this.tokenService.saveEmployeeId(stud.EmpEmployeeId);
 

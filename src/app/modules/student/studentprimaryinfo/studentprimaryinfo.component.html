@@ -350,7 +350,15 @@
                     </mat-form-field>
                 </div>
                 <div style="padding: 15px 15px 0px 15px">
-
+                    <mat-form-field appearance="outline">
+                        <mat-label>Club</mat-label>
+                        <mat-select formControlName="ClubId" (selectionChange)="OnBlur()">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Clubs" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
                         <input formControlName="Remarks" autocomplete="Off" #Pincode matInput [maxlength]="250">

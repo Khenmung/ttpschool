@@ -344,7 +344,7 @@ export class LeaveBalanceComponent implements OnInit {
         this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
         this.Leaves.sort((a, b) => a.Sequence - b.Sequence);
 
-        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.GRADE);
+        this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
