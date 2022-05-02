@@ -30,7 +30,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     FeeTypeName: '',
     Description: '',
     Formula: '',
-    DefaultType:0,
+    DefaultType: 0,
     Active: 0,
     OrgId: 0,
     BatchId: 0
@@ -40,14 +40,14 @@ export class SchoolFeeTypesComponent implements OnInit {
     'FeeTypeName',
     'Description',
     'Formula',
-    'DefaultType',    
+    'DefaultType',
     'Active',
     'Action'
   ];
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,    
+    private tokenstorage: TokenStorageService,
     private nav: Router,
     private contentservice: ContentService,
     private fb: FormBuilder
@@ -86,7 +86,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       FeeTypeName: '',
       Description: '',
       Formula: '',
-      DefaultType:0,
+      DefaultType: 0,
       Active: 0,
       Action: true
     };
@@ -101,7 +101,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     row.Action = true;
     row.Active = value.checked ? 1 : 0;
   }
-  updateDefaultType(row,value){
+  updateDefaultType(row, value) {
     row.Action = true;
     row.DefaultType = value.checked ? 1 : 0;
   }
@@ -109,7 +109,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "OrgId eq "+ this.LoginUserDetail[0]["orgId"] + " and FeeTypeName eq '" + row.FeeTypeName + "'";
+    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and FeeTypeName eq '" + row.FeeTypeName + "'";
 
     if (row.FeeTypeId > 0)
       checkFilterString += " and FeeTypeId ne " + row.FeeTypeId;
@@ -167,10 +167,10 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.GetFeeTypes();
           this.loadingFalse()
-          
+
         },
         err => {
-          this.loading=false;
+          this.loading = false;
           if (err.error) {
             var modelState = err.error.Errors;
             var errorMessage = '';
@@ -180,7 +180,7 @@ export class SchoolFeeTypesComponent implements OnInit {
                 errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key];
               }
             }
-            this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
         });
   }
@@ -190,9 +190,27 @@ export class SchoolFeeTypesComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-          this.GetFeeTypes();
-          this.loadingFalse();
+          this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
+            .subscribe((data: any) => {
+
+              this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+                .subscribe((data: any) => {
+                  // this.loading = false;
+                  // this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+                  this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+                  this.GetFeeTypes();
+                  this.loadingFalse();
+
+                },
+                  error => {
+                    this.loading = false;
+                    console.log("error in createInvoice", error);
+                  })
+            },
+              error => {
+                this.loading = false;
+                console.log("error in getinvoice", error);
+              })
         },
         err => {
           if (err.error) {
@@ -204,9 +222,9 @@ export class SchoolFeeTypesComponent implements OnInit {
                 errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key];
               }
             }
-            this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
-        });        
+        });
   }
   GetFeeTypes() {
     //debugger;
@@ -216,10 +234,10 @@ export class SchoolFeeTypesComponent implements OnInit {
     //   return;
     // }  
     this.loading = true;
-    let filterStr ="OrgId eq " + this.LoginUserDetail[0]["orgId"];// 'BatchId eq '+ this.SelectedBatchId;
+    let filterStr = "OrgId eq " + this.LoginUserDetail[0]["orgId"];// 'BatchId eq '+ this.SelectedBatchId;
     if (this.searchForm.get("searchFeeTypeName").value.length != 0)
       filterStr += " and contains(FeeTypeName,'" + this.searchForm.get("searchFeeTypeName").value + "')";
-      
+
 
     let list: List = new List();
     list.fields = [
@@ -241,13 +259,12 @@ export class SchoolFeeTypesComponent implements OnInit {
         if (data.value.length > 0) {
           this.FeeTypeList = [...data.value];
         }
-        else
-        {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        else {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.dataSource = new MatTableDataSource<IFeeType>(this.FeeTypeList);
         this.loadingFalse();
-        
+
       });
 
   }

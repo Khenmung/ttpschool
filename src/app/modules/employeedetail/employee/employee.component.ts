@@ -153,14 +153,14 @@ export class EmployeeComponent implements OnInit {
       GenderId: [0, [Validators.required]],
       DOB: ['', [Validators.required]],
       DOJ: ['', [Validators.required]],
-      BloodgroupId: [0,[Validators.required]],
-      CategoryId: [0,[Validators.required]],
-      ReligionId: [0,[Validators.required]],
+      BloodgroupId: [0, [Validators.required]],
+      CategoryId: [0, [Validators.required]],
+      ReligionId: [0, [Validators.required]],
       AdhaarNo: [''],
       BankAccountNo: [''],
       IFSCcode: [''],
-      MICRNo: [''],      
-      PhotoPath: [''],      
+      MICRNo: [''],
+      PhotoPath: [''],
       ContactNo: [''],
       WhatsappNo: [''],
       AlternateContactNo: [''],
@@ -614,6 +614,9 @@ export class EmployeeComponent implements OnInit {
               "EmpGradeId": stud.EmpGradeId,
               "WorkAccountId": stud.WorkAccountId
             });
+            if (this.EmployeeForm.get("EmailAddress").value != "") {
+              this.EmployeeForm.get("EmailAddress").disable();
+            }
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;
             else

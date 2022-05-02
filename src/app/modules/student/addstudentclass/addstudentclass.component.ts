@@ -139,7 +139,7 @@ export class AddstudentclassComponent implements OnInit {
       })
   }
   GetStudent() {
-debugger;
+    debugger;
     var filterOrgId = globalconstants.getStandardFilter(this.LoginUserDetail);
     if (this.StudentId == 0) {
       this.contentservice.openSnackBar("Invalid student Id", globalconstants.ActionText, globalconstants.RedBackground);
@@ -198,7 +198,7 @@ debugger;
               RollNo: data.value[0].RollNo,
               BatchId: data.value[0].BatchId,
               FeeTypeId: data.value[0].FeeTypeId,
-              AdmissionDate: admissiondate?moment():data.value[0].AdmissionDate,
+              AdmissionDate: admissiondate ? moment() : data.value[0].AdmissionDate,
               Remarks: data.value[0].Remarks,
               Active: data.value[0].Active,
             });
@@ -252,6 +252,7 @@ debugger;
       return;
     }
     else {
+      this.loading=true;
       this.studentclassData.Active = 1;
       this.studentclassData.BatchId = this.SelectedBatchId;
 
@@ -290,8 +291,28 @@ debugger;
     this.dataservice.postPatch('StudentClasses', this.studentclassData, this.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          //this.router.navigate(['/home/pages']);
+
+          this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.studentclassData.BatchId, this.StudentClassId)
+            .subscribe((data: any) => {
+
+              this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+                .subscribe((data: any) => {
+                  this.loading = false;
+                  this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+                },
+                  error => {
+                    this.loading = false;
+                    console.log("error in createInvoice", error);
+                  })
+            },
+              error => {
+                this.loading = false;
+                console.log("error in getinvoice", error);
+              })
+        },
+        error => {
+          this.loading = false;
+          console.log("error in StudentClasses", error);
         });
   }
   getDropDownData(dropdowntype) {

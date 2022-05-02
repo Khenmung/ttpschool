@@ -24,7 +24,7 @@ export class SubjectBoardComponent implements AfterViewInit {
     StudentSubjectMarkCompComponent,
     studentsubjectdashboardComponent,
     AssignStudentclassdashboardComponent,
-    PromoteclassComponent
+    // PromoteclassComponent
   ];
 
   tabNames = [
@@ -33,7 +33,7 @@ export class SubjectBoardComponent implements AfterViewInit {
     { "label": "Subject Mark Component", "faIcon": '' },
     { "label": "Student Subject", "faIcon": '' },
     { "label": "example", "faIcon": '' },
-    { "label": "example", "faIcon": '' }
+    // { "label": "example", "faIcon": '' }
   ];
   //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
@@ -44,7 +44,7 @@ export class SubjectBoardComponent implements AfterViewInit {
       SubjectMarkComponentPermission: '',
       ClassStudentPermission: '',
       StudentSubjectPermission: '',
-      PromoteStudent: ''
+      // PromoteStudent: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -88,9 +88,9 @@ export class SubjectBoardComponent implements AfterViewInit {
     comindx = this.components.indexOf(studentsubjectdashboardComponent);
     this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.PROMOTESTUDENT)
-    comindx = this.components.indexOf(PromoteclassComponent);
-    this.GetComponents(perObj, comindx)
+    // perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.PROMOTESTUDENT)
+    // comindx = this.components.indexOf(PromoteclassComponent);
+    // this.GetComponents(perObj, comindx)
 
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

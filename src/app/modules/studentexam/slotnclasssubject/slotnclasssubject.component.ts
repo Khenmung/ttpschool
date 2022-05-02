@@ -240,7 +240,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         }, err => {
           this.loadingFalse();
           console.log("slot and subject insert", err);
-          this.contentservice.openSnackBar(globalconstants.SomethingWentWrong, globalconstants.ActionText, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
         });
   }
   update(row) {
@@ -258,7 +258,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         }, err => {
           this.loadingFalse();
           console.log("slot and subject update", err);
-          this.contentservice.openSnackBar(globalconstants.SomethingWentWrong, globalconstants.ActionText, globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
         });
   }
   onBlur(element) {

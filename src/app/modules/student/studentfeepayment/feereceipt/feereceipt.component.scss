@@ -10,6 +10,9 @@ mat-header-cell{
     padding: 5px;    
     
 }
+.mat-column-index{
+    flex: 1 1 50px;
+}
 .mat-column-SlNo{
     display: grid;
     place-items: center;
@@ -22,6 +25,9 @@ mat-header-cell{
 }
 .mat-column-ReceiptNo{
     flex: 1 1 100px;
+}
+.mat-column-FeeName{
+    flex: 1 1 200px;
 }
 .mat-column-PaymentAmount,.mat-column-OfflineReceiptNo,.mat-column-TotalAmount{
     display:flex;

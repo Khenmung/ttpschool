@@ -7,8 +7,11 @@ import { List } from './interface';
 import { TokenStorageService } from '../_services/token-storage.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from './components/mat-confirm-dialog/mat-confirm-dialog.component';
-import { observable } from 'rxjs';
+//import { ConfirmDialogComponent } from './components/mat-confirm-dialog/mat-confirm-dialog.component';
+//import { observable } from 'rxjs';
+import alasql from 'alasql';
+import { evaluate } from 'mathjs';
+import { AuthService } from '../_services/auth.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +25,7 @@ export class ContentService implements OnInit {
   SelectedApplicationId = 0;
   constructor(
     private dialog: MatDialog,
+    private authservice: AuthService,
     private tokenService: TokenStorageService,
     private http: HttpClient,
     private dataservice: NaomitsuService,
@@ -38,8 +42,8 @@ export class ContentService implements OnInit {
   }
   checkSpecialChar(str) {
     var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-    if (format.test(str)) 
-      return true;    
+    if (format.test(str))
+      return true;
     else
       return false;
   }
@@ -170,6 +174,70 @@ export class ContentService implements OnInit {
     else
       return [];
 
+  }
+  getInvoice(pOrgId, pSelectedBatchId, pStudentClassId) {
+    //var selectedMonth = this.searchForm.get("searchMonth").value;
+    var _function = "";
+    if (pStudentClassId == 0)
+      _function = 'getinvoice';
+    else
+      _function = 'getInvoiceSingle'
+    var OrgIdAndbatchId = {
+      StudentClassId: pStudentClassId,
+      OrgId: pOrgId,
+      BatchId: pSelectedBatchId,
+      //Month: pSelectedMonth
+    }
+
+    return this.authservice.CallAPI(OrgIdAndbatchId, _function);
+  }
+  createInvoice(data, pSelectedBatchId, pOrgId) {
+    var AmountAfterFormulaApplied = 0;
+    var _VariableObjList = [];
+    var _LedgerData = [];
+    data.forEach(inv => {
+      _VariableObjList.push(inv)
+      if (inv.Formula.length > 0) {
+        var formula = this.ApplyVariables(inv.Formula, _VariableObjList);
+        //after applying, remove again since it is for each student
+        _VariableObjList.splice(_VariableObjList.indexOf(inv), 1);
+        AmountAfterFormulaApplied = evaluate(formula);
+      }
+      _LedgerData.push({
+        LedgerId: 0,
+        Active: 1,
+        GeneralLedgerId: 0,
+        BatchId: pSelectedBatchId,
+        Balance: AmountAfterFormulaApplied,
+        Month: inv.Month,
+        StudentClassId: inv.StudentClassId,
+        OrgId: pOrgId,
+        TotalDebit: AmountAfterFormulaApplied,
+        TotalCredit: 0,
+      });
+    });
+    var query = "select SUM(TotalCredit) TotalCredit,SUM(TotalDebit) TotalDebit, SUM(Balance) Balance, StudentClassId," +
+      "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
+      "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
+    var sumFeeData = alasql(query, [_LedgerData]);
+    console.log("_LedgerData",_LedgerData);
+    console.log("sumFeeData",sumFeeData);
+    return this.authservice.CallAPI(sumFeeData, 'createinvoice')
+  }
+  ApplyVariables(formula, pVariableObjList) {
+    var filledVar = formula;
+    pVariableObjList.forEach(stud => {
+      Object.keys(stud).forEach(studproperty => {
+        //var prop =studproperty.toLowerCase()
+        if (filledVar.includes(studproperty)) {
+          if (isNaN(stud[studproperty]))
+            filledVar = filledVar.replaceAll("[" + studproperty + "]", "'" + stud[studproperty] + "'");
+          else
+            filledVar = filledVar.replaceAll("[" + studproperty + "]", stud[studproperty]);
+        }
+      });
+    })
+    return filledVar;
   }
   Getcontent(title: string, query: string) {
     //debugger

@@ -46,7 +46,7 @@
                     <mat-icon>add</mat-icon>
                 </button>&nbsp;
             </mat-header-cell>
-            <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+            <mat-cell *matCellDef="let element">
                 <button [disabled]="loading || !element.Action || Permission=='Read'" matTooltip="save"
                     mat-mini-fab (click)="UpdateOrSave(element)">
                     <mat-icon>save</mat-icon>

@@ -57,7 +57,7 @@
             </div>
             <br>
             <div fxLayout="row" fxLayoutAlign="space-between center">
-                <span>
+                <span style="padding: 15px 15px 15px 0px;">
                     Received with thanks from <b>{{studentInfoTodisplay.StudentName}}</b>,
                     Class : {{studentInfoTodisplay.StudentClassName}}, Sec - {{studentInfoTodisplay.SectionName}},
                     Roll no. - {{studentInfoTodisplay.RollNo}}.
@@ -71,7 +71,7 @@
                             <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="FeeName">
-                            <mat-header-cell *matHeaderCellDef> Fee </mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef> Particulars </mat-header-cell>
                             <mat-cell *matCellDef="let element"> {{element.FeeName}} </mat-cell>
                             <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                         </ng-container>
@@ -92,7 +92,7 @@
                         <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
                         </mat-footer-row>
                     </mat-table> 
-                    <div style="display: flex;justify-content: flex-end;height: 50px;align-items:flex-end;padding: 5px;">                         
+                    <div style="display: flex;justify-content: flex-end;height: 50px;align-items:flex-end;padding: 10px;">                         
                          <div>Accountant</div>   
                     </div>           
             </div>

@@ -457,10 +457,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       })
   }
   CopyFromSameClassPreviousBatch() {
-    if(this.searchForm.get("searchClassId").value==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select class.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (this.searchForm.get("searchClassId").value == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.PreviousBatchId == -1)
@@ -490,7 +489,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             if (feetype.length > 0)
               _feetype = feetype[0].FeeTypeName;
 
-              SameClassPreviousBatchData.push({
+            SameClassPreviousBatchData.push({
               StudentClassId: 0,
               ClassId: _classId,
               StudentId: s.StudentId,
@@ -510,7 +509,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           })
           this.GetStudentClasses('')
             .subscribe((data: any) => {
-              ExistingData =[...data.value];
+              ExistingData = [...data.value];
               SameClassPreviousBatchData.forEach(spb => {
                 var promoted = ExistingData.filter(f => f.StudentId == spb.StudentId);
                 if (promoted.length == 0) {
@@ -532,10 +531,9 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   }
   CopyFromPreviousClassAndBatch() {
     debugger;
-    if(this.searchForm.get("searchClassId").value==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select class.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (this.searchForm.get("searchClassId").value == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.PreviousBatchId == -1)
@@ -856,12 +854,33 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           this.RowsToUpdate--;
+          this.CreateInvoice();
           if (this.RowsToUpdate == 0) {
             this.loading = false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
+  CreateInvoice() {
+    this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, this.StudentClassData.StudentClassId)
+      .subscribe((data: any) => {
+
+        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+          .subscribe((data: any) => {
+            //this.loading = false;
+            //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          },
+            error => {
+              this.loading = false;
+              console.log("error in createInvoice", error);
+            })
+      },
+        error => {
+          this.loading = false;
+          console.log("error in getinvoice", error);
+        })
+  }
+
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...

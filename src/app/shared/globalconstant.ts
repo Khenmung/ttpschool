@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:5000";//"http://localhost:8020";//"http://localhost:44394";//
+    public static apiUrl: string = "https://api.ttpsolutions.in";//"http://localhost:8020";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static TrialPeriod = 3;
@@ -19,7 +19,7 @@ export class globalconstants {
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
     public static UserLoginCreated = 'User login create! Please check your email for email verification.';
-    public static SomethingWentWrong = 'There is a technical issue! Please contact your administrator.';
+    public static TechnicalIssueMessage = 'There is a technical issue! Please contact your administrator.';
     public static ActionText = 'X';
     public static BuildCommand = "ng build --configuration production --aot=true --build-optimizer=true";
     public static AppAndMenuAndFeatures =

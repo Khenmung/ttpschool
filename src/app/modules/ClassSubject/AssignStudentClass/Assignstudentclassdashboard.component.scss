@@ -5,8 +5,7 @@ mat-form-field{
 .mat-column-StudentId{
     flex:1 1 70px;
 }
-.mat-column-GenderName,
-.mat-column-Active,
+.mat-column-GenderName,.mat-column-Active,
 .mat-column-Action,
 .mat-column-RollNo,
 .mat-column-ClassName,
@@ -15,11 +14,9 @@ mat-form-field{
     flex:1 1 100px;
 }
 
-.mat-column-StudentName,
-.mat-column-FeeTypeId,
-.mat-column-Remarks{
+.mat-column-StudentName,.mat-column-FeeTypeId,.mat-column-Remarks{
     flex:1 1 150px;
 }
-.mat-cell:first-of-type{
+mat-cell:first-of-type{
     padding-left: 0px;
 }

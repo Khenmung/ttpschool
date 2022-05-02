@@ -208,7 +208,9 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Email Id</mat-label>
-                    <input type="email" formControlName="EmailAddress" (blur)="OnBlur()"
+                    <input type="email"
+                     formControlName="EmailAddress"
+                     (blur)="OnBlur()"
                      autocomplete="Off" #Pincode matInput
                         [maxlength]="50">
                 </mat-form-field>
@@ -236,7 +238,7 @@
                         *ngIf="f.PresentAddress.touched && f.PresentAddress.hasError('required')">Present
                         Address is required.</span>
                 </mat-form-field>
-                <span class="radio">Primary contact
+                <span class="radio" fxFlex>Primary contact
                     <!-- <span fxLayout="row" fxLayoutAlign="space-between top"> -->
                     <mat-radio-group (change)="displayContact($event)" aria-label="Select an option"
                         formControlName="PrimaryContactFatherOrMother">

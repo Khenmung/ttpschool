@@ -30,8 +30,17 @@ export class searchstudentComponent implements OnInit {
   filterBatchIdNOrgId = '';
   ELEMENT_DATA: IStudent[];
   dataSource: MatTableDataSource<IStudent>;
-  displayedColumns = ['StudentId', 'Name', 'ClassName', 'FatherName', 'MotherName',
-    'Active', 'ReasonForLeaving', 'Action'];
+  displayedColumns = [
+    'StudentId',
+    'Name',
+    'ClassName',
+    'FatherName',
+    'MotherName',
+    'FeeType',
+    'Remarks',
+    'Active',
+    'ReasonForLeaving',
+    'Action'];
   allMasterData = [];
   Students = [];
   Genders = [];
@@ -335,22 +344,30 @@ export class searchstudentComponent implements OnInit {
     this.loading = true;
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
-    if (this.studentSearchForm.get("searchStudentId").value > 0)
-      checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentId").value;
+    var _studentId = this.studentSearchForm.get("searchStudentId").value;
+    var _fatherName = this.studentSearchForm.get("FatherName").value.FatherName;
+    var _motherName = this.studentSearchForm.get("MotherName").value.MotherName;
+    if (_studentId == 0 && studentName == undefined && _fatherName == undefined && _motherName == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_studentId > 0)
+      checkFilterString += " and  StudentId eq " + _studentId;
+
     if (studentName != undefined && studentName.trim().length > 0)
       checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentName").value.StudentId;
     if (this.studentSearchForm.get("FatherName").value != '')
-      checkFilterString += " and contains(FatherName,'" + this.studentSearchForm.get("FatherName").value.FatherName + "')";
+      checkFilterString += " and contains(FatherName,'" + _fatherName + "')";
     if (this.studentSearchForm.get("MotherName").value != '')
-      checkFilterString += " and contains(MotherName,'" + this.studentSearchForm.get("MotherName").value.MotherName + "')"
-
-    let list: List = new List();
+      checkFilterString += " and contains(MotherName,'" + + "')"
+      let list: List = new List();
     list.fields = ["StudentId",
       "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
       "ReasonForLeavingId"];
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo)"];
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";
@@ -361,12 +378,13 @@ export class searchstudentComponent implements OnInit {
         if (data.value.length > 0) {
           var formattedData = data.value.filter(sc => {
             let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
-            //sc.StudentClasses = sc.StudentClasses.filter(c => c.BatchId == this.SelectedBatchId)
+            sc.FeeType = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId)[0].FeeTypeName;            
             sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
             return sc;
           });
           this.ELEMENT_DATA = formattedData.map(item => {
             item.Name = item.FirstName + " " + item.LastName;
+            item.Remarks = item.StudentClasses[0].Remarks;
             if (item.StudentClasses.length == 0)
               item.ClassName = '';
             else {
@@ -391,7 +409,7 @@ export class searchstudentComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading=false;
+        this.loading = false;
       });
 
   }
@@ -460,8 +478,8 @@ export class searchstudentComponent implements OnInit {
               StudentClassId: _studentClassId,
               StudentId: student.StudentId,
               Name: _fullDescription,
-              FatherName:student.FatherName,
-              MotherName:student.MotherName
+              FatherName: student.FatherName,
+              MotherName: student.MotherName
             }
           })
         }

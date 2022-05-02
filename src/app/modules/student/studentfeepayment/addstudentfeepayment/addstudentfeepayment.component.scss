@@ -13,11 +13,21 @@ svg {
 .mat-column-MonthName{
     flex: 1 1 70px;
 }
-.mat-column-FeeName,
+.mat-column-TotalCredit{
+    justify-content: center;
+    flex:1 1 60px;
+}
+.mat-column-FeeName
+{
+    flex:1 1 300px;
+}
+.mat-column-Amount
+{
+    flex:1 1 100px;
+}
 .mat-column-SlNo,
-.mat-column-Paid,
+.mat-column-SlNo1,
 .mat-column-Action,
-.mat-column-TotalCredit,
 .mat-column-TotalDebit,
 .mat-column-Balance {
     flex:1 1 60px;

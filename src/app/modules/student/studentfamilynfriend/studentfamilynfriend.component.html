@@ -1,89 +1,136 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Student Family and Friends</strong></div>
+        <div><strong>Student Siblings and Friends</strong></div>
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
-    <div style="padding: 15px;" fxLayout="row wrap">
-        <div style="width: 100%;">
-            
-            <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="StudentFamilyNFriendId">
-                    <mat-header-cell *matHeaderCellDef>Id
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                   {{element.StudentFamilyNFriendId}}                        
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Name">
-                    <mat-header-cell *matHeaderCellDef>Name
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="50"
-                                [value]="element.Name" [(ngModel)]="element.Name">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ContactNo">
-                    <mat-header-cell *matHeaderCellDef>Contact No
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="20"
-                                [value]="element.ContactNo" [(ngModel)]="element.ContactNo">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="RelationshipId">
-                    <mat-header-cell *matHeaderCellDef>Relationship
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-select (selectionChange)="onBlur(element)" [value]="element.RelationshipId"
-                                [(ngModel)]="element.RelationshipId">
-                                <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Remarks">
-                    <mat-header-cell *matHeaderCellDef>Remarks
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
-                                [value]="element.Remarks" [(ngModel)]="element.Remarks">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>               
-                <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>Active
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                            [checked]="element.Active==1?true:false">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || Permission=='read' || StudentId==0" matTooltip="add new" mat-mini-fab (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
-                            (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-            </mat-table>
-        </div>
-
+    <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
+    <!-- <div style="width: 100%;"> -->
+    <form [formGroup]="searchForm">
+        <mat-form-field appearance="outline" [style.width.px]="200">
+            <mat-label>sibling or friend</mat-label>
+            <mat-select formControlName="searchSiblingOrFriend">
+                <mat-option [value]="0">All</mat-option>
+                <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
+                    {{item.MasterDataName}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button [disabled]="loading" matTooltip="search sibling or friend" mat-raised-button color="accent"
+            (click)="GetStudentFamilyNFriends()">
+            <mat-icon>search</mat-icon>
+        </button>
+    </form>
+    <div style="overflow: auto;max-width: 1200px;">
+        <mat-table #table [dataSource]="dataSource">
+            <ng-container matColumnDef="StudentFamilyNFriendId">
+                <mat-header-cell *matHeaderCellDef>Id
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.StudentFamilyNFriendId}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="SiblingId">
+                <mat-header-cell *matHeaderCellDef>Sibling or Friend
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Sibling or friend</mat-label>
+                        <input type="text" [(ngModel)]="element.SiblingName" (blur)="onBlur(element)"
+                            [value]="element.SiblingName" matInput [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete">
+                            <mat-option *ngFor="let option of Students" [value]="option.Name">
+                                {{option.Name}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FeeType">
+                <mat-header-cell *matHeaderCellDef>Fee Type
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FeeType}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="FeeTypeRemarks">
+                <mat-header-cell *matHeaderCellDef>Fee Type Remarks
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.FeeTypeRemarks}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Name">
+                <mat-header-cell *matHeaderCellDef>Name
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="50"
+                            [value]="element.Name" [(ngModel)]="element.Name">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ContactNo">
+                <mat-header-cell *matHeaderCellDef>Contact No
+                </mat-header-cell>
+                <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="20"
+                            [value]="element.ContactNo" [(ngModel)]="element.ContactNo">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="RelationshipId">
+                <mat-header-cell *matHeaderCellDef>Relationship
+                </mat-header-cell>
+                <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-select (selectionChange)="onBlur(element)" [value]="element.RelationshipId"
+                            [(ngModel)]="element.RelationshipId">
+                            <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Remarks">
+                <mat-header-cell *matHeaderCellDef>Remarks
+                </mat-header-cell>
+                <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                            [value]="element.Remarks" [(ngModel)]="element.Remarks">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef>Active
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                        [checked]="element.Active==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading || Permission=='read' || StudentId==0" matTooltip="add new" mat-mini-fab
+                        (click)="AddNew()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                        (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row">
+            </mat-row>
+        </mat-table>
     </div>
 </div>
+
+<!-- </div> -->
+<!-- </div> -->

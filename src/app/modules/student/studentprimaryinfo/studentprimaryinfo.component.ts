@@ -165,7 +165,7 @@ export class studentprimaryinfoComponent implements OnInit {
       IFSCCode: [''],
       MICRNo: [''],
       AadharNo: [''],
-      Photo: [''],      
+      Photo: [''],
       ContactNo: [''],
       WhatsAppNumber: [''],
       FatherContactNo: [''],
@@ -175,7 +175,7 @@ export class studentprimaryinfoComponent implements OnInit {
       RelationWithContactPerson: [''],
       ContactPersonContactNo: [''],
       AlternateContact: [''],
-      EmailAddress: [''],      
+      EmailAddress: [''],
       LastSchoolPercentage: [''],
       TransferFromSchool: [''],
       TransferFromSchoolBoard: [''],
@@ -347,6 +347,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     this.loading = true;
     this.studentData = [];
+    //var _studentId = this.studentForm.get("StudentId").value;
     this.studentData.push({
       StudentId: this.StudentId,
       FirstName: this.studentForm.get("FirstName").value,
@@ -376,13 +377,13 @@ export class studentprimaryinfoComponent implements OnInit {
       RelationWithContactPerson: this.studentForm.get("RelationWithContactPerson").value,
       ContactPersonContactNo: this.studentForm.get("ContactPersonContactNo").value,
       AlternateContact: this.studentForm.get("AlternateContact").value,
-      EmailAddress: this.studentForm.get("EmailAddress").value,
       ClassAdmissionSought: this.studentForm.get("ClassAdmissionSought").value,
       LastSchoolPercentage: this.studentForm.get("LastSchoolPercentage").value,
       TransferFromSchool: this.studentForm.get("TransferFromSchool").value,
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
       ClubId: this.studentForm.get("ClubId").value,
       Remarks: this.studentForm.get("Remarks").value,
+      EmailAddress: this.studentForm.get("EmailAddress").value,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
       OrgId: this.loginUserDetail[0]["orgId"],
@@ -390,10 +391,14 @@ export class studentprimaryinfoComponent implements OnInit {
     });
     //debugger;
     //console.log("studentData", this.studentData)
-    if (this.studentForm.get("StudentId").value == 0)
+    if (this.studentForm.get("StudentId").value == 0) {
+      //this.studentData[0].EmailAddress =this.studentForm.get("EmailAddress").value;
       this.save();
-    else
+    }
+    else {
       this.update();
+    }
+
   }
 
   save() {
@@ -458,8 +463,8 @@ export class studentprimaryinfoComponent implements OnInit {
             if (stud.StudentClasses.length > 0)
               this.tokenService.saveStudentClassId(stud.StudentClasses[0].StudentClassId);
 
-            let StudentName = stud.StudentId + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName + 
-            ' ' + stud.MotherName + ',';
+            let StudentName = stud.StudentId + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName +
+              ' ' + stud.MotherName + ',';
             this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
               StudentId: stud.StudentId,
@@ -495,12 +500,15 @@ export class studentprimaryinfoComponent implements OnInit {
               ClassAdmissionSought: stud.ClassAdmissionSought,
               TransferFromSchool: stud.TransferFromSchool,
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
-              ClubId:stud.ClubId,
+              ClubId: stud.ClubId,
               Remarks: stud.Remarks,
               Active: stud.Active,
               ReasonForLeavingId: stud.ReasonForLeavingId
             })
-
+            if(this.studentForm.get("EmailAddress").value !="")
+            {
+              this.studentForm.get("EmailAddress").disable();
+            }
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;
             else
@@ -524,4 +532,5 @@ export class studentprimaryinfoComponent implements OnInit {
           console.log("error", err)
         });
   }
+    
 }

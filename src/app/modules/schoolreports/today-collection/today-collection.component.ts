@@ -35,7 +35,7 @@ export class TodayCollectionComponent implements OnInit {
   allRowsExpanded: boolean = false;
   expandedElement: any;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
-  
+
   loading = false;
   allMasterData = [];
   FeeDefinitions = [];
@@ -47,6 +47,7 @@ export class TodayCollectionComponent implements OnInit {
   GroupByPaymentType = [];
   ELEMENT_DATA = [];
   GrandTotalAmount = 0;
+  CancelledAmount = 0;
   PaymentTypes = [];
   DisplayColumns = [
     "ReceiptDate",
@@ -73,7 +74,7 @@ export class TodayCollectionComponent implements OnInit {
     private dataservice: NaomitsuService,
     private formatdate: DatePipe,
     private fb: FormBuilder,
-    private nav: Router  
+    private nav: Router
   ) { }
 
   ngOnInit(): void {
@@ -130,11 +131,11 @@ export class TodayCollectionComponent implements OnInit {
     let toDate = this.SearchForm.get("ToDate").value;
     let filterstring = '';
     this.loading = true;
-    filterstring = "Active eq 1 ";
-    
-    filterstring += " and ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
-        " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd');
-    
+    //filterstring = " eq 1" 
+
+    filterstring += "ReceiptDate ge " + this.formatdate.transform(fromDate, 'yyyy-MM-dd') +
+      " and ReceiptDate le " + this.formatdate.transform(toDate, 'yyyy-MM-dd');
+
     filterstring += " and BatchId eq " + this.SelectedBatchId +
       " and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
@@ -146,11 +147,12 @@ export class TodayCollectionComponent implements OnInit {
       'ReceiptDate',
       'ReceiptNo',
       'TotalAmount',
-      'PaymentTypeId'
+      'PaymentTypeId',
+      'Active'
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = [
-      "AccountingVouchers($filter=Active eq 1;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
+      "AccountingVouchers($select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
 
     ]
     list.filter = [filterstring];
@@ -159,7 +161,10 @@ export class TodayCollectionComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         //console.log('paymentd ata', data.value);
-        this.GrandTotalAmount = data.value.reduce((acc, current) => acc + current.TotalAmount, 0);
+        this.GrandTotalAmount = data.value.filter(f=>f.Active==1)
+        .reduce((acc, current) => acc + current.TotalAmount, 0);
+        this.CancelledAmount = data.value.filter(f=>f.Active==0)
+        .reduce((acc, current) => acc + current.TotalAmount, 0);
         this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
@@ -196,14 +201,14 @@ export class TodayCollectionComponent implements OnInit {
 
         this.GroupByPaymentType = [...groupbyPaymentType];
         if (this.DateWiseCollection.length == 0)
-          this.contentservice.openSnackBar("No collection found.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No collection found.", globalconstants.ActionText, globalconstants.RedBackground);
 
         const rows = [];
         this.DateWiseCollection.forEach(element => rows.push(element, { detailRow: true, element }));
         //console.log("rows", rows)
         this.dataSource = new MatTableDataSource(rows);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        //this.dataSource.paginator = this.paginator;
+        //this.dataSource.sort = this.sort;
         this.loading = false;
       })
   }
@@ -215,7 +220,7 @@ export class TodayCollectionComponent implements OnInit {
         this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
           this.FeeDefinitions = [...f];
           if (this.FeeDefinitions.length == 0) {
-            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"],1).subscribe((d: any) => {
+            this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
               this.FeeDefinitions = [...d.value];
             })
           }

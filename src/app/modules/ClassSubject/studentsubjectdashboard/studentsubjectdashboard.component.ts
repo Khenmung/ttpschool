@@ -593,6 +593,7 @@ export class studentsubjectdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.edited = false;
+          row.Action=false;
           this.rowCount++;
           if (this.rowCount == Object.keys(row).length - 3) {
             this.loading = false;

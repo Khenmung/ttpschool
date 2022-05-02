@@ -179,58 +179,82 @@ export class DashboardclassfeeComponent implements OnInit {
   onBlur(element) {
     element.Action = true;
   }
-  
+
   CreateInvoice() {
     var selectedMonth = this.searchForm.get("searchMonth").value;
     if (selectedMonth == 0) {
       this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.BlueBackground);
       return;
     }
-    var OrgIdAndbatchId = {
-      OrgId: this.LoginUserDetail[0]["orgId"],
-      BatchId: this.SelectedBatchId,
-      Month: selectedMonth
-    }
-    this.loading=true;
-    
-    this.authservice.CallAPI(OrgIdAndbatchId, 'getinvoice')
+    this.contentservice.getInvoice(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
       .subscribe((data: any) => {
-        console.log("invoices", data)
-        var AmountAfterFormulaApplied = 0;
-
-        data.forEach(inv => {
-          this.VariableObjList.push(inv)
-          if (inv.Formula.length > 0) {
-            var formula = this.ApplyVariables(inv.Formula);
-            //after applying, remove again since it is for each student
-            this.VariableObjList.splice(this.VariableObjList.indexOf(inv), 1);
-            AmountAfterFormulaApplied = evaluate(formula);
-          }
-          this.LedgerData.push({
-            LedgerId: 0,
-            Active: 1,
-            GeneralLedgerId: 0,
-            BatchId: this.SelectedBatchId,
-            Balance: AmountAfterFormulaApplied,
-            Month: inv.Month,
-            StudentClassId: inv.StudentClassId,
-            OrgId: this.LoginUserDetail[0]["orgId"],
-            TotalDebit: 0,
-            TotalCredit: AmountAfterFormulaApplied,
-          });
-        });
-        var query = "select SUM(TotalCredit) TotalCredit, SUM(Balance) Balance, StudentClassId," +
-          "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalDebit " +
-          "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
-        var sumFeeData = alasql(query, [this.LedgerData]);
-
-        //console.log("sumFeeData",sumFeeData)
-        this.authservice.CallAPI(sumFeeData, 'createinvoice')
+        this.contentservice.createInvoice(data.value, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
-            this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
             this.loading = false;
-          })
-      });
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          },
+            error => {
+              this.loading = false;
+              this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage ,globalconstants.ActionText,globalconstants.RedBackground);
+              console.log("error in createInvoice", error);
+            })
+      },
+        error => {
+          this.loading = false;
+          this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage ,globalconstants.ActionText,globalconstants.RedBackground);
+          console.log("error in getinvoice", error);
+        })
+
+    // var selectedMonth = this.searchForm.get("searchMonth").value;
+    // if (selectedMonth == 0) {
+    //   this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.BlueBackground);
+    //   return;
+    // }
+    // var OrgIdAndbatchId = {
+    //   OrgId: this.LoginUserDetail[0]["orgId"],
+    //   BatchId: this.SelectedBatchId,
+    //   Month: selectedMonth
+    // }
+    // this.loading = true;
+
+    // this.authservice.CallAPI(OrgIdAndbatchId, 'getinvoice')
+    //   .subscribe((data: any) => {
+    //     console.log("invoices", data)
+    //     var AmountAfterFormulaApplied = 0;
+
+    //     data.forEach(inv => {
+    //       this.VariableObjList.push(inv)
+    //       if (inv.Formula.length > 0) {
+    //         var formula = this.ApplyVariables(inv.Formula);
+    //         //after applying, remove again since it is for each student
+    //         this.VariableObjList.splice(this.VariableObjList.indexOf(inv), 1);
+    //         AmountAfterFormulaApplied = evaluate(formula);
+    //       }
+    //       this.LedgerData.push({
+    //         LedgerId: 0,
+    //         Active: 1,
+    //         GeneralLedgerId: 0,
+    //         BatchId: this.SelectedBatchId,
+    //         Balance: AmountAfterFormulaApplied,
+    //         Month: inv.Month,
+    //         StudentClassId: inv.StudentClassId,
+    //         OrgId: this.LoginUserDetail[0]["orgId"],
+    //         TotalDebit: AmountAfterFormulaApplied,
+    //         TotalCredit: 0,
+    //       });
+    //     });
+    //     var query = "select SUM(TotalCredit) TotalCredit, SUM(Balance) Balance, StudentClassId," +
+    //       "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalDebit " +
+    //       "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
+    //     var sumFeeData = alasql(query, [this.LedgerData]);
+
+    //     //console.log("sumFeeData",sumFeeData)
+    //     this.authservice.CallAPI(sumFeeData, 'createinvoice')
+    //       .subscribe((data: any) => {
+    //         this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+    //         this.loading = false;
+    //       })
+    //   });
   }
   ApplyVariables(formula) {
     var filledVar = formula;
@@ -326,8 +350,8 @@ export class DashboardclassfeeComponent implements OnInit {
     let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
       " and ClassId eq " + row.ClassId +
-      " and Month eq " + row.Month 
-      //" and BatchId eq " + row.BatchId
+      " and Month eq " + row.Month
+    //" and BatchId eq " + row.BatchId
     if (row.ClassFeeId > 0)
       checkFilterString += " and ClassFeeId ne " + row.ClassFeeId;
 
@@ -425,12 +449,16 @@ export class DashboardclassfeeComponent implements OnInit {
         }
       })
   }
+  DataFromPreviousBatch = ''
   CopyFromPreviousBatch() {
     if (this.PreviousBatchId == -1)
       this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
-    else
+    else {
+
       this.GetClassFee(this.StandardFilterWithPreviousBatchId, 1)
+    }
   }
+
   GetClassFee(OrgIdAndbatchId, previousbatch) {
     debugger;
     if (this.searchForm.get("ClassId").value == 0) {
@@ -440,11 +468,7 @@ export class DashboardclassfeeComponent implements OnInit {
     }
 
     this.loading = true;
-    let filterstr = "";
-    if (previousbatch == 0)
-      filterstr += " and ClassId eq " + this.searchForm.get("ClassId").value;
-    // if (this.searchForm.get("FeeDefinitionId").value > 0)
-    //   filterstr += " and FeeDefinitionId eq " + this.searchForm.get("FeeDefinitionId").value;
+    let filterstr = " and Active eq 1 and ClassId eq " + this.searchForm.get("ClassId").value;
     if (this.searchForm.get("searchMonth").value > 0)
       filterstr += " and Month eq " + this.searchForm.get("searchMonth").value;
 
@@ -467,62 +491,84 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-
-        if (data.value.length > 0) {
-          this.ELEMENT_DATA = this.FeeDefinitions.map((mainFeeName, indx) => {
-            let existing = data.value.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
-            if (existing.length > 0) {
-              existing[0].SlNo = indx + 1;
-              existing[0].FeeName = mainFeeName.FeeName;
-              existing[0].Action = false;
-              existing[0].ClassFeeId = previousbatch == 1 ? 0 : existing[0].ClassFeeId
-              existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active
-              existing[0].Month = previousbatch == 1 ? 0 : existing[0].Month;
-              existing[0].BatchId = this.SelectedBatchId;
-
-              return existing[0];
-            }
-            else
-              return {
-                "SlNo": indx + 1,
-                "ClassFeeId": 0,
-                "FeeDefinitionId": mainFeeName.FeeDefinitionId,
-                "ClassId": this.searchForm.get("ClassId").value,
-                "FeeName": mainFeeName.FeeName,
-                "Amount": 0,
-                "Month": 0,
-                "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
-                "Active": 0,
-                "Action": false
-              }
-          })
+        var _classFee = [...data.value];
+        if (previousbatch == 1) {
+          this.DataFromPreviousBatch = 'Data From Previous Batch'
+          if (_classFee.length == 0) {
+            this.contentservice.openSnackBar("No data from previous batch.", globalconstants.ActionText, globalconstants.RedBackground);
+            this.loading = false;
+            return;
+          }
+          list.filter = [this.StandardFilterWithBatchId + filterstr];
+          this.dataservice.get(list)
+            .subscribe((existingclsfee: any) => {
+              _classFee = data.value.filter(f => existingclsfee.value.filter(g => g.FeeDefinitionId == f.FeeDefinitionId).length == 0)
+              this.ProcessClassFee(_classFee, previousbatch)
+            })
         }
-        else { //no existing data
-          this.ELEMENT_DATA = this.FeeDefinitions.map((fee, indx) => {
-            return {
-              "SlNo": indx + 1,
-              "ClassFeeId": 0,
-              "FeeDefinitionId": fee.FeeDefinitionId,
-              "ClassId": this.searchForm.get("ClassId").value,
-              "FeeName": fee.FeeName,
-              "Amount": 0,
-              "Month": 0,
-              "BatchId": this.SelectedBatchId,
-              "Active": 0,
-              //"LocationId": this.Locations[0].MasterDataId,
-              "Action": false
-            }
-          });
-
+        else {
+          this.DataFromPreviousBatch = '';
+          this.ProcessClassFee(_classFee, previousbatch)
         }
-        //this.ELEMENT_DATA = 
-        this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
-        ////console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
-        this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this.loading = false;
+
       });
+  }
+  ProcessClassFee(classFee, previousbatch) {
+    if (classFee.length > 0) {
+      this.ELEMENT_DATA = this.FeeDefinitions.map((mainFeeName, indx) => {
+        let existing = classFee.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
+        if (existing.length > 0) {
+          existing[0].SlNo = indx + 1;
+          existing[0].FeeName = mainFeeName.FeeName;
+          existing[0].Action = false;
+          existing[0].ClassId = this.searchForm.get("ClassId").value
+          existing[0].ClassFeeId = previousbatch == 1 ? 0 : existing[0].ClassFeeId
+          existing[0].Active = previousbatch == 1 ? 0 : existing[0].Active
+          existing[0].Month = previousbatch == 1 ? 0 : existing[0].Month;
+          existing[0].BatchId = this.SelectedBatchId;
+
+          return existing[0];
+        }
+        else if (previousbatch == 0)
+          return {
+            "SlNo": indx + 1,
+            "ClassFeeId": 0,
+            "FeeDefinitionId": mainFeeName.FeeDefinitionId,
+            "ClassId": this.searchForm.get("ClassId").value,
+            "FeeName": mainFeeName.FeeName,
+            "Amount": 0,
+            "Month": 0,
+            "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
+            "Active": 0,
+            "Action": false
+          }
+      })
+    }
+    else { //no existing data
+      this.ELEMENT_DATA = this.FeeDefinitions.map((fee, indx) => {
+        return {
+          "SlNo": indx + 1,
+          "ClassFeeId": 0,
+          "FeeDefinitionId": fee.FeeDefinitionId,
+          "ClassId": this.searchForm.get("ClassId").value,
+          "FeeName": fee.FeeName,
+          "Amount": 0,
+          "Month": 0,
+          "BatchId": this.SelectedBatchId,
+          "Active": 0,
+          //"LocationId": this.Locations[0].MasterDataId,
+          "Action": false
+        }
+      });
+
+    }
+    //this.ELEMENT_DATA = 
+    this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
+    ////console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
+    this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.loading = false;
   }
   updateEnable(row, value) {
     row.Action = true;

@@ -226,13 +226,13 @@ export class VerifyResultsComponent implements OnInit {
         });
 
       })
-
+      console.log("_resultToInsert",_resultToInsert)
       this.dataservice.postPatch('ExamStudentResults', _resultToInsert, 0, 'post')
         .subscribe(
           (data: any) => {
             this.loading = false;
             //row.Action = false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.contentservice.openSnackBar("Exam result verified.", globalconstants.ActionText, globalconstants.BlueBackground);
           }, error => {
             //console.log("error",error);
             this.contentservice.openSnackBar("Something went wrong. Please try again.", globalconstants.ActionText, globalconstants.RedBackground);
