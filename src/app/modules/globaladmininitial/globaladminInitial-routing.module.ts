@@ -9,6 +9,7 @@ import { PlanFeatureComponent } from './planfeature/planfeature.component';
 import { AdminrolepermissionComponent } from './adminrolepermission/adminrolepermission.component';
 import { PlanandmasteritemComponent } from './planandmasteritem/planandmasteritem.component';
 import { OrganizationpaymentComponent } from './organizationpayment/organizationpayment.component';
+import { CustomerPlanFeatureComponent } from './customerplanfeature/customerplanfeature.component';
 
 const routes: Routes = [
   {
@@ -32,5 +33,6 @@ export const GlobalAdminInitialComponents = [
   PlanFeatureComponent,
   AdminrolepermissionComponent,
   PlanandmasteritemComponent,
-  OrganizationpaymentComponent
+  OrganizationpaymentComponent,
+  CustomerPlanFeatureComponent
 ]

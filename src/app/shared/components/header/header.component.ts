@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenStorageService } from '../../../_services/token-storage.service';
+import { globalconstants } from '../../globalconstant';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',

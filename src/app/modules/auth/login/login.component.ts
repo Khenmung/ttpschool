@@ -217,7 +217,7 @@ export class LoginComponent implements OnInit {
                 orgId: UserRole[0].OrgId,
                 org: __organization,
                 planId: localStorage.getItem("planId"),
-                logoPath: UserRole[0].Org.LogoPath,
+                logoPath: globalconstants.apiUrl + "/uploads/"+ __organization + "/organization logo/" + UserRole[0].Org.LogoPath,
                 RoleUsers: UserRole.map(roleuser => {
                   if (roleuser.Active == 1 && roleuser.RoleId != null) {
                     this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId

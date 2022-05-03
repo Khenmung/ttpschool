@@ -67,7 +67,7 @@ export class settingboardComponent implements AfterViewInit {
       this.Permissions.ParentPermission = perObj[0].permission;
 
     }
-    this.Permissions.ParentPermission ='rwd';
+    //this.Permissions.ParentPermission ='rwd';
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.MASTERS)
     var comindx = this.components.indexOf(AddMasterDataComponent);

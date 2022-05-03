@@ -11,6 +11,7 @@ import { AdminrolepermissionComponent } from '../adminrolepermission/adminrolepe
 import { PlanandmasteritemComponent } from '../planandmasteritem/planandmasteritem.component';
 import { OrganizationpaymentComponent } from '../organizationpayment/organizationpayment.component';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CustomerPlanFeatureComponent } from '../customerplanfeature/customerplanfeature.component';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -26,7 +27,8 @@ export class GlobaladminboardComponent implements AfterViewInit {
     PlanFeatureComponent,
     PlanandmasteritemComponent,
     AdminrolepermissionComponent,
-    CustomerPlansComponent
+    CustomerPlansComponent,
+    CustomerPlanFeatureComponent
   ];
   LoginUserDetail = [];
   tabNames = [
@@ -36,6 +38,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
     { 'label': "Customer's Plan", 'faIcon': '' },
     { 'label': 'menu config', 'faIcon': '' },
     { 'label': 'Admin Role Permission', 'faIcon': '' },
+    { 'label': 'Organization payment', 'faIcon': '' },
     { 'label': 'Organization payment', 'faIcon': '' },
   ];
 
@@ -105,9 +108,12 @@ export class GlobaladminboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT)
       var comindx = this.components.indexOf(OrganizationpaymentComponent);
       this.GetComponents(perObj, comindx)
+      
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERPLANFEATURE)
+      var comindx = this.components.indexOf(CustomerPlanFeatureComponent);
+      this.GetComponents(perObj, comindx)
 
       this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-      //if(1){ //(this.Permissions.ParentPermission != 'deny') {
       this.renderComponent(0);
       this.cdr.detectChanges();
     }

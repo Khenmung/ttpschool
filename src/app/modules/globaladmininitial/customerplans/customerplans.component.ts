@@ -20,7 +20,7 @@ export class CustomerPlansComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   Applications = [];
-  //ReportNames = [];
+  CustomerPlanFeatures=[];
   Organizations = [];
   Currencies = [];
   CustomerPlansListName = "CustomerPlans";
@@ -56,7 +56,6 @@ export class CustomerPlansComponent implements OnInit {
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
-
     private nav: Router,
     private fb: FormBuilder
   ) {
@@ -80,9 +79,10 @@ export class CustomerPlansComponent implements OnInit {
       this.UserId = this.LoginUserDetail[0]["userId"];
       this.OrgId = this.LoginUserDetail[0]["orgId"];
       if (this.LoginUserDetail[0]['org'].toLowerCase() == 'ttp') {
-        this.displayedColumns = ["PlanName",
-          "PCPM",
+        this.displayedColumns = [
+          "PlanName",
           'Description',
+          "PCPM",
           "MinCount",
           "MinPrice",
           "LoginUserCount",
@@ -100,6 +100,7 @@ export class CustomerPlansComponent implements OnInit {
 
     }
     this.GetOrganizations();
+    this.GetCustomerPlanFeatures();
    
   }
   updateActive(row, value) {
@@ -211,6 +212,21 @@ export class CustomerPlansComponent implements OnInit {
         this.GetPlan();
       })
   }
+  GetCustomerPlanFeatures() {
+    let list: List = new List();
+    list.fields = [
+      "PlanId",
+      "FeatureName",
+      "Active"
+    ];
+    list.PageName = "CustomerPlanFeatures";
+    list.filter = ["Active eq 1"];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.CustomerPlanFeatures = [...data.value];
+        this.loading = false;
+      })
+  }
   GetPlan() {
     let list: List = new List();
     list.fields = [
@@ -235,7 +251,6 @@ export class CustomerPlansComponent implements OnInit {
   GetCustomerPlans() {
 
     this.CustomerPlansList = [];
-    //var orgIdSearchstr = ' and OrgId eq ' + localStorage.getItem("orgId");// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = '';
     if (this.searchForm.get("searchCustomerId").value == 0) {
       this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText, globalconstants.RedBackground);
@@ -281,10 +296,10 @@ export class CustomerPlansComponent implements OnInit {
               "LoginUserCount": d[0].LoginUserCount,
               "PersonOrItemCount": d[0].PersonOrItemCount,
               "MinCount": p.MinCount,
+              "Features": this.CustomerPlanFeatures.filter(f=>f.PlanId == d[0].PlanId),
               "MinPrice": p.MinPrice,
               "PCPM": p.PCPM,
               "Description": p.Description,
-              //"Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
               "Active": d[0].Active
             });
           }

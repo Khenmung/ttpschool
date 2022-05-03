@@ -43,7 +43,9 @@
                     <mat-header-cell *matHeaderCellDef>Description
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" style="padding:15px;" >
-                        {{element.Description}}
+                        <ul>
+                            <li *ngFor="let item of element.Features">{{item.FeatureName}}</li>
+                        </ul>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="MinCount">

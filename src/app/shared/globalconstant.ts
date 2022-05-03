@@ -92,7 +92,8 @@ export class globalconstants {
                 "REPORTCONIG": 'report config',
                 "MENUCONFIG": 'menu config',
                 "PLANANDMASTERDATA": 'Plan n Master Item',
-                "ORGANIZATIONPAYMENT": 'organization payment'
+                "ORGANIZATIONPAYMENT": 'organization payment',
+                "CUSTOMERPLANFEATURE": 'customer plan feature'
             },
             "common": {
                 'AUTH': {

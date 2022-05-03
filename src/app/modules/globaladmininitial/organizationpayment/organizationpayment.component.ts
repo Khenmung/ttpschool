@@ -59,7 +59,7 @@ export class OrganizationpaymentComponent implements OnInit {
     "PaymentMode",
     "Amount",
     "PaymentDate",
-    "Active",
+    //"Active",
     "Action"
   ];
   SelectedApplicationId = 0;
@@ -116,7 +116,7 @@ export class OrganizationpaymentComponent implements OnInit {
       this.contentservice.openSnackBar("Please select customer.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
-    var customDetail = this.CustomerPlans.filter(f => f.CustomerPlanId == orgId);
+    var customDetail = this.CustomerPlans.filter(f => f.OrgId == orgId);
     var AmountPerMonth = 0;
     var PlanId = 0;
     var PlanName = '';
@@ -133,8 +133,8 @@ export class OrganizationpaymentComponent implements OnInit {
       "PaidMonths": 0,
       "Amount": 0,
       "PaymentDate": new Date(),
-      "Active": 0,
-      "Action": false,
+      "Active": 1,
+      "Action": true,
       "OrgId": 0,
       "PaymentStatus": '',
       "PaymentMode": 0
@@ -148,23 +148,23 @@ export class OrganizationpaymentComponent implements OnInit {
     if (row.PaidMonths == 0) {
       this.contentservice.openSnackBar("Please payment for enter no. of months.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
-      row.Action = false;
+      row.Action = true;
       return;
     }
     if (row.PaymentMode == 0) {
       this.contentservice.openSnackBar("Please select payment mode.",globalconstants.ActionText,globalconstants.RedBackground);
       this.loading = false;
-      row.Action = false;
+      row.Action = true;
       return;
     }
-
+    var _searchCustomerId = this.searchForm.get("searchCustomerId").value;
     this.OrganizationPaymentData.OrganizationPaymentId = row.OrganizationPaymentId;
     this.OrganizationPaymentData.OrganizationPlanId = row.OrganizationPlanId;
     this.OrganizationPaymentData.PaidMonths = row.PaidMonths;
     this.OrganizationPaymentData.Amount = row.Amount;
     this.OrganizationPaymentData.PaymentMode = row.PaymentMode;
     this.OrganizationPaymentData.Active = row.Active;
-    this.OrganizationPaymentData.OrgId = this.OrgId;//this.LoginUserDetail[0]["orgId"];
+    this.OrganizationPaymentData.OrgId = _searchCustomerId;//this.LoginUserDetail[0]["orgId"];
     this.OrganizationPaymentData.PaymentDate = row.PaymentDate
     if (this.OrganizationPaymentData.OrganizationPaymentId == 0) {
       this.OrganizationPaymentData["CreatedDate"] = new Date();

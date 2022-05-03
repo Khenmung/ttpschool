@@ -7,6 +7,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -16,30 +17,28 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class OrganizationComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  imagePath: string;
+  message: string;
+  imgURL: any;
+  selectedFile: any;
+  formdata: FormData;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  StorageFnPList = [];
   StandardFilterWithBatchId = '';
   loading = false;
   Applications = [];
   Organizations = [];
   OrganizationListName = "Organizations";
   OrganizationList = [];
-  Country=[];
-  States=[];
-  City=[];
+  Country = [];
+  States = [];
+  City = [];
   Plans = [];
   CustomerPlans = [];
   dataSource: MatTableDataSource<IOrganization>;
   allMasterData = [];
-  PagePermission = '';
+  Permission = '';
   OrganizationData = {
     OrganizationId: 0,
     OrganizationName: '',
@@ -55,9 +54,8 @@ export class OrganizationComponent implements OnInit {
   OrgId = 0;
   UserId = '';
   displayedColumns = [
-    "OrganizationId",
-    "OrganizationName",
-    "LogoPath",
+    //"OrganizationId",
+    //"OrganizationName",
     "Address",
     "Country",
     "State",
@@ -66,16 +64,16 @@ export class OrganizationComponent implements OnInit {
     "ValidTo",
     "CreatedDate",
     "Active",
-    "Action"    
+    "Action"
   ];
-  TopMasters=[];
+  TopMasters = [];
   SelectedApplicationId = 0;
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+    private fileUploadService: FileUploadService,
     private nav: Router,
     private fb: FormBuilder
   ) {
@@ -85,7 +83,7 @@ export class OrganizationComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchCustomerId:[0]
+      searchCustomerId: [0]
     });
     this.dataSource = new MatTableDataSource<IOrganization>([]);
     this.PageLoad();
@@ -106,31 +104,39 @@ export class OrganizationComponent implements OnInit {
       this.OrgId = +localStorage.getItem("orgId");
     }
     this.Applications = this.tokenstorage.getPermittedApplications();
-    var commonAppId = this.Applications.filter(f=>f.appShortName=='common')[0].applicationId;
+    var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
     //var TopMasters=[];
-    this.contentservice.GetParentZeroMasters().subscribe((data:any)=>{
-      this.TopMasters=[...data.value];
-      var countryparentId = this.TopMasters.filter(f=>f.MasterDataName.toLowerCase()=='country')[0].MasterDataId;
-      this.contentservice.GetDropDownDataFromDB(countryparentId,this.OrgId,commonAppId)
-      .subscribe((data:any)=>{
-        this.Country = [...data.value];
-      })
+    this.contentservice.GetParentZeroMasters().subscribe((data: any) => {
+      this.TopMasters = [...data.value];
+      //console.log("this.TopMasters",this.TopMasters)
+      var countryparentId = this.TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'country')[0].MasterDataId;
+      this.contentservice.GetDropDownDataFromDB(countryparentId, this.OrgId, commonAppId)
+        .subscribe((data: any) => {
+          this.Country = [...data.value];
+        })
     })
+    var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.ORGANIZATION)
+    if (perObj.length > 0) {
+      this.Permission = perObj[0].permission;
+    }
     this.GetOrganization();
-    
+    this.GetStorageFnP(0).subscribe((data: any) => {
+      this.StorageFnPList = [...data.value];
+      this.loading = false;
+    })
   }
-  PopulateState(element){
-    var commonAppId = this.Applications.filter(f=>f.appShortName=='common')[0].applicationId;
-       this.contentservice.GetDropDownDataFromDB(element.value,this.OrgId,commonAppId)
-      .subscribe((data:any)=>{
-        this.States =[...data.value];
+  PopulateState(element) {
+    var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
+    this.contentservice.GetDropDownDataFromDB(element.value, this.OrgId, commonAppId)
+      .subscribe((data: any) => {
+        this.States = [...data.value];
       })
   }
-  PopulateCity(element){
-    var commonAppId = this.Applications.filter(f=>f.appShortName=='common')[0].applicationId;
-       this.contentservice.GetDropDownDataFromDB(element.value,this.OrgId,commonAppId)
-      .subscribe((data:any)=>{
-        this.City =[...data.value];
+  PopulateCity(element) {
+    var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
+    this.contentservice.GetDropDownDataFromDB(element.value, this.OrgId, commonAppId)
+      .subscribe((data: any) => {
+        this.City = [...data.value];
       })
   }
   updateActive(row, value) {
@@ -146,12 +152,12 @@ export class OrganizationComponent implements OnInit {
   UpdateOrSave(row) {
 
     if (row.OrganizationName == '') {
-      this.contentservice.openSnackBar("Please enter organization name.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please enter organization name.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       row.Action = false;
       return;
     }
-    
+
 
     this.OrganizationData.OrganizationId = row.OrganizationId;
     this.OrganizationData.OrganizationName = row.OrganizationName;
@@ -190,7 +196,7 @@ export class OrganizationComponent implements OnInit {
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
-          this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
         });
   }
   update(row) {
@@ -200,7 +206,7 @@ export class OrganizationComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   GetOrganization() {
@@ -252,10 +258,89 @@ export class OrganizationComponent implements OnInit {
         this.OrganizationList = [...data.value];
         this.dataSource = new MatTableDataSource<any>(this.OrganizationList);
         this.dataSource.paginator = this.paginator;
-        this.loading = false;
+              
+        var _OrgLogoParentId = this.StorageFnPList.filter(f=>f.FileName.toLowerCase() == "organization logo")[0].FileId;
+        this.GetStorageFnP(_OrgLogoParentId).subscribe((imgurldata: any) => {
+           this.imgURL = globalconstants.apiUrl +"/uploads/"+ this.LoginUserDetail[0]["org"] +"/organization logo/" +  imgurldata.value[0].UpdatedFileFolderName
+          this.loading = false;
+
+          //this.loading = false;
+        })
       })
   }
-  
+  preview(files) {
+    if (files.length === 0)
+      return;
+
+    var mimeType = files[0].type;
+    if (mimeType.match(/image\/*/) == null) {
+      this.message = "Only images are supported.";
+      return;
+    }
+    debugger;
+    this.selectedFile = files[0];
+    if (this.selectedFile.size > 60000) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var reader = new FileReader();
+    this.imagePath = files;
+    reader.readAsDataURL(files[0]);
+    reader.onload = (_event) => {
+      this.imgURL = reader.result;
+    }
+  }
+  uploadFile() {
+    debugger;
+    let error: boolean = false;
+    this.loading = true;
+    if (this.selectedFile == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var _parentId = this.StorageFnPList.filter(f => f.FileName.toLowerCase() == "organization logo")[0].FileId;
+    this.formdata = new FormData();
+    this.formdata.append("description", "organization logo");
+    this.formdata.append("fileOrPhoto", "0");
+    this.formdata.append("folderName", "organization logo");
+    this.formdata.append("parentId", _parentId);
+
+    this.formdata.append("batchId", "0");
+    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("pageId", "0");
+
+    this.formdata.append("studentId", "0");
+    this.formdata.append("studentClassId", "0");
+    this.formdata.append("docTypeId", "0");
+
+    this.formdata.append("image", this.selectedFile, this.selectedFile.name);
+    this.uploadImage();
+  }
+  GetStorageFnP(pParentId) {
+
+    var filterstr = 'Active eq 1 and ParentId eq ' + pParentId;
+    let list: List = new List();
+    list.fields = ["*"];
+    list.PageName = "StorageFnPs";
+    //list.lookupFields = [];
+    list.filter = [filterstr];
+    return this.dataservice.get(list);
+  }
+  uploadImage() {
+    let options = {
+      autoClose: true,
+      keepAfterRouteChange: true
+    };
+    this.fileUploadService.postFiles(this.formdata).subscribe(res => {
+      this.loading = false;
+      this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+
+      //this.Edit = false;
+    });
+  }
   onBlur(element) {
     //debugger;
     element.Action = true;
