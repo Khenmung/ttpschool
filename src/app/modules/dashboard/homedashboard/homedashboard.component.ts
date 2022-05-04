@@ -63,7 +63,7 @@ export class HomeDashboardComponent implements OnInit {
       }
       else {
         var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-        this.PermittedApplications = [..._UniquePermittedApplications];
+        this.PermittedApplications = _UniquePermittedApplications.filter(f=>f.applicationName.toLowerCase()!='common panel');
 
         if (this.PermittedApplications.length == 0) {
           this.tokenStorage.signOut();

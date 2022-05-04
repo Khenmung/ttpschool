@@ -63,7 +63,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   studentInfoTodisplay = {
     StudentFeeReceiptId: 0,
     BatchId: 0,
-    RollNo:0,
+    RollNo: 0,
     StudentFeeType: '',
     StudentName: '',
     StudentClassName: '',
@@ -148,7 +148,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     LedgerId: 0,
     StudentClassId: 0,
     Month: 0,
-    TotalDebit: 0,
+    //TotalDebit: 0,
     TotalCredit: 0,
     Balance: 0,
     BatchId: 0,
@@ -160,7 +160,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     'SlNo1',
     'MonthName',
     'TotalDebit',
-    'TotalCredit',    
+    'TotalCredit',
     'Balance',
     'Action'
   ];
@@ -472,37 +472,38 @@ export class AddstudentfeepaymentComponent implements OnInit {
                   })
                 })
             }
-            else {
-              //debugger;
-              let AmountAfterFormulaApplied = 0;
-              this.VariableObjList.push(studentClassFee);
-              var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
-              //after applying, remove again since it is for each student
-              this.VariableObjList.splice(this.VariableObjList.indexOf(studentClassFee), 1);
-              AmountAfterFormulaApplied = evaluate(formula);
+            // else {
+            //   //debugger;
+            //   let AmountAfterFormulaApplied = 0;
+            //   this.VariableObjList.push(studentClassFee);
+            //   var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
+            //   //after applying, remove again since it is for each student
+            //   this.VariableObjList.splice(this.VariableObjList.indexOf(studentClassFee), 1);
+            //   AmountAfterFormulaApplied = evaluate(formula);
 
-              var monthadded = this.StudentLedgerList.filter(f => f.Month == studentClassFee.Month);
-              if (monthadded.length > 0) {
-                monthadded[0].TotalDebit += +AmountAfterFormulaApplied;
-                monthadded[0].Balance = monthadded[0].TotalDebit;
-              }
-              else
-                this.StudentLedgerList.push({
-                  SlNo1: itemcount++,
-                  LedgerId: 0,
-                  StudentClassId: this.studentInfoTodisplay.StudentClassId,
-                  Month: studentClassFee.Month,
-                  GeneralLedgerId: 0,
-                  TotalDebit: +AmountAfterFormulaApplied,
-                  TotalCredit: 0,
-                  Balance: +AmountAfterFormulaApplied,
-                  MonthName: studentClassFee.MonthName,
-                  FeeCategory: studentClassFee.FeeCategory,
-                  FeeSubCategory: studentClassFee.FeeSubCategory,
-                  BatchId: studentClassFee.BatchId,
-                  Action: false
-                });
-            }
+            //   var monthadded = this.StudentLedgerList.filter(f => f.Month == studentClassFee.Month);
+            //   if (monthadded.length > 0) {
+            //     monthadded[0].TotalDebit += +AmountAfterFormulaApplied;
+            //     monthadded[0].Balance = monthadded[0].TotalDebit;
+            //   }
+            //   else {
+            //     this.StudentLedgerList.push({
+            //       SlNo1: itemcount++,
+            //       LedgerId: 0,
+            //       StudentClassId: this.studentInfoTodisplay.StudentClassId,
+            //       Month: studentClassFee.Month,
+            //       GeneralLedgerId: 0,
+            //       TotalDebit: +AmountAfterFormulaApplied,
+            //       TotalCredit: 0,
+            //       Balance: +AmountAfterFormulaApplied,
+            //       MonthName: studentClassFee.MonthName,
+            //       FeeCategory: studentClassFee.FeeCategory,
+            //       FeeSubCategory: studentClassFee.FeeSubCategory,
+            //       BatchId: studentClassFee.BatchId,
+            //       Action: false
+            //     });
+            //   }
+            // }
           })
         }
         else {
@@ -541,7 +542,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     if (event.checked) {
       var previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < row.Month && +f.Balance > 0);
       var MonthSelected = [];
-      
+
       //checking if previous balance exist
       if (previousBalanceMonthObj.length > 0) {
         MonthSelected = this.MonthlyDueDetail.filter(f => f.Month == previousBalanceMonthObj[0].Month)
@@ -554,35 +555,35 @@ export class AddstudentfeepaymentComponent implements OnInit {
       }
       row.Action = true;
       var SelectedMonthFees = this.StudentClassFees.filter(f => f.Month == row.Month);
-      
+
       //  debugger;
-        var AmountAfterFormulaApplied = 0;
-        SelectedMonthFees.forEach((f,indx) => {
-          this.VariableObjList.push(f);
-          var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
-          this.VariableObjList.splice(this.VariableObjList.indexOf(f), 1);
-          AmountAfterFormulaApplied = evaluate(formula);
-          this.NewDataCount++;
-          this.MonthlyDueDetail.push({
-            SlNo: this.NewDataCount,
-            AccountingVoucherId: 0,
-            PostingDate: new Date(),
-            Reference: '',
-            LedgerId: row.LedgerId,
-            DebitCreditId: 0,
-            FeeName: f.FeeName,
-            BaseAmountForCalc: +AmountAfterFormulaApplied,
-            Amount: +AmountAfterFormulaApplied,
-            Month: row.Month,
-            ClassFeeId: f.ClassFeeId,
-            AmountEditable: f.AmountEditable,
-            ShortText: '',
-            OrgId: this.LoginUserDetail[0]["orgId"],
-            SubOrgId: 0,
-            Active: 1,
-            Action: true
-          })
+      var AmountAfterFormulaApplied = 0;
+      SelectedMonthFees.forEach((f, indx) => {
+        this.VariableObjList.push(f);
+        var formula = this.ApplyVariables(this.studentInfoTodisplay.Formula);
+        this.VariableObjList.splice(this.VariableObjList.indexOf(f), 1);
+        AmountAfterFormulaApplied = evaluate(formula);
+        this.NewDataCount++;
+        this.MonthlyDueDetail.push({
+          SlNo: this.NewDataCount,
+          AccountingVoucherId: 0,
+          PostingDate: new Date(),
+          Reference: '',
+          LedgerId: row.LedgerId,
+          DebitCreditId: 0,
+          FeeName: f.FeeName,
+          BaseAmountForCalc: +AmountAfterFormulaApplied,
+          Amount: +AmountAfterFormulaApplied,
+          Month: row.Month,
+          ClassFeeId: f.ClassFeeId,
+          AmountEditable: f.AmountEditable,
+          ShortText: '',
+          OrgId: this.LoginUserDetail[0]["orgId"],
+          SubOrgId: 0,
+          Active: 1,
+          Action: true
         })
+      })
       //}
     }
     else {
@@ -603,7 +604,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     //debugger;
     var error = [];
     var maxMonth = Math.max.apply(Math, this.MonthlyDueDetail.map(function (o) { return o.Month; }));
-    this.StudentLedgerData.LedgerId =0;
+    this.StudentLedgerData.LedgerId = 0;
     var previousBalanceMonthObj = [];
 
     previousBalanceMonthObj = this.StudentLedgerList.filter(f => f.Month < maxMonth && +f.Balance > 0);
@@ -666,32 +667,32 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     var SelectedMonths = this.StudentLedgerList.filter(f => f.Action)
     //this.FeePayment.LedgerAccount["AccountingVoucher"] = [];
-    this.FeePayment.AccountingVoucher =[];
-    this.FeePayment.LedgerAccount =[];
-    SelectedMonths.forEach(selectedMonthrow => {
-      var monthPayAmount = this.MonthlyDueDetail.filter(f => f.Month == selectedMonthrow.Month)
-      var monthAmount = monthPayAmount.reduce((acc, item) => {
+    this.FeePayment.AccountingVoucher = [];
+    this.FeePayment.LedgerAccount = [];
+    SelectedMonths.forEach(selectedMonthrowFromLedger => {
+      var monthPayAmount = this.MonthlyDueDetail.filter(f => f.Month == selectedMonthrowFromLedger.Month)
+      var monthAmountFromClassFee = monthPayAmount.reduce((acc, item) => {
         return acc + item.Amount;
       }, 0)
 
-      this.StudentLedgerData.LedgerId = selectedMonthrow.LedgerId;
+      this.StudentLedgerData.LedgerId = selectedMonthrowFromLedger.LedgerId;
       this.StudentLedgerData.Active = 1;
       //this.StudentLedgerData.GeneralLedgerId = 0;//StudentFeeLedgerNameId;// row.AccountGroupId;
       this.StudentLedgerData.BatchId = this.SelectedBatchId;
 
       this.StudentLedgerData.Balance = this.Balance;
-      this.StudentLedgerData.Month = selectedMonthrow.Month;
-      this.StudentLedgerData.StudentClassId = selectedMonthrow.StudentClassId;
+      this.StudentLedgerData.Month = selectedMonthrowFromLedger.Month;
+      this.StudentLedgerData.StudentClassId = selectedMonthrowFromLedger.StudentClassId;
       this.StudentLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
-      this.StudentLedgerData.TotalDebit = this.Balance == 0 ?monthAmount:selectedMonthrow.TotalCredit;
-      this.StudentLedgerData.TotalCredit = this.Balance == 0 ?monthAmount:selectedMonthrow.TotalCredit;
+      //this.StudentLedgerData.TotalDebit = selectedMonthrowFromLedger.TotalDebit == 0 ?monthAmountFromClassFee:selectedMonthrowFromLedger.TotalDebit;
+      this.StudentLedgerData.TotalCredit = monthAmountFromClassFee;
 
       this.FeePayment.LedgerAccount.push(JSON.parse(JSON.stringify(this.StudentLedgerData)));
 
-      var monthPaydetail = this.MonthlyDueDetail.filter(f => f.Month == selectedMonthrow.Month)
+      var monthPaydetail = this.MonthlyDueDetail.filter(f => f.Month == selectedMonthrowFromLedger.Month)
 
       monthPaydetail.forEach((paydetail) => {
-        paydetail.LedgerId = selectedMonthrow.LedgerId;
+        paydetail.LedgerId = selectedMonthrowFromLedger.LedgerId;
         this.FeePayment.AccountingVoucher.push(
           {
             "AccountingVoucherId": 0,
@@ -700,7 +701,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             "Amount": paydetail.Amount,
             "DebitCreditId": 0,
             "FeeReceiptId": 0,
-            "LedgerId": selectedMonthrow.LedgerId,
+            "LedgerId": selectedMonthrowFromLedger.LedgerId,
             "ShortText": paydetail.ShortText,
             "Active": 1,
             "OrgId": this.LoginUserDetail[0]["orgId"],
@@ -718,7 +719,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.loading = false;
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource([]);
-        
+
         this.contentservice.openSnackBar("Payment done successfully!", globalconstants.ActionText, globalconstants.BlueBackground);
         this.tabChanged(1);
       })

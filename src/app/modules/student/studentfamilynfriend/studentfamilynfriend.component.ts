@@ -193,13 +193,17 @@ export class StudentfamilynfriendComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
+          var studentIdObj = this.Students.filter(s => s.Name == row.SiblingName)
+          var _studentId = 0;
+          if (studentIdObj.length > 0)
+            _studentId = studentIdObj[0].StudentId;
 
           this.StudentFamilyNFriendData.StudentFamilyNFriendId = row.StudentFamilyNFriendId;
           this.StudentFamilyNFriendData.Active = row.Active;
           this.StudentFamilyNFriendData.ContactNo = row.ContactNo;
           this.StudentFamilyNFriendData.StudentId = this.StudentId;
           this.StudentFamilyNFriendData.RelationshipId = row.RelationshipId;
-          this.StudentFamilyNFriendData.SiblingId = this.Students.filter(s => s.Name == row.SiblingName)[0].StudentId;
+          this.StudentFamilyNFriendData.SiblingId = _studentId;
           this.StudentFamilyNFriendData.Name = row.Name;
           this.StudentFamilyNFriendData.Remarks = row.Remarks;
           this.StudentFamilyNFriendData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -289,8 +293,8 @@ export class StudentfamilynfriendComponent implements OnInit {
               if (obj.length > 0) {
                 m.SiblingName = obj[0].Name;
                 m.FeeType = obj[0].FeeType;
-                m.FeeTypeRemarks =obj[0].Remarks;
-            }
+                m.FeeTypeRemarks = obj[0].Remarks;
+              }
             }
             else
               m.SiblingName = ''

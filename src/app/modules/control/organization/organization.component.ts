@@ -103,28 +103,32 @@ export class OrganizationComponent implements OnInit {
       this.UserId = localStorage.getItem("userId");
       this.OrgId = +localStorage.getItem("orgId");
     }
-    this.Applications = this.tokenstorage.getPermittedApplications();
-    var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
-    //var TopMasters=[];
-    this.contentservice.GetParentZeroMasters().subscribe((data: any) => {
-      this.TopMasters = [...data.value];
-      //console.log("this.TopMasters",this.TopMasters)
-      var countryparentId = this.TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'country')[0].MasterDataId;
-      this.contentservice.GetDropDownDataFromDB(countryparentId, this.OrgId, commonAppId)
-        .subscribe((data: any) => {
-          this.Country = [...data.value];
-        })
-    })
+
     var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.CONTROL.ORGANIZATION)
     if (perObj.length > 0) {
       this.Permission = perObj[0].permission;
     }
-    this.GetOrganization();
-    this.GetStorageFnP(0).subscribe((data: any) => {
-      this.StorageFnPList = [...data.value];
-      this.loading = false;
-    })
-  }
+    if (this.Permission != 'deny') {
+      this.Applications = this.tokenstorage.getPermittedApplications();
+      var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
+      //var TopMasters=[];
+      this.contentservice.GetParentZeroMasters().subscribe((data: any) => {
+        this.TopMasters = [...data.value];
+        //console.log("this.TopMasters",this.TopMasters)
+        var countryparentId = this.TopMasters.filter(f => f.MasterDataName.toLowerCase() == 'country')[0].MasterDataId;
+        this.contentservice.GetDropDownDataFromDB(countryparentId, this.OrgId, commonAppId)
+          .subscribe((data: any) => {
+            this.Country = [...data.value];
+          })
+      })
+      this.GetOrganization();
+        this.GetStorageFnP(0).subscribe((data: any) => {
+          this.StorageFnPList = [...data.value];
+          this.loading = false;
+        })
+      }
+    }
+  //}
   PopulateState(element) {
     var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
     this.contentservice.GetDropDownDataFromDB(element.value, this.OrgId, commonAppId)
@@ -219,6 +223,13 @@ export class OrganizationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.Organizations = [...data.value];
+        if (this.LoginUserDetail[0]['org'].toLowerCase() != 'ttp') {
+          this.imgURL = this.LoginUserDetail[0].logoPath
+          this.searchForm.patchValue({"searchCustomerId":this.LoginUserDetail[0]['orgId']});
+          var cntrl =  this.searchForm.get("searchCustomerId");
+          cntrl.disable();
+          this.GetOrganizationDetail();
+        }
         this.loading = false;
       });
   }
@@ -258,10 +269,10 @@ export class OrganizationComponent implements OnInit {
         this.OrganizationList = [...data.value];
         this.dataSource = new MatTableDataSource<any>(this.OrganizationList);
         this.dataSource.paginator = this.paginator;
-              
-        var _OrgLogoParentId = this.StorageFnPList.filter(f=>f.FileName.toLowerCase() == "organization logo")[0].FileId;
+
+        var _OrgLogoParentId = this.StorageFnPList.filter(f => f.FileName.toLowerCase() == "organization logo")[0].FileId;
         this.GetStorageFnP(_OrgLogoParentId).subscribe((imgurldata: any) => {
-           this.imgURL = globalconstants.apiUrl +"/uploads/"+ this.LoginUserDetail[0]["org"] +"/organization logo/" +  imgurldata.value[0].UpdatedFileFolderName
+          this.imgURL = globalconstants.apiUrl + "/uploads/" + this.LoginUserDetail[0]["org"] + "/organization logo/" + imgurldata.value[0].UpdatedFileFolderName
           this.loading = false;
 
           //this.loading = false;

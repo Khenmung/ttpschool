@@ -181,14 +181,15 @@ export class DashboardclassfeeComponent implements OnInit {
   }
 
   CreateInvoice() {
-    var selectedMonth = this.searchForm.get("searchMonth").value;
-    if (selectedMonth == 0) {
-      this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.BlueBackground);
-      return;
-    }
+    // var selectedMonth = this.searchForm.get("searchMonth").value;
+    // if (selectedMonth == 0) {
+    //   this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.BlueBackground);
+    //   return;
+    // }
+    //debugger;
     this.contentservice.getInvoice(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
       .subscribe((data: any) => {
-        this.contentservice.createInvoice(data.value, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.loading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);

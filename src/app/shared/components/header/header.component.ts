@@ -27,7 +27,10 @@ export class HeaderComponent implements OnInit {
 debugger;
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetails.length==0)
+    {
       this.loggedIn = false;
+      this.logoPath = "assets/images/newttplogo.png"
+    }     
     else {
       this.loggedIn = true;
       this.userName = localStorage.getItem('username');    

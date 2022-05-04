@@ -363,7 +363,9 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
-                        <input formControlName="Remarks" autocomplete="Off" #Pincode matInput [maxlength]="250">
+                        <input formControlName="Remarks" 
+                        (blur)="OnBlur()"
+                        autocomplete="Off" #Pincode matInput [maxlength]="250">
                     </mat-form-field>
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active

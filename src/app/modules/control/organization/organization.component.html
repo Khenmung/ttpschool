@@ -7,7 +7,7 @@
 <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
     <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
         <mat-form-field appearance="outline">
-            <mat-label>Customer</mat-label>
+            <mat-label>Organization</mat-label>
             <mat-select formControlName="searchCustomerId">
                 <mat-option [value]="0">select</mat-option>
                 <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
@@ -15,7 +15,7 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <button [disabled]="loading" matTooltip="search" mat-raised-button color="accent"
+        <button [disabled]="loading || Permission=='read' || LoginUserDetail[0]['org'] !='TTP'" matTooltip="search" mat-raised-button color="accent"
             (click)="GetOrganizationDetail()">
             <mat-icon>search</mat-icon>
         </button>
@@ -116,26 +116,27 @@
         <mat-header-cell *matHeaderCellDef>Registered On
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
+            {{element.CreatedDate|date:'dd/MM/yyyy hh:mm'}}
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Start Date</mat-label>
                 <input (onBlur)="onBlur(element)" [(ngModel)]="element.CreatedDate" [value]="element.CreatedDate"
                     matInput [matDatepicker]="CreatedDate" autocomplete="off">
                 <mat-datepicker-toggle matSuffix [for]="CreatedDate"></mat-datepicker-toggle>
                 <mat-datepicker #CreatedDate></mat-datepicker>
-            </mat-form-field>
+            </mat-form-field> -->
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ValidTo">
         <mat-header-cell *matHeaderCellDef>Valid Till
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field appearance="outline">
-                <!-- <mat-label>Start Date</mat-label> -->
+            {{element.ValidTo|date:'dd/MM/yyyy hh:mm'}}
+            <!-- <mat-form-field appearance="outline">
                 <input (onBlur)="onBlur(element)" [(ngModel)]="element.ValidTo" [value]="element.ValidTo" matInput
                     [matDatepicker]="ValidTo" autocomplete="off">
                 <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
                 <mat-datepicker #ValidTo></mat-datepicker>
-            </mat-form-field>
+            </mat-form-field> -->
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Active">

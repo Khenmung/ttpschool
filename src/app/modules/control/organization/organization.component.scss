@@ -2,12 +2,17 @@ mat-form-field{
     margin-right: 15px;
     width: 98%;
 }
+mat-cell:first-of-type{
+    padding-left: 0px;
+}
 .mat-column-CreatedDate,.mat-column-ValidTo{
     flex: 1 1 140px;
 }
 .mat-column-Contact,.mat-column-Active,.mat-column-Action,.mat-column-Country,.mat-column-State,.mat-column-City{
     flex: 1 1 120px;    
 }
-.mat-column-LogoPath,.mat-column-Address,.mat-column-OrganizationName{
+.mat-column-LogoPath,
+.mat-column-Address,
+.mat-column-OrganizationName{
     flex: 1 1 150px;
 }
