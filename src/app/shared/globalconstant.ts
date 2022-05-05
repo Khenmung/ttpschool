@@ -109,7 +109,8 @@ export class globalconstants {
                     'ROLEUSER': 'role user',
                     'USERS': 'user',
                     'MASTERS': 'Essential Data',
-                    'ORGANIZATION': 'organization'
+                    'ORGANIZATION': 'organization',
+                    'MYPLAN': 'my plan'
                 },
                 "misc": {
                     "FRONTOFFICE": "front office",

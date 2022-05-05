@@ -20,7 +20,7 @@ export class CustomerPlansComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   Applications = [];
-  CustomerPlanFeatures=[];
+  CustomerPlanFeatures = [];
   Organizations = [];
   Currencies = [];
   CustomerPlansListName = "CustomerPlans";
@@ -29,6 +29,7 @@ export class CustomerPlansComponent implements OnInit {
   dataSource: MatTableDataSource<ICustomerPlans>;
   allMasterData = [];
   PagePermission = '';
+  CustomerPlanId = 0;
   CustomerPlansData = {
     CustomerPlanId: 0,
     PlanId: 0,
@@ -101,7 +102,7 @@ export class CustomerPlansComponent implements OnInit {
     }
     this.GetOrganizations();
     this.GetCustomerPlanFeatures();
-   
+
   }
   updateActive(row, value) {
 
@@ -119,7 +120,9 @@ export class CustomerPlansComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter no. of students", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    this.CustomerPlansData.CustomerPlanId = row.CustomerPlanId;
+    //there will be only one row for a customer;
+    this.CustomerPlansData.CustomerPlanId = this.CustomerPlanId;
+    
     this.CustomerPlansData.PlanId = row.PlanId;
     this.CustomerPlansData.AmountPerMonth = row.AmountPerMonth;
     this.CustomerPlansData.Formula = row.Formula;
@@ -285,6 +288,9 @@ export class CustomerPlansComponent implements OnInit {
           //customerapp = {};  
           var d = data.value.filter(db => db.PlanId == p.PlanId);
           if (d.length > 0) {
+            if (d[0].Active == 1)
+              this.CustomerPlanId = d[0].CustomerPlanId
+
             this.CustomerPlansList.push({
               "AmountPerMonth": d[0].AmountPerMonth,
               "CurrencyId": p.CurrencyId,
@@ -296,7 +302,7 @@ export class CustomerPlansComponent implements OnInit {
               "LoginUserCount": d[0].LoginUserCount,
               "PersonOrItemCount": d[0].PersonOrItemCount,
               "MinCount": p.MinCount,
-              "Features": this.CustomerPlanFeatures.filter(f=>f.PlanId == d[0].PlanId),
+              "Features": this.CustomerPlanFeatures.filter(f => f.PlanId == p.PlanId),
               "MinPrice": p.MinPrice,
               "PCPM": p.PCPM,
               "Description": p.Description,
@@ -317,7 +323,7 @@ export class CustomerPlansComponent implements OnInit {
               "MinPrice": p.MinPrice,
               "PCPM": p.PCPM,
               "Description": p.Description,
-              //"Currency": this.Currencies.filter(a => a.MasterDataId == p.CurrencyId)[0].MasterDataName,
+              "Features": this.CustomerPlanFeatures.filter(f => f.PlanId == p.PlanId),
               "Active": 0
             });
           }

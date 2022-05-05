@@ -51,6 +51,7 @@
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
+                        &nbsp;
                         <button [disabled]="loading" matTooltip="Details" mat-mini-fab (click)="view(element)">
                             <mat-icon>pageview</mat-icon>
                         </button>

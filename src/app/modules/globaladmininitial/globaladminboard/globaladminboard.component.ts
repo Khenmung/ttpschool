@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { MenuConfigComponent } from '../menu-config/menu-config.component';
-import { CustomerPlansComponent } from '../customerplans/customerplans.component';
+import { CustomerPlansComponent } from '../../control/customerplans/customerplans.component';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';

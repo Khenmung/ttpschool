@@ -163,6 +163,7 @@ export class AdminrolepermissionComponent implements OnInit {
       })
   }
   SelectApplication(event) {
+    debugger;
     this.EmptyData();
     this.getCustomersData();
     this.SelectedCustomerPlanId = this.Organizations.filter(f => f.OrganizationId == event.value)[0].PlanId;
@@ -184,7 +185,7 @@ export class AdminrolepermissionComponent implements OnInit {
           this.CustomerApps.push(objapp[0]);
         }
       })
-
+      this.searchForm.patchValue({"searchApplicationId":0});
     })
   }
   getSettingStatus(data) {
@@ -271,6 +272,7 @@ export class AdminrolepermissionComponent implements OnInit {
     }
 
     var rolefilter = '';
+    this.SelectedApplicationId = this.searchForm.get("searchApplicationId").value
     if (this.SelectedApplicationId == 0) {
       this.contentservice.openSnackBar("Please select Application", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -314,7 +316,11 @@ export class AdminrolepermissionComponent implements OnInit {
           filteredFeature = this.PlanFeaturePages.filter(f => f.ParentId == _ParentId);
         else
           filteredFeature = [...this.PlanFeaturePages];
-        //debugger;
+        // console.log("filteredFeature")
+        // console.table(filteredFeature)
+        // console.log("data.value")
+        // console.table(data.value)
+
         filteredFeature.forEach(p => {
           var existing = data.value.filter(r => r.PlanFeatureId == p.PlanFeatureId);
           if (existing.length > 0)

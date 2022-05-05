@@ -23,3 +23,9 @@
 .mat-column-Formula,.mat-column-Description{
     flex: 0 0 200px;
 }
+mat-cell{
+    border-right: 1px solid lightgray;
+    //border-bottom: 1px solid lightgray;
+    padding: 10px;
+    align-self: stretch;
+}

@@ -33,9 +33,9 @@ export class searchstudentComponent implements OnInit {
   displayedColumns = [
     'StudentId',
     'Name',
-    'ClassName',
     'FatherName',
     'MotherName',
+    'ClassName',
     'FeeType',
     'Remarks',
     'Active',
@@ -360,8 +360,8 @@ export class searchstudentComponent implements OnInit {
     if (this.studentSearchForm.get("FatherName").value != '')
       checkFilterString += " and contains(FatherName,'" + _fatherName + "')";
     if (this.studentSearchForm.get("MotherName").value != '')
-      checkFilterString += " and contains(MotherName,'" + + "')"
-      let list: List = new List();
+      checkFilterString += " and contains(MotherName,'" + _motherName + "')"
+    let list: List = new List();
     list.fields = ["StudentId",
       "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
@@ -378,16 +378,21 @@ export class searchstudentComponent implements OnInit {
         if (data.value.length > 0) {
           var formattedData = data.value.filter(sc => {
             let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
-            sc.FeeType = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId)[0].FeeTypeName;            
+            if (sc.StudentClasses.length > 0)
+              sc.FeeType = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId)[0].FeeTypeName;
             sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
             return sc;
           });
           this.ELEMENT_DATA = formattedData.map(item => {
             item.Name = item.FirstName + " " + item.LastName;
-            item.Remarks = item.StudentClasses[0].Remarks;
+            
             if (item.StudentClasses.length == 0)
+            {
+              item.Remarks='';
               item.ClassName = '';
+            }              
             else {
+              item.Remarks = item.StudentClasses[0].Remarks;
               var clsobj = this.Classes.filter(cls => {
                 return cls.ClassId == item.StudentClasses[0].ClassId
               })

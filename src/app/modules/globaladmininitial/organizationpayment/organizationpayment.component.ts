@@ -68,7 +68,7 @@ export class OrganizationpaymentComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: FormBuilder
   ) {
@@ -113,7 +113,7 @@ export class OrganizationpaymentComponent implements OnInit {
     var orgId = this.searchForm.get("searchCustomerId").value
     if (orgId == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select customer.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select customer.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var customDetail = this.CustomerPlans.filter(f => f.OrgId == orgId);
@@ -146,13 +146,13 @@ export class OrganizationpaymentComponent implements OnInit {
   UpdateOrSave(row) {
 
     if (row.PaidMonths == 0) {
-      this.contentservice.openSnackBar("Please payment for enter no. of months.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please payment for enter no. of months.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       row.Action = true;
       return;
     }
     if (row.PaymentMode == 0) {
-      this.contentservice.openSnackBar("Please select payment mode.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select payment mode.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       row.Action = true;
       return;
@@ -192,7 +192,7 @@ export class OrganizationpaymentComponent implements OnInit {
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
-          this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
         });
   }
   update(row) {
@@ -202,7 +202,7 @@ export class OrganizationpaymentComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   GetPaymentModes() {
@@ -213,7 +213,7 @@ export class OrganizationpaymentComponent implements OnInit {
         var globalAdminId = this.Applications.filter(f => f.appShortName.toLowerCase() == 'globaladmin')[0].applicationId;
         var PaymentModeParentId = this.allMasterData.filter(f => f.MasterDataName.toLowerCase() == globalconstants.MasterDefinitions.ttpapps.PAYMENTSTATUS)[0].MasterDataId;
 
-        this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.LoginUserDetail[0]["orgId"], globalAdminId,1)
+        this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.LoginUserDetail[0]["orgId"], globalAdminId, 1)
           .subscribe((data: any) => {
             this.PaymentModes = [...data.value];
             this.loading = false;
@@ -270,7 +270,7 @@ export class OrganizationpaymentComponent implements OnInit {
     //var orgIdSearchstr = ' and OrgId eq ' + localStorage.getItem("orgId");// + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchCustomerId").value == 0) {
-      this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select organization", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -286,6 +286,7 @@ export class OrganizationpaymentComponent implements OnInit {
       "OrganizationPaymentId",
       "OrgId",
       "OrganizationPlanId",
+      "AmountPerMonth",
       "PaidMonths",
       "PaymentDate",
       "Amount",
@@ -293,6 +294,7 @@ export class OrganizationpaymentComponent implements OnInit {
       "Active"
     ];
     list.PageName = this.OrganizationPaymentListName;
+    list.orderBy = "OrganizationPaymentId desc"
     //list.lookupFields = [];
     list.filter = [filterstr];
     this.dataservice.get(list)
@@ -302,14 +304,14 @@ export class OrganizationpaymentComponent implements OnInit {
           var customerplanobj = this.CustomerPlans.filter(f => f.CustomerPlanId == x.OrganizationPlanId);
           if (customerplanobj.length > 0) {
             x.PlanName = customerplanobj[0].PlanName;
-            x.AmountPerMonth = customerplanobj[0].AmountPerMonth;
+            //x.AmountPerMonth = //customerplanobj[0].AmountPerMonth;
             x.PaymentStatus = this.PaymentModes.filter(f => f.MasterDataId == x.PaymentMode)[0].MasterDataName;
           }
           return x;
         });
 
         if (this.OrganizationPaymentList.length == 0)
-          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
 
         this.dataSource = new MatTableDataSource<any>(this.OrganizationPaymentList.sort((a, b) => new Date(b.PaymentDate).getTime() - new Date(a.PaymentDate).getTime()));
         this.dataSource.paginator = this.paginator;
@@ -335,13 +337,10 @@ export class OrganizationpaymentComponent implements OnInit {
 
   onBlur(element) {
     debugger;
-    element.Action = true;
-    // var formula = element.Formula == '' ? element.Logic : element.Formula;
-    // Object.keys(element).forEach(prop => {
-    //   if (formula.includes('[' + prop + ']') && prop != 'Description')
-    //     formula = formula.replaceAll('[' + prop + ']', element[prop]);
-    // })
-    element.Amount = element["AmountPerMonth"] * element.PaidMonths;
+    if (element.OrganizationPaymentId == 0) {
+      element.Action = true;
+      element.Amount = element["AmountPerMonth"] * element.PaidMonths;
+    }
   }
 
   getDropDownData(dropdowntype) {

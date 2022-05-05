@@ -5,34 +5,39 @@
     <!-- <alert></alert> -->
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline" #Class style="width: 200px;">
-            <mat-label>Class</mat-label>
-            <mat-select formControlName="ClassId">
-                <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
-                    {{p.ClassName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" style="width: 200px;">
-            <mat-label>Month Year</mat-label>
-            <mat-select formControlName="searchMonth">
-                <mat-option [value]="0">select</mat-option>
-                <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button [disabled]="loading" matTooltip="search" mat-raised-button color="accent" style="margin-right: 15px;"
-            (click)="GetClassFee(StandardFilterWithBatchId,0)">
-            <mat-icon>search</mat-icon>
-        </button>
-        <button [disabled]="loading" matTooltip="copy from previous batch" style="margin-right: 15px;" mat-raised-button
-            color="accent" (click)="CopyFromPreviousBatch()">
-            <mat-icon>copy_all</mat-icon>
-        </button>
-        <button [disabled]="loading" matTooltip="create invoice" class="mat-raised-button" style="margin-right: 15px;"
-            (click)="CreateInvoice()">
-            <mat-icon>receipt_long</mat-icon>
-        </button>
-        <br>
+        <span style="display: flex;flex-direction: row;justify-content: space-around;">
+            <span>
+                <mat-form-field appearance="outline" #Class style="width: 200px;">
+                    <mat-label>Class</mat-label>
+                    <mat-select formControlName="ClassId">
+                        <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
+                            {{p.ClassName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" style="width: 200px;">
+                    <mat-label>Month Year</mat-label>
+                    <mat-select formControlName="searchMonth">
+                        <mat-option [value]="0">select</mat-option>
+                        <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button [disabled]="loading" matTooltip="search" mat-raised-button color="accent"
+                    style="margin-right: 15px;" (click)="GetClassFee(StandardFilterWithBatchId,0)">
+                    <mat-icon>search</mat-icon>
+                </button>
+                <button [disabled]="loading" matTooltip="copy from previous batch" style="margin-right: 15px;"
+                    mat-raised-button color="accent" (click)="CopyFromPreviousBatch()">
+                    <mat-icon>copy_all</mat-icon>
+                </button>
+            </span>
+            <span style="display:flex;flex-direction: column; justify-content: center;align-items:center;padding-left: 15px; border: 1px solid lightgray;">
+                <button [disabled]="loading" matTooltip="create invoice" mat-raised-button color="accent"
+                    style="margin-right: 15px;" (click)="CreateInvoice()">
+                    <mat-icon>receipt_long</mat-icon>
+                </button>
+            </span>
+        </span>
     </form>
     <span style="font-weight: bold;">{{DataFromPreviousBatch}}</span>
     <mat-table #table [dataSource]="dataSource" matSort>
@@ -70,7 +75,8 @@
         </ng-container>
         <ng-container matColumnDef="Active">
             <mat-header-cell *matHeaderCellDef style="justify-content: center;">
-                <mat-checkbox style="margin-right: 15px;" (click)="$event.stopPropagation()" (change)="SelectAll($event)">
+                <mat-checkbox style="margin-right: 15px;" (click)="$event.stopPropagation()"
+                    (change)="SelectAll($event)">
                 </mat-checkbox>
                 Active
             </mat-header-cell>

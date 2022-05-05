@@ -7,12 +7,10 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { SchoolReportsModule } from '../schoolreports/reports.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { SingleorganizationComponent } from './singleorganization/singleorganization.component';
-//import { OrganizationComponent } from './organization/organization.component';
-//import { DefinePagesModule } from '../define-pages/define-pages.module';
+import { GlobaladminInitialModule } from '../globaladmininitial/globaladminInitial.module';
 
 @NgModule({
-  declarations: [settingsComponent, SingleorganizationComponent],
+  declarations: [settingsComponent],
   imports: [
     CommonModule,
     MaterialModule,
@@ -22,7 +20,7 @@ import { SingleorganizationComponent } from './singleorganization/singleorganiza
     SharedhomepageModule,
     SchoolReportsModule,
     FlexLayoutModule,
-    //DefinePagesModule
+    //GlobaladminInitialModule
   ],
   exports:[settingsComponent]
 })

@@ -26,7 +26,7 @@ export class HomeDashboardComponent implements OnInit {
   SelectedAppId = 0;
   Batches = [];
   PermittedApplications = [];
-
+  SelectedAppName = '';
   constructor(
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
@@ -49,7 +49,7 @@ export class HomeDashboardComponent implements OnInit {
       searchBatchId: [0]
     })
     this.loginUserDetail = this.tokenStorage.getUserDetail();
-    if (this.loginUserDetail.length==0) {
+    if (this.loginUserDetail.length == 0) {
       this.tokenStorage.signOut();
       this.route.navigate(['/auth/login']);
     }
@@ -63,7 +63,7 @@ export class HomeDashboardComponent implements OnInit {
       }
       else {
         var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-        this.PermittedApplications = _UniquePermittedApplications.filter(f=>f.applicationName.toLowerCase()!='common panel');
+        this.PermittedApplications = _UniquePermittedApplications.filter(f => f.applicationName.toLowerCase() != 'common panel');
 
         if (this.PermittedApplications.length == 0) {
           this.tokenStorage.signOut();
@@ -78,7 +78,8 @@ export class HomeDashboardComponent implements OnInit {
         this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
         this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
         this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-        //if (this.Batches.length == 0)
+        this.SelectedAppName = this.tokenStorage.getSelectedAppName();
+        //console.log("this.SelectedAppName",this.SelectedAppName);
         this.getBatches();
 
         //this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
@@ -87,23 +88,27 @@ export class HomeDashboardComponent implements OnInit {
     }
   }
   ChangeApplication() {
+    var SelectedAppId = this.searchForm.get("searchApplicationId").value;
+    this.SelectedAppName = this.PermittedApplications.filter(f=>f.applicationId ==SelectedAppId)[0].applicationName 
+  }
+  submit() {
     var selectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     if (selectedBatchId > 0)
       this.ChangeCurrentBatchId(selectedBatchId);
-        
+
     this.tokenStorage.saveSelectedAppId(SelectedAppId);
     var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 
     //this line is added because when batch is not defined for new user, selected batch name is null.
-    if(this.Batches.length>0)
-    {
-      var _batchName =  this.Batches.filter(f=>f.BatchId == selectedBatchId)[0].BatchName;
+    if (this.Batches.length > 0) {
+      var _batchName = this.Batches.filter(f => f.BatchId == selectedBatchId)[0].BatchName;
       this.tokenStorage.saveSelectedBatchName(_batchName)
-    }    
+    }
     else
-    this.tokenStorage.saveSelectedBatchName('');
-    
+      this.tokenStorage.saveSelectedBatchName('');
+    this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
+    this.SelectedAppName = selectedApp[0].applicationName;
     this.route.navigate(['/', selectedApp[0].appShortName])
 
   }

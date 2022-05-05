@@ -59,6 +59,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
                             <input type="number"
+                            (blur)="onBlur(element)"
                             [(ngModel)]="element.PaidMonths" [value]="element.PaidMonths" matInput
                                 autocomplete="off" [max]="72">                          
                         </mat-form-field>

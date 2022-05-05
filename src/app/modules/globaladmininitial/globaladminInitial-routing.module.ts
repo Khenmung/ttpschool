@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
-import { CustomerPlansComponent } from './customerplans/customerplans.component';
+import { CustomerPlansComponent } from '../control/customerplans/customerplans.component';
 import { GlobaladminboardComponent } from './globaladminboard/globaladminboard.component';
 import { MenuConfigComponent } from './menu-config/menu-config.component';
 import { PlansComponent } from './plans/plans.component';
@@ -26,7 +26,7 @@ const routes: Routes = [
 })
 export class GlobaladminInitialRoutingModule { }
 export const GlobalAdminInitialComponents = [
-  CustomerPlansComponent,
+  //CustomerPlansComponent,
   GlobaladminboardComponent,
   MenuConfigComponent,
   PlansComponent,

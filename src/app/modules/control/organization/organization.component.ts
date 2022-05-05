@@ -270,13 +270,13 @@ export class OrganizationComponent implements OnInit {
         this.dataSource = new MatTableDataSource<any>(this.OrganizationList);
         this.dataSource.paginator = this.paginator;
 
-        var _OrgLogoParentId = this.StorageFnPList.filter(f => f.FileName.toLowerCase() == "organization logo")[0].FileId;
-        this.GetStorageFnP(_OrgLogoParentId).subscribe((imgurldata: any) => {
-          this.imgURL = globalconstants.apiUrl + "/uploads/" + this.LoginUserDetail[0]["org"] + "/organization logo/" + imgurldata.value[0].UpdatedFileFolderName
-          this.loading = false;
+        // var _OrgLogoParentId = this.StorageFnPList.filter(f => f.FileName.toLowerCase() == "organization logo")[0].FileId;
+        // this.GetStorageFnP(_OrgLogoParentId).subscribe((imgurldata: any) => {
+        //   this.imgURL = globalconstants.apiUrl + "/uploads/" + this.LoginUserDetail[0]["org"] + "/organization logo/" + imgurldata.value[0].UpdatedFileFolderName
+        //   this.loading = false;
 
-          //this.loading = false;
-        })
+        //   //this.loading = false;
+        // })
       })
   }
   preview(files) {

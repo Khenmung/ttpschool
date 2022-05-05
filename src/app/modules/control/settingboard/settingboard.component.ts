@@ -9,6 +9,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { OrganizationComponent } from '../organization/organization.component';
+import { CustomerPlansComponent } from '../customerplans/customerplans.component';
 
 @Component({
   selector: 'app-signup',
@@ -22,7 +23,8 @@ export class settingboardComponent implements AfterViewInit {
     roleuserdashboardComponent,
     RoleAppPermissiondashboardComponent,
     BatchdashboardComponent,
-    OrganizationComponent
+    OrganizationComponent,
+    CustomerPlansComponent
   ];
 
   tabNames = [
@@ -30,6 +32,7 @@ export class settingboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
+    { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' }
   ];
@@ -92,6 +95,10 @@ export class settingboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.ORGANIZATION);
       var comindx = this.components.indexOf(OrganizationComponent);
       this.GetComponents(perObj, comindx);
+
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.MYPLAN);
+      var comindx = this.components.indexOf(CustomerPlansComponent);
+      this.GetComponents(perObj, comindx);
     }
     else {
       var comindx = this.components.indexOf(BatchdashboardComponent);
@@ -111,7 +118,7 @@ export class settingboardComponent implements AfterViewInit {
       this.tabNames.splice(comindx, 1);
     }
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-    if (this.Permissions.ParentPermission != 'deny') {
+    if (this.Permissions.ParentPermission != 'deny' && this.Permissions.ParentPermission !='') {
       this.renderComponent(0);
       this.cdr.detectChanges();
     }

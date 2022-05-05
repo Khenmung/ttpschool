@@ -7,20 +7,20 @@
         <form [formGroup]="searchForm" style="margin: 30px;">
             <mat-form-field [style.width.px]="250" appearance="outline">
                 <mat-label>Application</mat-label>
-                <mat-select formControlName="searchApplicationId" #searchApplicationId>
+                <mat-select formControlName="searchApplicationId" (selectionChange)="ChangeApplication()">
                     <mat-option *ngFor="let item of PermittedApplications" [value]="item.applicationId">
                         {{item.applicationName}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <span>
-            <mat-form-field [style.width.px]="130" appearance="outline">
-                <mat-label>Batch</mat-label>
-                <mat-select formControlName="searchBatchId">
-                    <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </span>
-            <button [disabled]="loading" class="mat-raised-button" (click)="ChangeApplication()">
+            <span *ngIf="SelectedAppName=='Education Management'">
+                <mat-form-field [style.width.px]="130" appearance="outline">
+                    <mat-label>Batch</mat-label>
+                    <mat-select formControlName="searchBatchId">
+                        <mat-option *ngFor="let item of Batches" [value]="item.BatchId">{{item.BatchName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
+            <button [disabled]="loading" class="mat-raised-button" (click)="submit()">
                 <mat-icon>search</mat-icon>
             </button>
         </form>

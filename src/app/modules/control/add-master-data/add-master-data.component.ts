@@ -47,8 +47,8 @@ export class AddMasterDataComponent implements OnInit {
   SelectedApplicationId = 0;
   DataToSaveCount = -1;
   SelectedApplicationName = '';
-  ApplicationDataStatus = [];
-  SchoolDataStatus = [];
+  //ApplicationDataStatus = [];
+  //SchoolDataStatus = [];
   StudentVariableNames = [];
   DisplayColumns = [
     "MasterDataId",

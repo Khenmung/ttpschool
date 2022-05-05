@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CustomerPlansComponent } from '../globaladmininitial/customerplans/customerplans.component';
+import { CustomerPlansComponent } from '../control/customerplans/customerplans.component';
 import { AuthHomeComponent } from './authhome/authhome.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ConfirmemailComponent } from './confirmemail/confirmemail.component';
