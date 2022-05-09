@@ -4,8 +4,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import alasql from 'alasql';
-import { evaluate } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { AuthService } from 'src/app/_services/auth.service';
@@ -24,15 +22,7 @@ export class DashboardclassfeeComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-
+  SelectedMonth = 0;
   Months = [];
   VariableObjList = [];
   LedgerData = [];
@@ -189,6 +179,7 @@ export class DashboardclassfeeComponent implements OnInit {
     //debugger;
     this.contentservice.getInvoice(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
       .subscribe((data: any) => {
+        //console.log("getinvoice",data)
         this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.loading = false;
@@ -196,13 +187,13 @@ export class DashboardclassfeeComponent implements OnInit {
           },
             error => {
               this.loading = false;
-              this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage ,globalconstants.ActionText,globalconstants.RedBackground);
+              this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
               console.log("error in createInvoice", error);
             })
       },
         error => {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage ,globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
           console.log("error in getinvoice", error);
         })
 
@@ -341,18 +332,20 @@ export class DashboardclassfeeComponent implements OnInit {
       this.contentservice.openSnackBar("Amount should be smaller than 100,000.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else if (row.Month == 0) {
-      row.Action = false;
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // else if (row.Month == 0) {
+    //   row.Action = false;
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     this.loading = true;
     let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
       " and ClassId eq " + row.ClassId +
-      " and Month eq " + row.Month
-    //" and BatchId eq " + row.BatchId
+      " and BatchId eq " + row.BatchId
+    if (row.Month > 0)
+      checkFilterString += " and Month eq " + row.Month
+      
     if (row.ClassFeeId > 0)
       checkFilterString += " and ClassFeeId ne " + row.ClassFeeId;
 
@@ -470,8 +463,9 @@ export class DashboardclassfeeComponent implements OnInit {
 
     this.loading = true;
     let filterstr = " and Active eq 1 and ClassId eq " + this.searchForm.get("ClassId").value;
-    if (this.searchForm.get("searchMonth").value > 0)
-      filterstr += " and Month eq " + this.searchForm.get("searchMonth").value;
+    this.SelectedMonth = this.searchForm.get("searchMonth").value;
+    if (this.SelectedMonth > 0)
+      filterstr += " and Month eq " + this.SelectedMonth;
 
     let list: List = new List();
     list.fields = [
@@ -482,16 +476,13 @@ export class DashboardclassfeeComponent implements OnInit {
       "Month",
       "BatchId",
       "Active",
-      //"LocationId",
       "PaymentOrder"];
     list.PageName = "ClassFees";
-    //list.orderBy ="PaymentOrder";
     list.filter = [OrgIdAndbatchId + filterstr];
-    //list.orderBy = "ParentId";
-
+    this.ELEMENT_DATA = [];
+    this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
         var _classFee = [...data.value];
         if (previousbatch == 1) {
           this.DataFromPreviousBatch = 'Data From Previous Batch'
@@ -516,7 +507,7 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   ProcessClassFee(classFee, previousbatch) {
     if (classFee.length > 0) {
-      this.ELEMENT_DATA = this.FeeDefinitions.map((mainFeeName, indx) => {
+      this.FeeDefinitions.forEach((mainFeeName, indx) => {
         let existing = classFee.filter(fromdb => fromdb.FeeDefinitionId == mainFeeName.FeeDefinitionId)
         if (existing.length > 0) {
           existing[0].SlNo = indx + 1;
@@ -528,10 +519,10 @@ export class DashboardclassfeeComponent implements OnInit {
           existing[0].Month = previousbatch == 1 ? 0 : existing[0].Month;
           existing[0].BatchId = this.SelectedBatchId;
 
-          return existing[0];
+          this.ELEMENT_DATA.push(existing[0]);
         }
-        else if (previousbatch == 0)
-          return {
+        else if (previousbatch == 0 && this.SelectedMonth == 0)
+          this.ELEMENT_DATA.push({
             "SlNo": indx + 1,
             "ClassFeeId": 0,
             "FeeDefinitionId": mainFeeName.FeeDefinitionId,
@@ -542,10 +533,11 @@ export class DashboardclassfeeComponent implements OnInit {
             "BatchId": this.SelectedBatchId,// this.Batches[0].MasterDataId,
             "Active": 0,
             "Action": false
-          }
+          });
       })
     }
-    else { //no existing data
+    else if (previousbatch == 0 && this.SelectedMonth == 0) {
+
       this.ELEMENT_DATA = this.FeeDefinitions.map((fee, indx) => {
         return {
           "SlNo": indx + 1,
@@ -557,7 +549,6 @@ export class DashboardclassfeeComponent implements OnInit {
           "Month": 0,
           "BatchId": this.SelectedBatchId,
           "Active": 0,
-          //"LocationId": this.Locations[0].MasterDataId,
           "Action": false
         }
       });
@@ -565,7 +556,7 @@ export class DashboardclassfeeComponent implements OnInit {
     }
     //this.ELEMENT_DATA = 
     this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
-    ////console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
+    console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
     this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -634,6 +625,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
 }
 export interface Element {
+  SlNo: number;
   ClassFeeId: number;
   FeeDefinitionId: number;
   ClassId: number;
@@ -641,6 +633,6 @@ export interface Element {
   Month: number;
   BatchId: number;
   Active: number;
-  //LocationId: number;
+  FeeName: string;
   Action: boolean;
 }

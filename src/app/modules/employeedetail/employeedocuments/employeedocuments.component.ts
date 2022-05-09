@@ -184,7 +184,8 @@ export class EmployeedocumentsComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.DOCUMENTTYPE);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenService.getBatches();
         this.GetDocuments();
       });
 

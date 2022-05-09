@@ -89,30 +89,32 @@ export class HomeDashboardComponent implements OnInit {
   }
   ChangeApplication() {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
-    this.SelectedAppName = this.PermittedApplications.filter(f=>f.applicationId ==SelectedAppId)[0].applicationName 
+    this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
   }
   submit() {
     var selectedBatchId = this.searchForm.get("searchBatchId").value;
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     if (selectedBatchId > 0)
-      this.ChangeCurrentBatchId(selectedBatchId);
+      this.SaveBatchIds(selectedBatchId);
+    if (SelectedAppId > 0) {
 
-    this.tokenStorage.saveSelectedAppId(SelectedAppId);
-    var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
+      this.tokenStorage.saveSelectedAppId(SelectedAppId);
+      var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 
-    //this line is added because when batch is not defined for new user, selected batch name is null.
-    if (this.Batches.length > 0) {
-      var _batchName = this.Batches.filter(f => f.BatchId == selectedBatchId)[0].BatchName;
-      this.tokenStorage.saveSelectedBatchName(_batchName)
+      //this line is added because when batch is not defined for new user, selected batch name is null.
+      if (this.Batches.length > 0) {
+        var _batchName = this.Batches.filter(f => f.BatchId == selectedBatchId)[0].BatchName;
+        this.tokenStorage.saveSelectedBatchName(_batchName)
+      }
+      else
+        this.tokenStorage.saveSelectedBatchName('');
+
+      this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
+      this.SelectedAppName = selectedApp[0].applicationName;
+      this.route.navigate(['/', selectedApp[0].appShortName])
     }
-    else
-      this.tokenStorage.saveSelectedBatchName('');
-    this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
-    this.SelectedAppName = selectedApp[0].applicationName;
-    this.route.navigate(['/', selectedApp[0].appShortName])
-
   }
-  ChangeCurrentBatchId(selectedBatchId) {
+  SaveBatchIds(selectedBatchId) {
     debugger;
     var _SelectedBatch = this.Batches.filter(b => b.BatchId == selectedBatchId);
     var SelectedBatchName = ''
@@ -165,29 +167,32 @@ export class HomeDashboardComponent implements OnInit {
     list.filter = ["Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"]];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
-      this.shareddata.ChangeBatch(this.Batches);
-      var _currentBatchStartEnd = {};
-      var _currentBatch = this.Batches.filter(b => b.CurrentBatch == 1);
-      if (_currentBatch.length > 0) {
-        _currentBatchStartEnd = {
-          'StartDate': _currentBatch[0].StartDate,
-          'EndDate': _currentBatch[0].EndDate,
-        };
-        this.tokenStorage.saveSelectedBatchName(_currentBatch[0].BatchName);
-        this.tokenStorage.saveCurrentBatchStartEnd(_currentBatchStartEnd)
-        this.tokenStorage.saveSelectedBatchStartEnd(_currentBatchStartEnd)
-        this.CurrentBatchId = _currentBatch[0].BatchId;
-      }
+      //this.shareddata.ChangeBatch(this.Batches);
+      this.tokenStorage.saveBatches(this.Batches)
+      // var _currentBatchStartEnd = {};
+      // var _currentBatch = this.Batches.filter(b => b.CurrentBatch == 1);
+      // if (_currentBatch.length > 0) {
+      //   _currentBatchStartEnd = {
+      //     'StartDate': _currentBatch[0].StartDate,
+      //     'EndDate': _currentBatch[0].EndDate,
+      //   };
+      //   this.tokenStorage.saveSelectedBatchName(_currentBatch[0].BatchName);
+      //   this.tokenStorage.saveCurrentBatchStartEnd(_currentBatchStartEnd)
+      //   this.tokenStorage.saveSelectedBatchStartEnd(_currentBatchStartEnd)
+      //   this.CurrentBatchId = _currentBatch[0].BatchId;
+      // }
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-      if (this.SelectedBatchId == 0) {
-        this.tokenStorage.saveCurrentBatchId(this.CurrentBatchId.toString())
-        this.SelectedBatchId = this.CurrentBatchId;
-      }
+      this.tokenStorage.saveCurrentBatchId(this.SelectedBatchId + "");
+      // if (this.SelectedBatchId == 0) {
+      //   this.tokenStorage.saveCurrentBatchId(this.CurrentBatchId.toString())
+      //   this.SelectedBatchId = this.CurrentBatchId;
+      // }
 
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
-      this.generateBatchIds(this.SelectedBatchId);
+      if (this.SelectedBatchId > 0)
+        this.generateBatchIds(this.SelectedBatchId);
       this.loading = false;
     });
   }

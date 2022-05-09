@@ -21,6 +21,7 @@ const ROLEFILTER ='rolefilter';
 const SELECTEDBATCHNAME ='selectedbatchname';
 const CURRENTBATCHID ='currentbatchid';
 const SELECTEDAPPNAME ='selectedappname';
+const BATCHES ='batches';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,18 @@ export class TokenStorageService {
     }
     return "";    
   }
-  
+  public saveBatches(token: any): void {
+    localStorage.removeItem(BATCHES);
+    localStorage.setItem(BATCHES, JSON.stringify(token));
+  }
+  public getBatches(): string[]|null {
+    var batch=localStorage.getItem(BATCHES);
+    if (batch) {
+      return JSON.parse(JSON.stringify(batch));
+    }
+    return [""];
+    
+  }
   public saveCurrentBatchStartEnd(token: any): void {
     localStorage.removeItem(CURRENTBATCHSTARTEND);
     localStorage.setItem(CURRENTBATCHSTARTEND, JSON.stringify(token));

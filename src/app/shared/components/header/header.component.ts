@@ -41,10 +41,10 @@ debugger;
       }
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
       debugger;
-      if (PermittedApplications.length == 0) {
-        this.route.navigate(["/auth/selectplan"]);
-      }
-      else {
+      // if (PermittedApplications.length == 0) {
+      //   this.route.navigate(["/auth/selectplan"]);
+      // }
+      // else {
         this.OrganizationName = this.LoginUserDetails[0].org
         var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
         this.SelectedApplicationName = '';
@@ -55,7 +55,7 @@ debugger;
           this.SelectedBatchName = this.tokenStorage.getSelectedBatchName();
           this.SelectedApplicationName = apps[0].applicationName + (this.SelectedBatchName ==''?'':' - ' + this.SelectedBatchName)
         }
-      }
+      //}
     }
 
   }

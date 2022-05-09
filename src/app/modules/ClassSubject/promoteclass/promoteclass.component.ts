@@ -123,7 +123,9 @@ export class PromoteclassComponent implements OnInit {
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
       })
-      this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
+      //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
+      this.Batches = this.tokenstorage.getBatches()
+      
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
@@ -157,7 +159,9 @@ export class PromoteclassComponent implements OnInit {
       this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
       //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
       this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
-      this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
+      //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
+      this.Batches = this.tokenstorage.getBatches()
+
       if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
         this.GetMasterData();
         this.GetFeeTypes();

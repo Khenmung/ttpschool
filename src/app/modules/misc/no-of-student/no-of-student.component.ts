@@ -110,7 +110,8 @@ export class NoOfStudentComponent implements OnInit {
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
       })
-      this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
+      //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
+      this.Batches = this.tokenstorage.getBatches()
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
       this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
@@ -137,7 +138,8 @@ export class NoOfStudentComponent implements OnInit {
       this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
       //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
       this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
-      this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
+      this.Batches = this.tokenstorage.getBatches()
+      //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
       if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
         this.GetMasterData();
         this.GetFeeTypes();
@@ -245,7 +247,7 @@ export class NoOfStudentComponent implements OnInit {
         })
         if (errormsg.length > 0) {
           errormsg = "Section not defined for student Id: " + errormsg;
-          this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);          
+          this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);
         }
         var _classStudentCount = alasql("select ClassId,ClassName,Section,MaxStudent,sum(1) NoOfStudent from ? group by ClassId,ClassName,Section,MaxStudent",
           [this.StudentClassList])
@@ -272,8 +274,10 @@ export class NoOfStudentComponent implements OnInit {
 
             }
           })
-          this.TotalStudent += newClassRow[0].Total;
-          pivottedClass.push(newClassRow[0]);
+          if (newClassRow.length > 0) {
+            this.TotalStudent += newClassRow[0].Total;
+            pivottedClass.push(newClassRow[0]);
+          }
         })
         if (this.displayedColumns.indexOf('Total') == -1)
           this.displayedColumns.push("Total");

@@ -168,8 +168,8 @@ export class searchstudentComponent implements OnInit {
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
         this.shareddata.ChangeReasonForLeaving(this.ReasonForLeaving);
 
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.token.getBatches()
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.shareddata.ChangeCategory(this.Category);
 

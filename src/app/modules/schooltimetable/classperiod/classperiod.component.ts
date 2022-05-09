@@ -413,7 +413,8 @@ export class ClassperiodComponent implements OnInit {
         this.Periods.sort((a, b) => a.Sequence - b.Sequence);
 
         this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
-        this.shareddata.ChangeBatch(this.Batches);
+        //this.shareddata.ChangeBatch(this.Batches);
+        this.Batches = this.tokenstorage.getBatches()
         this.loading = false;
       });
   }

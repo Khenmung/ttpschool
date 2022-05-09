@@ -12,6 +12,7 @@ import { SharedataService } from '../../sharedata.service';
 })
 export class SidebarComponent implements OnInit {
   //@Output() openLeftMenu1:new EventEmitter();
+  SelectedBatchId = 0;
   loginUserDetail = [];
   sideMenu = [];
   collapse = false;
@@ -23,15 +24,13 @@ export class SidebarComponent implements OnInit {
     private route: Router) { }
 
   ngOnInit(): void {
-    // this.ar.params.subscribe(param=>{
-    //   this.ApplicationId = param["id"];
-    // })
+    debugger;
+    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.loginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-    if (this.SelectedApplicationId == 0)
-      this.route.navigate(['/dashboard']);
-    else
+    if (this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)//this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)
       this.GetMenuData();
+
   }
   open() {
 
@@ -61,8 +60,8 @@ export class SidebarComponent implements OnInit {
     this.dataservice.get(list).subscribe((data: any) => {
       //this.sideMenu = [...data.value];
       data.value.forEach(m => {
-        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId==0)
-        if (permission.length > 0 && permission[0].permission !='deny') {
+        permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
+        if (permission.length > 0 && permission[0].permission != 'deny') {
           m.PageId = m.Page.PageId;
           m.PageTitle = m.Page.PageTitle;
           m.label = m.Page.label;
@@ -74,7 +73,7 @@ export class SidebarComponent implements OnInit {
           this.sideMenu.push(m);
         }
       })
-      this.sideMenu = this.sideMenu.sort((a,b)=>a.DisplayOrder - b.DisplayOrder);
+      this.sideMenu = this.sideMenu.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
 
       let NewsNEvents = this.sideMenu.filter(item => {
         return item.label.toUpperCase() == 'NEWS N EVENTS'

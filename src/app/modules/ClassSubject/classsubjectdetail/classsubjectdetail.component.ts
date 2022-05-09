@@ -546,10 +546,11 @@ export class ClassSubjectDetailComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenstorage.getBatches()
+        
         this.shareddata.ChangeSubjects(this.Subjects);
-        this.shareddata.ChangeBatch(this.Batches);
+        //this.shareddata.ChangeBatch(this.Batches);
         this.GetSubjectTypes();
         this.GetTeachers();
 

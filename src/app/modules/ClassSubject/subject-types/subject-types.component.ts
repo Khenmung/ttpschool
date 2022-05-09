@@ -276,8 +276,9 @@ export class SubjectTypesComponent implements OnInit {
         this.allMasterData = [...data.value];
 
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenstorage.getBatches()
+        
         //this.shareddata.ChangeBatch(this.Batches);
         this.loading = false;
       });

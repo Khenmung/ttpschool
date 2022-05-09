@@ -41,6 +41,7 @@ export class StudentDocumentComponent implements OnInit {
   DocumentTypes = [];
   Batches = [];
   LoginUserDetail = [];
+  EnableUploadButton =false;
   uploadForm: FormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
@@ -72,9 +73,9 @@ export class StudentDocumentComponent implements OnInit {
 
     if (this.StudentClassId == 0) {
       this.contentservice.openSnackBar("Student Class Id not found.",globalconstants.ActionText,globalconstants.RedBackground);
-      setTimeout(() => {
-        this.nav.navigate(['/edu']);  
-      }, 2000);      
+      // setTimeout(() => {
+      //   this.nav.navigate(['/edu']);  
+      // }, 2000);      
     }
     else {
       this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
@@ -94,6 +95,12 @@ export class StudentDocumentComponent implements OnInit {
   PageLoad() {
     this.GetMasterData();
 
+  }
+  enableUpload(event){
+      if(event.value>0)
+      {
+        this.EnableUploadButton=true;
+      }
   }
   get f() {
     return this.uploadForm.controls;
@@ -193,7 +200,8 @@ export class StudentDocumentComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.DocumentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTDOCUMENTTYPE);
         //this.Batches = this.getDropDownData(globalconstants.MasterDefinitions.school.BATCH);
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenService.getBatches();
         this.GetDocuments();
       });
 

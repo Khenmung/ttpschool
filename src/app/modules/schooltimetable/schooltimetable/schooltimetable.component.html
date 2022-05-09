@@ -4,7 +4,7 @@
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
-    <div style="padding: 15px;" fxLayout="row wrap">
+    <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
         <div style="width: 100%;">
             <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
                 <div>
@@ -30,7 +30,7 @@
                     </button>
                 </div>
             </form>
-            <div style="overflow: auto; max-width: 1200px;height: 430px;">
+            <div style="overflow: auto;height: 430px; width: auto;">
                 <mat-table #table [dataSource]="dataSource">
 
                     <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
@@ -48,7 +48,7 @@
                         <mat-cell *matCellDef="let element"
                             [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
                             <span *ngIf="disCol !='Day' && !disCol.includes('f_') && disCol !='Action'">
-                                <mat-form-field>
+                                <mat-form-field style="width:135px;">
                                     <mat-select (selectionChange)="onBlur(element,$event,disCol)"                                      
                                         [(ngModel)]="element[disCol]" [value]="element[disCol]">
                                         <mat-option *ngFor="let item of ClassWiseSubjects"
@@ -73,4 +73,4 @@
             </div>
         </div>
     </div>
-</div>
+<!-- </div> -->

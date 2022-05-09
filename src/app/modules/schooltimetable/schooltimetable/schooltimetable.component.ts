@@ -121,7 +121,7 @@ export class SchooltimetableComponent implements OnInit {
       //" and ClassSubjectId eq " + row.ClassSubjectId +   
       //" and TeacherId eq " + row.TeacherId +
       " and Active eq 1"
-    console.log("this.AllTimeTable", this.AllTimeTable)
+    //console.log("this.AllTimeTable", this.AllTimeTable)
     var duplicateCheck = alasql("select DayId,PeriodId,TeacherId,TeacherId from ? where DayId = ? and PeriodId = ? and TeacherId = ?", [this.AllTimeTable,row.DayId,row.PeriodId, row.TeacherId])
     if (duplicateCheck.length > 0) {
       //console.log("duplicateCheck",duplicateCheck);
@@ -594,7 +594,8 @@ export class SchooltimetableComponent implements OnInit {
 
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.ChangeBatch(this.Batches);
+        this.Batches = this.tokenstorage.getBatches()
+        //this.shareddata.ChangeBatch(this.Batches);
         //this.loading = false;
         this.GetClassSubject();
         this.GetAllClassPeriods();

@@ -132,10 +132,11 @@ export class GenerateCertificateComponent implements OnInit {
         this.Permission = perObj[0].permission;
 
       if (this.StudentClassId == 0) {
+        this.loading=false;
         this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
-        this.nav.navigate(['/edu']);
+        //this.nav.navigate(['/edu']);
       }
-      if (this.Permission != 'deny') {
+      else if (this.Permission != 'deny') {
 
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -465,7 +466,8 @@ export class GenerateCertificateComponent implements OnInit {
         this.CommonFooter = this.getDropDownData(globalconstants.MasterDefinitions.school.COMMONFOOTER);
         this.CommonHeader.sort((a, b) => a.Sequence - b.Sequence)
         this.CommonFooter.sort((a, b) => a.Sequence - b.Sequence)
-        this.shareddata.ChangeBatch(this.Batches);
+        //this.shareddata.ChangeBatch(this.Batches);
+        this.Batches = this.tokenstorage.getBatches()
       });
   }
   clear() {

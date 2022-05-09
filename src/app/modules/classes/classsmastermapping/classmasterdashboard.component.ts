@@ -450,11 +450,12 @@ export class ClassmasterdashboardComponent implements OnInit {
         //this.Classes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASS);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenstorage.getBatches()
 
         //this.shareddata.ChangeClasses(this.Classes);
         this.shareddata.ChangeSubjects(this.Subjects);
-        this.shareddata.ChangeBatch(this.Batches);
+        //this.shareddata.ChangeBatch(this.Batches);
         this.GetTeachers();
         //this.GetClassSubject();
         this.loading = false;

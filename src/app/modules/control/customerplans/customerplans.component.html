@@ -7,7 +7,7 @@
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
             <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
-                <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
+                <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center" *ngIf="Org=='TTP'">
                     <mat-form-field appearance="outline">
                         <mat-label>Organisation</mat-label>
                         <mat-select [disabled]="Org !='TTP'" formControlName="searchCustomerId" [(ngModel)]="OrgId">
@@ -17,7 +17,7 @@
                         </mat-select>
                     </mat-form-field>
                    
-                    <button [disabled]="loading" *ngIf="Org=='TTP'" matTooltip="search" class="mat-raised-button"
+                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
                         (click)="GetCustomerPlans()">
                         <mat-icon>search</mat-icon>
                     </button>
@@ -121,7 +121,7 @@
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <mat-cell *matCellDef="let element">
                         <button [disabled]="loading || !element.Action || SelectedCustomer=='TTP'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>

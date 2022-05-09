@@ -63,8 +63,8 @@ export class ExcelDataManagementComponent implements OnInit {
       this.Classes = [...data.value];
 
     });
-
-    this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+    this.Batches = this.tokenservice.getBatches();
+    //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
     this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
     this.shareddata.CurrentUploadType.subscribe(c => (this.UploadTypes = c));
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
@@ -929,7 +929,8 @@ export class ExcelDataManagementComponent implements OnInit {
           this.Country = this.getDropDownData(globalconstants.MasterDefinitions.common.COUNTRY);
 
         }
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenservice.getBatches();
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
         this.GetStudents();
       });

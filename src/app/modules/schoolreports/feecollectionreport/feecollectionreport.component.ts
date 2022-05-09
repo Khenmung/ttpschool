@@ -93,7 +93,8 @@ export class FeecollectionreportComponent implements OnInit {
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
         this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.shareddata.CurrentFeeDefinitions.subscribe(c => (this.FeeDefinitions = c));
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenservice.getBatches();
         this.shareddata.CurrentSection.subscribe(c => (this.Sections = c));
 
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {

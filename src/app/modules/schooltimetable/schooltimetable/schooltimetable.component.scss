@@ -1,4 +1,4 @@
-.mat-form-field{
+mat-form-field{
     margin-right: 15px;
     width:98%;
    
@@ -12,6 +12,7 @@ mat-cell:first-of-type,mat-header-cell:first-of-type{
 mat-cell{
     border-right: 1px solid lightgray;
     padding: 10px;
+    //width: 150px;
     align-self: stretch;
 }
 .mat-column-Action{
@@ -29,6 +30,7 @@ mat-cell{
         > .mat-header-cell, > .mat-cell {
             display: table-cell;
 //            height: 48px;
+            max-width:150px;
             vertical-align: middle;        
             border-bottom: 1px solid rgba(0, 0, 0, 0.12);
         }

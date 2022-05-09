@@ -26,6 +26,7 @@ import {
 import { List } from 'src/app/shared/interface';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import * as moment from 'moment';
 
 const colors: any = {
   red: {
@@ -62,8 +63,9 @@ const colors: any = {
 export class DemoComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
   LoginUserDetail = [];
-  events: CalendarEvent[]=[];
+  events: CalendarEvent[] = [];
   EventList = [];
+  HolidayList = [];
   EventsListName = 'Events';
   HolidayListName = 'Holidays';
   view: CalendarView = CalendarView.Month;
@@ -138,7 +140,7 @@ export class DemoComponent implements OnInit {
   //     draggable: true,
   //   },
   // ];
-  
+
   activeDayIsOpen: boolean = true;
 
   constructor(private modal: NgbModal,
@@ -146,7 +148,7 @@ export class DemoComponent implements OnInit {
     private tokenservice: TokenStorageService
   ) { }
   ngOnInit(): void {
-    console.log("events",this.events);
+    console.log("events", this.events);
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.GetEvents();
@@ -184,8 +186,8 @@ export class DemoComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+    //this.modalData = { event, action };
+    //this.modal.open(this.modalContent, { size: 'lg' });
   }
 
   addEvent(): void {
@@ -227,7 +229,7 @@ export class DemoComponent implements OnInit {
 
     list.PageName = this.EventsListName;
     list.filter = [filterStr];
-    this.EventList = [];
+    this.events = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
@@ -235,7 +237,7 @@ export class DemoComponent implements OnInit {
             this.events.push(
               {
                 //id: e.EventId,
-                title: e.EventName,
+                title: e.EventName + ", " + moment(e.EventStartDate).format('ddd HH:mm A') + ", " + e.Venue,
                 start: new Date(e.EventStartDate),
                 end: new Date(e.EventEndDate),
                 color: colors.red,
@@ -250,7 +252,30 @@ export class DemoComponent implements OnInit {
             );
           })
         }
-        console.log("this.events",this.events);
+        list.PageName = "Holidays";
+        list.filter = [filterStr];
+        this.dataservice.get(list)
+          .subscribe((holiday: any) => {
+            if (holiday.value.length > 0) {
+              holiday.value.forEach(e => {
+                this.events.push(
+                  {
+                    title: e.Title + ", " + moment(e.StartDate).format('ddd HH:mm A') ,
+                    start: new Date(e.StartDate),
+                    end: new Date(e.EndDate),
+                    color: colors.lightgreen,
+                    actions: this.actions,
+                    allDay: true,
+                    resizable: {
+                      beforeStart: true,
+                      afterEnd: true,
+                    },
+                    draggable: true,
+                  }
+                );
+              })
+            }
+          });
       });
   }
 }

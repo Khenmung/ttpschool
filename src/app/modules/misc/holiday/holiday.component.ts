@@ -91,6 +91,7 @@ export class HolidayComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
@@ -148,7 +149,7 @@ export class HolidayComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "Title eq '" + row.Title + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = "Title eq '" + row.Title + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
 
     if (row.HolidayId > 0)
       checkFilterString += " and HolidayId ne " + row.HolidayId;
@@ -173,6 +174,7 @@ export class HolidayComponent implements OnInit {
           this.HolidayData.StartDate = row.StartDate;
           this.HolidayData.EndDate = row.EndDate;
           this.HolidayData.HolidayTypeId = row.HolidayTypeId;
+          this.HolidayData.BatchId = this.SelectedBatchId;
           this.HolidayData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (this.HolidayData.HolidayId == 0) {
@@ -221,7 +223,7 @@ export class HolidayComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
 
     let list: List = new List();
     list.fields = ["*"];

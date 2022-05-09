@@ -220,7 +220,7 @@ export class EventComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
 
     let list: List = new List();
     list.fields = ["*"];
@@ -233,12 +233,7 @@ export class EventComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.EventsList =[...data.value]; 
-          // data.value.map(m=>{
-          //   m.EventStartDate = new Date(this.datepipe.transform(m.EventStartDate,'dd/MM/yyyy HH:mm'));
-          //   return m;
-          // });
         }
-        //console.log('ashdflk',this.EventsList);
         this.dataSource = new MatTableDataSource<IEvent>(this.EventsList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();

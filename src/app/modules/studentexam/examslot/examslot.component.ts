@@ -96,7 +96,8 @@ export class ExamslotComponent implements OnInit {
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
+      this.Batches = this.tokenstorage.getBatches();
+      //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
       this.GetMasterData();
     }
   }

@@ -8,6 +8,7 @@ import { ExamslotComponent } from '../examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from '../examstudentsubjectresult/examstudentsubjectresult.component';
 import { VerifyResultsComponent } from '../verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubject.component';
+import { StudentgradeComponent } from '../studentgrade/studentgrade.component';
 
 @Component({
   selector: 'app-examdashboard',
@@ -19,13 +20,15 @@ export class ExamdashboardComponent implements AfterViewInit {
 
   components = [
     ExamsComponent,
+    StudentgradeComponent,
     ExamslotComponent,
     SlotnclasssubjectComponent,
     ExamstudentsubjectresultComponent,
     VerifyResultsComponent,
   ];
- 
+
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -39,7 +42,7 @@ export class ExamdashboardComponent implements AfterViewInit {
       DataDownloadPermission: '',
       DataUploadPermission: ''
     };
-    LoginUserDetail =[];
+  LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
@@ -53,19 +56,20 @@ export class ExamdashboardComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     debugger
-    this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EXAM.EXAM)
     if (perObj.length > 0) {
-      this.Permissions.ParentPermission = perObj[0].permission;  
+      this.Permissions.ParentPermission = perObj[0].permission;
     }
-    
+
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAM)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMSLOT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULT)
-    
+    this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTGRADE)
+
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
       this.renderComponent(0);
@@ -86,32 +90,34 @@ export class ExamdashboardComponent implements AfterViewInit {
     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
     this.viewContainer.createComponent(factory);
   }
-  GenerateComponent(featureName){
-    
+  GenerateComponent(featureName) {
+
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
-    var comindx =0;
-    switch(featureName)
-    {
+    var comindx = 0;
+    switch (featureName) {
       case "exam":
-        comindx =this.components.indexOf(ExamsComponent);
+        comindx = this.components.indexOf(ExamsComponent);
         break;
       case "exam slot":
-        comindx =this.components.indexOf(ExamslotComponent);
+        comindx = this.components.indexOf(ExamslotComponent);
         break;
       case "Exam Result Entry":
-        comindx =this.components.indexOf(ExamstudentsubjectresultComponent);
+        comindx = this.components.indexOf(ExamstudentsubjectresultComponent);
         break;
       case "slot n class subject":
-        comindx =this.components.indexOf(SlotnclasssubjectComponent);
+        comindx = this.components.indexOf(SlotnclasssubjectComponent);
         break;
-        case "verify result":
-        comindx =this.components.indexOf(VerifyResultsComponent);
+      case "verify result":
+        comindx = this.components.indexOf(VerifyResultsComponent);
+        break;
+      case "student grade":
+        comindx = this.components.indexOf(StudentgradeComponent);
         break;
       default:
-        comindx =this.components.indexOf(ExamsComponent);
+        comindx = this.components.indexOf(ExamsComponent);
         break;
-    } 
-    
+    }
+
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);

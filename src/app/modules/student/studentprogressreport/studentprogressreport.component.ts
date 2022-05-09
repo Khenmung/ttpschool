@@ -223,13 +223,14 @@ export class StudentprogressreportComponent implements OnInit {
 
           var current = marksum.filter(c => c.SubjectId == report.SubjectId);
           current.forEach(exam => {
-            if (this.DisplayColumns.indexOf(exam.ExamName) == -1)
+            if (exam.ExamName.length>0 && this.DisplayColumns.indexOf(exam.ExamName) == -1)
               this.DisplayColumns.push(exam.ExamName)
             report[exam.ExamName] = exam.Mark
           })
         })
 
-        ////console.log("shd", progressreport);
+        console.log("this.DisplayColumns", this.DisplayColumns);
+        console.log("shd", progressreport);
 
         this.dataSource = new MatTableDataSource<any>(progressreport);
         this.dataSource.sort = this.sort;
@@ -250,7 +251,8 @@ export class StudentprogressreportComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        this.shareddata.ChangeBatch(this.Batches);
+        //this.shareddata.ChangeBatch(this.Batches);
+        this.Batches = this.tokenstorage.getBatches()
         //this.GetCurrentBatchIDnAssign();
         this.GetExams();
       });

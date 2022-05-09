@@ -167,6 +167,7 @@ export class globalconstants {
                     'EXAMSTUDENTSUBJECTRESULT': 'Exam Result Entry',
                     'SLOTNCLASSSUBJECT': 'slot n class subject',
                     'VERIFYRESULT': 'verify result',
+                    'STUDENTGRADE': 'student grade'
 
                 },
                 'SUBJECT': {
@@ -301,7 +302,8 @@ export class globalconstants {
                 "FEECATEGORY": "fee category",
                 "RATINGOPTION": "rating option",
                 "EVALUATIONTYPE": "evaluation type",
-                "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship"
+                "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
+                "STUDENTGRADETYPE": "student grade type"
 
             },
             "leave": {

@@ -151,7 +151,7 @@ export class DailytimetablereportComponent implements OnInit {
 
         ////console.log('this.WeekDays',this.WeekDays);
         var filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == _classId);
-        console.log("filterPeriods", filterPeriods)
+        //console.log("filterPeriods", filterPeriods)
         if (filterPeriods.length == 0) {
           this.contentservice.openSnackBar("Period not yet defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
 
@@ -431,7 +431,8 @@ export class DailytimetablereportComponent implements OnInit {
 
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.shareddata.ChangeBatch(this.Batches);
+        this.Batches = this.tokenstorage.getBatches()
+        //this.shareddata.ChangeBatch(this.Batches);
         //this.loading = false;
         this.GetClassSubject();
         this.GetAllClassPeriods();

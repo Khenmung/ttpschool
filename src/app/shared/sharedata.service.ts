@@ -94,8 +94,8 @@ export class SharedataService {
   CurrentSection = this.SectionSource.asObservable();
   CurrentPrimaryContact = this.PrimaryContactSource.asObservable();
   CurrentMasterData = this.MasterItemsource.asObservable();
-  CurrentBatchId = this.CurrentBatchIdSource.asObservable();
-  CurrentBatch = this.BatchSource.asObservable();
+  //CurrentBatchId = this.CurrentBatchIdSource.asObservable();
+  //CurrentBatch = this.BatchSource.asObservable();
   CurrentStudentId = this.StudentIdSource.asObservable();
   CurrentStudentClassId = this.StudentClassIdSource.asObservable();
   CurrentCountry = this.CountrySource.asObservable();
@@ -234,9 +234,9 @@ export class SharedataService {
 
     this.CurrentBatchIdSource.next(item);
   }
-  ChangeBatch(item) {
-    this.BatchSource.next(item);
-  }
+  // ChangeBatch(item) {
+  //   this.BatchSource.next(item);
+  // }
   ChangeStudentId(item) {
     this.StudentIdSource.next(item);
   }

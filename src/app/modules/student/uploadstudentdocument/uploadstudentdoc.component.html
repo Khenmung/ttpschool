@@ -1,13 +1,13 @@
 <div class="divCls"><strong>Student Documents</strong></div>
 <br>
 <!-- <alert></alert> -->
-<div class="divCls" fxLayout="row wrap" fxLayoutGap="100px">
+<div class="divCls" fxLayout="row wrap">
     <form [formGroup]="uploadForm" fxLayout="row" fxLayoutAlign="space-between center">
         <input #uploadfile type="file" (change)="uploadchange(uploadfile.files)" />
         <div style="padding: 15px 15px 0px 15px;">
             <mat-form-field appearance="outline" fxFlex>
                 <mat-label>Document type</mat-label>
-                <mat-select formControlName="DocTypeId">
+                <mat-select formControlName="DocTypeId" (selectionChange)="enableUpload($event)">
                     <mat-option *ngFor="let p of DocumentTypes" [value]="p.MasterDataId">
                         {{p.MasterDataName}}
                     </mat-option>
@@ -16,8 +16,8 @@
                     is required.</span>
             </mat-form-field>
         </div>
-        <span fxLayout="row" fxLayoutAlign="space-between center">
-            <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()" matTooltip="upload file" 
+        <span>
+            <button [disabled]="loading || Permission=='read' || !EnableUploadButton" type="submit" (click)="uploadFile()" matTooltip="upload file" 
             mat-raised-button color="accent">
                 <mat-icon aria-label="file_upload">file_upload</mat-icon>
             </button>&nbsp;&nbsp;

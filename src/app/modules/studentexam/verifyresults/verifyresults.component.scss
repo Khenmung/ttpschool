@@ -13,12 +13,15 @@ mat-cell,mat-header-cell{
     justify-content: center;
     align-self: stretch;
 }
-
+.mat-column-Student{
+    justify-content: flex-start;
+}
 .mat-cell {
     padding: 0px;
 }
 .mat-column-Division{
     justify-content:center;
+
 }
 .mat-footer-row,
 .mat-header-row,

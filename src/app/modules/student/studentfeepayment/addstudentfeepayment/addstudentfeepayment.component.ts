@@ -204,14 +204,11 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.LoginUserDetail = this.tokenstorage.getUserDetail();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
-        //this.shareddata.CurrentStudentId.subscribe(fy => (this.studentInfoTodisplay.StudentId = fy));
         this.studentInfoTodisplay.StudentId = this.tokenstorage.getStudentId()
-        //this.shareddata.CurrentStudentClassId.subscribe(fy => (this.studentInfoTodisplay.StudentClassId = fy));
         this.studentInfoTodisplay.StudentClassId = this.tokenstorage.getStudentClassId();
         this.shareddata.CurrentStudentName.subscribe(fy => (this.StudentName = fy));
 
-
-        this.shareddata.CurrentBatch.subscribe(fy => (this.Batches = fy));
+        this.Batches = this.tokenstorage.getBatches()
         this.shareddata.CurrentLocation.subscribe(fy => (this.Locations = fy));
         this.shareddata.CurrentFeeType.subscribe(fy => (this.FeeTypes = fy));
         this.shareddata.CurrentSection.subscribe(fy => (this.Sections = fy));
@@ -258,17 +255,14 @@ export class AddstudentfeepaymentComponent implements OnInit {
             })
           }
         })
-        this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
+        this.Batches = this.tokenstorage.getBatches()
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.CurrentFeeType.subscribe(f => this.FeeTypes = f);
         this.AccountNature = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        //this.AccountGroup = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
         this.PaymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.FEEPAYMENTTYPE);
         this.PaymentTypeId = this.PaymentTypes.filter(p => p.MasterDataName.toLowerCase() == "cash")[0].MasterDataId;
-        //this.GetClassFee(this.studentInfoTodisplay.ClassId);
-        // this.GetStudentClass();
       });
 
   }

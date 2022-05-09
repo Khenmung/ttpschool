@@ -8,9 +8,13 @@
     margin-right: 15px;
     width:98%;
 }
+.mat-column-Action{
+    justify-content: center;
+    flex: 1 1 100px;
+}
+.mat-column-Active,
 .mat-column-LoginUserCount,
 .mat-column-PersonOrItemCount,
-.mat-column-Active,
 .mat-column-Action,
 .mat-column-MinCount,
 .mat-column-MinPrice,
@@ -18,14 +22,14 @@
 .mat-column-AmountPerMonth,
 .mat-column-PlanName
 {
-    flex:0 0 100px;
+    flex:1 1 100px;
 }
-.mat-column-Formula,.mat-column-Description{
-    flex: 0 0 200px;
+.mat-column-Formula,
+.mat-column-Description{
+    flex: 1 1 200px;
 }
 mat-cell{
     border-right: 1px solid lightgray;
-    //border-bottom: 1px solid lightgray;
     padding: 10px;
     align-self: stretch;
 }

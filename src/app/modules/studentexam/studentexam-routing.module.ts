@@ -8,6 +8,7 @@ import { ExamslotComponent } from './examslot/examslot.component';
 import { ExamstudentsubjectresultComponent } from './examstudentsubjectresult/examstudentsubjectresult.component';
 import { VerifyResultsComponent } from './verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
+import { StudentgradeComponent } from './studentgrade/studentgrade.component';
 const routes: Routes = [
   {
     path: '', component: HomeComponent,
@@ -33,5 +34,6 @@ export const studentexamComponents = [
   ExamstudentsubjectresultComponent,
   SlotnclasssubjectComponent,
   ExamhomeComponent,
-  VerifyResultsComponent
+  VerifyResultsComponent,
+  StudentgradeComponent
 ]

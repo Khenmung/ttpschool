@@ -258,7 +258,7 @@ export class ResultComponent implements OnInit {
           var _classObj = this.Classes.filter(s => s.ClassId == d.StudentClass["ClassId"]);
           if (_classObj.length > 0)
             _className = _classObj[0].MasterDataName;
-          d["Section"] = _section;
+          //d["Section"] = _section;
           d["ClassName"] = _className;
           d["RollNo"] = d.StudentClass["RollNo"]
           d["Student"] = d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
@@ -268,7 +268,7 @@ export class ResultComponent implements OnInit {
 
         })
 
-        this.ExamStudentResult = this.ExamStudentResult.sort((a, b) => b.TotalMarks - a.TotalMarks)
+        this.ExamStudentResult = this.ExamStudentResult.filter(f=>f.Grade != 'Fail').sort((a, b) => a.Rank - b.Rank)
           // .map((m, indx) => {
           //   m.Rank = (m.Grade + "" == 'Fail') ? 0 : indx + 1;
           //   return m;
@@ -292,7 +292,8 @@ export class ResultComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        this.shareddata.ChangeBatch(this.Batches);
+        this.Batches = this.tokenstorage.getBatches()
+        //this.shareddata.ChangeBatch(this.Batches);
         this.GetExams();
         this.GetStudentSubjects();
       });

@@ -20,12 +20,12 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class StudentattendancereportComponent implements OnInit {
 
-  @ViewChild(MatPaginator) paginator:MatPaginator;
-  @ViewChild(MatSort) sort:MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
-  AttendanceStatusSum=[];
+  AttendanceStatusSum = [];
   edited = false;
   EnableSave = true;
   Permission = 'deny';
@@ -80,15 +80,15 @@ export class StudentattendancereportComponent implements OnInit {
     'AttendanceStatus',
     'Remarks'
   ];
-  TotoalPresent=0;
-  TotalAbsent=0;
-  SelectedApplicationId=0;
+  TotoalPresent = 0;
+  TotalAbsent = 0;
+  SelectedApplicationId = 0;
   constructor(
     private fb: FormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -109,8 +109,10 @@ export class StudentattendancereportComponent implements OnInit {
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
         this.StudentClassId = this.tokenstorage.getStudentClassId();
-        if (this.StudentClassId == 0)
-          this.nav.navigate(['/edu']);
+        if (this.StudentClassId == 0) {
+          this.loading = false;
+          this.contentservice.openSnackBar("Student class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+        }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
@@ -162,7 +164,7 @@ export class StudentattendancereportComponent implements OnInit {
     list.lookupFields = ["StudentClass($select=RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and StudentClassId eq " + this.StudentClassId + " and BatchId eq " + this.SelectedBatchId];
-    
+
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
         attendance.value.forEach(att => {
@@ -173,10 +175,10 @@ export class StudentattendancereportComponent implements OnInit {
             AttendanceDate: att.AttendanceDate,
             ClassSubjectId: att.ClassSubjectId,
             Remarks: att.Remarks,
-            StudentRollNo: att.StudentClass.Student.FirstName + " " + att.StudentClass.Student.LastName 
+            StudentRollNo: att.StudentClass.Student.FirstName + " " + att.StudentClass.Student.LastName
           });
         });
-        this.AttendanceStatusSum=alasql("select AttendanceStatus, sum(AttendanceStatus) Total from ? group by AttendanceStatus",[this.StudentAttendanceList])
+        this.AttendanceStatusSum = alasql("select AttendanceStatus, sum(AttendanceStatus) Total from ? group by AttendanceStatus", [this.StudentAttendanceList])
         this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -207,7 +209,7 @@ export class StudentattendancereportComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -255,7 +257,7 @@ export class StudentattendancereportComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
