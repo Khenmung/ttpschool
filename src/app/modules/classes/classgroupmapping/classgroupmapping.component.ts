@@ -12,45 +12,38 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-studentgrade',
-  templateUrl: './studentgrade.component.html',
-  styleUrls: ['./studentgrade.component.scss']
+  selector: 'app-classgroupmapping',
+  templateUrl: './classgroupmapping.component.html',
+  styleUrls: ['./classgroupmapping.component.scss']
 })
-export class StudentgradeComponent implements OnInit {
+export class ClassgroupmappingComponent implements OnInit {
   @ViewChild(MatPaginator) paging: MatPaginator;
-  ClassGroups =[];
-  StudentGradeTypes = [];
+  ClassGroups = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  StudentGradeListName = 'StudentGrades';
+  ClassGroupMappingListName = 'ClassGroupMappings';
   Applications = [];
   loading = false;
   SelectedBatchId = 0;
-  StudentGradeList: IStudentGrade[] = [];
-  filteredOptions: Observable<IStudentGrade[]>;
-  dataSource: MatTableDataSource<IStudentGrade>;
+  ClassGroupMappingList: IClassGroupMapping[] = [];
+  filteredOptions: Observable<IClassGroupMapping[]>;
+  dataSource: MatTableDataSource<IClassGroupMapping>;
   allMasterData = [];
-  StudentGrade = [];
+  ClassGroupMapping = [];
   Permission = 'deny';
-  Classes =[];
-  StudentGradeData = {
-    StudentGradeId: 0,
-    GradeName: '',
-    Formula: '',
-    ClassGroupId:0,
-    GradeTypeId: 0,
-    Sequence: 0,
+  Classes = [];
+  ClassGroupMappingData = {
+    ClassGroupMappingId: 0,
+    ClassId: 0,
+    ClassGroupId: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
   };
   displayedColumns = [
-    "StudentGradeId",
-    "GradeName",
-    "Formula",
+    "ClassGroupMappingId",
+    "ClassId",
     "ClassGroupId",
-    "GradeTypeId",
-    "Sequence",
     "Active",
     "Action"
   ];
@@ -85,7 +78,7 @@ export class StudentgradeComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUPING);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -103,18 +96,15 @@ export class StudentgradeComponent implements OnInit {
   AddNew() {
 
     var newdata = {
-      StudentGradeId: 0,
-      GradeName: '',
-      Formula: '',
-      ClassGroupId:0,
-      GradeTypeId: 0,
-      Sequence: 0,
+      ClassGroupMappingId: 0,
+      ClassId: 0,
+      ClassGroupId: 0,
       Active: 0,
-      Action:false
+      Action: false
     };
-    this.StudentGradeList = [];
-    this.StudentGradeList.push(newdata);
-    this.dataSource = new MatTableDataSource<IStudentGrade>(this.StudentGradeList);
+    this.ClassGroupMappingList = [];
+    this.ClassGroupMappingList.push(newdata);
+    this.dataSource = new MatTableDataSource<IClassGroupMapping>(this.ClassGroupMappingList);
     this.dataSource.paginator = this.paging;
   }
   onBlur(element) {
@@ -140,14 +130,14 @@ export class StudentgradeComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "GradeName eq '" + row.GradeName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] + 
-    " and ClassGroupId eq "+ row.ClassGroupId +" and BatchId eq " + this.SelectedBatchId;
+    let checkFilterString = "ClassId eq " + row.ClassId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ClassGroupId eq " + row.ClassGroupId + " and BatchId eq " + this.SelectedBatchId;
 
-    if (row.StudentGradeId > 0)
-      checkFilterString += " and StudentGradeId ne " + row.StudentGradeId;
+    if (row.ClassGroupMappingId > 0)
+      checkFilterString += " and ClassGroupMappingId ne " + row.ClassGroupMappingId;
     let list: List = new List();
-    list.fields = ["StudentGradeId"];
-    list.PageName = this.StudentGradeListName;
+    list.fields = ["ClassGroupMappingId"];
+    list.PageName = this.ClassGroupMappingListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -159,28 +149,25 @@ export class StudentgradeComponent implements OnInit {
         }
         else {
 
-          this.StudentGradeData.StudentGradeId = row.StudentGradeId;
-          this.StudentGradeData.Active = row.Active;
-          this.StudentGradeData.GradeName = row.GradeName;
-          this.StudentGradeData.ClassGroupId = row.ClassGroupId;
-          this.StudentGradeData.GradeTypeId = row.GradeTypeId;
-          this.StudentGradeData.Formula = row.Formula;
-          this.StudentGradeData.Sequence = row.Sequence;
-          this.StudentGradeData.BatchId = this.SelectedBatchId;
-          this.StudentGradeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          console.log("this.StudentGradeData",this.StudentGradeData)
-          if (this.StudentGradeData.StudentGradeId == 0) {
-            this.StudentGradeData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-            this.StudentGradeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.StudentGradeData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-            delete this.StudentGradeData["UpdatedBy"];
+          this.ClassGroupMappingData.ClassGroupMappingId = row.ClassGroupMappingId;
+          this.ClassGroupMappingData.Active = row.Active;
+          this.ClassGroupMappingData.ClassId = row.ClassId;
+          this.ClassGroupMappingData.ClassGroupId = row.ClassGroupId;
+          this.ClassGroupMappingData.BatchId = this.SelectedBatchId;
+          this.ClassGroupMappingData.OrgId = this.LoginUserDetail[0]["orgId"];
+          console.log("this.ClassGroupMappingData", this.ClassGroupMappingData)
+          if (this.ClassGroupMappingData.ClassGroupMappingId == 0) {
+            this.ClassGroupMappingData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+            this.ClassGroupMappingData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.ClassGroupMappingData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+            delete this.ClassGroupMappingData["UpdatedBy"];
             this.insert(row);
           }
           else {
-            delete this.StudentGradeData["CreatedDate"];
-            delete this.StudentGradeData["CreatedBy"];
-            this.StudentGradeData["UpdatedDate"] = new Date();
-            this.StudentGradeData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.ClassGroupMappingData["CreatedDate"];
+            delete this.ClassGroupMappingData["CreatedBy"];
+            this.ClassGroupMappingData["UpdatedDate"] = new Date();
+            this.ClassGroupMappingData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
         }
@@ -192,10 +179,10 @@ export class StudentgradeComponent implements OnInit {
   insert(row) {
 
     //debugger;
-    this.dataservice.postPatch(this.StudentGradeListName, this.StudentGradeData, 0, 'post')
+    this.dataservice.postPatch(this.ClassGroupMappingListName, this.ClassGroupMappingData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.StudentGradeId = data.StudentGradeId;
+          row.ClassGroupMappingId = data.ClassGroupMappingId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
@@ -203,7 +190,7 @@ export class StudentgradeComponent implements OnInit {
   }
   update(row) {
 
-    this.dataservice.postPatch(this.StudentGradeListName, this.StudentGradeData, this.StudentGradeData.StudentGradeId, 'patch')
+    this.dataservice.postPatch(this.ClassGroupMappingListName, this.ClassGroupMappingData, this.ClassGroupMappingData.ClassGroupMappingId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -211,32 +198,36 @@ export class StudentgradeComponent implements OnInit {
           this.loadingFalse();
         });
   }
-  GetStudentGrade() {
+  GetClassGroupMapping() {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + 
-    " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+      " and BatchId eq " + this.SelectedBatchId;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
-    if(_ClassGroupId>0)
-    {
+    if (_ClassGroupId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else {
       filterStr += " and ClassGroupId eq " + _ClassGroupId;
     }
 
     let list: List = new List();
     list.fields = ["*"];
 
-    list.PageName = this.StudentGradeListName;
+    list.PageName = this.ClassGroupMappingListName;
     list.filter = [filterStr];
-    this.StudentGradeList = [];
+    this.ClassGroupMappingList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.StudentGradeList = [...data.value];
+          this.ClassGroupMappingList = [...data.value];
         }
-        this.dataSource = new MatTableDataSource<IStudentGrade>(this.StudentGradeList);
+        this.dataSource = new MatTableDataSource<IClassGroupMapping>(this.ClassGroupMappingList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
@@ -248,14 +239,13 @@ export class StudentgradeComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.StudentGradeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADETYPE)
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.loading = false;
         });
 
-       
+
       });
   }
   getDropDownData(dropdowntype) {
@@ -274,13 +264,11 @@ export class StudentgradeComponent implements OnInit {
 
   }
 }
-export interface IStudentGrade {
-  StudentGradeId: number;
-  GradeName: string;
-  Formula: string;
-  GradeTypeId: number;
-  ClassGroupId:number;
-  Sequence: number;
+export interface IClassGroupMapping {
+  ClassGroupMappingId: number;
+  ClassId: number;
+  ClassGroupId: number;
   Active: number;
   Action: boolean;
 }
+

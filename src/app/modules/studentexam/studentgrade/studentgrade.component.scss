@@ -3,7 +3,6 @@ mat-form-field{
     margin-right: 15px;
 }
 .mat-column-GradeTypeId,
-.mat-column-ClassId,
 .mat-column-Sequence
 {    
     flex:1 0 100px;
@@ -15,6 +14,7 @@ mat-form-field{
     flex:1 0 100px;
 
 }
+.mat-column-ClassGroupId,
 .mat-column-GradeName,
 .mat-column-Formula{
     flex:1 0 150px;

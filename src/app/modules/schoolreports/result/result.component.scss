@@ -4,3 +4,12 @@ mat-form-field,button{
 mat-cell:first-of-type{
     padding-left: 0px;
 }
+.mat-column-Student{
+    flex:1 0 150px
+}
+.mat-column-Rank,
+.mat-column-Grade,
+.mat-column-Percent,
+.mat-column-TotalMarks{
+    flex:1 0 100px
+}

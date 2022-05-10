@@ -24,14 +24,7 @@ export class ResultComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  SelectedClassStudentGrades = [];
   SelectedApplicationId = 0;
   StandardFilterWithBatchId = '';
   loading = false;
@@ -53,6 +46,7 @@ export class ResultComponent implements OnInit {
   ExamNames = [];
   Exams = [];
   Batches = [];
+  GradeTypes = [];
   StudentSubjects = [];
   dataSource: MatTableDataSource<IExamStudentResult>;
   allMasterData = [];
@@ -250,6 +244,7 @@ export class ResultComponent implements OnInit {
 
         this.ExamStudentResult = this.ExamStudentResult.map(d => {
           var _section = '';
+          var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
           var _sectionObj = this.Sections.filter(s => s.SectionId == d.StudentClass["SectionId"]);
           if (_sectionObj.length > 0)
             _section = _sectionObj[0].MasterDataName;
@@ -262,24 +257,70 @@ export class ResultComponent implements OnInit {
           d["ClassName"] = _className;
           d["RollNo"] = d.StudentClass["RollNo"]
           d["Student"] = d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
-          d.Grade = this.StudentGrades.filter(f => f.MasterDataId == d.Grade)[0].MasterDataName;
-          d["Percent"] = d.Grade == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
+          d.Grade = _gradeObj[0].GradeName;
+          d.GradeType = _gradeObj[0].GradeType;
+          d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
+          d["Percent"] = d.GradeType == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
           return d;
 
         })
 
-        this.ExamStudentResult = this.ExamStudentResult.filter(f=>f.Grade != 'Fail').sort((a, b) => a.Rank - b.Rank)
-          // .map((m, indx) => {
-          //   m.Rank = (m.Grade + "" == 'Fail') ? 0 : indx + 1;
-          //   return m;
-          // })
-
+        this.ExamStudentResult = this.ExamStudentResult.filter(f => f.Grade != 'Fail').sort((a, b) => a.Rank - b.Rank)
         this.dataSource = new MatTableDataSource(this.ExamStudentResult);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false;
       })
   }
+  GetClassGroupMapping() {
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+
+    let list: List = new List();
+
+    list.fields = ["ClassId,ClassGroupId"];
+    list.PageName = "ClassGroupMappings";
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GetStudentGradeDefn(data.value);
+      })
+  }
+  GetStudentGradeDefn(classgroupmapping) {
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    let list: List = new List();
+
+    list.fields = ["StudentGradeId,GradeName,ClassGroupId,GradeTypeId,Formula"];
+    list.PageName = "StudentGrades";
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+    this.StudentGrades = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        classgroupmapping.forEach(f => {
+          var mapped = data.value.filter(d => d.ClassGroupId == f.ClassGroupId)
+          var _grades = [];
+          mapped.forEach(m => {
+            _grades.push(
+              {
+                StudentGradeId: m.StudentGradeId,
+                GradeName: m.GradeName,
+                GradeTypeId: m.GradeTypeId,
+                GradeType: this.GradeTypes.filter(f => f.MasterDataId == m.GradeTypeId)[0].MasterDataName,
+                Formula: m.Formula,
+                ClassGroupId: m.ClassGroupId
+              })
+          })
+          f.grades = _grades;
+          this.StudentGrades.push(f);
+        })
+      })
+  }
+  GetSelectedClassStudentGrade() {
+    var _classId = this.searchForm.get("searchClassId").value;
+    if (_classId > 0)
+      this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
+  }
+
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -291,11 +332,13 @@ export class ResultComponent implements OnInit {
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+        this.GradeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADETYPE);
+        //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.Batches = this.tokenstorage.getBatches()
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetExams();
         this.GetStudentSubjects();
+        this.GetClassGroupMapping();
       });
   }
 
@@ -368,6 +411,7 @@ export interface IExamStudentResult {
   TotalMarks: number;
   Grade: string;
   GradeId: number;
+  GradeType: string;
   Rank: number;
   OrgId: number;
   BatchId: number;

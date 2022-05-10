@@ -118,7 +118,7 @@ export class ClassmasterdashboardComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSTEACHER);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 

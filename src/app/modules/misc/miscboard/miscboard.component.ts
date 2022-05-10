@@ -4,6 +4,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { DemoComponent } from '../calendar/calendar.component';
+import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
 //import { CalendarComponent } from '../calendar/calendar.component';
 import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
@@ -20,10 +21,12 @@ export class MiscboardComponent implements AfterViewInit {
     NoOfStudentComponent,
     DemoComponent,
     EventComponent,
-    HolidayComponent
+    HolidayComponent,
+    ClassprerequisiteComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -61,6 +64,7 @@ export class MiscboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.common.misc.HOLIDAY)
     this.GenerateComponent(globalconstants.Pages.common.misc.EVENT)
     this.GenerateComponent(globalconstants.Pages.common.misc.NOOFSTUDENT)
+    this.GenerateComponent(globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -98,6 +102,9 @@ export class MiscboardComponent implements AfterViewInit {
         break;
       case "no of students":
         comindx = this.components.indexOf(NoOfStudentComponent);
+        break;
+      case "pre-requisite":
+        comindx = this.components.indexOf(ClassprerequisiteComponent);
         break;
     }
 

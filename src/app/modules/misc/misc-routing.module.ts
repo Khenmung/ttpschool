@@ -7,6 +7,7 @@ import { EventComponent } from './event/event.component';
 import { HolidayComponent } from './holiday/holiday.component';
 import { NoOfStudentComponent } from './no-of-student/no-of-student.component';
 import { DemoComponent } from './calendar/calendar.component';
+import { ClassprerequisiteComponent } from './classprerequisite/classprerequisite.component';
 
 const routes: Routes = [
   {
@@ -24,7 +25,7 @@ const routes: Routes = [
 })
 export class MiscRoutingModule { }
 export const MiscComponents = [
-  //  CalendarComponent,
+  ClassprerequisiteComponent,  
   DemoComponent,
   NoOfStudentComponent,
   EventComponent,

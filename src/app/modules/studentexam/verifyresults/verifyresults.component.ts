@@ -25,14 +25,6 @@ export class VerifyResultsComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
@@ -45,6 +37,7 @@ export class VerifyResultsComponent implements OnInit {
   SubjectMarkComponents = [];
   MarkComponents = [];
   StudentGrades = [];
+  SelectedClassStudentGrades = [];
   Students = [];
   Classes = [];
   ClassGroups = [];
@@ -55,6 +48,7 @@ export class VerifyResultsComponent implements OnInit {
   Exams = [];
   Batches = [];
   StudentSubjects = [];
+  GradeTypes = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
   Permission = 'deny';
@@ -119,6 +113,7 @@ export class VerifyResultsComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
+
         this.GetSubjectComponents();
       }
     }
@@ -226,7 +221,7 @@ export class VerifyResultsComponent implements OnInit {
         });
 
       })
-      console.log("_resultToInsert",_resultToInsert)
+      console.log("_resultToInsert", _resultToInsert)
       this.dataservice.postPatch('ExamStudentResults', _resultToInsert, 0, 'post')
         .subscribe(
           (data: any) => {
@@ -355,22 +350,21 @@ export class VerifyResultsComponent implements OnInit {
             this.displayedColumns.push("Total", "Rank", "Division");
 
             this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
-            this.StudentGrades.sort((a, b) => a.Sequence - b.Sequence);
+            this.SelectedClassStudentGrades[0].grades.sort((a, b) => a.Sequence - b.Sequence);
             var rankCount = 0;
             this.ExamStudentSubjectResult.forEach((r: any, index) => {
-              for (var i = 0; i < this.StudentGrades.length; i++) {
-                var formula = this.StudentGrades[i].Logic
+              for (var i = 0; i < this.SelectedClassStudentGrades[0].grades.length; i++) {
+                var formula = this.SelectedClassStudentGrades[0].grades[i].Formula
                   .replaceAll("[TotalMark]", r.Total)
                   .replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
                   .replaceAll("[PassCount]", r.PassCount)
                   .replaceAll("[FailCount]", r.FailCount);
 
-                if (evaluate(formula))
-                {
+                if (evaluate(formula)) {
                   //if (r.FailCount == 0) {
-                    r.Grade = this.StudentGrades[i].MasterDataId;
-                    r.Division = this.StudentGrades[i].MasterDataName;
-                    break;
+                  r.Grade = this.SelectedClassStudentGrades[0].grades[i].StudentGradeId;
+                  r.Division = this.SelectedClassStudentGrades[0].grades[i].GradeName;
+                  break;
                   //}
                 }
               }
@@ -409,11 +403,62 @@ export class VerifyResultsComponent implements OnInit {
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+        this.GradeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADETYPE);
+        this.GetClassGroupMapping();
+        //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetExams();
         this.GetStudentSubjects();
       });
+  }
+  GetClassGroupMapping() {
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+
+    let list: List = new List();
+
+    list.fields = ["ClassId,ClassGroupId"];
+    list.PageName = "ClassGroupMappings";
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GetStudentGradeDefn(data.value);
+      })
+  }
+  GetStudentGradeDefn(classgroupmapping) {
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    let list: List = new List();
+
+    list.fields = ["StudentGradeId,GradeName,ClassGroupId,GradeTypeId,Formula"];
+    list.PageName = "StudentGrades";
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+    this.StudentGrades = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        classgroupmapping.forEach(f => {
+          var mapped = data.value.filter(d => d.ClassGroupId == f.ClassGroupId)
+          var _grades = [];
+          mapped.forEach(m => {
+            _grades.push(
+              {
+                StudentGradeId:m.StudentGradeId,
+                GradeName: m.GradeName,
+                GradeTypeId: m.GradeTypeId,
+                Formula: m.Formula,
+                ClassGroupId: m.ClassGroupId
+              })
+          })
+          f.grades = _grades;
+          this.StudentGrades.push(f);
+        })
+      })
+  }
+  GetStudentGrade() {
+    var _classId = this.searchForm.get("searchClassId").value;
+    if (_classId > 0)
+      this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
+    //console.log("this.studentgrade", this.StudentGrades)
+    //console.log("this.SelectedClassStudentGrades", this.SelectedClassStudentGrades)
   }
   GetExams() {
 

@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ClassboardComponent } from './classboard/classboard.component';
 import { ClassdetailComponent } from './classdetail/classdetail.component';
-import { ClassprerequisiteComponent } from './classprerequisite/classprerequisite.component';
+import { ClassgroupmappingComponent } from './classgroupmapping/classgroupmapping.component';
 import { ClassmasterdashboardComponent } from './classsmastermapping/classmasterdashboard.component';
 import { DashboardclassfeeComponent } from './dashboardclassfee/dashboardclassfee.component';
 import { FeeDefinitionComponent } from './feedefinition/feedefinition.component';
@@ -28,8 +28,8 @@ export const ClassesComponents = [
   ClassdetailComponent,
   DashboardclassfeeComponent,
   ClassboardComponent,
-  ClassprerequisiteComponent,
   ClassmasterdashboardComponent,
   SchoolFeeTypesComponent,
-  FeeDefinitionComponent 
+  FeeDefinitionComponent ,
+  ClassgroupmappingComponent
 ]

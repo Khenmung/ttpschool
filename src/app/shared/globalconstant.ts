@@ -158,8 +158,9 @@ export class globalconstants {
                     'FEEDEFINITION': 'fee definition',
                     'FEETYPE': 'fee type',
                     'PREREQUISITE': 'pre-requisite',
-                    'CLASSMASTER': 'class master',
-                    'CLASSEVALUATION':'class evaluation'
+                    'CLASSTEACHER': 'class teacher',
+                    'CLASSEVALUATION':'class evaluation',
+                    'CLASSGROUPING':'class grouping'
                 },
                 'EXAM': {
                     'EXAM': 'Exam',

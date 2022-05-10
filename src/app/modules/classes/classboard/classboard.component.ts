@@ -3,12 +3,11 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassdetailComponent } from '../classdetail/classdetail.component';
-import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
+import { ClassgroupmappingComponent } from '../classgroupmapping/classgroupmapping.component';
 import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
 import { FeeDefinitionComponent } from '../feedefinition/feedefinition.component';
 import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.component';
-import { ClassEvaluationComponent } from '../../evaluation/classevaluation/classevaluation.component';
 
 @Component({
   selector: 'app-classboard',
@@ -22,7 +21,7 @@ export class ClassboardComponent implements AfterViewInit {
     DashboardclassfeeComponent,
     SchoolFeeTypesComponent,
     ClassmasterdashboardComponent,
-    ClassprerequisiteComponent
+    ClassgroupmappingComponent
   ];
 
   tabNames = [
@@ -71,11 +70,11 @@ export class ClassboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(DashboardclassfeeComponent);
     this.GetComponents(perObj, comindx)
     
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
-    var comindx = this.components.indexOf(ClassprerequisiteComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUPING)
+    var comindx = this.components.indexOf(ClassgroupmappingComponent);
     this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSMASTER)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSTEACHER)
     var comindx = this.components.indexOf(ClassmasterdashboardComponent);
     this.GetComponents(perObj, comindx)
 
