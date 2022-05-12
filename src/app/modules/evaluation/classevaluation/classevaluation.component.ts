@@ -38,7 +38,7 @@ export class ClassEvaluationComponent implements OnInit {
   ClassEvaluationList: IClassEvaluation[] = [];
   //EvaluationMasterId = 0;
   SelectedBatchId = 0;
-  Categories = [];
+  QuestionnaireTypes = [];
   SubCategories = [];
   Classes = [];
   ClassSubjects = [];
@@ -65,8 +65,7 @@ export class ClassEvaluationComponent implements OnInit {
   displayedColumns = [
     'ClassEvaluationId',
     'Description',
-    'ClassEvalCategoryId',
-    'ClassEvalSubCategoryId',
+    'QuestionnaireTypeId',
     'DisplayOrder',
     'ClassEvaluationAnswerOptionParentId',
     'MultipleAnswer',
@@ -140,7 +139,7 @@ export class ClassEvaluationComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.loading = false;
+        //this.loading = false;
       })
   }
   SelectSubCategory(pCategoryId) {
@@ -184,8 +183,7 @@ export class ClassEvaluationComponent implements OnInit {
 
     var newItem = {
       ClassEvaluationId: 0,
-      ClassEvalCategoryId: 0,
-      ClassEvalSubCategoryId: 0,
+      QuestionnaireTypeId: 0,
       Description: '',
       MultipleAnswer: 0,
       EvaluationMasterId: _EvaluationMasterId,
@@ -206,6 +204,11 @@ export class ClassEvaluationComponent implements OnInit {
       this.UpdateOrSave(question);
     })
   }
+  SaveRow(row)
+  {
+    this.RowToUpdate=0;
+    this.UpdateOrSave(row);  
+  }
   UpdateOrSave(row) {
 
     debugger;
@@ -221,18 +224,18 @@ export class ClassEvaluationComponent implements OnInit {
       this.contentservice.openSnackBar("No Evaluation type Id selected.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
-    if(this.contentservice.checkSpecialChar(row.Description)){
-      this.loading=false;
-      this.contentservice.openSnackBar("Special characters not allowed in questionnaire!",globalconstants.ActionText,globalconstants.RedBackground);
+
+    if (this.contentservice.checkSpecialChar(row.Description)) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Special characters not allowed in questionnaire!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     let checkFilterString = "Description eq '" + row.Description + "'";
-    if (row.ClassEvalCategoryId > 0)
-      checkFilterString += " and ClassEvalCategoryId eq " + row.ClassEvalCategoryId
+    if (row.QuestionnaireTypeId > 0)
+      checkFilterString += " and QuestionnaireTypeId eq " + row.QuestionnaireTypeId
     // if (row.ClassEvalSubCategoryId > 0)
-    //   checkFilterString += " and ClassEvalSubCategoryId eq " + row.ClassEvalSubCategoryId
+    checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
 
     if (row.ClassEvaluationId > 0)
       checkFilterString += " and ClassEvaluationId ne " + row.ClassEvaluationId;
@@ -259,8 +262,7 @@ export class ClassEvaluationComponent implements OnInit {
             {
               ClassEvaluationId: row.ClassEvaluationId,
               Active: row.Active,
-              ClassEvalCategoryId: row.ClassEvalCategoryId,
-              ClassEvalSubCategoryId: row.ClassEvalSubCategoryId,
+              QuestionnaireTypeId: row.QuestionnaireTypeId,
               MultipleAnswer: row.MultipleAnswer,
               ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
               EvaluationMasterId: row.EvaluationMasterId,
@@ -328,7 +330,7 @@ export class ClassEvaluationComponent implements OnInit {
           this.loadingFalse();
         });
   }
- 
+
   GetClassEvaluation() {
     debugger;
     this.loading = true;
@@ -346,8 +348,7 @@ export class ClassEvaluationComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'ClassEvaluationId',
-      'ClassEvalCategoryId',
-      'ClassEvalSubCategoryId',
+      'QuestionnaireTypeId',
       'Description',
       'EvaluationMasterId',
       'MultipleAnswer',
@@ -367,7 +368,7 @@ export class ClassEvaluationComponent implements OnInit {
         if (data.value.length > 0) {
           this.ClassEvaluationList = data.value.map(item => {
             item.Action = false;
-            item.SubCategories = this.allMasterData.filter(f => f.ParentId == item.ClassEvalCategoryId);
+            //item.SubCategories = this.allMasterData.filter(f => f.ParentId == item.ClassEvalCategoryId);
             return item;
           })
         }
@@ -375,7 +376,8 @@ export class ClassEvaluationComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
 
-        console.log('ClassEvaluation', this.ClassEvaluationList)
+        //console.log('ClassEvaluation', this.ClassEvaluationList)
+        this.ClassEvaluationList = this.ClassEvaluationList.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
         this.dataSource = new MatTableDataSource<IClassEvaluation>(this.ClassEvaluationList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -413,7 +415,7 @@ export class ClassEvaluationComponent implements OnInit {
             return item;
           })
         }
-        this.loadingFalse();
+        //this.loadingFalse();
       });
 
   }
@@ -446,7 +448,7 @@ export class ClassEvaluationComponent implements OnInit {
           })
         }
         //console.log("ClassEvaluationAnswerOptionsId",this.ClassEvaluationOptionList)
-        this.loadingFalse();
+        //this.loadingFalse();
       });
 
   }
@@ -474,10 +476,7 @@ export class ClassEvaluationComponent implements OnInit {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
   }
-  // SelectCategory() {
-  //   debugger;
-  //   this.Categories = this.allMasterData.filter(f => f.ParentId == this.searchForm.get("searchSubjectId").value);
-  // }
+
   GetMasterData() {
     debugger;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -485,16 +484,31 @@ export class ClassEvaluationComponent implements OnInit {
         this.allMasterData = [...data.value];
         //this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
+        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         this.GetExams();
-        this.loading = false;
+        //this.loading = false;
         this.GetClassSubjects();
         this.GetClassEvaluationOption();
         //this.GetClassEvaluation();
+        this.loading = false
       });
   }
   onBlur(row) {
     row.Action = true;
+  }
+  Sequencing(editedrow) {
+    debugger;
+    editedrow.Action = true;
+    var editedrowindx = this.ClassEvaluationList.findIndex(x => x.ClassEvaluationId == editedrow.ClassEvaluationId);
+    //this.ClassEvaluationList = this.ClassEvaluationList.filter(f=>f.DisplayOrder>editedrow.DisplayOrder)
+    var numbering = 0;
+    this.ClassEvaluationList.forEach((listrow, indx) => {
+      if (indx > editedrowindx) {
+        numbering++;
+        listrow.DisplayOrder = editedrow.DisplayOrder + numbering;
+        listrow.Action = true;
+      }
+    })
   }
   CategoryChanged(row) {
     debugger;
@@ -529,8 +543,7 @@ export class ClassEvaluationComponent implements OnInit {
 
 export interface IClassEvaluation {
   ClassEvaluationId: number;
-  ClassEvalCategoryId: number;
-  ClassEvalSubCategoryId: number;
+  QuestionnaireTypeId: number;
   MultipleAnswer: number;
   Description: string;
   ClassEvaluationAnswerOptionParentId: number;

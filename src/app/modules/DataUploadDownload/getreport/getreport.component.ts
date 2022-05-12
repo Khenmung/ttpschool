@@ -262,7 +262,7 @@ export class GetreportComponent implements OnInit {
       .subscribe((data: any) => {
         this.AllMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
+        this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         this.loading = false;
       });
   }

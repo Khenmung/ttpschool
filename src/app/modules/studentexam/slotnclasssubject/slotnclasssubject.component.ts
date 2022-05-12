@@ -20,14 +20,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  
   DistinctExamDate = [];
   Permission = 'deny';
   StandardFilterWithBatchId = '';

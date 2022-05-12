@@ -1,100 +1,104 @@
-<div>
-    <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Execute Evaluation</strong></div>
-    </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
-    <div style="padding: 15px;">
-        <div style="width: 100%;">
-            <form [formGroup]="searchForm">
-                <mat-form-field appearance="outline" [style.width.px]="350">
-                    <mat-label>Student</mat-label>
-                    <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                        <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                            {{option.Name}}
-                        </mat-option>
-                    </mat-autocomplete>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="150">
-                    <mat-label>Evaluation</mat-label>
-                    <mat-select formControlName="searchEvaluationMasterId">
-                        <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
-                            {{item.EvaluationName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="150">
-                    <mat-label>Subject</mat-label>
-                    <mat-select formControlName="searchSubjectId">
-                        <mat-option value="0">select</mat-option>
-                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
-                            {{item.SubjectName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Exam/Test</mat-label>
-                    <mat-select formControlName="searchExamId">
-                        <mat-option value="0">select</mat-option>
-                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
-                    <mat-icon>search</mat-icon>
-                </button>
-            </form>
-            <mat-table #table [dataSource]="AssessmentTypeDatasource" *ngIf="AssessmentTypeList.length>0">
-                <ng-container matColumnDef="ExamName">
-                    <mat-header-cell *matHeaderCellDef>Exam
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ExamName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="EvaluationName">
-                    <mat-header-cell *matHeaderCellDef>Evaluation
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.EvaluationName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ClassName">
-                    <mat-header-cell *matHeaderCellDef>Class
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.ClassName}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Subject">
-                    <mat-header-cell *matHeaderCellDef>Subject
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        {{element.Subject}}
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="Action">
-                    <mat-header-cell *matHeaderCellDef>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <button style="margin-right: 15px;"
-                            [disabled]="loading || !element.Action || Permission=='read' || EvaluationStarted"
-                            matTooltip="start" mat-mini-fab color="accent" (click)="StartEvaluation(element)">
-                            <mat-icon>pageview</mat-icon>
-                        </button>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="EvaluationPlanColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: EvaluationPlanColumns;let indx=index" class="element-row"
-                    style="align-items: center;"></mat-row>
-            </mat-table>
-            <!-- <span style="display: flex;flex-direction:column;" *ngFor="let cat of Categories;">
-                {{cat.MasterDataName}} 
-                <span style="margin-left: 15px; display: flex;flex-direction:column;" *ngFor="let subcat of Categories|Catfilter:cat">
-                    {{subcat.MasterDataName}}                 
+<div style="padding:15px 15px 10px 15px;">
+    <div><strong>Evaluation Result</strong></div>
+</div>
+<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<!-- <alert></alert> -->
+<div style="padding: 15px 15px 15px 0px;">
+    <div style="width: 100%;">
+        <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline" [style.width.px]="350">
+                <mat-label>Student</mat-label>
+                <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                        {{option.FullName}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Evaluation</mat-label>
+                <mat-select formControlName="searchEvaluationMasterId">
+                    <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
+                        {{item.EvaluationName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="150">
+                <mat-label>Subject</mat-label>
+                <mat-select formControlName="searchSubjectId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
+                        {{item.SubjectName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Exam/Test</mat-label>
+                <mat-select formControlName="searchExamId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </form>
+        <mat-table #table [dataSource]="AssessmentTypeDatasource" *ngIf="AssessmentTypeList.length>0">
+            <ng-container matColumnDef="ExamName">
+                <mat-header-cell *matHeaderCellDef>Exam/Evaluation session
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ExamName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="EvaluationName">
+                <mat-header-cell *matHeaderCellDef>Evaluation
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.EvaluationName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ClassGroupName">
+                <mat-header-cell *matHeaderCellDef>Class/Class group
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.ClassGroupName}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Subject">
+                <mat-header-cell *matHeaderCellDef>Subject
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    {{element.Subject}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button style="margin-right: 15px;"
+                        [disabled]="loading || !element.Action || Permission=='read' || element.EvaluationStarted"
+                        matTooltip="display" mat-mini-fab color="accent" (click)="StartEvaluation(element)">
+                        <mat-icon>pageview</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="EvaluationPlanColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: EvaluationPlanColumns;let indx=index" class="element-row"
+                style="align-items: center;"></mat-row>
+        </mat-table>
+        <div id="printSection" *ngIf="StudentEvaluationList.length>0">
+            <div
+                style="margin:30px 15px 15px 30px; display:flex;flex-direction: column;justify-content: center; width:100%">
+                <span *ngFor="let item of PrintHeading">
+                    <span style="font-size:larger;display: flex;justify-content: center;">{{item.Logic}}</span>
                 </span>
-            </span> -->
+            </div>
+            <div *ngIf="StudentName.length>0">
+                <span>My name is:</span>
+                <span style="padding-left:30px;">{{StudentName}}</span>
+            </div>
             <mat-table #table [dataSource]="dataSource" *ngIf="StudentEvaluationList.length>0">
                 <ng-container matColumnDef="StudentEvaluationResultId">
                     <mat-header-cell *matHeaderCellDef>Id
@@ -104,24 +108,29 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Description">
-                    <mat-header-cell *matHeaderCellDef>Description
+                    <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element"
+                    <mat-cell *matCellDef="let element" [attr.colspan]="2"
                         style="display:flex; flex-direction: column;justify-content: start;">
-                        <span style="width: 100%;padding: 15px 15px 10px 0px;"> {{element.Description}}</span>
-                        <span style="width: 100%;" *ngIf="element.ClassEvaluationAnswerOptionParentId==0">
-                            <mat-form-field appearance="outline" style="width:100%">
-                                <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
-                                    (blur)="onBlur(element)" [value]="element.AnswerText"
-                                    [(ngModel)]="element.AnswerText"></textarea>
-                            </mat-form-field>
-                            <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/1000
-                            </mat-hint>
+                        <!-- <span *ngIf="element.ClassEvalCategoryId>0">{{element.CatName}}</span> -->
+                        <span style="width:100%; margin: 15px;display:flex; flex-direction:column;justify-content: flex-start;">
+                            <span
+                                *ngIf="element.QuestionnaireType=='Category' || element.QuestionnaireType=='Sub Category'"
+                                style="font-weight: bold; width: 100%;padding: 15px 15px 10px 0px;">
+                                {{element.Description}}</span>
+                            <span *ngIf="element.QuestionnaireType=='Questionnaire'"
+                                style="width: 100%;padding: 15px 15px 10px 0px;">
+                               <mat-icon class="icon">star_outline</mat-icon> {{element.Description}}
+                            </span>
+                            <span style="width: 100%;min-height: 50px;padding: 15px;margin-bottom: 15px;border:1px solid lightgray"
+                                *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.AnswerText.length>0">
+                                {{element.AnswerText}}
+                            </span>
                         </span>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="AnswerOptionsId">
-                    <mat-header-cell *matHeaderCellDef>Assessment
+                    <mat-header-cell *matHeaderCellDef style="display:none">
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <span style="padding: 15px 15px 15px 0px;"
@@ -150,8 +159,14 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
                     style="align-items: center;"></mat-row>
             </mat-table>
-            <mat-paginator [pageSizeOptions]="[3,5,10,20]"></mat-paginator>
         </div>
-
+        <span style="margin: 15px;display: flex;justify-content: center;" fxLayout="row"
+            *ngIf="StudentEvaluationList.length>0">
+            <button [disabled]="loading || StudentEvaluationList.length ==0" matTooltip="print"
+                printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
+                <mat-icon>print</mat-icon>
+            </button>
+            <mat-paginator [pageSizeOptions]="[50,100]"></mat-paginator>
+        </span>
     </div>
 </div>

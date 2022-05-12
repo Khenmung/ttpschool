@@ -26,7 +26,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   loading = false;
   ClassEvaluationOptionList: IClassEvaluationOption[] = [];
   SelectedBatchId = 0;
-  Categories = [];
+  QuestionnaireTypes = [];
   EvaluationOptionAutoComplete = [];
   Classes = [];
   RatingOptions = [];
@@ -335,7 +335,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
+        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         //this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.loading = false;
       });

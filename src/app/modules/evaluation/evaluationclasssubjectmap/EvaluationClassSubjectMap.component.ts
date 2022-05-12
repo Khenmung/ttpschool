@@ -34,6 +34,8 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   Sessions = [];
   SelectedBatchId = 0;
   SelectedClassSubjects = [];
+  ClassGroups = [];
+  ClassGroupMappings = [];
   ClassSubjects = [];
   Classes = [];
   RatingOptions = [];
@@ -44,7 +46,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   Exams = [];
   EvaluationClassSubjectMapData = {
     EvaluationClassSubjectMapId: 0,
-    ClassId: 0,
+    ClassGroupId: 0,
     ClassSubjectId: 0,
     EvaluationMasterId: 0,
     ExamId: 0,
@@ -55,7 +57,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   displayedColumns = [
     'EvaluationClassSubjectMapId',
     'EvaluationName',
-    'ClassId',
+    'ClassGroupId',
     'ClassSubjectId',
     'ExamId',
     'Active',
@@ -75,7 +77,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     this.searchForm = this.fb.group({
       searchEvaluationMasterId: [0],
       searchSubjectId: [0],
-      searchClassId: [0],
+      searchClassGroupId: [0],
       searchExamId: [0]
     })
     this.PageLoad();
@@ -109,6 +111,11 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
             this.Classes = [...data.value];
           });
         }
+        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+          .subscribe((data: any) => {
+            this.ClassGroupMappings = [...data.value];
+            this.loading = false;
+          })
       }
     }
   }
@@ -150,7 +157,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
     var newItem = {
       EvaluationClassSubjectMapId: 0,
-      ClassId: 0,
+      ClassGroupId: 0,
       ClassSubjectId: 0,
       ExamId: 0,
       EvaluationMasterId: _EvaluationMasterId,
@@ -164,22 +171,32 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     this.dataSource = new MatTableDataSource(this.EvaluationClassSubjectMapList);
   }
   UpdateOrSave(row) {
-
+    debugger;
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
 
     this.loading = true;
     let checkFilterString = this.StandardFilter;
     if (row.ExamId > 0)
-      checkFilterString = " and ExamId eq " + row.ExamId;
+      checkFilterString = "ExamId eq " + row.ExamId;
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select evaluation session or examination.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (_EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId eq " + _EvaluationMasterId;
     else {
+      this.loading = false;
       this.contentservice.openSnackBar("Please select evaluation.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (row.ClassId > 0)
-      checkFilterString += " and ClassId eq " + row.ClassId;
-
+    if (row.ClassGroupId > 0)
+      checkFilterString += " and ClassGroupId eq " + row.ClassGroupId;
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class/class group.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (row.ClassSubjectId > 0)
       checkFilterString += " and ClassSubjectId eq " + row.ClassSubjectId;
 
@@ -203,16 +220,16 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
           this.EvaluationClassSubjectMapForUpdate.push(
             {
               EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
-              ClassId: row.ClassId,
+              ClassGroupId: row.ClassGroupId,
               ClassSubjectId: row.ClassSubjectId,
-              ExamId: row.ExamId==null?0:row.ExamId,
+              ExamId: row.ExamId == null ? 0 : row.ExamId,
               EvaluationMasterId: this.searchForm.get("searchEvaluationMasterId").value,
               Active: row.Active,
               Deleted: false,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
 
-            //console.log("for udpate",this.EvaluationClassSubjectMapForUpdate[0])
+          //console.log("for udpate",this.EvaluationClassSubjectMapForUpdate[0])
           if (this.EvaluationClassSubjectMapForUpdate[0].EvaluationClassSubjectMapId == 0) {
             this.EvaluationClassSubjectMapForUpdate[0]["CreatedDate"] = new Date();
             this.EvaluationClassSubjectMapForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -225,7 +242,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
           else {
             delete this.EvaluationClassSubjectMapForUpdate[0]["CreatedDate"];
             this.EvaluationClassSubjectMapForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.EvaluationClassSubjectMapForUpdate[0]["CreatedBy"];            
+            delete this.EvaluationClassSubjectMapForUpdate[0]["CreatedBy"];
             delete this.EvaluationClassSubjectMapForUpdate[0]["SubCategories"];
             delete this.EvaluationClassSubjectMapForUpdate[0]["UpdatedBy"];
             this.update(row);
@@ -301,7 +318,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    var _classId = this.searchForm.get("searchClassId").value;
+    var _classGroupId = this.searchForm.get("searchClassGroupId").value;
     var _subjectId = this.searchForm.get("searchSubjectId").value;
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     var _searchExamId = this.searchForm.get("searchExamId").value;
@@ -316,8 +333,8 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
       filterStr += " and EvaluationMasterId eq " + _EvaluationMasterId;
     }
 
-    if (_classId > 0)
-      filterStr += " and ClassId eq " + _classId;
+    if (_classGroupId > 0)
+      filterStr += " and ClassGroupId eq " + _classGroupId;
     if (_subjectId > 0)
       filterStr += " and ClassSubjectId eq " + _subjectId;
     if (_searchExamId > 0)
@@ -326,7 +343,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'EvaluationClassSubjectMapId',
-      'ClassId',
+      'ClassGroupId',
       'ClassSubjectId',
       'ExamId',
       'EvaluationMasterId',
@@ -385,7 +402,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.EvaluationNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EvaluationName);
+        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.GetClassSubjects();
         this.GetExams();
@@ -396,11 +413,15 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     row.Action = true;
   }
 
-  getClassSubjects() {
+  getSelectedClassSubjects() {
     debugger;
-
-    this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
-
+    var _classGroupId = this.searchForm.get("searchClassGroupId").value;
+    var classgroupmapping = this.ClassGroupMappings.filter(f => f.ClassGroupId == _classGroupId);
+    //only if _classGroupId has one classid, subjects can be selected.
+    if (classgroupmapping.length == 1)
+      this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classgroupmapping[0].ClassId);
+    else
+      this.SelectedClassSubjects = [];
   }
   GetEvaluationMasterId() {
     this.EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
@@ -429,7 +450,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
 export interface IEvaluationClassSubjectMap {
   EvaluationClassSubjectMapId: number;
   ExamId: number;
-  ClassId: number;
+  ClassGroupId: number;
   ClassSubjectId: number;
   EvaluationMasterId: number;
   Active: boolean;

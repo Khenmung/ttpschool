@@ -37,7 +37,7 @@ export class StudentprofilereportComponent implements OnInit {
   loading = false;
   StudentEvaluationList: any[] = [];
   SelectedBatchId = 0;
-  Categories = [];
+  QuestionnaireTypes = [];
   Classes = [];
   ClassEvaluations = [];
   RatingOptions = [];
@@ -336,7 +336,7 @@ export class StudentprofilereportComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
-        this.Categories = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
+        this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
@@ -439,7 +439,7 @@ export interface IStudentEvaluation {
   StudentClassId: number;
   EvaluationTypeId: number;
   ExamId: number;
-  SubCategories: any[];
+  //QuestionnaireTypeId: any[];
   Active: number;
   Action: boolean;
 }

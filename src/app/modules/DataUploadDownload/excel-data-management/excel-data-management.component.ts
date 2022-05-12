@@ -911,7 +911,7 @@ export class ExcelDataManagementComponent implements OnInit {
           this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
           this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
           this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
-          this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONCATEGORY);
+          this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         }
         else if (SelectedApplicationName == 'employee') {
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);

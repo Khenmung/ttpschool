@@ -44,7 +44,7 @@
                 </button>                
             </form>
 
-            <mat-table #table style="overflow: auto;" [dataSource]="dataSource">
+            <mat-table #table style="overflow: auto;" [dataSource]="dataSource" *ngIf="ExamStudentSubjectResult.length>0">
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
                         <div *ngIf="ExamStudentSubjectResult.length>0" fxLayoutAlign="center center">

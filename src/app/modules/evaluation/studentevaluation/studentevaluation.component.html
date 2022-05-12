@@ -34,7 +34,7 @@
                     </mat-select>
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Exam/Test</mat-label>
+                    <mat-label>Exam/Evaluation session/Test</mat-label>
                     <mat-select formControlName="searchExamId">
                         <mat-option value="0">select</mat-option>
                         <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
@@ -60,11 +60,11 @@
                         {{element.EvaluationName}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ClassName">
-                    <mat-header-cell *matHeaderCellDef>Class
+                <ng-container matColumnDef="ClassGroupName">
+                    <mat-header-cell *matHeaderCellDef>Class Group
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.ClassName}}
+                        {{element.ClassGroupName}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Subject">
@@ -107,12 +107,13 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Description">
-                    <mat-header-cell *matHeaderCellDef>Description
+                    <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element"
                         style="display:flex; flex-direction: column;justify-content: start;">
-                        <span style="width: 100%;padding: 15px 15px 10px 0px;"> {{element.Description}}</span>
-                        <span style="width: 100%;" *ngIf="element.ClassEvaluationAnswerOptionParentId==0">
+                        <span *ngIf="element.QuestionnaireType=='Category' || element.QuestionnaireType=='Sub Category'" style="width: 100%;padding: 15px 15px 10px 0px;font-weight: bold;"> {{element.Description}}</span>
+                        <span *ngIf="element.QuestionnaireType=='Questionnaire'" style="width: 100%;padding: 15px 15px 10px 0px;"> {{element.Description}}</span>
+                        <span style="width: 100%;" *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
                             <mat-form-field appearance="outline" style="width:100%">
                                 <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
                                     (blur)="onBlur(element)" [value]="element.AnswerText"
@@ -124,7 +125,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="AnswerOptionsId">
-                    <mat-header-cell *matHeaderCellDef>Assessment
+                    <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <span style="padding: 15px 15px 15px 0px;" *ngIf="element.MultipleAnswer==1 && element.ClassEvaluationAnswerOptionParentId>0">

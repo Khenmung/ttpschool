@@ -203,6 +203,7 @@ export class VerifyResultsComponent implements OnInit {
       return;
     }
     else {
+      this.loading = true;
       this.ExamStudentSubjectResult.forEach(d => {
 
         _resultToInsert.push({
@@ -221,7 +222,7 @@ export class VerifyResultsComponent implements OnInit {
         });
 
       })
-      console.log("_resultToInsert", _resultToInsert)
+      //console.log("_resultToInsert", _resultToInsert)
       this.dataservice.postPatch('ExamStudentResults', _resultToInsert, 0, 'post')
         .subscribe(
           (data: any) => {
@@ -350,33 +351,37 @@ export class VerifyResultsComponent implements OnInit {
             this.displayedColumns.push("Total", "Rank", "Division");
 
             this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
-            this.SelectedClassStudentGrades[0].grades.sort((a, b) => a.Sequence - b.Sequence);
-            var rankCount = 0;
-            this.ExamStudentSubjectResult.forEach((r: any, index) => {
-              for (var i = 0; i < this.SelectedClassStudentGrades[0].grades.length; i++) {
-                var formula = this.SelectedClassStudentGrades[0].grades[i].Formula
-                  .replaceAll("[TotalMark]", r.Total)
-                  .replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
-                  .replaceAll("[PassCount]", r.PassCount)
-                  .replaceAll("[FailCount]", r.FailCount);
+            if (this.SelectedClassStudentGrades.length > 0) {
+              this.SelectedClassStudentGrades[0].grades.sort((a, b) => a.Sequence - b.Sequence);
+              var rankCount = 0;
+              this.ExamStudentSubjectResult.forEach((r: any, index) => {
+                for (var i = 0; i < this.SelectedClassStudentGrades[0].grades.length; i++) {
+                  var formula = this.SelectedClassStudentGrades[0].grades[i].Formula
+                    .replaceAll("[TotalMark]", r.Total)
+                    .replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
+                    .replaceAll("[PassCount]", r.PassCount)
+                    .replaceAll("[FailCount]", r.FailCount);
 
-                if (evaluate(formula)) {
-                  //if (r.FailCount == 0) {
-                  r.Grade = this.SelectedClassStudentGrades[0].grades[i].StudentGradeId;
-                  r.Division = this.SelectedClassStudentGrades[0].grades[i].GradeName;
-                  break;
-                  //}
+                  if (evaluate(formula)) {
+                    //if (r.FailCount == 0) {
+                    r.Grade = this.SelectedClassStudentGrades[0].grades[i].StudentGradeId;
+                    r.Division = this.SelectedClassStudentGrades[0].grades[i].GradeName;
+                    break;
+                    //}
+                  }
                 }
-              }
 
-              if (r.FailCount == 0) {
-                rankCount++;
-                r.Rank = rankCount;
-              }
-              //else
-              //  r.Rank =-1;
+                if (r.FailCount == 0) {
+                  rankCount++;
+                  r.Rank = rankCount;
+                }
+              })
+            }
+            else
+            {
+              this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
 
-            })
+            }
             if (this.ExamStudentSubjectResult.length == 0) {
               this.contentservice.openSnackBar("No Result found for this class/section.", globalconstants.ActionText, globalconstants.RedBackground);
             }
@@ -441,7 +446,7 @@ export class VerifyResultsComponent implements OnInit {
           mapped.forEach(m => {
             _grades.push(
               {
-                StudentGradeId:m.StudentGradeId,
+                StudentGradeId: m.StudentGradeId,
                 GradeName: m.GradeName,
                 GradeTypeId: m.GradeTypeId,
                 Formula: m.Formula,

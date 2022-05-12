@@ -84,7 +84,7 @@
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
                     <input type="number" matInput (blur)="onBlur(element)" [value]="element.Sequence"
-                        [(ngModel)]="element.Sequence" autocomplete="Off" (blur)="ReSequence(element)" [max]="100">
+                        [(ngModel)]="element.Sequence" autocomplete="Off" (keyup)="ReSequence(element)" [max]="100">
                 </mat-form-field>
             </mat-cell>
         </ng-container>

@@ -41,7 +41,7 @@ export class ContentService implements OnInit {
     this.snackbar.open(message, action, option);
   }
   checkSpecialChar(str) {
-    var format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    var format = /[!@#$%^&*_+\=\[\]{};':"\\|<>]+/;
     if (format.test(str))
       return true;
     else
@@ -83,6 +83,23 @@ export class ContentService implements OnInit {
     ];
 
     list.PageName = "FeeDefinitions";
+    list.filter = [filterStr];
+    return this.dataservice.get(list);
+  }
+  GetClassGroupMapping(orgId, active) {
+    //Fee definition is not batch wise.      
+    //let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;
+    var activefilter = active == 1 ? ' and Active eq 1' : '';
+    let filterStr = 'OrgId eq ' + orgId + activefilter;
+    let list: List = new List();
+    list.fields = [
+      "ClassGroupMappingId",
+      "ClassId",
+      "ClassGroupId",
+      "Active"
+    ];
+
+    list.PageName = "ClassGroupMappings";
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
@@ -136,6 +153,48 @@ export class ContentService implements OnInit {
       }
     }
     return monthArray;
+  }
+  ReSequence(editedrow,MasterList:any[]) {
+    debugger;
+    var diff = editedrow.OldSequence - editedrow.DisplayOrder;
+    var newDisplayOrder = editedrow.DisplayOrder;
+    MasterList = MasterList.sort((a, b) => a.DisplayOrder - b.DisplayOrder)
+
+    if (diff > 0) {
+      var indx = -1;
+      //search in loop using ">=" since the new sequence may not exist in the list.
+      for (var i = 0; i < MasterList.length; i++) {
+        if (MasterList[i].OldSequence >= editedrow.DisplayOrder) {
+          indx = i;
+          break;
+        }
+      }
+      //var indx = this.MasterList.findIndex(x => x.OldSequence == editedrow.Sequence);
+
+      for (var start = indx; start < MasterList.length; start++) {
+        newDisplayOrder += 1;
+        //if (start != newSequence)
+        MasterList[start].DisplayOrder = newDisplayOrder;
+        MasterList[start].Action = true;
+      }
+    }
+    else {
+      var indx = MasterList.findIndex(x => x.DisplayOrder == editedrow.DisplayOrder);
+      for (var start = indx + 1; start < MasterList.length; start++) {
+        newDisplayOrder += 1;
+        MasterList[start].Sequence = newDisplayOrder;
+        MasterList[start].Action = true;
+      }
+    }
+
+
+    // editedrow.Action = true;
+    editedrow.OldSequence = editedrow.newDisplayOrder;
+    MasterList.sort((a, b) => a.newDisplayOrder - b.newDisplayOrder);
+    // this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
+    // this.datasource.sort = this.sort;
+    // this.datasource.paginator = this.paginator;
+
   }
   GetDropDownDataFromDB(ParentId, OrgId, AppIds, activeMaster = 1) {
     //debugger;
@@ -220,8 +279,8 @@ export class ContentService implements OnInit {
       "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
       "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
-    console.log("_LedgerData",_LedgerData);
-    console.log("sumFeeData",sumFeeData);
+    //console.log("_LedgerData",_LedgerData);
+    //console.log("sumFeeData",sumFeeData);
     return this.authservice.CallAPI(sumFeeData, 'createinvoice')
   }
   ApplyVariables(formula, pVariableObjList) {

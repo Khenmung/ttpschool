@@ -22,13 +22,14 @@
 .mat-column-AmountPerMonth,
 .mat-column-PlanName
 {
+
     flex:1 1 100px;
 }
 .mat-column-Formula,
 .mat-column-Description{
     flex: 1 1 200px;
 }
-mat-cell{
+mat-cell,mat-cell-header{
     border-right: 1px solid lightgray;
     padding: 10px;
     align-self: stretch;

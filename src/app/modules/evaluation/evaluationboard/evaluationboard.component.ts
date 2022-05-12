@@ -17,11 +17,11 @@ import { StudentEvaluationComponent } from '../studentevaluation/studentevaluati
 export class EvaluationboardComponent implements AfterViewInit {
 
   components = [    
+    EvaluationresultComponent,
     EvaluationMasterComponent,
     ClassEvaluationComponent,    
     EvaluationClassSubjectMapComponent,
-    StudentEvaluationComponent,
-    EvaluationresultComponent
+    StudentEvaluationComponent    
   ];
 
   tabNames = [

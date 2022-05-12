@@ -3,25 +3,25 @@
 </div>
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
-<div style="padding: 15px;" fxLayout="row wrap">
+<div style="padding: 15px 15px 15px 0px;" fxLayout="row wrap">
     <div style="width: 100%;">
         <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline" [style.width.px]="150">
+            <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Evaluation</mat-label>
                 <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="GetEvaluationMasterId()">
                     <mat-option *ngFor="let item of EvaluationNames" [value]="item.EvaluationMasterId">{{item.EvaluationName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="150">
-                <mat-label>Class</mat-label>
-                <mat-select formControlName="searchClassId" (selectionChange)="getClassSubjects()">
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Class/Class group</mat-label>
+                <mat-select formControlName="searchClassGroupId" (selectionChange)="getSelectedClassSubjects()">
                     <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
+                    <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">{{item.MasterDataName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="150">
+            <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Subject</mat-label>
                 <mat-select formControlName="searchSubjectId">
                     <mat-option [value]="0">select</mat-option>
@@ -29,8 +29,8 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="150">
-                <mat-label>Exam</mat-label>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Exam/Evaluation session/Test</mat-label>
                 <mat-select formControlName="searchExamId">
                     <mat-option [value]="0">select</mat-option>
                     <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
@@ -57,14 +57,15 @@
                     {{element.EvaluationName}}
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="ClassId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Class
+            <ng-container matColumnDef="ClassGroupId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Class/Class Group
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassId"
-                            [value]="element.ClassId">
-                            <mat-option *ngFor="let item of Classes" [value]="item.ClassId">{{item.ClassName}}
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassGroupId"
+                            [value]="element.ClassGroupId">
+                            <mat-option *ngFor="let item of ClassGroups" 
+                            [value]="item.MasterDataId">{{item.MasterDataName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
@@ -77,6 +78,7 @@
                     <mat-form-field appearance="outline">
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassSubjectId"
                             [value]="element.ClassSubjectId">
+                            <mat-option value="0">select</mat-option>
                             <mat-option *ngFor="let item of ClassSubjects" [value]="item.SubjectId">{{item.ClassSubject}}
                             </mat-option>
                         </mat-select>
@@ -84,7 +86,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="ExamId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Exam
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Exam/Evaluation Session
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">

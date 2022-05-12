@@ -4,15 +4,13 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 
 <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabchanged($event)">
-    
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>note_add</mat-icon>Questionaire
         </ng-template>
-        <!-- <div style="padding:15px 15px 10px 15px;"><strong>Detail</strong></div> -->
-        <div style="padding: 15px;" fxLayout="row wrap">
-            <div style="width: 100%;">
-                <form [formGroup]="searchForm">
+        <div style="padding: 15px 15px 15px 0px;">
+            <form [formGroup]="searchForm">
+                <div style="padding: 15px;">
                     <mat-form-field appearance="outline" [style.width.px]="250">
                         <mat-label>Evaluation</mat-label>
                         <mat-select formControlName="searchEvaluationMasterId">
@@ -24,140 +22,133 @@
                     <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassEvaluation()">
                         <mat-icon>search</mat-icon>
                     </button>
-                </form>
-                <!-- <div style="width: 100%;"> -->
-                <mat-table #table [dataSource]="dataSource" matSort style="max-width: 1200px;">
-                    <ng-container matColumnDef="ClassEvaluationId">
-                        <mat-header-cell *matHeaderCellDef>Id
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            {{element.ClassEvaluationId}}
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="Description">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Questionaire
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <mat-form-field appearance="outline">
-                                <input [maxlength]="256" autocomplete="Off" matInput (blur)="onBlur(element)"
-                                    [value]="element.Description" [(ngModel)]="element.Description">
-                            </mat-form-field>
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="ClassEvalCategoryId">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Category
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <mat-form-field appearance="outline">
-                                <mat-select (selectionChange)="CategoryChanged(element)"
-                                        (selectionChange)="onBlur(element)"
-                                    [(ngModel)]="element.ClassEvalCategoryId" [value]="element.ClassEvalCategoryId">
-                                    <mat-option *ngFor="let item of Categories" [value]="item.MasterDataId">
-                                        {{item.MasterDataName}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="ClassEvalSubCategoryId">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Category
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <mat-form-field appearance="outline">
-                                <mat-select
-                                (selectionChange)="onBlur(element)"
-                                    [(ngModel)]="element.ClassEvalSubCategoryId" [value]="element.ClassEvalSubCategoryId">
-                                    <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">
-                                        {{item.MasterDataName}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="ClassEvaluationAnswerOptionParentId">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Answer Option
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <mat-form-field appearance="outline">
-                                <mat-select [(ngModel)]="element.ClassEvaluationAnswerOptionParentId" 
+                </div>
+            </form>
+            <!-- <div style="width: 100%;"> -->
+            <mat-table #table [dataSource]="dataSource" matSort style="max-width: 1200px;">
+                <ng-container matColumnDef="ClassEvaluationId">
+                    <mat-header-cell *matHeaderCellDef>Id
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.ClassEvaluationId}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Description">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Questionaire
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input [maxlength]="256" autocomplete="Off" matInput (blur)="onBlur(element)"
+                                [value]="element.Description" [(ngModel)]="element.Description">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="QuestionnaireTypeId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Type
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="CategoryChanged(element)" (selectionChange)="onBlur(element)"
+                                [(ngModel)]="element.QuestionnaireTypeId" [value]="element.QuestionnaireTypeId">
+                                <mat-option *ngFor="let item of QuestionnaireTypes" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <!-- <ng-container matColumnDef="ClassEvalSubCategoryId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassEvalSubCategoryId"
+                                [value]="element.ClassEvalSubCategoryId">
+                                <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container> -->
+                <ng-container matColumnDef="ClassEvaluationAnswerOptionParentId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Answer Option
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select [(ngModel)]="element.ClassEvaluationAnswerOptionParentId"
                                 (selectionChange)="onBlur(element)"
                                 [value]="element.ClassEvaluationAnswerOptionParentId">
-                                <mat-option [value]="0">--Answer option--</mat-option>                                
+                                <mat-option [value]="0">--Answer option--</mat-option>
                                 <mat-option *ngFor="let item of ClassEvaluationOptionList"
-                                        [value]="item.ClassEvaluationAnswerOptionsId">
-                                        {{item.Title}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="DisplayOrder">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header>Display Order
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <mat-form-field appearance="outline">
-                                <input type="number" [max]="250" matInput [(ngModel)]="element.DisplayOrder"
-                                    (blur)="onBlur(element)" [value]="element.DisplayOrder">
-                            </mat-form-field>
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="MultipleAnswer">
-                        <mat-header-cell *matHeaderCellDef style="justify-content: center;">Multiple Answers
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element" style="justify-content: center;">
-                            <mat-checkbox (click)="$event.stopPropagation()"
-                                (change)="UpdateMultiAnswer(element,$event)"
-                                [checked]="element.MultipleAnswer==1?true:false">
-                            </mat-checkbox>
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="Active">
-                        <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element" style="justify-content: center;">
-                            <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
-                                [checked]="element.Active==1?true:false">
-                            </mat-checkbox>
-                        </mat-cell>
-                    </ng-container>
-                    <ng-container matColumnDef="Action">
-                        <mat-header-cell *matHeaderCellDef>
-                            <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
-                                <mat-icon>add</mat-icon>
-                            </button>
-                            <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
-                                <mat-icon>all_out</mat-icon>
-                            </button>
+                                    [value]="item.ClassEvaluationAnswerOptionsId">
+                                    {{item.Title}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="DisplayOrder">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Display Order
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input type="number" [max]="250" matInput [(ngModel)]="element.DisplayOrder"
+                                (blur)="Sequencing(element)" [value]="element.DisplayOrder">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="MultipleAnswer">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center;">Multiple Answers
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" style="justify-content: center;">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateMultiAnswer(element,$event)"
+                            [checked]="element.MultipleAnswer==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" style="justify-content: center;">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                            [checked]="element.Active==1?true:false">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button [disabled]="loading" matTooltip="add new child" mat-mini-fab (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                            <mat-icon>all_out</mat-icon>
+                        </button>
 
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                            <button (click)="viewchild(element)" mat-mini-fab matTooltip="view answer options">
-                                <mat-icon>pageview</mat-icon>
-                            </button>
-                            <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
-                                mat-mini-fab (click)="UpdateOrSave(element)">
-                                <mat-icon>save</mat-icon>
-                            </button>
-                        </mat-cell>
-                    </ng-container>
-                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
-                        style="display: flex;justify-content: baseline;"
-                        [ngClass]="{'highlight': selectedRowIndex ==indx}" (click)="highlight(indx)">
-                    </mat-row>
-                </mat-table>
-                <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
-                
-            </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button (click)="viewchild(element)" mat-mini-fab matTooltip="view answer options">
+                            <mat-icon>pageview</mat-icon>
+                        </button>
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                            mat-mini-fab (click)="SaveRow(element)">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
+                    style="display: flex;justify-content: baseline;" [ngClass]="{'highlight': selectedRowIndex ==indx}"
+                    (click)="highlight(indx)">
+                </mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
+
         </div>
+        <!-- </div> -->
     </mat-tab>
     <mat-tab>
         <ng-template mat-tab-label>
-            <mat-icon>rule</mat-icon>Options
+            <mat-icon>rule</mat-icon>Answer Options
         </ng-template>
         <app-ClassEvaluationOption></app-ClassEvaluationOption>
     </mat-tab>
-    <!-- <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>note_add</mat-icon>Evaluation Class Subject Mapping
-        </ng-template>
-        <app-EvaluationClassSubjectMap (NotifyParent)="Detail($event)"></app-EvaluationClassSubjectMap>
-    </mat-tab> -->
+    
 </mat-tab-group>

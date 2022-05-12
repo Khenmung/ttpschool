@@ -32,7 +32,7 @@
                 </button>
             </span>
             <span style="display:flex;flex-direction: column; justify-content: center;align-items:center;padding-left: 15px; border: 1px solid lightgray;">
-                <button [disabled]="loading" matTooltip="create invoice" mat-raised-button color="accent"
+                <button [disabled]="loading || InvoiceCreated" matTooltip="create invoice" mat-raised-button color="accent"
                     style="margin-right: 15px;" (click)="CreateInvoice()">
                     <mat-icon>receipt_long</mat-icon>
                 </button>

@@ -5,6 +5,7 @@ import { EvaluationComponents, EvaluationRoutingModule } from './evaluation-rout
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
+import { NgxPrintModule } from 'ngx-print';
 //import { EvaluationresultComponent } from './evaluationresult/evaluationresult.component';
 //import { EvaluationnameComponent } from './evaluationname/evaluationname.component';
 
@@ -18,7 +19,8 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
     ReactiveFormsModule,
     FormsModule,
     MaterialModule,
-    SharedhomepageModule
+    SharedhomepageModule,
+    NgxPrintModule
   ],
   exports:[
     EvaluationComponents

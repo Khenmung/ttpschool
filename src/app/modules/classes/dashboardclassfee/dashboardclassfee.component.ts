@@ -22,6 +22,7 @@ export class DashboardclassfeeComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
+  InvoiceCreated =false;
   SelectedMonth = 0;
   Months = [];
   VariableObjList = [];
@@ -171,18 +172,14 @@ export class DashboardclassfeeComponent implements OnInit {
   }
 
   CreateInvoice() {
-    // var selectedMonth = this.searchForm.get("searchMonth").value;
-    // if (selectedMonth == 0) {
-    //   this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.BlueBackground);
-    //   return;
-    // }
-    //debugger;
+    this.loading = true;
     this.contentservice.getInvoice(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
       .subscribe((data: any) => {
         //console.log("getinvoice",data)
         this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.loading = false;
+            this.InvoiceCreated =true;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           },
             error => {
@@ -197,56 +194,6 @@ export class DashboardclassfeeComponent implements OnInit {
           console.log("error in getinvoice", error);
         })
 
-    // var selectedMonth = this.searchForm.get("searchMonth").value;
-    // if (selectedMonth == 0) {
-    //   this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.BlueBackground);
-    //   return;
-    // }
-    // var OrgIdAndbatchId = {
-    //   OrgId: this.LoginUserDetail[0]["orgId"],
-    //   BatchId: this.SelectedBatchId,
-    //   Month: selectedMonth
-    // }
-    // this.loading = true;
-
-    // this.authservice.CallAPI(OrgIdAndbatchId, 'getinvoice')
-    //   .subscribe((data: any) => {
-    //     console.log("invoices", data)
-    //     var AmountAfterFormulaApplied = 0;
-
-    //     data.forEach(inv => {
-    //       this.VariableObjList.push(inv)
-    //       if (inv.Formula.length > 0) {
-    //         var formula = this.ApplyVariables(inv.Formula);
-    //         //after applying, remove again since it is for each student
-    //         this.VariableObjList.splice(this.VariableObjList.indexOf(inv), 1);
-    //         AmountAfterFormulaApplied = evaluate(formula);
-    //       }
-    //       this.LedgerData.push({
-    //         LedgerId: 0,
-    //         Active: 1,
-    //         GeneralLedgerId: 0,
-    //         BatchId: this.SelectedBatchId,
-    //         Balance: AmountAfterFormulaApplied,
-    //         Month: inv.Month,
-    //         StudentClassId: inv.StudentClassId,
-    //         OrgId: this.LoginUserDetail[0]["orgId"],
-    //         TotalDebit: AmountAfterFormulaApplied,
-    //         TotalCredit: 0,
-    //       });
-    //     });
-    //     var query = "select SUM(TotalCredit) TotalCredit, SUM(Balance) Balance, StudentClassId," +
-    //       "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId, TotalDebit " +
-    //       "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
-    //     var sumFeeData = alasql(query, [this.LedgerData]);
-
-    //     //console.log("sumFeeData",sumFeeData)
-    //     this.authservice.CallAPI(sumFeeData, 'createinvoice')
-    //       .subscribe((data: any) => {
-    //         this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-    //         this.loading = false;
-    //       })
-    //   });
   }
   ApplyVariables(formula) {
     var filledVar = formula;
@@ -345,7 +292,7 @@ export class DashboardclassfeeComponent implements OnInit {
       " and BatchId eq " + row.BatchId
     if (row.Month > 0)
       checkFilterString += " and Month eq " + row.Month
-      
+
     if (row.ClassFeeId > 0)
       checkFilterString += " and ClassFeeId ne " + row.ClassFeeId;
 

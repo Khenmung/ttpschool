@@ -297,14 +297,14 @@ export class globalconstants {
                 "CLASSPROMOTION": "class promotion",
                 "FEEPAYMENTTYPE": "fee payment type",
                 "FEETYPE": "fee type",
-                "EVALUATIONCATEGORY": "evaluation category",
-                "EVALUATIONSUBCATEGORY": "evaluation sub category",
+                "QUESTIONNAIRETYPE": "questionnaire type",
                 "ROLE": "role",
                 "FEECATEGORY": "fee category",
                 "RATINGOPTION": "rating option",
                 "EVALUATIONTYPE": "evaluation type",
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
-                "STUDENTGRADETYPE": "student grade type"
+                "STUDENTGRADETYPE": "student grade type",
+                "ASSESSMENTPRINTHEADING": "Assessment Print Heading"
 
             },
             "leave": {

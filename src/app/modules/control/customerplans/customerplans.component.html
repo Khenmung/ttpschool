@@ -24,7 +24,7 @@
                 </div>
             </form>
           
-            <mat-table #table [dataSource]="dataSource">
+            <mat-table #table [dataSource]="dataSource" style="width: 900px;">
                 <ng-container matColumnDef="PlanName">
                     <mat-header-cell *matHeaderCellDef>Plan name
                     </mat-header-cell>
@@ -74,7 +74,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <input (blur)="onBlur(element)" type="number"
+                            <input (keyup)="onBlur(element)" type="number"
                             [(ngModel)]="element.PersonOrItemCount" [value]="element.PersonOrItemCount" matInput
                                 autocomplete="off" [max]="100000">                          
                         </mat-form-field>

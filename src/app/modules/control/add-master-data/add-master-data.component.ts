@@ -140,7 +140,10 @@ export class AddMasterDataComponent implements OnInit {
   displayFn(master: IMaster): string {
     return master && master.MasterDataName ? master.MasterDataName : '';
   }
-
+  ReSequence(element)
+  {
+    this.contentservice.ReSequence(element,this.MasterList);
+  }
   GetMastersForAutoComplete() {
     debugger;
     var apps = this.tokenStorage.getPermittedApplications();
@@ -173,10 +176,9 @@ export class AddMasterDataComponent implements OnInit {
             OrgId: d.OrgId,
           });
         }
-      })//.filter(f=>f.ApplicationId == this.SelectedApplicationId)
+      })
 
       this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);
-      //console.log("my MasterData", this.MasterData);
     })
 
   }
@@ -233,48 +235,7 @@ export class AddMasterDataComponent implements OnInit {
       this.UpdateOrSave(s);
     });
   }
-  ReSequence(editedrow) {
-    debugger;
-    var diff = editedrow.OldSequence - editedrow.Sequence;
-    var newSequence = editedrow.Sequence;
-    this.MasterList = this.MasterList.sort((a, b) => a.Sequence - b.Sequence)
-
-    if (diff > 0) {
-      var indx = -1;
-      //search in loop using ">=" since the new sequence may not exist in the list.
-      for (var i = 0; i < this.MasterList.length; i++) {
-        if (this.MasterList[i].OldSequence >= editedrow.Sequence) {
-          indx = i;
-          break;
-        }
-      }
-      //var indx = this.MasterList.findIndex(x => x.OldSequence == editedrow.Sequence);
-
-      for (var start = indx; start < this.MasterList.length; start++) {
-        newSequence += 1;
-        //if (start != newSequence)
-        this.MasterList[start].Sequence = newSequence;
-        this.MasterList[start].Action = true;
-      }
-    }
-    else {
-      var indx = this.MasterList.findIndex(x => x.Sequence == editedrow.Sequence);
-      for (var start = indx + 1; start < this.MasterList.length; start++) {
-        newSequence += 1;
-        this.MasterList[start].Sequence = newSequence;
-        this.MasterList[start].Action = true;
-      }
-    }
-
-
-    // editedrow.Action = true;
-    editedrow.OldSequence = editedrow.Sequence;
-    this.MasterList.sort((a, b) => a.Sequence - b.Sequence);
-    this.datasource = new MatTableDataSource<IMaster>(this.MasterList);
-    this.datasource.sort = this.sort;
-    this.datasource.paginator = this.paginator;
-
-  }
+  
   onBlur(element) {
     //debugger;
     element.Action = true;
