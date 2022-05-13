@@ -95,19 +95,19 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Gender</mat-label>
-                            <mat-select formControlName="Gender" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="GenderId" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
-                            <span class="text-danger" *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
+                            <span class="text-danger" *ngIf="f.GenderId.touched && f.GenderId.hasError('required')">Gender
                                 is required.</span>
                         </mat-form-field>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Religion</mat-label>
-                            <mat-select formControlName="Religion" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="ReligionId" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
@@ -117,20 +117,20 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Blood group</mat-label>
-                            <mat-select formControlName="Bloodgroup" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="BloodgroupId" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <span class="text-danger"
-                            *ngIf="f.Bloodgroup.touched && f.Bloodgroup.hasError('required')">Blood group
+                            *ngIf="f.BloodgroupId.touched && f.BloodgroupId.hasError('required')">Blood group
                             is required.</span>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Category</mat-label>
-                            <mat-select formControlName="Category" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="CategoryId" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>

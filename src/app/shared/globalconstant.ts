@@ -168,8 +168,8 @@ export class globalconstants {
                     'EXAMSTUDENTSUBJECTRESULT': 'Exam Result Entry',
                     'SLOTNCLASSSUBJECT': 'slot n class subject',
                     'VERIFYRESULT': 'verify result',
-                    'STUDENTGRADE': 'student grade'
-
+                    'STUDENTGRADE': 'student grade',
+                    'VERIFYRESULTSTATUS': 'verify result status'
                 },
                 'SUBJECT': {
                     'SUBJECT': 'class subject',

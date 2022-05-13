@@ -224,8 +224,9 @@ export class ResultComponent implements OnInit {
       "StudentClassId",
       "TotalMarks",
       "Grade",
+      "MarkPercent",
       "Rank",
-      "Active"
+      "Active"      
     ];
     list.PageName = "ExamStudentResults";
     list.lookupFields = ["StudentClass($select=ClassId,RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
@@ -233,6 +234,7 @@ export class ResultComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        //console.log("examresults1",data.value);
         var classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
         if (classMarks.length > 0)
           this.ClassFullMark = alasql("select ClassId,sum(FullMark) as FullMark from ? group by ClassId", [classMarks]);
@@ -241,7 +243,7 @@ export class ResultComponent implements OnInit {
           this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId && f["StudentClass"].SectionId == _sectionId);
         else
           this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId);
-
+          //console.log("this.ExamStudentResult",this.ExamStudentResult);
         this.ExamStudentResult = this.ExamStudentResult.map(d => {
           var _section = '';
           var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
@@ -249,18 +251,18 @@ export class ResultComponent implements OnInit {
           if (_sectionObj.length > 0)
             _section = _sectionObj[0].MasterDataName;
           d["Section"] = _section;
+          d["Percent"] = d["MarkPercent"];
           var _className = '';
           var _classObj = this.Classes.filter(s => s.ClassId == d.StudentClass["ClassId"]);
           if (_classObj.length > 0)
-            _className = _classObj[0].MasterDataName;
-          //d["Section"] = _section;
+            _className = _classObj[0].ClassName;
           d["ClassName"] = _className;
           d["RollNo"] = d.StudentClass["RollNo"]
-          d["Student"] = d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
+          d["Student"] = _className + "-" + d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
           d.Grade = _gradeObj[0].GradeName;
           d.GradeType = _gradeObj[0].GradeType;
           d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
-          d["Percent"] = d.GradeType == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
+          //d["Percent"] = d.GradeType == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
           return d;
 
         })

@@ -8,7 +8,7 @@
         <div style="width: 100%;">
             <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
                 <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
-                    <mat-form-field appearance="outline">
+                    <mat-form-field appearance="outline" [style.width.px]="200">
                         <mat-label>Available Reports</mat-label>
                         <mat-select formControlName="searchAvailableReportName" (selectionChange)="GetMyReportNames()">
                             <mat-option *ngFor="let item of AvailableReportNames" [value]="item.ReportConfigItemId">
@@ -16,7 +16,7 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <mat-form-field appearance="outline">
+                    <mat-form-field appearance="outline" [style.width.px]="200">
                         <mat-label>My Report Name</mat-label>
                         <mat-select formControlName="searchReportName">
                             <mat-option *ngFor="let item of AppReportNames" [value]="item.ReportConfigItemId">
@@ -40,7 +40,7 @@
                 <ng-container matColumnDef="DisplayName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Display Name </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.pc]="10" appearance="outline">
+                        <mat-form-field appearance="outline">
                             <input matInput [value]="element.DisplayName" [(ngModel)]="element.DisplayName"
                                 autocomplete="Off" placeholder="" (blur)="onBlur(element)" [minlength]="1"
                                 [maxlength]="50">
@@ -68,7 +68,7 @@
                 <ng-container matColumnDef="ColumnSequence">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Sequence </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field [style.width.pc]="4" appearance="outline">
+                        <mat-form-field appearance="outline">
                             <input type="number" matInput [value]="element.ColumnSequence"
                                 [(ngModel)]="element.ColumnSequence" autocomplete="Off" (blur)="ReSequence(element)"
                                 [max]="100">
@@ -76,7 +76,11 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> 
+                            <mat-checkbox matTooltip="select all" style="margin-right: 15px;"
+                                (click)="$event.stopPropagation()" (change)="SelectAll($event)">
+                            </mat-checkbox>                        
+                        Active </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                             [checked]="element.Active==1?true:false">

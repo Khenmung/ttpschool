@@ -12,8 +12,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-userreportconfigcolumns',
-  templateUrl: './userreportconfigColumns.component.html',
-  styleUrls: ['./userreportconfigColumns.component.scss']
+  templateUrl: './userreportconfigcolumns.component.html',
+  styleUrls: ['./userreportconfigcolumns.component.scss']
 })
 export class UserReportConfigColumnsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -138,6 +138,15 @@ export class UserReportConfigColumnsComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+  SelectAll(event) {
+    this.ReportConfigItemList.forEach(f => {
+      if (event.checked == true) {
+        f.Active = true;
+      }
+      else
+        f.Active = false;
+    })
+  }
   SaveAll() {
     var edited = this.ReportConfigItemList.filter(f => f.Action);
     this.ToUpateCount = edited.length;
@@ -153,7 +162,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     //var ApplicationId = this.SelectedApplicationId;
     var MyReportNameId = this.searchForm.get("searchReportName").value;
@@ -171,7 +180,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     }
 
     this.loading = true;
-    let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
+    let checkFilterString = "Active eq 1 and ReportName eq '" + row.ReportName + "'" +
       " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ParentId eq " + MyReportNameId;
 

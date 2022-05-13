@@ -54,6 +54,7 @@ export class GetreportComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   ReportName = '';
+  BaseReportName = '';
   searchCondition1;
   searchConditionText = [];
   AvailableReportNames = [];
@@ -63,6 +64,7 @@ export class GetreportComponent implements OnInit {
   Classes = [];
   Sections = [];
   Students = [];
+  SchoolGenders = [];
   ActivityCategory = [];
   SelectedBatchId = 0;
   ReportConfigItemListName = "ReportConfigItems";
@@ -100,7 +102,7 @@ export class GetreportComponent implements OnInit {
     private datepipe: DatePipe,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: FormBuilder
   ) {
@@ -126,7 +128,7 @@ export class GetreportComponent implements OnInit {
     this.dataSource = new MatTableDataSource([]);
     this.Applications = this.tokenstorage.getPermittedApplications();
     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-    
+
     this.PageLoad();
     //this.cdr.detectChanges();
   }
@@ -166,11 +168,11 @@ export class GetreportComponent implements OnInit {
     var MyReportNameId = this.searchForm.get("searchReportName").value;
 
     if (AvailableReportId == 0) {
-      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (MyReportNameId == 0) {
-      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -247,7 +249,7 @@ export class GetreportComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   IfStudentActivityMethods() {
@@ -258,10 +260,11 @@ export class GetreportComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.AllMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.SchoolGenders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         this.loading = false;
       });
@@ -325,7 +328,7 @@ export class GetreportComponent implements OnInit {
           this.GetReportNames();
         }
         else {
-          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.loading = false;
       });
@@ -344,12 +347,14 @@ export class GetreportComponent implements OnInit {
       "UserId",
       "Active"]
     list.PageName = this.ReportConfigItemListName;
-    list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId + " and (ParentId eq " + this.BaseReportId +
+    list.filter = ["Active eq 1 and ApplicationId eq " + this.SelectedApplicationId +
+      " and (ParentId eq " + this.BaseReportId +
       " or OrgId eq 0 or OrgId eq " + this.LoginUserDetail[0]["orgId"] + ")"];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ReportNames = [...data.value];
+        //console.log("this.ReportNames", this.ReportNames)
         this.GetMyReportNames();
         this.loading = false;
       });
@@ -358,7 +363,8 @@ export class GetreportComponent implements OnInit {
     debugger;
     this.ReportConfigItemList = [];
     this.AvailableReportNames = this.ReportNames.filter(a => a.ParentId == this.BaseReportId);
-
+    //console.log("this.AvailableReportNames", this.AvailableReportNames);
+    //this.SelectedReportBase =this.AvailableReportNames.filter(f=>f.ReportName.toLowerCase()=='student report')
     this.AvailableReportNames.forEach(r => {
       var temp = this.ReportNames.filter(p => p.ParentId == r.ReportConfigItemId && p.OrgId != 0)
       if (temp.length > 0) {
@@ -368,14 +374,16 @@ export class GetreportComponent implements OnInit {
       }
     })
   }
+
   GetFilterColumn() {
     debugger;
     this.FilterColumns = this.ReportNames.filter(f => f.ParentId == this.searchForm.get("searchReportName").value);
-    var selectedObj = this.MyAppReportNames.filter(f => f.ReportConfigItemId == this.searchForm.get("searchReportName").value);
-
-    if (selectedObj.length > 0) {
-      this.SelectedReport = selectedObj[0].ReportName;
-      switch (this.SelectedReport) {
+    //var selectedObj = this.MyAppReportNames.filter(f => f.ReportConfigItemId == this.searchForm.get("searchReportName").value);
+    var obj = this.ReportNames.filter(f => f.ReportConfigItemId == this.searchForm.get("searchReportName").value)
+    if (obj.length > 0) {
+      var _parentId = obj[0].ParentId
+      this.BaseReportName = this.ReportNames.filter(f => f.ReportConfigItemId == _parentId)[0].ReportName;
+      switch (this.BaseReportName) {
         case "Student Activity":
           this.IfStudentActivityMethods();
           break;
@@ -393,7 +401,7 @@ export class GetreportComponent implements OnInit {
     var MyReportNameId = this.searchForm.get("searchReportName").value;
 
     if (MyReportNameId == 0) {
-      this.contentservice.openSnackBar("Please select report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -427,6 +435,7 @@ export class GetreportComponent implements OnInit {
           _ParentId = SelectedReport[0].ParentId;
         }
         var baseReportColumns = this.ReportNames.filter(f => f.ParentId == _ParentId && f.OrgId == 0);
+        console.log("baseReportColumns", baseReportColumns)
         var _tableNames = this.AvailableReportNames.filter(m => m.ReportConfigItemId == _ParentId)[0].TableNames.split(',');
         //var _baseColumns = this.ReportNames.filter(f=>f.ParentId == _ParentId && f.OrgId ==0)
         this.ColumnsOfSelectedReports = data.value.map(m => {
@@ -440,7 +449,7 @@ export class GetreportComponent implements OnInit {
         list.PageName = _tableNames[0];
 
         if (_tableNames.length == 0) {
-          this.contentservice.openSnackBar("Table name not present!",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Table name not present!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
 
@@ -450,7 +459,7 @@ export class GetreportComponent implements OnInit {
         for (var i = 1; i < _tableNames.length; i++) {
           list.lookupFields.push(_tableNames[i])
         }
-
+        //console.log("ColumnsOfSelectedReports", this.ColumnsOfSelectedReports)
         // filter whose tablenames column are empty
         var fitleredNotNestedColumns = this.ColumnsOfSelectedReports.filter(f => f.TableNames == '');
         var filteredNestedColumns = this.ColumnsOfSelectedReports.filter(f => f.TableNames != '');
@@ -481,7 +490,7 @@ export class GetreportComponent implements OnInit {
         this.dataservice.get(list)
           .subscribe((data: any) => {
             var result = [...data.value];
-          debugger;
+            debugger;
             //var whereDisplayNameNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.DisplayName.length > 0)
             var colTem = [];
             var formatedResult = [];
@@ -491,14 +500,14 @@ export class GetreportComponent implements OnInit {
 
               formatedResult = result.map(m => {
                 if (m[c.ReportName] === undefined) {
-                   var nestedvalue = this.traverse(m, c.TableNames, '');
-                   m[c.DisplayName] =this.ReportwiseSetDropDownValue(c.ReportName,nestedvalue);
+                  var nestedvalue = this.traverse(m, c.TableNames, '');
+                  m[c.DisplayName] = this.ReportwiseSetDropDownValue(c.ReportName, nestedvalue);
                 }
                 else {
                   if (c.ReportName.indexOf('Date') > -1)
                     m[c.DisplayName] = this.datepipe.transform(m[c.ReportName], 'dd/MM/yyyy');
                   else if (c.ReportName.indexOf('Id') > -1) {
-                    m[c.DisplayName] = this.ReportwiseSetDropDownValue(c.ReportName,m[c.ReportName]);
+                    m[c.DisplayName] = this.ReportwiseSetDropDownValue(c.ReportName, m[c.ReportName]);
                   }
                   else {
                     m[c.DisplayName] = m[c.ReportName];
@@ -528,7 +537,7 @@ export class GetreportComponent implements OnInit {
             });
 
             if (this.ReportConfigItemList.length == 0) {
-              this.contentservice.openSnackBar("No record matching search criteria found!", globalconstants.ActionText,globalconstants.RedBackground);
+              this.contentservice.openSnackBar("No record matching search criteria found!", globalconstants.ActionText, globalconstants.RedBackground);
             }
             this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
             this.dataSource.paginator = this.paginator;
@@ -539,11 +548,11 @@ export class GetreportComponent implements OnInit {
 
       });
   }
-  ReportwiseSetDropDownValue(colName,IdValue) {
+  ReportwiseSetDropDownValue(colName, IdValue) {
     var returnvalue = '';
     debugger;
-    switch (this.SelectedReport) {
-      case "Student Activity":
+    switch (this.BaseReportName) {
+      case "Student Report":
         switch (colName) {
           case "StudentId":
             var obj = this.Students.filter(s => s.StudentId == IdValue)
@@ -555,8 +564,13 @@ export class GetreportComponent implements OnInit {
             if (obj.length > 0)
               returnvalue = obj[0].ClassName;
             break;
-          case "CategoryId":
-            var obj = this.ActivityCategory.filter(s => s.MasterDataId == IdValue)
+          case "GenderId":
+            var obj = this.SchoolGenders.filter(s => s.MasterDataId == IdValue)
+            if (obj.length > 0)
+              returnvalue = obj[0].MasterDataName;
+            break;
+          case "SectionId":
+            var obj = this.Sections.filter(s => s.MasterDataId == IdValue)
             if (obj.length > 0)
               returnvalue = obj[0].MasterDataName;
             break;

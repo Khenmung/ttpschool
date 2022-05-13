@@ -280,6 +280,7 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading =false;
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);

@@ -25,7 +25,7 @@ export class ExamsComponent implements OnInit {
   loading = false;
   Exams: IExams[] = [];
   SelectedBatchId = 0;
-  //ClassSubjectComponents = [];
+  ClassGroups = [];
   SelectedApplicationId = 0;
   StudentGradeFormula = [];
   ClassSubjectComponents = [];
@@ -41,6 +41,7 @@ export class ExamsComponent implements OnInit {
     ExamNameId: 0,
     StartDate: Date,
     EndDate: Date,
+    ClassGroupId:0,
     ReleaseResult: 0,
     ReleaseDate: null,
     OrgId: 0,
@@ -52,6 +53,7 @@ export class ExamsComponent implements OnInit {
     'ExamName',
     'StartDate',
     'EndDate',
+    'ClassGroupId',
     'ReleaseDate',
     'ReleaseResult',
     'Active',
@@ -106,6 +108,7 @@ export class ExamsComponent implements OnInit {
       ExamName: '',
       StartDate: new Date(),
       EndDate: new Date(),
+      ClassGroupId:0,
       ReleaseResult: 0,
       ReleaseDate: null,
       BatchId: 0,
@@ -169,6 +172,7 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.ExamNameId = row.ExamNameId;
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
+          this.ExamsData.ClassGroupId = row.ClassGroupId;
           this.ExamsData.ReleaseResult = row.ReleaseResult;
           this.ExamsData.BatchId = this.SelectedBatchId;
           if (row.ReleaseResult == 1) {
@@ -227,7 +231,8 @@ export class ExamsComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate",
+    list.fields = [
+      "ExamId", "ExamNameId", "StartDate", "EndDate","ClassGroupId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -256,7 +261,7 @@ export class ExamsComponent implements OnInit {
               ReleaseResult: 0,
               ReleaseDate: null,
               OrgId: 0,
-              //BatchId: 0,
+              ClassGroupId: 0,
               Active: 0,
               Action: false
             }
@@ -282,6 +287,7 @@ export class ExamsComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.StudentGradeFormula = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);  
         this.GetExams();
 
       });
@@ -620,6 +626,7 @@ export interface IExams {
   ExamName: string;
   StartDate: Date;
   EndDate: Date;
+  ClassGroupId:number;
   ReleaseResult: number;
   ReleaseDate: Date;
   OrgId: number;

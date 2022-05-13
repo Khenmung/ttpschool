@@ -9,14 +9,6 @@ import { TokenStorageService } from "src/app/_services/token-storage.service";
 export class StudentActivity {
     ELEMENT_DATA = [];
     loading = false;
-    optionsNoAutoClose = {
-        autoClose: false,
-        keepAfterRouteChange: true
-    };
-    optionAutoClose = {
-        autoClose: true,
-        keepAfterRouteChange: true
-    };
     loginUserDetail = [];
     SelectedBatchId = 0;
     constructor(

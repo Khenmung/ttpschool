@@ -12,8 +12,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-ReportConfigItem',
-  templateUrl: './ReportConfigItem.component.html',
-  styleUrls: ['./ReportConfigItem.component.scss']
+  templateUrl: './reportconfigitem.component.html',
+  styleUrls: ['./reportconfigitem.component.scss']
 })
 export class ReportConfigItemComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -326,8 +326,10 @@ export class ReportConfigItemComponent implements OnInit {
           d.OldSequence = d.ReportConfigItemId;
           return d;
         })
-
+        this.ReportConfigItemList = this.ReportConfigItemList.sort((a,b)=>a.ColumnSequence - b.ColumnSequence);
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loading = false;
       })
   }

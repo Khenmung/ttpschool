@@ -152,7 +152,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "LastName",
         "FatherName",
         "MotherName",
-        "Gender",
+        "GenderId",
         "PermanentAddress",
         "PresentAddress",
         "WhatsAppNumber",
@@ -164,14 +164,14 @@ export class ExcelDataManagementComponent implements OnInit {
         "PresentAddressStateId",
         "PresentAddressCountryId",
         "DOB",
-        "Bloodgroup",
+        "BloodgroupId",
         "Category",
         "BankAccountNo",
         "IFSCCode",
         "MICRNo",
         "AadharNo",
         "Photo",
-        "Religion",
+        "ReligionId",
         "ContactNo",
         "AlternateContact",
         "EmailAddress",
@@ -639,25 +639,25 @@ export class ExcelDataManagementComponent implements OnInit {
       if (GenderFilter.length == 0)
         this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
       else
-        element.Gender = GenderFilter[0].MasterDataId;
+        element.GenderId = GenderFilter[0].MasterDataId;
 
       let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase());
       if (BloodgroupFilter.length == 0)
         this.ErrorMessage += "Invalid Bloodgroup at row " + slno + ":" + element.Bloodgroup + "<br>";
       else
-        element.Bloodgroup = BloodgroupFilter[0].MasterDataId;
+        element.BloodgroupId = BloodgroupFilter[0].MasterDataId;
 
       let Categoryfilter = this.Category.filter(g => g.MasterDataName.toLowerCase() == element.Category.toLowerCase());
       if (Categoryfilter.length == 0)
         this.ErrorMessage += "Invalid Category at row " + slno + ":" + element.Category + "<br>";
       else
-        element.Category = Categoryfilter[0].MasterDataId;
+        element.CategoryId = Categoryfilter[0].MasterDataId;
 
       let ReligionFilter = this.Religion.filter(g => g.MasterDataName.toLowerCase() == element.Religion.toLowerCase());
       if (ReligionFilter.length == 0)
         this.ErrorMessage += "Invalid Religion at row " + slno + ":" + element.Religion + "<br>";
       else
-        element.ReligionFilter = ReligionFilter[0].MasterDataId;
+        element.ReligionId = ReligionFilter[0].MasterDataId;
 
       let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName.toLowerCase() == element.PrimaryContactFatherOrMother.toLowerCase());
       if (PrimaryContactFatherOrMotherFilter.length == 0)

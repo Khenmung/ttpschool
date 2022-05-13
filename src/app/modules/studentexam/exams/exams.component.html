@@ -48,16 +48,19 @@ marks can no longer be entered/edited for that examination.
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <!-- <ng-container matColumnDef="CategoryId">
-                    <mat-header-cell>Category</mat-header-cell>
-                    <mat-cell>
-                        <mat-form-field>
-                            <mat-select [(ngModel)]="element.CategoryId" [value]="element.">
-
+            <ng-container matColumnDef="ClassGroupId">
+                    <mat-header-cell *matHeaderCellDef>Class Group</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select [(ngModel)]="element.ClassGroupId" 
+                            (selectionChange)="onBlur(element)"
+                            [value]="element.ClassGroupId">
+                                <mat-option value="0">select</mat-option>
+                                <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">{{item.MasterDataName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </mat-cell>
-                </ng-container> -->
+                </ng-container>
             <ng-container matColumnDef="ReleaseResult">
                 <mat-header-cell *matHeaderCellDef> Release Result </mat-header-cell>
                 <mat-cell *matCellDef="let element">

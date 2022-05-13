@@ -9,6 +9,7 @@ import { ExamstudentsubjectresultComponent } from '../examstudentsubjectresult/e
 import { VerifyResultsComponent } from '../verifyresults/verifyresults.component';
 import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubject.component';
 import { StudentgradeComponent } from '../studentgrade/studentgrade.component';
+import { VerifyresultstatusComponent } from '../verifyresultstatus/verifyresultstatus.component';
 
 @Component({
   selector: 'app-examdashboard',
@@ -25,9 +26,11 @@ export class ExamdashboardComponent implements AfterViewInit {
     SlotnclasssubjectComponent,
     ExamstudentsubjectresultComponent,
     VerifyResultsComponent,
+    VerifyresultstatusComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -69,6 +72,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTGRADE)
+    this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -112,6 +116,9 @@ export class ExamdashboardComponent implements AfterViewInit {
         break;
       case "student grade":
         comindx = this.components.indexOf(StudentgradeComponent);
+        break;
+      case "verify result status":
+        comindx = this.components.indexOf(VerifyresultstatusComponent);
         break;
       default:
         comindx = this.components.indexOf(ExamsComponent);

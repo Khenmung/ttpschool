@@ -33,7 +33,7 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    
+
                     <mat-form-field appearance="outline">
                         <mat-label>search value</mat-label>
                         <input matInput formControlName="searchCriteria" autocomplete="Off">
@@ -49,7 +49,8 @@
                         </button>
                     </div>
                     <!-- (selectionChange)="onSelection($event, shoes.selectedOptions.selected)" -->
-                    <mat-selection-list #searchval [(ngModel)]="searchConditionText" [ngModelOptions]="{standalone: true}"
+                    <mat-selection-list #searchval [(ngModel)]="searchConditionText"
+                        [ngModelOptions]="{standalone: true}"
                         (selectionChange)="onNgModelChange(searchval.selectedOptions.selected)">
                         <mat-list-option *ngFor="let item of FilterCriteria" [value]="item">
                             {{item}}
@@ -63,7 +64,9 @@
             </form>
             <mat-table #table [dataSource]="dataSource" matSort>
                 <ng-container *ngFor="let disCol of DisplayColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{disCol}}
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                       {{disCol}}
+
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <!-- <mat-checkbox matTooltip="select all in row" *ngIf="disCol !='Student'"

@@ -196,6 +196,7 @@ export class VerifyResultsComponent implements OnInit {
 
   }
   Verified() {
+    
     var _resultToInsert = [];
     if (this.ExamStudentSubjectResult.length == 0) {
       this.loading = false;
@@ -212,6 +213,7 @@ export class VerifyResultsComponent implements OnInit {
           "StudentClassId": d["StudentClassId"],
           "Rank": d["Rank"],
           "Grade": d["Grade"],
+          "MarkPercent": +d["Percentage"],
           "TotalMarks": d["Total"],
           "OrgId": this.LoginUserDetail[0]["orgId"],
           "BatchId": this.SelectedBatchId,
@@ -222,7 +224,7 @@ export class VerifyResultsComponent implements OnInit {
         });
 
       })
-      //console.log("_resultToInsert", _resultToInsert)
+      console.log("_resultToInsert", _resultToInsert)
       this.dataservice.postPatch('ExamStudentResults', _resultToInsert, 0, 'post')
         .subscribe(
           (data: any) => {
@@ -348,37 +350,37 @@ export class VerifyResultsComponent implements OnInit {
 
               this.ExamStudentSubjectResult.push(forDisplay);
             })
-            this.displayedColumns.push("Total", "Rank", "Division");
+            this.displayedColumns.push("Total","Percentage", "Rank", "Division");
 
             this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
             if (this.SelectedClassStudentGrades.length > 0) {
               this.SelectedClassStudentGrades[0].grades.sort((a, b) => a.Sequence - b.Sequence);
               var rankCount = 0;
-              this.ExamStudentSubjectResult.forEach((r: any, index) => {
+              this.ExamStudentSubjectResult.forEach((result: any, index) => {
                 for (var i = 0; i < this.SelectedClassStudentGrades[0].grades.length; i++) {
                   var formula = this.SelectedClassStudentGrades[0].grades[i].Formula
-                    .replaceAll("[TotalMark]", r.Total)
+                    .replaceAll("[TotalMark]", result.Total)
                     .replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
-                    .replaceAll("[PassCount]", r.PassCount)
-                    .replaceAll("[FailCount]", r.FailCount);
+                    .replaceAll("[PassCount]", result.PassCount)
+                    .replaceAll("[FailCount]", result.FailCount);
 
                   if (evaluate(formula)) {
                     //if (r.FailCount == 0) {
-                    r.Grade = this.SelectedClassStudentGrades[0].grades[i].StudentGradeId;
-                    r.Division = this.SelectedClassStudentGrades[0].grades[i].GradeName;
+                    result.Grade = this.SelectedClassStudentGrades[0].grades[i].StudentGradeId;
+                    result.Division = this.SelectedClassStudentGrades[0].grades[i].GradeName;
                     break;
                     //}
                   }
                 }
+                result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
 
-                if (r.FailCount == 0) {
+                if (result.FailCount == 0) {
                   rankCount++;
-                  r.Rank = rankCount;
+                  result.Rank = rankCount;
                 }
               })
             }
-            else
-            {
+            else {
               this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
 
             }
@@ -386,7 +388,7 @@ export class VerifyResultsComponent implements OnInit {
               this.contentservice.openSnackBar("No Result found for this class/section.", globalconstants.ActionText, globalconstants.RedBackground);
             }
             //console.log("displaycol", this.displayedColumns)
-            console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
+            //console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
 
 
             this.ExamStudentSubjectResult.sort((a, b) => a.Rank - b.Rank)

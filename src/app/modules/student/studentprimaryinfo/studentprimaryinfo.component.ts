@@ -153,14 +153,14 @@ export class studentprimaryinfoComponent implements OnInit {
       FatherOccupation: ['', [Validators.required]],
       MotherName: ['', [Validators.required]],
       MotherOccupation: ['', [Validators.required]],
-      Gender: [0, [Validators.required]],
+      GenderId: [0, [Validators.required]],
       PresentAddress: ['', [Validators.required]],
       PermanentAddress: ['', [Validators.required]],
       DOB: [new Date(), [Validators.required]],
-      Bloodgroup: [0, [Validators.required]],
-      Category: [0, [Validators.required]],
+      BloodgroupId: [0, [Validators.required]],
+      CategoryId: [0, [Validators.required]],
       ClassAdmissionSought: [0, [Validators.required]],
-      Religion: [0, [Validators.required]],
+      ReligionId: [0, [Validators.required]],
       BankAccountNo: [''],
       IFSCCode: [''],
       MICRNo: [''],
@@ -322,19 +322,19 @@ export class studentprimaryinfoComponent implements OnInit {
       errorMessage += "Father name is required.\n";
 
     }
-    if (this.studentForm.get("Bloodgroup").value == 0) {
+    if (this.studentForm.get("BloodgroupId").value == 0) {
       errorMessage += "Please select blood group.\n";
 
     }
-    if (this.studentForm.get("Gender").value == 0) {
+    if (this.studentForm.get("GenderId").value == 0) {
       errorMessage += "Please select gender.\n";
 
     }
-    if (this.studentForm.get("Religion").value == 0) {
+    if (this.studentForm.get("ReligionId").value == 0) {
       errorMessage += "Please select religion.\n";
 
     }
-    if (this.studentForm.get("Category").value == 0) {
+    if (this.studentForm.get("CategoryId").value == 0) {
       errorMessage += "Please select Category.\n";
     }
     if (this.studentForm.get("ClassAdmissionSought").value == 0) {
@@ -356,18 +356,18 @@ export class studentprimaryinfoComponent implements OnInit {
       FatherOccupation: this.studentForm.get("FatherOccupation").value,
       MotherName: this.studentForm.get("MotherName").value,
       MotherOccupation: this.studentForm.get("MotherOccupation").value,
-      Gender: this.studentForm.get("Gender").value,
+      GenderId: this.studentForm.get("GenderId").value,
       PermanentAddress: this.studentForm.get("PermanentAddress").value,
       PresentAddress: this.studentForm.get("PresentAddress").value,
       DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
-      Bloodgroup: this.studentForm.get("Bloodgroup").value,
-      Category: this.studentForm.get("Category").value,
+      BloodgroupId: this.studentForm.get("BloodgroupId").value,
+      CategoryId: this.studentForm.get("CategoryId").value,
       BankAccountNo: this.studentForm.get("BankAccountNo").value,
       IFSCCode: this.studentForm.get("IFSCCode").value,
       MICRNo: this.studentForm.get("MICRNo").value,
       AadharNo: this.studentForm.get("AadharNo").value,
       Photo: this.studentForm.get("Photo").value,
-      Religion: this.studentForm.get("Religion").value,
+      ReligionId: this.studentForm.get("ReligionId").value,
       ContactNo: this.studentForm.get("ContactNo").value,
       WhatsAppNumber: this.studentForm.get("WhatsAppNumber").value,
       FatherContactNo: this.studentForm.get("FatherContactNo").value,
@@ -475,17 +475,17 @@ export class studentprimaryinfoComponent implements OnInit {
               FatherOccupation: stud.FatherOccupation,
               MotherOccupation: stud.MotherOccupation,
               PresentAddress: stud.PresentAddress,
-              PermanentAddress: stud.PermanentAddress,
-              Gender: stud.Gender,
+              PermanentAddress: stud.PermanentAddress,              
               DOB: new Date(stud.DOB),//this.formatdate.transform(stud.DOB,'dd/MM/yyyy'),
-              Bloodgroup: stud.Bloodgroup,
-              Category: stud.Category,
+              GenderId: stud.GenderId,
+              BloodgroupId: stud.BloodgroupId,
+              CategoryId: stud.CategoryId,
+              ReligionId: stud.ReligionId,
               BankAccountNo: stud.BankAccountNo,
               IFSCCode: stud.IFSCCode,
               MICRNo: stud.MICRNo,
               AadharNo: stud.AadharNo,
-              Photo: stud.Photo,
-              Religion: stud.Religion,
+              Photo: stud.Photo,              
               ContactNo: stud.ContactNo,
               WhatsAppNumber: stud.WhatsAppNumber,
               FatherContactNo: stud.FatherContactNo,

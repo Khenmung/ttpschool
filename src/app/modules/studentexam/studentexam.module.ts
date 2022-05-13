@@ -8,9 +8,6 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { StudentSubjectModule } from '../ClassSubject/student-subject.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { StudentgradeComponent } from './studentgrade/studentgrade.component';
-//import { MatFormFieldModule } from '@angular/material/form-field';
-
 
 @NgModule({
   declarations: [studentexamComponents],
