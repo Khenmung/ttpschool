@@ -505,10 +505,10 @@ export class studentprimaryinfoComponent implements OnInit {
               Active: stud.Active,
               ReasonForLeavingId: stud.ReasonForLeavingId
             })
-            if(this.studentForm.get("EmailAddress").value !="")
-            {
-              this.studentForm.get("EmailAddress").disable();
-            }
+            // if(this.studentForm.get("EmailAddress").value !="")
+            // {
+            //   this.studentForm.get("EmailAddress").disable();
+            // }
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;
             else

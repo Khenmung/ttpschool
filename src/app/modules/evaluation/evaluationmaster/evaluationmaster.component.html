@@ -36,7 +36,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Duration">
-                    <mat-header-cell *matHeaderCellDef> Duration </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> Duration (in minutes) </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
                             <input autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.Duration"
@@ -53,7 +53,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="ProvideCertificate">
-                    <mat-header-cell *matHeaderCellDef> Provide Certificate </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef style="display:flex; justify-content: center;"> Provide Certificate </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                             [checked]="element.ProvideCertificate==1?true:false">

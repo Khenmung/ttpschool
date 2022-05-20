@@ -90,13 +90,14 @@ export class StudentfamilynfriendComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.FAMILY)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
 
       if (this.Permission == 'deny') {
-
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
 
@@ -346,7 +347,7 @@ export class StudentfamilynfriendComponent implements OnInit {
         //this.Students = [...data.value];
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
-          this.Students = data.value.map(student => {
+          data.value.forEach(student => {
             var _RollNo = '';
             var _name = '';
             var _className = '';
@@ -368,19 +369,19 @@ export class StudentfamilynfriendComponent implements OnInit {
 
               if (_SectionObj.length > 0)
                 _section = _SectionObj[0].MasterDataName;
-              _RollNo = studentclassobj[0].RollNo;
-            }
 
-            _name = student.FirstName + " " + student.LastName;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-            return {
-              StudentClassId: _studentClassId,
-              StudentId: student.StudentId,
-              Name: _fullDescription,
-              FatherName: student.FatherName,
-              MotherName: student.MotherName,
-              FeeType: _feeType,
-              Remarks: _remarks
+              _RollNo = studentclassobj[0].RollNo;
+              _name = student.FirstName + " " + student.LastName;
+              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+              this.Students.push({
+                StudentClassId: _studentClassId,
+                StudentId: student.StudentId,
+                Name: _fullDescription,
+                FatherName: student.FatherName,
+                MotherName: student.MotherName,
+                FeeType: _feeType,
+                Remarks: _remarks
+              });
             }
           })
         }

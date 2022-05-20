@@ -264,7 +264,7 @@ export class EvaluationMasterComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
     list.fields = [

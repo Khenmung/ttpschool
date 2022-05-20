@@ -63,7 +63,7 @@ const colors: any = {
 export class DemoComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
   LoginUserDetail = [];
-  events: CalendarEvent[] = [];
+  events: CalendarEvent[];
   EventList = [];
   HolidayList = [];
   EventsListName = 'Events';
@@ -78,7 +78,6 @@ export class DemoComponent implements OnInit {
     action: string;
     event: CalendarEvent;
   };
-
   actions: CalendarEventAction[] = [
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
@@ -96,6 +95,7 @@ export class DemoComponent implements OnInit {
       },
     },
   ];
+    
   SelectedBatchId = 0;
   loading = false;
   refresh = new Subject<void>();
@@ -146,14 +146,18 @@ export class DemoComponent implements OnInit {
   constructor(private modal: NgbModal,
     private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService
-  ) { }
-  ngOnInit(): void {
-    console.log("events", this.events);
+  ) { 
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.GetEvents();
   }
+  ngOnInit(): void {
+    //console.log("events", this.events);
+    
+    
+  }
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+    //debugger;
     if (isSameMonth(date, this.viewDate)) {
       if (
         (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
@@ -172,6 +176,7 @@ export class DemoComponent implements OnInit {
     newStart,
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
+    //debugger;
     this.events = this.events.map((iEvent) => {
       if (iEvent === event) {
         return {
@@ -218,9 +223,8 @@ export class DemoComponent implements OnInit {
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
-  GetEvents() {
-    debugger;
-
+  async GetEvents() {
+    //debugger;
     this.loading = true;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId;
 
@@ -230,7 +234,7 @@ export class DemoComponent implements OnInit {
     list.PageName = this.EventsListName;
     list.filter = [filterStr];
     this.events = [];
-    this.dataservice.get(list)
+    await this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           data.value.forEach(e => {
@@ -263,7 +267,7 @@ export class DemoComponent implements OnInit {
                     title: e.Title + ", " + moment(e.StartDate).format('ddd HH:mm A') ,
                     start: new Date(e.StartDate),
                     end: new Date(e.EndDate),
-                    color: colors.lightgreen,
+                    color: colors.blue,
                     actions: this.actions,
                     allDay: true,
                     resizable: {
@@ -276,6 +280,9 @@ export class DemoComponent implements OnInit {
               })
             }
           });
+          //console.log("events",this.events);
+          ///this.activeDayIsOpen = false;
+      //this.dayClicked({date:new Date(),events:[]});    
       });
   }
 }

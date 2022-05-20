@@ -401,17 +401,30 @@ export class EmployeeComponent implements OnInit {
     }
     var filterstr = "OrgId eq " + this.loginUserDetail[0]["orgId"];
     var _employeeCode = this.EmployeeForm.get("EmployeeCode").value;
-    if (this.EmployeeId > 0) {
-      filterstr += " and EmpEmployeeId ne " + this.EmployeeId
-    }
-    var _shortName = this.EmployeeForm.get("ShortName").value;
+
+    var _employeeCodefilter = '';
     if (_employeeCode.length > 0) {
-      filterstr += " and EmployeeCode eq '" + _employeeCode + "'"
+      _employeeCodefilter += "EmployeeCode eq '" + _employeeCode + "'"
     }
 
-    if (_shortName.length > 0)
-      filterstr += " or ShortName eq '" + _shortName + "'"
+    if (this.EmployeeId > 0) {
+      filterstr += " and EmpEmployeeId ne " + this.EmployeeId;
+    }
 
+    var _shortName = this.EmployeeForm.get("ShortName").value;
+    var _shortNamefilter = '';
+    if (_shortName.length > 0)
+      _shortNamefilter = "ShortName eq '" + _shortName + "'"
+
+    if (_shortNamefilter.length > 0 && _employeeCodefilter.length > 0) {
+      filterstr += " and (" + _shortNamefilter + " or " + _employeeCodefilter + ")";
+    }
+    else if (_shortNamefilter.length == 0 && _employeeCodefilter.length > 0) {
+      filterstr += " and " + _employeeCodefilter;
+    }
+    else if (_shortNamefilter.length > 0 && _employeeCodefilter.length == 0) {
+      filterstr += " and " + _shortNamefilter;
+    }
     let list: List = new List();
     list.fields = ["EmpEmployeeId"];
     list.PageName = "EmpEmployees";
@@ -614,9 +627,9 @@ export class EmployeeComponent implements OnInit {
               "EmpGradeId": stud.EmpGradeId,
               "WorkAccountId": stud.WorkAccountId
             });
-            if (this.EmployeeForm.get("EmailAddress").value != "") {
-              this.EmployeeForm.get("EmailAddress").disable();
-            }
+            // if (this.EmployeeForm.get("EmailAddress").value != "") {
+            //   this.EmployeeForm.get("EmailAddress").disable();
+            // }
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;
             else

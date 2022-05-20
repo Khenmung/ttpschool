@@ -5,9 +5,9 @@ mat-form-field{
     margin-right: 15px;
     width: 98%;
 }
-button{
-    padding:5px;
-}  
+// button{
+//     padding:5px;
+// }  
  .mat-column-ApplicationUserId{
    flex:1 1 70px;
 }
@@ -18,12 +18,9 @@ button{
 .mat-column-PhoneNumber,.mat-column-ValidFrom,.mat-column-ValidTo,.mat-column-ContactNo{
     flex:1 1 140px;
 }
-.mat-column-UserName,.mat-column-EmailAddress{
+.mat-column-ClassName,.mat-column-EmailAddress{
     flex:1 1 250px;
 }
-// .mat-column-Active,.mat-column-UserName,.mat-column-EmailAddress,.mat-column-ContactNo,.mat-column-ValidFrom,.mat-column-ValidTo{
-//     margin-right: 15px;
-// }
 mat-cell:first-of-type{
     padding-left: 0px;
 }

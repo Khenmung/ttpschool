@@ -77,6 +77,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     RollNo: 0,
     SectionId: 0,
     FeeTypeId: 0,
+    Remarks:'',
     Active: 1
   };
   displayedColumns = [
@@ -778,7 +779,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.loading = true;
 
     let checkFilterString = "ClassId eq " + row.ClassId +
-      " and StudentId eq " + row.StudentId + ' and Active eq 1 and BatchId eq ' + this.SelectedBatchId
+      " and StudentId eq " + row.StudentId + ' and BatchId eq ' + this.SelectedBatchId
 
     if (row.StudentClassId > 0)
       checkFilterString += " and StudentClassId ne " + row.StudentClassId;
@@ -806,6 +807,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.StudentClassData.FeeTypeId = row.FeeTypeId;
           this.StudentClassData.RollNo = row.RollNo;
           this.StudentClassData.SectionId = row.SectionId;
+          this.StudentClassData.Remarks = row.Remarks;
           this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentClassData.BatchId = this.SelectedBatchId;
           if (this.StudentClassData.StudentClassId == 0) {
@@ -929,9 +931,6 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        //this.ClassPromotion = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSPROMOTION);
-
-        //this.shareddata.ChangeBatch(this.Batches);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
         this.loading = false;
       });

@@ -57,6 +57,7 @@ export class ResetpasswordComponent implements OnInit {
     return this.resetpwdForm.controls;
   }
   onSubmit(): void {
+    this.loading=true;
     var ConfirmPassword = this.resetpwdForm.get("ConfirmPassword").value;
     var NewPassword = this.resetpwdForm.get("NewPassword").value;
     var payload = {
@@ -68,13 +69,12 @@ export class ResetpasswordComponent implements OnInit {
     debugger;
     this.authService.CallAPI(payload,'ResetPassword').subscribe(
       (data: any) => {
-        ////console.log(data);
+        this.loading=false;
         this.isSuccessful = true;
-        //this.contentservice.openSnackBar("Password reset.", this.optionsAutoClose);
         this.tokenService.signOut();
-        //this.route.navigate(['/auth/login']);
       },
       err => {
+        this.loading=false;
         if (err.error) {
           var modelState = err.error.errors;
           this.errorMessage = '';
@@ -85,9 +85,7 @@ export class ResetpasswordComponent implements OnInit {
               //errors.push(modelState[key]);//list of error messages in an array
             }
           }
-
           this.isSignUpFailed = true;
-          //console.log(err.error)
         }
       }
     );

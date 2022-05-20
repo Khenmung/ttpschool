@@ -1,16 +1,17 @@
 //import { DatePipe } from '@angular/common';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/shared/components/mat-confirm-dialog/mat-confirm-dialog.component';
 import { ContentService } from 'src/app/shared/content.service';
+import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
@@ -30,26 +31,10 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   ],
 })
 export class AppuserdashboardComponent implements OnInit {
-  // @Output()
-  // dateChange: EventEmitter<MatDatepickerInputEvent<any>> = new EventEmitter();
-
-  // onDateChange(row): void {
-  //   this.dateChange.emit();
-  //   row.Action = true;
-  // }
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("container") container: ElementRef;
   @ViewChild("table") mattable;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionsAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   loading = false;
   errorMessage = '';
   Permission = '';
@@ -58,17 +43,19 @@ export class AppuserdashboardComponent implements OnInit {
   filterwithOrg = '';
   allMasterData = [];
   Organizations = [];
-  //Applications = [];
   Departments = [];
   Locations = [];
   Roles = [];
   LoginDetail = [];
+  UserDetail = [];
+  Classes = [];
+  RoleUserList = [];
+  OrgIdAndBatchIdFilter = '';
   SelectedApplicationId = 0;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   datasource: MatTableDataSource<IAppUser>;
   displayedColumns = [
-    //'UserName',
     'EmailAddress',
     'PhoneNumber',
     'ValidFrom',
@@ -77,15 +64,25 @@ export class AppuserdashboardComponent implements OnInit {
     'Action'
   ]
   AppUsersData = {
-    Id: 0,
+    Id: '',
     UserName: '',
-    Email: 0,
+    Email: '',
     PhoneNumber: '',
+    OrganizationName: '',
+    RoleName: '',
+    Password: '',
     ValidTo: new Date(),
     Active: 1,
   }
+
+  EducationManagement = 'education management';
+  EmployeeManagement = 'employee management';
+  RoleName ='';
+  Password ='';
   UserId = 0;
   AppUsers = [];
+  UserTypes = [];
+  SelectedApplicationName = '';
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
@@ -93,9 +90,9 @@ export class AppuserdashboardComponent implements OnInit {
     private fb: FormBuilder,
     private route: Router,
     private tokenStorage: TokenStorageService,
-    //private dataservice: NaomitsuService,
+    private dataservice: NaomitsuService,
     private authservice: AuthService,
-    private alert: MatSnackBar
+    private dialog: MatDialog
   ) { }
   ngOnInit() {
     this.searchForm = this.fb.group({
@@ -107,6 +104,7 @@ export class AppuserdashboardComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.UserName),
         map(UserName => UserName ? this._filter(UserName) : this.Users.slice())
       );
+    this.OrgIdAndBatchIdFilter = globalconstants.getStandardFilterWithBatchId(this.tokenStorage);
     this.PageLoad();
   }
   private _filter(name: string): IUser[] {
@@ -119,7 +117,7 @@ export class AppuserdashboardComponent implements OnInit {
     return user && user.UserName ? user.UserName : '';
   }
   PageLoad() {
-    //debugger;
+    debugger;
     this.loading = true;
 
     this.LoginDetail = this.tokenStorage.getUserDetail();
@@ -130,6 +128,7 @@ export class AppuserdashboardComponent implements OnInit {
       this.Permission = perObj[0].permission;
     if (this.Permission != 'deny') {
       this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedApplicationName = this.tokenStorage.getSelectedAppName();
       this.filterwithOrg = globalconstants.getStandardFilter(this.LoginDetail);
       this.GetMasterData();
     }
@@ -141,19 +140,29 @@ export class AppuserdashboardComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
-        //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.APPLICATION);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
+        this.UserTypes = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.USERTYPE);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.shareddata.ChangeRoles(this.Roles);
-        //this.shareddata.ChangePermittedApplications(this.Applications);
         this.shareddata.ChangeDepartment(this.Departments);
         this.shareddata.ChangeLocation(this.Locations);
         this.shareddata.CurrentOrganization.subscribe(o => this.Organizations = o);
         this.shareddata.CurrentDepartment.subscribe(d => this.Departments = d);
         this.shareddata.CurrentLocation.subscribe(l => this.Locations = l);
-        //this.shareddata.CurrentPermittedApplications.subscribe(a => this.Applications = a);
-        this.GetUsers();
+        this.contentservice.GetClasses(this.LoginDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
+          if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement) {
+            this.RoleName='Student';
+            this.Password ='Student@1234';
+            this.GetStudents();
+          }
+          else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement) {
+            this.RoleName ='Employee'
+            this.Password = 'Employee@1234';
+            this.GetEmployees();
+          }
+        })
 
         //this.GetRoleUser();
       });
@@ -187,42 +196,51 @@ export class AppuserdashboardComponent implements OnInit {
     this.UserId = element.UserId;
     this.container.nativeElement.style.backgroundColor = "grey";
     this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    //this.route.navigate(['/auth/appuser']);
   }
-  //   GetOrganization(){
-  //     let list: List = new List();
-  //     list.fields = ["OrganizationId,OrganizationName"];
-
-  //     list.PageName = "Organizations";
-  //     list.filter = ["Active eq 1 and " + this.filterwithOrg];
-  //     //this.RoleUserList = [];
-
-  //     this.dataservice.get(list)
-  //       .subscribe((data: any) => {
-  //         this.Organizations=[...data.value];
-  //   })
-  // }
   GetUsers() {
-
-    ////console.log(this.LoginUserDetail);
 
     let list: List = new List();
     list.fields = [
       'Id',
-      'UserName'
+      'UserName',
+      'Email',
+      'Active'
     ];
 
     list.PageName = "AuthManagement";
     list.filter = [this.filterwithOrg];
-    //this.RoleUserList = [];
-
     this.authservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        if (data.length > 0) {
-          this.Users = [...data];
-        }
+        this.Users = [];
+        //var _userDetail = [];
+        // if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement)
+        //   _userDetail = [...this.Students];
+        // else
+        //   _userDetail = [...this.Employees];
+
+        this.UserDetail.forEach(userdetail => {
+          var existinglogin = data.filter(f => f.Email.toLowerCase() == userdetail.EmailAddress.toLowerCase());
+          if (existinglogin.length > 0) {
+            this.Users.push(
+              {
+                Id: existinglogin[0].Id,
+                UserName: existinglogin[0].UserName,
+                Email: existinglogin[0].Email,
+                Active: existinglogin[0].Active
+              }
+            )
+          }
+          else {
+            this.Users.push(
+              {
+                Id: '',
+                UserName: userdetail.EmailAddress,
+                Email: userdetail.EmailAddress,
+                Active: 0
+              }
+            )
+          }
+        })
         this.loading = false;
       })
   }
@@ -230,13 +248,94 @@ export class AppuserdashboardComponent implements OnInit {
     debugger;
     row.Action = true;
   }
+  GetRoleUsers() {
+    debugger;
+    this.loading = true;
+    let list: List = new List();
+    list.fields = [
+      "RoleId",
+      "UserId"
+    ];
+    list.PageName = "RoleUsers";
+    list.filter = ["Active eq 1 and " + this.OrgIdAndBatchIdFilter];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.RoleUserList = data.value.map(f => {
+          f.RoleName = this.Roles.filter(r => r.MasterDataId == f.RoleId)[0].MasterDataName;
+          return f;
+        })
+      })
+  }
+  GetEmployees() {
+    debugger;
+    this.loading = true;
+    //let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
+
+    let list: List = new List();
+    list.fields = [
+      "EmpEmployeeId",
+      "FirstName",
+      "LastName",
+      "EmailAddress"
+    ];
+    list.PageName = "EmpEmployees";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginDetail[0]['orgId']];
+    this.UserDetail = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        data.value.forEach(employee => {
+          if (employee.EmailAddress.length > 0) {
+            this.UserDetail.push(employee);
+          }
+        })
+        this.GetUsers()
+      });
+  }
+  GetStudents() {
+    //debugger;
+    this.loading = true;
+    //let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
+
+    let list: List = new List();
+    list.fields = [
+      "StudentClassId",
+      "ClassId",
+      "RollNo",
+      "SectionId"
+    ];
+    list.PageName = "StudentClasses";
+    list.lookupFields = ["Student($select=UserId,StudentId,FirstName,LastName,EmailAddress)"];
+    list.filter = ["Active eq 1 and " + this.OrgIdAndBatchIdFilter];
+    this.UserDetail = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        data.value.forEach(student => {
+          if (student.Student.EmailAddress.length > 0) {
+            student.ClassName = this.Classes.filter(c => c.ClassId == student.ClassId)[0].ClassName;
+            student.EmailAddress = student.Student.EmailAddress;
+            this.UserDetail.push(student);
+          }
+        })
+        this.GetUsers()
+      });
+  }
   GetAppUsers() {
     debugger;
     this.loading = true;
     let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
-    if (this.searchForm.get("searchUserName").value != "") {
-      filterStr += " and Id eq '" + this.searchForm.get("searchUserName").value.Id + "'";
+    var searchObj = this.searchForm.get("searchUserName").value;
+    if (searchObj != "") {
+      filterStr += " and Id eq '" + searchObj.Id + "'";
     }
+    var _userTypeId = 0;
+    if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement)
+      _userTypeId = this.UserTypes.filter(f => f.MasterDataName.toLowerCase() == 'student')[0].MasterDataId;
+    else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement)
+      _userTypeId = this.UserTypes.filter(f => f.MasterDataName.toLowerCase() == 'employee')[0].MasterDataId;
+
+    filterStr += " and UserTypeId eq " + _userTypeId;
 
     let list: List = new List();
     list.fields = [
@@ -247,38 +346,54 @@ export class AppuserdashboardComponent implements OnInit {
       "OrgId",
       "ValidFrom",
       "ValidTo",
+      "UserTypeId",
       "Active",
     ];
     list.PageName = "AuthManagement";
-    //list.lookupFields = ["Org($select=OrganizationName)"];
     list.filter = ["Active eq 1" + filterStr];
 
     this.authservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        this.AppUsers = [];
+        //var _UserName ='';
         if (data.length > 0) {
-
-          this.AppUsers = data.map(u => {
-            return {
-              "Id": u.Id,
-              "UserName": u.UserName,
-              "EmailAddress": u.Email,
-              "PhoneNumber": u.PhoneNumber,
-              "OrgId": u.OrgId,
-              "ValidFrom": u.ValidFrom,
-              "ValidTo": u.ValidTo,
-              "Active": u.Active,
-              "Action": false
+          data.forEach(u => {
+            var newlogin = this.UserDetail.filter(f => f.EmailAddress == u.Email);
+            if (newlogin.length > 0) {
+              this.AppUsers.push({
+                "Id": u.Id,
+                "UserName": u.UserName,
+                "EmailAddress": u.Email,
+                "PhoneNumber": u.PhoneNumber,
+                "OrgId": u.OrgId,
+                "ValidFrom": u.ValidFrom,
+                "ValidTo": u.ValidTo,
+                "Active": u.Active,
+                "Action": false
+              });
             }
           });
         }
-        else
-          this.alert.open("No user found matching search criteria!", 'Dismiss', { duration: 10000 });
-        //const rows = [];
+        else {
+          var newlogin = this.UserDetail.filter(f => f.EmailAddress == searchObj.Email);
+          var today = new Date();
+          newlogin.forEach(login => {
 
-        //this.AppUsers.forEach(element => rows.push(element, { detailRow: true, element }));
-
-        //console.log("users", this.AppUsers)
+            this.AppUsers.push({
+              "Id": "",
+              "UserName": login.EmailAddress,
+              "EmailAddress": login.EmailAddress,
+              "PhoneNumber": login.ContactNo,
+              "OrgId": login.OrgId,
+              "ValidFrom": today,
+              "ValidTo": today.setDate(today.getDate() + 30),
+              "Active": 0,
+              "Action": false
+            });
+          });
+        }
+        console.log("this.AppUsers",this.AppUsers)
         this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
@@ -286,11 +401,52 @@ export class AppuserdashboardComponent implements OnInit {
       });
 
   }
+  Delete(row) {
+
+    this.openDialog(row)
+  }
+  openDialog(row) {
+    debugger;
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        message: 'Are you sure want to delete?',
+        buttonText: {
+          ok: 'Save',
+          cancel: 'No'
+        }
+      }
+    });
+
+    dialogRef.afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (confirmed) {
+          this.UpdateAsDeleted(row);
+        }
+      });
+  }
+  UpdateAsDeleted(row) {
+    debugger;
+    let toUpdate = {
+      Id: row.Id,
+      UserName: row.UserName,
+      Email: row.Email,
+      Active: 0,
+      UpdatedDate: new Date()
+    }
+    this.authservice.CallAPI(toUpdate, 'UpdateUser')
+      //this.dataservice.postPatch('MasterItems', toUpdate, row.MasterDataId, 'patch')
+      .subscribe(res => {
+        row.Action = false;
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+      });
+  }
   updateActive(row, value) {
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
   }
-  
+
   onSave(row): void {
     this.errorMessage = '';
     //debugger;
@@ -368,12 +524,16 @@ export class AppuserdashboardComponent implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.AppUsersData.Active = row.Active;
     this.AppUsersData.Id = row.Id;
     this.AppUsersData.UserName = row.UserName;
     this.AppUsersData.Email = row.EmailAddress;
     this.AppUsersData.PhoneNumber = row.PhoneNumber;
-    //this.AppUsersData.ValidFrom = row.ValidFrom;
+    this.AppUsersData.OrganizationName = this.LoginDetail[0]['org'];
+    this.AppUsersData.RoleName = this.RoleName;
+    this.AppUsersData.Password = this.Password;
+
     this.AppUsersData.ValidTo = new Date(row.ValidTo);
     console.log('this.AppUsersData', this.AppUsersData)
     if (row.Id == '')
@@ -407,8 +567,6 @@ export class AppuserdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground)
-          //this.alert.open(globalconstants.,globalconstants.ActionText,globalconstants.AlertDuration);
-          //this.router.navigate(['/home/pages']);
         });
   }
 }
@@ -420,9 +578,13 @@ export interface IAppUser {
   ValidFrom: Date;
   ValidTo: Date;
   OrgName: string;
+  UserTypeId: number;
   Active: number;
 }
 export interface IUser {
   Id: string;
   UserName: string;
+  Email: string;
+  Active: number;
+  //Action:boolean;
 }

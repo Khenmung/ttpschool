@@ -8,12 +8,22 @@ button{
 mat-cell:first-of-type {
     padding-left: 0px;
 }
-.mat-column-AnswerOptionsId{
+.mat-column-ClassEvaluationAnswerOptionsId{
     flex:1 0 60px;
-
 }
-.mat-column-Title,.mat-column-Value,
-.mat-column-Point,.mat-column-Correct,
-.mat-column-Active,.mat-column-Action{
-    flex:1 0 100px;
+.mat-column-ParentId,
+.mat-column-Title
+{
+    flex:1 0 150px;
+}
+.mat-column-Value,
+.mat-column-Point
+{
+    flex:1 0 80px;
+}
+.mat-column-Correct,
+.mat-column-Active,
+.mat-column-Action{
+    justify-content: center;
+    flex:1 0 80px;
 }

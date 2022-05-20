@@ -48,6 +48,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   displayedColumns = [
     'ClassEvaluationAnswerOptionsId',
     'Title',
+    'ParentId',
     'Value',
     'Point',
     'Correct',
@@ -122,9 +123,11 @@ export class ClassEvaluationOptionComponent implements OnInit {
         });
   }
   AddParent() {
+    debugger;
+    var _title = this.searchForm.get("searchParent").value.Title;
     var parentItem = {
       ClassEvaluationAnswerOptionsId: 0,
-      Title: this.searchForm.get("searchParent").value.Title,
+      Title: _title,
       Value: '0',
       Point: 0,
       Correct: 0,
@@ -136,12 +139,13 @@ export class ClassEvaluationOptionComponent implements OnInit {
   }
   AddNew() {
     var _AnswerOptionId = this.searchForm.get("searchParent").value.ClassEvaluationAnswerOptionsId;
-    if (_AnswerOptionId == undefined) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select parent", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-
+    // if (_AnswerOptionId == undefined) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select parent", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    if (_AnswerOptionId == undefined)
+      _AnswerOptionId = 0;
     var newItem = {
       ClassEvaluationAnswerOptionsId: 0,
       Title: '',
@@ -161,11 +165,12 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    if (row.Title.length == 0) {
+    if (row.Title == undefined) {
       this.loading = false;
       this.contentservice.openSnackBar("Title is required.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    
     let checkFilterString = this.StandardFilter;
     if (row.ParentId != null)
       checkFilterString = "ParentId eq " + row.ParentId
@@ -228,7 +233,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     this.dataservice.postPatch('ClassEvaluationOptions', this.ClassEvaluationOptionForUpdate[0], 0, 'post')
       .subscribe(
         (data: any) => {
-          row.AnswerOptionsId = data.AnswerOptionsId;
+          row.ClassEvaluationAnswerOptionsId = data.ClassEvaluationAnswerOptionsId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.GetEvaluationOptionAutoComplete();

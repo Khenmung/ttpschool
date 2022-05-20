@@ -4,26 +4,23 @@ mat-form-field{
 }
 .mat-column-FeeType,
 .mat-column-FeeTypeRemarks,
-.mat-column-Name
-{
-    flex:1 1 120px;
-}
+.mat-column-Name,
+.mat-column-RelationshipId,
 .mat-column-ContactNo,
+.mat-column-Remarks
+{
+    flex:1 0 150px;
+}
+
 .mat-column-Action
 {
-    flex:1 1 100px;
+    flex:1 0 100px;
 }
 .mat-column-SiblingId
 {
-    flex: 1 1 200px;
-}
-
-.mat-column-RelationshipId,
-.mat-column-Remarks
-{
-    flex: 1 1 150px;
+    flex: 1 0 200px;
 }
 .mat-column-StudentFamilyNFriendId,.mat-column-Active{
     justify-content: center;
-    flex: 1 1 70px;
+    flex: 1 0 70px;
 }

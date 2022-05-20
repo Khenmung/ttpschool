@@ -323,7 +323,7 @@ GetPlanFeature() {
   ];
 
   list.PageName = this.PlanFeatureListName;
-  list.filter = ["Active eq 1 and ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
+  list.filter = ["ApplicationId eq " + _applicationId + " and PlanId eq " + _PlanId];
   this.PlanFeatureList = [];
   this.dataservice.get(list)
     .subscribe((data: any) => {

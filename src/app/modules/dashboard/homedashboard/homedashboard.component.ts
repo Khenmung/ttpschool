@@ -32,18 +32,11 @@ export class HomeDashboardComponent implements OnInit {
     private shareddata: SharedataService,
     private fb: FormBuilder,
     private route: Router,
-    private aroute: ActivatedRoute,
     private dataservice: NaomitsuService,
     private http: HttpClient
   ) { }
 
   ngOnInit(): void {
-    // var urlId = 0;
-    // this.aroute.paramMap.subscribe(p => {
-    //   urlId = +p.get('id');
-    //   this.shareddata.ChangeApplicationId(urlId);
-    // })
-
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
       searchBatchId: [0]
@@ -58,12 +51,16 @@ export class HomeDashboardComponent implements OnInit {
       this.loading = true;
       this.userName = localStorage.getItem('userName');
       var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
-      if (PermittedApps.length == 0) {
+      var _roleName = this.loginUserDetail[0]['RoleUsers'][0].role;
+      if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
         this.route.navigate(["/auth/selectplan"]);
       }
       else {
         var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-        this.PermittedApplications = _UniquePermittedApplications.filter(f => f.applicationName.toLowerCase() != 'common panel');
+        if (_roleName.toLowerCase() != 'admin')
+          this.PermittedApplications = _UniquePermittedApplications.filter(f => f.applicationName.toLowerCase() != 'common panel');
+        else
+          this.PermittedApplications = [..._UniquePermittedApplications];
 
         if (this.PermittedApplications.length == 0) {
           this.tokenStorage.signOut();
@@ -97,7 +94,7 @@ export class HomeDashboardComponent implements OnInit {
     if (selectedBatchId > 0)
       this.SaveBatchIds(selectedBatchId);
     if (SelectedAppId > 0) {
-
+      this.loading=true;
       this.tokenStorage.saveSelectedAppId(SelectedAppId);
       var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 

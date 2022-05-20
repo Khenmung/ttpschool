@@ -21,7 +21,7 @@
                 <mat-icon>copy_all</mat-icon>
             </button><br> -->
         </form>
-        <mat-table #table [dataSource]="dataSource" matSort>
+        <mat-table #table [dataSource]="dataSource" matSort *ngIf="ClassSubjectList.length>0">
             <!-- <ng-container matColumnDef="ClassName">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Class/stream
                 </mat-header-cell>

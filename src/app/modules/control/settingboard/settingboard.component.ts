@@ -110,10 +110,14 @@ export class settingboardComponent implements AfterViewInit {
       comindx = this.components.indexOf(roleuserdashboardComponent);
       this.components.splice(comindx, 1);
       this.tabNames.splice(comindx, 1);
-      comindx = this.components.indexOf(RoleAppPermissiondashboardComponent);
+      // comindx = this.components.indexOf(RoleAppPermissiondashboardComponent);
+      // this.components.splice(comindx, 1);
+      // this.tabNames.splice(comindx, 1);
+      comindx = this.components.indexOf(OrganizationComponent);
       this.components.splice(comindx, 1);
       this.tabNames.splice(comindx, 1);
-      comindx = this.components.indexOf(OrganizationComponent);
+
+      comindx = this.components.indexOf(CustomerPlansComponent);
       this.components.splice(comindx, 1);
       this.tabNames.splice(comindx, 1);
     }

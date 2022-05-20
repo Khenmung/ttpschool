@@ -97,7 +97,7 @@
             </div>
             <div *ngIf="StudentName.length>0">
                 <span>My name is:</span>
-                <span style="padding-left:30px;">{{StudentName}}</span>
+                <span style="padding-left:30px;font-weight: bold;">{{StudentName}}</span>
             </div>
             <mat-table #table [dataSource]="dataSource" *ngIf="StudentEvaluationList.length>0">
                 <ng-container matColumnDef="StudentEvaluationResultId">

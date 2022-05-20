@@ -40,16 +40,9 @@ export class GetreportComponent implements OnInit {
   ParentId = 0;
   Permission = '';
   DisplayColumns = [];
+  FeeTypes = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   ColumnsOfSelectedReports = [];
   StandardFilterWithBatchId = '';
   loading = false;
@@ -119,6 +112,7 @@ export class GetreportComponent implements OnInit {
     });
     this.FilterConditions = [
       { "text": "equal", "val": "eq" },
+      { "text": "not equal", "val": "ne" },
       { "text": "greater than", "val": "gt" },
       { "text": "less than", "val": "lt" },
       { "text": "greater than n equal", "val": "ge" },
@@ -145,14 +139,18 @@ export class GetreportComponent implements OnInit {
 
 
   PageLoad() {
-    //this.tokenstorage.get
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     this.ApplicationName = this.LoginUserDetail[0]["org"];
-
+    this.GetFeeTypes();
     this.GetBaseReportId();
     this.GetMasterData();
+    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      this.Classes = [...data.value];
+    })
+
   }
   updateActive(row, value) {
     debugger;
@@ -353,7 +351,10 @@ export class GetreportComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.ReportNames = [...data.value];
+        this.ReportNames = data.value.map(reportname => {
+          reportname.DisplayName = reportname.DisplayName == null ? reportname.ReportName : reportname.DisplayName;
+          return reportname;
+        });
         //console.log("this.ReportNames", this.ReportNames)
         this.GetMyReportNames();
         this.loading = false;
@@ -435,7 +436,7 @@ export class GetreportComponent implements OnInit {
           _ParentId = SelectedReport[0].ParentId;
         }
         var baseReportColumns = this.ReportNames.filter(f => f.ParentId == _ParentId && f.OrgId == 0);
-        console.log("baseReportColumns", baseReportColumns)
+        //console.log("baseReportColumns", baseReportColumns)
         var _tableNames = this.AvailableReportNames.filter(m => m.ReportConfigItemId == _ParentId)[0].TableNames.split(',');
         //var _baseColumns = this.ReportNames.filter(f=>f.ParentId == _ParentId && f.OrgId ==0)
         this.ColumnsOfSelectedReports = data.value.map(m => {
@@ -489,8 +490,13 @@ export class GetreportComponent implements OnInit {
 
         this.dataservice.get(list)
           .subscribe((data: any) => {
-            var result = [...data.value];
-            debugger;
+            var result = [...data.value]; 
+            // data.value.map(res=>{
+            //       res.StudentClasses = res.StudentClasses.filter(f=>f.BatchId == this.SelectedBatchId);
+            //       return res;
+            // });
+            //console.log("result",result)
+            //debugger;
             //var whereDisplayNameNotEmpty = this.ColumnsOfSelectedReports.filter(f => f.DisplayName.length > 0)
             var colTem = [];
             var formatedResult = [];
@@ -574,6 +580,11 @@ export class GetreportComponent implements OnInit {
             if (obj.length > 0)
               returnvalue = obj[0].MasterDataName;
             break;
+          case "FeeTypeId":
+            var obj = this.FeeTypes.filter(s => s.FeeTypeId == IdValue)
+            if (obj.length > 0)
+              returnvalue = obj[0].FeeTypeName;
+            break;
           default:
             returnvalue = IdValue;
             break;
@@ -585,9 +596,53 @@ export class GetreportComponent implements OnInit {
     }
     return returnvalue;
   }
+  GetDropDownId(colName, TextValue) {
+    var returnvalue = 0;
+    debugger;
+    switch (this.BaseReportName) {
+      case "Student Report":
+        switch (colName) {
+          case "StudentId":
+            var obj = this.Students.filter(s => s.Name.toLowerCase() == TextValue.toLowerCase())
+            if (obj.length > 0)
+              returnvalue = obj[0].StudentId;
+            break;
+          case "ClassId":
+            var obj = this.Classes.filter(s => s.ClassName.toLowerCase() == TextValue.toLowerCase())
+            if (obj.length > 0)
+              returnvalue = obj[0].ClassId;
+            break;
+          case "GenderId":
+            var obj = this.SchoolGenders.filter(s => s.MasterDataName.toLowerCase() == TextValue.toLowerCase())
+            if (obj.length > 0)
+              returnvalue = obj[0].MasterDataId;
+            break;
+          case "SectionId":
+            var obj = this.Sections.filter(s => s.MasterDataName.toLowerCase() == TextValue.toLowerCase())
+            if (obj.length > 0)
+              returnvalue = obj[0].MasterDataId;
+            break;
+          case "FeeTypeId":
+            var obj = this.FeeTypes.filter(s => s.FeeTypeName.toLowerCase() == TextValue.toLowerCase())
+            if (obj.length > 0)
+              returnvalue = obj[0].FeeTypeId;
+            break;
+          default:
+            returnvalue = 0;
+            break;
+        }
+        break;
+      default:
+        returnvalue = 0;
+        break;
+    }
+    return returnvalue;
+  }
   searchRecursive(arr, searchcondition) {
     let lowerCaseName = '';
-    searchcondition.value = searchcondition.value.toLowerCase()
+    if (isNaN(searchcondition.value))
+      searchcondition.value = searchcondition.value.toLowerCase()
+
     if (arr[searchcondition.columnname]) {
       lowerCaseName = arr[searchcondition.columnname].toLowerCase();
 
@@ -618,6 +673,9 @@ export class GetreportComponent implements OnInit {
     switch (condition) {
       case "eq":
         return firstval == secondval;
+        break;
+      case "ne":
+        return firstval != secondval;
         break;
       case "lt":
         return firstval < secondval;
@@ -676,7 +734,20 @@ export class GetreportComponent implements OnInit {
         return model[parts[0]][parts[1]][parts[2]];
     }
   }
+  GetFeeTypes() {
+    debugger;
+    this.loading = true;
+    let list: List = new List();
+    list.fields = ["FeeTypeId", "FeeTypeName", "Formula"];
+    list.PageName = "SchoolFeeTypes";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
 
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.FeeTypes = [...data.value];
+        this.loading = false;
+      })
+  }
   ItemExists(obj, colname) {
     return obj.some((el) => {
       return el.col === colname;
@@ -770,6 +841,7 @@ export class GetreportComponent implements OnInit {
       })
   }
   AddSearchFilter() {
+    debugger;
     var columnName = this.searchForm.get("searchFilterColumn").value;
     var condition = this.searchForm.get("searchCondition").value;
     var value = this.searchForm.get("searchCriteria").value;
@@ -779,13 +851,13 @@ export class GetreportComponent implements OnInit {
     //if the selected column is a nested column
     var nestedcolumn = this.FilterColumns.filter(f => f.ReportName == columnName && f.TableNames.length > 0)
     if (nestedcolumn.length > 0 || columnName.substr(columnName.length - 2) == 'Id') {
-      filtertext = columnName + " " + condition + " " + value;
-      this.NestedfilterKeyValue.push({ "columnname": columnName, "condition": condition, "value": value })
+      var _Id = this.GetDropDownId(columnName, value);
+      filtertext = columnName + " " + condition + " " + _Id;
+      this.NestedfilterKeyValue.push({ "columnname": columnName, "condition": condition, "value": _Id })
     }
     else {
       this.filterKeyValue.push({ "columnname": columnName, "condition": condition, "value": value })
       filtertext = columnName + " " + condition + " '" + value + "'";
-
     }
     this.FilterCriteria.push(filtertext);
 

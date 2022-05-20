@@ -165,7 +165,7 @@ export class LoginComponent implements OnInit {
     list.PageName = "RoleUsers";
     list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
 
-    list.filter = ["Active eq 1 and UserId eq '" + this.userInfo["Id"] + "'"];
+    list.filter = ["Active eq 1 and UserId eq '" + this.userInfo["Id"] + "' and OrgId eq " + localStorage.getItem("orgId")];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

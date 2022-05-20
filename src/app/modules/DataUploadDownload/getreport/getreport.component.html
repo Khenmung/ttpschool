@@ -20,7 +20,7 @@
                         <mat-label>Search by</mat-label>
                         <mat-select formControlName="searchFilterColumn">
                             <mat-option *ngFor="let item of FilterColumns" [value]="item.ReportName">
-                                {{item.ReportName}}
+                                {{item.DisplayName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

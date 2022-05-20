@@ -131,8 +131,16 @@ export class RegisterComponent implements OnInit {
 
   onSave(): void {
     debugger;
+    this.loading=true;
     this.errorMessage = '';
     const { UserName, ConfirmPassword, Email, Password, OrganizationName, ContactNo } = this.RegistrationForm.value;
+    if(this.contentservice.checkSpecialChar(UserName))
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("user name should not contains space or special characters.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    
     //debugger;
     var userDetail = {
       ConfirmPassword: ConfirmPassword,
@@ -148,6 +156,7 @@ export class RegisterComponent implements OnInit {
         this.contentservice.openSnackBar("Congratulations! Your registration is successful.",  globalconstants.ActionText,globalconstants.BlueBackground);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
+        this.loading=false;
       },
       err => {
         var modelState;
@@ -168,6 +177,7 @@ export class RegisterComponent implements OnInit {
         }
         this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
         this.isSignUpFailed = true;
+        this.loading=false;
         //console.log(err.error)
       }
     );

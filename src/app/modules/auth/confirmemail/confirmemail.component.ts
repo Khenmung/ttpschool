@@ -27,10 +27,11 @@ export class ConfirmemailComponent implements OnInit {
     this.loading = true;
 
     this.aroute.paramMap.subscribe(params => {
-      this.code = params.get("code");
+      this.code =  params.get("code");
       this.userId = params.get("id");
       var payload = { "code": this.code, "userId": this.userId };
       this.authservice.CallAPI(payload, 'ConfirmEmail').subscribe((data: any) => {
+        console.log("confirmemail data",data)
         localStorage.setItem("orgId", data.OrgId);
         localStorage.setItem("userId", data.Id);
         this.contentservice.openSnackBar("Email confirmation success! Please select your plan.", globalconstants.ActionText, globalconstants.BlueBackground);

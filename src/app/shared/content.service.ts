@@ -355,13 +355,10 @@ export class ContentService implements OnInit {
     list.PageName = "RoleUsers";
     list.lookupFields = ["Org($select=OrganizationId,OrganizationName,LogoPath,Active)"];
 
-    list.filter = ["Active eq 1 and UserId eq '" + userdetail[0]["userId"] + "'"];
-    //list.orderBy = "ParentId";
+    list.filter = ["Active eq 1 and UserId eq '" + userdetail[0]["userId"] + "' and OrgId eq " + userdetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        ////console.log("data", data)
         if (data.value.length > 0) {
           if (data.value[0].Org.Active == 1)
             this.GetMasterData(data.value);
@@ -371,36 +368,10 @@ export class ContentService implements OnInit {
         }
       })
   }
-  // openDialog(model, Id) {
-  //   debugger;
-  //   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-  //     data: {
-  //       message: 'Are you sure want to delete?',
-  //       buttonText: {
-  //         ok: 'Save',
-  //         cancel: 'No'
-  //       }
-  //     }
-  //   });
-
-  //   dialogRef.afterClosed()
-  //     .subscribe((confirmed: boolean) => {
-  //       if (confirmed) {
-  //         var toDelete = {
-  //           Active: 0,
-  //           Deleted: true,
-  //           UpdatedDate: new Date()
-  //         }
-  //         return this.dataservice.postPatch(model, toDelete, Id, 'patch');
-  //       }
-  //       else
-  //         return null;
-  //     });
-  // }
 
   private GetMasterData(UserRole) {
     var applicationtext = globalconstants.MasterDefinitions.ttpapps.bang;
-    var roletext = globalconstants.MasterDefinitions.school.ROLE
+    var roletext = globalconstants.MasterDefinitions.common.ROLE;
 
     let list: List = new List();
     list.fields = ["MasterDataId", "MasterDataName"];

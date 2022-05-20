@@ -17,16 +17,17 @@
             <button mat-raised-button color="accent" matTooltip="search" (click)="SearchAnswerOptions()">
                 <mat-icon>search</mat-icon>
             </button>
-            <button mat-raised-button *ngIf="AnswerOptionsId==0" matTooltip="add parent" color="accent" (click)="AddParent()">
+            <!-- <button mat-raised-button *ngIf="AnswerOptionsId==0" matTooltip="add parent" color="accent"
+                (click)="AddParent()">
                 <mat-icon>add</mat-icon>
-            </button>
+            </button> -->
         </form>
-        <mat-table #table [dataSource]="dataSource" matSort>            
+        <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="ClassEvaluationAnswerOptionsId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Id
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                   {{element.ClassEvaluationAnswerOptionsId}}
+                    {{element.ClassEvaluationAnswerOptionsId}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Title">
@@ -36,6 +37,21 @@
                     <mat-form-field appearance="outline">
                         <input [maxlength]="256" autocomplete="Off" matInput (blur)="onBlur(element)"
                             [value]="element.Title" [(ngModel)]="element.Title">
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ParentId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Parent
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-label>parent</mat-label>
+                        <mat-select [value]="element.ParentId" [(ngModel)]="element.ParentId">
+                            <mat-option *ngFor="let option of EvaluationOptionAutoComplete"
+                                [value]="option.ClassEvaluationAnswerOptionsId">
+                                {{option.Title}}
+                            </mat-option>
+                        </mat-select>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -63,17 +79,16 @@
             <ng-container matColumnDef="Correct">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center;">Correct Answer
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                <mat-cell *matCellDef="let element">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateCorrect(element,$event)"
                         [checked]="element.Correct==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
             </ng-container>
-
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" style="justify-content: center;">
+                <mat-cell *matCellDef="let element">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
                         [checked]="element.Active==1?true:false">
                     </mat-checkbox>
@@ -85,7 +100,7 @@
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                <mat-cell *matCellDef="let element">
                     <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
                         (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
@@ -93,9 +108,10 @@
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row" style="display: flex;justify-content: baseline;">
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"
+                style="display: flex;justify-content: baseline;">
             </mat-row>
-        </mat-table>    
-    
+        </mat-table>
+
     </div>
 </div>

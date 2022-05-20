@@ -67,6 +67,7 @@ export class searchstudentComponent implements OnInit {
   SelectedBatchStudentIDRollNo = [];
   StudentClassId = 0;
   StudentId = 0;
+  StudentFamilyNFriendList = [];
   studentSearchForm: FormGroup;
   filteredStudents: Observable<IStudent[]>;
   filteredFathers: Observable<IStudent[]>;
@@ -385,12 +386,11 @@ export class searchstudentComponent implements OnInit {
           });
           this.ELEMENT_DATA = formattedData.map(item => {
             item.Name = item.FirstName + " " + item.LastName;
-            
-            if (item.StudentClasses.length == 0)
-            {
-              item.Remarks='';
+
+            if (item.StudentClasses.length == 0) {
+              item.Remarks = '';
               item.ClassName = '';
-            }              
+            }
             else {
               item.Remarks = item.StudentClasses[0].Remarks;
               var clsobj = this.Classes.filter(cls => {
@@ -433,23 +433,55 @@ export class searchstudentComponent implements OnInit {
         this.GetStudents();
       })
   }
-  GetStudents() {
-    this.loading = true;
+  GetSibling() {
+
+    var StudentFamilyNFriendListName = 'StudentFamilyNFriends';
+    var filterStr = '';
     let list: List = new List();
     list.fields = [
+      'StudentFamilyNFriendId',
       'StudentId',
-      'FirstName',
-      'LastName',
-      'FatherName',
-      'MotherName',
+      'SiblingId',
+      'Name',
       'ContactNo',
-      'FatherContactNo',
-      'MotherContactNo'
+      'RelationshipId',
+      'Active',
+      'Remarks'
     ];
+    list.PageName = StudentFamilyNFriendListName;
+    list.filter = [filterStr];
+    this.StudentFamilyNFriendList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
 
-    list.PageName = "Students";
-    //list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,RollNo,SectionId)"]
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+      })
+
+  }
+  GetStudents() {
+    this.loading = true;
+    var extrafilter = ''
+    let list: List = new List();
+    if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
+      list.fields = ['StudentId'];
+      list.PageName = "StudentFamilyNFriends";
+      list.lookupFields = ["Student($select=StudentId,FirstName,LastName,FatherName,MotherName,ContactNo,FatherContactNo,MotherContactNo"]
+      extrafilter = " and UserId eq '" + this.LoginUserDetail[0]['userId'] + "'";
+    }
+    else {
+      list.fields = [
+        'StudentId',
+        'FirstName',
+        'LastName',
+        'FatherName',
+        'MotherName',
+        'ContactNo',
+        'FatherContactNo',
+        'MotherContactNo'
+      ];
+      list.PageName = "Students";
+    }
+     var standardfilter ='OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    list.filter = [standardfilter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

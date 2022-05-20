@@ -63,10 +63,11 @@ export class ForgotpasswordComponent implements OnInit {
     var payload = {
       'Email': email
     }
-    
+    this.loading=true;
     this.authService.CallAPI(payload,'ForgotPassword').subscribe(
       (data: any) => {
         ////console.log(data);
+        this.loading=false;
         this.isSuccessful = true;
         this.contentservice.openSnackBar("Email sent to your register email address.",globalconstants.ActionText,globalconstants.BlueBackground);        
       },

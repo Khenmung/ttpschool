@@ -30,15 +30,12 @@
                         </button>
                     </mat-cell>
                 </ng-container>
-                <!-- <ng-container matColumnDef="UserName">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> User </mat-header-cell>
+                <ng-container matColumnDef="ClassName">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <input matInput [value]="element.UserName" [(ngModel)]="element.UserName" autocomplete="Off"
-                                [maxlength]="30">
-                        </mat-form-field>
+                        {{element.ClassName}}
                     </mat-cell>
-                </ng-container> -->
+                </ng-container>
                 <ng-container matColumnDef="EmailAddress">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -102,7 +99,8 @@
                                                     || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon matTooltip="save">save</mat-icon>
                         </button>
-                        <button [disabled]="loading || Permission!='rwd' || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                        &nbsp;
+                        <button [disabled]="loading || Permission!='rwd' || !element.Action" mat-mini-fab (click)="Delete(element)">
                             <mat-icon matTooltip="delete">delete</mat-icon>
                         </button>
                     </mat-cell>

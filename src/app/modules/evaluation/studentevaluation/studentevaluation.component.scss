@@ -13,13 +13,22 @@ mat-cell:first-of-type {
 {
     flex:0 0 150px;
 }
-.mat-column-ClassName,.mat-column-ExamName,.mat-column-Subject{
-    flex:1 1 150px;
+.mat-column-Action1
+{
+    flex:1 0 200px;
+}
+.mat-column-ClassName,
+.mat-column-ExamName,
+.mat-column-EvaluationName,
+.mat-column-ClassGroupName,
+.mat-column-Subject{
+    flex:1 0 150px;
 }
 .mat-column-AutoId{
     flex:1 1 80px;
 }
-.mat-column-Action,.mat-column-Active
+.mat-column-Action,
+.mat-column-Active
 {
     justify-content: center;
     flex:1 1 100px;

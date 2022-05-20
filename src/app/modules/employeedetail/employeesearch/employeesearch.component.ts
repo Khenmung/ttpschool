@@ -259,7 +259,7 @@ export class EmployeesearchComponent implements OnInit {
   }
   GetEmployee() {
     debugger;
-
+    this.loading=true;
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var EmployeeName = this.EmployeeSearchForm.get("searchemployeeName").value.Name;
     var EmployeeCode = this.EmployeeSearchForm.get("searchEmployeeCode").value.EmployeeCode;
@@ -322,6 +322,7 @@ export class EmployeesearchComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IEmployee>(this.EmployeeData);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        this.loading =false;
       });
 
   }

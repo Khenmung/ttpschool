@@ -141,7 +141,7 @@
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>DOB</mat-label>
                             <input formControlName="DOB" matInput 
-                            (blur)="OnBlur()"
+                            (dateChange)="OnBlur()"
                             [matDatepicker]="picker" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>

@@ -51,7 +51,7 @@ export class EvaluationresultComponent implements OnInit {
   PrintHeading = [];
   ClassGroups = [];
   ClassGroupMappings = [];
-  Result=[];
+  Result = [];
   StudentName = '';
   EvaluationPlanColumns = [
     'EvaluationName',
@@ -151,8 +151,18 @@ export class EvaluationresultComponent implements OnInit {
     var _searchEvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     var _studentObj = this.searchForm.get("searchStudentName").value;
 
-    _studentObj["SessionName"] = this.Exams.filter(f => f.ExamId == row.ExamId)[0].ExamName;
-    _studentObj["AssessmentName"] = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _searchEvaluationMasterId)[0].EvaluationName;
+    var _examobj = this.Exams.filter(f => f.ExamId == row.ExamId)
+    if (_examobj.length > 0)
+      _studentObj["SessionName"] = _examobj[0].ExamName;
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Exam/Session name must be selected", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var _evaluationobj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _searchEvaluationMasterId)
+    if (_evaluationobj.length > 0)
+      _studentObj["AssessmentName"] = _evaluationobj[0].EvaluationName;
+
     this.StudentName = _studentObj.Name;
     this.StudentClassId = _studentObj.StudentClassId;
     this.ApplyVariables(_studentObj);
@@ -180,7 +190,7 @@ export class EvaluationresultComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger
-        this.Result =[...data.value]
+        this.Result = [...data.value]
         //console.log("data.value", data.value);
         //console.log("_classEvaluations", _classEvaluations);
         var item;
@@ -248,8 +258,8 @@ export class EvaluationresultComponent implements OnInit {
           }
 
         })
-        if (this.Result.length==0){
-          this.StudentEvaluationList =[];
+        if (this.Result.length == 0) {
+          this.StudentEvaluationList = [];
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
         else
@@ -571,9 +581,10 @@ export class EvaluationresultComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        this.Students = [];
         if (data.value.length > 0) {
-          var _batches = this.tokenstorage.getBatches();
-          this.Students = data.value.map(student => {
+
+          data.value.map(student => {
             var _RollNo = '';
             var _name = '';
             var _className = '';
@@ -594,20 +605,20 @@ export class EvaluationresultComponent implements OnInit {
               if (_SectionObj.length > 0)
                 _section = _SectionObj[0].MasterDataName;
               _RollNo = studentclassobj[0].RollNo;
-            }
 
-            _name = student.FirstName + " " + student.LastName;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-            return {
-              StudentClassId: _studentClassId,
-              StudentId: student.StudentId,
-              ClassId: _classId,
-              StudentClass: _className,
-              RollNo: _RollNo,
-              Name: _name,
-              Section: _section,
-              Batch: _batchName,
-              FullName: _fullDescription,
+              _name = student.FirstName + " " + student.LastName;
+              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+              this.Students.push({
+                StudentClassId: _studentClassId,
+                StudentId: student.StudentId,
+                ClassId: _classId,
+                StudentClass: _className,
+                RollNo: _RollNo,
+                Name: _name,
+                Section: _section,
+                Batch: _batchName,
+                FullName: _fullDescription,
+              });
             }
           })
         }

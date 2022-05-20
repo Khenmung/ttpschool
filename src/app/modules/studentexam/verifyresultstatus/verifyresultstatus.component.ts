@@ -53,11 +53,7 @@ export class VerifyresultstatusComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
 
@@ -65,7 +61,6 @@ export class VerifyresultstatusComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchExamId: [0],
-      searchClassId: [0]
     });
     this.PageLoad();
   }
@@ -107,7 +102,7 @@ export class VerifyresultstatusComponent implements OnInit {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    var _classId = this.searchForm.get("searchClassId").value;
+    //var _classId = this.searchForm.get("searchClassId").value;
 
     this.loading = true;
     filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
@@ -125,9 +120,9 @@ export class VerifyresultstatusComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        if (_classId > 0)
-          this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId);
-        else
+        // if (_classId > 0)
+        //   this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId);
+        // else
           this.ExamStudentResult = [...data.value]
         //  console.log("this.ExamStudentResult",this.ExamStudentResult)
         this.ExamStudentResult = this.ExamStudentResult.map(d => {
@@ -166,7 +161,7 @@ export class VerifyresultstatusComponent implements OnInit {
             )
           }
         })
-
+        statusdetail = statusdetail.sort((a,b)=>a.Active-b.Active);
         this.dataSource = new MatTableDataSource(statusdetail);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -193,7 +188,7 @@ export class VerifyresultstatusComponent implements OnInit {
 
     list.fields = ["ExamId", "ExamNameId"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and ReleaseResult eq 1 " + orgIdSearchstr];
+    list.filter = ["Active eq 1 and ReleaseResult eq 0 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)

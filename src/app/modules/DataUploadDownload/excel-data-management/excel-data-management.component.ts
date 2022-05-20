@@ -216,6 +216,10 @@ export class ExcelDataManagementComponent implements OnInit {
     this.ErrorMessage = '';
     readFile.onload = (e) => {
       this.storeData = readFile.result;
+      var _rowCount = this.storeData.length;
+      if (_rowCount > globalconstants.RowUploadLimit) {
+        this.storeData.slice(globalconstants.RowUploadLimit);
+      }
       var data = new Uint8Array(this.storeData);
       ////console.log('data',data)
       var arr = new Array();
@@ -513,8 +517,8 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'PermanentAddressPincode must be less 11 characters at row ' + indx + '.\n';
       else if (element.PermanentAddressPincode == undefined)
         element.PermanentAddressPincode = '';
-      
-        element.OrgId = this.loginDetail[0]["orgId"];
+
+      element.OrgId = this.loginDetail[0]["orgId"];
       if (this.ErrorMessage.length == 0)
         this.ELEMENT_DATA.push(element);
     });

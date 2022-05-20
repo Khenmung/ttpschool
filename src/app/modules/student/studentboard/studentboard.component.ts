@@ -9,7 +9,6 @@ import { StudentattendancereportComponent } from '../studentattendancereport/stu
 import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudentdoc.component';
 import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimaryinfo.component';
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
-import { StudentEvaluationComponent } from '../../evaluation/studentevaluation/studentevaluation.component';
 import { StudentfamilynfriendComponent } from '../studentfamilynfriend/studentfamilynfriend.component';
 import { Router } from '@angular/router';
 

@@ -159,7 +159,7 @@ export class roleuserdashboardComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.school.ROLE);
+        this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
 
@@ -294,7 +294,7 @@ export class roleuserdashboardComponent implements OnInit {
     }
 
     var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-    let checkFilterString = "UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId + " and " + StandardFilter;
+    let checkFilterString = "OrgId eq "+ this.LoginUserDetail[0]['orgId'] +" and UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId + " and " + StandardFilter;
 
     if (row.RoleUserId > 0)
       checkFilterString += " and RoleUserId ne " + row.RoleUserId;

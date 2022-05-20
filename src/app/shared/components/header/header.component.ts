@@ -12,9 +12,9 @@ export class HeaderComponent implements OnInit {
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
   loading: false;
   userName: string = '';
-  logoPath ='';
+  logoPath = '';
   loggedIn: boolean;
-  OrganizationName ='';
+  OrganizationName = '';
   SelectedApplicationName = '';
   SelectedBatchName = '';
   LoginUserDetails = [];
@@ -24,40 +24,34 @@ export class HeaderComponent implements OnInit {
   ) {
   }
   ngOnInit(): void {
-debugger;
+    debugger;
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
-    if (this.LoginUserDetails.length==0)
-    {
+    if (this.LoginUserDetails.length == 0) {
       this.loggedIn = false;
       this.logoPath = "assets/images/newttplogo.png"
-    }     
+    }
     else {
       this.loggedIn = true;
-      this.userName = localStorage.getItem('username');    
+      this.userName = localStorage.getItem('username');
       this.logoPath = this.LoginUserDetails[0].logoPath;
-      if(this.logoPath ==undefined)
-      {
+      if (this.logoPath == undefined) {
         this.logoPath = "assets/images/newttplogo.png"
       }
+      this.OrganizationName = this.LoginUserDetails[0].org
+      var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
+      this.SelectedApplicationName = '';
+
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
-      debugger;
-      // if (PermittedApplications.length == 0) {
-      //   this.route.navigate(["/auth/selectplan"]);
-      // }
-      // else {
-        this.OrganizationName = this.LoginUserDetails[0].org
-        var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();
-        this.SelectedApplicationName = '';
+      if (PermittedApplications != null) {
         var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
 
-        if (apps.length > 0) {        
-          
-          this.SelectedBatchName = this.tokenStorage.getSelectedBatchName();
-          this.SelectedApplicationName = apps[0].applicationName + (this.SelectedBatchName ==''?'':' - ' + this.SelectedBatchName)
-        }
-      //}
-    }
+        if (apps.length > 0) {
 
+          this.SelectedBatchName = this.tokenStorage.getSelectedBatchName();
+          this.SelectedApplicationName = apps[0].applicationName + (this.SelectedBatchName == '' ? '' : ' - ' + this.SelectedBatchName)
+        }
+      }
+    }
   }
 
   changepassword() {
