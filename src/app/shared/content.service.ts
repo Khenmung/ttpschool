@@ -66,6 +66,16 @@ export class ContentService implements OnInit {
     list.PageName = "ClassMasters";
     return this.dataservice.get(list);
   }
+  GetStudentMaxPID(orgId) {
+    let list: List = new List();
+    list.fields = ["PID"];
+    list.PageName = "Students";
+    list.filter = ["OrgId eq " + orgId];
+    list.limitTo = 1;
+    list.orderBy = "PID Desc";
+
+    return this.dataservice.get(list);
+  }
   GetFeeDefinitions(orgId, active) {
     //Fee definition is not batch wise.      
     //let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;

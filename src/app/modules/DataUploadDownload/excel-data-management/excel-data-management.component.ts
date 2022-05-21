@@ -757,63 +757,72 @@ export class ExcelDataManagementComponent implements OnInit {
   save() {
     var toInsert = [];
     debugger;
-    this.ELEMENT_DATA.forEach(row => {
-      toInsert.push({
-        "StudentId": row["StudentId"],
-        "AadharNo": row["AadharNo"],
-        "Active": +row["Active"],
-        "AlternateContact": row["AlternateContact"],
-        "BankAccountNo": row["BankAccountNo"],
-        "Bloodgroup": +row["Bloodgroup"],
-        "Category": +row["Category"],
-        "ClassAdmissionSought": +row["ClassAdmissionSought"],
-        "ContactNo": row["ContactNo"],
-        "ContactPersonContactNo": row["ContactPersonContactNo"],
-        "DOB": this.datepipe.transform(row["DOB"], 'yyyy/MM/dd'),
-        "EmailAddress": row["EmailAddress"],
-        "FatherContactNo": row["FatherContactNo"],
-        "FatherName": row["FatherName"],
-        "FatherOccupation": row["FatherOccupation"],
-        "FirstName": row["FirstName"],
-        "Gender": +row["Gender"],
-        "IFSCCode": row["IFSCCode"],
-        "LastName": row["LastName"],
-        "LastSchoolPercentage": row["LastSchoolPercentage"],
-        "LocationId": +row["LocationId"],
-        "MICRNo": row["MICRNo"],
-        "MotherContactNo": row["MotherContactNo"],
-        "MotherName": row["MotherName"],
-        "MotherOccupation": row["MotherOccupation"],
-        "NameOfContactPerson": row["NameOfContactPerson"],
-        "OrgId": +row["OrgId"],
-        "ParentDeclaration": +row["ParentDeclaration"],
-        "PermanentAddress": row["PermanentAddress"],
-        "PermanentAddressCityId": +row["PermanentAddressCityId"],
-        "PermanentAddressCountryId": +row["PermanentAddressCountryId"],
-        "PermanentAddressPincode": row["PermanentAddressPincode"],
-        "PermanentAddressStateId": +row["PermanentAddressStateId"],
-        "Photo": row["Photo"],
-        "PresentAddress": row["PresentAddress"],
-        "PresentAddressCityId": +row["PresentAddressCityId"],
-        "PresentAddressCountryId": +row["PresentAddressCountryId"],
-        "PresentAddressStateId": +row["PresentAddressStateId"],
-        "PrimaryContactFatherOrMother": +row["PrimaryContactFatherOrMother"],
-        "ReasonForLeavingId": +row["ReasonForLeavingId"],
-        "RelationWithContactPerson": row["RelationWithContactPerson"],
-        "Religion": +row["Religion"],
-        "StudentDeclaration": +row["StudentDeclaration"],
-        "TransferFromSchool": row["TransferFromSchool"],
-        "TransferFromSchoolBoard": row["TransferFromSchoolBoard"],
-        "UpdatedBy": row["UpdatedBy"],
-        "UpdatedDate": this.datepipe.transform(row["UpdatedDate"], 'yyyy/MM/dd'),
-        "CreatedBy": row["CreatedBy"],
-        "CreatedDate": this.datepipe.transform(row["CreatedDate"], 'yyyy/MM/dd'),
-        "WhatsAppNumber": row["WhatsAppNumber"],
-        "ClubId": +row["ClubId"],
-        "BatchId": +row["BatchId"]
+    this.contentservice.GetStudentMaxPID(this.loginDetail[0]["orgId"])
+      .subscribe((data: any) => {
+        var _MaxPID = 0;
+        if (data.value.length > 0) {
+          _MaxPID = data.value[0].PID;
+        }
+        
+        this.ELEMENT_DATA.forEach(row => {
+          toInsert.push({
+            "PID":_MaxPID++,
+            "StudentId": row["StudentId"],
+            "AadharNo": row["AadharNo"],
+            "Active": +row["Active"],
+            "AlternateContact": row["AlternateContact"],
+            "BankAccountNo": row["BankAccountNo"],
+            "Bloodgroup": +row["Bloodgroup"],
+            "Category": +row["Category"],
+            "ClassAdmissionSought": +row["ClassAdmissionSought"],
+            "ContactNo": row["ContactNo"],
+            "ContactPersonContactNo": row["ContactPersonContactNo"],
+            "DOB": this.datepipe.transform(row["DOB"], 'yyyy/MM/dd'),
+            "EmailAddress": row["EmailAddress"],
+            "FatherContactNo": row["FatherContactNo"],
+            "FatherName": row["FatherName"],
+            "FatherOccupation": row["FatherOccupation"],
+            "FirstName": row["FirstName"],
+            "Gender": +row["Gender"],
+            "IFSCCode": row["IFSCCode"],
+            "LastName": row["LastName"],
+            "LastSchoolPercentage": row["LastSchoolPercentage"],
+            "LocationId": +row["LocationId"],
+            "MICRNo": row["MICRNo"],
+            "MotherContactNo": row["MotherContactNo"],
+            "MotherName": row["MotherName"],
+            "MotherOccupation": row["MotherOccupation"],
+            "NameOfContactPerson": row["NameOfContactPerson"],
+            "OrgId": +row["OrgId"],
+            "ParentDeclaration": +row["ParentDeclaration"],
+            "PermanentAddress": row["PermanentAddress"],
+            "PermanentAddressCityId": +row["PermanentAddressCityId"],
+            "PermanentAddressCountryId": +row["PermanentAddressCountryId"],
+            "PermanentAddressPincode": row["PermanentAddressPincode"],
+            "PermanentAddressStateId": +row["PermanentAddressStateId"],
+            "Photo": row["Photo"],
+            "PresentAddress": row["PresentAddress"],
+            "PresentAddressCityId": +row["PresentAddressCityId"],
+            "PresentAddressCountryId": +row["PresentAddressCountryId"],
+            "PresentAddressStateId": +row["PresentAddressStateId"],
+            "PrimaryContactFatherOrMother": +row["PrimaryContactFatherOrMother"],
+            "ReasonForLeavingId": +row["ReasonForLeavingId"],
+            "RelationWithContactPerson": row["RelationWithContactPerson"],
+            "Religion": +row["Religion"],
+            "StudentDeclaration": +row["StudentDeclaration"],
+            "TransferFromSchool": row["TransferFromSchool"],
+            "TransferFromSchoolBoard": row["TransferFromSchoolBoard"],
+            "UpdatedBy": row["UpdatedBy"],
+            "UpdatedDate": this.datepipe.transform(row["UpdatedDate"], 'yyyy/MM/dd'),
+            "CreatedBy": row["CreatedBy"],
+            "CreatedDate": this.datepipe.transform(row["CreatedDate"], 'yyyy/MM/dd'),
+            "WhatsAppNumber": row["WhatsAppNumber"],
+            "ClubId": +row["ClubId"],
+            "BatchId": +row["BatchId"]
 
+          });
+        });
       });
-    });
     ////console.log("toInsert", toInsert)
     this.dataservice.postPatch('Students', toInsert, 0, 'post')
       .subscribe((result: any) => {

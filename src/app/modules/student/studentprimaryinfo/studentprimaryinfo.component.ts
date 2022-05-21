@@ -49,7 +49,7 @@ export class studentprimaryinfoComponent implements OnInit {
   Category = [];
   Bloodgroup = [];
   Religion = [];
-  //States = [];
+  MaxPID = 0;
   Permission = '';
   PrimaryContact = [];
   Location = [];
@@ -403,31 +403,41 @@ export class studentprimaryinfoComponent implements OnInit {
 
   save() {
     this.studentForm.patchValue({ AlternateContact: "" });
+    this.contentservice.GetStudentMaxPID(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
+      var _MaxPID = 0;
+      if (data.value.length > 0) {
+        _MaxPID = +data.value[0].PID + 1;
+      }
+      this.studentData[0].PID = _MaxPID;
+      
+      this.dataservice.postPatch('Students', this.studentData, 0, 'post')
+        .subscribe((result: any) => {
+          debugger;
+          if (result != undefined) {
+            this.studentForm.patchValue({
+              StudentId: result.StudentId
+            })
+            this.StudentId = result.StudentId;
+            // if (result != null && result.UserId != "")
+            //   this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            // else
+              this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-    this.dataservice.postPatch('Students', this.studentData, 0, 'post')
-      .subscribe((result: any) => {
-        debugger;
-        if (result != undefined) {
-          this.studentForm.patchValue({
-            StudentId: result.StudentId
-          })
-          this.StudentId = result.StudentId;
-          if (result != null && result.UserId != "")
-            this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
-          else
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
+            this.loading = false;
+            this.tokenService.saveStudentId(this.StudentId + "")
+            this.tokenService.saveStudentClassId(this.StudentClassId + "");
+            this.GetStudent();
+            this.Edited = false;
 
-          this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
-          this.loading = false;
-          this.tokenService.saveStudentId(this.StudentId + "")
-          this.tokenService.saveStudentClassId(this.StudentClassId + "");
-          this.GetStudent();
-          this.Edited = false;
+          }
 
-        }
+        }, error => console.log(error))
 
-      }, error => console.log(error))
+
+    })
   }
+
   update() {
     ////console.log('student', this.studentForm.value)
 
@@ -446,6 +456,7 @@ export class studentprimaryinfoComponent implements OnInit {
     var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
     return new Date(dateToAdjust.getTime() - offsetMs);
   }
+
   GetStudent() {
     //debugger;
     this.loading = true;
@@ -463,7 +474,7 @@ export class studentprimaryinfoComponent implements OnInit {
             if (stud.StudentClasses.length > 0)
               this.tokenService.saveStudentClassId(stud.StudentClasses[0].StudentClassId);
 
-            let StudentName = stud.StudentId + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName +
+            let StudentName = stud.PID + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName +
               ' ' + stud.MotherName + ',';
             this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
@@ -475,7 +486,7 @@ export class studentprimaryinfoComponent implements OnInit {
               FatherOccupation: stud.FatherOccupation,
               MotherOccupation: stud.MotherOccupation,
               PresentAddress: stud.PresentAddress,
-              PermanentAddress: stud.PermanentAddress,              
+              PermanentAddress: stud.PermanentAddress,
               DOB: new Date(stud.DOB),//this.formatdate.transform(stud.DOB,'dd/MM/yyyy'),
               GenderId: stud.GenderId,
               BloodgroupId: stud.BloodgroupId,
@@ -485,7 +496,7 @@ export class studentprimaryinfoComponent implements OnInit {
               IFSCCode: stud.IFSCCode,
               MICRNo: stud.MICRNo,
               AadharNo: stud.AadharNo,
-              Photo: stud.Photo,              
+              Photo: stud.Photo,
               ContactNo: stud.ContactNo,
               WhatsAppNumber: stud.WhatsAppNumber,
               FatherContactNo: stud.FatherContactNo,
@@ -532,5 +543,5 @@ export class studentprimaryinfoComponent implements OnInit {
           console.log("error", err)
         });
   }
-    
+
 }

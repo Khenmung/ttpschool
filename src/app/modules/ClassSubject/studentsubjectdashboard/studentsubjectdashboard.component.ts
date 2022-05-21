@@ -163,7 +163,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     ];
 
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"];
+    list.lookupFields = ["Student($select=PID,FirstName,LastName)"];
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((studentclassdb: any) => {

@@ -52,7 +52,7 @@
 </form>
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
-    <ng-container matColumnDef="StudentId">
+    <ng-container matColumnDef="PID">
         <mat-header-cell *matHeaderCellDef mat-sort-header> 
             <span style="display: flex;flex-direction: column;justify-content: start;">
                 <span style="justify-content: start;display: flex;">Id</span>
@@ -63,7 +63,7 @@
             </span>    
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.StudentId}}
+            {{element.PID}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StudentName">

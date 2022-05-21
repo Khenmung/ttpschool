@@ -81,7 +81,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     Active: 1
   };
   displayedColumns = [
-    'StudentId',
+    'PID',
     'StudentName',
     'GenderName',
     'ClassName',
@@ -667,7 +667,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       ];
 
       list.PageName = "StudentClasses";
-      list.lookupFields = ["Student($select=FirstName,LastName,Gender)"];
+      list.lookupFields = ["Student($select=PID,FirstName,LastName,Gender)"];
       list.filter = ['Active eq 1 and ' + filterStr];
       this.StudentClassList = [];
       return this.dataservice.get(list);
@@ -693,6 +693,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             _feetype = feetype[0].FeeTypeName;
 
           this.StudentClassList.push({
+            PID:s.Student.PID,
             StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
@@ -897,6 +898,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
+      'PID',
       'StudentId',
       'FirstName',
       'LastName'
@@ -914,7 +916,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.Students = data.value.map(student => {
             return {
               StudentId: student.StudentId,
-              Name: student.StudentId + '-' + student.FirstName + '-' + student.LastName
+              Name: student.PID + '-' + student.FirstName + '-' + student.LastName
             }
           })
         }
@@ -953,6 +955,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
 }
 export interface IStudentClass {
+  PID:number;
   StudentClassId: number;
   ClassId: number;
   ClassName: string;

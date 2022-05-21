@@ -106,7 +106,8 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('userId', decodedUser.Id);
         localStorage.setItem('planId', decodedUser.iss);
         localStorage.setItem('username', decodedUser.email);
-        localStorage.setItem('employeeId', decodedUser.nameid);
+        localStorage.setItem('employeeId', decodedUser.employeeId);
+        localStorage.setItem('studentId', decodedUser.studentId);
 
         //console.log("decodedUser.iss",decodedUser.iss)
         //if PlanId is zero, redirect to select plan.

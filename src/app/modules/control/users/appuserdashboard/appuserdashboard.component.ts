@@ -56,6 +56,7 @@ export class AppuserdashboardComponent implements OnInit {
   expandedElement: any;
   datasource: MatTableDataSource<IAppUser>;
   displayedColumns = [
+    'UserName',
     'EmailAddress',
     'PhoneNumber',
     'ValidFrom',
@@ -286,6 +287,7 @@ export class AppuserdashboardComponent implements OnInit {
         debugger;
         data.value.forEach(employee => {
           if (employee.EmailAddress.length > 0) {
+            employee.FullName = employee.FirstName + " " + employee.LastName;
             this.UserDetail.push(employee);
           }
         })
@@ -302,10 +304,11 @@ export class AppuserdashboardComponent implements OnInit {
       "StudentClassId",
       "ClassId",
       "RollNo",
-      "SectionId"
+      "SectionId",
+      "OrgId"
     ];
     list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=UserId,StudentId,FirstName,LastName,EmailAddress)"];
+    list.lookupFields = ["Student($select=ContactNo,UserId,StudentId,FirstName,LastName,EmailAddress)"];
     list.filter = ["Active eq 1 and " + this.OrgIdAndBatchIdFilter];
     this.UserDetail = [];
     this.dataservice.get(list)
@@ -315,6 +318,8 @@ export class AppuserdashboardComponent implements OnInit {
           if (student.Student.EmailAddress.length > 0) {
             student.ClassName = this.Classes.filter(c => c.ClassId == student.ClassId)[0].ClassName;
             student.EmailAddress = student.Student.EmailAddress;
+            student.FullName = student.Student.FirstName + " " + student.Student.LastName;
+            student.ContactNo = student.Student.ContactNo;
             this.UserDetail.push(student);
           }
         })
@@ -363,7 +368,7 @@ export class AppuserdashboardComponent implements OnInit {
             if (newlogin.length > 0) {
               this.AppUsers.push({
                 "Id": u.Id,
-                "UserName": u.UserName,
+                "UserName": newlogin[0].FullName,
                 "EmailAddress": u.Email,
                 "PhoneNumber": u.PhoneNumber,
                 "OrgId": u.OrgId,
@@ -382,7 +387,7 @@ export class AppuserdashboardComponent implements OnInit {
 
             this.AppUsers.push({
               "Id": "",
-              "UserName": login.EmailAddress,
+              "UserName": login.FullName,
               "EmailAddress": login.EmailAddress,
               "PhoneNumber": login.ContactNo,
               "OrgId": login.OrgId,

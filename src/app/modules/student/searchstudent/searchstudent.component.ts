@@ -31,7 +31,7 @@ export class searchstudentComponent implements OnInit {
   ELEMENT_DATA: IStudent[];
   dataSource: MatTableDataSource<IStudent>;
   displayedColumns = [
-    'StudentId',
+    'PID',
     'Name',
     'FatherName',
     'MotherName',
@@ -61,7 +61,7 @@ export class searchstudentComponent implements OnInit {
   StudentClasses = [];
   UploadTypes = [];
   ReasonForLeaving = [];
-  //StandardFilter ='';
+  Siblings=[];
   SelectedApplicationId = 0;
   SelectedBatchId = 0;
   SelectedBatchStudentIDRollNo = [];
@@ -128,7 +128,10 @@ export class searchstudentComponent implements OnInit {
 
       this.GetMasterData();
       this.GetFeeTypes();
-
+      if(+localStorage.getItem('studentId')>0)
+      {
+        this.GetSibling();
+      }
     }
     //this.GetStudents();
   }
@@ -260,7 +263,7 @@ export class searchstudentComponent implements OnInit {
     this.route.navigate(['/edu/feepayment']);
   }
   generateDetail(element) {
-    let StudentName = element.StudentId + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
+    let StudentName = element.PID + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
 
     let studentclass = this.SelectedBatchStudentIDRollNo.filter(sid => sid.StudentId == element.StudentId);
     if (studentclass.length > 0) {
@@ -363,7 +366,7 @@ export class searchstudentComponent implements OnInit {
     if (this.studentSearchForm.get("MotherName").value != '')
       checkFilterString += " and contains(MotherName,'" + _motherName + "')"
     let list: List = new List();
-    list.fields = ["StudentId",
+    list.fields = ["StudentId","PID",
       "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
@@ -435,8 +438,9 @@ export class searchstudentComponent implements OnInit {
   }
   GetSibling() {
 
+    var _studentId = localStorage.getItem('studentId');
     var StudentFamilyNFriendListName = 'StudentFamilyNFriends';
-    var filterStr = '';
+    var filterStr = 'Active eq 1 and StudentId eq ' + _studentId;
     let list: List = new List();
     list.fields = [
       'StudentFamilyNFriendId',
@@ -450,12 +454,14 @@ export class searchstudentComponent implements OnInit {
     ];
     list.PageName = StudentFamilyNFriendListName;
     list.filter = [filterStr];
-    this.StudentFamilyNFriendList = [];
+    //this.StudentFamilyNFriendList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-
-      })
-
+        data.value.forEach(m=>{
+          if(m.SiblingId>0)
+          this.Siblings.push(m);
+        });
+      });
   }
   GetStudents() {
     this.loading = true;
@@ -481,6 +487,9 @@ export class searchstudentComponent implements OnInit {
       list.PageName = "Students";
     }
      var standardfilter ='OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+     this.Siblings.forEach(s=>{
+      standardfilter += ' and StudentId eq ' + s.StudentId;
+     })
     list.filter = [standardfilter];
 
     this.dataservice.get(list)

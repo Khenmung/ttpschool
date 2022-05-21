@@ -178,7 +178,11 @@ export class StudentattendancereportComponent implements OnInit {
             StudentRollNo: att.StudentClass.Student.FirstName + " " + att.StudentClass.Student.LastName
           });
         });
-        this.AttendanceStatusSum = alasql("select AttendanceStatus, sum(AttendanceStatus) Total from ? group by AttendanceStatus", [this.StudentAttendanceList])
+        this.AttendanceStatusSum = alasql("select AttendanceStatus, count(AttendanceStatus) Total from ? group by AttendanceStatus", 
+        [this.StudentAttendanceList])
+        //console.log("this.StudentAttendanceList",this.StudentAttendanceList)
+        //console.log("this.AttendanceStatusSum",this.AttendanceStatusSum)
+
         this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

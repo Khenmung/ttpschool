@@ -30,12 +30,21 @@
                         </button>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ClassName">
+                <ng-container matColumnDef="UserName">
+                    <mat-header-cell *matHeaderCellDef> Name</mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button [disabled]="loading" mat-button
+                            (click)="expandedElement = expandedElement === element ? null : element">
+                            {{element.UserName}}
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <!-- <ng-container matColumnDef="ClassName">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Class </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         {{element.ClassName}}
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <ng-container matColumnDef="EmailAddress">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -43,7 +52,7 @@
                             <input matInput [value]="element.EmailAddress"
                             (blur)="onBlur(element)"
                             [(ngModel)]="element.EmailAddress"
-                                autocomplete="Off" [maxlength]="20">
+                                autocomplete="Off" [maxlength]="100">
                         </mat-form-field>                       
                     </mat-cell>
                 </ng-container>
