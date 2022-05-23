@@ -18,14 +18,14 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="CurrentBatch">
+    <!-- <ng-container matColumnDef="CurrentBatch">
         <mat-header-cell *matHeaderCellDef> Current Batch </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-checkbox (click)="$event.stopPropagation()" (change)="updateCurrentBatch(element,$event)"
                 [checked]="element.CurrentBatch==1?true:false">
             </mat-checkbox>
         </mat-cell>
-    </ng-container>
+    </ng-container> -->
     <ng-container matColumnDef="StartDate">
         <mat-header-cell *matHeaderCellDef> Start </mat-header-cell>
         <mat-cell *matCellDef="let element">

@@ -76,14 +76,14 @@
                             <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="Amount">
-                            <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef> Amount &#x20b9;</mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 {{element.Amount}}
                             </mat-cell>
                             <mat-footer-cell *matFooterCellDef fxLayout="row" fxLayoutAlign="space-between center">
-                                <div><b>Balance:</b> {{calculateBalance()}}
+                                <div><b>Balance &#x20b9;:</b> {{calculateBalance()}}
                                 </div>
-                                <div><b>Total:</b> {{ calculateTotal() }}</div>
+                                <div><b>Total &#x20b9;:</b> {{ calculateTotal() }}</div>
                             </mat-footer-cell>
                         </ng-container>
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -92,7 +92,7 @@
                         <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
                         </mat-footer-row>
                     </mat-table> 
-                    <div style="display: flex;justify-content: flex-end;height: 50px;align-items:flex-end;padding: 10px;">                         
+                    <div style="display: flex;justify-content: flex-end;height: 100px;align-items:flex-end;padding: 10px;">                         
                          <div>Accountant</div>   
                     </div>           
             </div>

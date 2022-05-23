@@ -16,7 +16,7 @@
     </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Sub Master</mat-label>
-        <mat-select #ParentId formControlName="SubId" (selectionChange)="emptyresult()">
+        <mat-select formControlName="SubId" (selectionChange)="emptyresult()">
             <mat-option [value]="0">--sub master--</mat-option>
             <mat-option *ngFor="let master of SubMasters" [value]="master.MasterDataId">
                 {{master.MasterDataName}}
@@ -44,7 +44,7 @@
                     <input [disabled]="element.MasterDataId>0 && (Parent=='Information Restriction' 
                                        || Parent=='Period Type'
                                        || Parent=='Roll No Generation' 
-                                       || Parent=='Class Promotion'
+                                       || Parent=='User Type'
                                        || element.MasterDataName=='Admin'
                                        || element.MasterDataName=='Teacher'
                                        || element.MasterDataName=='Student'

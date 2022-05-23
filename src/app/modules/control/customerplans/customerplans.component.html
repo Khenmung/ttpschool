@@ -122,7 +122,8 @@
                     <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading || !element.Action || SelectedCustomer=='TTP'" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action || SelectedCustomer=='TTP'" 
+                        matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

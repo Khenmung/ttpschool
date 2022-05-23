@@ -130,7 +130,8 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.loading = true;
     let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and BatchId eq " + this.SelectedBatchId +
     " and ClassSubjectId eq " + row.ClassSubjectId +
-      " and SubjectComponentId eq " + row.SubjectComponentId
+      " and SubjectComponentId eq " + row.SubjectComponentId +
+      " and Active eq 1";
 
     if (row.ClassSubjectMarkComponentId > 0)
       checkFilterString += " and ClassSubjectMarkComponentId ne " + row.ClassSubjectMarkComponentId;

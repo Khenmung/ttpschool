@@ -9,3 +9,9 @@ mat-form-field,button{
 mat-cell:first-of-type{
     padding-left: 0px;
 }
+.mat-column-TeacherName,.mat-column-Remarks{
+    flex:1 0 150px;
+}
+.mat-column-AttendanceStatus,.mat-column-Action{
+    flex:1 0 100px;
+}

@@ -338,7 +338,18 @@ export class EmployeeComponent implements OnInit {
     }
     this.loading = true;
     var _active = this.EmployeeForm.get("Active").value;
-
+    var _email = this.EmployeeForm.get("EmailAddress").value;
+    if (_email.length > 0) {
+      var checkduppayload = { 'Id': this.EmployeeId, 'Email': _email }
+      this.contentservice.CheckEmailDuplicate(checkduppayload)
+        .subscribe((data: any) => {
+          if (data) {
+            this.loading = false;
+            this.contentservice.openSnackBar("Email already in use.", globalconstants.ActionText, globalconstants.RedBackground);
+            return;
+          }
+        });
+    }
     this.EmployeeData = [{
       EmpEmployeeId: this.EmployeeId,
       ShortName: this.EmployeeForm.get("ShortName").value,

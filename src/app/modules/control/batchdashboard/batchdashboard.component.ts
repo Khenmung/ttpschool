@@ -22,14 +22,6 @@ export class BatchdashboardComponent implements OnInit {
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   Permission = '';
   StandardFilter = '';
   loading = false;
@@ -44,7 +36,6 @@ export class BatchdashboardComponent implements OnInit {
     StartDate: Date,
     EndDate: Date,
     OrgId: 0,
-    CurrentBatch: 0,
     Active: 1
   };
   displayedColumns = [
@@ -52,7 +43,6 @@ export class BatchdashboardComponent implements OnInit {
     'BatchName',
     'StartDate',
     'EndDate',
-    'CurrentBatch',
     'Active',
     'Action'
   ];
@@ -105,7 +95,6 @@ export class BatchdashboardComponent implements OnInit {
       'BatchName',
       'StartDate',
       'EndDate',
-      'CurrentBatch',
       'OrgId',
       'Active'
     ];
@@ -129,7 +118,6 @@ export class BatchdashboardComponent implements OnInit {
     var newdata = {
       BatchId: 0,
       BatchName: 'new batch name',
-      CurrentBatch: 0,
       StartDate: new Date(),
       EndDate: new Date(),
       OrgId: +this.LoginUserDetail[0]["orgId"],
@@ -159,17 +147,17 @@ export class BatchdashboardComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
-    if (row.CurrentBatch == 1 && row.Active == 0) {
-      this.contentservice.openSnackBar("Current batch should be active!", globalconstants.ActionText,globalconstants.RedBackground);
-      return;
-    }
-    if (row.CurrentBatch == 1) {
-      var existingActive = this.BatchList.filter(b => b.CurrentBatch == 1 && b.BatchId != row.BatchId);
-      if (existingActive.length > 0) {
-        this.contentservice.openSnackBar("There is already another current batch!", globalconstants.ActionText,globalconstants.RedBackground);
-        return;
-      }
-    }
+    // if (row.CurrentBatch == 1 && row.Active == 0) {
+    //   this.contentservice.openSnackBar("Current batch should be active!", globalconstants.ActionText,globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (row.CurrentBatch == 1) {
+    //   var existingActive = this.BatchList.filter(b => b.CurrentBatch == 1 && b.BatchId != row.BatchId);
+    //   if (existingActive.length > 0) {
+    //     this.contentservice.openSnackBar("There is already another current batch!", globalconstants.ActionText,globalconstants.RedBackground);
+    //     return;
+    //   }
+    // }
     this.loading = true;
     var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
     let checkFilterString = "BatchName eq '" + row.BatchName + "' and " + StandardFilter;
@@ -197,7 +185,6 @@ export class BatchdashboardComponent implements OnInit {
           this.BatchData.BatchName = row.BatchName;
           this.BatchData.StartDate = row.StartDate;
           this.BatchData.EndDate = row.EndDate;
-          this.BatchData.CurrentBatch = row.CurrentBatch;
           this.BatchData.OrgId = this.LoginUserDetail[0]["orgId"];
           if (this.BatchData.BatchId == 0) {
             this.BatchData["CreatedDate"] = new Date();
@@ -253,7 +240,6 @@ export interface IBatches {
   BatchName: string;
   StartDate: Date;
   EndDate: Date;
-  CurrentBatch: number;
   OrgId: number;
   Active;
 }

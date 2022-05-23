@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -17,6 +19,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./classdetail.component.scss']
 })
 export class ClassdetailComponent implements OnInit {
+@ViewChild(MatPaginator) paginator :MatPaginator;
+@ViewChild(MatSort) sort :MatSort;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -301,7 +305,11 @@ export class ClassdetailComponent implements OnInit {
         if (data.value.length > 0) {
           this.ClassMasterList = [...data.value];
         }
+        this.ClassMasterList.sort((a,b)=>a.Sequence - b.Sequence);
+        
         this.dataSource = new MatTableDataSource<IClassMaster>(this.ClassMasterList);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loadingFalse();
       });
 

@@ -9,6 +9,10 @@ mat-form-field,button{
 mat-cell:first-of-type{
     padding-left: 0px;
 }
-.mat-column-AttendanceStatus{
+.mat-column-AttendanceStatus,.mat-column-Action{
     justify-content: center;
+    flex:1 0 100px;
+}
+.mat-column-StudentRollNo,.mat-column-Remarks{
+    flex:1 0 150px;
 }

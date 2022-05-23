@@ -6,9 +6,6 @@ import { NaomitsuService } from './databaseService';
 import { List } from './interface';
 import { TokenStorageService } from '../_services/token-storage.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
-//import { ConfirmDialogComponent } from './components/mat-confirm-dialog/mat-confirm-dialog.component';
-//import { observable } from 'rxjs';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import { AuthService } from '../_services/auth.service';
@@ -24,7 +21,6 @@ export class ContentService implements OnInit {
   url: any;
   SelectedApplicationId = 0;
   constructor(
-    private dialog: MatDialog,
     private authservice: AuthService,
     private tokenService: TokenStorageService,
     private http: HttpClient,
@@ -32,8 +28,6 @@ export class ContentService implements OnInit {
     private snackbar: MatSnackBar
   ) { }
   ngOnInit(): void {
-    //debugger;
-    //this.UserDetail = this.tokenService.getUserDetail();
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
 
   }
@@ -48,9 +42,7 @@ export class ContentService implements OnInit {
       return false;
   }
   AddUpdateContent(pagecontent: any) {
-    ////debugger  
     this.url = globalconstants.apiUrl + '/odata/Pages';
-    //this.url ="/odata/Pages"; 
     return this.http.post(this.url, pagecontent);
   }
   GetEmployeeVariable() {
@@ -59,11 +51,16 @@ export class ContentService implements OnInit {
     list.PageName = "EmpEmployees";
     return this.dataservice.get(list);
   }
+  CheckEmailDuplicate(payload){
+ 
+    return this.authservice.CallAPI(payload,'EmailDuplicateCheck');
+  }
   GetClasses(orgId) {
     let list = new List();
     list.fields = ["*"];
     list.filter = ["Active eq 1 and OrgId eq " + orgId];
     list.PageName = "ClassMasters";
+    list.orderBy="Sequence";
     return this.dataservice.get(list);
   }
   GetStudentMaxPID(orgId) {

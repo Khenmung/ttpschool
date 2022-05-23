@@ -17,7 +17,7 @@
         <mat-icon>search</mat-icon>
     </button>
 </form>
-<mat-table #table [dataSource]="dataSource" style="overflow: auto;">
+<mat-table #table [dataSource]="dataSource" style="overflow: auto;" matSort>
     <ng-container matColumnDef="ClassId">
         <mat-header-cell *matHeaderCellDef>Id
         </mat-header-cell>
@@ -26,7 +26,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ClassName">
-        <mat-header-cell *matHeaderCellDef>Class Name
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Class Name
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -36,7 +36,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Sequence">
-        <mat-header-cell *matHeaderCellDef>Sequence
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Sequence
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -46,7 +46,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="DurationId">
-        <mat-header-cell *matHeaderCellDef>Duration
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Duration
         </mat-header-cell>
         <mat-cell style="display: flex;" *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -59,7 +59,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StudyAreaId">
-        <mat-header-cell *matHeaderCellDef>Study Area
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Study Area
         </mat-header-cell>
         <mat-cell style="display: flex;" *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -72,7 +72,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StudyModeId">
-        <mat-header-cell *matHeaderCellDef>Study Mode
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Study Mode
         </mat-header-cell>
         <mat-cell style="display: flex;" *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -85,7 +85,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="MinStudent">
-        <mat-header-cell *matHeaderCellDef>Section Min Student
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Section Min Student
         </mat-header-cell>
         <mat-cell style="display: flex;" *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -95,7 +95,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="MaxStudent">
-        <mat-header-cell *matHeaderCellDef>Section Max Student
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Section Max Student
         </mat-header-cell>
         <mat-cell style="display: flex;" *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -105,7 +105,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StartDate">
-        <mat-header-cell *matHeaderCellDef>Start Date
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Start Date
         </mat-header-cell>
         <mat-cell style="display: flex;" *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -117,7 +117,7 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="EndDate">
-        <mat-header-cell *matHeaderCellDef>End Date
+        <mat-header-cell *matHeaderCellDef mat-sort-header>End Date
         </mat-header-cell>
         <mat-cell style="display: flex;" *matCellDef="let element">
             <mat-form-field appearance="outline">
@@ -154,3 +154,4 @@
     <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row">
     </mat-row>
 </mat-table>
+<mat-paginator [pageSizeOptions]="[5,10,20]"></mat-paginator>

@@ -148,7 +148,8 @@ export class RegisterComponent implements OnInit {
       Password: Password,
       Username: UserName,
       OrganizationName: OrganizationName,
-      ContactNo: ContactNo
+      ContactNo: ContactNo,
+      RoleName:'Admin'
     }
     this.authService.CallAPI(userDetail,'Register').subscribe(
       data => {

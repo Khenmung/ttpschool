@@ -837,8 +837,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
+          row.ClassName= this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName,
           row.StudentClassId = data.StudentClassId;
+          
           row.Action = false;
+          
           this.RowsToUpdate--;
           // if (row.Promote == 1)
           //   this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);

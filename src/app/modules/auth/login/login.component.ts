@@ -102,25 +102,26 @@ export class LoginComponent implements OnInit {
         const decodedUser = this.jwtHelper.decodeToken(data.Token);
         this.userInfo = JSON.parse(JSON.stringify(decodedUser));
 
-        localStorage.setItem('orgId', decodedUser.sid);
+        localStorage.setItem('orgId', decodedUser.orgId);
         localStorage.setItem('userId', decodedUser.Id);
-        localStorage.setItem('planId', decodedUser.iss);
+        localStorage.setItem('planId', decodedUser.planId);
         localStorage.setItem('username', decodedUser.email);
         localStorage.setItem('employeeId', decodedUser.employeeId);
         localStorage.setItem('studentId', decodedUser.studentId);
+        localStorage.setItem('role', decodedUser.role);
 
         //console.log("decodedUser.iss",decodedUser.iss)
         //if PlanId is zero, redirect to select plan.
-        // if (+decodedUser.iss == 0)
-        //   this.route.navigate(['/auth/selectplan']);
-        // else {
+         if (+decodedUser.planId == 0 && decodedUser.role.toLowerCase() =='admin')
+           this.route.navigate(['/auth/selectplan']);
+         else {
           //  localStorage.setItem('userInfo',decodedUser);
           this.isLoginFailed = false;
           this.isLoggedIn = true;
           //this.roles = this.tokenStorage.getUser().roles;
           this.GetApplicationRoleUser();
           //this.reloadPage();
-        //}
+        }
       },
       err => {
         debugger;

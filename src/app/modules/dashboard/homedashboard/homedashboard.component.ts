@@ -2,7 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
+import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
@@ -33,7 +35,9 @@ export class HomeDashboardComponent implements OnInit {
     private fb: FormBuilder,
     private route: Router,
     private dataservice: NaomitsuService,
-    private http: HttpClient
+    private http: HttpClient,
+    private contentservice: ContentService
+
   ) { }
 
   ngOnInit(): void {
@@ -93,8 +97,13 @@ export class HomeDashboardComponent implements OnInit {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     if (selectedBatchId > 0)
       this.SaveBatchIds(selectedBatchId);
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select batch.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (SelectedAppId > 0) {
-      this.loading=true;
+      this.loading = true;
       this.tokenStorage.saveSelectedAppId(SelectedAppId);
       var selectedApp = this.PermittedApplications.filter(a => a.applicationId == SelectedAppId);
 
@@ -109,6 +118,12 @@ export class HomeDashboardComponent implements OnInit {
       this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
       this.SelectedAppName = selectedApp[0].applicationName;
       this.route.navigate(['/', selectedApp[0].appShortName])
+    }
+    else
+    {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
     }
   }
   SaveBatchIds(selectedBatchId) {
@@ -158,32 +173,15 @@ export class HomeDashboardComponent implements OnInit {
       "BatchName",
       "StartDate",
       "EndDate",
-      "CurrentBatch",
+      //"CurrentBatch",
       "Active"];
     list.PageName = "Batches";
     list.filter = ["Active eq 1 and OrgId eq " + this.loginUserDetail[0]["orgId"]];
     this.dataservice.get(list).subscribe((data: any) => {
       this.Batches = [...data.value];
-      //this.shareddata.ChangeBatch(this.Batches);
       this.tokenStorage.saveBatches(this.Batches)
-      // var _currentBatchStartEnd = {};
-      // var _currentBatch = this.Batches.filter(b => b.CurrentBatch == 1);
-      // if (_currentBatch.length > 0) {
-      //   _currentBatchStartEnd = {
-      //     'StartDate': _currentBatch[0].StartDate,
-      //     'EndDate': _currentBatch[0].EndDate,
-      //   };
-      //   this.tokenStorage.saveSelectedBatchName(_currentBatch[0].BatchName);
-      //   this.tokenStorage.saveCurrentBatchStartEnd(_currentBatchStartEnd)
-      //   this.tokenStorage.saveSelectedBatchStartEnd(_currentBatchStartEnd)
-      //   this.CurrentBatchId = _currentBatch[0].BatchId;
-      // }
       this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
       this.tokenStorage.saveCurrentBatchId(this.SelectedBatchId + "");
-      // if (this.SelectedBatchId == 0) {
-      //   this.tokenStorage.saveCurrentBatchId(this.CurrentBatchId.toString())
-      //   this.SelectedBatchId = this.CurrentBatchId;
-      // }
 
       this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
       this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });

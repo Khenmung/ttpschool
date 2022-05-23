@@ -120,6 +120,7 @@ export class CustomerPlansComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter no. of students", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    this.loading=true;
     //there will be only one row for a customer;
     this.CustomerPlansData.CustomerPlanId = this.CustomerPlanId;
     

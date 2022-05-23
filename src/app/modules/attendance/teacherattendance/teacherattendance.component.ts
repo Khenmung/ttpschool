@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -19,19 +21,12 @@ export class TeacherAttendanceComponent implements OnInit {
 
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
-  //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   edited = false;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   EnableSave = true;
   SaveAll = false;
   NoOfRecordToUpdate = 0;
@@ -149,7 +144,7 @@ export class TeacherAttendanceComponent implements OnInit {
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($select=EmpEmployeeId,FirstName,LastName,ShortName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and (ManagerId eq " + this.LoginUserDetail[0]["employeeId"] + " or ReportingTo eq " + this.LoginUserDetail[0]["employeeId"] + ")"];
+    list.filter = [orgIdSearchstr + " and Active eq 1 and (ManagerId eq " + localStorage.getItem("employeeId") + " or ReportingTo eq " + localStorage.getItem("employeeId") + ")"];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)
@@ -205,7 +200,10 @@ export class TeacherAttendanceComponent implements OnInit {
                   Action: false
                 });
             })
+            this.TeacherAttendanceList = this.TeacherAttendanceList.sort((a,b)=>b.AttendanceStatus-a.AttendanceStatus);
             this.dataSource = new MatTableDataSource<ITeacherAttendance>(this.TeacherAttendanceList);
+            this.dataSource.paginator=this.paginator;
+            this.dataSource.sort = this.sort;
             this.loading = false;
           });
         //this.changeDetectorRefs.detectChanges();

@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -20,21 +22,14 @@ export class StudentAttendanceComponent implements OnInit {
 
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
-  //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   edited = false;
   EnableSave = true;
   Permission = 'deny';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   SaveAll = false;
   NoOfRecordToUpdate = -1;
   StudentDetailToDisplay = '';
@@ -272,6 +267,8 @@ export class StudentAttendanceComponent implements OnInit {
                 });
             })
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
             this.loading = false;
           });
         //this.changeDetectorRefs.detectChanges();

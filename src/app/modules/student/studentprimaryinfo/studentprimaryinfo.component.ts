@@ -346,6 +346,18 @@ export class studentprimaryinfoComponent implements OnInit {
       return;
     }
     this.loading = true;
+    var _email = this.studentForm.get("EmailAddress").value;
+    if (_email.length > 0) {
+      var checkduppayload = { 'Id': this.StudentId, 'Email': _email }
+      this.contentservice.CheckEmailDuplicate(checkduppayload)
+        .subscribe((data: any) => {
+          if (data) {
+            this.loading = false;
+            this.contentservice.openSnackBar("Email already in use.", globalconstants.ActionText, globalconstants.RedBackground);
+            return;
+          }
+        });
+    }
     this.studentData = [];
     //var _studentId = this.studentForm.get("StudentId").value;
     this.studentData.push({
@@ -383,7 +395,7 @@ export class studentprimaryinfoComponent implements OnInit {
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
       ClubId: this.studentForm.get("ClubId").value,
       Remarks: this.studentForm.get("Remarks").value,
-      EmailAddress: this.studentForm.get("EmailAddress").value,
+      EmailAddress: _email,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
       OrgId: this.loginUserDetail[0]["orgId"],
@@ -409,7 +421,7 @@ export class studentprimaryinfoComponent implements OnInit {
         _MaxPID = +data.value[0].PID + 1;
       }
       this.studentData[0].PID = _MaxPID;
-      
+
       this.dataservice.postPatch('Students', this.studentData, 0, 'post')
         .subscribe((result: any) => {
           debugger;
@@ -421,7 +433,7 @@ export class studentprimaryinfoComponent implements OnInit {
             // if (result != null && result.UserId != "")
             //   this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             // else
-              this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
             this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
             this.loading = false;

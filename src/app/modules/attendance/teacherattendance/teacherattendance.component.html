@@ -13,16 +13,16 @@
                 <mat-icon>search</mat-icon>
             </button>
         </form>
-        <mat-table #table [dataSource]="dataSource">
+        <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="TeacherName">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Teacher
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Teacher
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.TeacherName}}
                 </mat-cell>
             </ng-container>            
             <ng-container matColumnDef="AttendanceStatus">
-                <mat-header-cell *matHeaderCellDef> Present&nbsp;
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Present&nbsp;
                     <mat-checkbox *ngIf="TeacherAttendanceList.length>0" 
                         matTooltip="check/uncheck all" mat-mini-fab 
                         (click)="$event.stopPropagation()" (change)="checkall($event)">
@@ -35,11 +35,14 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Remarks">
-                <mat-header-cell *matHeaderCellDef> Remarks </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field [style.width.px]="150">
-                        <input matInput [maxlength]="250" autocomplete="Off" (change)="onChangeEvent(element,$event)" [value]="element.Remarks"
-                            [(ngModel)]="element.Remarks">
+                        <textarea matInput [maxlength]="250" 
+                        autocomplete="Off" 
+                        (change)="onChangeEvent(element,$event)" 
+                        [value]="element.Remarks"
+                            [(ngModel)]="element.Remarks"></textarea>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -59,4 +62,4 @@
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
-    
+    <mat-paginator [pageSizeOptions]="[10,20,50,100]"></mat-paginator>

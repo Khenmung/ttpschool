@@ -61,7 +61,7 @@ export class searchstudentComponent implements OnInit {
   StudentClasses = [];
   UploadTypes = [];
   ReasonForLeaving = [];
-  Siblings=[];
+  Siblings = [];
   SelectedApplicationId = 0;
   SelectedBatchId = 0;
   SelectedBatchStudentIDRollNo = [];
@@ -128,8 +128,7 @@ export class searchstudentComponent implements OnInit {
 
       this.GetMasterData();
       this.GetFeeTypes();
-      if(+localStorage.getItem('studentId')>0)
-      {
+      if (+localStorage.getItem('studentId') > 0) {
         this.GetSibling();
       }
     }
@@ -357,7 +356,7 @@ export class searchstudentComponent implements OnInit {
       return;
     }
     if (_studentId > 0)
-      checkFilterString += " and  StudentId eq " + _studentId;
+      checkFilterString += " and StudentId eq " + _studentId;
 
     if (studentName != undefined && studentName.trim().length > 0)
       checkFilterString += " and  StudentId eq " + this.studentSearchForm.get("searchStudentName").value.StudentId;
@@ -366,7 +365,7 @@ export class searchstudentComponent implements OnInit {
     if (this.studentSearchForm.get("MotherName").value != '')
       checkFilterString += " and contains(MotherName,'" + _motherName + "')"
     let list: List = new List();
-    list.fields = ["StudentId","PID",
+    list.fields = ["StudentId", "PID",
       "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
       "MotherContactNo", "Active",
@@ -457,9 +456,9 @@ export class searchstudentComponent implements OnInit {
     //this.StudentFamilyNFriendList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        data.value.forEach(m=>{
-          if(m.SiblingId>0)
-          this.Siblings.push(m);
+        data.value.forEach(m => {
+          if (m.SiblingId > 0)
+            this.Siblings.push(m);
         });
       });
   }
@@ -486,10 +485,21 @@ export class searchstudentComponent implements OnInit {
       ];
       list.PageName = "Students";
     }
-     var standardfilter ='OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-     this.Siblings.forEach(s=>{
-      standardfilter += ' and StudentId eq ' + s.StudentId;
-     })
+    
+    var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    if (this.Siblings.length > 0) {
+      //login student
+      var _studentId = localStorage.getItem('studentId');  
+      standardfilter += ' and ( StudentId eq ' + _studentId
+      //siblings
+      this.Siblings.forEach(s => {
+        standardfilter += ' or StudentId eq ' + s.StudentId;
+      })
+      standardfilter += ')'
+    
+    }
+
     list.filter = [standardfilter];
 
     this.dataservice.get(list)
