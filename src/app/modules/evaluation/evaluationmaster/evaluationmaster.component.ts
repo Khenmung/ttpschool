@@ -88,7 +88,7 @@ export class EvaluationMasterComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONMASTER);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

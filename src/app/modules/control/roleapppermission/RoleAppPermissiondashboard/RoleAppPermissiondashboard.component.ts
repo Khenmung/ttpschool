@@ -204,7 +204,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         else
           this.PageFeatures = [];
         this.loading = false;
-        console.log("PageFeatures", this.PageFeatures)
+        //console.log("PageFeatures", this.PageFeatures)
       })
   }
   FilterPageFeatures() {
@@ -289,12 +289,12 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
             })
         })
         //const parents = ResultedPermittedPageFeatures.filter(x => !x.ParentId);
-        this.ApplicationRoleList = ResultedPermittedPageFeatures.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
+        this.ApplicationRoleList = ResultedPermittedPageFeatures.sort((a, b) =>b.Active -a.Active);
         
         if (this.ApplicationRoleList.length == 0) {
           this.contentservice.openSnackBar("No feature found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
-        console.log("this.ApplicationRoleList",this.ApplicationRoleList)
+        //console.log("this.ApplicationRoleList",this.ApplicationRoleList)
         this.datasource = new MatTableDataSource<IApplicationRolePermission>(this.ApplicationRoleList);
         this.datasource.sort = this.sort;
         this.datasource.paginator = this.paginator;

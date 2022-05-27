@@ -16,12 +16,12 @@ import { StudentEvaluationComponent } from '../studentevaluation/studentevaluati
 })
 export class EvaluationboardComponent implements AfterViewInit {
 
-  components = [    
+   components:any = [
     EvaluationresultComponent,
     EvaluationMasterComponent,
-    ClassEvaluationComponent,    
+    ClassEvaluationComponent,
     EvaluationClassSubjectMapComponent,
-    StudentEvaluationComponent    
+    StudentEvaluationComponent
   ];
 
   tabNames = [
@@ -42,7 +42,7 @@ export class EvaluationboardComponent implements AfterViewInit {
   LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
-
+  Loaded = false;
   constructor(
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
@@ -52,19 +52,19 @@ export class EvaluationboardComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-debugger;
+    debugger;
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-    
+
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATION)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
     }
-    
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION);
     var comindx = this.components.indexOf(StudentEvaluationComponent);
     this.AddRemoveComponent(perObj, comindx);
-    
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONMASTER);
     var comindx = this.components.indexOf(EvaluationMasterComponent);
     this.AddRemoveComponent(perObj, comindx);
@@ -76,7 +76,7 @@ debugger;
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONCLASSSUBJECTMAP)
     var comindx = this.components.indexOf(EvaluationClassSubjectMapComponent);
     this.AddRemoveComponent(perObj, comindx);
-    
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONRESULT)
     var comindx = this.components.indexOf(EvaluationresultComponent);
     this.AddRemoveComponent(perObj, comindx);
@@ -100,8 +100,8 @@ debugger;
 
   private renderComponent(index: number): any {
     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
-    //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
+    const component =this.viewContainer.createComponent(factory);
+    
   }
   AddRemoveComponent(perObj, comindx) {
     if (perObj.length > 0) {

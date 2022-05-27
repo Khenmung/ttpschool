@@ -106,7 +106,7 @@ export class MenuConfigComponent implements OnInit {
     private navigate: Router,
     private route: ActivatedRoute,
     private tokenStorage: TokenStorageService,
-    ) {
+  ) {
   }
 
   checklogin() {
@@ -117,11 +117,20 @@ export class MenuConfigComponent implements OnInit {
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
 
     if (this.LoginUserDetail == null) {
-      this.contentservice.openSnackBar("Access denied! login required.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Access denied! login required.", globalconstants.ActionText, globalconstants.RedBackground);
       this.navigate.navigate(['/auth/login']);
     }
-    this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-    this.GetMasterData();
+    else {
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.MENUCONFIG)
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      if (this.Permission != 'deny') {
+        this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+        this.GetMasterData();
+      }
+    }
+
   }
   EmptyData() {
     this.PageList = [];
@@ -287,7 +296,7 @@ export class MenuConfigComponent implements OnInit {
   AddNew() {
     if (this.searchForm.get("searchApplicationId").value == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var newdata = {
@@ -331,7 +340,7 @@ export class MenuConfigComponent implements OnInit {
     }
 
     if (ErrorMessage.length > 0) {
-      this.contentservice.openSnackBar(ErrorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar(ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     // var _ParentId = 0;
@@ -350,7 +359,7 @@ export class MenuConfigComponent implements OnInit {
     list.filter = ["Active eq 1 and " + duplicatecheck]
     this.dataservice.get(list).subscribe((data: any) => {
       if (data.value.length > 0) {
-        this.contentservice.openSnackBar("Page already exists.", globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Page already exists.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
       else {
@@ -386,7 +395,7 @@ export class MenuConfigComponent implements OnInit {
           this.MenuConfigData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
           this.update(row);
         }
-        
+
       }
     })
   }
@@ -402,8 +411,8 @@ export class MenuConfigComponent implements OnInit {
           row.PageId = data.PageId;
           row.Action = false;
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-          
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
           this.GetTopMenu();
         });
 
@@ -415,8 +424,8 @@ export class MenuConfigComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText,globalconstants.BlueBackground);
-          
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
           this.GetTopMenu();
         });
   }
@@ -430,19 +439,19 @@ export class MenuConfigComponent implements OnInit {
   GetPages() {
     var filterStr = '';
     if (this.searchForm.get("searchApplicationId").value == 0) {
-      this.contentservice.openSnackBar("Please select application.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
     filterStr = "ApplicationId eq " + this.searchForm.get("searchApplicationId").value
     var _ParentId = 0;
 
-    
+
     if (this.searchForm.get("searchTopMenuId").value > 0) {
-      
+
       _ParentId = this.searchForm.get("searchTopMenuId").value
     }
-    
+
 
     filterStr += " and ParentId eq " + _ParentId;
     let list: List = new List();

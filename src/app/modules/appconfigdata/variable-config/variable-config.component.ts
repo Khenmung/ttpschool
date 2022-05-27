@@ -38,7 +38,7 @@ export class VariableConfigComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   rowCount = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   filteredOptions: Observable<IVariableConfig[]>;
   VariableConfig = [];
   ConfigTypes = [];
@@ -68,7 +68,7 @@ export class VariableConfigComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private contentservice: ContentService,
     private fb: FormBuilder
@@ -98,16 +98,26 @@ export class VariableConfigComponent implements OnInit {
   displayFn(varconfig: IVariableConfig): string {
     return varconfig && varconfig.VariableName ? varconfig.VariableName : '';
   }
+  Permission = '';
   PageLoad() {
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.GetMasterData();
-      //      this.GetVariables();
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission == 'deny') {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else {
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetMasterData();
+      }
+
     }
   }
   addnew() {
@@ -230,7 +240,7 @@ export class VariableConfigComponent implements OnInit {
           //   this.loading = false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
 
@@ -294,7 +304,7 @@ export class VariableConfigComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ConfigTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
@@ -309,10 +319,10 @@ export class VariableConfigComponent implements OnInit {
     if (this.searchForm.get("searchTypeId").value > 0)
       filter += ' and VariableTypeId eq ' + this.searchForm.get("searchTypeId").value;
     else {
-      this.contentservice.openSnackBar("Please select type", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select type", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
+
     if (this.searchForm.get("searchVariableName").value.VariableConfigurationId > 0)
       " and VariableName eq '" + this.searchForm.get("searchVariableName").value.VariableName + "'";
 

@@ -147,6 +147,11 @@ export class GenerateCertificateComponent implements OnInit {
         this.GetStudentAttendance();
         this.getPaymentStatus();
       }
+      else
+      {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      }
     }
   }
 

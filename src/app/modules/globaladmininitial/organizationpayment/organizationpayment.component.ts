@@ -62,6 +62,7 @@ export class OrganizationpaymentComponent implements OnInit {
     //"Active",
     "Action"
   ];
+  Permission = '';
   SelectedApplicationId = 0;
   searchForm: FormGroup;
   constructor(
@@ -95,10 +96,21 @@ export class OrganizationpaymentComponent implements OnInit {
     else {
       this.UserId = localStorage.getItem("userId");
       this.OrgId = +localStorage.getItem("orgId");
+
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission == 'deny') {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else {
+        this.GetPaymentModes();
+        this.GetOrganizations();
+        this.GetCustomerPlan();
+
+      }
     }
-    this.GetPaymentModes();
-    this.GetOrganizations();
-    this.GetCustomerPlan();
   }
   updateActive(row, value) {
 

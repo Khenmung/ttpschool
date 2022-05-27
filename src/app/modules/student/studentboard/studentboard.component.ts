@@ -101,25 +101,25 @@ export class StudentboardComponent implements AfterViewInit {
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
     var comindx = 0;
     switch (featureName) {
-      case "student detail":
+      case globalconstants.Pages.edu.STUDENT.STUDENTDETAIL:
         comindx = this.components.indexOf(studentprimaryinfoComponent);
         break;
-      case "student class":
+      case globalconstants.Pages.edu.STUDENT.STUDENTCLASS:
         comindx = this.components.indexOf(AddstudentclassComponent);
         break;
-      case "generate certificate":
+      case globalconstants.Pages.edu.STUDENT.GENERATECERTIFICATE:
         comindx = this.components.indexOf(GenerateCertificateComponent);
         break;
-      case "documents":
+      case globalconstants.Pages.edu.STUDENT.DOCUMENT:
         comindx = this.components.indexOf(StudentDocumentComponent);
         break;
-      case "student attendance":
+      case globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT:
         comindx = this.components.indexOf(StudentattendancereportComponent);
         break;
-      case "progress report":
+      case globalconstants.Pages.edu.STUDENT.PROGRESSREPORT:
         comindx = this.components.indexOf(StudentprogressreportComponent);
         break;
-      case "siblings n friends":
+      case globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS:
         comindx = this.components.indexOf(StudentfamilynfriendComponent);
         break;
     }

@@ -87,7 +87,8 @@
                         </button> -->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" 
+                        matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                         </button>
                     </mat-cell>

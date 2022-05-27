@@ -118,36 +118,32 @@ export class NoOfStudentComponent implements OnInit {
       this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
       this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
 
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSTUDENT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.NOOFSTUDENT);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-
-      this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
-      ////console.log('selected batchid', this.SelectedBatchId);
-      ////console.log('current batchid', this.CurrentBatchId)
-      if (this.PromotePermission == 'read')
-        this.displayedColumns = [
-          'Student',
-          'ClassName',
-          'RollNo',
-          'GenderName',
-          'SectionId',
-          'FeeTypeId',
-          'Action'
-        ];
-      this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
-      //this.shareddata.CurrentFeeType.subscribe(b => this.FeeTypes = b);
-      this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
-      this.Batches = this.tokenstorage.getBatches()
-      //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-      if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
-        this.GetMasterData();
-        this.GetFeeTypes();
+      if (this.Permission != 'deny') {
+        this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
+        if (this.PromotePermission == 'read')
+          this.displayedColumns = [
+            'Student',
+            'ClassName',
+            'RollNo',
+            'GenderName',
+            'SectionId',
+            'FeeTypeId',
+            'Action'
+          ];
+        this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
+        this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
+        this.Batches = this.tokenstorage.getBatches()
+        if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
+          this.GetMasterData();
+          this.GetFeeTypes();
+        }
+        else {
+          this.loading = false;
+        }
       }
-      else {
-        this.loading = false;
-      }
-      //this.GetStudents();
     }
   }
   createFilter(): (data: any, filter: string) => boolean {

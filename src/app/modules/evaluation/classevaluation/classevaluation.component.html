@@ -115,10 +115,10 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading" matTooltip="add new child" mat-mini-fab (click)="AddNew()">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="add new child" mat-mini-fab (click)="AddNew()">
                             <mat-icon>add</mat-icon>
                         </button>
-                        <button [disabled]="loading" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
                             <mat-icon>all_out</mat-icon>
                         </button>
 

@@ -7,9 +7,10 @@ import { List } from "./interface";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:5000";//"http://localhost:8020";//"http://localhost:44394";//
+    public static apiUrl: string = "https://api.ttpsolutions.in";//"http://localhost:8020";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
+    public static CommonPanelID = 329; //536870912;    
     public static RowUploadLimit = 5; //536870912;
     public static TrialPeriod = 3;
     public static BlueBackground = {duration:3000,panelClass:'blue-snackbar'};
@@ -146,7 +147,7 @@ export class globalconstants {
                     'STUDENTCLASS': 'student class',
                     'GENERATECERTIFICATE': 'generate certificate',
                     'DOCUMENT': 'documents',                    
-                    'ATTENDANCEREPORT': 'student attendance',
+                    'ATTENDANCEREPORT': 'student attendance record',
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',
                     'FEERECEIPT': 'fee receipt',
@@ -190,7 +191,9 @@ export class globalconstants {
                 'ATTENDANCE': {
                     'ATTENDANCE': 'attendance',
                     'STUDENTATTENDANCE': 'student attendance',
-                    'TEACHERATTENDANCE': 'employee attendance'
+                    'TEACHERATTENDANCE': 'employee attendance',
+                    'TEACHERATTENDANCERECORD': 'teacher attendance record',
+                    'STUDENTATTENDANCERECORD': 'student attendance record'
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',

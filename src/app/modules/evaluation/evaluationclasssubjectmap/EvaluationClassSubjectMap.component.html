@@ -109,7 +109,7 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button *ngIf="EvaluationMasterId!=0" [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                    <button *ngIf="EvaluationMasterId!=0" [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
                         <mat-icon>add</mat-icon>
                     </button>
                 </mat-header-cell>

@@ -32,7 +32,7 @@
     </div>
 </form>
 <!-- <div *ngIf="DateWiseCollection.length>0"> -->
-<div id="printSection">
+<div id="printSection" style="overflow: auto;">
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="Student">
             <mat-header-cell *matHeaderCellDef> Student </mat-header-cell>
@@ -56,6 +56,12 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> Account </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 {{element.PaymentType}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Status </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.Status}}
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="TotalAmount">

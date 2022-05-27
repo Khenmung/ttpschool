@@ -24,10 +24,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
     autoClose: false,
     keepAfterRouteChange: true
   };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  Permission='';
   StandardFilter = '';
   loading = false;
   rowCount = 0;
@@ -123,10 +120,18 @@ export class EmployeeGradehistoryComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.WORKHISTORY);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission == 'deny') {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
-
+      }
     }
   }
   updateActive(row, value) {

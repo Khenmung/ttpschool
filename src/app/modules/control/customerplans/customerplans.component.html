@@ -1,8 +1,8 @@
 <div style="display: flex;flex-direction: column;">
-    <div style="padding:15px 15px 10px 15px;">
-        <div><strong>My Plan</strong></div>
+    <div style="padding:30px 15px 10px 15px;">
+        <div style="font-size: x-large;display: flex; justify-content: center; align-items: center;"><strong>My Plan</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;">Please wait while setting your data</mat-spinner>
     <!-- <alert></alert> -->
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
@@ -26,7 +26,7 @@
           
             <mat-table #table [dataSource]="dataSource" style="width: 900px;">
                 <ng-container matColumnDef="PlanName">
-                    <mat-header-cell *matHeaderCellDef>Plan name
+                    <mat-header-cell *matHeaderCellDef>Plan
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <b>{{element.PlanName}}</b>
@@ -40,9 +40,9 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Description">
-                    <mat-header-cell *matHeaderCellDef>Description
+                    <mat-header-cell *matHeaderCellDef style="justify-content:center">Description
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element" style="padding:15px;" >
+                    <mat-cell *matCellDef="let element" style="padding-top:25px;" >
                         <ul>
                             <li *ngFor="let item of element.Features">{{item.FeatureName}}</li>
                         </ul>
@@ -70,10 +70,10 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="PersonOrItemCount">
-                    <mat-header-cell *matHeaderCellDef>No. Of Students
+                    <mat-header-cell *matHeaderCellDef style="justify-content:center">No. Of Students
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
+                        <mat-form-field>
                             <input (keyup)="onBlur(element)" type="number"
                             [(ngModel)]="element.PersonOrItemCount" [value]="element.PersonOrItemCount" matInput
                                 autocomplete="off" [max]="100000">                          
@@ -104,7 +104,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="AmountPerMonth">
-                    <mat-header-cell *matHeaderCellDef>Amount Per Month
+                    <mat-header-cell *matHeaderCellDef style="justify-content:center">Amount Per Month
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" style="padding:15px; justify-content: end;">
                        {{element.AmountPerMonth}}
@@ -122,9 +122,9 @@
                     <mat-header-cell *matHeaderCellDef>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading || !element.Action || SelectedCustomer=='TTP'" 
-                        matTooltip="save" mat-mini-fab (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
+                        <button [disabled]="loading || !element.Action || SelectedCustomer=='TTP' || PlanSelected" 
+                        matTooltip="trial" mat-mini-fab (click)="UpdateOrSave(element)">
+                            <mat-icon>beenhere</mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>
@@ -133,7 +133,10 @@
             </mat-table>
         </div>
         <div style="width:100%; display: flex;align-items: center; justify-content: center;padding: 15px 15px 15px 0px">
-            <button [disabled]="loading" class="mat-raised-button" matTooltip="login" (click)="login()">
+            <button [disabled]="loading || !PlanSelected" 
+            mat-raised-button color="accent" 
+            matTooltip="go to login" 
+            (click)="login()">
                 <mat-icon>login</mat-icon>
             </button>
         </div>

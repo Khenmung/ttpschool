@@ -21,20 +21,13 @@ export class ExamslotComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  Permission = '';
   StandardFilterWithBatchId = '';
   loading = false;
   DataCountToUpdate = 0;
   ExamSlots: IExamSlots[] = [];
   SelectedBatchId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   Exams = [];
   ExamNames = [];
   SlotNames = [];
@@ -50,7 +43,7 @@ export class ExamslotComponent implements OnInit {
     StartTime: '',
     EndTime: '',
     ExamDate: Date,
-    Sequence:0,
+    Sequence: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 1
@@ -69,7 +62,7 @@ export class ExamslotComponent implements OnInit {
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private contentservice: ContentService,
     private nav: Router,
     private shareddata: SharedataService,
@@ -92,13 +85,18 @@ export class ExamslotComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.Batches = this.tokenstorage.getBatches();
-      //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
-      this.GetMasterData();
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMSLOT)
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission != 'deny') {
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.Batches = this.tokenstorage.getBatches();
+        //this.shareddata.CurrentBatch.subscribe(b => this.Batches = b);
+        this.GetMasterData();
+      }
     }
   }
   AssignExamDate(selected) {
@@ -119,7 +117,7 @@ export class ExamslotComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -142,12 +140,12 @@ export class ExamslotComponent implements OnInit {
 
     if (row.ExamDate == null) {
       this.loading = false;
-      this.contentservice.openSnackBar("Exam date is mandatory!", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Exam date is mandatory!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.StartTime.length == 0 || row.EndTime.length == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Start time and end time are mandatory!", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Start time and end time are mandatory!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate() + 1)
@@ -186,7 +184,7 @@ export class ExamslotComponent implements OnInit {
           this.ExamSlotsData.Sequence = row.Sequence;
           this.ExamSlotsData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ExamSlotsData.BatchId = this.SelectedBatchId;
-          
+
           if (this.ExamSlotsData.ExamSlotId == 0) {
             this.ExamSlotsData["CreatedDate"] = new Date();
             this.ExamSlotsData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -232,7 +230,7 @@ export class ExamslotComponent implements OnInit {
           row.Action = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -273,7 +271,7 @@ export class ExamslotComponent implements OnInit {
     this.ExamSlots = [];
     if (this.searchForm.get("searchExamId").value == 0) {
 
-      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else
@@ -286,7 +284,7 @@ export class ExamslotComponent implements OnInit {
     _endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
     var higherdate = new Date(this.searchForm.get("searchExamDate").value);
-    higherdate.setDate(_filterExamDate.getDate() +1);
+    higherdate.setDate(_filterExamDate.getDate() + 1);
 
     if (!_filterExamDate != null) {
 
@@ -294,7 +292,7 @@ export class ExamslotComponent implements OnInit {
       filterstr += " and ExamDate lt " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
       //var startDate = new Date(_startDate)
       if (_filterExamDate.getTime() < _startDate.getTime() || _filterExamDate.getTime() > _endDate.getTime()) {
-        this.contentservice.openSnackBar("Date should be between exam start date and end date.",globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Date should be between exam start date and end date.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
     }
@@ -323,38 +321,38 @@ export class ExamslotComponent implements OnInit {
           _examDate = _filterExamDate;
         }
         //while (_examDate < higherdate) {
-          day = this.weekday[_examDate.getDay()];
+        day = this.weekday[_examDate.getDay()];
 
-          this.SlotNames.forEach(e => {
-            let existing = data.value.filter(db => {                                     
-              return db.SlotNameId == e.MasterDataId
+        this.SlotNames.forEach(e => {
+          let existing = data.value.filter(db => {
+            return db.SlotNameId == e.MasterDataId
+          });
+          if (existing.length > 0) {
+            existing[0].SlotName = e.MasterDataName;
+            existing[0].WeekDay = day;
+            existing[0].Action = false;
+            //existing[0].ExamDate = moment(existing[0].ExamDate).utc(false).format('DD/MM/YYYY hh:mm:ss')
+            existing[0].ExamDate = existing[0].ExamDate
+            this.ExamSlots.push(existing[0]);
+          }
+          else {
+            this.ExamSlots.push({
+              ExamSlotId: 0,
+              ExamId: 0,
+              SlotNameId: e.MasterDataId,
+              SlotName: e.MasterDataName,
+              ExamDate: _examDate,
+              WeekDay: day,
+              StartTime: '',
+              EndTime: '',
+              Sequence: 0,
+              OrgId: 0,
+              BatchId: 0,
+              Active: 0,
+              Action: false
             });
-            if (existing.length > 0) {
-              existing[0].SlotName = e.MasterDataName;
-              existing[0].WeekDay = day;
-              existing[0].Action = false;
-              //existing[0].ExamDate = moment(existing[0].ExamDate).utc(false).format('DD/MM/YYYY hh:mm:ss')
-              existing[0].ExamDate = existing[0].ExamDate
-              this.ExamSlots.push(existing[0]);
-            }
-            else {
-              this.ExamSlots.push({
-                ExamSlotId: 0,
-                ExamId: 0,
-                SlotNameId: e.MasterDataId,
-                SlotName: e.MasterDataName,
-                ExamDate: _examDate,
-                WeekDay: day,
-                StartTime: '',
-                EndTime: '',
-                Sequence:0,
-                OrgId: 0,
-                BatchId: 0,
-                Active: 0,
-                Action: false
-              });
-            }
-          })
+          }
+        })
         //  _examDate.setDate(_examDate.getDate() + 1);
         //}
         ////console.log('this', this.ExamSlots)
@@ -367,7 +365,7 @@ export class ExamslotComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.SlotNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSLOTNAME);

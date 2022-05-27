@@ -42,7 +42,7 @@ export class HeaderComponent implements OnInit {
       this.SelectedApplicationName = '';
 
       var PermittedApplications = this.tokenStorage.getPermittedApplications();
-      if (PermittedApplications != null) {
+      if (PermittedApplications != '') {
         var apps = PermittedApplications.filter(f => f.applicationId == SelectedApplicationId)
 
         if (apps.length > 0) {

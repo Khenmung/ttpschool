@@ -4,45 +4,49 @@
 <mat-card>
     <mat-card-title style="margin:30px 0px 0px 30px;">Login</mat-card-title>
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="25" style="margin:15px;position:relative;margin-left: 50%;"></mat-spinner>
-            <form [formGroup]="loginForm" novalidate style="margin:30px;display: flex;flex-direction: column;">
-                <mat-form-field>
-                    <mat-label for="username">Username</mat-label>
-                    <input type="text" matInput formControlName="username" required autocomplete="Off" />
-                </mat-form-field>
-                <mat-form-field>
+        <mat-spinner *ngIf="loading" diameter="25" style="margin:15px;position:relative;margin-left: 50%;">
+        </mat-spinner>
+        <form [formGroup]="loginForm" novalidate style="margin:30px;display: flex;flex-direction: column;">
+            <mat-form-field>
+                <mat-label for="username">User name</mat-label>
+                <input type="text" matInput formControlName="username" required autocomplete="Off" />
+            </mat-form-field>
+            <span style="display:flex;width:100%;align-items: baseline;">
+                <mat-form-field style="width:98%;margin-right: 15px;">
                     <mat-label for="password">Password</mat-label>
-                    <input type="password" matInput formControlName="password" required minlength="6"
+                    <input [type]="password" matInput formControlName="password" required minlength="6"
                         autocomplete="Off" />
-                </mat-form-field>                
-                <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">                    
-                   
-                    <button [disabled]="loading" 
-                    mat-raised-button color="accent"
-                    (click)="onSubmit()" 
-                    matTooltip="login">
-                        <mat-icon>login</mat-icon>
-                    </button>
-                    <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" mat-raised-button>
-                        <mat-icon>cancel</mat-icon>
-                    </button>
-                </div>
-                <div style="margin: 15px 15px 15px 0px;">
-                    <a [routerLink]="['/auth/forgot']">Forgot password</a>
-                </div>
-                <div style="margin: 15px 15px 15px 0px;">
-                    New user? <a [routerLink]="['/auth/signup']">Sign up</a>
-                </div>                
-                <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
+                </mat-form-field>
+                <span (click)="showhidePassword()" style="height:25px;border: 1px solid lightgray;">
+                    <mat-icon>{{visibility}}</mat-icon>
+                </span>
+            </span>
 
-                    <div *ngIf="f.username.errors?.['required']">
-                        user name is required.
-                    </div>
-                    <!-- <div *ngIf="f.username.errors?.['minlength']">
+            <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">
+
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="onSubmit()" matTooltip="login">
+                    <mat-icon>login</mat-icon>
+                </button>
+                <button [disabled]="loading" (click)="gotohome()" matTooltip="cancel" mat-raised-button>
+                    <mat-icon>cancel</mat-icon>
+                </button>
+            </div>
+            <div style="margin: 15px 15px 15px 0px;">
+                <a [routerLink]="['/auth/forgot']">Forgot password</a>
+            </div>
+            <div style="margin: 15px 15px 15px 0px;">
+                New user? <a [routerLink]="['/auth/signup']">Sign up</a>
+            </div>
+            <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
+
+                <div *ngIf="f.username.errors?.['required']">
+                    user name is required.
+                </div>
+                <!-- <div *ngIf="f.username.errors?.['minlength']">
                         User name must be at least 6 characters long.
                     </div>                     -->
-                </div>
-                <!-- <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
+            </div>
+            <!-- <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)" class="alert alert-danger">
 
                     <div *ngIf="f.password.errors?.['required']">
                         password is required.
@@ -51,7 +55,7 @@
                         password must be at least 6 characters long.
                     </div>                    
                 </div> -->
-            </form>
+        </form>
         <!-- </div> -->
         <div class="alert alert-success col-md-12" *ngIf="isLoggedIn">
             Logged in as {{ username }}.

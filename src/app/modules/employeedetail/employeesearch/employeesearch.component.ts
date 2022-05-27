@@ -70,6 +70,7 @@ export class EmployeesearchComponent implements OnInit {
   filteredEmployees: Observable<IEmployee[]>;
   filteredEmployeeCode: Observable<IEmployee[]>;
   LoginUserDetail = [];
+  Permission = '';
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -83,30 +84,37 @@ export class EmployeesearchComponent implements OnInit {
     //debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
+    var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.emp.employee.EMPLOYEEDETAIL);
+    if (perObj.length > 0)
+      this.Permission = perObj[0].permission;
+    if (this.Permission == 'deny') {
+      this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    }
+    else {
+      this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
+      this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
+      this.EmployeeSearchForm = this.fb.group({
+        searchemployeeName: [''],
+        searchEmployeeCode: ['']
+      })
+      this.SelectedApplicationId = +this.token.getSelectedAPPId();
+      this.filteredEmployees = this.EmployeeSearchForm.get("searchemployeeName").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.Name),
+          map(Name => Name ? this._filter(Name) : this.Employees.slice())
+        );
+      this.filteredEmployeeCode = this.EmployeeSearchForm.get("searchEmployeeCode").valueChanges
+        .pipe(
+          startWith(''),
+          map(value => typeof value === 'string' ? value : value.EmployeeCode),
+          map(EmployeeCode => EmployeeCode ? this._filterC(EmployeeCode) : this.Employees.slice())
+        );
 
-    this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
-    this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
-    this.EmployeeSearchForm = this.fb.group({
-      searchemployeeName: [''],
-      searchEmployeeCode: ['']
-    })
-    this.SelectedApplicationId = +this.token.getSelectedAPPId();
-    this.filteredEmployees = this.EmployeeSearchForm.get("searchemployeeName").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.Employees.slice())
-      );
-    this.filteredEmployeeCode = this.EmployeeSearchForm.get("searchEmployeeCode").valueChanges
-      .pipe(
-        startWith(''),
-        map(value => typeof value === 'string' ? value : value.EmployeeCode),
-        map(EmployeeCode => EmployeeCode ? this._filterC(EmployeeCode) : this.Employees.slice())
-      );
-
-    this.GetMasterData();
-    this.GetEmployees();
-    this.loading = false;
+      this.GetMasterData();
+      this.GetEmployees();
+      this.loading = false;
+    }
   }
   private _filter(name: string): IEmployee[] {
 
@@ -259,7 +267,7 @@ export class EmployeesearchComponent implements OnInit {
   }
   GetEmployee() {
     debugger;
-    this.loading=true;
+    this.loading = true;
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var EmployeeName = this.EmployeeSearchForm.get("searchemployeeName").value.Name;
     var EmployeeCode = this.EmployeeSearchForm.get("searchEmployeeCode").value.EmployeeCode;
@@ -307,7 +315,7 @@ export class EmployeesearchComponent implements OnInit {
             }
 
             item.EmployeeCode = item.EmployeeCode;
-            item.Name = item.FirstName + " " + (item.LastName == null?'': item.LastName);
+            item.Name = item.FirstName + " " + (item.LastName == null ? '' : item.LastName);
             item.Grade = _gradeName;
             item.Designation = _designationName;
             item.Department = _departmentName;
@@ -322,7 +330,7 @@ export class EmployeesearchComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IEmployee>(this.EmployeeData);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading =false;
+        this.loading = false;
       });
 
   }
@@ -339,7 +347,7 @@ export class EmployeesearchComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
-            var _lastname = Employee.LastName == null?'': Employee.LastName
+            var _lastname = Employee.LastName == null ? '' : Employee.LastName
             var _name = Employee.FirstName + " " + _lastname;
             var _fullDescription = _name + "-" + Employee.ContactNo;
             return {

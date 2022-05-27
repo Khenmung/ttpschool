@@ -93,7 +93,7 @@ export class EducationhistoryComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYEESKILL)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EDUCATIONHISTORY)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

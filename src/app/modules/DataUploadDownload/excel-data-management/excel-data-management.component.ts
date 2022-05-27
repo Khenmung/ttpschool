@@ -46,6 +46,7 @@ export class ExcelDataManagementComponent implements OnInit {
   loading = false;
   SelectedBatchId = 0;
   loginDetail = [];
+  Permission = '';
   ngOnInit() {
     //this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     //this.GetMasterData();
@@ -80,10 +81,19 @@ export class ExcelDataManagementComponent implements OnInit {
   PageLoad() {
     debugger;
     this.SelectedApplicationId = +this.tokenservice.getSelectedAPPId();
-    if (this.UploadTypes.length == 0)
-      this.GetMasterData();
-    else
-      this.GetStudents();
+    var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.DATA.UPLOAD);
+    if (perObj.length > 0)
+      this.Permission = perObj[0].permission;
+    if (this.Permission == 'deny') {
+      this.loading = false;
+      this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    }
+    else {
+      if (this.UploadTypes.length == 0)
+        this.GetMasterData();
+      else
+        this.GetStudents();
+    }
   }
   NotMandatory = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
     "MotherContactNo", "AlternateContact", "EmailAddress",
@@ -763,10 +773,10 @@ export class ExcelDataManagementComponent implements OnInit {
         if (data.value.length > 0) {
           _MaxPID = data.value[0].PID;
         }
-        
+
         this.ELEMENT_DATA.forEach(row => {
           toInsert.push({
-            "PID":_MaxPID++,
+            "PID": _MaxPID++,
             "StudentId": row["StudentId"],
             "AadharNo": row["AadharNo"],
             "Active": +row["Active"],

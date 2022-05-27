@@ -107,7 +107,7 @@ export class SchoolFeeTypesComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     this.loading = true;
     let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and FeeTypeName eq '" + row.FeeTypeName + "'";
 

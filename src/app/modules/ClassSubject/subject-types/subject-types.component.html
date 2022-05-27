@@ -41,13 +41,13 @@
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading || Permission=='Read'" matTooltip="add new" mat-mini-fab
+                <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
                     (click)="addnew()">
                     <mat-icon>add</mat-icon>
                 </button>&nbsp;
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button [disabled]="loading || !element.Action || Permission=='Read'" matTooltip="save"
+                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
                     mat-mini-fab (click)="UpdateOrSave(element)">
                     <mat-icon>save</mat-icon>
                 </button>

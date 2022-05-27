@@ -21,13 +21,10 @@ export class EmpComponentsComponent implements OnInit {
     autoClose: false,
     keepAfterRouteChange: true
   };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  VariableTypes =[];
-  VariableConfigs =[];
-  EmployeeVariables=[];
+  Permission = '';
+  VariableTypes = [];
+  VariableConfigs = [];
+  EmployeeVariables = [];
   EmpComponentListName = 'EmpComponents';
   StandardFilter = '';
   loading = false;
@@ -74,12 +71,12 @@ export class EmpComponentsComponent implements OnInit {
     "Active",
     "Action"
   ];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private contentservice: ContentService,
@@ -101,11 +98,19 @@ export class EmpComponentsComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-      this.GetMasterData();
-      this.getEmployeeVariables();
-           
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission == 'deny') {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else {
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetMasterData();
+        this.getEmployeeVariables();
+      }
     }
   }
   // updateDeduction(row, value) {
@@ -178,7 +183,7 @@ export class EmpComponentsComponent implements OnInit {
         (data: any) => {
           row.EmpSalaryComponentId = data.EmpSalaryComponentId;
           this.loading = false;
-          row.Action=false;
+          row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false;
@@ -192,14 +197,14 @@ export class EmpComponentsComponent implements OnInit {
     this.dataservice.postPatch(this.EmpComponentListName, this.EmpComponentData, this.EmpComponentData.EmpSalaryComponentId, 'patch')
       .subscribe(
         (data: any) => {
-          row.Action=false;
+          row.Action = false;
           this.loading = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
           //   this.loading = false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
 
@@ -219,11 +224,11 @@ export class EmpComponentsComponent implements OnInit {
       }
     })
   }
- 
+
   onBlur(element, event) {
     //debugger;
     //var _colName = event.srcElement.name;
-    element.Action =true;
+    element.Action = true;
     ////console.log("event", event);
     //var row = this.StoredForUpdate.filter(s => s.SubjectMarkComponent == _colName && s.StudentClassSubjectId == element.StudentClassSubjectId);
     //row[0][_colName] = element[_colName];
@@ -255,7 +260,7 @@ export class EmpComponentsComponent implements OnInit {
   GetConfigVariables() {
 
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    var variabletypeId = this.VariableTypes.filter(f=>f.MasterDataName.toLowerCase() == 'payroll')[0].MasterDataId;
+    var variabletypeId = this.VariableTypes.filter(f => f.MasterDataName.toLowerCase() == 'payroll')[0].MasterDataId;
 
     let list: List = new List();
 
@@ -265,7 +270,7 @@ export class EmpComponentsComponent implements OnInit {
       "VariableAmount",
       "Active"
     ];
-    
+
     list.PageName = "VariableConfigurations";
     list.filter = ["Active eq 1 and VariableTypeId eq " + variabletypeId + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -277,7 +282,7 @@ export class EmpComponentsComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
@@ -301,7 +306,7 @@ export class EmpComponentsComponent implements OnInit {
         this.EmploymentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYMENTTYPE);;
         this.Natures = this.getDropDownData(globalconstants.MasterDefinitions.employee.NATURE);
         this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
-        
+
         this.GetConfigVariables();
         this.GetAllComponents();
         //this.loading = false;
@@ -309,7 +314,7 @@ export class EmpComponentsComponent implements OnInit {
   }
   GetEmpComponents() {
 
-    this.loading=true;
+    this.loading = true;
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var compfilter = ''
     if (this.searchForm.get("searchComponentId").value > 0)
@@ -331,13 +336,13 @@ export class EmpComponentsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        data.value.forEach(f=>{
-          f.Action=false;
+        data.value.forEach(f => {
+          f.Action = false;
         })
         this.EmpComponentList = [...data.value];
         //console.log('all data',this.EmpComponentList)
         this.dataSource = new MatTableDataSource<IEmpComponent>(this.EmpComponentList);
-        this.loading=false;
+        this.loading = false;
       })
   }
   getEmployeeVariables() {

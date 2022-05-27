@@ -69,25 +69,27 @@ export class VerifyresultstatusComponent implements OnInit {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.VERIFYRESULT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-      ////console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
-
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
+      }
+      else
+      {
+        this.loading=false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
       }
     }
   }

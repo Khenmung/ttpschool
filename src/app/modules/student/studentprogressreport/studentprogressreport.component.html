@@ -1,26 +1,19 @@
-<div>
-    <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Progress Report</strong></div>
-    </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
-    <div style="padding: 15px;" fxLayout="row wrap">
-        <div style="width: 100%;">
-                       
-            <mat-table #table [dataSource]="dataSource" matSort>
-                <ng-container *ngFor="let disCol of DisplayColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>{{disCol}}
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">                    
-                        {{element[disCol]}}
-                    </mat-cell>
-                </ng-container>
+<div style="padding:15px 15px 10px 15px;">
+    <div><strong>Progress Report</strong></div>
+</div>
+<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<div style="width: 100%;">
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <ng-container *ngFor="let disCol of DisplayColumns; let colIndex = index" matColumnDef="{{disCol}}">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{disCol}}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element[disCol]}}
+            </mat-cell>
+        </ng-container>
 
-                <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: DisplayColumns;" class="element-row"></mat-row>
-            </mat-table>
-            <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
-        </div>
-
-    </div>
+        <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: DisplayColumns;" class="element-row"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
 </div>

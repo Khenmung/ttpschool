@@ -41,7 +41,7 @@ export class ExamsComponent implements OnInit {
     ExamNameId: 0,
     StartDate: Date,
     EndDate: Date,
-    ClassGroupId:0,
+    ClassGroupId: 0,
     ReleaseResult: 0,
     ReleaseDate: null,
     OrgId: 0,
@@ -91,14 +91,14 @@ export class ExamsComponent implements OnInit {
       }
       if (this.Permission == 'deny')
         this.nav.navigate(['/auth/login']);
-
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-      this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+      else {
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.GetMasterData();
+        this.GetSubjectComponents();
+        this.GetStudentSubjects();
+      }
     }
-    this.GetMasterData();
-    this.GetSubjectComponents();
-    this.GetStudentSubjects();
   }
   addnew() {
 
@@ -108,7 +108,7 @@ export class ExamsComponent implements OnInit {
       ExamName: '',
       StartDate: new Date(),
       EndDate: new Date(),
-      ClassGroupId:0,
+      ClassGroupId: 0,
       ReleaseResult: 0,
       ReleaseDate: null,
       BatchId: 0,
@@ -220,7 +220,7 @@ export class ExamsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.loading=false;
+          this.loading = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.GetExamStudentSubjectResults(this.ExamsData.ExamId, row);
         });
@@ -232,7 +232,7 @@ export class ExamsComponent implements OnInit {
     let list: List = new List();
 
     list.fields = [
-      "ExamId", "ExamNameId", "StartDate", "EndDate","ClassGroupId",
+      "ExamId", "ExamNameId", "StartDate", "EndDate", "ClassGroupId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -287,7 +287,7 @@ export class ExamsComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.StudentGradeFormula = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);  
+        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.GetExams();
 
       });
@@ -390,7 +390,7 @@ export class ExamsComponent implements OnInit {
                 else
                   forDisplay["PassCount"]++;
 
-                forDisplay["TotalMarks"] += +(markObtained.length>0?markObtained[0].Marks:0);
+                forDisplay["TotalMarks"] += +(markObtained.length > 0 ? markObtained[0].Marks : 0);
 
               })
 
@@ -626,7 +626,7 @@ export interface IExams {
   ExamName: string;
   StartDate: Date;
   EndDate: Date;
-  ClassGroupId:number;
+  ClassGroupId: number;
   ReleaseResult: number;
   ReleaseDate: Date;
   OrgId: number;

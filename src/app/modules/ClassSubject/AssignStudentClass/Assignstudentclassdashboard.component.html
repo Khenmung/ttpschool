@@ -53,11 +53,11 @@
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="PID">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> 
-            <span style="display: flex;flex-direction: column;justify-content: start;">
-                <span style="justify-content: start;display: flex;">Id</span>
+        <mat-header-cell *matHeaderCellDef mat-sort-header style="display:flex ;"> 
+            <span style="display: flex;flex-direction: column;justify-content: flex-start;">
+                <span style="justify-content: flex-start;display: flex;">PID</span>
                 <mat-form-field style="width: 80px;">
-                    <mat-label>search Id</mat-label>
+                    <mat-label>search PID</mat-label>
                     <input matInput [formControl]="IdFilter" autocomplete="Off">
                 </mat-form-field>
             </span>    

@@ -175,7 +175,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.loading = true;
     this.contentservice.getInvoice(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
       .subscribe((data: any) => {
-        //console.log("getinvoice",data)
+        console.log("getinvoice",data)
         this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.loading = false;

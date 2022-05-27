@@ -10,7 +10,6 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -24,7 +23,7 @@ export class StudentprogressreportComponent implements OnInit {
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  
+
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
@@ -49,7 +48,7 @@ export class StudentprogressreportComponent implements OnInit {
   allMasterData = [];
   Permission = 'deny';
   ExamId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     ExamId: 0,
@@ -69,11 +68,7 @@ export class StudentprogressreportComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
-    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
@@ -81,6 +76,7 @@ export class StudentprogressreportComponent implements OnInit {
   }
 
   PageLoad() {
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -89,7 +85,7 @@ export class StudentprogressreportComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.VERIFYRESULT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.PROGRESSREPORT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -103,6 +99,11 @@ export class StudentprogressreportComponent implements OnInit {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
       }
+      else {
+        this.loading=false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      }
+
 
     }
   }
@@ -223,7 +224,7 @@ export class StudentprogressreportComponent implements OnInit {
 
           var current = marksum.filter(c => c.SubjectId == report.SubjectId);
           current.forEach(exam => {
-            if (exam.ExamName.length>0 && this.DisplayColumns.indexOf(exam.ExamName) == -1)
+            if (exam.ExamName.length > 0 && this.DisplayColumns.indexOf(exam.ExamName) == -1)
               this.DisplayColumns.push(exam.ExamName)
             report[exam.ExamName] = exam.Mark
           })
@@ -238,10 +239,10 @@ export class StudentprogressreportComponent implements OnInit {
         this.loading = false;
       });
   }
-  
-  GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+  GetMasterData() {
+    debugger;
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

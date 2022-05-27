@@ -35,7 +35,7 @@ export class ContentService implements OnInit {
     this.snackbar.open(message, action, option);
   }
   checkSpecialChar(str) {
-    var format = /[!@#$%^&*_+\=\[\]{};':"\\|<>]+/;
+    var format = /[!@#$%^&*_+\=\[\]{};:"\\|<>]+/;
     if (format.test(str))
       return true;
     else
@@ -51,16 +51,42 @@ export class ContentService implements OnInit {
     list.PageName = "EmpEmployees";
     return this.dataservice.get(list);
   }
-  CheckEmailDuplicate(payload){
- 
-    return this.authservice.CallAPI(payload,'EmailDuplicateCheck');
+  CheckEmailDuplicate(payload) {
+
+    return this.authservice.CallAPI(payload, 'EmailDuplicateCheck');
+  }
+  GetExams(pOrgId, pSelectedBatchId, pExamNames) {
+
+    var orgIdSearchstr = 'and OrgId eq ' + pOrgId + ' and BatchId eq ' + pSelectedBatchId;
+
+    let list: List = new List();
+    var result = [];
+    list.fields = ["ExamId", "ExamNameId"];
+    list.PageName = "Exams";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(e => {
+          var obj = pExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          var _examName = ''
+          if (obj.length > 0) {
+            _examName = obj[0].MasterDataName;
+            result.push({
+              ExamId: e.ExamId,
+              ExamName: _examName
+            })
+          }
+        })
+
+        return result;
+      })
   }
   GetClasses(orgId) {
     let list = new List();
     list.fields = ["*"];
     list.filter = ["Active eq 1 and OrgId eq " + orgId];
     list.PageName = "ClassMasters";
-    list.orderBy="Sequence";
+    list.orderBy = "Sequence";
     return this.dataservice.get(list);
   }
   GetStudentMaxPID(orgId) {
@@ -107,6 +133,23 @@ export class ContentService implements OnInit {
     ];
 
     list.PageName = "ClassGroupMappings";
+    list.filter = [filterStr];
+    return this.dataservice.get(list);
+  }
+  GetEvaluationClassGroup(orgId, active) {
+    var activefilter = active == 1 ? ' and Active eq true' : '';
+    let filterStr = 'OrgId eq ' + orgId + activefilter;
+    let list: List = new List();
+    list.fields = [
+      'EvaluationClassSubjectMapId',
+      'ClassGroupId',
+      'ClassSubjectId',
+      'ExamId',
+      'EvaluationMasterId',
+      'Active',
+    ];
+
+    list.PageName = "EvaluationClassSubjectMaps";
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
@@ -161,7 +204,7 @@ export class ContentService implements OnInit {
     }
     return monthArray;
   }
-  ReSequence(editedrow,MasterList:any[]) {
+  ReSequence(editedrow, MasterList: any[]) {
     debugger;
     var diff = editedrow.OldSequence - editedrow.DisplayOrder;
     var newDisplayOrder = editedrow.DisplayOrder;
@@ -261,9 +304,11 @@ export class ContentService implements OnInit {
     var AmountAfterFormulaApplied = 0;
     var _VariableObjList = [];
     var _LedgerData = [];
+    //console.log("data",data)
     data.forEach(inv => {
       _VariableObjList.push(inv)
       if (inv.Formula.length > 0) {
+        console.log("inv.Formula", inv.Formula);
         var formula = this.ApplyVariables(inv.Formula, _VariableObjList);
         //after applying, remove again since it is for each student
         _VariableObjList.splice(_VariableObjList.indexOf(inv), 1);
@@ -286,7 +331,7 @@ export class ContentService implements OnInit {
       "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
       "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
-    //console.log("_LedgerData",_LedgerData);
+    console.log("_LedgerData", _LedgerData);
     //console.log("sumFeeData",sumFeeData);
     return this.authservice.CallAPI(sumFeeData, 'createinvoice')
   }

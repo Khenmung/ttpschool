@@ -25,14 +25,14 @@ mat-cell:first-of-type {
     flex:1 0 150px;
 }
 .mat-column-AutoId{
-    flex:1 1 80px;
+    flex:1 0 80px;
 }
 .mat-column-Action,
 .mat-column-Active
 {
     justify-content: center;
-    flex:1 1 100px;
+    flex:1 0 100px;
 }
-.mat-column-Detail,.mat-column-Description{
-    flex:1 1 350px;
+.mat-column-Detail,.mat-column-Description,.mat-column-AnswerOptionsId{
+    flex:1 0 350px;
 }

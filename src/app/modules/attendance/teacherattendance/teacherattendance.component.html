@@ -48,7 +48,8 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading || !EnableSave || Permission=='read'" *ngIf="TeacherAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
+                    <button [disabled]="loading || !EnableSave || Permission=='read'" 
+                    *ngIf="TeacherAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
                         <mat-icon>all_out</mat-icon>
                     </button>
                 </mat-header-cell>

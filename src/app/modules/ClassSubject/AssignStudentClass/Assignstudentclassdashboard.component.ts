@@ -95,6 +95,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   nameFilter = new FormControl('');
   IdFilter = new FormControl('');
   filterValues = {
+    PID:0,
     StudentId: 0,
     StudentName: ''
   };
@@ -128,8 +129,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       )
     this.IdFilter.valueChanges
       .subscribe(
-        StudentId => {
-          this.filterValues.StudentId = StudentId;
+        PID => {
+          this.filterValues.PID = PID;
           this.dataSource.filter = JSON.stringify(this.filterValues);
         }
       )

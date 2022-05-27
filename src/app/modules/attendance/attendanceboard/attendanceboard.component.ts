@@ -1,3 +1,4 @@
+import { debugOutputAstAsTypeScript } from '@angular/compiler';
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -16,7 +17,7 @@ export class AttendanceboardComponent implements AfterViewInit {
       StudentAttendanceComponent,
       TeacherAttendanceComponent
     ];
-  
+    SelectedAppName='';
     tabNames = [
       { label: 'Student Attendance', faIcon: '' },
       { label: 'Employee Attendance', faIcon: '' },
@@ -41,7 +42,8 @@ export class AttendanceboardComponent implements AfterViewInit {
     }
   
     public ngAfterViewInit(): void {
-  
+      debugger;
+      this.SelectedAppName = this.tokenStorage.getSelectedAppName();
       this.LoginUserDetail =  this.tokenStorage.getUserDetail();
       this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
 
@@ -54,7 +56,7 @@ export class AttendanceboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       var comindx = this.components.indexOf(StudentAttendanceComponent);
       if (perObj.length > 0) {
-        if (perObj[0].permission == 'deny') {
+        if (perObj[0].permission == 'deny' || this.SelectedAppName.toLowerCase() =='employee management') {
           this.components.splice(comindx, 1);
           this.tabNames.splice(comindx, 1);
         }
@@ -71,7 +73,7 @@ export class AttendanceboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
       var comindx = this.components.indexOf(TeacherAttendanceComponent);
       if (perObj.length > 0) {
-        if (perObj[0].permission == 'deny') {
+        if (perObj[0].permission == 'deny' || this.SelectedAppName.toLowerCase() =='education management') {
           this.components.splice(comindx, 1);
           this.tabNames.splice(comindx, 1);
         }

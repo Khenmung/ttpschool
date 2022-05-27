@@ -377,7 +377,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
 

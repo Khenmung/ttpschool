@@ -92,7 +92,7 @@ export class HolidayComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.HOLIDAY);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

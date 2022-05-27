@@ -122,66 +122,43 @@ export class SchooltimetableComponent implements OnInit {
       //" and TeacherId eq " + row.TeacherId +
       " and Active eq 1"
     //console.log("this.AllTimeTable", this.AllTimeTable)
-    var duplicateCheck = alasql("select DayId,PeriodId,TeacherId,TeacherId from ? where DayId = ? and PeriodId = ? and TeacherId = ?", [this.AllTimeTable,row.DayId,row.PeriodId, row.TeacherId])
+    var duplicateCheck = alasql("select DayId,PeriodId,TeacherId,TeacherId from ? where DayId = ? and PeriodId = ? and TeacherId = ?", [this.AllTimeTable, row.DayId, row.PeriodId, row.TeacherId])
     if (duplicateCheck.length > 0) {
       //console.log("duplicateCheck",duplicateCheck);
-      var _teacherobj = this.ClassSubjects.filter(f=>f.TeacherId == row.TeacherId)
-      this.contentservice.openSnackBar("Teacher "+ _teacherobj[0].TeacherShortName + " already exists in the same period", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
-      return;
-    }
-    //   if (row.TimeTableId > 0)
-    //   checkFilterString += " and TimeTableId ne " + row.TimeTableId;
-    // checkFilterString += " and " + this.StandardFilterWithBatchId;
-
-    // let list: List = new List();
-    // list.fields = ["TimeTableId", "ClassSubjectId"];
-    // list.PageName = this.SchoolTimeTableListName;
-    // list.lookupFields = ["SchoolClassPeriod($select=Sequence)"];
-    // list.filter = [checkFilterString];
-
-    // this.dataservice.get(list)
-    //   .subscribe((alreadyassignedTeacher: any) => {
-    //     debugger;
-
-    //     var clssubteacher = this.ClassSubjects.filter(f => f.TeacherId == row.TeacherId)
-    //     var dup = alreadyassignedTeacher.value.filter(f => f.SchoolClassPeriod.Sequence == row.Sequence && clssubteacher.indexOf(f.ClassSubjectId) > -1)
-    //     if (dup.length > 0) {
-    //       //var clssub= this.ClassSubjects.filter(f=>f.TeacherId == row.TeacherId)
-    //       this.loading = false;
-    //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-    //     }
-    //     else {
-
-    this.SchoolTimeTableData.TimeTableId = row.TimeTableId;
-    this.SchoolTimeTableData.SchoolClassPeriodId = row.SchoolClassPeriodId;
-    this.SchoolTimeTableData.ClassId = row.ClassId;
-    this.SchoolTimeTableData.Active = row.Active;
-    this.SchoolTimeTableData.DayId = row.DayId;
-    this.SchoolTimeTableData.SectionId = row.SectionId;
-    this.SchoolTimeTableData.ClassSubjectId = row.ClassSubjectId;
-
-    this.SchoolTimeTableData.OrgId = this.LoginUserDetail[0]["orgId"];
-    this.SchoolTimeTableData.BatchId = this.SelectedBatchId;
-
-    //console.log('data', this.SchoolTimeTableData);
-    if (this.SchoolTimeTableData.TimeTableId == 0) {
-      this.SchoolTimeTableData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-      this.SchoolTimeTableData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-      this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-      delete this.SchoolTimeTableData["UpdatedBy"];
-      ////console.log('exam slot', this.SchoolClassPeriodListData)
-      this.insert(row);
+      var _teacherobj = this.ClassSubjects.filter(f => f.TeacherId == row.TeacherId)
+      this.contentservice.openSnackBar("Teacher " + _teacherobj[0].TeacherShortName + " already exists in the same period", globalconstants.ActionText, globalconstants.RedBackground);
+      //this.loading = false;
     }
     else {
-      delete this.SchoolTimeTableData["CreatedDate"];
-      delete this.SchoolTimeTableData["CreatedBy"];
-      this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
-      this.SchoolTimeTableData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-      this.update(row);
+
+      this.SchoolTimeTableData.TimeTableId = row.TimeTableId;
+      this.SchoolTimeTableData.SchoolClassPeriodId = row.SchoolClassPeriodId;
+      this.SchoolTimeTableData.ClassId = row.ClassId;
+      this.SchoolTimeTableData.Active = row.Active;
+      this.SchoolTimeTableData.DayId = row.DayId;
+      this.SchoolTimeTableData.SectionId = row.SectionId;
+      this.SchoolTimeTableData.ClassSubjectId = row.ClassSubjectId;
+
+      this.SchoolTimeTableData.OrgId = this.LoginUserDetail[0]["orgId"];
+      this.SchoolTimeTableData.BatchId = this.SelectedBatchId;
+
+      //console.log('data', this.SchoolTimeTableData);
+      if (this.SchoolTimeTableData.TimeTableId == 0) {
+        this.SchoolTimeTableData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+        this.SchoolTimeTableData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+        this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+        delete this.SchoolTimeTableData["UpdatedBy"];
+        ////console.log('exam slot', this.SchoolClassPeriodListData)
+        this.insert(row);
+      }
+      else {
+        delete this.SchoolTimeTableData["CreatedDate"];
+        delete this.SchoolTimeTableData["CreatedBy"];
+        this.SchoolTimeTableData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd')
+        this.SchoolTimeTableData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+        this.update(row);
+      }
     }
-    //}
-    //});
   }
 
   insert(row) {
@@ -307,7 +284,7 @@ export class SchooltimetableComponent implements OnInit {
 
               var existing = dbTimeTable.filter(d => d.SchoolClassPeriod.PeriodId == clsperiod.PeriodId && d.DayId == p.MasterDataId)
               if (existing.length > 0) {
-                existing[0].PeriodId =clsperiod.PeriodId;
+                existing[0].PeriodId = clsperiod.PeriodId;
                 existing[0].Period = _period;
                 existing[0].Action = false;
                 existing[0].TeacherId = existing[0].ClassSubject.TeacherId;
@@ -330,7 +307,7 @@ export class SchooltimetableComponent implements OnInit {
                   "TeacherId": 0,
                   "Sequence": clsperiod.Sequence,
                   "Period": _period,
-                  "PeriodId":clsperiod.PeriodId,
+                  "PeriodId": clsperiod.PeriodId,
                   "Active": 0,
                   "Action": false
                 })
@@ -472,7 +449,7 @@ export class SchooltimetableComponent implements OnInit {
             ClassId: cs.ClassId,
             ClassName: _class,
             TeacherId: cs.TeacherId,
-            TeacherShortName:_shortName,
+            TeacherShortName: _shortName,
             SubjectAndTeacherName: _subject + " (" + _shortName + ")"
           }
         })

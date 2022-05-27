@@ -26,7 +26,7 @@ export class ClassperiodComponent implements OnInit {
   rowCount = 0;
   DataToSave = 0;
   SelectedBatchId = 0;
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   StoredForUpdate = [];
   Classes = [];
   Periods = [];
@@ -52,10 +52,10 @@ export class ClassperiodComponent implements OnInit {
   displayedColumns = [];
   searchForm: FormGroup;
   constructor(
-    private datepipe:DatePipe,
+    private datepipe: DatePipe,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private shareddata: SharedataService,
     private contentservice: ContentService,
@@ -80,22 +80,20 @@ export class ClassperiodComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj= globalconstants.getPermission(this.tokenstorage,globalconstants.Pages.edu.TIMETABLE.CLASSPERIOD);
-      if(perObj.length>0)
-      this.Permission =perObj[0].permission;
-      if(this.Permission !='deny')
-      {
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.TIMETABLE.CLASSPERIOD);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission != 'deny') {
 
-      
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
 
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.GetMasterData();
-      this.GetAllClassPeriods();
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.GetMasterData();
+        this.GetAllClassPeriods();
+      }
     }
-  }
   }
   updateActive(row, value) {
 
@@ -110,34 +108,31 @@ export class ClassperiodComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
   UpdateOrSave(row) {
 
     //debugger;
-    this.loading =false;
+    this.loading = false;
 
-    if(row.PeriodTypeId==0)
-    {
-      this.contentservice.openSnackBar("Please select period type.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.PeriodTypeId == 0) {
+      this.contentservice.openSnackBar("Please select period type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(row.FromToTime==0)
-    {
-      this.contentservice.openSnackBar("Please enter period time.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.FromToTime == 0) {
+      this.contentservice.openSnackBar("Please enter period time.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(row.Sequence==0)
-    {
-      this.contentservice.openSnackBar("Please enter sequence of period.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.Sequence == 0) {
+      this.contentservice.openSnackBar("Please enter sequence of period.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     this.loading = true;
-    
-    
+
+
     let checkFilterString = "ClassId eq " + row.ClassId +
       " and PeriodId eq " + row.PeriodId
 
@@ -172,9 +167,9 @@ export class ClassperiodComponent implements OnInit {
 
           ////console.log('data', this.ClassSubjectData);
           if (this.SchoolClassPeriodData.SchoolClassPeriodId == 0) {
-            this.SchoolClassPeriodData["CreatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd') ;
+            this.SchoolClassPeriodData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             this.SchoolClassPeriodData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.SchoolClassPeriodData["UpdatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
+            this.SchoolClassPeriodData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             delete this.SchoolClassPeriodData["UpdatedBy"];
             ////console.log('exam slot', this.SchoolClassPeriodListData)
             this.insert(row);
@@ -182,7 +177,7 @@ export class ClassperiodComponent implements OnInit {
           else {
             delete this.SchoolClassPeriodData["CreatedDate"];
             delete this.SchoolClassPeriodData["CreatedBy"];
-            this.SchoolClassPeriodData["UpdatedDate"] = this.datepipe.transform(new Date(),'yyyy-MM-dd');
+            this.SchoolClassPeriodData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
             this.SchoolClassPeriodData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
@@ -200,12 +195,12 @@ export class ClassperiodComponent implements OnInit {
           row.Action = false;
           this.loading = false;
           this.DataToSave--;
-          if (this.DataToSave==0) {
-            this.DataToSave =-1;
+          if (this.DataToSave == 0) {
+            this.DataToSave = -1;
             this.loading = false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
-          
+
         });
   }
   update(row) {
@@ -216,10 +211,10 @@ export class ClassperiodComponent implements OnInit {
           this.rowCount++;
           row.Action = false;
           this.DataToSave--;
-          if (this.DataToSave==0) {
-            this.DataToSave =-1;
+          if (this.DataToSave == 0) {
+            this.DataToSave = -1;
             this.loading = false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -232,7 +227,7 @@ export class ClassperiodComponent implements OnInit {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -344,7 +339,7 @@ export class ClassperiodComponent implements OnInit {
   ReplicateToClasses() {
 
     if (this.searchForm.get("searchClassIdApplyAll").value == 0) {
-      this.contentservice.openSnackBar("Please select classes to replicate to!",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select classes to replicate to!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -406,7 +401,7 @@ export class ClassperiodComponent implements OnInit {
   }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Periods = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIOD);

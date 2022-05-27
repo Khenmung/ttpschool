@@ -121,6 +121,11 @@ export class studentsubjectdashboardComponent implements OnInit {
           this.loading = false;
         }
       }
+      else
+      {
+        this.loading=false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      }
     }
   }
 

@@ -219,7 +219,7 @@
                     <input formControlName="AadharNo" (blur)="OnBlur()"
                      autocomplete="Off" #Pincode matInput [maxlength]="10">
                 </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline" [style.width.px]="250">
                     <mat-label>Permanent address</mat-label>
                     <textarea formControlName="PermanentAddress" (blur)="OnBlur()"
                      autocomplete="Off" matInput
@@ -229,7 +229,7 @@
                         *ngIf="f.PermanentAddress.touched && f.PermanentAddress.hasError('required')">Permanent
                         Address is required.</span>
                 </mat-form-field>
-                <mat-form-field appearance="outline" fxFlex>
+                <mat-form-field appearance="outline" [style.width.px]="250">
                     <mat-label>Present address</mat-label>
                     <textarea formControlName="PresentAddress" (blur)="OnBlur()"
                      autocomplete="Off" matInput [maxlength]="250"></textarea>

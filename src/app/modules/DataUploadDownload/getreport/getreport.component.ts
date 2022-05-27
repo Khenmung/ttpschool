@@ -143,14 +143,21 @@ export class GetreportComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
-    this.ApplicationName = this.LoginUserDetail[0]["org"];
-    this.GetFeeTypes();
-    this.GetBaseReportId();
-    this.GetMasterData();
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-      this.Classes = [...data.value];
-    })
+    var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.DATA.DOWNLOAD);
+    if (perObj.length > 0) {
+      this.Permission = perObj[0].permission;
+    }
+    ////console.log('this.Permission', this.Permission)
+    if (this.Permission != 'deny') {
 
+      this.ApplicationName = this.LoginUserDetail[0]["org"];
+      this.GetFeeTypes();
+      this.GetBaseReportId();
+      this.GetMasterData();
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+      })
+    }
   }
   updateActive(row, value) {
     debugger;
@@ -490,7 +497,7 @@ export class GetreportComponent implements OnInit {
 
         this.dataservice.get(list)
           .subscribe((data: any) => {
-            var result = [...data.value]; 
+            var result = [...data.value];
             // data.value.map(res=>{
             //       res.StudentClasses = res.StudentClasses.filter(f=>f.BatchId == this.SelectedBatchId);
             //       return res;

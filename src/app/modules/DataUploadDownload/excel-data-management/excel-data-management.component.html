@@ -18,18 +18,18 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <button [disabled]="loading" mat-mini-fab matTooltip="select file" style="margin-right: 15px;"
+            <button [disabled]="loading || Permission=='read'" mat-mini-fab matTooltip="select file" style="margin-right: 15px;"
                 (click)="inputfile.click()">
                 <mat-icon aria-label="photo">attach_file</mat-icon>
             </button>
-            <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="readAsJson()"
+            <button [disabled]="loading || ErrorMessage.length>0 || Permission=='read'" type="submit" (click)="readAsJson()"
                 matTooltip="upload file" mat-mini-fab>
                 <mat-icon aria-label="file_upload">file_upload</mat-icon>
             </button>&nbsp;&nbsp;
-            <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="clear()"
+            <!-- <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="clear()"
                 matTooltip="upload file" mat-mini-fab>
                 <mat-icon aria-label="file_upload">clear</mat-icon>
-            </button>
+            </button> -->
         </span>
         <mat-divider></mat-divider>
 

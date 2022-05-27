@@ -18,6 +18,7 @@ export class CustomerPlansComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   StandardFilterWithBatchId = '';
+  PlanSelected=false;
   loading = false;
   Applications = [];
   CustomerPlanFeatures = [];
@@ -156,6 +157,7 @@ export class CustomerPlansComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.CustomerPlanId = data.CustomerPlanId;
+          this.PlanSelected=true;
           this.GetCustomerPlans();
           row.Action = false;
           this.loading = false;
@@ -171,6 +173,7 @@ export class CustomerPlansComponent implements OnInit {
     this.dataservice.postPatch(this.CustomerPlansListName, this.CustomerPlansData, this.CustomerPlansData.CustomerPlanId, 'patch')
       .subscribe(
         (data: any) => {
+          this.PlanSelected=true;
           this.GetCustomerPlans();
           this.loading = false;
           row.Action = false;
@@ -307,7 +310,8 @@ export class CustomerPlansComponent implements OnInit {
               "MinPrice": p.MinPrice,
               "PCPM": p.PCPM,
               "Description": p.Description,
-              "Active": d[0].Active
+              "Active": d[0].Active,
+              "Action":true
             });
           }
           else {
@@ -325,14 +329,15 @@ export class CustomerPlansComponent implements OnInit {
               "PCPM": p.PCPM,
               "Description": p.Description,
               "Features": this.CustomerPlanFeatures.filter(f => f.PlanId == p.PlanId),
-              "Active": 0
+              "Active": 0,
+              "Action":true
             });
           }
         })
         if (this.Org.toLowerCase() != 'ttp') {
           this.CustomerPlansList = this.CustomerPlansList.filter(f => f.PlanName.toLowerCase() != 'delux');
         }
-        console.log("customer list", this.CustomerPlansList)
+        //console.log("customer list", this.CustomerPlansList)
         this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
         this.loading = false;
       })

@@ -4,31 +4,21 @@
     </div>
     <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
-    <form [formGroup]="searchForm">
-        <!-- <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="30px"> -->
-            <!-- <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Application</mat-label>
-                <mat-select formControlName="searchApplicationId" (selectionChange)="enable($event)">
-                    <mat-option [value]="0">select</mat-option>
-                    <mat-option *ngFor="let feature of Applications" [value]="feature.MasterDataId">
-                        {{feature.Description}}
+    <form [formGroup]="searchForm">        
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="RoleId" (selectionChange)="enable($event)">
+                    <mat-option *ngFor="let role of Roles" [value]="role.MasterDataId">
+                        {{role.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field> -->
+            </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Top Feature</mat-label>
                 <mat-select formControlName="PlanFeatureId" (selectionChange)="enable($event)">
                     <mat-option [value]="0">select</mat-option>
                     <mat-option *ngFor="let feature of TopPageFeatures" [value]="feature.PlanFeatureId">
                         {{feature.label}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Role</mat-label>
-                <mat-select formControlName="RoleId" (selectionChange)="enable($event)">
-                    <mat-option *ngFor="let role of Roles" [value]="role.MasterDataId">
-                        {{role.MasterDataName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

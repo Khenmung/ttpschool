@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -20,15 +20,6 @@ export class LoginComponent implements OnInit {
   jwtHelper = new JwtHelperService();
   userInfo = [];
   loading = false;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionsAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  //allMasterData = [];
   Organizations = [];
   Departments = [];
   Applications = [];
@@ -44,7 +35,8 @@ export class LoginComponent implements OnInit {
   username: string = '';
   mediaSub: Subscription;
   deviceXs: boolean;
-  //common: globalconstants;
+  password;
+  show = false;
   IsSubmitted = false;
   constructor(private authService: AuthService,
     
@@ -57,13 +49,14 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.password = 'password';
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
       ////console.log("authlogin",this.deviceXs);
     });
     var username = this.tokenStorage.getUser();
     this.loginForm = this.fb.group({
-      username: [username, Validators.required],
+      username: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]]
     })
 
@@ -256,6 +249,20 @@ export class LoginComponent implements OnInit {
   }
   get f() {
     return this.loginForm.controls;
+  }
+  visibility='visibility';
+  showhidePassword(){
+    
+    if (this.password === 'password') {
+      this.password = 'text';
+      this.show = true;
+      this.visibility ='visibility';
+    } else {
+      this.password = 'password';
+      this.show = false;
+      this.visibility ='visibility_off';
+    }
+    
   }
   GetApplicationRolesPermission() {
 

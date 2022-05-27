@@ -359,7 +359,11 @@ export class StudentfamilynfriendComponent implements OnInit {
             var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
             if (studentclassobj.length > 0) {
               _studentClassId = studentclassobj[0].StudentClassId;
-              _feeType = this.FeeType.filter(f => f.FeeTypeId == studentclassobj[0].FeeTypeId)[0].FeeTypeName;
+
+              var feetypeobj = this.FeeType.filter(f => f.FeeTypeId == studentclassobj[0].FeeTypeId)
+              if (feetypeobj.length > 0)
+                _feeType = feetypeobj[0].FeeTypeName;
+                
               _remarks = studentclassobj[0].Remarks;
               var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
 

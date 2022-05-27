@@ -26,3 +26,12 @@ mat-cell:first-of-type {
 .element-row.expanded {
     border-bottom-color: transparent;
 }
+.mat-column-ReceiptNo,.mat-column-Status,.mat-column-TotalAmount{
+    flex:1 0 100px;
+}
+.mat-column-ReceiptDate,
+.mat-column-Student,
+.mat-column-ClassName,
+.mat-column-PaymentType{
+    flex:1 0 150px;
+}

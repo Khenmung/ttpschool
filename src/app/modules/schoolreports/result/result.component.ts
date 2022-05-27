@@ -104,11 +104,10 @@ export class ResultComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.VERIFYRESULT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.REPORT.RESULT);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
-      ////console.log('this.Permission', this.Permission)
       if (this.Permission != 'deny') {
 
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {

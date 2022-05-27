@@ -45,6 +45,7 @@ export class ChartReportComponent {
   LoginUserDetail = [];
   SelectedApplicationId = 0;
   SelectedBatchId = 0;
+  Permission = '';
   constructor(
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
@@ -55,19 +56,30 @@ export class ChartReportComponent {
     monkeyPatchChartJsLegend();
   }
   ngOnInit() {
+
     this.SearchForm = this.fb.group(
       {
         searchMonth: [0]
       }
     )
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
-    this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-    this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-    this.Months = this.contentservice.GetSessionFormattedMonths();
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.CHARTREPORT);
+    if (perObj.length > 0) {
+      this.Permission = perObj[0].permission;
+    }
+    if (this.Permission != 'deny') {
+      this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
+      this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+      this.Months = this.contentservice.GetSessionFormattedMonths();
 
-    this.GetClassFees();
-    this.GetStudentClasses();
-    //this.GetMonthlyPayments();
+      this.GetClassFees();
+      this.GetStudentClasses();
+    }
+    else
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+    }
   }
   GetMonthlyPayments(pMonth) {
     let list = new List();

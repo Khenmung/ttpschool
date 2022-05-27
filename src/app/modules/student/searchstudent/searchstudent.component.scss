@@ -38,14 +38,15 @@ mat-header-cell{
     text-align: center;
     
 }
-.mat-column-PID,.mat-column-Active,.mat-column-StudentId{
-    flex:1 1 80px;
+.mat-column-PID,.mat-column-Active{
+    justify-content: center;
+    flex:1 0 80px;
 }
 .mat-column-Action,.mat-column-ClassName,.mat-column-Name,
 .mat-column-Remarks,.mat-column-FeeType,
 .mat-column-FatherName,.mat-column-MotherName,.mat-column-ReasonForLeaving{
     justify-content: center;
-    flex: 1 1 120px;
+    flex: 1 0 120px;
 }
 table{
     min-width: 300px;

@@ -94,14 +94,15 @@ export class FeeDefinitionComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSDETAIL)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.CLASSCOURSE.FEEDEFINITION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
 
       if (this.Permission == 'deny') {
-
-        //this.nav.navigate(['/edu'])
+        this.loading=false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+    
       }
       else {
         this.GetMasterData();
@@ -195,7 +196,7 @@ export class FeeDefinitionComponent implements OnInit {
         else {
 
           this.FeeDefinitionData.FeeDefinitionId = row.FeeDefinitionId;
-          this.FeeDefinitionData.FeeName = row.FeeName;
+          this.FeeDefinitionData.FeeName = row.FeeName.trim();
           this.FeeDefinitionData.Description = row.Description;
           this.FeeDefinitionData.FeeCategoryId = row.FeeCategoryId;
           this.FeeDefinitionData.FeeSubCategoryId = row.FeeSubCategoryId;

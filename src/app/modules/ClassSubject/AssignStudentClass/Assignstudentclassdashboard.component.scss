@@ -2,7 +2,7 @@ mat-form-field{
     margin-right: 15px;
     width:98%;
 }
-.mat-column-StudentId{
+.mat-column-PID{
     flex:1 1 70px;
 }
 .mat-column-GenderName,.mat-column-Active,
@@ -11,7 +11,7 @@ mat-form-field{
 .mat-column-ClassName,
 .mat-column-SectionId{
     //justify-content: center;
-    flex:1 1 100px;
+    flex:1 0 100px;
 }
 
 .mat-column-StudentName,.mat-column-FeeTypeId,.mat-column-Remarks{

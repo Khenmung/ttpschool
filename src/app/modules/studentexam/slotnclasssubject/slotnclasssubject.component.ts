@@ -20,7 +20,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  
+
   DistinctExamDate = [];
   Permission = 'deny';
   StandardFilterWithBatchId = '';
@@ -401,14 +401,7 @@ export class SlotnclasssubjectComponent implements OnInit {
   GetSelectedExamSlot() {
     this.SelectedExamSlots = this.ExamSlots.filter(f => f.ExamId == this.searchForm.get("searchExamId").value)
       .sort((a, b) => moment.utc(a.ExamDate).diff(moment.utc(b.ExamDate)));
-    // {
-    //   //a.gsize == b.gsize ? a.glow - b.glow : a.gsize - b.gsize
-    //   var datediff =moment.utc(a.ExamDate).diff(moment.utc(b.ExamDate));
-    //   return datediff==0? a.Sequence - b.Sequence:0;
-
-    // });
-    console.log("this.SelectedExamSlots", this.SelectedExamSlots);
-
+    this.emptyresult();
     this.GetSelectedSubjectsForSelectedExam();
   }
   GetSelectedSubjectsForSelectedExam() {
@@ -437,6 +430,10 @@ export class SlotnclasssubjectComponent implements OnInit {
         });
         //console.log("all",this.AllSelectedSubjects)
       })
+  }
+  emptyresult() {
+    this.ClassWiseSubjectDisplay = [];
+    this.dataSource = new MatTableDataSource<any>(this.ClassWiseSubjectDisplay);
   }
   GetSlotNClassSubjects() {
 

@@ -73,6 +73,7 @@ export class EmployeeLeaveComponent implements OnInit {
     "Active",
     "Action"
   ];
+  Permission=''
   searchForm: FormGroup;
   SelectedApplicationId=0;
   constructor(
@@ -118,7 +119,11 @@ export class EmployeeLeaveComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+      // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.EMPLOYEE);
+      // if (perObj.length > 0)
+      //   this.Permission = perObj[0].permission;
+      
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
 

@@ -27,6 +27,7 @@ import { List } from 'src/app/shared/interface';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as moment from 'moment';
+import { globalconstants } from 'src/app/shared/globalconstant';
 
 const colors: any = {
   red: {
@@ -95,7 +96,7 @@ export class DemoComponent implements OnInit {
       },
     },
   ];
-    
+
   SelectedBatchId = 0;
   loading = false;
   refresh = new Subject<void>();
@@ -142,19 +143,24 @@ export class DemoComponent implements OnInit {
   // ];
 
   activeDayIsOpen: boolean = true;
-
+  Permission = '';
   constructor(private modal: NgbModal,
     private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService
-  ) { 
+  ) {
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
     this.GetEvents();
   }
   ngOnInit(): void {
     //console.log("events", this.events);
-    
-    
+    var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.DATA.DOWNLOAD);
+    if (perObj.length > 0) {
+      this.Permission = perObj[0].permission;
+    }
+    ////console.log('this.Permission', this.Permission)
+    if (this.Permission != 'deny') {
+    }
   }
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     //debugger;
@@ -264,7 +270,7 @@ export class DemoComponent implements OnInit {
               holiday.value.forEach(e => {
                 this.events.push(
                   {
-                    title: e.Title + ", " + moment(e.StartDate).format('ddd HH:mm A') ,
+                    title: e.Title + ", " + moment(e.StartDate).format('ddd HH:mm A'),
                     start: new Date(e.StartDate),
                     end: new Date(e.EndDate),
                     color: colors.blue,
@@ -280,9 +286,9 @@ export class DemoComponent implements OnInit {
               })
             }
           });
-          //console.log("events",this.events);
-          ///this.activeDayIsOpen = false;
-      //this.dayClicked({date:new Date(),events:[]});    
+        //console.log("events",this.events);
+        ///this.activeDayIsOpen = false;
+        //this.dayClicked({date:new Date(),events:[]});    
       });
   }
 }

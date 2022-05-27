@@ -86,6 +86,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     "Active",
     "Action"
   ];
+  Permission='';
   searchForm: FormGroup;
   SelectedApplicationId=0;
   constructor(
@@ -136,11 +137,19 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.emp.employee.SALARY);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission == 'deny') {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.getVariables();
       this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.GetMasterData();
-
+      }
     }
   }
 

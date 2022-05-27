@@ -38,7 +38,7 @@
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="addnew()">
                     <mat-icon>add</mat-icon>
                 </button>
             </mat-header-cell>

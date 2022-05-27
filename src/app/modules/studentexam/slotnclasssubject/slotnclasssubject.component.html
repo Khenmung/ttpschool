@@ -15,7 +15,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="400">
             <mat-label>Exam Date</mat-label>
-            <mat-select formControlName="searchSlotId">
+            <mat-select formControlName="searchSlotId" (selectionChange)="emptyresult()">
                 <mat-option *ngFor="let item of SelectedExamSlots" [value]="item.ExamSlotId">
                     {{item.ExamDateDetail}}
                 </mat-option>
@@ -56,7 +56,7 @@
         </ng-container>        
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading" matTooltip="save all" *ngIf="ClassWiseSubjectDisplay.length>0"
+                <button [disabled]="loading || Permission=='read'" matTooltip="save all" *ngIf="ClassWiseSubjectDisplay.length>0"
                      mat-mini-fab (click)="SaveAll()">
                     <mat-icon>all_out</mat-icon>
                 </button>

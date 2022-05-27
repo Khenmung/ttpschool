@@ -39,7 +39,7 @@ export class UserconfigreportnameComponent implements OnInit {
     autoClose: true,
     keepAfterRouteChange: true
   };
-  SelectedApplicationId =0;
+  SelectedApplicationId = 0;
   ColumnsOfAvailableReports = [];
   StandardFilterWithBatchId = '';
   loading = false;
@@ -71,7 +71,7 @@ export class UserconfigreportnameComponent implements OnInit {
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: FormBuilder
   ) {
@@ -94,9 +94,17 @@ export class UserconfigreportnameComponent implements OnInit {
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
-    this.ApplicationName = this.LoginUserDetail[0]["org"];
+    else {
+      // var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin)
+      // if (perObj.length > 0) {
+      //   this.Permission = perObj[0].permission;
+      // }
+      // if (this.Permission != 'deny') {
+        this.ApplicationName = this.LoginUserDetail[0]["org"];
 
-    this.GetBaseReportId();
+        this.GetBaseReportId();
+      //}
+    }
   }
   updateActive(row, value) {
     debugger;
@@ -140,17 +148,17 @@ export class UserconfigreportnameComponent implements OnInit {
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     var ApplicationId = this.SelectedApplicationId;
     if (ApplicationId == 0) {
-      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (AvailableReportId == 0) {
-      AvailableReportId = this.BaseReportId;     
+      AvailableReportId = this.BaseReportId;
     }
     this.loading = true;
     let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
       " and ApplicationId eq " + row.ApplicationId + //" and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ParentId eq " + AvailableReportId;
-    
+
     if (row.ReportConfigItemId > 0)
       checkFilterString += " and ReportConfigItemId ne " + row.ReportConfigItemId;
 
@@ -219,7 +227,7 @@ export class UserconfigreportnameComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.loading = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   ReSequence(editedrow) {
@@ -266,16 +274,16 @@ export class UserconfigreportnameComponent implements OnInit {
     debugger;
     this.ReportConfigItemList = [];
     var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    
+
     //var ApplicationId = this.searchForm.get("searchApplicationId").value;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
-    
+
     if (this.SelectedApplicationId == 0) {
-      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (AvailableReportId == 0) {
-      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -303,11 +311,11 @@ export class UserconfigreportnameComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ReportConfigItemList = [];
-          this.ReportConfigItemList = data.value.map(d => {
-            d.Action = false;
-            return d;
-          });
-    
+        this.ReportConfigItemList = data.value.map(d => {
+          d.Action = false;
+          return d;
+        });
+
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
         this.loading = false;
       })
@@ -333,7 +341,7 @@ export class UserconfigreportnameComponent implements OnInit {
           this.GetReportNames();
         }
         else {
-          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.loading = false;
       });
@@ -358,8 +366,8 @@ export class UserconfigreportnameComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         this.ReportNames = [...data.value];
-        
-        this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId  && a.ParentId == this.BaseReportId);
+
+        this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId && a.ParentId == this.BaseReportId);
         this.loading = false;
       });
   }
@@ -368,8 +376,8 @@ export class UserconfigreportnameComponent implements OnInit {
     this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId
       && a.ParentId == this.BaseReportId);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
-  } 
-  
+  }
+
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {

@@ -50,11 +50,12 @@ export class TodayCollectionComponent implements OnInit {
   CancelledAmount = 0;
   PaymentTypes = [];
   DisplayColumns = [
+    "ReceiptNo",
     "ReceiptDate",
     "Student",
-    "ClassName",
-    "ReceiptNo",
+    "ClassName",    
     "PaymentType",
+    "Status",
     "TotalAmount"
   ]
   SelectedApplicationId = 0;
@@ -169,6 +170,7 @@ export class TodayCollectionComponent implements OnInit {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
           d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
+          d.Status = d.Active==0?'Cancelled':'Active';
           //d.ReceiptDate = this.datepipe.transform(d.ReceiptDate,'dd/MM/yyyy') 
           //d.FeeName = this.FeeDefinitions.filter(f=>f.FeeDefinitionId == d.AccountingVouchers[0].ClassFeeId)[0].FeeName;
           return d;
@@ -190,7 +192,7 @@ export class TodayCollectionComponent implements OnInit {
               Student: d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName,
               ClassName: d.StudentClass.Class.ClassName,
               FeeCategoryId: _feeCategoryId,
-              FeeCategory: _feeCategoryName
+              FeeCategory: _feeCategoryName,            
             })
           })
           return d.AccountingVouchers;

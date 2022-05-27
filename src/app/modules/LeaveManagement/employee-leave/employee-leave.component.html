@@ -108,7 +108,7 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || f.searchEmployee.value.EmployeeId==undefined" matTooltip="add new" mat-mini-fab (click)="addnew()">
+                        <button [disabled]="loading || f.searchEmployee.value.EmployeeId==undefined || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="addnew()">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>

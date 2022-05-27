@@ -79,7 +79,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.STUDENTAPROFILE)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.CLASSEVALUATIONOPTION)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -170,7 +170,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       this.contentservice.openSnackBar("Title is required.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
+
     let checkFilterString = this.StandardFilter;
     if (row.ParentId != null)
       checkFilterString = "ParentId eq " + row.ParentId
@@ -252,24 +252,27 @@ export class ClassEvaluationOptionComponent implements OnInit {
         });
   }
   SearchAnswerOptions() {
+    debugger;
     this.AnswerOptionsId = this.searchForm.get("searchParent").value.ClassEvaluationAnswerOptionsId;
-    if (this.AnswerOptionsId != undefined)
-      this.GetClassEvaluationOption(0, this.AnswerOptionsId);
-    else
-      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    if (this.AnswerOptionsId == undefined)
+      this.AnswerOptionsId = 0;
+    this.GetClassEvaluationOption(0, this.AnswerOptionsId);
+    // else
+    //   this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
   }
   GetClassEvaluationOption(pClassEvaluationId, pAnswerOptionId) {
     debugger;
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
-    if (pAnswerOptionId == 0 && pClassEvaluationId == 0) {
-      this.contentservice.openSnackBar("Atleast one parameter should be provided.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (pAnswerOptionId > 0)
-      filterStr += " and ParentId eq " + pAnswerOptionId
-    else if (pClassEvaluationId > 0)
+    // if (pAnswerOptionId == 0 && pClassEvaluationId == 0) {
+    //   this.contentservice.openSnackBar("Atleast one parameter should be provided.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    //if (pAnswerOptionId > 0)
+    filterStr += " and ParentId eq " + pAnswerOptionId
+
+    if (pClassEvaluationId > 0)
       filterStr += " and ClassEvaluationId eq " + pClassEvaluationId
 
     let list: List = new List();

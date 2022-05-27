@@ -85,7 +85,7 @@ export class StudentgradeComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.EVENT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.STUDENTGRADE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -215,8 +215,8 @@ export class StudentgradeComponent implements OnInit {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + 
-    " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]  
+    //" and BatchId eq " + this.SelectedBatchId;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
     if(_ClassGroupId>0)

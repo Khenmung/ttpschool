@@ -69,6 +69,7 @@ export class FeereceiptComponent implements OnInit {
     Remarks: '',
     Active: 1
   };
+  Permission = '';
   OriginalAmountForCalc = 0;
   TotalAmount = 0;
   Balance = 0;
@@ -113,27 +114,37 @@ export class FeereceiptComponent implements OnInit {
     this.loading = true;
     this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.LoginUserDetail = this.tokenservice.getUserDetail();
-    this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-      this.Classes = [...data.value];
-      var obj = this.Classes.filter(f => f.ClassId == this.studentInfoTodisplay.ClassId)
-      if (obj.length > 0)
-        this.studentInfoTodisplay.StudentClassName = obj[0].ClassName;
-    })
-    //this.shareddata.CurrentBatch.subscribe(lo => (this.Batches = lo));
-    this.Batches = this.tokenservice.getBatches();
-    this.shareddata.CurrentSection.subscribe(pr => (this.Sections = pr));
+    var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
+    if (perObj.length > 0) {
+      this.Permission = perObj[0].permission;
+    }
+    if (this.Permission != 'deny') {
 
-    this.studentInfoTodisplay.StudentId = this.tokenservice.getStudentId();
-    this.studentInfoTodisplay.StudentClassId = this.tokenservice.getStudentClassId();
-    this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-    this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
-    this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;    
+      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+        this.Classes = [...data.value];
+        var obj = this.Classes.filter(f => f.ClassId == this.studentInfoTodisplay.ClassId)
+        if (obj.length > 0)
+          this.studentInfoTodisplay.StudentClassName = obj[0].ClassName;
+      })
+      //this.shareddata.CurrentBatch.subscribe(lo => (this.Batches = lo));
+      this.Batches = this.tokenservice.getBatches();
+      this.shareddata.CurrentSection.subscribe(pr => (this.Sections = pr));
 
-    this.shareddata.CurrentFeeDefinitions.subscribe(b => (this.FeeDefinitions = b));
-    debugger;
-    this.GetMasterData();
-    this.GetBills();
+      this.studentInfoTodisplay.StudentId = this.tokenservice.getStudentId();
+      this.studentInfoTodisplay.StudentClassId = this.tokenservice.getStudentClassId();
+      this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
+      this.studentInfoTodisplay.OffLineReceiptNo = this.OffLineReceiptNo;
+      this.studentInfoTodisplay.currentbatchId = this.SelectedBatchId;
 
+      this.shareddata.CurrentFeeDefinitions.subscribe(b => (this.FeeDefinitions = b));
+      debugger;
+      this.GetMasterData();
+      this.GetBills();
+    }
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    }
   }
 
   viewDetail(row) {

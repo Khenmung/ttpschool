@@ -4,14 +4,13 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="width: 100%;">
     <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline" [style.width.px]="300">
-            <mat-label>Student</mat-label>
-            <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-            <mat-autocomplete (optionSelected)="GetSubjects($event)" #auto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                    {{option.Name}}
+        <mat-form-field appearance="outline" [style.width.px]="200">
+            <mat-label>Exam/Evaluation session/Test</mat-label>
+            <mat-select formControlName="searchExamId">
+                <mat-option value="0">select</mat-option>
+                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
                 </mat-option>
-            </mat-autocomplete>
+            </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>Evaluation</mat-label>
@@ -30,19 +29,20 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Exam/Evaluation session/Test</mat-label>
-            <mat-select formControlName="searchExamId">
-                <mat-option value="0">select</mat-option>
-                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+        <mat-form-field appearance="outline" [style.width.px]="300">
+            <mat-label>Student</mat-label>
+            <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+            <mat-autocomplete (optionSelected)="GetSubjects($event)" #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                    {{option.Name}}
                 </mat-option>
-            </mat-select>
+            </mat-autocomplete>
         </mat-form-field>
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
             <mat-icon>search</mat-icon>
         </button>
     </form>
-    <mat-table #table [dataSource]="AssessmentTypeDatasource" *ngIf="AssessmentTypeList.length>0">
+    <mat-table #table [dataSource]="AssessmentTypeDatasource" *ngIf="RelevantEvaluationListForSelectedStudent.length>0">
         <ng-container matColumnDef="ExamName">
             <mat-header-cell *matHeaderCellDef>Exam
             </mat-header-cell>

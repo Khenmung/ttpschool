@@ -101,7 +101,7 @@ export class ClassEvaluationComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.STUDENTAPROFILE)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONQUESTIONNAIRE)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -225,11 +225,11 @@ export class ClassEvaluationComponent implements OnInit {
       return;
     }
 
-    if (this.contentservice.checkSpecialChar(row.Description)) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Special characters not allowed in questionnaire!", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // if (this.contentservice.checkSpecialChar(row.Description)) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Special characters not allowed in questionnaire!", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
 
     let checkFilterString = "Description eq '" + row.Description + "'";
     if (row.QuestionnaireTypeId > 0)
@@ -485,6 +485,10 @@ export class ClassEvaluationComponent implements OnInit {
         //this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+        // this.contentservice.GetExams(this.LoginUserDetail[0],this.SelectedBatchId,this.ExamNames)
+        // .subscribe((data:any)=>{
+        //   this.Exams =[...data.value];
+        // })
         this.GetExams();
         //this.loading = false;
         this.GetClassSubjects();

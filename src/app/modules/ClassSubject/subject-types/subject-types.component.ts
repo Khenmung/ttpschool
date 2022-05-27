@@ -75,7 +75,7 @@ export class SubjectTypesComponent implements OnInit {
       this.nav.navigate(['/auth/login']);
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.SUBJECT);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.SUBJECTTYPE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

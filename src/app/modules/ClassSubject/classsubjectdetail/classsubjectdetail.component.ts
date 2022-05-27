@@ -19,8 +19,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class ClassSubjectDetailComponent implements OnInit {
 
   @ViewChild("table") mattable;
-  @ViewChild(MatPaginator) paginator:MatPaginator;
-  @ViewChild(MatSort) sort:MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
@@ -67,7 +67,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     ClassId: 0,
     Credits: 0,
     OrgId: 0,
-  //  BatchId: 0,
+    //  BatchId: 0,
     TeacherId: 0,
     SubjectId: 0,
     SubjectTypeId: 0,
@@ -92,7 +92,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -112,27 +112,30 @@ export class ClassSubjectDetailComponent implements OnInit {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.nameFilter.valueChanges
-      .subscribe(
-        name => {
-          this.filterValues.SubjectName = name;
-          this.dataSource.filter = JSON.stringify(this.filterValues);
-        }
-      )
+        .subscribe(
+          name => {
+            this.filterValues.SubjectName = name;
+            this.dataSource.filter = JSON.stringify(this.filterValues);
+          }
+        )
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
-      ////console.log(this.CheckPermission);
-      this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-      this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
-      //this.shareddata.CurrentClasses.subscribe(a => this.Classes = a);
-      this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
-      this.GetMasterData();
-      this.GetSubjectTypes();
-      if (this.Classes.length == 0) {
-        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-          this.Classes = [...data.value];
-
-        });
+      if (this.Permission == 'deny') {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else {
+        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+        this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
+        this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
+        this.GetMasterData();
+        this.GetSubjectTypes();
+        if (this.Classes.length == 0) {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+            this.Classes = [...data.value];
+          });
+        }
       }
     }
   }
@@ -228,7 +231,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -240,7 +243,7 @@ export class ClassSubjectDetailComponent implements OnInit {
 
     if (filterStr.length == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -316,7 +319,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           }
           //})
         })
-        this.ClassSubjectList.sort((a,b)=> b.Active - a.Active);
+        this.ClassSubjectList.sort((a, b) => b.Active - a.Active);
 
         this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
         this.dataSource.paginator = this.paginator;
@@ -360,7 +363,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -383,7 +386,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     //debugger;
     this.loading = true;
     if (row.SubjectTypeId == 0) {
-      this.contentservice.openSnackBar("Please select subject type.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select subject type.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;
     }
@@ -394,13 +397,13 @@ export class ClassSubjectDetailComponent implements OnInit {
     //   return;
     // }
     if (row.Credits > 100) {
-      this.contentservice.openSnackBar("Credits can not be greater than 100.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Credits can not be greater than 100.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;
     }
     ////console.log("row.TeacherId", row.TeacherId);
     if (row.TeacherId == 0) {
-      this.contentservice.openSnackBar("Please select teacher for the subject.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select teacher for the subject.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;
     }
@@ -484,7 +487,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           if (this.DataCountToSave == 0) {
             this.loading = false;
             this.DataCountToSave = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -501,7 +504,7 @@ export class ClassSubjectDetailComponent implements OnInit {
 
     list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
     list.PageName = "SubjectTypes";
-    list.filter = ["OrgId eq "+ this.LoginUserDetail[0]["orgId"] + " and Active eq 1 "];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1 "];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -548,7 +551,7 @@ export class ClassSubjectDetailComponent implements OnInit {
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Batches = this.tokenstorage.getBatches()
-        
+
         this.shareddata.ChangeSubjects(this.Subjects);
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetSubjectTypes();

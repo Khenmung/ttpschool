@@ -6,8 +6,8 @@
         <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
             <mat-form-field appearance="outline" style="width: 100px;">
-                <mat-label>Id</mat-label>
-                <input formControlName="searchStudentId" autocomplete="Off" matInput [maxlength]="10">
+                <mat-label>PID</mat-label>
+                <input formControlName="searchPID" autocomplete="Off" matInput [maxlength]="10">
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>Father</mat-label>
@@ -56,7 +56,7 @@
                             <mat-icon>pageview</mat-icon>
                         </button>
                         &nbsp;
-                        <button [disabled]="loading || element.ClassName==''" matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
+                        <button [disabled]="loading || element.ClassName=='' || FeePaymentPermission=='deny'" matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
                             <mat-icon>payments</mat-icon>
                         </button>
                     </mat-cell>

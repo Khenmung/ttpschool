@@ -47,6 +47,7 @@ export class AddstudentclassComponent implements OnInit {
     Active: 1,
     OrgId: 0
   }
+  Permission = '';
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -78,24 +79,33 @@ export class AddstudentclassComponent implements OnInit {
     if (this.LoginUserDetail.length == 0)
       this.nav.navigate(['/auth/login']);
     else {
-      this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-        this.Classes = [...data.value];
-      });
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL);
+      if (perObj.length > 0)
+        this.Permission = perObj[0].permission;
+      if (this.Permission == 'deny') {
+        this.loading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      }
+      else {
 
-      this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+        });
 
-      this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
-      if (this.FeeType.length == 0)
-        this.GetFeeTypes();
-      this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
-      this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
-      this.StudentId = this.tokenstorage.getStudentId();
-      this.StudentClassId = this.tokenstorage.getStudentClassId()
-      this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
-      this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      this.GetMasterData();
-      this.GetStudentClass();
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
 
+        this.shareddata.CurrentFeeType.subscribe(t => this.FeeType = t);
+        if (this.FeeType.length == 0)
+          this.GetFeeTypes();
+        this.shareddata.CurrentSection.subscribe(t => this.Sections = t);
+        this.shareddata.CurrentHouse.subscribe(t => this.Houses = t);
+        this.StudentId = this.tokenstorage.getStudentId();
+        this.StudentClassId = this.tokenstorage.getStudentClassId()
+        this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.GetMasterData();
+        this.GetStudentClass();
+      }
     }
   }
   get f() { return this.studentclassForm.controls }
@@ -252,7 +262,7 @@ export class AddstudentclassComponent implements OnInit {
       return;
     }
     else {
-      this.loading=true;
+      this.loading = true;
       this.studentclassData.Active = 1;
       this.studentclassData.BatchId = this.SelectedBatchId;
 
@@ -280,7 +290,7 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading =false;
+          this.loading = false;
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);

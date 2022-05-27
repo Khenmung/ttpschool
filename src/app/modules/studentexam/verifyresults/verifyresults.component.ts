@@ -72,11 +72,7 @@ export class VerifyResultsComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
     private nav: Router,
-    private shareddata: SharedataService,
-    private datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
 
@@ -419,7 +415,8 @@ export class VerifyResultsComponent implements OnInit {
       });
   }
   GetClassGroupMapping() {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]; 
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
 
@@ -432,7 +429,9 @@ export class VerifyResultsComponent implements OnInit {
       })
   }
   GetStudentGradeDefn(classgroupmapping) {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] 
+    //batch wise not necessary
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
     list.fields = ["StudentGradeId,GradeName,ClassGroupId,GradeTypeId,Formula"];

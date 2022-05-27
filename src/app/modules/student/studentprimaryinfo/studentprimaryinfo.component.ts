@@ -416,7 +416,7 @@ export class studentprimaryinfoComponent implements OnInit {
   save() {
     this.studentForm.patchValue({ AlternateContact: "" });
     this.contentservice.GetStudentMaxPID(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
-      var _MaxPID = 0;
+      var _MaxPID = 1;
       if (data.value.length > 0) {
         _MaxPID = +data.value[0].PID + 1;
       }

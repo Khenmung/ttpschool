@@ -100,12 +100,22 @@
                                 </mat-cell>
                                 <mat-footer-cell *matFooterCellDef></mat-footer-cell>
                             </ng-container>
+                            <ng-container matColumnDef="Balance">
+                                <mat-header-cell *matHeaderCellDef> Balance
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element">
+                                   {{element.Balance}}
+                                </mat-cell>
+                                <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                            </ng-container>
                             <ng-container matColumnDef="Amount">
                                 <mat-header-cell *matHeaderCellDef style="justify-content: end;"> Amount &#x20b9;
                                 </mat-header-cell>
                                 <mat-cell *matCellDef="let element" style="justify-content: end;">
                                     <mat-form-field>
-                                        <input style="text-align: right" [disabled]="element.AmountEditable==0" matInput
+                                        <input style="text-align: right" 
+                                        (keyup)="onBlur(element)"
+                                        [disabled]="element.AmountEditable==0" matInput
                                             type="number" max="100000" [(ngModel)]="element.Amount"
                                             [value]="element.Amount" autocomplete="Off">
                                     </mat-form-field>
