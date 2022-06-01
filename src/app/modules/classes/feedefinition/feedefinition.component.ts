@@ -69,8 +69,7 @@ export class FeeDefinitionComponent implements OnInit {
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private tokenstorage: TokenStorageService,
-    
+    private tokenstorage: TokenStorageService,    
     private nav: Router,
     private fb: FormBuilder
   ) { }

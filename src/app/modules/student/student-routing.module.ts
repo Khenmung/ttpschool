@@ -12,10 +12,11 @@ import { StudentattendancereportComponent } from './studentattendancereport/stud
 import { StudentboardComponent } from './studentboard/studentboard.component';
 import { StudentprogressreportComponent } from './studentprogressreport/studentprogressreport.component';
 import { StudentEvaluationComponent } from '../evaluation/studentevaluation/studentevaluation.component';
+import { AuthGuard } from 'src/app/guards/auth.guard';
 
 const routes: Routes = [
   {
-    path: '', component: StudenthomeComponent,
+    path: '', component: StudenthomeComponent,canActivate:[AuthGuard],
     children: [
       { path: '', component: searchstudentComponent },
       { path: 'addstudent/:id', component: StudentboardComponent },

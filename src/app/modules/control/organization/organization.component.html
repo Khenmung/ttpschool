@@ -4,10 +4,10 @@
 <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
 <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
-<form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
+<form [formGroup]="searchForm">
     <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="space-around center">
         <mat-form-field appearance="outline">
-            <mat-label>Organization</mat-label>
+            <!-- <mat-label>Organization</mat-label> -->
             <mat-select formControlName="searchCustomerId">
                 <mat-option [value]="0">select</mat-option>
                 <mat-option *ngFor="let item of Organizations" [value]="item.OrganizationId">
@@ -15,32 +15,129 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <button [disabled]="loading || Permission=='read' || LoginUserDetail[0]['org'] !='TTP'" matTooltip="search" mat-raised-button color="accent"
-            (click)="GetOrganizationDetail()">
-            <mat-icon>search</mat-icon>
-        </button>
+        <span *ngIf="LoginUserDetail[0]['org'] =='TTP'">
+            <button [disabled]="loading || Permission=='read'" matTooltip="search" mat-raised-button color="accent"
+                (click)="GetOrganizationDetail()">
+                <mat-icon>search</mat-icon>
+            </button>
+        </span>
+        <div style="width: 100%;display: flex;justify-content: center;">
+            <div style="display: flex;border: 1px solid lightgray;">
+                <span style="color:red;" *ngIf="message">{{message}}</span>
+                <input #inputfile [hidden]="true" type="file" accept='image/*' (change)="preview(inputfile.files)" />
+                <div style="padding:5px;margin-top: 5px;margin-bottom: 5px;">
+                    <img [src]="imgURL" style="margin-left:5px;" height="100px" *ngIf="imgURL">
+                </div>
+                <div fxLayout="column" fxLayoutAlign="center center" style="margin: 5px;">
+                    <button [disabled]="loading || Permission=='read'" class="mat-flat-button" matTooltip="select logo"
+                        (click)="inputfile.click()">
+                        <mat-icon aria-label="photo">photo</mat-icon>
+                    </button>&nbsp;&nbsp;
+                    <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()"
+                        matTooltip="upload logo" class="mat-flat-button">
+                        <mat-icon aria-label="file_upload">file_upload</mat-icon>
+                    </button>&nbsp;&nbsp;
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <mat-grid-list cols="2" rowHeight="90px">
+        <!-- <mat-grid-tile [colspan]="1" [rowspan]="1">
+            {{OrganizationId}}
+        </mat-grid-tile> -->
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Address</mat-label>
+                <textarea formControlName="Address" (blur)="OnBlur()" autocomplete="Off" #input matInput
+                    [maxlength]="50">
+            </textarea>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Registration No.</mat-label>
+                <textarea formControlName="RegistrationNo" (blur)="OnBlur()" autocomplete="Off" #input matInput
+                    [maxlength]="50">
+            </textarea>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline">
+                <mat-label>Country</mat-label>
+                <mat-select (selectionChange)="PopulateState($event)" formControlName="CountryId">
+                    <mat-option *ngFor="let item of Country" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline">
+                <mat-label>State</mat-label>
+                <mat-select (selectionChange)="PopulateCity($event)" formControlName="StateId">
+                    <mat-option *ngFor="let item of States" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline">
+                <mat-label>City</mat-label>
+                <mat-select formControlName="CityId">
+                    <mat-option *ngFor="let item of City" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Contact</mat-label>
+                <input formControlName="Contact" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="50">
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Registered On</mat-label>
+                <input formControlName="CreatedDate" autocomplete="Off" #input matInput>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Valid Till</mat-label>
+                <input formControlName="ValidTo" autocomplete="Off" #input matInput>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline" fxFlex>
+                <mat-label>Web site</mat-label>
+                <input formControlName="WebSite" (blur)="OnBlur()" autocomplete="Off" #input matInput [maxlength]="250">
+            </mat-form-field>
+        </mat-grid-tile>
+        <!-- <mat-grid-tile [colspan]="1" [rowspan]="1" style="display: flex;justify-content:flex-end">             -->
+
+        <!-- <mat-checkbox (click)="deActivate($event)" formControlName="Active">
+        </mat-checkbox>&nbsp; Active -->
+        <!-- </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1" style="display: flex;justify-content:flex-start"> -->
+        <!-- <button [disabled]="loading || !Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave()">
+            <mat-icon>save</mat-icon>
+        </button> -->
+        <!-- </mat-grid-tile> -->
+    </mat-grid-list>
+    <div style="display: flex;justify-content: center;align-items: baseline; width:100%">
+        <span>
+            <span>
+                <mat-checkbox (change)="deActivate($event)" formControlName="Active">
+                </mat-checkbox>&nbsp; Active &nbsp;&nbsp;
+            </span>
+            <button [disabled]="loading || !Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave()">
+                <mat-icon>save</mat-icon>
+            </button>
+        </span>
     </div>
 </form>
-<div style="width: 100%;display: flex;justify-content: center;">
-    <div style="display: flex;border: 1px solid lightgray;">
-        <span style="color:red;" *ngIf="message">{{message}}</span>
-        <input #inputfile [hidden]="true" type="file" accept='image/*' (change)="preview(inputfile.files)" />
-        <div style="padding:5px;margin-top: 5px;margin-bottom: 5px;">
-            <img [src]="imgURL" style="margin-left:5px;" height="150px" *ngIf="imgURL">
-        </div>
-        <div fxLayout="column" fxLayoutAlign="center center" style="margin: 5px;">
-            <button [disabled]="loading || Permission=='read'" class="mat-flat-button" matTooltip="select logo"
-                (click)="inputfile.click()">
-                <mat-icon aria-label="photo">photo</mat-icon>
-            </button>&nbsp;&nbsp;
-            <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()"
-                matTooltip="upload logo" class="mat-flat-button">
-                <mat-icon aria-label="file_upload">file_upload</mat-icon>
-            </button>&nbsp;&nbsp;
-        </div>
-    </div>
-</div>
-<mat-table #table [dataSource]="dataSource">
+
+<!-- <mat-table #table [dataSource]="dataSource">
     <ng-container matColumnDef="OrganizationId">
         <mat-header-cell *matHeaderCellDef>Id
         </mat-header-cell>
@@ -48,13 +145,6 @@
             {{element.OrganizationId}}
         </mat-cell>
     </ng-container>
-    <!-- <ng-container matColumnDef="OrganizationName">
-        <mat-header-cell *matHeaderCellDef>Name
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-            {{element.OrganizationName}}
-        </mat-cell>
-    </ng-container> -->
     <ng-container matColumnDef="Address">
         <mat-header-cell *matHeaderCellDef>Address
         </mat-header-cell>
@@ -64,38 +154,47 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="Country">
+    <ng-container matColumnDef="RegistrationNo">
+        <mat-header-cell *matHeaderCellDef>Registration No.
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <textarea matInput [(ngModel)]="element.RegistrationNo" [value]="element.RegistrationNo"></textarea>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="CountryId">
         <mat-header-cell *matHeaderCellDef>Country
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-                <mat-select (selectionChange)="PopulateState($event)" [(ngModel)]="element.Country"
-                    [value]="element.Country">
+                <mat-select (selectionChange)="PopulateState($event)" [(ngModel)]="element.CountryId"
+                    [value]="element.CountryId">
                     <mat-option *ngFor="let item of Country" [value]="item.MasterDataId">
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="State">
+    <ng-container matColumnDef="StateId">
         <mat-header-cell *matHeaderCellDef>State
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-                <mat-select (selectionChange)="PopulateCity($event)" [(ngModel)]="element.State"
-                    [value]="element.State">
+                <mat-select (selectionChange)="PopulateCity($event)" [(ngModel)]="element.StateId"
+                    [value]="element.StateId">
                     <mat-option *ngFor="let item of States" [value]="item.MasterDataId">
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="City">
+    <ng-container matColumnDef="CityId">
         <mat-header-cell *matHeaderCellDef>City
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.City" [value]="element.City">
+                <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.CityId" [value]="element.CityId">
                     <mat-option *ngFor="let item of City" [value]="item.MasterDataId">
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>
@@ -117,26 +216,14 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.CreatedDate|date:'dd/MM/yyyy hh:mm'}}
-            <!-- <mat-form-field appearance="outline">
-                <mat-label>Start Date</mat-label>
-                <input (onBlur)="onBlur(element)" [(ngModel)]="element.CreatedDate" [value]="element.CreatedDate"
-                    matInput [matDatepicker]="CreatedDate" autocomplete="off">
-                <mat-datepicker-toggle matSuffix [for]="CreatedDate"></mat-datepicker-toggle>
-                <mat-datepicker #CreatedDate></mat-datepicker>
-            </mat-form-field> -->
+     
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ValidTo">
         <mat-header-cell *matHeaderCellDef>Valid Till
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.ValidTo|date:'dd/MM/yyyy hh:mm'}}
-            <!-- <mat-form-field appearance="outline">
-                <input (onBlur)="onBlur(element)" [(ngModel)]="element.ValidTo" [value]="element.ValidTo" matInput
-                    [matDatepicker]="ValidTo" autocomplete="off">
-                <mat-datepicker-toggle matSuffix [for]="ValidTo"></mat-datepicker-toggle>
-                <mat-datepicker #ValidTo></mat-datepicker>
-            </mat-form-field> -->
+            {{element.ValidTo|date:'dd/MM/yyyy hh:mm'}}      
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Active">
@@ -161,10 +248,10 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;align-items: baseline;">
     </mat-row>
 </mat-table>
-<mat-paginator [pageSizeOptions]="[10,20,30]"></mat-paginator>
+<mat-paginator [pageSizeOptions]="[10,20,30]"></mat-paginator> -->
 <!-- </div> -->
-<div style="width:100%; display: flex;align-items: center; justify-content: center;padding: 15px 15px 15px 0px">
+<!-- <div style="width:100%; display: flex;align-items: center; justify-content: center;padding: 15px 15px 15px 0px">
     <button [disabled]="loading" class="mat-raised-button" matTooltip="login" (click)="login()">
         <mat-icon>login</mat-icon>
     </button>
-</div>
+</div> -->

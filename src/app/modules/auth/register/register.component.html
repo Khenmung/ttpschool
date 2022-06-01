@@ -8,7 +8,7 @@
             [formGroup]="RegistrationForm">
             <div>
                 <mat-form-field appearance="outline">
-                    <mat-label>Name</mat-label>
+                    <mat-label>User Name</mat-label>
                     <input formControlName="UserName" autocomplete="Off" #UserName matInput [maxlength]="50">
                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                     <span class="text-danger" *ngIf="f.UserName.touched && f.UserName.hasError('required')">
@@ -80,8 +80,11 @@
                 </div>
             </div>
         </form>
-        <div class="alert alert-success" *ngIf="isSuccessful">
-            Please check and click on the link provided in your email for verification.           
+        <div class="alert alert-success" style="display: flex; justify-content: center;" *ngIf="isSuccessful">
+            Login now
+            <button [disabled]="loading" (click)="gotologin()" class="mat-raised-button" matTooltip="login">
+                <mat-icon>login</mat-icon>
+            </button>         
         </div>
     </mat-card-content>
 </mat-card>

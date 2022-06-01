@@ -45,23 +45,23 @@ mat-form-field {
 // .mat-table{
 //     min-width:960px;
 // }
-.mat-column-ParentId,.mat-column-Description{
-    flex:1 1 180px;
+.mat-column-ParentId,.mat-column-MasterDataName{
+    flex:1 0 150px;
 }
-.mat-column-MasterDataName,.mat-column-Logic {
-    flex:1 1 220px;
+.mat-column-Description,.mat-column-Logic {
+    flex:1 0 220px;
 }
 .mat-column-Active{
     
     justify-content: center;
-    flex:1 1 100px;
+    flex:1 0 100px;
 }
 .mat-column-Action{
     justify-content: center;
-    flex:1 1 120px;
+    flex:1 0 120px;
 }
 .mat-column-Sequence,.mat-column-MasterDataId {
-    flex:1 1 70px;
+    flex:1 0 70px;
 }
 
 // mat-cell:first-of-type{

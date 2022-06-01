@@ -24,7 +24,7 @@ export class globalconstants {
     public static TechnicalIssueMessage = 'There is a technical issue! Please contact your administrator.';
     public static PermissionDeniedMessage = 'Permission Denied!';
     public static ActionText = 'X';
-    public static BuildCommand = "ng build --configuration production --aot=true --build-optimizer=true";
+    public static BuildCommand = "ng build --configuration production --aot=true --build-optimizer=true --outputHashing=all";
     public static AppAndMenuAndFeatures =
         {
             'edu': {

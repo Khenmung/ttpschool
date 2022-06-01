@@ -120,6 +120,24 @@ export class ClassEvaluationComponent implements OnInit {
       }
     }
   }
+  EscapeSpecialCharacter(str) {
+  
+    if ((str===null) || (str===''))
+          return false;
+    else
+      str = str.toString();
+     
+     var map = {
+       '&': '&amp;',
+     '<': '&lt;',
+     '>': '&gt;',
+     '"': '&quot;',
+     "'": '&#039;'
+     };
+     var format = /[!@#$&%^&*_+\=\[\]{};:'"\\|<>]+/;
+     return str.replace(format, function(m) { return map[m]; });
+     //return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+   }
   GetExams() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
@@ -266,7 +284,7 @@ export class ClassEvaluationComponent implements OnInit {
               MultipleAnswer: row.MultipleAnswer,
               ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
               EvaluationMasterId: row.EvaluationMasterId,
-              Description: row.Description,
+              Description: this.EscapeSpecialCharacter(row.Description),
               DisplayOrder: row.DisplayOrder,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });

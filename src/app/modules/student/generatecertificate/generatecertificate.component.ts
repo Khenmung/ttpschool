@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
+import * as moment from 'moment';
 import { Observable } from 'rxjs';
 import { IStudent } from 'src/app/modules/ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
 import { ContentService } from 'src/app/shared/content.service';
@@ -43,6 +44,7 @@ export class GenerateCertificateComponent implements OnInit {
   ExamNames = [];
   Exams = [];
   Batches = [];
+  Houses = [];
   City = [];
   State = [];
   Country = [];
@@ -56,6 +58,7 @@ export class GenerateCertificateComponent implements OnInit {
   CommonStyles = [];
   CommonHeader = [];
   CommonFooter = [];
+  Organization = [];
   StudentAttendanceList = [];
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
@@ -132,7 +135,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.Permission = perObj[0].permission;
 
       if (this.StudentClassId == 0) {
-        this.loading=false;
+        this.loading = false;
         this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
         //this.nav.navigate(['/edu']);
       }
@@ -146,11 +149,11 @@ export class GenerateCertificateComponent implements OnInit {
         this.GetMasterData();
         this.GetStudentAttendance();
         this.getPaymentStatus();
+
       }
-      else
-      {
+      else {
         this.loading = false;
-        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
   }
@@ -231,7 +234,9 @@ export class GenerateCertificateComponent implements OnInit {
         "SectionId",
         "RollNo",
         "AdmissionDate",
-        "StudentId"
+        "StudentId",
+        "BatchId",
+        "HouseId"
       ];
     }
     list.PageName = "StudentClasses";
@@ -298,6 +303,11 @@ export class GenerateCertificateComponent implements OnInit {
           var _category = d.Student.Category == null ? '' : this.Category.filter(c => c.MasterDataId == d.Student.Category)[0].MasterDataName;
           var _religion = d.Student.Religion == null ? '' : this.Religion.filter(c => c.MasterDataId == d.Student.Religion)[0].MasterDataName;
           var _reason = d.Student.ReasonForLeavingId == null ? '' : this.ReasonForLeaving.filter(c => c.MasterDataId == d.Student.ReasonForLeavingId)[0].MasterDataName;
+          var _batch = this.Batches.filter(c => c.BatchId == d.BatchId)[0].BatchName;
+          var _house = '';
+          var objhouse = this.Houses.filter(c => c.MasterDataId == d.HouseId);
+          if (objhouse.length > 0)
+            _house = objhouse[0].MasterDataName;
 
           this.StudentForVariables.push(
             { name: "ToDay", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
@@ -334,7 +344,9 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "NameOfContactPerson", val: d.Student.NameOfContactPerson },
             { name: "RelationWithContactPerson", val: d.Student.RelationWithContactPerson },
             { name: "ContactPersonContactNo", val: d.Student.ContactPersonContactNo },
-            { name: "ReasonForLeaving", val: _reason }
+            { name: "ReasonForLeaving", val: _reason },
+            { name: "Batch", val: _batch },
+            { name: "House", val: _house }
           )
         })
         this.StudentForVariables.push(
@@ -403,7 +415,7 @@ export class GenerateCertificateComponent implements OnInit {
       styleStr += s.Description;
     });
     this.loadTheme(styleStr);
-    ////console.log("ss",this.CertificateElements)
+    console.log("CertificateElements", this.CertificateElements)
     this.dataSource = new MatTableDataSource<any>(this.CertificateElements);
     this.loading = false;
   }
@@ -448,11 +460,12 @@ export class GenerateCertificateComponent implements OnInit {
 
   }
   GetMasterData() {
-
+    debugger;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
+        this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
@@ -473,6 +486,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.CommonFooter.sort((a, b) => a.Sequence - b.Sequence)
         //this.shareddata.ChangeBatch(this.Batches);
         this.Batches = this.tokenstorage.getBatches()
+        this.GetOrganization();
       });
   }
   clear() {
@@ -490,7 +504,90 @@ export class GenerateCertificateComponent implements OnInit {
 
 
   }
+  GetOrganization() {
 
+    let list: List = new List();
+    list.fields = [
+      "OrganizationId",
+      "OrganizationName",
+      "LogoPath",
+      "Address",
+      "CityId",
+      "StateId",
+      "CountryId",
+      "WebSite",
+      "Contact",
+      "RegistrationNo",
+      "ValidFrom",
+      "ValidTo"
+
+    ];
+    list.PageName = "Organizations";
+    list.filter = ["OrganizationId eq " + this.LoginUserDetail[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((org: any) => {
+        this.Organization = org.value.map(m => {
+          //m.CountryName = '';
+          var countryObj = this.allMasterData.filter(f => f.MasterDataId == m.CountryId);
+          if (countryObj.length > 0)
+            m.Country = countryObj[0].MasterDataName;
+
+          var stateObj = this.allMasterData.filter(f => f.MasterDataId == m.StateId);
+          if (stateObj.length > 0)
+            m.State = stateObj[0].MasterDataName;
+
+          var cityObj = this.allMasterData.filter(f => f.MasterDataId == m.CityId);
+          if (cityObj.length > 0)
+            m.City = cityObj[0].MasterDataName;
+
+          return [{
+            name: "OrganizationId", val: m.OrganizationId
+          }, {
+            name: "Organization", val: m.OrganizationName
+          }, {
+            name: "LogoPath", val: m.LogoPath
+          }, {
+            name: "Address", val: m.Address
+          }, {
+            name: "City", val: m.City
+          }, {
+            name: "State", val: m.State
+          }, {
+            name: "Country", val: m.Country
+          }, {
+            name: "Contact", val: m.Contact
+          }, {
+            name: "RegistrationNo", val: m.RegistrationNo == null ? '' : m.RegistrationNo
+          }, {
+            name: "ValidFrom", val: m.ValidFrom
+          }, {
+            name: "ValidTo", val: m.ValidTo
+          },
+          {
+            name: "WebSite", val: m.WebSite == null ? '' : m.WebSite
+          },
+          {
+            name: "ToDay", val: moment(new Date()).format("DD/MM/YYYY")
+          }
+          ]
+        })
+        //console.log("this.Organization",this.Organization);
+        //console.log("this.CommonHeader.",this.CommonHeader);
+
+        this.CommonHeader.forEach(header => {
+          this.Organization[0].forEach(orgdet => {
+            header.Description = header.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
+          })
+        })
+        this.CommonFooter.forEach(footer => {
+          this.Organization[0].forEach(orgdet => {
+            footer.Description = footer.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
+          })
+        })
+        this.loading = false;
+      });
+  }
   GetStudentAttendance() {
 
     let list: List = new List();

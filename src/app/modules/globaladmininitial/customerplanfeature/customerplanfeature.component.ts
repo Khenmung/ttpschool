@@ -321,7 +321,7 @@ export class CustomerPlanFeatureComponent implements OnInit {
         if (this.CustomerPlanFeatureList.length == 0) {
           this.contentservice.openSnackBar("No record found.", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        this.CustomerPlanFeatureList.sort((a, b) => b.Active - a.Active);
+        this.CustomerPlanFeatureList.sort((a, b) => b.Active - a.Active || a.PlanId - b.PlanId);
         this.dataSource = new MatTableDataSource<ICustomerPlanFeature>(this.CustomerPlanFeatureList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

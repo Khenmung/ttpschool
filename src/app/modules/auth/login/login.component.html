@@ -8,7 +8,7 @@
         </mat-spinner>
         <form [formGroup]="loginForm" novalidate style="margin:30px;display: flex;flex-direction: column;">
             <mat-form-field>
-                <mat-label for="username">User name</mat-label>
+                <mat-label for="username">Email</mat-label>
                 <input type="text" matInput formControlName="username" required autocomplete="Off" />
             </mat-form-field>
             <span style="display:flex;width:100%;align-items: baseline;">
@@ -40,7 +40,7 @@
             <div *ngIf="f.username.invalid && (f.username.dirty || f.username.touched)" class="alert alert-danger">
 
                 <div *ngIf="f.username.errors?.['required']">
-                    user name is required.
+                    Email is required.
                 </div>
                 <!-- <div *ngIf="f.username.errors?.['minlength']">
                         User name must be at least 6 characters long.

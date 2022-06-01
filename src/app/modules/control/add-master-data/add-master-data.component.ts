@@ -142,7 +142,7 @@ export class AddMasterDataComponent implements OnInit {
   }
   ReSequence(element)
   {
-    this.contentservice.ReSequence(element,this.MasterList);
+    //this.contentservice.ReSequence(element,this.MasterList);
   }
   GetMastersForAutoComplete() {
     debugger;

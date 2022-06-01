@@ -27,9 +27,9 @@
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetCertificates()">
                     <mat-icon>search</mat-icon>
                 </button>
-                <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
+                <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
-                </button>
+                </button> -->
             </form>
             <div class="divCls" fxLayoutGap="100px" id="printSection">
                 <mat-table [dataSource]="dataSource">

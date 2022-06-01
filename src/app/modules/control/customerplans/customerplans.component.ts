@@ -168,16 +168,22 @@ export class CustomerPlansComponent implements OnInit {
           console.log("customerplan insert error:", error.error);
         });
   }
+  logout() {
+    //debugger;
+    this.tokenstorage.signOut();
+    this.nav.navigate(['/auth/login']);
+  }
   update(row) {
 
     this.dataservice.postPatch(this.CustomerPlansListName, this.CustomerPlansData, this.CustomerPlansData.CustomerPlanId, 'patch')
       .subscribe(
         (data: any) => {
           this.PlanSelected=true;
-          this.GetCustomerPlans();
+          //this.GetCustomerPlans();
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          this.contentservice.openSnackBar("Plan updated successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+          this.logout();
         },
         err => {
           this.loading = false;
@@ -337,7 +343,7 @@ export class CustomerPlansComponent implements OnInit {
         if (this.Org.toLowerCase() != 'ttp') {
           this.CustomerPlansList = this.CustomerPlansList.filter(f => f.PlanName.toLowerCase() != 'delux');
         }
-        //console.log("customer list", this.CustomerPlansList)
+        console.log("customer list", this.CustomerPlansList)
         this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
         this.loading = false;
       })

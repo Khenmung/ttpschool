@@ -10,7 +10,7 @@
 }
 .mat-column-Action{
     justify-content: center;
-    flex: 1 1 100px;
+    flex: 1 0 80px;
 }
 .mat-column-Active,
 .mat-column-LoginUserCount,
@@ -23,11 +23,11 @@
 .mat-column-PlanName
 {
 
-    flex:1 1 100px;
+    flex:1 0 80px;
 }
 .mat-column-Formula,
 .mat-column-Description{
-    flex: 1 1 200px;
+    flex: 1 0 200px;
 }
 mat-cell,mat-cell-header{
     border-right: 1px solid lightgray;

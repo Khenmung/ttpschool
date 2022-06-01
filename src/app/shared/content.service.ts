@@ -269,6 +269,19 @@ export class ContentService implements OnInit {
     return this.dataservice.get(list)
 
   }
+  GetDropDownDataWithOrgIdnParent(ParentId, OrgId, activeMaster = 1) {
+    //debugger;
+    var _active = activeMaster == 0 ? '' : "Active eq 1 and ";
+    
+    let list: List = new List();
+    list.fields = [
+      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId", "Active"
+    ];
+    list.PageName = "MasterItems";
+    list.filter = [_active + "ParentId eq " + ParentId + " and OrgId eq " + OrgId];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
+    return this.dataservice.get(list)
+
+  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {

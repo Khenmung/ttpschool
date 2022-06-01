@@ -7,11 +7,11 @@
         </div>
         <div fxLayout="row" fxLayoutAlign="space-between center">
             <div style="font-size: medium;margin-right: 15px;">{{userName}}</div>
-            <span class="rightside" *ngIf="!deviceXs && !loggedIn">
+            <!-- <span class="rightside" *ngIf="!deviceXs && !loggedIn">
                 <button [disabled]="loading" mat-button (click)="contactus()">
                     <mat-icon>contact_support</mat-icon><span>Contact Us</span>
                 </button>
-            </span>
+            </span> -->
             <button [disabled]="loading" class="rightside" fxHide.xs mat-icon-button [matMenuTriggerFor]="menu"
                 matTooltip="login">
                 <mat-icon *ngIf="deviceXs">more_vert</mat-icon>

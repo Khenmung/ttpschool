@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -17,6 +18,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class OrganizationComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  Action = false;
+  OrganizationId = 0;
   imagePath: string;
   message: string;
   imgURL: any;
@@ -41,12 +44,13 @@ export class OrganizationComponent implements OnInit {
   Permission = '';
   OrganizationData = {
     OrganizationId: 0,
-    OrganizationName: '',
-    LogoPath: '',
+    //OrganizationName: '',
+    WebSite: '',
     Address: '',
-    City: 0,
-    State: 0,
-    Country: 0,
+    CityId: 0,
+    StateId: 0,
+    CountryId: 0,
+    RegistrationNo: '',
     Contact: '',
     Active: 0,
     CreatedDate: new Date()
@@ -54,12 +58,11 @@ export class OrganizationComponent implements OnInit {
   OrgId = 0;
   UserId = '';
   displayedColumns = [
-    //"OrganizationId",
-    //"OrganizationName",
     "Address",
-    "Country",
-    "State",
-    "City",
+    "RegistrationNo",
+    "CountryId",
+    "StateId",
+    "CityId",
     "Contact",
     "ValidTo",
     "CreatedDate",
@@ -69,6 +72,7 @@ export class OrganizationComponent implements OnInit {
   TopMasters = [];
   SelectedApplicationId = 0;
   searchForm: FormGroup;
+  LogoPath = '';
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -83,7 +87,17 @@ export class OrganizationComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchCustomerId: [0]
+      searchCustomerId: [0],
+      Address: [''],
+      RegistrationNo: [''],
+      CountryId: [0],
+      StateId: [0],
+      CityId: [0],
+      Contact: [0],
+      ValidTo: [{value:new Date(),disabled:true}],
+      CreatedDate: [{value:new Date(),disabled:true}],
+      WebSite:[''],
+      Active: [0]
     });
     this.dataSource = new MatTableDataSource<IOrganization>([]);
     this.PageLoad();
@@ -122,12 +136,12 @@ export class OrganizationComponent implements OnInit {
           })
       })
       this.GetOrganization();
-        this.GetStorageFnP(0).subscribe((data: any) => {
-          this.StorageFnPList = [...data.value];
-          this.loading = false;
-        })
-      }
+      this.GetStorageFnP(0).subscribe((data: any) => {
+        this.StorageFnPList = [...data.value];
+        this.loading = false;
+      })
     }
+  }
   //}
   PopulateState(element) {
     var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
@@ -153,25 +167,27 @@ export class OrganizationComponent implements OnInit {
     this.nav.navigate(['auth/login']);
   }
 
-  UpdateOrSave(row) {
+  UpdateOrSave() {
 
-    if (row.OrganizationName == '') {
-      this.contentservice.openSnackBar("Please enter organization name.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
-      row.Action = false;
-      return;
-    }
+    // if (row.OrganizationName == '') {
+    //   this.contentservice.openSnackBar("Please enter organization name.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   this.loading = false;
+    //   row.Action = false;
+    //   return;
+    // }
 
 
-    this.OrganizationData.OrganizationId = row.OrganizationId;
-    this.OrganizationData.OrganizationName = row.OrganizationName;
-    this.OrganizationData.Address = row.Address;
-    this.OrganizationData.City = row.City;
-    this.OrganizationData.State = row.State;
-    this.OrganizationData.Active = row.Active;
-    this.OrganizationData.Country = row.Country;
-    this.OrganizationData.Contact = row.Contact;
-    this.OrganizationData.LogoPath = row.LogoPath;
+    this.OrganizationData.OrganizationId = this.OrganizationId;
+    //this.OrganizationData.RegistrationNo = row.OrganizationName;
+    this.OrganizationData.Address = this.searchForm.get("Address").value;
+    this.OrganizationData.CityId = this.searchForm.get("CityId").value;
+    this.OrganizationData.StateId = this.searchForm.get("StateId").value;
+    this.OrganizationData.RegistrationNo = this.searchForm.get("RegistrationNo").value;
+    this.OrganizationData.Active = this.searchForm.get("Active").value;
+    this.OrganizationData.CountryId = this.searchForm.get("CountryId").value;
+    this.OrganizationData.Contact = this.searchForm.get("Contact").value;
+    this.OrganizationData.WebSite = this.searchForm.get("WebSite").value;
+    // this.OrganizationData.LogoPath = this.LogoPath// this.searchForm.get("LogoPath").value;
     //this.OrganizationData. = row.LogoPath;
 
     if (this.OrganizationData.OrganizationId == 0) {
@@ -179,37 +195,37 @@ export class OrganizationComponent implements OnInit {
       this.OrganizationData["CreatedBy"] = this.UserId;
       this.OrganizationData["UpdatedDate"] = new Date();
       delete this.OrganizationData["UpdatedBy"];
-      this.insert(row);
+      this.insert();
     }
     else {
       delete this.OrganizationData["CreatedDate"];
       delete this.OrganizationData["CreatedBy"];
       this.OrganizationData["UpdatedDate"] = new Date();
       this.OrganizationData["UpdatedBy"] = this.UserId;
-      this.update(row);
+      this.update();
     }
   }
-  insert(row) {
+  insert() {
 
     debugger;
     this.dataservice.postPatch(this.OrganizationListName, this.OrganizationData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.OrganizationId = data.OrganizationId;
-          row.Action = false;
+         // row.OrganizationId = data.OrganizationId;
+         // row.Action = false;
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
           this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
         });
   }
-  update(row) {
+  update() {
 
     this.dataservice.postPatch(this.OrganizationListName, this.OrganizationData, this.OrganizationData.OrganizationId, 'patch')
       .subscribe(
         (data: any) => {
           this.loading = false;
-          row.Action = false;
+          //row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -225,8 +241,8 @@ export class OrganizationComponent implements OnInit {
         this.Organizations = [...data.value];
         if (this.LoginUserDetail[0]['org'].toLowerCase() != 'ttp') {
           this.imgURL = this.LoginUserDetail[0].logoPath
-          this.searchForm.patchValue({"searchCustomerId":this.LoginUserDetail[0]['orgId']});
-          var cntrl =  this.searchForm.get("searchCustomerId");
+          this.searchForm.patchValue({ "searchCustomerId": this.LoginUserDetail[0]['orgId'] });
+          var cntrl = this.searchForm.get("searchCustomerId");
           cntrl.disable();
           this.GetOrganizationDetail();
         }
@@ -251,9 +267,11 @@ export class OrganizationComponent implements OnInit {
       "OrganizationName",
       "LogoPath",
       "Address",
-      "City",
-      "State",
-      "Country",
+      "CityId",
+      "StateId",
+      "CountryId",
+      "RegistrationNo",
+      "WebSite",
       "Contact",
       "ValidFrom",
       "ValidTo",
@@ -266,9 +284,25 @@ export class OrganizationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //var customerapp;
-        this.OrganizationList = [...data.value];
-        this.dataSource = new MatTableDataSource<any>(this.OrganizationList);
-        this.dataSource.paginator = this.paginator;
+        //console.log("data.value[0]",data.value[0])
+        if(data.value.length>0)
+        {
+          data.value[0].CreatedDate= moment(data.value[0].CreatedDate).format("DD/MM/YYYY")
+          data.value[0].ValidTo= moment(data.value[0].ValidTo).format("DD/MM/YYYY")
+        this.searchForm.patchValue(data.value[0])
+        this.OrganizationId = data.value[0].OrganizationId;
+        this.imgURL = globalconstants.apiUrl + "/uploads/"+ this.LoginUserDetail[0]["org"] +"/organization logo/"+ data.value[0].LogoPath;
+        this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].CountryId,this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.States = [...data.value];
+        });
+        this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].StateId,this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.City =  [...data.value];
+        });
+        }
+        //this.dataSource = new MatTableDataSource<any>(this.OrganizationList);
+        //this.dataSource.paginator = this.paginator;
 
         // var _OrgLogoParentId = this.StorageFnPList.filter(f => f.FileName.toLowerCase() == "organization logo")[0].FileId;
         // this.GetStorageFnP(_OrgLogoParentId).subscribe((imgurldata: any) => {
@@ -300,6 +334,7 @@ export class OrganizationComponent implements OnInit {
     reader.readAsDataURL(files[0]);
     reader.onload = (_event) => {
       this.imgURL = reader.result;
+      //console.log("imgurl",this.imgURL);
     }
   }
   uploadFile() {
@@ -348,16 +383,24 @@ export class OrganizationComponent implements OnInit {
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.loading = false;
       this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-
+      this.LogoPath = this.selectedFile.name;
       //this.Edit = false;
     });
   }
-  onBlur(element) {
+  OnBlur() {
     //debugger;
-    element.Action = true;
+    this.Action = true;
     //element.Amount = element["AmountPerMonth"] * element.PaidMonths;
   }
-
+  deActivate(event) {
+    debugger;
+    if (event.checked) {
+      this.Action = true;
+    }
+    else {
+      this.Action = false;
+    }
+  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {
@@ -377,13 +420,15 @@ export class OrganizationComponent implements OnInit {
 }
 export interface IOrganization {
   OrganizationId: number;
-  OrganizationName: '';
-  LogoPath: '';
-  Address: '';
-  City: number;
-  State: number;
-  Country: number;
-  Contact: '';
+  OrganizationName: string;
+  LogoPath: string;
+  Address: string;
+  CityId: number;
+  StateId: number;
+  CountryId: number;
+  RegistrationNo: string;
+  WebSite:string;
+  Contact: string;
   ValidFrom: Date;
   ValidTo: Date;
   Active: number;

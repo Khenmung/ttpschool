@@ -51,12 +51,12 @@ export class TokenStorageService {
     localStorage.removeItem(BATCHES);
     localStorage.setItem(BATCHES, JSON.stringify(token));
   }
-  public getBatches(): string[]|null {
+  public getBatches(): object[]|null {
     var batch=localStorage.getItem(BATCHES);
     if (batch) {
-      return JSON.parse(JSON.stringify(batch));
+      return JSON.parse(batch);
     }
-    return [""];
+    return [{}];
     
   }
   public saveCurrentBatchStartEnd(token: any): void {

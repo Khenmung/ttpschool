@@ -89,13 +89,14 @@ export class OrganizationpaymentComponent implements OnInit {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-    if (this.LoginUserDetail.length != 0) {
-      this.UserId = this.LoginUserDetail[0]["userId"];
-      this.OrgId = this.LoginUserDetail[0]["orgId"];
-    }
-    else {
+    if (this.LoginUserDetail.length == 0) {
       this.UserId = localStorage.getItem("userId");
       this.OrgId = +localStorage.getItem("orgId");
+    }
+    else {
+     
+      this.UserId = this.LoginUserDetail[0]["userId"];
+      this.OrgId = this.LoginUserDetail[0]["orgId"];
 
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT);
       if (perObj.length > 0)

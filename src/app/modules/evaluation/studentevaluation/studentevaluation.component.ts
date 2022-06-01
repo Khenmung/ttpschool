@@ -592,8 +592,9 @@ export class StudentEvaluationComponent implements OnInit {
     debugger;
     this.loading = true;
     var filterstr = ''
+    var studentobj = this.searchForm.get("searchStudentName").value;
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
-    if (this.ClassId == undefined) {
+    if (studentobj.ClassId == undefined) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -610,7 +611,7 @@ export class StudentEvaluationComponent implements OnInit {
       this.contentservice.openSnackBar("Please select exam/test/session.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    var studentobj = this.searchForm.get("searchStudentName").value;
+    
     var _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _EvaluationMasterId && f.ExamId == _examId);
     this.RelevantEvaluationListForSelectedStudent = [];
     var __classGroupId = 0;

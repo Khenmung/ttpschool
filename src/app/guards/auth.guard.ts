@@ -3,10 +3,12 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Rout
 import { Observable } from 'rxjs';
 import { SharedataService } from '../shared/sharedata.service';
 import { AuthService } from '../_services/auth.service';
+import { TokenStorageService } from '../_services/token-storage.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate{
     constructor(
+        private token:TokenStorageService,
         private shareddata:SharedataService,
         private authService:AuthService,
         private router:Router){}
@@ -20,21 +22,22 @@ export class AuthGuard implements CanActivate{
         | Promise<boolean 
         | UrlTree> {
         var userData; 
-        this.shareddata.CurrentUserInfo.subscribe(s=>userData =s);
+        var loginUserDetail = this.token.getUserDetail();
         //debugger;
-        if(userData && userData.sub){ // sub represents user id value
-            if(state.url.indexOf("/login") != -1){
-                // loggin user trying to access login page
-                this.router.navigate(["/dashboard"]);
-                return false;
-            }
-            else{
-                return true;
-            }
+        if(loginUserDetail!=null){ // sub represents user id value
+            return true;
+            // if(state.url.indexOf("/auth/login") != -1){
+            //     // loggin user trying to access login page
+            //     this.router.navigate(["/dashboard"]);
+            //     return false;
+            // }
+            // else{
+            //     return true;
+            // }
         }else{
-            if(state.url.indexOf("/login") == -1){
+            if(state.url.indexOf("/auth/login") == -1){
                 // not logged in users only navigate to login page
-                this.router.navigate(["/login"]);
+                this.router.navigate(["/auth/login"]);
                 return false;
             }
             else{
