@@ -11,6 +11,7 @@ import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimar
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
 import { StudentfamilynfriendComponent } from '../studentfamilynfriend/studentfamilynfriend.component';
 import { Router } from '@angular/router';
+import { SportsResultComponent } from '../sportsresult/sportsresult.component';
 
 @Component({
   selector: 'app-studentboard',
@@ -25,10 +26,12 @@ export class StudentboardComponent implements AfterViewInit {
     GenerateCertificateComponent,
     StudentDocumentComponent,
     StudentattendancereportComponent,
-    StudentprogressreportComponent
+    StudentprogressreportComponent,
+    SportsResultComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -75,6 +78,7 @@ export class StudentboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ACTIVITY)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -121,6 +125,9 @@ export class StudentboardComponent implements AfterViewInit {
         break;
       case globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS:
         comindx = this.components.indexOf(StudentfamilynfriendComponent);
+        break;
+      case globalconstants.Pages.edu.STUDENT.ACTIVITY:
+        comindx = this.components.indexOf(SportsResultComponent);
         break;
     }
 

@@ -35,6 +35,7 @@ export class BatchdashboardComponent implements OnInit {
     BatchName: '',
     StartDate: Date,
     EndDate: Date,
+    CurrentBatch:0,
     OrgId: 0,
     Active: 1
   };
@@ -43,6 +44,7 @@ export class BatchdashboardComponent implements OnInit {
     'BatchName',
     'StartDate',
     'EndDate',
+    'CurrentBatch',
     'Active',
     'Action'
   ];
@@ -95,6 +97,7 @@ export class BatchdashboardComponent implements OnInit {
       'BatchName',
       'StartDate',
       'EndDate',
+      'CurrentBatch',
       'OrgId',
       'Active'
     ];
@@ -120,6 +123,7 @@ export class BatchdashboardComponent implements OnInit {
       BatchName: 'new batch name',
       StartDate: new Date(),
       EndDate: new Date(),
+      CurrentBatch:0,
       OrgId: +this.LoginUserDetail[0]["orgId"],
       Active: 1
     }
@@ -185,6 +189,7 @@ export class BatchdashboardComponent implements OnInit {
           this.BatchData.BatchName = row.BatchName;
           this.BatchData.StartDate = row.StartDate;
           this.BatchData.EndDate = row.EndDate;
+          this.BatchData.CurrentBatch = row.CurrentBatch;
           this.BatchData.OrgId = this.LoginUserDetail[0]["orgId"];
           if (this.BatchData.BatchId == 0) {
             this.BatchData["CreatedDate"] = new Date();
@@ -240,6 +245,7 @@ export interface IBatches {
   BatchName: string;
   StartDate: Date;
   EndDate: Date;
+  CurrentBatch:number;
   OrgId: number;
   Active;
 }

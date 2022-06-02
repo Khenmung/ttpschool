@@ -20,7 +20,7 @@ export class globalconstants {
     public static DeletedMessage = 'Data deleted sucessfully.';
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
-    public static UserLoginCreated = 'User login create! Please check your email for email verification.';
+    public static UserLoginCreated = 'User login created! Please check your email for email verification.';
     public static TechnicalIssueMessage = 'There is a technical issue! Please contact your administrator.';
     public static PermissionDeniedMessage = 'Permission Denied!';
     public static ActionText = 'X';
@@ -152,7 +152,8 @@ export class globalconstants {
                     'FEEPAYMENT': 'fee payment',
                     'FEERECEIPT': 'fee receipt',
                     'STUDENTAPROFILE': 'student profile',
-                    'SIBLINGSNFRIENDS': 'siblings n friends'
+                    'SIBLINGSNFRIENDS': 'siblings n friends',
+                    'ACTIVITY': 'student activity'
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
@@ -248,8 +249,10 @@ export class globalconstants {
                 "BLOODGROUP": "blood group",
                 "HOLIDAYLIST": "holiday type",
                 "ROLE": "role",                
-                "CONFIGTYPE": "Variable config type"
-                
+                "CONFIGTYPE": "Variable config type",
+                "ACTIVITYNAME":"activity name",                
+                "ACTIVITYCATEGORY":"activity category",                
+                "ACTIVITYSESSION":"activity session"                
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",

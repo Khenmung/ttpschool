@@ -44,5 +44,5 @@ export const settingsComponent = [
   AddMasterDataComponent,
   OrganizationComponent,
   SingleorganizationComponent,
-  CustomerPlansComponent  
+  CustomerPlansComponent,
 ]

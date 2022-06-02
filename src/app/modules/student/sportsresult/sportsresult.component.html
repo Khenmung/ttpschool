@@ -1,0 +1,133 @@
+<div style="padding:15px 15px 10px 15px;">
+    <div><strong>Student Activity</strong></div>
+</div>
+<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<div style="width: 100%;">
+    <form [formGroup]="searchForm">
+        <span *ngIf="StudentClassId==0">
+            <mat-form-field appearance="outline" [style.width.px]="300">
+                <mat-label>Student</mat-label>
+                <input type="text" matInput (click)="SetStudentClassId()" formControlName="searchStudentName"
+                    [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                        {{option.Name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSportsResult(0)">
+                <mat-icon>search</mat-icon>
+            </button>
+        </span>
+    </form>
+    <mat-table #table [dataSource]="dataSource">
+        <ng-container matColumnDef="SportResultId">
+            <mat-header-cell *matHeaderCellDef>Id
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.SportResultId}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Achievement">
+            <mat-header-cell *matHeaderCellDef>Achievement
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input matInput [maxlength]="250" (blur)="onBlur(element)" [value]="element.Achievement"
+                        [(ngModel)]="element.Achievement">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SportsNameId">
+            <mat-header-cell *matHeaderCellDef>Activity
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.SportsNameId" (selectionChange)="onBlur(element)"
+                        [value]="element.SportsNameId">
+                        <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="CategoryId">
+            <mat-header-cell *matHeaderCellDef>Category
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.CategoryId" (selectionChange)="SelectSubCategory(element,$event)"
+                        [value]="element.CategoryId">
+                        <mat-option *ngFor="let item of ActivityCategory" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SubCategoryId">
+            <mat-header-cell *matHeaderCellDef>Sub Category
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.SubCategoryId" (selectionChange)="onBlur(element)"
+                        [value]="element.SubCategoryId">
+                        <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SessionId">
+            <mat-header-cell *matHeaderCellDef>Session
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select [(ngModel)]="element.SessionId" (selectionChange)="onBlur(element)"
+                        [value]="element.SessionId">
+                        <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="AchievementDate">
+            <mat-header-cell *matHeaderCellDef> Achievement Date </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-label>End Date</mat-label>
+                    <input [value]="element.AchievementDate" [(ngModel)]="element.AchievementDate" matInput
+                        [matDatepicker]="AchievementDate" (dateChange)="onBlur(element)" autocomplete="off">
+                    <mat-datepicker-toggle matSuffix [for]="AchievementDate"></mat-datepicker-toggle>
+                    <mat-datepicker #AchievementDate></mat-datepicker>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Active">
+            <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" style="justify-content: center;">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                    [checked]="element.Active==1?true:false">
+                </mat-checkbox>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Action">
+            <mat-header-cell *matHeaderCellDef>
+                <button [disabled]="loading || Permission=='read' || StudentClassId==0" matTooltip="add new"
+                    mat-mini-fab (click)="AddNew()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                    (click)="UpdateOrSave(element)">
+                    <mat-icon>save</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
+            style="align-items: center;"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="[3,5,10,20,50]"></mat-paginator>
+</div>
