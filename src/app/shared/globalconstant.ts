@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "https://api.ttpsolutions.in";//"http://localhost:8020";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:5000";//"http://localhost:8020";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -505,7 +505,26 @@ export class globalconstants {
         return filterstr;
 
     }
-
+    public static formatError(err)
+    {
+        var errorMessage='';
+          var modelState;
+          if (err.error.ModelState != null)
+            modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+          else if (err.error != null)
+            modelState = JSON.parse(JSON.stringify(err.error));
+          else
+            modelState = JSON.parse(JSON.stringify(err));
+  
+          //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+          for (var key in modelState) {
+            if (modelState.hasOwnProperty(key) && (key.toLowerCase() == 'errors' || key.toLowerCase() == 'error')) {
+              for(var key1 in modelState[key])
+              errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key][key1];
+            }
+          }
+          return  errorMessage;
+    }
     public static getPermission(tokenservice: TokenStorageService, feature: any) {
         var checkBatchIdNSelectedId = 0;
         var loginUserDetail = tokenservice.getUserDetail();

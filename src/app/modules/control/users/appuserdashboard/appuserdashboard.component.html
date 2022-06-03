@@ -12,7 +12,7 @@
                     <input type="text" matInput formControlName="searchUserName" [matAutocomplete]="auto">
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                         <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                            {{option.UserName}}
+                            {{option.Email}}
                         </mat-option>
                     </mat-autocomplete>
                 </mat-form-field>

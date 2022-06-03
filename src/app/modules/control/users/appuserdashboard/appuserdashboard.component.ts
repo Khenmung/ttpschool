@@ -102,8 +102,8 @@ export class AppuserdashboardComponent implements OnInit {
     this.filteredOptions = this.searchForm.get("searchUserName").valueChanges
       .pipe(
         startWith(''),
-        map(value => typeof value === 'string' ? value : value.UserName),
-        map(UserName => UserName ? this._filter(UserName) : this.Users.slice())
+        map(value => typeof value === 'string' ? value : value.Email),
+        map(email => email ? this._filter(email) : this.Users.slice())
       );
     this.OrgIdAndBatchIdFilter = globalconstants.getStandardFilterWithBatchId(this.tokenStorage);
     this.PageLoad();
@@ -111,11 +111,11 @@ export class AppuserdashboardComponent implements OnInit {
   private _filter(name: string): IUser[] {
 
     const filterValue = name.toLowerCase();
-    return this.Users.filter(option => option.UserName.toLowerCase().includes(filterValue));
+    return this.Users.filter(option => option.Email.toLowerCase().includes(filterValue));
 
   }
   displayFn(user: IUser): string {
-    return user && user.UserName ? user.UserName : '';
+    return user && user.Email ? user.Email : '';
   }
   PageLoad() {
     debugger;
@@ -235,7 +235,7 @@ export class AppuserdashboardComponent implements OnInit {
             this.Users.push(
               {
                 Id: '',
-                UserName: userdetail.EmailAddress,
+                UserName: userdetail.FullName,
                 Email: userdetail.EmailAddress,
                 Active: 0
               }
@@ -280,16 +280,17 @@ export class AppuserdashboardComponent implements OnInit {
       "EmailAddress"
     ];
     list.PageName = "EmpEmployees";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginDetail[0]['orgId']];
+    list.filter = ["Active eq 1 and EmailAddress ne '' and OrgId eq " + this.LoginDetail[0]['orgId']];
     this.UserDetail = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         data.value.forEach(employee => {
-          if (employee.EmailAddress.length > 0) {
+          //if (employee.EmailAddress!=null) {
+            employee.LastName = employee.LastName==null?'':employee.LastName;
             employee.FullName = employee.FirstName + " " + employee.LastName;
             this.UserDetail.push(employee);
-          }
+          //}
         })
         this.GetUsers()
       });
@@ -403,6 +404,27 @@ export class AppuserdashboardComponent implements OnInit {
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
         this.loading = false;
+      },err => {
+        debugger;
+        this.loading = false;
+        this.errorMessage = '';
+        var modelState;
+        if (err.error.ModelState != null)
+          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+        else if (err.error != null)
+          modelState = JSON.parse(JSON.stringify(err.error));
+        else
+          modelState = JSON.parse(JSON.stringify(err));
+
+        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        for (var key in modelState) {
+          if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+            for(var key1 in modelState[key])
+            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
+            //errors.push(modelState[key]);//list of error messages in an array
+          }
+        }
+        this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       });
 
   }
@@ -562,6 +584,27 @@ export class AppuserdashboardComponent implements OnInit {
           this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
+        },err => {
+          debugger;
+          this.loading = false;
+          this.errorMessage = '';
+          var modelState;
+          if (err.error.ModelState != null)
+            modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+          else if (err.error != null)
+            modelState = JSON.parse(JSON.stringify(err.error));
+          else
+            modelState = JSON.parse(JSON.stringify(err));
+  
+          //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+          for (var key in modelState) {
+            if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+              for(var key1 in modelState[key])
+              this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
+              //errors.push(modelState[key]);//list of error messages in an array
+            }
+          }
+          this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
         });
 
   }

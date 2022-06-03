@@ -337,22 +337,32 @@ export class EmployeesearchComponent implements OnInit {
   GetEmployees() {
     this.loading = true;
     let list: List = new List();
-    list.fields = ["EmpEmployeeId", "EmployeeCode", "FirstName", "LastName", "ContactNo"];
-    list.PageName = "EmpEmployees";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.fields = ["ManagerId", "ReportingTo"];
+    //list.PageName = "EmpEmployees";
+    //list.filter = [
+    var checkFilterString = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    list.lookupFields = ["Employee($select=EmpEmployeeId,EmployeeCode,FirstName,LastName,ShortName,ContactNo)"]
+    list.filter = [checkFilterString + 
+      " and IsCurrent eq 1 and Active eq 1 and (ManagerId eq " + localStorage.getItem("employeeId") + 
+      " or ReportingTo eq " + localStorage.getItem("employeeId") + 
+      " or EmployeeId eq " + localStorage.getItem("employeeId") + 
+      ")"];
+
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
-          this.Employees = data.value.map(Employee => {
-            var _lastname = Employee.LastName == null ? '' : Employee.LastName
-            var _name = Employee.FirstName + " " + _lastname;
-            var _fullDescription = _name + "-" + Employee.ContactNo;
+          this.Employees = data.value.map(history => {
+            var _lastname = history.Employee.LastName == null ? '' : history.Employee.LastName
+            var _name = history.Employee.FirstName + " " + _lastname;
+            var _fullDescription = _name + "-" + history.Employee.ContactNo;
             return {
-              EmployeeId: Employee.EmpEmployeeId,
-              EmployeeCode: Employee.EmployeeCode,
+              EmployeeId: history.Employee.EmpEmployeeId,
+              EmployeeCode: history.Employee.EmployeeCode,
               Name: _fullDescription
             }
           })

@@ -148,13 +148,15 @@ export class OrganizationComponent implements OnInit {
     this.contentservice.GetDropDownDataFromDB(element.value, this.OrgId, commonAppId)
       .subscribe((data: any) => {
         this.States = [...data.value];
-      })
+        this.Action = true;
+      })      
   }
   PopulateCity(element) {
     var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
     this.contentservice.GetDropDownDataFromDB(element.value, this.OrgId, commonAppId)
       .subscribe((data: any) => {
         this.City = [...data.value];
+        this.Action = true;
       })
   }
   updateActive(row, value) {

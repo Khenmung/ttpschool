@@ -81,7 +81,7 @@
             </div>
         </form>
         <div class="alert alert-success" style="display: flex; justify-content: center;" *ngIf="isSuccessful">
-            Login now
+            <span style="margin-right: 15px;">Login now</span>
             <button [disabled]="loading" (click)="gotologin()" class="mat-raised-button" matTooltip="login">
                 <mat-icon>login</mat-icon>
             </button>         

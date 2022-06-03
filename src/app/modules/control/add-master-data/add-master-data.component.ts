@@ -445,7 +445,7 @@ export class AddMasterDataComponent implements OnInit {
       if (duplicate.length > 0) {
         this.loading = false;
         //this.contentservice.openSnackBar("Data already exists in this master", this.optionNoAutoClose);
-        this.contentservice.openSnackBar("Data already exists in this master", globalconstants.ActionText, globalconstants.RedBackground);
+        this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
     }
@@ -454,7 +454,7 @@ export class AddMasterDataComponent implements OnInit {
         && item.MasterDataId != row.MasterDataId && item.ApplicationId == row.ApplicationId && item.OrgId == row.OrgId);
       if (duplicate.length > 0) {
         this.loading = false;
-        this.contentservice.openSnackBar("Data already exists!", globalconstants.ActionText, globalconstants.RedBackground);
+        this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
     }
@@ -504,7 +504,11 @@ export class AddMasterDataComponent implements OnInit {
               this.GetMastersForAutoComplete();
             }
           }
-        }, error => console.log('insert error', error));
+        }, err => {
+          var errorMessage = globalconstants.formatError(err);
+          this.loading=false;
+          this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        });
     }
     else {
       //console.log('data to update', mastertoUpdate);

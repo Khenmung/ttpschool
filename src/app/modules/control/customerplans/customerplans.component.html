@@ -3,9 +3,12 @@
         <div style="font-size: x-large;display: flex; justify-content: center; align-items: center;"><strong>My
                 Plan</strong></div>
     </div>
-    <span *ngIf="loading" style="display: flex;justify-content: center;">
-        <span>Please wait while setting your data</span>
-        <mat-spinner diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <span style="width:100%;display: flex;justify-content: center;">
+        <span *ngIf="loading"
+            style="display: flex;justify-content: center;width:550px;padding:15px;border:1px solid lightgray">
+            <span>Please wait while setting your data..</span>
+            <span><mat-spinner diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner></span>
+        </span>
     </span>
     <!-- <alert></alert> -->
     <div style="padding: 15px;" fxLayout="row wrap">
@@ -28,7 +31,7 @@
                 </div>
             </form>
 
-            <mat-table #table [dataSource]="dataSource" style="width: 1400px;">
+            <mat-table #table [dataSource]="dataSource" style="max-width: 1400px;">
                 <ng-container matColumnDef="PlanName">
                     <mat-header-cell *matHeaderCellDef>Plan
                     </mat-header-cell>

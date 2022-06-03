@@ -83,7 +83,7 @@
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
                 <mat-label>City</mat-label>
-                <mat-select formControlName="CityId">
+                <mat-select formControlName="CityId" (selectionChange)="OnBlur()">
                     <mat-option *ngFor="let item of City" [value]="item.MasterDataId">
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>

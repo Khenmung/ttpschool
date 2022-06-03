@@ -31,20 +31,13 @@ export class roleuserdashboardComponent implements OnInit {
   exceptionColumns: boolean;
   CurrentRow: any = {};
   FeePayable = true;
-  //filteredOptions: Observable<string[]>;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  SelectedApplicationId=0;
+
+  SelectedApplicationId = 0;
   Departments = [];
   Locations = [];
   Applications = [];
   Roles = [];
+  RolesTemp = [];
   Users: IUser[] = [];
   filteredOptions: Observable<IUser[]>;
   RoleUserList: IRoleUsers[];
@@ -53,7 +46,7 @@ export class roleuserdashboardComponent implements OnInit {
   searchForm = this.fb.group({
     searchUserName: [''],
   });
-  Permission='';
+  Permission = '';
   SelectedBatchId = 0;
   filterOrgIdNBatchId = '';
   RoleUserId = 0;
@@ -74,11 +67,11 @@ export class roleuserdashboardComponent implements OnInit {
   currentRoute = '';
   constructor(private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private authservice: AuthService,
     private nav: Router,
     private shareddata: SharedataService,
-    private contentservice:ContentService,
+    private contentservice: ContentService,
     private fb: FormBuilder) {
   }
 
@@ -117,7 +110,7 @@ export class roleuserdashboardComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-      this.GetMasterData();
+        this.GetMasterData();
       }
     }
 
@@ -153,13 +146,17 @@ export class roleuserdashboardComponent implements OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+  // removeadmin() {
+  //   this.RolesTemp = this.Roles.filter(f => f.MasterDataName != 'Admin');
 
+  // }
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.Roles = this.getDropDownData(globalconstants.MasterDefinitions.common.ROLE);
+        this.RolesTemp = [...this.Roles];
         this.Departments = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.DEPARTMENT);
         this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
 
@@ -193,7 +190,8 @@ export class roleuserdashboardComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'Id',
-      'UserName'
+      'UserName',
+      'Email'
     ];
 
     list.PageName = "AuthManagement";
@@ -212,7 +210,7 @@ export class roleuserdashboardComponent implements OnInit {
   GetRoleUser() {
 
     var filterstr = '';
-    if (this.searchForm.get("searchUserName").value != '')
+    if (this.searchForm.get("searchUserName").value.Id != undefined)
       filterstr = " and UserId eq '" + this.searchForm.get("searchUserName").value.Id + "'"
     this.loading = true;
     let list: List = new List();
@@ -244,7 +242,7 @@ export class roleuserdashboardComponent implements OnInit {
               this.RoleUserList.push({
                 RoleUserId: item.RoleUserId,
                 UserId: item.UserId,
-                User: validuser[0].UserName,
+                User: validuser[0].Email,
                 RoleId: item.RoleId,
                 Role: _roleName,
                 Active: item.Active
@@ -276,7 +274,15 @@ export class roleuserdashboardComponent implements OnInit {
     row.Action = true;
   }
   onBlur(row) {
-    row.Action = true;
+
+    var _selectedRoleObj = this.Roles.filter(f => f.MasterDataId == row.RoleId);
+
+    if (_selectedRoleObj.length > 0) {
+      if (_selectedRoleObj[0].MasterDataName == 'Admin')
+        this.contentservice.openSnackBar("Admin can not be assigned.", globalconstants.ActionText, globalconstants.RedBackground);
+      else
+        row.Action = true;
+    }
   }
 
   UpdateOrSave(row) {
@@ -285,16 +291,16 @@ export class roleuserdashboardComponent implements OnInit {
     this.loading = true;
 
     if (row.RoleId == 0) {
-      this.contentservice.openSnackBar("Please select role", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select role", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.CurrentBatch == 1 && row.Active == 0) {
-      this.contentservice.openSnackBar("Current batch should be active!", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Current batch should be active!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     var StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-    let checkFilterString = "OrgId eq "+ this.LoginUserDetail[0]['orgId'] +" and UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId + " and " + StandardFilter;
+    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]['orgId'] + " and UserId eq '" + row.UserId + "' and RoleId eq " + row.RoleId + " and " + StandardFilter;
 
     if (row.RoleUserId > 0)
       checkFilterString += " and RoleUserId ne " + row.RoleUserId;
@@ -357,7 +363,7 @@ export class roleuserdashboardComponent implements OnInit {
         (data: any) => {
           this.loading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {
@@ -387,5 +393,6 @@ export interface IRoleUsers {
 export interface IUser {
   Id: string;
   UserName: string;
+  Email: string;
 }
 

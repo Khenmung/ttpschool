@@ -38,11 +38,11 @@
                         </div>
                         <div style="margin: 5px;" fxLayout="column" fxLayoutAlign="center center">
                             
-                                <button [disabled]="loading" class="mat-flat-button" matTooltip="select file"
+                                <button [disabled]="loading || Permission=='read'" class="mat-flat-button" matTooltip="select file"
                                     (click)="inputfile.click()">
                                     <mat-icon aria-label="photo">photo</mat-icon>
                                 </button>&nbsp;&nbsp;
-                                <button [disabled]="loading" type="submit" (click)="uploadFile()"
+                                <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile()"
                                     matTooltip="upload file" class="mat-flat-button">
                                     <mat-icon aria-label="file_upload">file_upload</mat-icon>
                                 </button>&nbsp;&nbsp;
@@ -122,7 +122,6 @@
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Blood group</mat-label>
                         <mat-select formControlName="BloodgroupId" (selectionChange)="OnBlur()">
-                            <mat-option value="0">---</mat-option>
                             <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>

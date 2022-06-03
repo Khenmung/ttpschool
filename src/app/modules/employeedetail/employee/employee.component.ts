@@ -179,7 +179,7 @@ export class EmployeeComponent implements OnInit {
       PFAccountNo: [''],
       NatureId: [0],
       EmployeeCode: [''],
-      Active: [0, [Validators.required]],
+      Active: [1, [Validators.required]],
       Remarks: [''],
       PresentAddress: [''],
       PermanentAddress: [''],
@@ -583,6 +583,7 @@ export class EmployeeComponent implements OnInit {
             this.SelectPermanentCity(stud.PermanentAddressStateId);
 
             this.EmployeeId = stud.EmpEmployeeId;
+            stud.EmployeeCode = stud.EmployeeCode==null?'':stud.EmployeeCode;
             let EmployeeName = stud.EmployeeCode + ' ' + stud.FirstName + ' ' + (stud.LastName == null ? '' : stud.LastName);
             this.shareddata.ChangeEmployeeName(EmployeeName);
             this.tokenService.saveEmployeeId(stud.EmpEmployeeId);

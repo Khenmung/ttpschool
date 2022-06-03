@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
@@ -51,6 +52,7 @@ export class EmployeeboardComponent implements AfterViewInit {
   public viewContainer: ViewContainerRef;
 
   constructor(
+    private nav:Router,
     private cdr: ChangeDetectorRef,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
@@ -83,7 +85,10 @@ export class EmployeeboardComponent implements AfterViewInit {
       this.cdr.detectChanges();
     }
   }
-
+back()
+{
+  this.nav.navigate(["/employee"]);
+}
   public tabChange(index: number) {
     setTimeout(() => {
       this.renderComponent(index);
