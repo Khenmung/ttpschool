@@ -341,14 +341,16 @@ export class EmployeesearchComponent implements OnInit {
     //list.PageName = "EmpEmployees";
     //list.filter = [
     var checkFilterString = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    list.PageName = "EmpEmployeeGradeSalHistories";
-    list.lookupFields = ["Employee($select=EmpEmployeeId,EmployeeCode,FirstName,LastName,ShortName,ContactNo)"]
-    list.filter = [checkFilterString + 
-      " and IsCurrent eq 1 and Active eq 1 and (ManagerId eq " + localStorage.getItem("employeeId") + 
+    if(this.LoginUserDetail[0]["RoleUsers"][0].role=="Employee")
+    {      
+      checkFilterString += " and IsCurrent eq 1 and Active eq 1 and (ManagerId eq " + localStorage.getItem("employeeId") + 
       " or ReportingTo eq " + localStorage.getItem("employeeId") + 
       " or EmployeeId eq " + localStorage.getItem("employeeId") + 
-      ")"];
+      ")"
+    }
+    list.PageName = "EmpEmployeeGradeSalHistories";
+    list.lookupFields = ["Employee($select=EmpEmployeeId,EmployeeCode,FirstName,LastName,ShortName,ContactNo)"]
+    list.filter = [checkFilterString];
 
 
     this.dataservice.get(list)

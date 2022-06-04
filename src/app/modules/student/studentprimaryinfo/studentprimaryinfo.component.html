@@ -13,7 +13,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Name</mat-label>
-                            <input formControlName="FirstName" (blur)="OnBlur()" autocomplete="Off" #input matInput [maxlength]="50">
+                            <input formControlName="FirstName" (blur)="OnBlur()" autocomplete="Off" #input matInput
+                                [maxlength]="50">
                             <span class="text-danger"
                                 *ngIf="f.FirstName.touched && f.FirstName.hasError('required')">First Name
                                 is required.</span>
@@ -22,7 +23,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Last Name</mat-label>
-                            <input formControlName="LastName" autocomplete="Off" (blur)="OnBlur()" #input matInput [maxlength]="50">
+                            <input formControlName="LastName" autocomplete="Off" (blur)="OnBlur()" #input matInput
+                                [maxlength]="50">
                         </mat-form-field>
                     </mat-grid-tile>
 
@@ -50,9 +52,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Father's name</mat-label>
-                            <input formControlName="FatherName" 
-                            (blur)="OnBlur()"
-                            autocomplete="Off" #input matInput [maxlength]="50">
+                            <input formControlName="FatherName" (blur)="OnBlur()" autocomplete="Off" #input matInput
+                                [maxlength]="50">
                             <span class="text-danger"
                                 *ngIf="f.FatherName.touched && f.FatherName.hasError('required')">Father's
                                 name
@@ -62,9 +63,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Father's occupation</mat-label>
-                            <input formControlName="FatherOccupation" (blur)="OnBlur()"
-                             autocomplete="Off" #input matInput
-                                [maxlength]="50">
+                            <input formControlName="FatherOccupation" (blur)="OnBlur()" autocomplete="Off" #input
+                                matInput [maxlength]="50">
                             <span class="text-danger"
                                 *ngIf="f.FatherOccupation.touched && f.FatherOccupation.hasError('required')">Father's
                                 occupation is required.</span>
@@ -73,8 +73,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Mother's name</mat-label>
-                            <input formControlName="MotherName" (blur)="OnBlur()"
-                             autocomplete="Off" matInput [maxlength]="50">
+                            <input formControlName="MotherName" (blur)="OnBlur()" autocomplete="Off" matInput
+                                [maxlength]="50">
                             <span class="text-danger"
                                 *ngIf="f.MotherName.touched && f.MotherName.hasError('required')">Mother's
                                 name
@@ -84,8 +84,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Mother's Occupation</mat-label>
-                            <input formControlName="MotherOccupation" (blur)="OnBlur()"
-                             autocomplete="Off" matInput [maxlength]="50">
+                            <input formControlName="MotherOccupation" (blur)="OnBlur()" autocomplete="Off" matInput
+                                [maxlength]="50">
                             <span class="text-danger"
                                 *ngIf="f.MotherOccupation.touched && f.MotherOccupation.hasError('required')">Mother's
                                 occupation
@@ -100,7 +100,8 @@
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
-                            <span class="text-danger" *ngIf="f.GenderId.touched && f.GenderId.hasError('required')">Gender
+                            <span class="text-danger"
+                                *ngIf="f.GenderId.touched && f.GenderId.hasError('required')">Gender
                                 is required.</span>
                         </mat-form-field>
                     </mat-grid-tile>
@@ -140,9 +141,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>DOB</mat-label>
-                            <input formControlName="DOB" matInput 
-                            (dateChange)="OnBlur()"
-                            [matDatepicker]="picker" autocomplete="off">
+                            <input formControlName="DOB" matInput (dateChange)="OnBlur()" [matDatepicker]="picker"
+                                autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-datepicker #picker></mat-datepicker>
                         </mat-form-field>
@@ -150,13 +150,30 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline">
                             <mat-label>Class for which admission is sought</mat-label>
-                            <mat-select (selectionChange)="OnBlur()"
-                             formControlName="ClassAdmissionSought">
-                                <mat-option value="0">---</mat-option>
+                            <mat-select (selectionChange)="OnBlur()" formControlName="ClassAdmissionSought">
                                 <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
                                     {{p.ClassName}}
                                 </mat-option>
                             </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile [colspan]="1" [rowspan]="1">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Admission Status</mat-label>
+                            <mat-select formControlName="AdmissionStatusId" (selectionChange)="OnBlur()">
+                                <mat-option *ngFor="let p of AdmissionStatuses" [value]="p.MasterDataId">
+                                    {{p.MasterDataName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-grid-tile>
+                    <mat-grid-tile [colspan]="1" [rowspan]="1">
+                        <mat-form-field appearance="outline" fxFlex>
+                            <mat-label>Admission Date</mat-label>
+                            <input formControlName="AdmissionDate" matInput (dateChange)="OnBlur()" [matDatepicker]="AdmissionDate"
+                                autocomplete="off">
+                            <mat-datepicker-toggle matSuffix [for]="AdmissionDate"></mat-datepicker-toggle>
+                            <mat-datepicker #AdmissionDate></mat-datepicker>
                         </mat-form-field>
                     </mat-grid-tile>
                 </mat-grid-list>
@@ -188,41 +205,37 @@
             <div class="content" fxLayout="row wrap" fxLayoutGap="130px">
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Student's Contact no.</mat-label>
-                    <input formControlName="ContactNo" (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput [maxlength]="10">
+                    <input formControlName="ContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                        [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>WhatsApp No.</mat-label>
-                    <input formControlName="WhatsAppNumber" (blur)="OnBlur()"
-                     autocomplete="Off" matInput [maxlength]="10">
+                    <input formControlName="WhatsAppNumber" (blur)="OnBlur()" autocomplete="Off" matInput
+                        [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Father's contact no.</mat-label>
-                    <input formControlName="FatherContactNo" (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput [maxlength]="10">
+                    <input formControlName="FatherContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                        [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Mother's contact no.</mat-label>
-                    <input formControlName="MotherContactNo" (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput [maxlength]="10">
+                    <input formControlName="MotherContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                        [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Email Id</mat-label>
-                    <input type="email"
-                     formControlName="EmailAddress"
-                     (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput
-                        [maxlength]="50">
+                    <input type="email" formControlName="EmailAddress" (blur)="OnBlur()" autocomplete="Off" #Pincode
+                        matInput [maxlength]="50">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Aadhaar No</mat-label>
-                    <input formControlName="AadharNo" (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput [maxlength]="10">
+                    <input formControlName="AadharNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                        [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="250">
                     <mat-label>Permanent address</mat-label>
-                    <textarea formControlName="PermanentAddress" (blur)="OnBlur()"
-                     autocomplete="Off" matInput
+                    <textarea formControlName="PermanentAddress" (blur)="OnBlur()" autocomplete="Off" matInput
                         [maxlength]="250"></textarea>
                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                     <span class="text-danger"
@@ -231,8 +244,8 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline" [style.width.px]="250">
                     <mat-label>Present address</mat-label>
-                    <textarea formControlName="PresentAddress" (blur)="OnBlur()"
-                     autocomplete="Off" matInput [maxlength]="250"></textarea>
+                    <textarea formControlName="PresentAddress" (blur)="OnBlur()" autocomplete="Off" matInput
+                        [maxlength]="250"></textarea>
                     <!-- <mat-hint align="end">{{MotherName.value?.length || 0}}/50</mat-hint> -->
                     <span class="text-danger"
                         *ngIf="f.PresentAddress.touched && f.PresentAddress.hasError('required')">Present
@@ -251,21 +264,18 @@
                             <mat-form-field appearance="outline">
                                 <mat-label>Name Of contact person
                                 </mat-label>
-                                <input formControlName="NameOfContactPerson" (blur)="OnBlur()"
-                                 autocomplete="Off" matInput
-                                    [maxlength]="50">
+                                <input formControlName="NameOfContactPerson" (blur)="OnBlur()" autocomplete="Off"
+                                    matInput [maxlength]="50">
                             </mat-form-field>
                             <mat-form-field appearance="outline">
                                 <mat-label>Relation with contact person</mat-label>
-                                <input formControlName="RelationWithContactPerson" (blur)="OnBlur()"
-                                 autocomplete="Off" matInput
-                                    [maxlength]="50">
+                                <input formControlName="RelationWithContactPerson" (blur)="OnBlur()" autocomplete="Off"
+                                    matInput [maxlength]="50">
                             </mat-form-field>
                             <mat-form-field appearance="outline">
                                 <mat-label>Contact No.</mat-label>
-                                <input formControlName="ContactPersonContactNo" (blur)="OnBlur()"
-                                 autocomplete="Off" matInput
-                                    [maxlength]="50">
+                                <input formControlName="ContactPersonContactNo" (blur)="OnBlur()" autocomplete="Off"
+                                    matInput [maxlength]="50">
                             </mat-form-field>
                         </span>
                     </span>
@@ -284,8 +294,8 @@
                 <button [disabled]="loading" (click)="back()" class="mat-raised-button" matTooltip="back to search">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save" mat-raised-button
-                    color="accent">
+                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
+                    mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
@@ -298,18 +308,18 @@
             <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>Account no.</mat-label>
-                    <input formControlName="BankAccountNo" (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput [maxlength]="15">
+                    <input formControlName="BankAccountNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                        [maxlength]="15">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>IFSC</mat-label>
-                    <input formControlName="IFSCCode" (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput [maxlength]="10">
+                    <input formControlName="IFSCCode" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                        [maxlength]="10">
                 </mat-form-field>
                 <mat-form-field appearance="outline" fxFlex>
                     <mat-label>MICR No.</mat-label>
-                    <input formControlName="MICRNo" (blur)="OnBlur()"
-                     autocomplete="Off" #Pincode matInput [maxlength]="10">
+                    <input formControlName="MICRNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                        [maxlength]="10">
                 </mat-form-field>
             </div>
             <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
@@ -325,8 +335,8 @@
                     class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save" mat-raised-button
-                    color="accent">
+                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
+                    mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>
@@ -340,15 +350,13 @@
                 <div style="padding: 15px 15px 0px 15px;">
                     <mat-form-field appearance="outline">
                         <mat-label>Last school attended</mat-label>
-                        <input formControlName="TransferFromSchool" (blur)="OnBlur()"
-                         autocomplete="Off" #Pincode matInput
-                            [maxlength]="100">
+                        <input formControlName="TransferFromSchool" (blur)="OnBlur()" autocomplete="Off" #Pincode
+                            matInput [maxlength]="100">
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Percentage obtained in last examination</mat-label>
-                        <input formControlName="LastSchoolPercentage" (blur)="OnBlur()"
-                         autocomplete="Off" #Pincode matInput
-                            [maxlength]="10">
+                        <input formControlName="LastSchoolPercentage" (blur)="OnBlur()" autocomplete="Off" #Pincode
+                            matInput [maxlength]="10">
                     </mat-form-field>
                 </div>
                 <div style="padding: 15px 15px 0px 15px">
@@ -363,9 +371,8 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
-                        <input formControlName="Remarks" 
-                        (blur)="OnBlur()"
-                        autocomplete="Off" #Pincode matInput [maxlength]="250">
+                        <input formControlName="Remarks" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
+                            [maxlength]="250">
                     </mat-form-field>
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
@@ -388,8 +395,8 @@
                 <button [disabled]="loading" (click)="back()" alt="back" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
-                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save" mat-raised-button
-                    color="accent">
+                <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
+                    mat-raised-button color="accent">
                     <mat-icon>save</mat-icon>
                 </button>
             </mat-card-actions>

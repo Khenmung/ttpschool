@@ -89,10 +89,10 @@ export class ExcelDataManagementComponent implements OnInit {
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
-      if (this.UploadTypes.length == 0)
-        this.GetMasterData();
-      else
-        this.GetStudents();
+      //if (this.UploadTypes.length == 0)
+      this.GetMasterData();
+      //else
+      this.GetStudents();
     }
   }
   NotMandatory = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
@@ -101,7 +101,7 @@ export class ExcelDataManagementComponent implements OnInit {
   NoNeedToCheckBlank = ["StudentId", "BatchId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
     "MotherContactNo", "AlternateContact", "EmailAddress",
     "TransferFromSchool", "TransferFromSchoolBoard",
-    "Gender", "Religion", "Category", "Bloodgroup",
+    "Gender", "Religion", "Category", "Bloodgroup", "Club", "House",
     "PrimaryContactFatherOrMother", "Remarks"];
 
   ErrorMessage = '';
@@ -121,6 +121,7 @@ export class ExcelDataManagementComponent implements OnInit {
   fileUploaded: File;
   worksheet: any;
   selectedFile: string;
+  Houses = [];
   Clubs = [];
   Classes = [];
   Batches = [];
@@ -133,6 +134,7 @@ export class ExcelDataManagementComponent implements OnInit {
   EmployeeTypes = [];
   States = [];
   Country = [];
+  AdmissionStatuses = [];
   PrimaryContact = [];
   Location = [];
   ActivityCategory = [];
@@ -162,26 +164,26 @@ export class ExcelDataManagementComponent implements OnInit {
         "LastName",
         "FatherName",
         "MotherName",
-        "GenderId",
+        "Gender",
         "PermanentAddress",
         "PresentAddress",
         "WhatsAppNumber",
-        "PermanentAddressCityId",
+        "PermanentAddressCity",
         "PermanentAddressPincode",
-        "PermanentAddressStateId",
-        "PermanentAddressCountryId",
-        "PresentAddressCityId",
-        "PresentAddressStateId",
-        "PresentAddressCountryId",
+        "PermanentAddressState",
+        "PermanentAddressCountry",
+        "PresentAddressCity",
+        "PresentAddressState",
+        "PresentAddressCountry",
         "DOB",
-        "BloodgroupId",
+        "Bloodgroup",
         "Category",
         "BankAccountNo",
         "IFSCCode",
         "MICRNo",
         "AadharNo",
         "Photo",
-        "ReligionId",
+        "Religion",
         "ContactNo",
         "AlternateContact",
         "EmailAddress",
@@ -204,6 +206,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "LocationId",
         "ReasonForLeavingId",
         "Club",
+        "House",
         "OrgId",
         "CreatedDate",
         "CreatedBy",
@@ -226,10 +229,10 @@ export class ExcelDataManagementComponent implements OnInit {
     this.ErrorMessage = '';
     readFile.onload = (e) => {
       this.storeData = readFile.result;
-      var _rowCount = this.storeData.length;
-      if (_rowCount > globalconstants.RowUploadLimit) {
-        this.storeData.slice(globalconstants.RowUploadLimit);
-      }
+      //var _rowCount = this.storeData.length;
+      // if (_rowCount > globalconstants.RowUploadLimit) {
+      //   this.storeData.slice(globalconstants.RowUploadLimit);
+      // }
       var data = new Uint8Array(this.storeData);
       ////console.log('data',data)
       var arr = new Array();
@@ -647,13 +650,18 @@ export class ExcelDataManagementComponent implements OnInit {
         if (element[d] == undefined && this.NoNeedToCheckBlank.filter(b => b == d).length == 0)
           this.ErrorMessage += d + " is required at row " + slno + ".<br>";
       })
-
+      debugger;
       //if (element.StudentId == undefined || element.StudentId == '' || element.StudentId == 0) {
       let GenderFilter = this.Genders.filter(g => g.MasterDataName.toLowerCase() == element.Gender.toLowerCase());
       if (GenderFilter.length == 0)
         this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
       else
         element.GenderId = GenderFilter[0].MasterDataId;
+      // let houseFilter = this.Houses.filter(g => g.MasterDataName.toLowerCase() == element.House.toLowerCase());
+      // if (houseFilter.length == 0)
+      //   this.ErrorMessage += "Invalid House at row " + slno + ":" + element.House + "<br>";
+      // else
+      //   element.HouseId = houseFilter[0].MasterDataId;
 
       let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase());
       if (BloodgroupFilter.length == 0)
@@ -673,6 +681,12 @@ export class ExcelDataManagementComponent implements OnInit {
       else
         element.ReligionId = ReligionFilter[0].MasterDataId;
 
+      let AdmissionStatusFilter = this.AdmissionStatuses.filter(g => g.MasterDataName.toLowerCase() == element.AdmissionStatus.toLowerCase());
+      if (AdmissionStatusFilter.length == 0)
+        this.ErrorMessage += "Invalid admission status at row " + slno + ":" + element.AdmissionStatus + "<br>";
+      else
+        element.AdmissionStatusId = AdmissionStatusFilter[0].MasterDataId;
+
       let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName.toLowerCase() == element.PrimaryContactFatherOrMother.toLowerCase());
       if (PrimaryContactFatherOrMotherFilter.length == 0)
         this.ErrorMessage += "Invalid PrimaryContactFatherOrMother at row " + slno + ":" + element.PrimaryContactFatherOrMother + "<br>";
@@ -683,7 +697,7 @@ export class ExcelDataManagementComponent implements OnInit {
       if (ClassAdmissionSoughtFilter.length == 0)
         this.ErrorMessage += "Invalid ClassAdmissionSought at row " + slno + ":" + element.ClassAdmissionSought + "<br>";
       else
-        element.ClassAdmissionSought = ClassAdmissionSoughtFilter[0].MasterDataId;
+        element.ClassAdmissionSought = ClassAdmissionSoughtFilter[0].ClassId;
 
       if (element.Club.length > 0) {
         let ClubObj = this.Clubs.filter(g => g.MasterDataName.toLowerCase() == element.Club.toLowerCase());
@@ -691,6 +705,56 @@ export class ExcelDataManagementComponent implements OnInit {
           this.ErrorMessage += "Invalid Club at row " + slno + ":" + element.Club + "<br>";
         else
           element.ClubId = ClubObj[0].MasterDataId;
+      }
+      if (element.PermanentAddressCountry.length > 0) {
+        let CountryObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressCountry.toLowerCase());
+        if (CountryObj.length == 0)
+          this.ErrorMessage += "Invalid country at row " + slno + ":" + element.PermanentAddressCountry + "<br>";
+        else {
+          element.PermanentAddressCountryId = CountryObj[0].MasterDataId;
+          if (element.PermanentAddressState.length > 0) {
+            let stateObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressState.toLowerCase()
+              && g.ParentId == element.PermanentAddressCountryId);
+            if (stateObj.length == 0)
+              this.ErrorMessage += "Invalid state at row " + slno + ":" + element.PermanentAddressState + "<br>";
+            else {
+              element.PermanentAddressStateId = stateObj[0].MasterDataId;
+              if (element.PermanentAddressCity.length > 0) {
+                let CityObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressCity.toLowerCase()
+                  && g.ParentId == element.PermanentAddressStateId);
+                if (CityObj.length == 0)
+                  this.ErrorMessage += "Invalid city at row " + slno + ":" + element.PermanentAddressCity + "<br>";
+                else
+                  element.PermanentAddressCityId = CityObj[0].MasterDataId;
+              }
+            }
+          }
+        }
+      }
+      if (element.PresentAddressCountry.length > 0) {
+        let CountryObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PresentAddressCountry.toLowerCase());
+        if (CountryObj.length == 0)
+          this.ErrorMessage += "Invalid country at row " + slno + ":" + element.PresentAddressCountry + "<br>";
+        else {
+          element.PresentAddressCountryId = CountryObj[0].MasterDataId;
+          if (element.PresentAddressState.length > 0) {
+            let stateObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PresentAddressState.toLowerCase()
+              && g.ParentId == element.PresentAddressCountryId);
+            if (stateObj.length == 0)
+              this.ErrorMessage += "Invalid state at row " + slno + ":" + element.PresentAddressState + "<br>";
+            else {
+              element.PresentAddressStateId = stateObj[0].MasterDataId;
+              if (element.PresentAddressCity.length > 0) {
+                let CityObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PresentAddressCity.toLowerCase()
+                  && g.ParentId == element.PresentAddressStateId);
+                if (CityObj.length == 0)
+                  this.ErrorMessage += "Invalid city at row " + slno + ":" + element.PresentAddressCity + "<br>";
+                else
+                  element.PresentAddressCityId = CityObj[0].MasterDataId;
+              }
+            }
+          }
+        }
       }
 
       element.StudentId = +element.StudentId;
@@ -766,13 +830,18 @@ export class ExcelDataManagementComponent implements OnInit {
 
   save() {
     var toInsert = [];
-    debugger;
+    this.loading = true;
     this.contentservice.GetStudentMaxPID(this.loginDetail[0]["orgId"])
       .subscribe((data: any) => {
-        var _MaxPID = 0;
+        var _MaxPID = 1;
         if (data.value.length > 0) {
-          _MaxPID = data.value[0].PID;
+          _MaxPID = data.value[0].PID + 1;
         }
+        debugger;
+        if (this.ELEMENT_DATA.length > globalconstants.RowUploadLimit) {
+          this.ELEMENT_DATA.splice(globalconstants.RowUploadLimit);
+        }
+        
 
         this.ELEMENT_DATA.forEach(row => {
           toInsert.push({
@@ -782,8 +851,9 @@ export class ExcelDataManagementComponent implements OnInit {
             "Active": +row["Active"],
             "AlternateContact": row["AlternateContact"],
             "BankAccountNo": row["BankAccountNo"],
-            "Bloodgroup": +row["Bloodgroup"],
-            "Category": +row["Category"],
+            "BloodgroupId": +row["BloodgroupId"],
+            "CategoryId": +row["CategoryId"],
+            "GenderId": +row["GenderId"],
             "ClassAdmissionSought": +row["ClassAdmissionSought"],
             "ContactNo": row["ContactNo"],
             "ContactPersonContactNo": row["ContactPersonContactNo"],
@@ -793,7 +863,6 @@ export class ExcelDataManagementComponent implements OnInit {
             "FatherName": row["FatherName"],
             "FatherOccupation": row["FatherOccupation"],
             "FirstName": row["FirstName"],
-            "Gender": +row["Gender"],
             "IFSCCode": row["IFSCCode"],
             "LastName": row["LastName"],
             "LastSchoolPercentage": row["LastSchoolPercentage"],
@@ -818,7 +887,7 @@ export class ExcelDataManagementComponent implements OnInit {
             "PrimaryContactFatherOrMother": +row["PrimaryContactFatherOrMother"],
             "ReasonForLeavingId": +row["ReasonForLeavingId"],
             "RelationWithContactPerson": row["RelationWithContactPerson"],
-            "Religion": +row["Religion"],
+            "ReligionId": +row["ReligionId"],
             "StudentDeclaration": +row["StudentDeclaration"],
             "TransferFromSchool": row["TransferFromSchool"],
             "TransferFromSchoolBoard": row["TransferFromSchoolBoard"],
@@ -828,24 +897,25 @@ export class ExcelDataManagementComponent implements OnInit {
             "CreatedDate": this.datepipe.transform(row["CreatedDate"], 'yyyy/MM/dd'),
             "WhatsAppNumber": row["WhatsAppNumber"],
             "ClubId": +row["ClubId"],
+            "AdmissionStatusId": +row["AdmissionStatusId"],
+            "AdmissionDate": row["AdmissionDate"],
             "BatchId": +row["BatchId"]
 
           });
         });
-      });
-    ////console.log("toInsert", toInsert)
-    this.dataservice.postPatch('Students', toInsert, 0, 'post')
-      .subscribe((result: any) => {
-        this.loading = false;
-        this.ELEMENT_DATA = [];
-        this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-      }, error => {
-        console.log("error from student upload:", error);
-        this.ErrorMessage = "Something went wrong. Please contact your administrator.";
-        this.contentservice.openSnackBar(this.ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
-      }
 
-      )
+        //console.log("toInsert", toInsert)
+        this.dataservice.postPatch('Students', toInsert, 0, 'post')
+          .subscribe((result: any) => {
+            this.loading = false;
+            this.ELEMENT_DATA = [];
+            this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+          }, error => {
+            console.log("error from student upload:", error);
+            this.ErrorMessage = "Something went wrong. Please contact your administrator.";
+            this.contentservice.openSnackBar(this.ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
+          })
+      });
   }
   updateStudentClass() {
     this.dataservice.postPatch('StudentClasses', this.studentData[0].element, this.studentData[0].element.StudentClassId, 'patch')
@@ -910,9 +980,6 @@ export class ExcelDataManagementComponent implements OnInit {
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
-        ////console.log(data.value);
-        debugger;
-        var _gender = '';
         var SelectedApplicationName = '';
         var PermittedApplications = this.tokenservice.getPermittedApplications();
         var apps = PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
@@ -928,12 +995,14 @@ export class ExcelDataManagementComponent implements OnInit {
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         //this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
         if (SelectedApplicationName == 'edu') {
+          this.AdmissionStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.ADMISSIONSTATUS);
           this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
           this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
           this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
           this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
           this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+          this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         }
         else if (SelectedApplicationName == 'employee') {

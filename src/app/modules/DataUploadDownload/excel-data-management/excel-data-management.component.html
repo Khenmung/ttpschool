@@ -2,12 +2,12 @@
     <strong>Upload Data</strong>
 </div>
 <div style="min-height: 400px;">
-    <form [formGroup]="uploadForm">
+    
+    <form [formGroup]="uploadForm">        
         <div class="row">
             <input [hidden]="true" #inputfile type="file" class="form-control" (change)="browseOnChange($event)"
                 placeholder="Upload file" accept=".xlsx">
-        </div>
-        <!-- <alert></alert> -->
+        </div>        
         <span>
             <span style="margin-right: 15px;">{{selectedFile}}</span>
             <mat-form-field appearance="outline" style="margin-right: 15px;">
@@ -63,11 +63,15 @@
 
     </form>
     <div style="display: flex;flex-direction: column;">
-        <span style="color:red" [innerHTML]="ErrorMessage">
-        </span>
+        <!-- <span style="color:red" [innerHTML]="ErrorMessage">
+        </span> -->
         <span *ngIf="ErrorMessage.length==0 && ELEMENT_DATA.length>0"
-            style="padding: 15px 0px 15px 0px; font-weight: bold;">
+            style="margin:15px;padding: 15px 0px 15px 0px; font-weight: bold;">
             Ready to Upload. Please click on upload button.
+        </span>
+        <span *ngIf="loading" style="display: flex;margin:15px;">
+            <span>Please wait while uploading your data..</span>
+            <span><mat-spinner diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner></span>
         </span>
     </div>
 </div>

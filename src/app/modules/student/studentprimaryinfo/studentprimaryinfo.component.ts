@@ -56,6 +56,7 @@ export class studentprimaryinfoComponent implements OnInit {
   allMasterData = [];
   ReasonForLeaving = [];
   studentData = [];
+  AdmissionStatuses =[];
   CountryId = 0;
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
@@ -180,28 +181,13 @@ export class studentprimaryinfoComponent implements OnInit {
       TransferFromSchool: [''],
       TransferFromSchoolBoard: [''],
       ClubId: [0],
+      AdmissionStatusId:[0],
+      AdmissionDate:[new Date()],
       Remarks: [''],
       Active: [1]
     });
     this.StudentId = this.tokenService.getStudentId();
     this.StudentClassId = this.tokenService.getStudentClassId()
-    // this.shareddata.CurrentMasterData.subscribe(message => (this.allMasterData = message));
-
-    // this.shareddata.CurrentCountry.subscribe(country => (this.Country == country));
-    // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup == bg));
-    // this.shareddata.CurrentCategory.subscribe(cat => (this.Category = cat));
-    // this.shareddata.CurrentReligion.subscribe(re => (this.Religion = re));
-    // this.shareddata.CurrentStates.subscribe(st => (this.States = st));
-    // this.shareddata.CurrentLocation.subscribe(lo => (this.Location = lo));
-    // this.shareddata.CurrentPrimaryContact.subscribe(pr => (this.PrimaryContact = pr));
-
-
-    // //console.log("this.StudentClassId",this.StudentClassId)
-    // this.shareddata.CurrentBloodgroup.subscribe(bg => (this.Bloodgroup = bg));
-    // this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));
-    // this.shareddata.CurrentReasonForLeaving.subscribe(r => (this.ReasonForLeaving = r))
-
-    //}
   }
 
   ngOnInit(): void {
@@ -283,6 +269,7 @@ export class studentprimaryinfoComponent implements OnInit {
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+        this.AdmissionStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.ADMISSIONSTATUS);
 
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
         this.PrimaryContactDefaultId = this.PrimaryContact.filter(contact => contact.MasterDataName.toLowerCase() == "father")[0].MasterDataId;
@@ -394,6 +381,8 @@ export class studentprimaryinfoComponent implements OnInit {
       TransferFromSchool: this.studentForm.get("TransferFromSchool").value,
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
       ClubId: this.studentForm.get("ClubId").value,
+      AdmissionStatusId: this.studentForm.get("AdmissionStatusId").value,
+      AdmissionDate: this.studentForm.get("AdmissionDate").value,
       Remarks: this.studentForm.get("Remarks").value,
       EmailAddress: _email,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
@@ -435,10 +424,10 @@ export class studentprimaryinfoComponent implements OnInit {
             // else
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-            this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
+            //this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
             this.loading = false;
             this.tokenService.saveStudentId(this.StudentId + "")
-            this.tokenService.saveStudentClassId(this.StudentClassId + "");
+            //this.tokenService.saveStudentClassId(this.StudentClassId + "");
             this.GetStudent();
             this.Edited = false;
 
@@ -484,8 +473,10 @@ export class studentprimaryinfoComponent implements OnInit {
         if (data.value.length > 0) {
           data.value.forEach(stud => {
             if (stud.StudentClasses.length > 0)
-              this.tokenService.saveStudentClassId(stud.StudentClasses[0].StudentClassId);
-
+            {
+              this.StudentClassId=stud.StudentClasses[0].StudentClassId;            
+              this.tokenService.saveStudentClassId(this.StudentClassId+"");
+            }
             let StudentName = stud.PID + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName +
               ' ' + stud.MotherName + ',';
             this.shareddata.ChangeStudentName(StudentName);
@@ -524,6 +515,8 @@ export class studentprimaryinfoComponent implements OnInit {
               TransferFromSchool: stud.TransferFromSchool,
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
               ClubId: stud.ClubId,
+              AdmissionStatusId:stud.AdmissionStatusId,
+              AdmissionDate:stud.AdmissionDate,
               Remarks: stud.Remarks,
               Active: stud.Active,
               ReasonForLeavingId: stud.ReasonForLeavingId

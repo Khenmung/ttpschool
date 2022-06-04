@@ -119,23 +119,24 @@ export class LoginComponent implements OnInit {
       err => {
         debugger;
         this.loading = false;
-        this.errorMessage = '';
-        var modelState;
-        if (err.error.ModelState != null)
-          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
-        else if (err.error != null)
-          modelState = JSON.parse(JSON.stringify(err.error));
-        else
-          modelState = JSON.parse(JSON.stringify(err));
+        //this.errorMessage = '';
+        this.errorMessage =globalconstants.formatError(err);
+        // var modelState;
+        // if (err.error.ModelState != null)
+        //   modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+        // else if (err.error != null)
+        //   modelState = JSON.parse(JSON.stringify(err.error));
+        // else
+        //   modelState = JSON.parse(JSON.stringify(err));
 
-        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
-        for (var key in modelState) {
-          if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
-            for(var key1 in modelState[key])
-            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
-            //errors.push(modelState[key]);//list of error messages in an array
-          }
-        }
+        // //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        // for (var key in modelState) {
+        //   if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+        //     for(var key1 in modelState[key])
+        //     this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
+        //     //errors.push(modelState[key]);//list of error messages in an array
+        //   }
+        // }
         this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
         this.isLoginFailed = true;
       }
