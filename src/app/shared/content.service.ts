@@ -120,8 +120,6 @@ export class ContentService implements OnInit { PageLoading=true;
     return this.dataservice.get(list);
   }
   GetClassGroupMapping(orgId, active) {
-    //Fee definition is not batch wise.      
-    //let filterStr = 'BatchId eq ' + SelectedBatchId + ' and OrgId eq ' + orgId;
     var activefilter = active == 1 ? ' and Active eq 1' : '';
     let filterStr = 'OrgId eq ' + orgId + activefilter;
     let list: List = new List();

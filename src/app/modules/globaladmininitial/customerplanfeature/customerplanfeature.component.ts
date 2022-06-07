@@ -290,9 +290,9 @@ export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
 
     debugger;
     var _PlanId = this.searchForm.get("searchPlanId").value;
-    var _filter ="Active eq 1";
+    var _filter ="";//"Active eq 1";
     if (_PlanId > 0) {
-      _filter += " and PlanId eq " + _PlanId
+      _filter += "PlanId eq " + _PlanId
       // this.contentservice.openSnackBar("Please select plan.", globalconstants.ActionText, globalconstants.RedBackground);
       // return;
     }

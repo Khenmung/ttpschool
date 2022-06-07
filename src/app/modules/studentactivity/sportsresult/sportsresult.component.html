@@ -4,28 +4,31 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="width: 100%;">
     <form [formGroup]="searchForm">
-        <span *ngIf="StudentClassId==0">
-            <mat-form-field appearance="outline" [style.width.px]="300">
-                <mat-label>Student</mat-label>
-                <input type="text" matInput (click)="SetStudentClassId()" formControlName="searchStudentName"
-                    [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                        {{option.Name}}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSportsResult(0)">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-            </button>
-        </span>
+        <mat-form-field appearance="outline" [style.width.px]="300">
+            <mat-label>Student</mat-label>
+            <input type="text" matInput (click)="SetStudentClassId()" formControlName="searchStudentName"
+                [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                    {{option.Name}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSportsResult()">
+            <mat-icon>search</mat-icon>
+            <mat-icon *ngIf="loading">
+                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+            </mat-icon>
+        </button>
     </form>
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="SportResultId">
-            <mat-header-cell *matHeaderCellDef>Id
+            <mat-header-cell *matHeaderCellDef>
+                <button [disabled]="loading || Permission=='read' || StudentClassId==0" matTooltip="add new"
+                    mat-mini-fab (click)="AddNew()">
+                    <mat-icon>add</mat-icon>
+                </button>
+                Id
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 {{element.SportResultId}}
@@ -116,19 +119,15 @@
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading || Permission=='read' || StudentClassId==0" matTooltip="add new"
-                    mat-mini-fab (click)="AddNew()">
-                    <mat-icon>add</mat-icon>
-                </button>
+
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
-mat-raised-button color="accent"
-                    (click)="UpdateOrSave(element)">
-                     <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                    mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

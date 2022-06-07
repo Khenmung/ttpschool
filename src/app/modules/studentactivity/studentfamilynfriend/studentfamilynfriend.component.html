@@ -3,6 +3,15 @@
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="searchForm">
+    <mat-form-field appearance="outline" [style.width.px]="350">
+        <mat-label>Student</mat-label>
+        <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                {{option.Name}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>same school sibling or friend</mat-label>
         <mat-select formControlName="searchSiblingOrFriend">
@@ -13,16 +22,22 @@
     </mat-form-field>
     <button [disabled]="loading" matTooltip="search sibling or friend" mat-raised-button color="accent"
         (click)="GetStudentFamilyNFriends()">
-         <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+        <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
     </button>
 </form>
 <div style="overflow: auto;max-width: 1200px;">
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="StudentFamilyNFriendId">
-            <mat-header-cell *matHeaderCellDef>Id
+            <mat-header-cell *matHeaderCellDef>
+                <button [disabled]="loading || Permission=='read' || StudentId==0" matTooltip="add new" mat-mini-fab
+                    (click)="AddNew()">
+                    <mat-icon>add</mat-icon>
+                </button>
+                &nbsp;
+                Id
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 {{element.StudentFamilyNFriendId}}
@@ -49,9 +64,9 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                <input type="text" [(ngModel)]="element.FeeType" [disabled]="true"
-                        [value]="element.FeeType" matInput>
-                </mat-form-field>                
+                    <input type="text" [(ngModel)]="element.FeeType" [disabled]="true" [value]="element.FeeType"
+                        matInput>
+                </mat-form-field>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="FeeTypeRemarks">
@@ -59,9 +74,9 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                <input type="text" [(ngModel)]="element.FeeTypeRemarks" [disabled]="true"
+                    <input type="text" [(ngModel)]="element.FeeTypeRemarks" [disabled]="true"
                         [value]="element.FeeTypeRemarks" matInput>
-                </mat-form-field>  
+                </mat-form-field>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Name">
@@ -118,19 +133,15 @@
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading || Permission=='read' || StudentId==0" matTooltip="add new" mat-mini-fab
-                    (click)="AddNew()">
-                    <mat-icon>add</mat-icon>
-                </button>
+
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
-mat-raised-button color="accent"
-                    (click)="UpdateOrSave(element)">
-                     <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                    mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

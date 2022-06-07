@@ -6,14 +6,12 @@ import { AddstudentclassComponent } from './addstudentclass/addstudentclass.comp
 import { searchstudentComponent } from './searchstudent/searchstudent.component';
 import { AddstudentfeepaymentComponent } from './studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from './studentfeepayment/feereceipt/feereceipt.component';
-import { StudentDocumentComponent } from './uploadstudentdocument/uploadstudentdoc.component';
-import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
 import { StudentattendancereportComponent } from './studentattendancereport/studentattendancereport.component';
 import { StudentboardComponent } from './studentboard/studentboard.component';
 import { StudentprogressreportComponent } from './studentprogressreport/studentprogressreport.component';
 import { StudentEvaluationComponent } from '../evaluation/studentevaluation/studentevaluation.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
-import { SportsResultComponent } from './sportsresult/sportsresult.component';
+import { StudentfamilynfriendComponent } from '../studentactivity/studentfamilynfriend/studentfamilynfriend.component';
 
 const routes: Routes = [
   {
@@ -39,11 +37,9 @@ export const StudentComponents = [
   AddstudentfeepaymentComponent,
   searchstudentComponent,
   FeereceiptComponent,
-  StudentDocumentComponent,
-  GenerateCertificateComponent,
   StudentattendancereportComponent,
   StudentboardComponent,
   StudentprogressreportComponent,
   StudentEvaluationComponent,
-  SportsResultComponent
+  StudentprogressreportComponent
 ]

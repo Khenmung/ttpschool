@@ -40,7 +40,7 @@ export class searchstudentComponent implements OnInit {
     'FeeType',
     'Remarks',
     'Active',
-    'ReasonForLeaving',
+    //'ReasonForLeaving',
     'Action'];
   allMasterData = [];
   Students = [];

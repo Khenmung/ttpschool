@@ -326,9 +326,9 @@ export class AppuserdashboardComponent implements OnInit {
       });
   }
   GetAppUsers() {
-    this.authservice.CallAPI("","SendSMS").subscribe((data:any)=>{
-      console.log("res",data);
-    })
+    // this.authservice.CallAPI("","SendSMS").subscribe((data:any)=>{
+    //   console.log("res",data);
+    // })
     
     //this.contentservice.openSnackBar(this.authservice.CallAPI("","SendSMS"),)
     debugger;

@@ -202,8 +202,8 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
     debugger;
 
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    //  " and BatchId eq " + this.SelectedBatchId;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
     if (_ClassGroupId == 0) {

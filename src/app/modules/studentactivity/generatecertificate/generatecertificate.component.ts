@@ -7,6 +7,8 @@ import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
+import { startWith } from 'rxjs/internal/operators/startWith';
+import { map } from 'rxjs/operators';
 import { IStudent } from 'src/app/modules/ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -21,7 +23,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './generatecertificate.component.html',
   styleUrls: ['./generatecertificate.component.scss']
 })
-export class GenerateCertificateComponent implements OnInit { PageLoading=true;
+export class GenerateCertificateComponent implements OnInit {
+  PageLoading = true;
   loading = false;
   LoginUserDetail = [];
   Permission = '';
@@ -60,9 +63,12 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
   CommonFooter = [];
   Organization = [];
   StudentAttendanceList = [];
+  StudentClasses = [];
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
-  filteredOptions: Observable<IStudent[]>;
+  //studentSearchForm: FormGroup;
+  filteredStudents: Observable<IStudent[]>;
+  //filteredOptions: Observable<IStudent[]>;
   AttendanceStatusSum = [];
   ExamId = 0;
   StudentClassId = 0;
@@ -99,8 +105,15 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
     //this.loadTheme();
     //debugger;
     this.searchForm = this.fb.group({
+      searchStudentName: [''],
       searchCertificateTypeId: [0]
     });
+    this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.Students.slice())
+      );
     this.PageLoad();
   }
   loadTheme(strStyle: string) {
@@ -134,25 +147,26 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
-      if (this.StudentClassId == 0) {
-        this.loading = false; this.PageLoading=false;
-        this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
-        //this.nav.navigate(['/edu']);
-      }
-      else if (this.Permission != 'deny') {
-
+      // if (this.StudentClassId == 0) {
+      //   this.loading = false; this.PageLoading=false;
+      //   this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
+      //   //this.nav.navigate(['/edu']);
+      // }
+      // else 
+      if (this.Permission != 'deny') {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
-        this.GetStudentAttendance();
-        this.getPaymentStatus();
+
+        //this.GetStudentAttendance();
+        //this.getPaymentStatus();
 
       }
       else {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
@@ -210,7 +224,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
           }
 
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetStudentAndGenerateCerts() {
@@ -285,7 +299,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
             StudentClassId: d.StudentClassId
           }
         });
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       }
       else {
         ////console.log('data.value',data.value)
@@ -365,7 +379,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
     debugger;
     var _certificateBody = this.allMasterData.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)
     if (_certificateBody.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -386,7 +400,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
         }
       }
       if (!certificateavailable) {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(_certificateFormula[0].MasterDataName + " not available for this student.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
@@ -417,7 +431,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
     this.loadTheme(styleStr);
     console.log("CertificateElements", this.CertificateElements)
     this.dataSource = new MatTableDataSource<any>(this.CertificateElements);
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   GetExamStudentSubjectResults() {
 
@@ -455,7 +469,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
 
   }
@@ -486,23 +500,110 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
         this.CommonFooter.sort((a, b) => a.Sequence - b.Sequence)
         //this.shareddata.ChangeBatch(this.Batches);
         this.Batches = this.tokenstorage.getBatches()
+        this.GetStudentClasses();
         this.GetOrganization();
       });
   }
   clear() {
 
   }
-  GetCertificates() {
+  GetStudentClasses() {
+    //debugger;
+    var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
+    let list: List = new List();
+    list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
+    list.PageName = "StudentClasses";
+    list.filter = [filterOrgIdNBatchId];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.StudentClasses = [...data.value];
+        this.GetStudents();
+      })
+  }
+  GetStudents() {
+    this.loading = true;
+    var extrafilter = ''
+    let list: List = new List();
+    list.fields = [
+      'StudentId',
+      'FirstName',
+      'LastName',
+      'FatherName',
+      'MotherName',
+      'ContactNo',
+      'FatherContactNo',
+      'MotherContactNo'
+    ];
+    list.PageName = "Students";
+
+    var standardfilter = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    list.filter = [standardfilter];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        //this.Students = [...data.value];
+        //  //console.log('data.value', data.value);
+        this.Students = [];
+        if (data.value.length > 0) {
+
+          var _students = [...data.value];
+         
+          _students.map(student => {
+            var _RollNo = '';
+            var _name = '';
+            var _className = '';
+            var _section = '';
+            var _studentClassId = 0;
+            var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
+            if (studentclassobj.length > 0) {
+              _studentClassId = studentclassobj[0].StudentClassId;
+              var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
+
+              if (_classNameobj.length > 0)
+                _className = _classNameobj[0].ClassName;
+              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+
+              if (_SectionObj.length > 0)
+                _section = _SectionObj[0].MasterDataName;
+              _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
+
+              student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
+              _name = student.FirstName + " " + student.LastName;
+              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+              this.Students.push({
+                StudentClassId: _studentClassId,
+                StudentId: student.StudentId,
+                Name: _fullDescription,
+                FatherName: student.FatherName,
+                MotherName: student.MotherName
+              });
+            }
+          })
+        }
+        this.loading = false;
+        this.PageLoading = false;
+      })
+  }
+  GetCertificates() {
+    debugger;
+    var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    if (_studentClassId > 0) {
+      this.StudentClassId = _studentClassId;
+    }
+    else {
+      this.contentservice.openSnackBar("Please select student!", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (this.searchForm.get("searchCertificateTypeId").value == 0) {
       this.contentservice.openSnackBar("Please select certificate type!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
     this.loading = true;
-    this.GetStudentAndGenerateCerts();
-
-
+    this.GetStudentAttendance();
   }
   GetOrganization() {
 
@@ -585,7 +686,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
             footer.Description = footer.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
           })
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetStudentAttendance() {
@@ -609,7 +710,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
         if (groupbyPresentAbsent.length > 0)
           this.AttendanceStatusSum = groupbyPresentAbsent[0].Total
 
-        this.loading = false; this.PageLoading=false;
+        this.getPaymentStatus();
       });
   }
   getPaymentStatus() {
@@ -629,8 +730,7 @@ export class GenerateCertificateComponent implements OnInit { PageLoading=true;
         if (data.value.length > 0) {
           this.FeePaidLastMonth = data.value[0].Month;
         }
-        this.loading = false; this.PageLoading=false;
-        console.log("this.FeePaidLastMonth", this.FeePaidLastMonth);
+        this.GetStudentAndGenerateCerts();
       });
   }
   GetExams() {

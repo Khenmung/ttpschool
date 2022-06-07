@@ -18,14 +18,6 @@ import { ContentService } from 'src/app/shared/content.service';
 })
 export class MenuConfigComponent implements OnInit { PageLoading=true;
 
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionsAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   loading = false;
   SelectedAppId = 0;
   oldvalue: any;
@@ -62,6 +54,8 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
     "HomePage": 0
   }
   DisplayColumns = [
+    "Action",
+    "Active",
     "PageId",
     "PageTitle",
     "ParentId",
@@ -71,9 +65,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
     "IsTemplate",
     "DisplayOrder",
     "HasSubmenu",
-    "HomePage",
-    "Active",
-    "Action"
+    "HomePage"      
   ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;

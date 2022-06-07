@@ -1,26 +1,27 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StudentComponents, StudentRoutingModule } from './student-routing.module';
+
+import { StudentActivityComponents, StudentactivityRoutingModule } from './studentactivity-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxPrintModule } from 'ngx-print';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { SharedModule } from 'src/app/shared/shared.module';
+
 
 @NgModule({
-  declarations: [StudentComponents],
+  declarations: [StudentActivityComponents],
   imports: [
     CommonModule,
-    StudentRoutingModule,
+    StudentactivityRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    SharedModule,
     SharedhomepageModule,
-    FlexLayoutModule,
+    SharedModule,
     NgxPrintModule,
-  ],
-  exports:[StudentComponents]
+    FlexLayoutModule
+  ]
 })
-export class StudentModule { }
+export class StudentactivityModule { }

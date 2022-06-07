@@ -14,7 +14,8 @@ import { SharedataService } from '../../../shared/sharedata.service';
   templateUrl: './addstudentclass.component.html',
   styleUrls: ['./addstudentclass.component.scss']
 })
-export class AddstudentclassComponent implements OnInit { PageLoading=true;
+export class AddstudentclassComponent implements OnInit {
+    PageLoading = true;
   loading = false;
   breakpoint = 0;
   SaveDisable = false;
@@ -83,7 +84,7 @@ export class AddstudentclassComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -104,7 +105,7 @@ export class AddstudentclassComponent implements OnInit { PageLoading=true;
         this.shareddata.CurrentStudentName.subscribe(name => this.StudentName = name);
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.GetMasterData();
-        this.GetStudentClass();
+        //this.GetStudentClass();
       }
     }
   }
@@ -145,7 +146,7 @@ export class AddstudentclassComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         this.FeeType = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeType);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetStudent() {
@@ -229,8 +230,11 @@ export class AddstudentclassComponent implements OnInit { PageLoading=true;
             });
             this.contentservice.openSnackBar("Class yet to be defined for this student", globalconstants.ActionText, globalconstants.RedBackground);
           }
+          this.loading = false;
         });
     }
+    else
+      this.loading = false;
   }
   onResize(event) {
     this.breakpoint = (event.target.innerWidth <= 400) ? 1 : 3;
@@ -290,7 +294,7 @@ export class AddstudentclassComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('StudentClasses', this.studentclassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -308,21 +312,21 @@ export class AddstudentclassComponent implements OnInit { PageLoading=true;
 
               this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
                 .subscribe((data: any) => {
-                  this.loading = false; this.PageLoading=false;
+                  this.loading = false; this.PageLoading = false;
                   this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
                 },
                   error => {
-                    this.loading = false; this.PageLoading=false;
+                    this.loading = false; this.PageLoading = false;
                     console.log("error in createInvoice", error);
                   })
             },
               error => {
-                this.loading = false; this.PageLoading=false;
+                this.loading = false; this.PageLoading = false;
                 console.log("error in getinvoice", error);
               })
         },
         error => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           console.log("error in StudentClasses", error);
         });
   }

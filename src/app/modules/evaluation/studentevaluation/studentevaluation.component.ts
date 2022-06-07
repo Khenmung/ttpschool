@@ -16,8 +16,10 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentevaluation.component.html',
   styleUrls: ['./studentevaluation.component.scss']
 })
-export class StudentEvaluationComponent implements OnInit { PageLoading=true;
+export class StudentEvaluationComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  AlreadyAnswered = false;
   RowsToUpdate = -1;
   EvaluationStarted = false;
   EvaluationSubmitted = false;
@@ -127,6 +129,10 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
+        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+          .subscribe((data: any) => {
+            this.ClassGroupMappings = [...data.value];
+          })
         this.GetEvaluationNames();
         this.GetMasterData();
         this.GetEvaluationOption();
@@ -211,6 +217,8 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
   SubmitEvaluation() {
     this.RowsToUpdate = this.StudentEvaluationList.length;
     this.EvaluationSubmitted = true;
+    clearInterval(this.interval);
+    console.log("this.StudentEvaluationList",this.StudentEvaluationList);
     this.StudentEvaluationList.forEach(question => {
       this.RowsToUpdate--;
       this.UpdateOrSave(question);
@@ -236,13 +244,14 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; 
+          this.PageLoading = false;
           this.EvaluationSubmitted = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.StudentEvaluationForUpdate = [];;
+          this.StudentEvaluationForUpdate = [];
           this.StudentEvaluationForUpdate.push(
             {
               StudentEvaluationResultId: row.StudentEvaluationResultId,
@@ -275,7 +284,7 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
     this.dataservice.postPatch('StudentEvaluationResults', this.StudentEvaluationForUpdate, 0, 'post')
@@ -323,6 +332,7 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
   StartEvaluation(row) {
     debugger;
     this.loading = true;
+    //this.AlreadyAnswered=false;
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
@@ -335,9 +345,7 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
         mapping.Action = false;
     })
     var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
-    if (this.ExamDurationMinutes > 0) {
-      this.startTimer();
-    }
+
 
     let list: List = new List();
     list.fields = [
@@ -358,6 +366,14 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         debugger
         //console.log("data.value", data.value);
+        if (this.ExamDurationMinutes > 0 && data.value.length == 0) {
+          this.AlreadyAnswered = false;
+          this.startTimer();
+        }
+        else {
+          this.AlreadyAnswered = true;
+        }
+
         var item, indx = 0, SlNo = '';
         _classEvaluations.forEach((clseval, index) => {
 
@@ -426,7 +442,7 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
           }
           this.StudentEvaluationList.push(JSON.parse(JSON.stringify(item)));
         })
-        //console.log("this.StudentEvaluationList", this.StudentEvaluationList)
+        console.log("1this.StudentEvaluationList", this.StudentEvaluationList)
         //var firstrow =[];
         //this.StudentEvaluationList = this.StudentEvaluationList.sort((a,b)=>a.DisplayOrder - b.DisplayOrder);
         this.EvaluationStarted = true;
@@ -459,7 +475,7 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
           }
         })
         //this.GetEvaluationMapping();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetClassSubjects() {
@@ -520,7 +536,7 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
               }
             })
             //this.EvaluationClassGroup = [...data.value];
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
           })
       });
   }
@@ -591,71 +607,55 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
   GetEvaluationMapping() {
     debugger;
     this.loading = true;
-    var filterstr = ''
+    var __classGroupIdsForThisStudent = [];
     var studentobj = this.searchForm.get("searchStudentName").value;
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     if (studentobj.ClassId == undefined) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    else {
+      __classGroupIdsForThisStudent = this.ClassGroupMappings.filter(f => f.ClassId == studentobj.ClassId);
+    }
     if (_EvaluationMasterId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select evaluation name.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var _examId = this.searchForm.get("searchExamId").value;
 
     if (_examId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select exam/test/session.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
-    var _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _EvaluationMasterId && f.ExamId == _examId);
+
+    var _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _EvaluationMasterId
+      && f.ExamId == _examId && __classGroupIdsForThisStudent.findIndex(g=>g.ClassGroupId == f.ClassGroupId) > -1);
+
     this.RelevantEvaluationListForSelectedStudent = [];
-    var __classGroupId = 0;
+    //var __classGroupId = 0;
     if (_classGroupIdObj.length > 0) {
       this.RelevantEvaluationListForSelectedStudent = [..._classGroupIdObj];
-      __classGroupId = _classGroupIdObj[0].ClassGroupId;
+      //__classGroupId = _classGroupIdObj[0].ClassGroupId;
     }
     else {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("No class group defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("No class group/evaluation defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
+      
     }
-    let list: List = new List();
-    list.fields = [
-      'EvaluationClassSubjectMapId',
-      'StudentClassId',
-      'ClassEvaluationId',
-      'Active'
-    ];
 
-    list.PageName = "StudentEvaluationResults";
-    //list.lookupFields = ["StudentEvaluationResults($select=EvaluationClassSubjectMapId,StudentClassId)"]
-    list.filter = ['StudentClassId eq ' + studentobj.StudentClassId +
-      ' and EvaluationClassSubjectMapId eq ' + _classGroupIdObj[0].EvaluationClassSubjectMapId +
-      ' and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    this.EvaluationStarted = false;
+    this.EvaluationSubmitted = false;
+    this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
 
-    this.dataservice.get(list)
-      .subscribe((studentexamdata: any) => {
+    this.StudentEvaluationList = [];
+    this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
+    this.dataSource.paginator = this.paginator;
+    this.ExamDurationMinutes = this.EvaluationMaster.filter(f => f.EvaluationMasterId == this.searchForm.get("searchEvaluationMasterId").value)[0].Duration;
+    this.loading = false; this.PageLoading = false;
 
-        if (this.RelevantEvaluationListForSelectedStudent.length == 0) {
-          this.contentservice.openSnackBar("No relevant test/exam/assessment found for this class.", globalconstants.ActionText, globalconstants.RedBackground);
-        }
-
-        this.EvaluationStarted = false;
-        this.EvaluationSubmitted = false;
-        this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
-
-        this.StudentEvaluationList = [];
-        this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
-        this.dataSource.paginator = this.paginator;
-        this.ExamDurationMinutes = this.EvaluationMaster.filter(f => f.EvaluationMasterId == this.searchForm.get("searchEvaluationMasterId").value)[0].Duration;
-        //this.ExamDurationMinutes *= 60;
-        this.loading = false; this.PageLoading=false;
-      })
   }
   GetEvaluationOption() {
     let list: List = new List();
@@ -784,7 +784,7 @@ export class StudentEvaluationComponent implements OnInit { PageLoading=true;
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 }

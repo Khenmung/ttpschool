@@ -1,33 +1,32 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AddstudentclassComponent } from '../addstudentclass/addstudentclass.component';
-import { StudentattendancereportComponent } from '../studentattendancereport/studentattendancereport.component';
-import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimaryinfo.component';
-import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
-import { Router } from '@angular/router';
-import { SportsResultComponent } from '../../studentactivity/sportsresult/sportsresult.component';
+import { GenerateCertificateComponent } from '../generatecertificate/generatecertificate.component';
+import { SportsResultComponent } from '../sportsresult/sportsresult.component';
+import { StudentfamilynfriendComponent } from '../studentfamilynfriend/studentfamilynfriend.component';
+import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudentdoc.component';
 
 @Component({
-  selector: 'app-studentboard',
-  templateUrl: './studentboard.component.html',
-  styleUrls: ['./studentboard.component.scss']
+  selector: 'app-studentactivityboard',
+  templateUrl: './studentactivityboard.component.html',
+  styleUrls: ['./studentactivityboard.component.scss']
 })
-export class StudentboardComponent implements AfterViewInit {
+export class StudentactivityboardComponent implements AfterViewInit {
   components = [
-    studentprimaryinfoComponent,
-    AddstudentclassComponent,
-    StudentattendancereportComponent,
-    StudentprogressreportComponent
+    GenerateCertificateComponent,
+    StudentDocumentComponent,
+    SportsResultComponent,
+    StudentfamilynfriendComponent
   ];
 
   tabNames = [
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
-    { "label": "khat peuhpeuh", "faIcon": '' },
+    { "label": "khat peuhpeuh", "faIcon": '' }
   ];
   //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
@@ -60,10 +59,10 @@ export class StudentboardComponent implements AfterViewInit {
       this.Permissions.ParentPermission = perObj[0].permission;
     }
 
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTDETAIL)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTCLASS)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.GENERATECERTIFICATE)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.DOCUMENT)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ACTIVITY)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -92,17 +91,17 @@ export class StudentboardComponent implements AfterViewInit {
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
     var comindx = 0;
     switch (featureName) {
-      case globalconstants.Pages.edu.STUDENT.STUDENTDETAIL:
-        comindx = this.components.indexOf(studentprimaryinfoComponent);
+      case globalconstants.Pages.edu.STUDENT.GENERATECERTIFICATE:
+        comindx = this.components.indexOf(GenerateCertificateComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.STUDENTCLASS:
-        comindx = this.components.indexOf(AddstudentclassComponent);
+      case globalconstants.Pages.edu.STUDENT.DOCUMENT:
+        comindx = this.components.indexOf(StudentDocumentComponent);
+        break;      
+      case globalconstants.Pages.edu.STUDENT.ACTIVITY:
+        comindx = this.components.indexOf(SportsResultComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT:
-        comindx = this.components.indexOf(StudentattendancereportComponent);
-        break;
-      case globalconstants.Pages.edu.STUDENT.PROGRESSREPORT:
-        comindx = this.components.indexOf(StudentprogressreportComponent);
+      case globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS:
+        comindx = this.components.indexOf(StudentfamilynfriendComponent);
         break;
     }
 

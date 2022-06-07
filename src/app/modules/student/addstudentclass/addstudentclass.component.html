@@ -1,15 +1,14 @@
 <div style="padding:15px 15px 10px 0px;"><strong>Class</strong></div>
 <!-- <alert></alert> -->
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-<span style="font-size: smaller;margin: 20px;">If fee type is updated, please run 'create invoice' in class-fee
-    page.</span>
+<!-- <span style="font-size: smaller;margin: 20px;">If fee type is updated, please run 'create invoice' in class-fee
+    page.</span> -->
 <form [formGroup]="studentclassForm">
     <mat-grid-list style="max-width: 600px;" [cols]="2" rowHeight="80px" (window:resize)="onResize($event)">
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="ClassId" #ClassId>
-                    <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of Classes" [value]="p.ClassId">
                         {{p.ClassName}}
                     </mat-option>
@@ -31,7 +30,6 @@
             <mat-form-field appearance="outline">
                 <mat-label>Section</mat-label>
                 <mat-select formControlName="SectionId" #SectionId>
-                    <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of Sections" [value]="p.MasterDataId">
                         {{p.MasterDataName}}
                     </mat-option>
@@ -44,7 +42,6 @@
             <mat-form-field appearance="outline">
                 <mat-label>Fee type</mat-label>
                 <mat-select formControlName="FeeTypeId">
-                    <mat-option value="0">---</mat-option>
                     <mat-option *ngFor="let p of FeeType" [value]="p.FeeTypeId">
                         {{p.FeeTypeName}}
                     </mat-option>

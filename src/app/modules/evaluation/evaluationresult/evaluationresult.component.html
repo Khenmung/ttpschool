@@ -16,6 +16,14 @@
                 </mat-autocomplete>
             </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Exam/Test/Session</mat-label>
+                <mat-select formControlName="searchExamId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Evaluation</mat-label>
                 <mat-select formControlName="searchEvaluationMasterId">
                     <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
@@ -32,14 +40,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Exam/Test</mat-label>
-                <mat-select formControlName="searchExamId">
-                    <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+            
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
                  <mat-icon>search</mat-icon>
                             <mat-icon *ngIf="loading">

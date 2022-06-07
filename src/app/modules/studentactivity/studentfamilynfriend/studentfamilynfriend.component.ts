@@ -3,12 +3,13 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { IStudent } from '../searchstudent/searchstudent.component';
+import { IStudent } from '../../student/searchstudent/searchstudent.component';
 
 @Component({
   selector: 'app-studentfamilynfriend',
@@ -60,7 +61,7 @@ export class StudentfamilynfriendComponent implements OnInit { PageLoading=true;
     'ContactNo',
     'RelationshipId',
     'Remarks',
-    'Active',
+    'Active',    
     'Action'
   ];
   searchForm: FormGroup;
@@ -75,8 +76,15 @@ export class StudentfamilynfriendComponent implements OnInit { PageLoading=true;
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
+      searchStudentName:[''],
       searchSiblingOrFriend: ['']
     });
+    this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(Name => Name ? this._filter(Name) : this.Students.slice())
+      );
     this.PageLoad();
   }
 
@@ -113,6 +121,9 @@ export class StudentfamilynfriendComponent implements OnInit { PageLoading=true;
     const filterValue = name.toLowerCase();
     return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
 
+  }
+  displayFn(user: IStudent): string {
+    return user && user.Name ? user.Name : '';
   }
   // filterStates(name: string) {
   //   return name && this.states.filter(
@@ -256,6 +267,14 @@ export class StudentfamilynfriendComponent implements OnInit { PageLoading=true;
   }
   GetStudentFamilyNFriends() {
     debugger;
+    var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
+    if(_studentId==undefined)
+    {
+      this.contentservice.openSnackBar("Please select student.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+
+    this.StudentId =_studentId;
     let filterStr = 'StudentId eq ' + this.StudentId;
     var siblingOrFriendId = this.searchForm.get("searchSiblingOrFriend").value;
 
@@ -338,14 +357,10 @@ export class StudentfamilynfriendComponent implements OnInit { PageLoading=true;
     ];
 
     list.PageName = "Students";
-    //list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,StudentId,ClassId,RollNo,SectionId)"]
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        debugger;
-        //this.Students = [...data.value];
-        //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           data.value.forEach(student => {
             var _RollNo = '';

@@ -12,15 +12,15 @@ mat-form-field{
     flex:1 0 150px;
 }
 
-.mat-column-Action
+.mat-column-Action,.mat-column-Active
 {
-    flex:1 0 100px;
+    flex:1 0 80px;
 }
 .mat-column-SiblingId
 {
     flex: 1 0 200px;
 }
-.mat-column-StudentFamilyNFriendId,.mat-column-Active{
+.mat-column-StudentFamilyNFriendId{
     justify-content: center;
-    flex: 1 0 70px;
+    flex: 1 0 100px;
 }
