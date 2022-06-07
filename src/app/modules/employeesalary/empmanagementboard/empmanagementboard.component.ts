@@ -8,7 +8,7 @@ import { EmployeeSalaryComponentComponent } from '../employee-salary-component/e
   templateUrl: './empmanagementboard.component.html',
   styleUrls: ['./empmanagementboard.component.scss']
 })
-export class EmpmanagementboardComponent implements OnInit {
+export class EmpmanagementboardComponent implements OnInit { PageLoading=true;
 @ViewChild(EmpComponentsComponent) Component:EmpComponentsComponent;
 @ViewChild(EmployeeGradehistoryComponent) gradehistory:EmployeeGradehistoryComponent;
 @ViewChild(EmployeeSalaryComponentComponent) salary:EmployeeSalaryComponentComponent;

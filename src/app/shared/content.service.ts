@@ -12,7 +12,7 @@ import { AuthService } from '../_services/auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ContentService implements OnInit {
+export class ContentService implements OnInit { PageLoading=true;
   RoleFilter = '';
   Roles = [];
   allMasterData = [];
@@ -605,7 +605,7 @@ export class ContentService implements OnInit {
     //     .subscribe((data:any)=>{
     //       this.Applications =[...data.value];
     //     })
-    //     this.loading=false;
+    //     this.loading=false;this.PageLoading=false;
     //   }
     // });
   }

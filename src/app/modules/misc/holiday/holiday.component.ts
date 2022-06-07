@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './holiday.component.html',
   styleUrls: ['./holiday.component.scss']
 })
-export class HolidayComponent implements OnInit {
+export class HolidayComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paging: MatPaginator;
   HolidayTypes =[];
   LoginUserDetail: any[] = [];
@@ -162,7 +162,7 @@ export class HolidayComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -195,7 +195,7 @@ export class HolidayComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -251,7 +251,7 @@ export class HolidayComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.HolidayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.HOLIDAYLIST)
         this.GetHoliday();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

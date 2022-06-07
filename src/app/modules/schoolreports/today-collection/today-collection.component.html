@@ -2,7 +2,7 @@
     <strong>Date wise collection</strong>
 </div>
 <!-- <alert></alert> -->
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="SearchForm">
     <div fxLayout="row wrap" fxLayoutAlign="center center" fxLayoutGap="15px">
         <mat-form-field [style.width.px]="250" appearance="outline">
@@ -27,7 +27,10 @@
             <mat-datepicker #ToDate></mat-datepicker>
         </mat-form-field>
         <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentDetails()">
-            <mat-icon>search</mat-icon>
+             <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
         </button>
     </div>
 </form>

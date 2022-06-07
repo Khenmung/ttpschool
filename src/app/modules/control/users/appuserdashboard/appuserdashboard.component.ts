@@ -1,6 +1,6 @@
 //import { DatePipe } from '@angular/common';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Component, ElementRef, OnInit,ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -31,6 +31,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   ],
 })
 export class AppuserdashboardComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("container") container: ElementRef;
@@ -78,8 +79,8 @@ export class AppuserdashboardComponent implements OnInit {
 
   EducationManagement = 'education management';
   EmployeeManagement = 'employee management';
-  RoleName ='';
-  Password ='';
+  RoleName = '';
+  Password = '';
   UserId = 0;
   AppUsers = [];
   UserTypes = [];
@@ -154,12 +155,12 @@ export class AppuserdashboardComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
           if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement) {
-            this.RoleName='Student';
-            this.Password ='Student@1234';
+            this.RoleName = 'Student';
+            this.Password = 'Student@1234';
             this.GetStudents();
           }
           else if (this.SelectedApplicationName.toLowerCase() == this.EmployeeManagement) {
-            this.RoleName ='Employee'
+            this.RoleName = 'Employee'
             this.Password = 'Employee@1234';
             this.GetEmployees();
           }
@@ -213,36 +214,33 @@ export class AppuserdashboardComponent implements OnInit {
     this.authservice.get(list)
       .subscribe((data: any) => {
         this.Users = [];
-        //var _userDetail = [];
-        // if (this.SelectedApplicationName.toLowerCase() == this.EducationManagement)
-        //   _userDetail = [...this.Students];
-        // else
-        //   _userDetail = [...this.Employees];
 
         this.UserDetail.forEach(userdetail => {
-          var existinglogin = data.filter(f => f.Email.toLowerCase() == userdetail.EmailAddress.toLowerCase());
-          if (existinglogin.length > 0) {
-            this.Users.push(
-              {
-                Id: existinglogin[0].Id,
-                UserName: existinglogin[0].UserName,
-                Email: existinglogin[0].Email,
-                Active: existinglogin[0].Active
-              }
-            )
-          }
-          else {
-            this.Users.push(
-              {
-                Id: '',
-                UserName: userdetail.FullName,
-                Email: userdetail.EmailAddress,
-                Active: 0
-              }
-            )
+          if (userdetail.EmailAddress != null) {
+            var existinglogin = data.filter(f => f.Email.toLowerCase() == userdetail.EmailAddress.toLowerCase());
+            if (existinglogin.length > 0) {
+              this.Users.push(
+                {
+                  Id: existinglogin[0].Id,
+                  UserName: existinglogin[0].UserName,
+                  Email: existinglogin[0].Email,
+                  Active: existinglogin[0].Active
+                }
+              )
+            }
+            else {
+              this.Users.push(
+                {
+                  Id: '',
+                  UserName: userdetail.FullName,
+                  Email: userdetail.EmailAddress,
+                  Active: 0
+                }
+              )
+            }
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   onBlur(row) {
@@ -287,9 +285,9 @@ export class AppuserdashboardComponent implements OnInit {
         debugger;
         data.value.forEach(employee => {
           //if (employee.EmailAddress!=null) {
-            employee.LastName = employee.LastName==null?'':employee.LastName;
-            employee.FullName = employee.FirstName + " " + employee.LastName;
-            this.UserDetail.push(employee);
+          employee.LastName = employee.LastName == null ? '' : employee.LastName;
+          employee.FullName = employee.FirstName + " " + employee.LastName;
+          this.UserDetail.push(employee);
           //}
         })
         this.GetUsers()
@@ -328,6 +326,11 @@ export class AppuserdashboardComponent implements OnInit {
       });
   }
   GetAppUsers() {
+    this.authservice.CallAPI("","SendSMS").subscribe((data:any)=>{
+      console.log("res",data);
+    })
+    
+    //this.contentservice.openSnackBar(this.authservice.CallAPI("","SendSMS"),)
     debugger;
     this.loading = true;
     let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
@@ -399,14 +402,14 @@ export class AppuserdashboardComponent implements OnInit {
             });
           });
         }
-        console.log("this.AppUsers",this.AppUsers)
+        console.log("this.AppUsers", this.AppUsers)
         this.datasource = new MatTableDataSource<IAppUser>(this.AppUsers);
         this.datasource.paginator = this.paginator;
         this.datasource.sort = this.sort;
-        this.loading = false;
-      },err => {
+        this.loading = false; this.PageLoading = false;
+      }, err => {
         debugger;
-        this.loading = false;
+        this.loading = false; this.PageLoading = false;
         this.errorMessage = '';
         var modelState;
         if (err.error.ModelState != null)
@@ -419,12 +422,12 @@ export class AppuserdashboardComponent implements OnInit {
         //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
         for (var key in modelState) {
           if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
-            for(var key1 in modelState[key])
-            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
+            for (var key1 in modelState[key])
+              this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
             //errors.push(modelState[key]);//list of error messages in an array
           }
         }
-        this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar(this.errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       });
 
   }
@@ -464,7 +467,7 @@ export class AppuserdashboardComponent implements OnInit {
       //this.dataservice.postPatch('MasterItems', toUpdate, row.MasterDataId, 'patch')
       .subscribe(res => {
         row.Action = false;
-        this.loading = false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
       });
@@ -517,7 +520,7 @@ export class AppuserdashboardComponent implements OnInit {
   //         this.contentservice.SoftDelete('AuthManagement',{}, row.MasterDataId)
   //           .subscribe((data: any) => {
   //             row.Action = false;
-  //             this.loading = false;
+  //             this.loading = false; this.PageLoading=false;
   //             var idx = this.AppUsers.findIndex(x => x.MasterDataId == row.MasterDataId)
   //             this.AppUsers.splice(idx, 1);
   //             this.datasource = new MatTableDataSource<any>(this.AppUsers);
@@ -581,12 +584,12 @@ export class AppuserdashboardComponent implements OnInit {
         (data: any) => {
 
           row.Id = data.Id;
-          this.loading = false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-        },err => {
+        }, err => {
           debugger;
-          this.loading = false;
+          this.loading = false; this.PageLoading = false;
           this.errorMessage = '';
           var modelState;
           if (err.error.ModelState != null)
@@ -595,16 +598,16 @@ export class AppuserdashboardComponent implements OnInit {
             modelState = JSON.parse(JSON.stringify(err.error));
           else
             modelState = JSON.parse(JSON.stringify(err));
-  
+
           //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
           for (var key in modelState) {
             if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
-              for(var key1 in modelState[key])
-              this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
+              for (var key1 in modelState[key])
+                this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
               //errors.push(modelState[key]);//list of error messages in an array
             }
           }
-          this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar(this.errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
         });
 
   }
@@ -613,7 +616,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.authservice.CallAPI(this.AppUsersData, 'UpdateUser')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground)
         });
   }

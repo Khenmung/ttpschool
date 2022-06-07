@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './sportsresult.component.html',
   styleUrls: ['./sportsresult.component.scss']
 })
-export class SportsResultComponent implements OnInit {
+export class SportsResultComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   RowsToUpdate = -1;
   EvaluationStarted = false;
@@ -170,7 +170,7 @@ export class SportsResultComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -213,7 +213,7 @@ export class SportsResultComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
     console.log("this.SportsResultForUpdate", this.SportsResultForUpdate)
@@ -434,7 +434,7 @@ export class SportsResultComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 }

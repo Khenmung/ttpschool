@@ -29,7 +29,7 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
     ]),
   ],
 })
-export class TodayCollectionComponent implements OnInit {
+export class TodayCollectionComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   allRowsExpanded: boolean = false;
@@ -211,7 +211,7 @@ export class TodayCollectionComponent implements OnInit {
         this.dataSource = new MatTableDataSource(rows);
         //this.dataSource.paginator = this.paginator;
         //this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetMasterData() {
@@ -279,7 +279,7 @@ export class TodayCollectionComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   getDropDownData(dropdowntype) {

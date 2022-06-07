@@ -14,7 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './emp-components.component.html',
   styleUrls: ['./emp-components.component.scss']
 })
-export class EmpComponentsComponent implements OnInit {
+export class EmpComponentsComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -102,7 +102,7 @@ export class EmpComponentsComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -144,7 +144,7 @@ export class EmpComponentsComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -182,11 +182,11 @@ export class EmpComponentsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.EmpSalaryComponentId = data.EmpSalaryComponentId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -198,10 +198,10 @@ export class EmpComponentsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -309,7 +309,7 @@ export class EmpComponentsComponent implements OnInit {
 
         this.GetConfigVariables();
         this.GetAllComponents();
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
       });
   }
   GetEmpComponents() {
@@ -342,7 +342,7 @@ export class EmpComponentsComponent implements OnInit {
         this.EmpComponentList = [...data.value];
         //console.log('all data',this.EmpComponentList)
         this.dataSource = new MatTableDataSource<IEmpComponent>(this.EmpComponentList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   getEmployeeVariables() {
@@ -372,7 +372,7 @@ export class EmpComponentsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SalaryComponents = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   addnew() {

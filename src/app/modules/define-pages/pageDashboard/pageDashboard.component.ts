@@ -18,7 +18,7 @@ import { ContentService } from 'src/app/shared/content.service';
   styleUrls: ['./pageDashboard.component.scss'],
   //providers: [ConfirmationService, MessageService]
 })
-export class pageDashboardComponent implements OnInit {
+export class pageDashboardComponent implements OnInit { PageLoading=true;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -105,7 +105,7 @@ export class pageDashboardComponent implements OnInit {
         },
         error: console.error
       });
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   constructor(private naomitsuService: NaomitsuService,
     private navigate: Router,

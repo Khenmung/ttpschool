@@ -17,7 +17,7 @@ import { IFamily } from '../family/family.component';
   templateUrl: './employeeskill.component.html',
   styleUrls: ['./employeeskill.component.scss']
 })
-export class EmployeeskillComponent implements OnInit {
+export class EmployeeskillComponent implements OnInit { PageLoading=true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -154,7 +154,7 @@ export class EmployeeskillComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -185,7 +185,7 @@ export class EmployeeskillComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -241,7 +241,7 @@ export class EmployeeskillComponent implements OnInit {
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
         this.EmployeeSkills = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEESKILL);
         this.GetEmployeeSkills();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

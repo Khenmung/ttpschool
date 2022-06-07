@@ -18,7 +18,7 @@ import { ContentService } from 'src/app/shared/content.service';
 
 })
 
-export class TextEditorComponent implements OnInit {
+export class TextEditorComponent implements OnInit { PageLoading=true;
   OneMB =1048576;
   processing =false;
   Edit = false;
@@ -117,7 +117,7 @@ export class TextEditorComponent implements OnInit {
       });
   }
   ngAfterViewInit() {
-    //this.loading = false;
+    //this.loading = false; this.PageLoading=false;
   }
   preview(files) {
     if (files.length === 0)
@@ -234,7 +234,7 @@ export class TextEditorComponent implements OnInit {
           //this.selected = this.ar.snapshot.queryParams.pgid;          
           //this.PageDetailForm.controls.PageGroupId.patchValue(this.ar.snapshot.queryParams.pgid);
         }
-      this.loading=false;
+      this.loading=false;this.PageLoading=false;
       });
   }
   checklogin() {
@@ -336,9 +336,9 @@ export class TextEditorComponent implements OnInit {
                     this.naomitsuService.postPatch('Pages', this.PageDetail, pageId, 'patch')
                       .subscribe(
                         (data: any) => {
-                          this.loading = false;
+                          this.loading = false; this.PageLoading=false;
                         }, (error) => {
-                          this.loading = false;
+                          this.loading = false; this.PageLoading=false;
                           //console.log(error);
                         })
                   }
@@ -413,7 +413,7 @@ export class TextEditorComponent implements OnInit {
             this.naomitsuService.postPatch('PageHistories', this.PageHistory, this.PageHistory.PageHistoryId, 'patch')
               .subscribe(
                 (data: any) => {
-                  this.loading = false;
+                  this.loading = false; this.PageLoading=false;
                   this.contentservice.openSnackBar("Data updated Successfully", globalconstants.ActionText,globalconstants.BlueBackground);
                   this.router.navigate(['/home/pages']);
                 });

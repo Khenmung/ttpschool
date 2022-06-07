@@ -3,7 +3,7 @@
         <div><strong>Student Subject</strong></div>
     </div>
     <!-- <alert></alert> -->
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <form [formGroup]="searchForm">
         <mat-form-field appearance="outline">
             <mat-label>Class</mat-label>
@@ -22,7 +22,10 @@
             </mat-select>
         </mat-form-field>
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentClassSubject()">
-            <mat-icon>search</mat-icon>
+             <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
         </button>
         <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
             <mat-icon>clear_all</mat-icon>
@@ -50,6 +53,9 @@
                             <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
                                 matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
                                 <mat-icon>all_out</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
                             </button>
                         </div>
                     </div>
@@ -61,8 +67,12 @@
                     </mat-checkbox>
                     <div fxLayout="column" fxLayoutAlign="center end">
                         <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read' || !element.Action"
-                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
-                            <mat-icon>save</mat-icon>
+                            matTooltip="save" 
+mat-raised-button color="accent" (click)="SaveRow(element)">
+                             <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                         </button>
                     </div>
                     {{disCol=='Student'?element[disCol]:''}}

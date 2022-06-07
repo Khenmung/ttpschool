@@ -1,6 +1,6 @@
 <div style="padding:15px 15px 10px 0px;"><strong>Class</strong></div>
 <!-- <alert></alert> -->
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <span style="font-size: smaller;margin: 20px;">If fee type is updated, please run 'create invoice' in class-fee
     page.</span>
 <form [formGroup]="studentclassForm">
@@ -93,6 +93,9 @@
         <mat-icon>arrow_back</mat-icon>
     </button>
     <button [disabled]="loading || Permission=='read'" mat-raised-button color="accent" (click)="UpdateOrSave()">
-        <mat-icon>save</mat-icon>
+         <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
     </button>
 </mat-card-actions>

@@ -8,7 +8,7 @@ import { LeavepolicyComponent } from '../leavepolicy/leavepolicy.component';
   templateUrl: './leaveboard.component.html',
   styleUrls: ['./leaveboard.component.scss']
 })
-export class LeaveboardComponent implements OnInit {
+export class LeaveboardComponent implements OnInit { PageLoading=true;
   @ViewChild(LeaveBalanceComponent) leavebalance:LeaveBalanceComponent;
   @ViewChild(EmployeeLeaveComponent) empleave:EmployeeLeaveComponent;
   @ViewChild(LeavepolicyComponent) leavepolicy:LeavepolicyComponent;

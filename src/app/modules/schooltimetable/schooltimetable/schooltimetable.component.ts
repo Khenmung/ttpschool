@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './schooltimetable.component.html',
   styleUrls: ['./schooltimetable.component.scss']
 })
-export class SchooltimetableComponent implements OnInit {
+export class SchooltimetableComponent implements OnInit { PageLoading=true;
   //weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   SelectedApplicationId = 0;
   LoginUserDetail: any[] = [];
@@ -127,7 +127,7 @@ export class SchooltimetableComponent implements OnInit {
       //console.log("duplicateCheck",duplicateCheck);
       var _teacherobj = this.ClassSubjects.filter(f => f.TeacherId == row.TeacherId)
       this.contentservice.openSnackBar("Teacher " + _teacherobj[0].TeacherShortName + " already exists in the same period", globalconstants.ActionText, globalconstants.RedBackground);
-      //this.loading = false;
+      //this.loading = false; this.PageLoading=false;
     }
     else {
 
@@ -170,11 +170,11 @@ export class SchooltimetableComponent implements OnInit {
           row.TimeTableId = data.TimeTableId;
           this.GetAllSchoolTimeTable();
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
 
           if (this.rowCount == 0) {
             this.rowCount = -1;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -188,12 +188,12 @@ export class SchooltimetableComponent implements OnInit {
           debugger;
           this.GetAllSchoolTimeTable();
           //var this.AllTimeTable.filter(f=>)
-          //this.loading = false;
+          //this.loading = false; this.PageLoading=false;
           //this.rowCount++;
           row.Action = false;
           if (this.rowCount == 0) {
             this.rowCount = -1;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -323,7 +323,7 @@ export class SchooltimetableComponent implements OnInit {
         this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetAllSchoolTimeTable() {
@@ -408,7 +408,7 @@ export class SchooltimetableComponent implements OnInit {
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //console.log("this.AllClassPeriods", this.AllClassPeriods);
         this.GetAllSchoolTimeTable();
       })
@@ -453,7 +453,7 @@ export class SchooltimetableComponent implements OnInit {
             SubjectAndTeacherName: _subject + " (" + _shortName + ")"
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   ReplicateToClasses() {
@@ -507,7 +507,7 @@ export class SchooltimetableComponent implements OnInit {
 
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
     if (validated.length > 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -524,7 +524,7 @@ export class SchooltimetableComponent implements OnInit {
 
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
     if (validated.length > 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -573,7 +573,7 @@ export class SchooltimetableComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Batches = this.tokenstorage.getBatches()
         //this.shareddata.ChangeBatch(this.Batches);
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
         this.GetClassSubject();
         this.GetAllClassPeriods();
       });

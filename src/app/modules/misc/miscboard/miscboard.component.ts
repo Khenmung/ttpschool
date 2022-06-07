@@ -68,7 +68,9 @@ export class MiscboardComponent implements AfterViewInit {
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }

@@ -19,7 +19,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './verifyresults.component.html',
   styleUrls: ['./verifyresults.component.scss']
 })
-export class VerifyResultsComponent implements OnInit {
+export class VerifyResultsComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -168,7 +168,7 @@ export class VerifyResultsComponent implements OnInit {
           }
 
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetStudents(classId) {
@@ -195,7 +195,7 @@ export class VerifyResultsComponent implements OnInit {
     
     var _resultToInsert = [];
     if (this.ExamStudentSubjectResult.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("No data to verified.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -224,13 +224,13 @@ export class VerifyResultsComponent implements OnInit {
       this.dataservice.postPatch('ExamStudentResults', _resultToInsert, 0, 'post')
         .subscribe(
           (data: any) => {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             //row.Action = false;
             this.contentservice.openSnackBar("Exam result verified.", globalconstants.ActionText, globalconstants.BlueBackground);
           }, error => {
             //console.log("error",error);
             this.contentservice.openSnackBar("Something went wrong. Please try again.", globalconstants.ActionText, globalconstants.RedBackground);
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           })
     }
   }
@@ -391,7 +391,7 @@ export class VerifyResultsComponent implements OnInit {
             this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
             this.dataSource.sort = this.sort;
             this.dataSource.paginator = this.paginator;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           })
       })
   }
@@ -506,7 +506,7 @@ export class VerifyResultsComponent implements OnInit {
           e.ClassId = e.ClassSubject.ClassId;
           return e;
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 

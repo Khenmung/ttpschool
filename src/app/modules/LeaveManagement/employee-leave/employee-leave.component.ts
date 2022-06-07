@@ -17,7 +17,7 @@ import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-g
   templateUrl: './employee-leave.component.html',
   styleUrls: ['./employee-leave.component.scss']
 })
-export class EmployeeLeaveComponent implements OnInit {
+export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -172,7 +172,7 @@ export class EmployeeLeaveComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -219,11 +219,11 @@ get f(){
       .subscribe(
         (data: any) => {
           row.EmployeeLeaveId = data.EmployeeLeaveId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.newitem = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -234,10 +234,10 @@ get f(){
     this.dataservice.postPatch(this.EmployeeLeaveListName, this.EmployeeLeaveData, this.EmployeeLeaveData.EmployeeLeaveId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -288,7 +288,7 @@ get f(){
         this.Grades = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEGRADE);
         this.Leaves = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVE);
         this.LeaveStatus = this.getDropDownData(globalconstants.MasterDefinitions.leave.LEAVESTATUS);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.GetEmployees();
       });
   }

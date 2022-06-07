@@ -16,8 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './educationhistory.component.html',
   styleUrls: ['./educationhistory.component.scss']
 })
-export class EducationhistoryComponent implements OnInit {
-
+export class EducationhistoryComponent implements OnInit { 
+  PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -161,7 +161,7 @@ export class EducationhistoryComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -195,7 +195,7 @@ export class EducationhistoryComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -251,7 +251,7 @@ export class EducationhistoryComponent implements OnInit {
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
         this.EmployeeEducationHistory = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEESKILL);
         this.GetEmployeeEducationHistory();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;        
       });
   }
   getDropDownData(dropdowntype) {

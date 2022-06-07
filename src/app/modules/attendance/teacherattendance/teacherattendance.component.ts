@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './teacherattendance.component.html',
   styleUrls: ['./teacherattendance.component.scss']
 })
-export class TeacherAttendanceComponent implements OnInit {
+export class TeacherAttendanceComponent implements OnInit { PageLoading=true;
 
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
@@ -76,7 +76,7 @@ export class TeacherAttendanceComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //debugger;
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
@@ -204,7 +204,7 @@ export class TeacherAttendanceComponent implements OnInit {
             this.dataSource = new MatTableDataSource<ITeacherAttendance>(this.TeacherAttendanceList);
             this.dataSource.paginator=this.paginator;
             this.dataSource.sort = this.sort;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           });
         //this.changeDetectorRefs.detectChanges();
       });
@@ -226,9 +226,14 @@ export class TeacherAttendanceComponent implements OnInit {
   saveall() {
     var toUpdateAttendance = this.TeacherAttendanceList.filter(f => f.Action);
     this.NoOfRecordToUpdate = toUpdateAttendance.length;
+    this.loading=true;
     toUpdateAttendance.forEach((record, indx) => {
       this.UpdateOrSave(record, indx);
     })
+    if(toUpdateAttendance.length==0)
+    {
+      this.loading=false;
+    }
   }
   UpdateOrSave(row, indx) {
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
@@ -288,6 +293,7 @@ export class TeacherAttendanceComponent implements OnInit {
           row.AttendanceId = data.AttendanceId;
           if (this.NoOfRecordToUpdate > 0) {
             if (this.NoOfRecordToUpdate == indx + 1) {
+              this.loading=false;
               this.NoOfRecordToUpdate = 0;
               this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             }
@@ -302,6 +308,7 @@ export class TeacherAttendanceComponent implements OnInit {
           if (this.NoOfRecordToUpdate > 0) {
             if (this.NoOfRecordToUpdate == indx + 1) {
               this.NoOfRecordToUpdate = 0;
+              this.loading=false;
               this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             }
           }
@@ -319,7 +326,7 @@ export class TeacherAttendanceComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

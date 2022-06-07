@@ -20,7 +20,8 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './searchstudent.component.html',
   styleUrls: ['./searchstudent.component.scss']
 })
-export class searchstudentComponent implements OnInit {
+export class searchstudentComponent implements OnInit { 
+  PageLoading=true;
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -221,7 +222,7 @@ export class searchstudentComponent implements OnInit {
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.getSelectedBatchStudentIDRollNo();
         this.GetStudentClasses();
 
@@ -346,7 +347,7 @@ export class searchstudentComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeType = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeType);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetStudent() {
@@ -358,7 +359,7 @@ export class searchstudentComponent implements OnInit {
     var _fatherName = this.studentSearchForm.get("FatherName").value.FatherName;
     var _motherName = this.studentSearchForm.get("MotherName").value.MotherName;
     if (_PID == 0 && studentName == undefined && _fatherName == undefined && _motherName == undefined) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -430,7 +431,7 @@ export class searchstudentComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
 
   }
@@ -567,7 +568,7 @@ export class searchstudentComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 

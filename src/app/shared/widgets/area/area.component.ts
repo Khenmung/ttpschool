@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './area.component.html',
   styleUrls: ['./area.component.scss']
 })
-export class AreaComponent implements OnInit {
+export class AreaComponent implements OnInit { PageLoading=true;
 
   constructor() { }
 

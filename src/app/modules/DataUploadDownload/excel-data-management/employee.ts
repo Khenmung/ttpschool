@@ -8,6 +8,7 @@ import { TokenStorageService } from "src/app/_services/token-storage.service";
 })
 export class employee {
     ELEMENT_DATA = [];
+    PageLoading=true;
     loading = false;
     optionsNoAutoClose = {
         autoClose: false,
@@ -28,7 +29,6 @@ export class employee {
     }
     save(ELEMENT_DATA) {
         var toInsert = [];
-        debugger;
         ELEMENT_DATA.forEach(row => {
             toInsert.push({
                 EmpEmployeeId: row.EmpEmployeeId,
@@ -46,7 +46,7 @@ export class employee {
                 IFSCcode: row.IFSCcode,
                 MICRNo: row.MICRNo,
                 AdhaarNo: row.AdhaarNo,
-                PhotoPath: row.PhotoPath,
+                PhotoPath: row.PhotoPath==null?'':row.PhotoPath,
                 ReligionId: row.ReligionId,
                 ContactNo: row.ContactNo,
                 WhatsappNo: row.WhatsappNo,
@@ -88,13 +88,7 @@ export class employee {
             });
         });
         ////console.log("toInsert", toInsert)
-        this.dataservice.postPatch('EmpEmployees', toInsert, 0, 'post')
-            .subscribe((result: any) => {
-                this.loading = false;
-                this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
-            }, error => {
-                this.contentservice.openSnackBar("Error occured. Please contact your administrator.",globalconstants.ActionText,globalconstants.RedBackground);
-                console.log(error)
-            })
+        return this.dataservice.postPatch('EmpEmployees', toInsert, 0, 'post');
+ 
     }
 }

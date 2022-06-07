@@ -16,7 +16,7 @@ import { AuthService } from '../../../_services/auth.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit { PageLoading=true;
   loading = false;
   optionsNoAutoClose = {
     autoClose: false,
@@ -136,7 +136,7 @@ export class RegisterComponent implements OnInit {
     const { UserName, ConfirmPassword, Email, Password, OrganizationName, ContactNo } = this.RegistrationForm.value;
     if(this.contentservice.checkSpecialChar(UserName))
     {
-      this.loading=false;
+      this.loading=false;this.PageLoading=false;
       this.contentservice.openSnackBar("user name should not contains space or special characters.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -157,7 +157,7 @@ export class RegisterComponent implements OnInit {
         this.contentservice.openSnackBar("Congratulations! Your registration is successful.",  globalconstants.ActionText,globalconstants.BlueBackground);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
       },
       err => {
         var modelState;
@@ -178,7 +178,7 @@ export class RegisterComponent implements OnInit {
         }
         this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
         this.isSignUpFailed = true;
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         //console.log(err.error)
       }
     );

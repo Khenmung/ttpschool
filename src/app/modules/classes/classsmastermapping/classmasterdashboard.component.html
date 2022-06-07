@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div style="padding: 15px;"><strong>Class Teacher</strong></div>
 
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <!-- <alert></alert> -->
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline" [style.width.px]="200">
@@ -22,7 +22,10 @@
                 </mat-autocomplete>
             </mat-form-field>
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassTeacher(0)">
-                <mat-icon>search</mat-icon>
+                 <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
              <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
                         (click)="CopyFromPreviousBatch()">
@@ -63,9 +66,13 @@
                 <mat-header-cell *matHeaderCellDef>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="display: flex;justify-content: center;">
-                    <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-mini-fab
+                    <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" 
+mat-raised-button color="accent"
                         (click)="UpdateOrSave(element)">
-                        <mat-icon>save</mat-icon>
+                         <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                     </button>
                 </mat-cell>
             </ng-container>

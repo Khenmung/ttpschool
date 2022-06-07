@@ -8,7 +8,7 @@ import { List } from '../../../shared/interface';
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss']
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent implements OnInit { PageLoading=true;
   loading=false;
   options = {
     autoClose: true,

@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './employeedocuments.component.html',
   styleUrls: ['./employeedocuments.component.scss']
 })
-export class EmployeedocumentsComponent implements OnInit {
+export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
   loading = false;
   optionsNoAutoClose = {
     autoClose: false,

@@ -14,7 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './school-fee-types.component.html',
   styleUrls: ['./school-fee-types.component.scss']
 })
-export class SchoolFeeTypesComponent implements OnInit {
+export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   FeeTypeListName = 'SchoolFeeTypes';
@@ -76,7 +76,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       }
       else {
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       }
     }
   }
@@ -122,7 +122,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -154,7 +154,7 @@ export class SchoolFeeTypesComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -170,7 +170,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
         },
         err => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           if (err.error) {
             var modelState = err.error.Errors;
             var errorMessage = '';
@@ -195,7 +195,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
               this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
                 .subscribe((data: any) => {
-                  // this.loading = false;
+                  // this.loading = false; this.PageLoading=false;
                   // this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
                   this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
                   this.GetFeeTypes();
@@ -203,12 +203,12 @@ export class SchoolFeeTypesComponent implements OnInit {
 
                 },
                   error => {
-                    this.loading = false;
+                    this.loading = false; this.PageLoading=false;
                     console.log("error in createInvoice", error);
                   })
             },
               error => {
-                this.loading = false;
+                this.loading = false; this.PageLoading=false;
                 console.log("error in getinvoice", error);
               })
         },

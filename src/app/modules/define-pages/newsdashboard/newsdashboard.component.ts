@@ -13,7 +13,7 @@ import { DatePipe } from '@angular/common';
   templateUrl: './newsdashboard.component.html',
   styleUrls: ['./newsdashboard.component.scss']
 })
-export class NewsdashboardComponent implements OnInit {
+export class NewsdashboardComponent implements OnInit { PageLoading=true;
   PageTitle: string = "News & Events";
   ParentPages: [{ PageId, PageTitle }];
   PageDetail: IPage;

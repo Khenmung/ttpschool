@@ -28,7 +28,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     ]),
   ],
 })
-export class AddstudentfeepaymentComponent implements OnInit {
+export class AddstudentfeepaymentComponent implements OnInit { PageLoading=true;
   @ViewChild(FeereceiptComponent) receipt: FeereceiptComponent;
   AccountingLedgerTrialBalanceListName = 'AccountingLedgerTrialBalances';
   AccountingVoucherListName = 'AccountingVouchers';
@@ -214,7 +214,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       }
       else
       {
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
       }
     }
@@ -331,7 +331,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             if (data.value[0].FeeType == undefined) {
               this.contentservice.openSnackBar("Fee Type not yet defined.", globalconstants.ActionText, globalconstants.RedBackground);
               //this.snackbar.open("Fee type not yet defined.",'Dimiss',{duration:10000});
-              this.loading = false;
+              this.loading = false; this.PageLoading=false;
             }
             else {
               //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
@@ -499,7 +499,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.StudentLedgerList.sort((a, b) => a.Month - b.Month);
         //console.log("this.StudentLedgerList", this.StudentLedgerList)
         this.dataSource = new MatTableDataSource<ILedger>(this.StudentLedgerList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   ApplyVariables(formula) {
@@ -567,7 +567,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
               })
             }//if (obj.length > 0) {
           })//data.value.forEac
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           console.log("this.MonthlyDueDetail", this.MonthlyDueDetail);
           this.billdataSource = new MatTableDataSource<IPaymentDetail>(this.MonthlyDueDetail);
         })//this.getAccountingVoucher(
@@ -604,7 +604,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             Action: true
           })
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.billdataSource = new MatTableDataSource<IPaymentDetail>(this.MonthlyDueDetail);
       }//if (row.TotalDebit>0 && row.TotalDebit != row.Balance) 
     }
@@ -617,7 +617,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
         this.MonthlyDueDetail.splice(indx, 1);
       })
       row.Action = false;
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       ////console.log("this.MonthlyDueDetail", this.MonthlyDueDetail);
       this.billdataSource = new MatTableDataSource<IPaymentDetail>(this.MonthlyDueDetail);
     }
@@ -742,7 +742,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.dataservice.postPatch(this.FeeReceiptListName, this.FeePayment, 0, 'post')
       .subscribe((data: any) => {
         this.StudentReceiptData.StudentFeeReceiptId = data.StudentFeeReceiptId;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.MonthlyDueDetail = [];
         this.billdataSource = new MatTableDataSource([]);
 

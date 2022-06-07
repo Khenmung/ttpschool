@@ -20,7 +20,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentsubjectdashboard.component.html',
   styleUrls: ['./studentsubjectdashboard.component.scss']
 })
-export class studentsubjectdashboardComponent implements OnInit {
+export class studentsubjectdashboardComponent implements OnInit { PageLoading=true;
   //@Input() StudentClassId:number;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -118,12 +118,12 @@ export class studentsubjectdashboardComponent implements OnInit {
         if (this.Classes.length == 0 || this.Subjects.length == 0)
           this.GetMasterData();
         else {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
       }
       else
       {
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
       }
     }
@@ -299,7 +299,7 @@ export class studentsubjectdashboardComponent implements OnInit {
             _clsName = cls[0].ClassName;
 
           this.contentservice.openSnackBar("No student found for the selected class " + _clsName, globalconstants.ActionText, globalconstants.RedBackground);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
         //console.log('this.StudentSubjectList', this.StudentSubjectList)
         if (this.StudentSubjectList.length > 0) {
@@ -316,7 +316,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         }
 
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
 
         /////////////
@@ -489,7 +489,7 @@ export class studentsubjectdashboardComponent implements OnInit {
     })
     /////////
     if (subjectCounterr.length > 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar(subjectCounterr, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -586,7 +586,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           row.StudentClassSubjectId = data.StudentClassSubjectId;
           
           if (this.rowCount == Object.keys(row).length - 3) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             //this.GetStudentClassSubject();
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -601,7 +601,7 @@ export class studentsubjectdashboardComponent implements OnInit {
           row.Action=false;
           this.rowCount++;
           if (this.rowCount == Object.keys(row).length - 3) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             //this.GetStudentClassSubject();
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -624,7 +624,7 @@ export class studentsubjectdashboardComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.GetClassSubjects();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

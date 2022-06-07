@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './evaluationresult.component.html',
   styleUrls: ['./evaluationresult.component.scss']
 })
-export class EvaluationresultComponent implements OnInit {
+export class EvaluationresultComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   RowsToUpdate = -1;
   EvaluationStarted = false;
@@ -164,7 +164,7 @@ export class EvaluationresultComponent implements OnInit {
               }
             })
             //this.EvaluationClassGroup = [...data.value];
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           })
       }
     }
@@ -184,7 +184,7 @@ export class EvaluationresultComponent implements OnInit {
     if (_examobj.length > 0)
       _studentObj["SessionName"] = _examobj[0].ExamName;
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Exam/Session name must be selected", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -298,7 +298,7 @@ export class EvaluationresultComponent implements OnInit {
         row.EvaluationStarted = true;
         this.dataSource = new MatTableDataSource<IStudentEvaluation>(this.StudentEvaluationList);
         this.dataSource.paginator = this.paginator;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   ApplyVariables(studentInfo) {
@@ -335,7 +335,7 @@ export class EvaluationresultComponent implements OnInit {
           }
         })
         //this.GetEvaluationMapping();
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
       })
   }
   GetClassSubjects() {
@@ -439,7 +439,7 @@ export class EvaluationresultComponent implements OnInit {
             return item;
           })
         }
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
       });
 
   }
@@ -450,7 +450,7 @@ export class EvaluationresultComponent implements OnInit {
     this.loading = true;
     if (_evaluationMasterId == 0) {
       this.contentservice.openSnackBar("Please select evaluation name.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
 
@@ -475,7 +475,7 @@ export class EvaluationresultComponent implements OnInit {
       __classGroupId = _classGroupIdObj[0].ClassGroupId;
     }
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("No class group defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -530,7 +530,7 @@ export class EvaluationresultComponent implements OnInit {
         this.StudentEvaluationList = [];
         this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
         this.dataSource.paginator = this.paginator;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetEvaluationOption() {
@@ -561,7 +561,7 @@ export class EvaluationresultComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("No answer option found.", globalconstants.ActionText, globalconstants.BlueBackground);
         }
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
       });
 
   }
@@ -593,7 +593,7 @@ export class EvaluationresultComponent implements OnInit {
           })
           console.log("this.ClassEvaluations", this.ClassEvaluations)
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetStudentClasses() {
@@ -668,7 +668,7 @@ export class EvaluationresultComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 }

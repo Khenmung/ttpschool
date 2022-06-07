@@ -23,7 +23,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
     ]),
   ],
 })
-export class StudentprofilereportComponent implements OnInit {
+export class StudentprofilereportComponent implements OnInit { PageLoading=true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -140,7 +140,7 @@ export class StudentprofilereportComponent implements OnInit {
 
   
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   
   GetStudentEvaluation() {
@@ -154,7 +154,7 @@ export class StudentprofilereportComponent implements OnInit {
     var _searchExamId = this.searchForm.get("searchExamId").value;
     //var _searchSubjectId = this.searchForm.get("searchSubjectId").value;
     if (_searchEvaluationTypeId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -280,7 +280,7 @@ export class StudentprofilereportComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetExams() {
@@ -302,7 +302,7 @@ export class StudentprofilereportComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   // GetSelectedClassSubject() {
@@ -570,7 +570,7 @@ export interface IStudent {
 //   }
 
 //   loadingFalse() {
-//     this.loading = false;
+//     this.loading = false; this.PageLoading=false;
 //   }
 //   private _filter(name: string): IStudent[] {
 
@@ -592,7 +592,7 @@ export interface IStudent {
 //     if (this.StudentClassId != undefined)
 //       filterStr += ' and StudentClassId eq ' + this.StudentClassId;
 //     else {
-//       this.loading = false;
+//       this.loading = false; this.PageLoading=false;
 //       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
 //       return;
 //     }
@@ -744,7 +744,7 @@ export interface IStudent {
 //             }
 //           })
 //         }
-//         this.loading = false;
+//         this.loading = false; this.PageLoading=false;
 //       })
 //   }
 //   GetClassEvaluations() {

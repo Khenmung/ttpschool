@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './feedefinition.component.html',
   styleUrls: ['./feedefinition.component.scss']
 })
-export class FeeDefinitionComponent implements OnInit {
+export class FeeDefinitionComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -99,7 +99,7 @@ export class FeeDefinitionComponent implements OnInit {
       }
 
       if (this.Permission == 'deny') {
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
     
       }
@@ -166,13 +166,13 @@ export class FeeDefinitionComponent implements OnInit {
 
     if (row.FeeCategoryId == 0) {
       this.contentservice.openSnackBar("Please select Fee Category.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = false;
       return;
     }
     if (row.FeeName == '') {
       this.contentservice.openSnackBar("Please enter fee name.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = false;
       return;
     }
@@ -189,7 +189,7 @@ export class FeeDefinitionComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -225,7 +225,7 @@ export class FeeDefinitionComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   GetSubCategory(row) {
     row.FeeSubCategories = this.allMasterData.filter(f => f.ParentId == row.FeeCategoryId);
@@ -305,7 +305,7 @@ export class FeeDefinitionComponent implements OnInit {
        
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

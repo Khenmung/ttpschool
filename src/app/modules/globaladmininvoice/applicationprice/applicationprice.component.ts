@@ -13,7 +13,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './applicationprice.component.html',
   styleUrls: ['./applicationprice.component.scss']
 })
-export class ApplicationpriceComponent implements OnInit {
+export class ApplicationpriceComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -139,7 +139,7 @@ export class ApplicationpriceComponent implements OnInit {
         (data: any) => {
           row.ApplicationPriceId = data.ApplicationPriceId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -148,7 +148,7 @@ export class ApplicationpriceComponent implements OnInit {
     this.dataservice.postPatch(this.ApplicationPriceListName, this.ApplicationPriceData, this.ApplicationPriceData.ApplicationPriceId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
@@ -214,7 +214,7 @@ export class ApplicationpriceComponent implements OnInit {
         }
         //console.log('app',this.ApplicationPriceList)
         this.dataSource = new MatTableDataSource<any>(this.ApplicationPriceList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -231,7 +231,7 @@ export class ApplicationpriceComponent implements OnInit {
         this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.common.CURRENCY);
         this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
 

@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.scss']
 })
-export class ResultComponent implements OnInit {
+export class ResultComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -173,7 +173,7 @@ export class ResultComponent implements OnInit {
           }
 
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetStudents(classId) {
@@ -270,7 +270,7 @@ export class ResultComponent implements OnInit {
         this.dataSource = new MatTableDataSource(this.ExamStudentResult);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetClassGroupMapping() {
@@ -383,7 +383,7 @@ export class ResultComponent implements OnInit {
           e.ClassId = e.ClassSubject.ClassId;
           return e;
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 

@@ -14,7 +14,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
   templateUrl: './homedashboard.component.html',
   styleUrls: ['./homedashboard.component.scss']
 })
-export class HomeDashboardComponent implements OnInit {
+export class HomeDashboardComponent implements OnInit { PageLoading=true;
   loading = false;
   searchForm: FormGroup;
   NewsNEventPageId = 0;
@@ -98,7 +98,7 @@ export class HomeDashboardComponent implements OnInit {
     if (selectedBatchId > 0)
       this.SaveBatchIds(selectedBatchId);
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select batch.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -121,7 +121,7 @@ export class HomeDashboardComponent implements OnInit {
     }
     else
     {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -188,7 +188,7 @@ export class HomeDashboardComponent implements OnInit {
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
       if (this.SelectedBatchId > 0)
         this.generateBatchIds(this.SelectedBatchId);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
     });
   }
   sendmessage() {

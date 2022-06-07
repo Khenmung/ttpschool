@@ -16,7 +16,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './contactdashboard.component.html',
   styleUrls: ['./contactdashboard.component.scss']
 })
-export class ContactdashboardComponent implements OnInit {
+export class ContactdashboardComponent implements OnInit { PageLoading=true;
   loading=false;
   options = {
     autoClose: true,

@@ -13,7 +13,7 @@ import { AuthService } from '../../../_services/auth.service';
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss']
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit { PageLoading=true;
   loading = false;
   loginUserDetail = [];
   changepwdForm: FormGroup;

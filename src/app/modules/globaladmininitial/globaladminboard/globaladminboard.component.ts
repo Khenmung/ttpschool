@@ -108,13 +108,15 @@ export class GlobaladminboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.ORGANIZATIONPAYMENT)
       var comindx = this.components.indexOf(OrganizationpaymentComponent);
       this.GetComponents(perObj, comindx)
-      
+
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.globaladmin.CUSTOMERPLANFEATURE)
       var comindx = this.components.indexOf(CustomerPlanFeatureComponent);
       this.GetComponents(perObj, comindx)
 
       this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }

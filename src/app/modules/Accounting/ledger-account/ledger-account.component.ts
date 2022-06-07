@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './ledger-account.component.html',
   styleUrls: ['./ledger-account.component.scss']
 })
-export class GeneralLedgerComponent implements OnInit {
+export class GeneralLedgerComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -166,19 +166,19 @@ export class GeneralLedgerComponent implements OnInit {
     //debugger;
     this.loading = true;
     if (row.AccountNatureId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       //this.contentservice.openSnackBar("Please select account nature.", globalconstants.ActionText,globalconstants.RedBackground);
       this.contentservice.openSnackBar("Please select account nature.",globalconstants.ActionText,globalconstants.RedBackground);
       
       return;
     }
     if (row.AccountGroupId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select account group.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (row.GeneralLedgerName.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter account name.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -197,7 +197,7 @@ export class GeneralLedgerComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -237,7 +237,7 @@ export class GeneralLedgerComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
     //console.log("inserting",this.GeneralLedgerForUpdate);
@@ -301,7 +301,7 @@ export class GeneralLedgerComponent implements OnInit {
     var LedgerAccountId = this.searchForm.get("searchAccountGroupId").value.LedgerAccountId;
 
     if (AccountNatureId == 0 && AccountGroupId == 0 && LedgerAccountId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select search criteria", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }

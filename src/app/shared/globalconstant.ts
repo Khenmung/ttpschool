@@ -11,7 +11,7 @@ export class globalconstants {
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
-    public static RowUploadLimit = 5; //536870912;
+    public static RowUploadLimit = 1000; //536870912;
     public static TrialPeriod = 3;
     public static BlueBackground = {duration:3000,panelClass:'blue-snackbar'};
     public static RedBackground = {duration:10000,panelClass:'red-snackbar'};

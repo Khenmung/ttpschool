@@ -21,7 +21,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './generatecertificate.component.html',
   styleUrls: ['./generatecertificate.component.scss']
 })
-export class GenerateCertificateComponent implements OnInit {
+export class GenerateCertificateComponent implements OnInit { PageLoading=true;
   loading = false;
   LoginUserDetail = [];
   Permission = '';
@@ -135,7 +135,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.Permission = perObj[0].permission;
 
       if (this.StudentClassId == 0) {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
         //this.nav.navigate(['/edu']);
       }
@@ -152,7 +152,7 @@ export class GenerateCertificateComponent implements OnInit {
 
       }
       else {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
@@ -210,7 +210,7 @@ export class GenerateCertificateComponent implements OnInit {
           }
 
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetStudentAndGenerateCerts() {
@@ -285,7 +285,7 @@ export class GenerateCertificateComponent implements OnInit {
             StudentClassId: d.StudentClassId
           }
         });
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       }
       else {
         ////console.log('data.value',data.value)
@@ -365,7 +365,7 @@ export class GenerateCertificateComponent implements OnInit {
     debugger;
     var _certificateBody = this.allMasterData.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)
     if (_certificateBody.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -386,7 +386,7 @@ export class GenerateCertificateComponent implements OnInit {
         }
       }
       if (!certificateavailable) {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(_certificateFormula[0].MasterDataName + " not available for this student.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
@@ -417,7 +417,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.loadTheme(styleStr);
     console.log("CertificateElements", this.CertificateElements)
     this.dataSource = new MatTableDataSource<any>(this.CertificateElements);
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   GetExamStudentSubjectResults() {
 
@@ -455,7 +455,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
 
   }
@@ -585,7 +585,7 @@ export class GenerateCertificateComponent implements OnInit {
             footer.Description = footer.Description.replaceAll("[" + orgdet.name + "]", orgdet.val);
           })
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetStudentAttendance() {
@@ -609,7 +609,7 @@ export class GenerateCertificateComponent implements OnInit {
         if (groupbyPresentAbsent.length > 0)
           this.AttendanceStatusSum = groupbyPresentAbsent[0].Total
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getPaymentStatus() {
@@ -629,7 +629,7 @@ export class GenerateCertificateComponent implements OnInit {
         if (data.value.length > 0) {
           this.FeePaidLastMonth = data.value[0].Month;
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         console.log("this.FeePaidLastMonth", this.FeePaidLastMonth);
       });
   }

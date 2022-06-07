@@ -14,7 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './customerplans.component.html',
   styleUrls: ['./customerplans.component.scss']
 })
-export class CustomerPlansComponent implements OnInit {
+export class CustomerPlansComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   StandardFilterWithBatchId = '';
@@ -160,7 +160,7 @@ export class CustomerPlansComponent implements OnInit {
           this.PlanSelected=true;
           this.GetCustomerPlans();
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.nav.navigate(['/auth/login']);
         }, error => {
@@ -180,13 +180,13 @@ export class CustomerPlansComponent implements OnInit {
         (data: any) => {
           this.PlanSelected=true;
           //this.GetCustomerPlans();
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.contentservice.openSnackBar("Plan updated successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
           this.logout();
         },
         err => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           var modelState;
           var errmsg = '';
           if (err.error.ModelState != null)
@@ -237,7 +237,7 @@ export class CustomerPlansComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.CustomerPlanFeatures = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetPlan() {
@@ -257,7 +257,7 @@ export class CustomerPlansComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.Plans = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.GetCustomerPlans();
       })
   }
@@ -345,7 +345,7 @@ export class CustomerPlansComponent implements OnInit {
         }
         console.log("customer list", this.CustomerPlansList)
         this.dataSource = new MatTableDataSource<any>(this.CustomerPlansList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -368,7 +368,7 @@ export class CustomerPlansComponent implements OnInit {
   //       this.allMasterData = [...data.value];
   //       this.Currencies = this.getDropDownData(globalconstants.MasterDefinitions.common.CURRENCY);
   //       this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
-  //       this.loading = false;
+  //       this.loading = false; this.PageLoading=false;
   //     });
   // }
 

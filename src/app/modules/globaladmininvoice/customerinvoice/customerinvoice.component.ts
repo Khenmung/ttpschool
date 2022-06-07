@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './customerinvoice.component.html',
   styleUrls: ['./customerinvoice.component.scss']
 })
-export class CustomerinvoiceComponent implements OnInit {
+export class CustomerinvoiceComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -141,7 +141,7 @@ export class CustomerinvoiceComponent implements OnInit {
     //   .subscribe((data: any) => {
     //     //debugger;
     //     if (data.value.length > 0) {
-    //       this.loading = false;
+    //       this.loading = false; this.PageLoading=false;
     //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
     //     }
     //     else {
@@ -184,7 +184,7 @@ export class CustomerinvoiceComponent implements OnInit {
         (data: any) => {
           row.CustomerInvoiceId = data.CustomerInvoiceId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -193,7 +193,7 @@ export class CustomerinvoiceComponent implements OnInit {
     this.dataservice.postPatch(this.CustomerInvoiceListName, this.CustomerInvoiceData, this.CustomerInvoiceData.CustomerInvoiceId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
@@ -239,7 +239,7 @@ export class CustomerinvoiceComponent implements OnInit {
           }
           return v;
         });
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetCustomerInvoice() {
@@ -323,7 +323,7 @@ export class CustomerinvoiceComponent implements OnInit {
         }
         //console.log('Organizations', this.Organizations)
         this.CustomerInvoiceDataSource = new MatTableDataSource<any>(this.CustomerInvoiceList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetCustomerPlans() {

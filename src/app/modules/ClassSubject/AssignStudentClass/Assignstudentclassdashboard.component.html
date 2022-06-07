@@ -1,10 +1,10 @@
 <div style="padding:15px 15px 10px 15px;">
     <div><strong>Class Student</strong></div>
 </div>
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form style="display: flex;flex-direction: row;justify-content: space-around;" [formGroup]="searchForm">
     <div>
-       
+
         <mat-form-field appearance="outline" style="width: 150px;">
             <mat-label>Class</mat-label>
             <mat-select formControlName="searchClassId">
@@ -32,9 +32,12 @@
         </mat-form-field>
         <button [disabled]="loading" style="margin-right: 10px;" mat-raised-button color="accent" (click)="GetData('')">
             <mat-icon>search</mat-icon>
+            <mat-icon *ngIf="loading">
+                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+            </mat-icon>
         </button>
-        <button [disabled]="loading" style="margin-right: 10px;" matTooltip="Data from previous batch & previous class" class="mat-raised-button"
-            (click)="CopyFromPreviousClassAndBatch()">
+        <button [disabled]="loading" style="margin-right: 10px;" matTooltip="Data from previous batch & previous class"
+            class="mat-raised-button" (click)="CopyFromPreviousClassAndBatch()">
             <mat-icon>copy_all</mat-icon>
         </button>
         <button [disabled]="loading" matTooltip="Data from previous batch & same class" class="mat-raised-button"
@@ -53,21 +56,21 @@
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="PID">
-        <mat-header-cell *matHeaderCellDef mat-sort-header style="display:flex ;"> 
+        <mat-header-cell *matHeaderCellDef mat-sort-header style="display:flex ;">
             <span style="display: flex;flex-direction: column;justify-content: flex-start;">
                 <span style="justify-content: flex-start;display: flex;">PID</span>
                 <mat-form-field style="width: 80px;">
                     <mat-label>search PID</mat-label>
                     <input matInput [formControl]="IdFilter" autocomplete="Off">
                 </mat-form-field>
-            </span>    
+            </span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.PID}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StudentName">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>              
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
             <span style="display: flex;flex-direction: column;justify-content: start;">
                 <span style="justify-content: start;display: flex;">Student</span>
                 <mat-form-field style="width: 150px;">
@@ -77,7 +80,7 @@
             </span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-                {{element.StudentName}}                
+            {{element.StudentName}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="GenderName">
@@ -102,7 +105,7 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    
+
     <ng-container matColumnDef="SectionId">
         <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Section
         </mat-header-cell>
@@ -139,14 +142,14 @@
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Active">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> 
-            <mat-checkbox (click)="$event.stopPropagation()"
-                (change)="SelectALL($event)">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="SelectALL($event)">
             </mat-checkbox>
-            &nbsp;Active </mat-header-cell>
+            &nbsp;Active
+        </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-checkbox (click)="$event.stopPropagation()"
-                (change)="updateActive(element,$event)" [checked]="element.Active==1?true:false">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                [checked]="element.Active==1?true:false">
             </mat-checkbox>
         </mat-cell>
     </ng-container>
@@ -155,13 +158,19 @@
             <button [disabled]="loading || StudentClassList.length==0 || Permission=='read'" matTooltip="save all"
                 mat-mini-fab (click)="SaveAll()">
                 <mat-icon>all_out</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
-                (click)="SaveRow(element)">
+            <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-raised-button
+                color="accent" (click)="SaveRow(element)">
                 <mat-icon>save</mat-icon>
-            </button>        
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
         </mat-cell>
     </ng-container>
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

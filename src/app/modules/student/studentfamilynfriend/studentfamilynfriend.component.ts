@@ -15,7 +15,7 @@ import { IStudent } from '../searchstudent/searchstudent.component';
   templateUrl: './studentfamilynfriend.component.html',
   styleUrls: ['./studentfamilynfriend.component.scss']
 })
-export class StudentfamilynfriendComponent implements OnInit {
+export class StudentfamilynfriendComponent implements OnInit { PageLoading=true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -96,7 +96,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       }
 
       if (this.Permission == 'deny') {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -161,18 +161,18 @@ export class StudentfamilynfriendComponent implements OnInit {
     debugger;
     this.loading = true;
     if (row.Name.length == 0 && row.SiblingName == '') {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter name or select name.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.RelationshipId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select relationship..", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var relationship = this.FamilyRelationship.filter(f => f.MasterDataId == row.RelationshipId)[0].MasterDataName;
     if (relationship.toLowerCase() == 'friend' && row.ContactNo.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter friend's contact no..", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -190,7 +190,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -230,7 +230,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -389,7 +389,7 @@ export class StudentfamilynfriendComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetFeeTypes() {
@@ -403,7 +403,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.FeeType = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetMasterData() {
@@ -419,7 +419,7 @@ export class StudentfamilynfriendComponent implements OnInit {
           this.GetStudentClasses();
         });
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

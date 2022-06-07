@@ -20,7 +20,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentprimaryinfo.component.html',
   styleUrls: ['./studentprimaryinfo.component.scss']
 })
-export class studentprimaryinfoComponent implements OnInit {
+export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
   @ViewChild(AddstudentclassComponent) studentClass: AddstudentclassComponent;
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
@@ -78,7 +78,7 @@ export class studentprimaryinfoComponent implements OnInit {
     debugger;
     this.selectedFile = files[0];
     if (this.selectedFile.size > 60000) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -94,7 +94,7 @@ export class studentprimaryinfoComponent implements OnInit {
     let error: boolean = false;
     this.loading = true;
     if (this.selectedFile == undefined) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -124,7 +124,7 @@ export class studentprimaryinfoComponent implements OnInit {
       keepAfterRouteChange: true
     };
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
 
       this.Edit = false;
@@ -328,7 +328,7 @@ export class studentprimaryinfoComponent implements OnInit {
       errorMessage += "Please select Class for which admission is sought.\n";
     }
     if (errorMessage.length > 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -339,7 +339,7 @@ export class studentprimaryinfoComponent implements OnInit {
       this.contentservice.CheckEmailDuplicate(checkduppayload)
         .subscribe((data: any) => {
           if (data) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar("Email already in use.", globalconstants.ActionText, globalconstants.RedBackground);
             return;
           }
@@ -425,7 +425,7 @@ export class studentprimaryinfoComponent implements OnInit {
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
             //this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.tokenService.saveStudentId(this.StudentId + "")
             //this.tokenService.saveStudentClassId(this.StudentClassId + "");
             this.GetStudent();
@@ -444,7 +444,7 @@ export class studentprimaryinfoComponent implements OnInit {
 
     this.dataservice.postPatch('Students', this.studentData[0], this.StudentId, 'patch')
       .subscribe((result: any) => {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.Edited = false;
         if (result != null && result.UserId != "")
           this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -542,7 +542,7 @@ export class studentprimaryinfoComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
 
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       },
         err => {
           console.log("error", err)

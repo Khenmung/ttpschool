@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './reportconfigitem.component.html',
   styleUrls: ['./reportconfigitem.component.scss']
 })
-export class ReportConfigItemComponent implements OnInit {
+export class ReportConfigItemComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   BaseReportId = 0;
@@ -179,7 +179,7 @@ export class ReportConfigItemComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -225,7 +225,7 @@ export class ReportConfigItemComponent implements OnInit {
         (data: any) => {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           if (this.ToUpdateCount == 0) {
             this.ToUpdateCount = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -237,7 +237,7 @@ export class ReportConfigItemComponent implements OnInit {
     this.dataservice.postPatch(this.ReportConfigItemListName, this.ReportConfigItemData, this.ReportConfigItemData.ReportConfigItemId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           if (this.ToUpdateCount == 0) {
             this.ToUpdateCount = -1;
@@ -330,7 +330,7 @@ export class ReportConfigItemComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -355,7 +355,7 @@ export class ReportConfigItemComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetReportNames() {
@@ -377,7 +377,7 @@ export class ReportConfigItemComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ReportNames = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetAppReportNames() {

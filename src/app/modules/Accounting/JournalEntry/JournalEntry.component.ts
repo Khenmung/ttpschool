@@ -17,7 +17,7 @@ import { IGeneralLedger } from '../ledger-account/ledger-account.component';
   templateUrl: './JournalEntry.component.html',
   styleUrls: ['./JournalEntry.component.scss']
 })
-export class JournalEntryComponent implements OnInit {
+export class JournalEntryComponent implements OnInit { PageLoading=true;
 
 
   @ViewChild("table") mattable;
@@ -221,7 +221,7 @@ export class JournalEntryComponent implements OnInit {
 
         }
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   onBlur(row) {
@@ -262,7 +262,7 @@ export class JournalEntryComponent implements OnInit {
       errorMessage += "Amount should be less than 10,00,000 or greater than -10,00,000<br>";
 
     if (errorMessage.length > 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       //this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
       return;
@@ -284,7 +284,7 @@ export class JournalEntryComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;        
+          this.loading = false; this.PageLoading=false;        
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage,globalconstants.ActionText,globalconstants.RedBackground);
         }
         else {
@@ -328,7 +328,7 @@ export class JournalEntryComponent implements OnInit {
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.AccountingVoucherId = data.AccountingVoucherId;
           
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -339,7 +339,7 @@ export class JournalEntryComponent implements OnInit {
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, this.AccountingVoucherData.AccountingVoucherId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
 
           
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -369,7 +369,7 @@ export class JournalEntryComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.GeneralLedgers = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetMasterData() {
@@ -377,7 +377,7 @@ export class JournalEntryComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

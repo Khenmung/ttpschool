@@ -21,7 +21,10 @@
         </mat-select>
     </mat-form-field>
     <button [disabled]="loading" class="mat-raised-button" (click)="GetPages()">
-        <mat-icon>search</mat-icon>
+         <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
     </button>
 </form>
 <mat-table [dataSource]="dataSource" matSort>
@@ -131,9 +134,13 @@
             </button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" style="justify-content: center;">
-            <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-mini-fab
+            <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" 
+mat-raised-button color="accent"
                 (click)="UpdateOrSave(element)">
-                <mat-icon>save</mat-icon>
+                 <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
         </mat-cell>
     </ng-container>

@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './gradehistory.component.html',
   styleUrls: ['./gradehistory.component.scss']
 })
-export class GradehistoryComponent implements OnInit {
+export class GradehistoryComponent implements OnInit { PageLoading=true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -201,12 +201,12 @@ export class GradehistoryComponent implements OnInit {
       " and DesignationId eq " + row.DesignationId +
       " and EmployeeId eq " + this.EmployeeId
     if (row.ManagerId == null || row.ManagerId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please assign manager.",globalconstants.ActionText,globalconstants.RedBackground);
       return
     }
     if (row.WorkAccountId == null || row.WorkAccountId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select work account.",globalconstants.ActionText,globalconstants.RedBackground);
       return
     }
@@ -221,7 +221,7 @@ export class GradehistoryComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -264,7 +264,7 @@ export class GradehistoryComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -343,7 +343,7 @@ export class GradehistoryComponent implements OnInit {
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
         this.GetEmploymentHistory();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -386,7 +386,7 @@ export class GradehistoryComponent implements OnInit {
           })
         }
         this.GetMasterData();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 }

@@ -17,7 +17,7 @@ import { ClassEvaluationOptionComponent } from '../classevaluationoption/classev
   templateUrl: './classevaluation.component.html',
   styleUrls: ['./classevaluation.component.scss']
 })
-export class ClassEvaluationComponent implements OnInit {
+export class ClassEvaluationComponent implements OnInit { PageLoading=true;
   @ViewChild("table") mattable;
   @ViewChild(ClassEvaluationOptionComponent) option: ClassEvaluationOptionComponent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -113,7 +113,7 @@ export class ClassEvaluationComponent implements OnInit {
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           });
           //this.GetClassEvaluation();
         }
@@ -157,7 +157,7 @@ export class ClassEvaluationComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
       })
   }
   SelectSubCategory(pCategoryId) {
@@ -232,19 +232,19 @@ export class ClassEvaluationComponent implements OnInit {
     debugger;
     this.loading = true;
     if (row.Description.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter description", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     //this.EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
     if (row.EvaluationMasterId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("No Evaluation type Id selected.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     // if (this.contentservice.checkSpecialChar(row.Description)) {
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   this.contentservice.openSnackBar("Special characters not allowed in questionnaire!", globalconstants.ActionText, globalconstants.RedBackground);
     //   return;
     // }
@@ -267,7 +267,7 @@ export class ClassEvaluationComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
@@ -315,7 +315,7 @@ export class ClassEvaluationComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
     //console.log("inserting",this.ClassEvaluationForUpdate);
@@ -508,7 +508,7 @@ export class ClassEvaluationComponent implements OnInit {
         //   this.Exams =[...data.value];
         // })
         this.GetExams();
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
         this.GetClassSubjects();
         this.GetClassEvaluationOption();
         //this.GetClassEvaluation();

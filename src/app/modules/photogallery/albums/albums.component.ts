@@ -14,7 +14,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './albums.component.html',
   styleUrls: ['./albums.component.scss']
 })
-export class AlbumsComponent implements OnInit {
+export class AlbumsComponent implements OnInit { PageLoading=true;
   @ViewChild('button') button: ElementRef;
   FileOrImage: number = 1;
   activeSkill() {
@@ -185,7 +185,7 @@ export class AlbumsComponent implements OnInit {
           this.Albums = [];
         }
         this.dataSource = new MatTableDataSource<IAlbum>(this.Albums);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //setTimeout(()=>{this.loading=false},3000); 
       })
   }

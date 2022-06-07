@@ -11,7 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
   templateUrl: './authhome.component.html',
   styleUrls: ['./authhome.component.scss']
 })
-export class AuthHomeComponent implements OnInit {
+export class AuthHomeComponent implements OnInit { PageLoading=true;
   content?: string;
   mediaSub: Subscription;
   deviceXs: boolean;

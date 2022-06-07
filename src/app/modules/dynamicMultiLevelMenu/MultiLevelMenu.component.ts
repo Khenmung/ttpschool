@@ -21,7 +21,7 @@ import { NaomitsuService } from '../../shared/databaseService';
   ]
 })
 
-export class MultiLevelMenuComponent implements OnInit {
+export class MultiLevelMenuComponent implements OnInit { PageLoading=true;
   @Output() openLeftMenu = new EventEmitter();
   module = {
     admin: "admin",
@@ -99,7 +99,7 @@ export class MultiLevelMenuComponent implements OnInit {
     //Add 'implements AfterViewInit' to the class.
 
 
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   setRow(_index: number) {
     this.selectedIndex = _index;

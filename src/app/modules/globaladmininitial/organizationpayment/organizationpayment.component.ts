@@ -14,7 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './organizationpayment.component.html',
   styleUrls: ['./organizationpayment.component.scss']
 })
-export class OrganizationpaymentComponent implements OnInit {
+export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -102,7 +102,7 @@ export class OrganizationpaymentComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -125,7 +125,7 @@ export class OrganizationpaymentComponent implements OnInit {
   AddNew() {
     var orgId = this.searchForm.get("searchCustomerId").value
     if (orgId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select customer.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -160,13 +160,13 @@ export class OrganizationpaymentComponent implements OnInit {
 
     if (row.PaidMonths == 0) {
       this.contentservice.openSnackBar("Please payment for enter no. of months.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = true;
       return;
     }
     if (row.PaymentMode == 0) {
       this.contentservice.openSnackBar("Please select payment mode.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = true;
       return;
     }
@@ -202,7 +202,7 @@ export class OrganizationpaymentComponent implements OnInit {
         (data: any) => {
           row.OrganizationPaymentId = data.OrganizationPaymentId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
           this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -213,7 +213,7 @@ export class OrganizationpaymentComponent implements OnInit {
     this.dataservice.postPatch(this.OrganizationPaymentListName, this.OrganizationPaymentData, this.OrganizationPaymentData.OrganizationPaymentId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -229,7 +229,7 @@ export class OrganizationpaymentComponent implements OnInit {
         this.contentservice.GetDropDownDataFromDB(PaymentModeParentId, this.LoginUserDetail[0]["orgId"], globalAdminId, 1)
           .subscribe((data: any) => {
             this.PaymentModes = [...data.value];
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           });
       })
   }
@@ -273,7 +273,7 @@ export class OrganizationpaymentComponent implements OnInit {
           m.PlanName = m.Plan.Title;
           return m;
         });
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //      this.GetOrganizationPayment();
       })
   }
@@ -328,7 +328,7 @@ export class OrganizationpaymentComponent implements OnInit {
 
         this.dataSource = new MatTableDataSource<any>(this.OrganizationPaymentList.sort((a, b) => new Date(b.PaymentDate).getTime() - new Date(a.PaymentDate).getTime()));
         this.dataSource.paginator = this.paginator;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetPlan() {
@@ -343,7 +343,7 @@ export class OrganizationpaymentComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.Plans = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
       })
   }

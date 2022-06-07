@@ -1,7 +1,7 @@
 <mat-card>
     <mat-card-title style="padding: 20px;">Manage Files/Folders</mat-card-title>
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <br>
         <form [formGroup]="searchForm">
             <div class="example-header" fxLayout="row" fxLayoutAlign="space-between center">
@@ -10,7 +10,10 @@
                     <input matInput formControlName="UpdatedFileFolderName" autocomplete="off">
                 </mat-form-field>
                 <button [disabled]="loading" class="mat-raised-button" (click)="getFiles(null,'search')" fxFlex="10">
-                    <mat-icon>search</mat-icon>
+                     <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
                 <div fxFlex>&nbsp;</div>
             </div>

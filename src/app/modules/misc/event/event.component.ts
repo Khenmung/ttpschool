@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './event.component.html',
   styleUrls: ['./event.component.scss']
 })
-export class EventComponent implements OnInit {
+export class EventComponent implements OnInit { PageLoading=true;
 @ViewChild(MatPaginator) paging:MatPaginator;
 
   LoginUserDetail: any[] = [];
@@ -156,7 +156,7 @@ export class EventComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -192,7 +192,7 @@ export class EventComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -249,7 +249,7 @@ export class EventComponent implements OnInit {
         //this.FamilyRelationship = this.getDropDownData(globalconstants.MasterDefinitions.employee.FAMILYRELATIONSHIP);
         this.Events = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEESKILL);
         this.GetEvents();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

@@ -17,7 +17,7 @@ import { SchoolFeeTypesComponent } from '../school-fee-types/school-fee-types.co
 export class ClassboardComponent implements AfterViewInit {
   components = [
     ClassdetailComponent,
-    FeeDefinitionComponent,    
+    FeeDefinitionComponent,
     DashboardclassfeeComponent,
     SchoolFeeTypesComponent,
     ClassmasterdashboardComponent,
@@ -49,7 +49,7 @@ export class ClassboardComponent implements AfterViewInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private contentservice:ContentService,
+    private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
     private componentFactoryResolver: ComponentFactoryResolver) {
   }
@@ -69,7 +69,7 @@ export class ClassboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSFEE)
     var comindx = this.components.indexOf(DashboardclassfeeComponent);
     this.GetComponents(perObj, comindx)
-    
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUPING)
     var comindx = this.components.indexOf(ClassgroupmappingComponent);
     this.GetComponents(perObj, comindx)
@@ -85,9 +85,11 @@ export class ClassboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEEDEFINITION)
     var comindx = this.components.indexOf(FeeDefinitionComponent);
     this.GetComponents(perObj, comindx)
-  
+
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }

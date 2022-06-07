@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './subject-types.component.html',
   styleUrls: ['./subject-types.component.scss']
 })
-export class SubjectTypesComponent implements OnInit {
+export class SubjectTypesComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   CheckBatchIdForEdit = 1;
@@ -155,7 +155,7 @@ export class SubjectTypesComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -193,7 +193,7 @@ export class SubjectTypesComponent implements OnInit {
         (data: any) => {
           row.SubjectTypeId = data.SubjectTypeId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -202,7 +202,7 @@ export class SubjectTypesComponent implements OnInit {
     this.dataservice.postPatch('SubjectTypes', this.SubjectTypeData, this.SubjectTypeData.SubjectTypeId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
@@ -238,7 +238,7 @@ export class SubjectTypesComponent implements OnInit {
     this.dataservice.postPatch('SubjectTypes', toUpdate, row.SubjectTypeId, 'patch')
       .subscribe(res => {
         row.Action = false;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         var idx = this.SubjectTypes.findIndex(x => x.SubjectTypeId == row.MasterDataId)
         this.SubjectTypes.splice(idx, 1);
         this.dataSource = new MatTableDataSource<any>(this.SubjectTypes);
@@ -266,7 +266,7 @@ export class SubjectTypesComponent implements OnInit {
           return m;
         });
         this.dataSource = new MatTableDataSource<ISubjectType>(this.SubjectTypes);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetMasterData() {
@@ -280,7 +280,7 @@ export class SubjectTypesComponent implements OnInit {
         this.Batches = this.tokenstorage.getBatches()
         
         //this.shareddata.ChangeBatch(this.Batches);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

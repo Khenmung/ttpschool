@@ -16,7 +16,7 @@ import * as moment from 'moment';
   templateUrl: './examslot.component.html',
   styleUrls: ['./examslot.component.scss']
 })
-export class ExamslotComponent implements OnInit {
+export class ExamslotComponent implements OnInit { PageLoading=true;
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   LoginUserDetail: any[] = [];
@@ -139,12 +139,12 @@ export class ExamslotComponent implements OnInit {
     this.loading = true;
 
     if (row.ExamDate == null) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Exam date is mandatory!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.StartTime.length == 0 || row.EndTime.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Start time and end time are mandatory!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -168,7 +168,7 @@ export class ExamslotComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -212,7 +212,7 @@ export class ExamslotComponent implements OnInit {
     this.dataservice.postPatch('ExamSlots', this.ExamSlotsData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.ExamSlotId = data.ExamSlotId;
           row.Action = false;
           if (this.DataCountToUpdate == 0) {
@@ -226,7 +226,7 @@ export class ExamslotComponent implements OnInit {
     this.dataservice.postPatch('ExamSlots', this.ExamSlotsData, this.ExamSlotsData.ExamSlotId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
@@ -261,7 +261,7 @@ export class ExamslotComponent implements OnInit {
             EndDate: e.EndDate
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetExamSlots() {
@@ -357,7 +357,7 @@ export class ExamslotComponent implements OnInit {
         //}
         ////console.log('this', this.ExamSlots)
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   onBlur(row) {

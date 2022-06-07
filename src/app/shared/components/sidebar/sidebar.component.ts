@@ -10,7 +10,7 @@ import { SharedataService } from '../../sharedata.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit { PageLoading=true;
   //@Output() openLeftMenu1:new EventEmitter();
   SelectedBatchId = 0;
   loginUserDetail = [];

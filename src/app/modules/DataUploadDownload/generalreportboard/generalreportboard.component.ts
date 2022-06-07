@@ -31,7 +31,7 @@ export class GeneralReportboardComponent implements AfterViewInit {
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
-  LoginUserDetail=[];
+  LoginUserDetail = [];
   constructor(
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
@@ -42,7 +42,7 @@ export class GeneralReportboardComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     debugger
-    this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.DATA)
@@ -87,7 +87,9 @@ export class GeneralReportboardComponent implements AfterViewInit {
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }

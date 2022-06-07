@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './planandmasteritem.component.html',
   styleUrls: ['./planandmasteritem.component.scss']
 })
-export class PlanandmasteritemComponent implements OnInit {
+export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -179,7 +179,7 @@ export class PlanandmasteritemComponent implements OnInit {
 
     if (row.PlanId == 0) {
       this.contentservice.openSnackBar("Please select plan name.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = false;
       return;
     }
@@ -199,7 +199,7 @@ export class PlanandmasteritemComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -220,7 +220,7 @@ export class PlanandmasteritemComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -289,7 +289,7 @@ export class PlanandmasteritemComponent implements OnInit {
     this.GetMasterItems(ApplicationId).subscribe((d: any) => {
       this.MasterItems = [...d.value];
       this.TopMasterItems = this.MasterItems.filter(f => f.ParentId == 0);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
     });
   }
   GetMasterItems(appId) {
@@ -408,7 +408,7 @@ export class PlanandmasteritemComponent implements OnInit {
             this.Applications = [...data.value];
           })
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

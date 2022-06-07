@@ -26,7 +26,10 @@
 
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
                         (click)="GetCustomerPlans()">
-                        <mat-icon>search</mat-icon>
+                         <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                     </button>
                 </div>
             </form>
@@ -126,7 +129,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <button [disabled]="loading || !element.Action || SelectedCustomer=='TTP' || PlanSelected"
-                            matTooltip="trial" mat-mini-fab (click)="UpdateOrSave(element)">
+                            matTooltip="trial" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>beenhere</mat-icon>
                         </button>
                     </mat-cell>

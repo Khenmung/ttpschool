@@ -13,7 +13,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './photobrowser.component.html',
   styleUrls: ['./photobrowser.component.scss']
 })
-export class PhotobrowserComponent implements OnInit {
+export class PhotobrowserComponent implements OnInit { PageLoading=true;
   ngVersion: string = VERSION.full;
   matVersion: string = '5.1.0';
   breakpoint: number;
@@ -99,7 +99,7 @@ export class PhotobrowserComponent implements OnInit {
         ////console.log('minId', minId)
         this.getPhotos(minId);
         this.AllAlbums = data.value;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       }, error => console.log(error))
   }
   getPhotos(minId) {
@@ -151,7 +151,7 @@ export class PhotobrowserComponent implements OnInit {
         }
 
         ////console.log('album', this.Albums);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 

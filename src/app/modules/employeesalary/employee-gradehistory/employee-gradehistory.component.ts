@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './employee-gradehistory.component.html',
   styleUrls: ['./employee-gradehistory.component.scss']
 })
-export class EmployeeGradehistoryComponent implements OnInit {
+export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
 
@@ -124,7 +124,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -181,7 +181,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -225,10 +225,10 @@ export class EmployeeGradehistoryComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.EmployeeGradeHistoryId = data.EmployeeGradeHistoryId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -239,10 +239,10 @@ export class EmployeeGradehistoryComponent implements OnInit {
     this.dataservice.postPatch('EmpEmployeeGradeSalHistories', this.EmployeeGradeHistoryData, this.EmployeeGradeHistoryData.EmployeeGradeHistoryId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           //this.rowCount++;
           //if (this.rowCount == this.displayedColumns.length - 2) {
-          //  this.loading = false;
+          //  this.loading = false; this.PageLoading=false;
           //  this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           //}
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -370,7 +370,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.JobTitles = this.getDropDownData(globalconstants.MasterDefinitions.employee.JOBTITLE);
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetEmployeeGradeHistory() {
@@ -413,7 +413,7 @@ export class EmployeeGradehistoryComponent implements OnInit {
             return h;
           });
           console.log("this.EmployeeGradeHistoryList",this.EmployeeGradeHistoryList)
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.dataSource = new MatTableDataSource<IEmployeeGradeHistory>(this.EmployeeGradeHistoryList);
       })
   }

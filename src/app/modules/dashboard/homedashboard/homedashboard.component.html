@@ -3,7 +3,7 @@
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <!-- <mat-card-content style="min-height: 100vh;margin-top:-100px; display: flex;flex-direction: column; align-items:center;justify-content: center;">         -->
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="searchForm" style="margin: 30px;">
             <mat-form-field [style.width.px]="250" appearance="outline">
                 <mat-label>Application</mat-label>
@@ -21,7 +21,10 @@
                 </mat-form-field>
             </span>
             <button [disabled]="loading" class="mat-raised-button" (click)="submit()">
-                <mat-icon>search</mat-icon>
+                 <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
         </form>
         <!-- <button class="mat-button-raised" (click)="sendmessage()">

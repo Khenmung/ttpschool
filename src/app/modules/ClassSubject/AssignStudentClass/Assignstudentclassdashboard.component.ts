@@ -21,7 +21,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './Assignstudentclassdashboard.component.html',
   styleUrls: ['./Assignstudentclassdashboard.component.scss']
 })
-export class AssignStudentclassdashboardComponent implements OnInit {
+export class AssignStudentclassdashboardComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
@@ -194,7 +194,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.GetFeeTypes();
       }
       else {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       }
       //this.GetStudents();
     }
@@ -254,7 +254,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       this.dataSource.filterPredicate = this.createFilter();
     }
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("No student to assign roll no.", globalconstants.ActionText, globalconstants.RedBackground);
 
     }
@@ -267,7 +267,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     if (this.searchForm.get("searchClassId").value > 0)
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -275,14 +275,14 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     if (this.searchForm.get("searchSectionId").value > 0)
       filterStr += " and SectionId eq " + this.searchForm.get("searchSectionId").value;
     // else {
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   this.contentservice.openSnackBar("Please select section.", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -382,7 +382,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.dataSource.filterPredicate = this.createFilter();
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
       })
   }
@@ -459,12 +459,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeTypes);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   CopyFromSameClassPreviousBatch() {
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -529,7 +529,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.dataSource.sort = this.sort;
               this.dataSource.paginator = this.paginator;
               this.dataSource.filterPredicate = this.createFilter();
-              this.loading = false;
+              this.loading = false; this.PageLoading=false;
 
             })
         })
@@ -538,7 +538,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   CopyFromPreviousClassAndBatch() {
     debugger;
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -604,7 +604,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
               this.dataSource.sort = this.sort;
               this.dataSource.paginator = this.paginator;
               this.dataSource.filterPredicate = this.createFilter();
-              this.loading = false;
+              this.loading = false; this.PageLoading=false;
             })
         })
     }
@@ -631,7 +631,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         filterStr += " and ClassId eq " + previousClassId;
       }
       else {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar("Previous class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
         //return;
       }
@@ -650,7 +650,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return null;
     }
@@ -722,7 +722,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.dataSource.filterPredicate = this.createFilter();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
       })
   }
@@ -795,7 +795,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -837,7 +837,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.ClassName= this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName,
           row.StudentClassId = data.StudentClassId;
           
@@ -867,7 +867,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.RowsToUpdate--;
           this.CreateInvoice();
           if (this.RowsToUpdate == 0) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -878,16 +878,16 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
         this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
-            //this.loading = false;
+            //this.loading = false; this.PageLoading=false;
             //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           },
             error => {
-              this.loading = false;
+              this.loading = false; this.PageLoading=false;
               console.log("error in createInvoice", error);
             })
       },
         error => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           console.log("error in getinvoice", error);
         })
   }
@@ -924,7 +924,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetMasterData() {
@@ -938,7 +938,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentgrade.component.html',
   styleUrls: ['./studentgrade.component.scss']
 })
-export class StudentgradeComponent implements OnInit {
+export class StudentgradeComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paging: MatPaginator;
   ClassGroups =[];
   StudentGradeTypes = [];
@@ -154,7 +154,7 @@ export class StudentgradeComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -187,7 +187,7 @@ export class StudentgradeComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -252,7 +252,7 @@ export class StudentgradeComponent implements OnInit {
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         });
 
        

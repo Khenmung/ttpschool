@@ -16,7 +16,7 @@ import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
   templateUrl: './trial-balance.component.html',
   styleUrls: ['./trial-balance.component.scss']
 })
-export class TrialBalanceComponent implements OnInit {
+export class TrialBalanceComponent implements OnInit { PageLoading=true;
 
 
   @ViewChild("table") mattable;
@@ -187,7 +187,7 @@ export class TrialBalanceComponent implements OnInit {
         //debugger;
         this.AccountingVoucherList = [...data.value];
         this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //this.changeDetectorRefs.detectChanges();
       });
   }
@@ -234,7 +234,7 @@ export class TrialBalanceComponent implements OnInit {
     //   .subscribe((data: any) => {
     //     //debugger;
     //     if (data.value.length > 0) {
-    //       this.loading = false;
+    //       this.loading = false; this.PageLoading=false;
     //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
     //       row.Ative = 0;
     //       return;
@@ -278,7 +278,7 @@ export class TrialBalanceComponent implements OnInit {
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.AccountingVoucherId = data.AccountingVoucherId;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -288,7 +288,7 @@ export class TrialBalanceComponent implements OnInit {
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, this.AccountingVoucherData.AccountingVoucherId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
 
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
@@ -323,7 +323,7 @@ export class TrialBalanceComponent implements OnInit {
             GLAccount: f.GeneralLedger
           }
         });
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetAccountingPeriod() {
@@ -347,7 +347,7 @@ export class TrialBalanceComponent implements OnInit {
           }
         });
         this.GetAccountingVoucher();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -356,7 +356,7 @@ export class TrialBalanceComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './right.component.html',
   styleUrls: ['./right.component.scss']
 })
-export class RightComponent implements OnInit {
+export class RightComponent implements OnInit { PageLoading=true;
   mediaSub: Subscription;
   deviceXs: boolean;
   constructor(private mediaObserver: MediaObserver) { }

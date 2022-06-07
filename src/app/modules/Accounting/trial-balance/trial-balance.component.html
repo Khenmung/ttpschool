@@ -2,7 +2,7 @@
     <mat-card-title>Vouchers</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <!-- <alert></alert> -->
         <!-- <form [formGroup]="searchForm">
             <mat-form-field>
@@ -23,7 +23,10 @@
                 </mat-autocomplete>
             </mat-form-field>
             <button [disabled]="loading" class="mat-raised-button" (click)="GetClassSubjectTeacher()">
-                <mat-icon>search</mat-icon>
+                 <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>            
         </form> -->
         <!-- "DocDate",
@@ -125,8 +128,11 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                     <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
-                        mat-mini-fab (click)="UpdateOrSave(element)">
-                        <mat-icon>save</mat-icon>
+                        mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                         <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                     </button>
 
                 </mat-cell>

@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './evaluationandexam.component.html',
   styleUrls: ['./evaluationandexam.component.scss']
 })
-export class EvaluationandExamComponent implements OnInit {
+export class EvaluationandExamComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
@@ -98,7 +98,7 @@ export class EvaluationandExamComponent implements OnInit {
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           });
 
         }
@@ -125,7 +125,7 @@ export class EvaluationandExamComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   SelectSubCategory(pCategoryId) {
@@ -179,7 +179,7 @@ export class EvaluationandExamComponent implements OnInit {
     let checkFilterString = this.StandardFilter;
 
     if (row.EvaluationMasterId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select evaluation master.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -188,7 +188,7 @@ export class EvaluationandExamComponent implements OnInit {
       checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
     }
     if (row.ExamId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -210,7 +210,7 @@ export class EvaluationandExamComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -245,7 +245,7 @@ export class EvaluationandExamComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
     this.dataservice.postPatch('EvaluationExams', this.EvaluationExamData, 0, 'post')
@@ -353,7 +353,7 @@ export class EvaluationandExamComponent implements OnInit {
         this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.GetExams();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.GetEvaluationMasters();
       });
   }

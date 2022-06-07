@@ -29,7 +29,7 @@ export class TimetableboardComponent implements AfterViewInit {
       ClassTimeTablePermission: ''
     };
   selectedIndex = 0;
-  LoginUserDetail=[];
+  LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
@@ -41,7 +41,7 @@ export class TimetableboardComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.TIMETABLE)
     if (perObj.length > 0) {
@@ -83,14 +83,16 @@ export class TimetableboardComponent implements AfterViewInit {
       this.tabNames.splice(comindx, 1);
     }
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
 
   }
 
   public tabChange(index: number) {
-        //console.log("index", index)
+    //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
     }, 800);

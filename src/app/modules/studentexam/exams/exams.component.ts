@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './exams.component.html',
   styleUrls: ['./exams.component.scss']
 })
-export class ExamsComponent implements OnInit {
+export class ExamsComponent implements OnInit { PageLoading=true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -163,7 +163,7 @@ export class ExamsComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -208,7 +208,7 @@ export class ExamsComponent implements OnInit {
     this.dataservice.postPatch('Exams', this.ExamsData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.ExamId = data.ExamId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -220,7 +220,7 @@ export class ExamsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.GetExamStudentSubjectResults(this.ExamsData.ExamId, row);
         });
@@ -272,7 +272,7 @@ export class ExamsComponent implements OnInit {
           return this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
         this.dataSource = new MatTableDataSource<IExams>(this.Exams);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   private getTime(date?: Date) {
@@ -311,7 +311,7 @@ export class ExamsComponent implements OnInit {
           e.ClassId = e.ClassSubject.ClassId;
           return e;
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetExamStudentSubjectResults(examId, row) {
@@ -427,13 +427,13 @@ export class ExamsComponent implements OnInit {
             this.dataservice.postPatch('ExamStudentResults', this.ExamStudentSubjectResult, 0, 'post')
               .subscribe(
                 (data: any) => {
-                  this.loading = false;
+                  this.loading = false; this.PageLoading=false;
                   row.Action = false;
                   this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
                 }, error => {
                   //console.log("error",error);
                   this.contentservice.openSnackBar("Something went wrong. Please try again.", globalconstants.ActionText, globalconstants.RedBackground);
-                  this.loading = false;
+                  this.loading = false; this.PageLoading=false;
                 })
           })
       })
@@ -528,13 +528,13 @@ export class ExamsComponent implements OnInit {
     //     this.dataservice.postPatch('ExamStudentResults', examresultstatus, 0, 'post')
     //       .subscribe(
     //         (data: any) => {
-    //           this.loading = false;
+    //           this.loading = false; this.PageLoading=false;
     //           row.Action = false;
     //           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
     //         }, error => {
     //           //console.log("error",error);
     //           this.contentservice.openSnackBar("Something went wrong. Please try again.", globalconstants.ActionText, globalconstants.RedBackground);
-    //           this.loading = false;
+    //           this.loading = false; this.PageLoading=false;
     //         })
 
 
@@ -577,7 +577,7 @@ export class ExamsComponent implements OnInit {
           }
 
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetStudents() {

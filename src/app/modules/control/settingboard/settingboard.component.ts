@@ -63,7 +63,7 @@ export class settingboardComponent implements AfterViewInit {
     var selectedApp = this.tokenStorage.getPermittedApplications().filter(f => f.applicationId == SelectedApplicationId);
     if (selectedApp.length > 0)
       this.AppName = selectedApp[0].appShortName
-      //this.AppName ='common'
+    //this.AppName ='common'
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.CONTROL)
     if (perObj.length > 0) {
@@ -120,14 +120,16 @@ export class settingboardComponent implements AfterViewInit {
       comindx = this.components.indexOf(CustomerPlansComponent);
       this.components.splice(comindx, 1);
       this.tabNames.splice(comindx, 1);
-      
+
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.APPLICATIONFEATUREPERMISSION);
       var comindx = this.components.indexOf(RoleAppPermissiondashboardComponent);
       this.GetComponents(perObj, comindx);
     }
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-    if (this.Permissions.ParentPermission != 'deny' && this.Permissions.ParentPermission !='') {
-      this.renderComponent(0);
+    if (this.Permissions.ParentPermission != 'deny' && this.Permissions.ParentPermission != '') {
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550)
       this.cdr.detectChanges();
     }
   }

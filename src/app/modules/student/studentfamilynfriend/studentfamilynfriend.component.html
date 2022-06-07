@@ -1,7 +1,7 @@
 <div style="padding:15px 15px 10px 15px;">
     <div><strong>Student Siblings and Friends</strong></div>
 </div>
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="searchForm">
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>same school sibling or friend</mat-label>
@@ -13,7 +13,10 @@
     </mat-form-field>
     <button [disabled]="loading" matTooltip="search sibling or friend" mat-raised-button color="accent"
         (click)="GetStudentFamilyNFriends()">
-        <mat-icon>search</mat-icon>
+         <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
     </button>
 </form>
 <div style="overflow: auto;max-width: 1200px;">
@@ -121,9 +124,13 @@
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
+mat-raised-button color="accent"
                     (click)="UpdateOrSave(element)">
-                    <mat-icon>save</mat-icon>
+                     <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

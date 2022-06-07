@@ -18,7 +18,7 @@ import { TableUtil } from '../../../shared/TableUtil';
   templateUrl: './getreport.component.html',
   styleUrls: ['./getreport.component.scss']
 })
-export class GetreportComponent implements OnInit {
+export class GetreportComponent implements OnInit { PageLoading=true;
 
   @ViewChild('searchval') selectionList: MatSelectionList;
   @ViewChild("table") tableRef: ElementRef;
@@ -199,7 +199,7 @@ export class GetreportComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -244,7 +244,7 @@ export class GetreportComponent implements OnInit {
         (data: any) => {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -253,7 +253,7 @@ export class GetreportComponent implements OnInit {
     this.dataservice.postPatch(this.ReportConfigItemListName, this.ReportConfigItemData, this.ReportConfigItemData.ReportConfigItemId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -271,7 +271,7 @@ export class GetreportComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.SchoolGenders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
 
@@ -335,7 +335,7 @@ export class GetreportComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetReportNames() {
@@ -364,7 +364,7 @@ export class GetreportComponent implements OnInit {
         });
         //console.log("this.ReportNames", this.ReportNames)
         this.GetMyReportNames();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetMyReportNames() {
@@ -555,7 +555,7 @@ export class GetreportComponent implements OnInit {
             this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           })
 
 
@@ -752,7 +752,7 @@ export class GetreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   ItemExists(obj, colname) {
@@ -844,7 +844,7 @@ export class GetreportComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   AddSearchFilter() {

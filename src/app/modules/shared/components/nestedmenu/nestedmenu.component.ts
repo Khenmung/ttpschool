@@ -6,7 +6,7 @@ import { MatMenu } from '@angular/material/menu';
   templateUrl: './nestedmenu.component.html',
   styleUrls: ['./nestedmenu.component.scss']
 })
-export class NestedmenuComponent implements OnInit {
+export class NestedmenuComponent implements OnInit { PageLoading=true;
 loading=false;
   constructor() { }
 

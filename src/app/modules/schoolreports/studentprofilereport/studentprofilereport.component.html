@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Stduent Profile Report</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <div style="padding: 15px;">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
@@ -32,7 +32,10 @@
                     </mat-select>
                 </mat-form-field>
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentEvaluation()">
-                    <mat-icon>search</mat-icon>
+                     <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </form>
             <div id="printsection">
@@ -104,7 +107,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Stduent Profile Report</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <div style="padding: 15px 15px 15px 0px;">
         <div style="width: 100%;">
             <form [formGroup]="searchForm">
@@ -118,7 +121,10 @@
                     </mat-autocomplete>
                 </mat-form-field>
                 <button [disabled]="loading" class="mat-raised-button" (click)="GetStudentEvaluation()">
-                    <mat-icon>search</mat-icon>
+                     <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </form>
            

@@ -9,7 +9,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './resetpassword.component.html',
   styleUrls: ['./resetpassword.component.scss']
 })
-export class ResetpasswordComponent implements OnInit {
+export class ResetpasswordComponent implements OnInit { PageLoading=true;
   loading = false;
   loginUserDetail = [];
   resetpwdForm: FormGroup;
@@ -69,12 +69,12 @@ export class ResetpasswordComponent implements OnInit {
     debugger;
     this.authService.CallAPI(payload,'ResetPassword').subscribe(
       (data: any) => {
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.isSuccessful = true;
         this.tokenService.signOut();
       },
       err => {
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         if (err.error) {
           var modelState = err.error.errors;
           this.errorMessage = '';

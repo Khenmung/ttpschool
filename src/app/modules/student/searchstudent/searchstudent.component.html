@@ -3,7 +3,7 @@
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content style="margin:20px">
         <!-- <alert></alert> -->
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
             <mat-form-field appearance="outline" style="width: 100px;">
                 <mat-label>PID</mat-label>
@@ -39,7 +39,10 @@
                 </mat-autocomplete>
             </mat-form-field>
             <button [disabled]="loading" matTooltip="search student" mat-raised-button color="accent" (click)="GetStudent()">
-                <mat-icon>search</mat-icon>
+                 <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
             <button [disabled]="loading" matTooltip="new student" mat-raised-button color="accent" (click)="new()">
                 <mat-icon>fiber_new</mat-icon>

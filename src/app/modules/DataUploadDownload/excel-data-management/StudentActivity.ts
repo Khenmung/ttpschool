@@ -8,6 +8,7 @@ import { TokenStorageService } from "src/app/_services/token-storage.service";
 })
 export class StudentActivity {
     ELEMENT_DATA = [];
+    PageLoading=true;
     loading = false;
     loginUserDetail = [];
     SelectedBatchId = 0;
@@ -40,7 +41,7 @@ export class StudentActivity {
         console.log("toInsert", toInsert)
         this.dataservice.postPatch('StudentEvaluations', toInsert, 0, 'post')
             .subscribe((result: any) => {
-                this.loading = false;
+                this.loading = false; this.PageLoading=false;
                 this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
             }, error => console.log(error))

@@ -19,7 +19,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './employee-salary-component.component.html',
   styleUrls: ['./employee-salary-component.component.scss'],
 })
-export class EmployeeSalaryComponentComponent implements OnInit {
+export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -141,7 +141,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -193,7 +193,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -233,12 +233,12 @@ export class EmployeeSalaryComponentComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.EmployeeSalaryComponentId = data.EmployeeSalaryComponentId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.VariableConfigs.push({ "VariableName": row.SalaryComponent, "VariableAmount": row.Amount });
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -249,14 +249,14 @@ export class EmployeeSalaryComponentComponent implements OnInit {
     this.dataservice.postPatch('EmpEmployeeSalaryComponents', this.EmployeeSalaryComponentData, this.EmployeeSalaryComponentData.EmployeeSalaryComponentId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           var vartoUpdate = this.VariableConfigs.filter(f => f.VariableName == row.VariableName);
           if (vartoUpdate.length > 0)
             vartoUpdate[0].VariableAmount = row.Amount;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -342,7 +342,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         this.MaritalStatus = this.getDropDownData(globalconstants.MasterDefinitions.employee.MARITALSTATUS);
         this.ComponentTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.COMPONENTTYPE);
         this.VariableTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.CONFIGTYPE);
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
         this.GetVariables();
         this.GetEmployees();
       });
@@ -405,7 +405,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
             FormulaOrAmount: d.FormulaOrAmount
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //this.dataSource = new MatemTableDataSource<IEmployeeSalaryComponent>(this.GradeComponentList);
       })
   }
@@ -484,7 +484,7 @@ export class EmployeeSalaryComponentComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("Employee grade has to be defined", globalconstants.ActionText,globalconstants.RedBackground);
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.dataSource = new MatTableDataSource<IEmployeeSalaryComponent>(this.EmployeeSalaryComponentList);
       })
     this.GetCurrentEmployee();

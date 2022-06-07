@@ -12,7 +12,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './photos.component.html',
   styleUrls: ['./photos.component.scss']
 })
-export class PhotosComponent implements OnInit {
+export class PhotosComponent implements OnInit { PageLoading=true;
   options = {
     autoClose: true,
     keepAfterRouteChange: true
@@ -88,7 +88,7 @@ export class PhotosComponent implements OnInit {
         }
         else
           this.error = "No image to display";
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //setTimeout(()=>{this.loading=false},3000); 
       })
 

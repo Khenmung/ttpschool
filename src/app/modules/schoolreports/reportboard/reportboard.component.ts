@@ -23,7 +23,7 @@ export class ReportboardComponent implements AfterViewInit {
     FeecollectionreportComponent,
     ChartReportComponent,
     ResultComponent,
-    ExamtimetableComponent    ,
+    ExamtimetableComponent,
     StudentprofilereportComponent,
     DailytimetablereportComponent
   ];
@@ -46,10 +46,10 @@ export class ReportboardComponent implements AfterViewInit {
       FeeCollectionPermission: '',
       DatewisePermission: '',
       ChartPermission: '',
-      StudentProfileReportPermission:'',
-      DailyTimeTablePermission:''
+      StudentProfileReportPermission: '',
+      DailyTimeTablePermission: ''
     };
-    LoginUserDetail=[];
+  LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
@@ -62,10 +62,10 @@ export class ReportboardComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-  
-    this.LoginUserDetail =  this.tokenStorage.getUserDetail();
+
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-    
+
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.REPORT)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
@@ -74,36 +74,38 @@ export class ReportboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.EXAMTIMETABLE)
     var comindx = this.components.indexOf(ExamtimetableComponent);
-    this.AddRemoveComponent(perObj,comindx);
+    this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.RESULT)
     var comindx = this.components.indexOf(ResultComponent);
-    this.AddRemoveComponent(perObj,comindx);
+    this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.FEEPAYMENTSTATUS)
     var comindx = this.components.indexOf(FeecollectionreportComponent);
-    this.AddRemoveComponent(perObj,comindx);
+    this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.CHARTREPORT)
     var comindx = this.components.indexOf(ChartReportComponent);
-    this.AddRemoveComponent(perObj,comindx);
+    this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.DATEWISECOLLECTION)
     var comindx = this.components.indexOf(TodayCollectionComponent);
-    this.AddRemoveComponent(perObj,comindx);
+    this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.STUDENTPROFILEREPORT)
     var comindx = this.components.indexOf(StudentprofilereportComponent);
-    this.AddRemoveComponent(perObj,comindx);
-    
+    this.AddRemoveComponent(perObj, comindx);
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.DAILYTIMETABLEREPORT)
     var comindx = this.components.indexOf(DailytimetablereportComponent);
-    this.AddRemoveComponent(perObj,comindx);
+    this.AddRemoveComponent(perObj, comindx);
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     //console.log('this.Permissions.ParentPermission', this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }
@@ -123,7 +125,7 @@ export class ReportboardComponent implements AfterViewInit {
     this.viewContainer.createComponent(factory);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
-  AddRemoveComponent(perObj,comindx){
+  AddRemoveComponent(perObj, comindx) {
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);

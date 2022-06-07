@@ -17,7 +17,7 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
   templateUrl: './employeeactivity.component.html',
   styleUrls: ['./employeeactivity.component.scss']
 })
-export class EmployeeactivityComponent implements OnInit {
+export class EmployeeactivityComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -173,7 +173,7 @@ export class EmployeeactivityComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -216,7 +216,7 @@ export class EmployeeactivityComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row, toinsert) {
     //console.log("inserting",this.EmployeeActivityForUpdate);
@@ -363,7 +363,7 @@ export class EmployeeactivityComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 }

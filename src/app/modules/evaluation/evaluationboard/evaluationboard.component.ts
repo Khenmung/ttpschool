@@ -16,7 +16,7 @@ import { StudentEvaluationComponent } from '../studentevaluation/studentevaluati
 })
 export class EvaluationboardComponent implements AfterViewInit {
 
-   components:any = [
+  components: any = [
     EvaluationresultComponent,
     EvaluationMasterComponent,
     ClassEvaluationComponent,
@@ -83,7 +83,9 @@ export class EvaluationboardComponent implements AfterViewInit {
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }
@@ -100,8 +102,8 @@ export class EvaluationboardComponent implements AfterViewInit {
 
   private renderComponent(index: number): any {
     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    const component =this.viewContainer.createComponent(factory);
-    
+    const component = this.viewContainer.createComponent(factory);
+
   }
   AddRemoveComponent(perObj, comindx) {
     if (perObj.length > 0) {

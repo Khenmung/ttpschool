@@ -1,5 +1,5 @@
 <div style="padding: 15px;font-weight: bold;">Essential Data</div>
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
 <br>
 <form [formGroup]="searchForm">
@@ -26,6 +26,9 @@
     <button [style.width.px]="80" [disabled]="loading" matTooltip="search" mat-raised-button color="accent"
         (click)="GetSearchMaster()">
         <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
     </button>
 </form>
 <div style="overflow: auto;">
@@ -51,10 +54,9 @@
                                        || element.MasterDataName=='Employee'
                                        || element.MasterDataName=='Cash'
                                        || element.MasterDataName=='Teaching'  
-                                       || element.MasterDataName=='Non Teaching')"  
-                        matInput [value]="element.MasterDataName"
-                        [(ngModel)]="element.MasterDataName" autocomplete="Off" placeholder="" (blur)="onBlur(element)"
-                        [minlength]="1" [maxlength]="50">
+                                       || element.MasterDataName=='Non Teaching')" matInput
+                        [value]="element.MasterDataName" [(ngModel)]="element.MasterDataName" autocomplete="Off"
+                        placeholder="" (blur)="onBlur(element)" [minlength]="1" [maxlength]="50">
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -114,18 +116,23 @@
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef style="justify-content: center;">
-                <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-raised-button color="accent"
-                    (click)="SaveAll()">
+                <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-raised-button
+                    color="accent" (click)="SaveAll()">
                     <mat-icon>all_out</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <button [disabled]="loading 
                 || !element.Action 
-                || Permission=='read'" 
-                style="margin-right:15px;"
-                matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
+                || Permission=='read'" style="margin-right:15px;" matTooltip="save" mat-raised-button color="accent"
+                    (click)="SaveRow(element)">
                     <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
                 <button [disabled]="loading 
                 || !element.Action 

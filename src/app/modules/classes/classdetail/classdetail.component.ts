@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classdetail.component.html',
   styleUrls: ['./classdetail.component.scss']
 })
-export class ClassdetailComponent implements OnInit {
+export class ClassdetailComponent implements OnInit { PageLoading=true;
 @ViewChild(MatPaginator) paginator :MatPaginator;
 @ViewChild(MatSort) sort :MatSort;
   LoginUserDetail: any[] = [];
@@ -178,18 +178,18 @@ export class ClassdetailComponent implements OnInit {
 
     if (row.Sequence > 250) {
       this.contentservice.openSnackBar("Sequence can not be greater than 250",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
     // if(row.MinStudent<1)
     // {
     //   this.contentservice.openSnackBar("Minimum can not be less than 1",this.optionsNoAutoClose);
-    //   this.loading=false;
+    //   this.loading=false;this.PageLoading=false;
     //   return;
     // }
     if (row.MaxStudent > 1000) {
       this.contentservice.openSnackBar("Maximum can not be greater than 1000",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
     this.loading = true;
@@ -206,7 +206,7 @@ export class ClassdetailComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -245,7 +245,7 @@ export class ClassdetailComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -324,7 +324,7 @@ export class ClassdetailComponent implements OnInit {
         this.Durations = this.getDropDownData(globalconstants.MasterDefinitions.school.DURATION);
         this.StudyArea = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYAREA);
         this.StudyMode = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYMODE);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

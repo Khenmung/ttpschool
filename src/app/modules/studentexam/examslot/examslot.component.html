@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Define Exam Slots</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
@@ -22,7 +22,10 @@
                     <mat-datepicker #ExamDate></mat-datepicker>
                 </mat-form-field>      
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetExamSlots()">
-                    <mat-icon>search</mat-icon>
+                     <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
                 <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
@@ -106,11 +109,17 @@
                     <mat-header-cell *matHeaderCellDef>
                         <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
                             <mat-icon>all_out</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="view/edit" mat-mini-fab (click)="Save(element)">
-                            <mat-icon>save</mat-icon>
+                             <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>

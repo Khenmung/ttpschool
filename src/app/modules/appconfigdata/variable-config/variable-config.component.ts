@@ -19,7 +19,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './variable-config.component.html',
   styleUrls: ['./variable-config.component.scss']
 })
-export class VariableConfigComponent implements OnInit {
+export class VariableConfigComponent implements OnInit { PageLoading=true;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('varPaginator') paginator: MatPaginator;
 
@@ -109,7 +109,7 @@ export class VariableConfigComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -173,7 +173,7 @@ export class VariableConfigComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -214,16 +214,16 @@ export class VariableConfigComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.VariableConfigurationId = data.VariableConfigurationId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }),
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
     console.error();
     ;
     ;
@@ -233,11 +233,11 @@ export class VariableConfigComponent implements OnInit {
     this.dataservice.postPatch(this.ListName, this.VariableConfigData, this.VariableConfigData.VariableConfigurationId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -382,7 +382,7 @@ export class VariableConfigComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         this.VariableConfig = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   getDropDownData(dropdowntype) {

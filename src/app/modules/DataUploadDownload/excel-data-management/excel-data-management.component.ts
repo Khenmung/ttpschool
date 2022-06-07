@@ -19,6 +19,7 @@ import { StudentActivity } from './StudentActivity';
   styleUrls: ['./excel-data-management.component.scss']
 })
 export class ExcelDataManagementComponent implements OnInit {
+    PageLoading = true;
   constructor(
     private snackbar: MatSnackBar,
     private datepipe: DatePipe,
@@ -85,7 +86,7 @@ export class ExcelDataManagementComponent implements OnInit {
     if (perObj.length > 0)
       this.Permission = perObj[0].permission;
     if (this.Permission == 'deny') {
-      this.loading = false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
@@ -278,10 +279,10 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'First name at row ' + indx + ' is required.\n';
       if (element.FatherName == undefined || element.FatherName.length == 0)
         this.ErrorMessage += 'Father name at row ' + indx + ' is required.\n';
-      if (element.WorkAccountId == '')
+      if (element.WorkAccount == '')
         this.ErrorMessage += 'Work Account at row ' + indx + ' is required.\n';
       else {
-        var workaccountobj = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == element.WorkAccountId.toLowerCase())
+        var workaccountobj = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == element.WorkAccount.toLowerCase())
         if (workaccountobj.length > 0) {
           element.WorkAccountId = workaccountobj[0].MasterDataId;
         }
@@ -289,84 +290,84 @@ export class ExcelDataManagementComponent implements OnInit {
           this.ErrorMessage += 'Invalid work account at row ' + indx + '.\n';
       }
 
-      if (element.GenderId == '')
-        this.ErrorMessage += 'GenderId at row ' + indx + ' is required.\n';
+      if (element.Gender == '')
+        this.ErrorMessage += 'Gender at row ' + indx + ' is required.\n';
       else {
-        var Genderobj = this.Genders.filter(f => f.MasterDataName.toLowerCase() == element.GenderId.toLowerCase())
+        var Genderobj = this.Genders.filter(f => f.MasterDataName.toLowerCase() == element.Gender.toLowerCase())
         if (Genderobj.length > 0) {
           element.GenderId = Genderobj[0].MasterDataId;
         }
         else
           this.ErrorMessage += 'Invalid gender at row ' + indx + '.\n';
       }
-      if (element.BloodgroupId != '') {
-        var bloodgroupobj = this.Bloodgroup.filter(f => f.MasterDataName.toLowerCase() == element.BloodgroupId.toLowerCase())
+      if (element.Bloodgroup != '') {
+        var bloodgroupobj = this.Bloodgroup.filter(f => f.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase())
         if (bloodgroupobj.length == 0)
           this.ErrorMessage += 'Invalid blood group at row ' + indx + '.\n';
         else
           element.BloodgroupId = bloodgroupobj[0].MasterDataId;
       }
-      if (element.CategoryId != '') {
-        var categoryobj = this.Category.filter(f => f.MasterDataName.toLowerCase() == element.CategoryId.toLowerCase())
+      if (element.Category != '') {
+        var categoryobj = this.Category.filter(f => f.MasterDataName.toLowerCase() == element.Category.toLowerCase())
         if (categoryobj.length == 0)
           this.ErrorMessage += 'Invalid category at row ' + indx + '.\n';
         else
           element.CategoryId = categoryobj[0].MasterDataId;
       }
-      if (element.EmploymentStatusId != '') {
-        var EmploymentStatusIdobj = this.EmployeeStatus.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentStatusId.toLowerCase())
+      if (element.EmploymentStatus != '') {
+        var EmploymentStatusIdobj = this.EmployeeStatus.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentStatus.toLowerCase())
         if (EmploymentStatusIdobj.length == 0)
           this.ErrorMessage += 'Invalid employee status at row ' + indx + '.\n';
         else
           element.EmploymentStatusId = EmploymentStatusIdobj[0].MasterDataId;
       }
-      if (element.ReligionId != '') {
-        var ReligionIdobj = this.Religion.filter(f => f.MasterDataName.toLowerCase() == element.ReligionId.toLowerCase())
+      if (element.Religion != '') {
+        var ReligionIdobj = this.Religion.filter(f => f.MasterDataName.toLowerCase() == element.Religion.toLowerCase())
         if (ReligionIdobj.length == 0)
           this.ErrorMessage += 'Invalid religion at row ' + indx + '.\n';
         else
           element.ReligionId = ReligionIdobj[0].MasterDataId;
       }
-      if (element.EmploymentTypeId != '') {
-        var EmploymentTypeIdobj = this.EmployeeTypes.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentTypeId.toLowerCase())
+      if (element.EmploymentType != '') {
+        var EmploymentTypeIdobj = this.EmployeeTypes.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentType.toLowerCase())
         if (EmploymentTypeIdobj.length == 0)
           this.ErrorMessage += 'Invalid employment type at row ' + indx + '.\n';
         else
           element.EmploymentTypeId = EmploymentTypeIdobj[0].MasterDataId;
       }
-      if (element.MaritalStatusId != '') {
-        var MaritalStatusobj = this.MaritalStatus.filter(f => f.MasterDataName.toLowerCase() == element.MaritalStatusId.toLowerCase())
+      if (element.MaritalStatus != '') {
+        var MaritalStatusobj = this.MaritalStatus.filter(f => f.MasterDataName.toLowerCase() == element.MaritalStatus.toLowerCase())
         if (MaritalStatusobj.length == 0)
           this.ErrorMessage += 'Invalid marital status at row ' + indx + '.\n';
         else
           element.MaritalStatusId = MaritalStatusobj[0].MasterDataId;
       }
-      if (element.NatureId != '') {
-        var Natureobj = this.WorkNatures.filter(f => f.MasterDataName.toLowerCase() == element.NatureId.toLowerCase())
+      if (element.Nature != '') {
+        var Natureobj = this.WorkNatures.filter(f => f.MasterDataName.toLowerCase() == element.Nature.toLowerCase())
         if (Natureobj.length == 0)
           this.ErrorMessage += 'Invalid work nature at row ' + indx + '.\n';
         else
           element.NatureId = Natureobj[0].MasterDataId;
       }
 
-      if (element.PermanentAddressCountryId != '') {
-        var PermanentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressCountryId.toLowerCase())
+      if (element.PermanentAddressCountry != '') {
+        var PermanentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressCountry.toLowerCase())
         if (PermanentAddressCountryIdobj.length == 0)
           this.ErrorMessage += 'Invalid permament country at row ' + indx + '.\n';
         else {
           element.PermanentAddressCountryId = PermanentAddressCountryIdobj[0].MasterDataId;
-          if (element.PermanentAddressStateId != '') {
+          if (element.PermanentAddressState != '') {
             var PermanentAddressStateobj = this.AllMasterData.filter(f => f.ParentId == element.PermanentAddressCountryId)
             if (PermanentAddressStateobj.length > 0) {
-              var listOfStates = PermanentAddressStateobj.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressStateId.toLowerCase());
+              var listOfStates = PermanentAddressStateobj.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressState.toLowerCase());
               if (listOfStates.length == 0)
                 this.ErrorMessage += 'Invalid permament state at row ' + indx + '.\n';
               else {
                 element.PermanentAddressStateId = +listOfStates[0].MasterDataId;
-                if (element.PermanentAddressCityId != '') {
+                if (element.PermanentAddressCity != '') {
                   var ListPermanentAddressCityobj = this.AllMasterData.filter(f => f.ParentId == element.PermanentAddressStateId)
                   if (ListPermanentAddressCityobj.length > 0) {
-                    var CityObj = ListPermanentAddressCityobj.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressCityId.toLowerCase());
+                    var CityObj = ListPermanentAddressCityobj.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressCity.toLowerCase());
                     if (CityObj.length == 0)
                       this.ErrorMessage += 'Invalid permament city at row ' + indx + '.\n';
                     else
@@ -378,24 +379,24 @@ export class ExcelDataManagementComponent implements OnInit {
           }
         }
       }
-      if (element.PresentAddressCountryId != '') {
-        var PresentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressCountryId.toLowerCase())
+      if (element.PresentAddressCountry != '') {
+        var PresentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressCountry.toLowerCase())
         if (PresentAddressCountryIdobj.length == 0)
           this.ErrorMessage += 'Invalid present country at row ' + indx + '.\n';
         else {
           element.PresentAddressCountryId = +PresentAddressCountryIdobj[0].MasterDataId;
-          if (element.PresentAddressStateId != '') {
+          if (element.PresentAddressState != '') {
             var PresentAddressStateobj = this.AllMasterData.filter(f => f.ParentId == element.PresentAddressCountryId)
             if (PresentAddressStateobj.length > 0) {
-              var listOfStates = PresentAddressStateobj.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressStateId.toLowerCase());
+              var listOfStates = PresentAddressStateobj.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressState.toLowerCase());
               if (listOfStates.length == 0)
                 this.ErrorMessage += 'Invalid present state at row ' + indx + '.\n';
               else {
                 element.PresentAddressStateId = +listOfStates[0].MasterDataId;
-                if (element.PresentAddressCityId != '') {
+                if (element.PresentAddressCity != '') {
                   var ListPresentAddressCityobj = this.AllMasterData.filter(f => f.ParentId == element.PresentAddressStateId)
                   if (ListPresentAddressCityobj.length > 0) {
-                    var CityObj = ListPresentAddressCityobj.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressCityId.toLowerCase());
+                    var CityObj = ListPresentAddressCityobj.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressCity.toLowerCase());
                     if (CityObj.length == 0)
                       this.ErrorMessage += 'Invalid present city at row ' + indx + '.\n';
                     else
@@ -407,22 +408,22 @@ export class ExcelDataManagementComponent implements OnInit {
           }
         }
       }
-      if (element.DepartmentId != '') {
-        var DepartmentIdobj = this.Departments.filter(f => f.MasterDataName.toLowerCase() == element.DepartmentId.toLowerCase())
+      if (element.Department != '') {
+        var DepartmentIdobj = this.Departments.filter(f => f.MasterDataName.toLowerCase() == element.Department.toLowerCase())
         if (DepartmentIdobj.length == 0)
           this.ErrorMessage += 'Invalid department at row ' + indx + '.\n';
         else
           element.DepartmentId = DepartmentIdobj[0].MasterDataId;
       }
-      if (element.DesignationId != '') {
-        var DesignationIdobj = this.Designations.filter(f => f.MasterDataName.toLowerCase() == element.DesignationId.toLowerCase())
+      if (element.Designation != '') {
+        var DesignationIdobj = this.Designations.filter(f => f.MasterDataName.toLowerCase() == element.Designation.toLowerCase())
         if (DesignationIdobj.length == 0)
           this.ErrorMessage += 'Invalid designation at row ' + indx + '.\n';
         else
           element.DesignationId = DesignationIdobj[0].MasterDataId;
       }
-      if (element.EmpGradeId != '') {
-        var EmpGradeIdobj = this.EmployeeGrades.filter(f => f.MasterDataName.toLowerCase() == element.EmpGradeId.toLowerCase())
+      if (element.EmpGrade != '') {
+        var EmpGradeIdobj = this.EmployeeGrades.filter(f => f.MasterDataName.toLowerCase() == element.EmpGrade.toLowerCase())
         if (EmpGradeIdobj.length == 0)
           this.ErrorMessage += 'Invalid grade at row ' + indx + '.\n';
         else
@@ -581,7 +582,7 @@ export class ExcelDataManagementComponent implements OnInit {
         if (this.ErrorMessage.length > 0)
           this.snackbar.open("Data is ready for upload. Please click on file upload button.", globalconstants.ActionText,
             globalconstants.BlueBackground);
-        this.loading = false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   ValidateStudentClassData() {
@@ -778,7 +779,7 @@ export class ExcelDataManagementComponent implements OnInit {
   }
   readAsJson() {
     try {
-      debugger;
+      this.loading = true;
       let datalength = this.ELEMENT_DATA.length;
       if (this.ErrorMessage.length == 0) {
 
@@ -806,7 +807,17 @@ export class ExcelDataManagementComponent implements OnInit {
           this.save();
         }
         else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.EMPLOYEEDETAIL)) {
-          this.employee.save(this.ELEMENT_DATA);
+          this.employee.save(this.ELEMENT_DATA)
+            .subscribe((result: any) => {
+              this.loading = false;
+              this.PageLoading = false;
+              this.ELEMENT_DATA =[];
+              
+              this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+            }, error => {
+              this.contentservice.openSnackBar("Error occured. Please contact your administrator.", globalconstants.ActionText, globalconstants.RedBackground);
+              console.log(error)
+            });
         }
         else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTPROFILE)) {
           this.studentActivity.save(this.ELEMENT_DATA);
@@ -841,7 +852,7 @@ export class ExcelDataManagementComponent implements OnInit {
         if (this.ELEMENT_DATA.length > globalconstants.RowUploadLimit) {
           this.ELEMENT_DATA.splice(globalconstants.RowUploadLimit);
         }
-        
+
 
         this.ELEMENT_DATA.forEach(row => {
           toInsert.push({
@@ -907,7 +918,7 @@ export class ExcelDataManagementComponent implements OnInit {
         //console.log("toInsert", toInsert)
         this.dataservice.postPatch('Students', toInsert, 0, 'post')
           .subscribe((result: any) => {
-            this.loading = false;
+            this.loading = false; this.PageLoading = false;
             this.ELEMENT_DATA = [];
             this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
           }, error => {
@@ -947,7 +958,7 @@ export class ExcelDataManagementComponent implements OnInit {
           this.contentservice.openSnackBar("No class student found.", globalconstants.ActionText, globalconstants.RedBackground);
         }
 
-        this.loading = false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetClassEvaluations() {

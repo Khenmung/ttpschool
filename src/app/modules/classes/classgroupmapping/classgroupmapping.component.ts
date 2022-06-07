@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classgroupmapping.component.html',
   styleUrls: ['./classgroupmapping.component.scss']
 })
-export class ClassgroupmappingComponent implements OnInit {
+export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paging: MatPaginator;
   ClassGroups = [];
   LoginUserDetail: any[] = [];
@@ -144,7 +144,7 @@ export class ClassgroupmappingComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -174,7 +174,7 @@ export class ClassgroupmappingComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -207,7 +207,7 @@ export class ClassgroupmappingComponent implements OnInit {
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
     if (_ClassGroupId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -242,7 +242,7 @@ export class ClassgroupmappingComponent implements OnInit {
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         });
 
 

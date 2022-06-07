@@ -46,7 +46,10 @@
     </mat-card-content>
     <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
         <button [disabled]="loading" class="mat-raised-button" (click)="UpdateOrSave()">
-            <mat-icon>save</mat-icon>
+             <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
         </button>
         <button [disabled]="loading" class="mat-raised-button" (click)="back()">
             <mat-icon>cancel</mat-icon>

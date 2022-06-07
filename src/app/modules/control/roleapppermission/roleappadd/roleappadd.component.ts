@@ -13,7 +13,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './roleappAdd.component.html',
   styleUrls: ['./roleappAdd.component.scss']
 })
-export class roleappAddComponent implements OnInit {
+export class roleappAddComponent implements OnInit { PageLoading=true;
   @Output() OutAppRoleId = new EventEmitter();
   @Output() CallParentPageFunction = new EventEmitter();
   @Input("AppRoleId") AppRoleId: number;

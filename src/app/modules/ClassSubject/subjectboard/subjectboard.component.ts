@@ -65,9 +65,9 @@ export class SubjectBoardComponent implements AfterViewInit {
     this.contentservice.GetApplicationRoleUser(loginUserDetail);
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECT)
-    if(perObj.length>0)
-    this.Permissions.ParentPermission = perObj[0].permission;
-    
+    if (perObj.length > 0)
+      this.Permissions.ParentPermission = perObj[0].permission;
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTTYPE)
     var comindx = this.components.indexOf(SubjectTypesComponent);
     this.GetComponents(perObj, comindx)
@@ -75,7 +75,7 @@ export class SubjectBoardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.CLASSSUBJECTDETAIL)
     comindx = this.components.indexOf(ClassSubjectDetailComponent);
     this.GetComponents(perObj, comindx)
-   
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.SUBJECTMARKCOMPONENT)
     comindx = this.components.indexOf(StudentSubjectMarkCompComponent);
     this.GetComponents(perObj, comindx)
@@ -96,7 +96,9 @@ export class SubjectBoardComponent implements AfterViewInit {
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
 
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }
@@ -134,7 +136,7 @@ export class SubjectBoardComponent implements AfterViewInit {
   }
 }
 
-// OnInit {
+// OnInit { PageLoading=true;
 //   @ViewChild(SubjectTypesComponent) subjecttypes: SubjectTypesComponent;
 //   @ViewChild(StudentSubjectMarkCompComponent) subjectmarkComponent: StudentSubjectMarkCompComponent;
 //   @ViewChild(SubjectDetailComponent) subjectdetail: SubjectDetailComponent;

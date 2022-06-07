@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentprogressreport.component.html',
   styleUrls: ['./studentprogressreport.component.scss']
 })
-export class StudentprogressreportComponent implements OnInit {
+export class StudentprogressreportComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -100,7 +100,7 @@ export class StudentprogressreportComponent implements OnInit {
         this.GetMasterData();
       }
       else {
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
       }
 
@@ -236,7 +236,7 @@ export class StudentprogressreportComponent implements OnInit {
         this.dataSource = new MatTableDataSource<any>(progressreport);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
 

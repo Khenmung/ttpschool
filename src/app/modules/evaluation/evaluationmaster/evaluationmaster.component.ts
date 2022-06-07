@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './evaluationmaster.component.html',
   styleUrls: ['./evaluationmaster.component.scss']
 })
-export class EvaluationMasterComponent implements OnInit {
+export class EvaluationMasterComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paging: MatPaginator;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -159,7 +159,7 @@ export class EvaluationMasterComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -193,7 +193,7 @@ export class EvaluationMasterComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -252,7 +252,7 @@ export class EvaluationMasterComponent implements OnInit {
     this.dataservice.postPatch('EvaluationMasters', toUpdate, row.EvaluationMasterId, 'patch')
       .subscribe(res => {
         row.Action = false;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         var idx = this.EvaluationMasterList.findIndex(x => x.EvaluationMasterId == row.EvaluationMasterId)
         this.EvaluationMasterList.splice(idx, 1);
         this.dataSource = new MatTableDataSource<any>(this.EvaluationMasterList);
@@ -305,7 +305,7 @@ export class EvaluationMasterComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.GetEvaluationMaster();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

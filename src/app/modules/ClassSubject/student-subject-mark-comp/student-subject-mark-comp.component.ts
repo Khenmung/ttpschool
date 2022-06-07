@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './student-subject-mark-comp.component.html',
   styleUrls: ['./student-subject-mark-comp.component.scss']
 })
-export class StudentSubjectMarkCompComponent implements OnInit {
+export class StudentSubjectMarkCompComponent implements OnInit { PageLoading=true;
   @ViewChild(MatSort) sort: MatSort;
   options = {
     autoClose: true,
@@ -144,7 +144,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -183,12 +183,12 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.ToUpdateCount--;
           row.ClassSubjectMarkComponentId = data.ClassSubjectMarkComponentId;
           if (this.ToUpdateCount == 0) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.router.navigate(['/home/pages']);
@@ -200,11 +200,11 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     this.dataservice.postPatch('ClassSubjectMarkComponents', this.classSubjectComponentData, this.classSubjectComponentData.ClassSubjectMarkComponentId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.ToUpdateCount--;
           if (this.ToUpdateCount == 0) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -229,7 +229,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
           });
         }
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -380,7 +380,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
 
         this.dataSource = new MatTableDataSource<ISubjectMarkComponent>(this.ELEMENT_DATA);
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
       });
   }

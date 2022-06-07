@@ -16,7 +16,7 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit { PageLoading=true;
   jwtHelper = new JwtHelperService();
   userInfo = [];
   loading = false;
@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit {
       },
       err => {
         debugger;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //this.errorMessage = '';
         this.errorMessage =globalconstants.formatError(err);
         // var modelState;
@@ -312,7 +312,7 @@ export class LoginComponent implements OnInit {
               });
             }
           });
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.tokenStorage.saveUserdetail(this.UserDetail);
           this.isLoginFailed = false;
           this.isLoggedIn = true;

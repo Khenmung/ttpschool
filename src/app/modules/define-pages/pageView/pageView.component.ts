@@ -8,7 +8,7 @@ import { ContentService } from '../../../shared/content.service';
   styleUrls: ['./pageView.component.scss']  
 })  
 
-export class pageViewComponent implements OnInit {  
+export class pageViewComponent implements OnInit { PageLoading=true;  
   res: any;  
   Title: any;  
   content: any;  

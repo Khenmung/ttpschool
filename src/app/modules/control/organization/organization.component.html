@@ -1,7 +1,7 @@
 <div style="padding:15px 15px 10px 15px;">
     <div><strong>Organization</strong></div>
 </div>
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
 <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
 <form [formGroup]="searchForm">
@@ -18,7 +18,10 @@
         <span *ngIf="LoginUserDetail[0]['org'] =='TTP'">
             <button [disabled]="loading || Permission=='read'" matTooltip="search" mat-raised-button color="accent"
                 (click)="GetOrganizationDetail()">
-                <mat-icon>search</mat-icon>
+                 <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
         </span>
         <div style="width: 100%;display: flex;justify-content: center;">
@@ -119,8 +122,12 @@
         </mat-checkbox>&nbsp; Active -->
         <!-- </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1" style="display: flex;justify-content:flex-start"> -->
-        <!-- <button [disabled]="loading || !Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave()">
-            <mat-icon>save</mat-icon>
+        <!-- <button [disabled]="loading || !Action" matTooltip="save" 
+mat-raised-button color="accent" (click)="UpdateOrSave()">
+             <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
         </button> -->
         <!-- </mat-grid-tile> -->
     </mat-grid-list>
@@ -130,8 +137,12 @@
                 <mat-checkbox (change)="deActivate($event)" formControlName="Active">
                 </mat-checkbox>&nbsp; Active &nbsp;&nbsp;
             </span>
-            <button [disabled]="loading || !Action" matTooltip="save" mat-mini-fab (click)="UpdateOrSave()">
-                <mat-icon>save</mat-icon>
+            <button [disabled]="loading || !Action" matTooltip="save" 
+mat-raised-button color="accent" (click)="UpdateOrSave()">
+                 <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
         </span>
     </div>
@@ -238,9 +249,13 @@
         <mat-header-cell *matHeaderCellDef>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || !element.Action" matTooltip="save" mat-mini-fab
+            <button [disabled]="loading || !element.Action" matTooltip="save" 
+mat-raised-button color="accent"
                 (click)="UpdateOrSave(element)">
-                <mat-icon>save</mat-icon>
+                 <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
         </mat-cell>
     </ng-container>

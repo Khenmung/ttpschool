@@ -12,7 +12,7 @@ import { TextEditorComponent } from '../texteditor/texteditor.component';
   templateUrl: './pagesboard.component.html',
   styleUrls: ['./pagesboard.component.scss']
 })
-export class PagesboardComponent implements OnInit {
+export class PagesboardComponent implements OnInit { PageLoading=true;
 
   
   components = [

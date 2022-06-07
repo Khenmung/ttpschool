@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import alasql from 'alasql';
 import { ChartType, ChartOptions } from 'chart.js';
-import { evaluate } from 'mathjs';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip } from 'ng2-charts';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -16,6 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./chartreport.component.scss']
 })
 export class ChartReportComponent {
+  PageLoading=true;
   VariableObjList = [];
   ExpectedAmount = 0.0;
   ReceiptAmount = 0.0;
@@ -77,7 +77,7 @@ export class ChartReportComponent {
     }
     else
     {
-      this.loading=false;
+      this.loading=false;this.PageLoading=false;
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
     }
   }
@@ -140,7 +140,7 @@ export class ChartReportComponent {
     debugger;
     var selectedmonthId = this.SearchForm.get("searchMonth").value;
     if (selectedmonthId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar('Please select payment month', globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -194,7 +194,7 @@ export class ChartReportComponent {
         var NonPaymentPercent = ((noofUnpaid * 100) / studentCount).toFixed(2);
         console.log("paymentcount", paymentcount);
         this.pieChartData = [+NonPaymentPercent, +PaymentPercent];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   ApplyVariables(formula) {

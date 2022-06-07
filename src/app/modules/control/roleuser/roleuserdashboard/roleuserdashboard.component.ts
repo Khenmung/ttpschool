@@ -19,7 +19,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './roleuserdashboard.component.html',
   styleUrls: ['./roleuserdashboard.component.scss']
 })
-export class roleuserdashboardComponent implements OnInit {
+export class roleuserdashboardComponent implements OnInit { PageLoading=true;
   @ViewChild("table") mattable;
   @ViewChild("container") container: ElementRef;
   //@ViewChild(roleuseraddComponent, { static: false }) roleuseradd: roleuseraddComponent;
@@ -165,7 +165,7 @@ export class roleuserdashboardComponent implements OnInit {
         this.shareddata.ChangeDepartment(this.Departments);
         this.shareddata.ChangeLocation(this.Locations);
         this.GetUsers();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -264,7 +264,7 @@ export class roleuserdashboardComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IRoleUsers>(this.RoleUserList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
 
@@ -315,7 +315,7 @@ export class roleuserdashboardComponent implements OnInit {
         if (data.value.length > 0) {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           return;
         }
         else {
@@ -351,7 +351,7 @@ export class roleuserdashboardComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.RoleUserId = data.RoleUserId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
 
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -361,7 +361,7 @@ export class roleuserdashboardComponent implements OnInit {
     this.dataservice.postPatch('RoleUsers', this.RoleUserData, this.RoleUserData.RoleUserId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });

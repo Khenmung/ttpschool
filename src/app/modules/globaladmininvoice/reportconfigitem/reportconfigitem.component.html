@@ -2,7 +2,7 @@
 <div style="padding:15px 15px 10px 15px;">
     <div><strong>Report Config Item</strong></div>
 </div>
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
 <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
 <div style="width: 100%;">
@@ -27,7 +27,10 @@
             </mat-form-field>
 
             <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetReportConfigItem()">
-                <mat-icon>search</mat-icon>
+                 <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
         </div>
     </form>
@@ -97,12 +100,19 @@
                 </button>
                 <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
                     <mat-icon>all_out</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-mini-fab
+                <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" 
+mat-raised-button color="accent"
                     (click)="Save(element)">
-                    <mat-icon>save</mat-icon>
+                     <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

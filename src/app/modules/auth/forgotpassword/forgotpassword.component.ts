@@ -13,7 +13,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './forgotpassword.component.html',
   styleUrls: ['./forgotpassword.component.scss']
 })
-export class ForgotpasswordComponent implements OnInit {
+export class ForgotpasswordComponent implements OnInit { PageLoading=true;
   loading = false;
   loginUserDetail = [];
   forgotpwdForm: FormGroup;
@@ -67,7 +67,7 @@ export class ForgotpasswordComponent implements OnInit {
     this.authService.CallAPI(payload,'ForgotPassword').subscribe(
       (data: any) => {
         ////console.log(data);
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.isSuccessful = true;
         this.contentservice.openSnackBar("Email sent to your register email address.",globalconstants.ActionText,globalconstants.BlueBackground);        
       },

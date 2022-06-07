@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
   templateUrl: './mat-confirm-dialog.component.html',
   styleUrls: ['./mat-confirm-dialog.component.scss']
 })
-export class ConfirmDialogComponent implements OnInit {
+export class ConfirmDialogComponent implements OnInit { PageLoading=true;
   title: string;
   message: string;
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>,

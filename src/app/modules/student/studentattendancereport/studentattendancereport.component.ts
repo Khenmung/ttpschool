@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentattendancereport.component.html',
   styleUrls: ['./studentattendancereport.component.scss']
 })
-export class StudentattendancereportComponent implements OnInit {
+export class StudentattendancereportComponent implements OnInit { PageLoading=true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -110,7 +110,7 @@ export class StudentattendancereportComponent implements OnInit {
       if (this.Permission != 'deny') {
         this.StudentClassId = this.tokenstorage.getStudentClassId();
         if (this.StudentClassId == 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar("Student class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -186,7 +186,7 @@ export class StudentattendancereportComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   clear() {
@@ -268,7 +268,7 @@ export class StudentattendancereportComponent implements OnInit {
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
         this.shareddata.ChangeSubjects(this.Subjects);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

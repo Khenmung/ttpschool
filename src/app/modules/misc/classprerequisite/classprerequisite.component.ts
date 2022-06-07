@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classprerequisite.component.html',
   styleUrls: ['./classprerequisite.component.scss']
 })
-export class ClassprerequisiteComponent implements OnInit {
+export class ClassprerequisiteComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -93,10 +93,10 @@ export class ClassprerequisiteComponent implements OnInit {
       else if (this.ClassMasters.length == 0) {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.ClassMasters = [...data.value];
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         })
       }
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       //this.GetMasterData();
     }
   }
@@ -162,7 +162,7 @@ export class ClassprerequisiteComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -194,7 +194,7 @@ export class ClassprerequisiteComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -225,7 +225,7 @@ export class ClassprerequisiteComponent implements OnInit {
     let filterStr = '';// BatchId eq  + this.SelectedBatchId
     var _searchClassId = this.searchForm.get("searchClassId").value;
     if (_searchClassId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select class/course.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -269,7 +269,7 @@ export class ClassprerequisiteComponent implements OnInit {
         // this.Durations = this.getDropDownData(globalconstants.MasterDefinitions.school.DURATION);
         // this.StudyArea = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYAREA);
         // this.StudyMode = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYMODE);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

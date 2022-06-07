@@ -1,66 +1,71 @@
 <!-- <div></div> -->
 <div style="padding: 15px;"><strong>Employee Attendance</strong></div>
 <!-- <alert></alert> -->
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <form [formGroup]="searchForm">            
-            <mat-form-field appearance="outline">
-                <mat-label>Attendance Date</mat-label>
-                <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
-                <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
-                <mat-datepicker #AttendanceDate></mat-datepicker>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<form [formGroup]="searchForm">
+    <mat-form-field appearance="outline">
+        <mat-label>Attendance Date</mat-label>
+        <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
+        <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
+        <mat-datepicker #AttendanceDate></mat-datepicker>
+    </mat-form-field>
+    <button [disabled]="loading" (click)="GetEmployeeAttendance()" class="mat-raised-button">
+        <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
+    </button>
+</form>
+<mat-table #table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="TeacherName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Teacher
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.TeacherName}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AttendanceStatus">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Present&nbsp;
+            <mat-checkbox *ngIf="TeacherAttendanceList.length>0" matTooltip="check/uncheck all" mat-mini-fab
+                (click)="$event.stopPropagation()" (change)="checkall($event)">
+            </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
+                [checked]="element.AttendanceStatus==1?true:false">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Remarks">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field [style.width.px]="150">
+                <textarea matInput [maxlength]="250" autocomplete="Off" (blur)="onChangeEvent(element,$event)"
+                    [value]="element.Remarks" [(ngModel)]="element.Remarks"></textarea>
             </mat-form-field>
-            <button [disabled]="loading" (click)="GetEmployeeAttendance()" class="mat-raised-button">
-                <mat-icon>search</mat-icon>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Action">
+        <mat-header-cell *matHeaderCellDef>
+            <button [disabled]="loading || !EnableSave || Permission=='read'" *ngIf="TeacherAttendanceList.length>0"
+                matTooltip="save all" mat-mini-fab (click)="saveall()">
+                <mat-icon>all_out</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
-        </form>
-        <mat-table #table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="TeacherName">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Teacher
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.TeacherName}}
-                </mat-cell>
-            </ng-container>            
-            <ng-container matColumnDef="AttendanceStatus">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Present&nbsp;
-                    <mat-checkbox *ngIf="TeacherAttendanceList.length>0" 
-                        matTooltip="check/uncheck all" mat-mini-fab 
-                        (click)="$event.stopPropagation()" (change)="checkall($event)">
-                    </mat-checkbox>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
-                        [checked]="element.AttendanceStatus==1?true:false">
-                    </mat-checkbox>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Remarks">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Remarks </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field [style.width.px]="150">
-                        <textarea matInput [maxlength]="250" 
-                        autocomplete="Off" 
-                        (change)="onChangeEvent(element,$event)" 
-                        [value]="element.Remarks"
-                            [(ngModel)]="element.Remarks"></textarea>
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading || !EnableSave || Permission=='read'" 
-                    *ngIf="TeacherAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
-                        <mat-icon>all_out</mat-icon>
-                    </button>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || !EnableSave || Permission=='read'" matTooltip="save" mat-mini-fab
-                        (click)="UpdateOrSave(element,0)">
-                        <mat-icon>save</mat-icon>
-                    </button>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-        </mat-table>
-    <mat-paginator [pageSizeOptions]="[10,20,50,100]"></mat-paginator>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+            <button [disabled]="loading || !element.Action || !EnableSave || Permission=='read'" matTooltip="save"
+                mat-raised-button color="accent" (click)="UpdateOrSave(element,0)">
+                <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+</mat-table>
+<mat-paginator [pageSizeOptions]="[10,20,50,100]"></mat-paginator>

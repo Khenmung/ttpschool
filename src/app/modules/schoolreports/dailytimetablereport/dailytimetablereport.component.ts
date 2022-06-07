@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './dailytimetablereport.component.html',
   styleUrls: ['./dailytimetablereport.component.scss']
 })
-export class DailytimetablereportComponent implements OnInit {
+export class DailytimetablereportComponent implements OnInit { PageLoading=true;
   SelectedApplicationId = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -222,7 +222,7 @@ export class DailytimetablereportComponent implements OnInit {
         this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
         //this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   // GetSchoolTimeTable() {
@@ -334,7 +334,7 @@ export class DailytimetablereportComponent implements OnInit {
   //       this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
   //       this.displayedColumns.push("Action");
   //       this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
-  //       this.loading = false;
+  //       this.loading = false; this.PageLoading=false;
   //     })
   // }
   GetAllClassPeriods() {
@@ -372,7 +372,7 @@ export class DailytimetablereportComponent implements OnInit {
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //console.log("this.AllClassPeriods", this.AllClassPeriods);
       })
   }
@@ -414,7 +414,7 @@ export class DailytimetablereportComponent implements OnInit {
             SubjectName: _subject + _shortName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -433,7 +433,7 @@ export class DailytimetablereportComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Batches = this.tokenstorage.getBatches()
         //this.shareddata.ChangeBatch(this.Batches);
-        //this.loading = false;
+        //this.loading = false; this.PageLoading=false;
         this.GetClassSubject();
         this.GetAllClassPeriods();
       });

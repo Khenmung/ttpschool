@@ -61,7 +61,7 @@ const colors: any = {
   ],
   templateUrl: 'calendar.component.html',
 })
-export class DemoComponent implements OnInit {
+export class DemoComponent implements OnInit { PageLoading=true;
   @ViewChild('modalContent', { static: true }) modalContent: TemplateRef<any>;
   LoginUserDetail = [];
   events: CalendarEvent[];
@@ -306,7 +306,7 @@ export class DemoComponent implements OnInit {
   //   templateUrl: './calendar.component.html',
   //   styleUrls: ['./calendar.component.scss']
   // })
-  // export class CalendarComponent implements OnInit {
+  // export class CalendarComponent implements OnInit { PageLoading=true;
   //   loading = false;
   //   LoginUserDetail = [];
   //   EventList = [];
@@ -352,7 +352,7 @@ export class DemoComponent implements OnInit {
   //           });
   //         }
   //         this.GetEvents();
-  //         this.loading = false;
+  //         this.loading = false; this.PageLoading=false;
   //       });
 
   //   }

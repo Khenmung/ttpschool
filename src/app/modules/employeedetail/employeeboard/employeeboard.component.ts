@@ -52,7 +52,7 @@ export class EmployeeboardComponent implements AfterViewInit {
   public viewContainer: ViewContainerRef;
 
   constructor(
-    private nav:Router,
+    private nav: Router,
     private cdr: ChangeDetectorRef,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
@@ -81,14 +81,15 @@ export class EmployeeboardComponent implements AfterViewInit {
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
-      this.renderComponent(0);
+      setTimeout(() => {
+        this.renderComponent(0);
+      }, 550);
       this.cdr.detectChanges();
     }
   }
-back()
-{
-  this.nav.navigate(["/employee"]);
-}
+  back() {
+    this.nav.navigate(["/employee"]);
+  }
   public tabChange(index: number) {
     setTimeout(() => {
       this.renderComponent(index);

@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './batchdashboard.component.html',
   styleUrls: ['./batchdashboard.component.scss']
 })
-export class BatchdashboardComponent implements OnInit {
+export class BatchdashboardComponent implements OnInit { PageLoading=true;
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
@@ -110,7 +110,7 @@ export class BatchdashboardComponent implements OnInit {
         //debugger;
         this.BatchList = [...data.value.sort((a, b) => new Date(a.StartDate).getTime() - new Date(b.StartDate).getTime())];
         this.dataSource = new MatTableDataSource<IBatches>(this.BatchList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   updateCurrentBatch(row, value) {
@@ -179,7 +179,7 @@ export class BatchdashboardComponent implements OnInit {
         if (data.value.length > 0) {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           return;
         }
         else {
@@ -215,7 +215,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.postPatch('Batches', this.BatchData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.BatchId = data.BatchId;
           this.GetBatches();
           row.Action = false;
@@ -227,7 +227,7 @@ export class BatchdashboardComponent implements OnInit {
     this.dataservice.postPatch('Batches', this.BatchData, this.BatchData.BatchId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.GetBatches();
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

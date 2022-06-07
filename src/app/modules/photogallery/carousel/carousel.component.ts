@@ -11,7 +11,7 @@ import {globalconstants } from '../../../shared/globalconstant';
   providers: [NgbCarouselConfig]
 })
 
-export class CarouselComponent implements OnInit {
+export class CarouselComponent implements OnInit { PageLoading=true;
    
   selectedAlbum: string;
   selectedAlbumId: number;
@@ -88,7 +88,7 @@ export class CarouselComponent implements OnInit {
         else
         this.error ="No image to display";
         // setTimeout(() => {
-           this.loading=false;       
+           this.loading=false;this.PageLoading=false;       
       })
   }
   getNestedFolders(fileId) {

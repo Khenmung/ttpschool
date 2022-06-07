@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './RoleAppPermissiondashboard.component.html',
   styleUrls: ['./RoleAppPermissiondashboard.component.scss']
 })
-export class RoleAppPermissiondashboardComponent implements OnInit {
+export class RoleAppPermissiondashboardComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   TopMenu = [];
@@ -203,7 +203,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         }
         else
           this.PageFeatures = [];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //console.log("PageFeatures", this.PageFeatures)
       })
   }
@@ -380,7 +380,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText,globalconstants.RedBackground);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
         else {
           //var _ParentId = 0;
@@ -426,7 +426,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.ApplicationFeatureRoleId = data.ApplicationFeatureRoleId;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
@@ -440,7 +440,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, this.AppRoleData.ApplicationFeatureRoleId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -455,7 +455,7 @@ export class RoleAppPermissiondashboardComponent implements OnInit {
     //       this.contentservice.SoftDelete('ApplicationFeatureRolesPerms',{}, row.MasterDataId)
     //         .subscribe((data: any) => {
     //           row.Action = false;
-    //           this.loading = false;
+    //           this.loading = false; this.PageLoading=false;
     //           var idx = this.ApplicationRoleList.findIndex(x => x.MasterDataId == row.MasterDataId)
     //           this.ApplicationRoleList.splice(idx, 1);
     //           this.datasource = new MatTableDataSource<any>(this.ApplicationRoleList);

@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './employee.component.html',
   styleUrls: ['./employee.component.scss']
 })
-export class EmployeeComponent implements OnInit {
+export class EmployeeComponent implements OnInit { PageLoading=true;
   ShortNameDuplicate = '';
   EmployeeCodeDuplicate = '';
   Edited = false;
@@ -78,7 +78,7 @@ export class EmployeeComponent implements OnInit {
     }
     this.selectedFile = files[0];
     if (this.selectedFile.size > 60000) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -119,7 +119,7 @@ export class EmployeeComponent implements OnInit {
       keepAfterRouteChange: true
     };
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground)
 
       this.Edited = false;
@@ -303,6 +303,8 @@ export class EmployeeComponent implements OnInit {
   }
   SaveOrUpdate() {
     debugger;
+    this.loading=true;
+    //setTimeout(()=>{
     var errorMessage = '';
     if (this.EmployeeForm.get("FirstName").value == '') {
       errorMessage += "First name is required.<br>";
@@ -334,7 +336,7 @@ export class EmployeeComponent implements OnInit {
     }
     if (errorMessage.length > 0) {
       this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
     this.loading = true;
@@ -345,7 +347,7 @@ export class EmployeeComponent implements OnInit {
       this.contentservice.CheckEmailDuplicate(checkduppayload)
         .subscribe((data: any) => {
           if (data) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar("Email already in use.", globalconstants.ActionText, globalconstants.RedBackground);
             return;
           }
@@ -445,7 +447,7 @@ export class EmployeeComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar("Employee code or short name already exists!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
@@ -456,6 +458,7 @@ export class EmployeeComponent implements OnInit {
             this.update();
         }
       })
+   
   }
   CheckDuplicate(fieldName) {
     debugger;
@@ -479,7 +482,7 @@ export class EmployeeComponent implements OnInit {
       .subscribe((data: any) => {
 
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           if (fieldName == 'EmployeeCode')
             this.EmployeeCodeDuplicate = "Employee code already exists. Please try another.";
           else if (fieldName == 'ShortName')
@@ -504,24 +507,24 @@ export class EmployeeComponent implements OnInit {
           this.EmployeeForm.patchValue({
             EmployeeId: result.EmpEmployeeId
           })
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.GetEmployee();
           this.contentservice.openSnackBar("Employee's data saved successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
         }
       }, error => {
         this.Edited = false;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         console.log(error)
       })
   }
   update() {
     this.dataservice.postPatch('EmpEmployees', this.EmployeeData[0], this.EmployeeId, 'patch')
       .subscribe((result: any) => {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.Edited = false;
         this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
       }, error => {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.Edited = false;
         this.contentservice.openSnackBar("Issue, Please contact your administrator.", globalconstants.ActionText, globalconstants.RedBackground);
         throw error;
@@ -659,9 +662,9 @@ export class EmployeeComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("No data found.", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       }, error => {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         console.error(error);
       });
   }

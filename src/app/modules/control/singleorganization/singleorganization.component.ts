@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './singleorganization.component.html',
   styleUrls: ['./singleorganization.component.scss']
 })
-export class SingleorganizationComponent implements OnInit {
+export class SingleorganizationComponent implements OnInit { PageLoading=true;
 
   constructor() { }
 

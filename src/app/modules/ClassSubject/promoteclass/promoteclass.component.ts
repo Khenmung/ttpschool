@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './promoteclass.component.html',
   styleUrls: ['./promoteclass.component.scss']
 })
-export class PromoteclassComponent implements OnInit {
+export class PromoteclassComponent implements OnInit { PageLoading=true;
   // @ViewChild(MatPaginator) paginator: MatPaginator;
   // @ViewChild(MatSort) sort: MatSort;
   // @ViewChild("table") mattable;
@@ -170,7 +170,7 @@ export class PromoteclassComponent implements OnInit {
 
         //this.SelectedBatchId = this.Batches.filter(b => b.CurrentBatch==1)[0].BatchId;
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       }
     }
   }
@@ -250,7 +250,7 @@ export class PromoteclassComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeTypes);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetStudentClasses() {
@@ -275,7 +275,7 @@ export class PromoteclassComponent implements OnInit {
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -330,7 +330,7 @@ export class PromoteclassComponent implements OnInit {
           this.contentservice.openSnackBar("No record found!", globalconstants.ActionText,globalconstants.RedBackground);
         this.dataSource = new MatTableDataSource<IStudentClass>(this.StudentClassList);
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
       })
 
@@ -395,7 +395,7 @@ export class PromoteclassComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -436,7 +436,7 @@ export class PromoteclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.StudentClassId = data.StudentClassId;
           row.Action = false;
           if (row.Promote == 1)
@@ -460,7 +460,7 @@ export class PromoteclassComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           if (this.RowsToUpdate == 0) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
         });
@@ -496,7 +496,7 @@ export class PromoteclassComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   onNgModelChange(selected) {
@@ -543,7 +543,7 @@ export class PromoteclassComponent implements OnInit {
 
         //this.shareddata.ChangeBatch(this.Batches);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

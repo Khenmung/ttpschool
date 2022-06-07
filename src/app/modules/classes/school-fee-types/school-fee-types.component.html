@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>School Fee Types</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
     <div style="width:100%;padding: 15px;" fxLayout="column">
         <form [formGroup]="searchForm">
@@ -11,7 +11,10 @@
                 <input matInput formControlName="searchFeeTypeName" autocomplete="Off">
             </mat-form-field>
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetFeeTypes()">
-                <mat-icon>search</mat-icon>
+                 <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
             </button>
         </form>
         <mat-table #table [dataSource]="dataSource">
@@ -78,9 +81,13 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="justify-content: center;">
-                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
+mat-raised-button color="accent"
                         (click)="UpdateOrSave(element)">
-                        <mat-icon>save</mat-icon>
+                         <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                     </button>
                 </mat-cell>
             </ng-container>

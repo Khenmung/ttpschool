@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './userreportconfigcolumns.component.html',
   styleUrls: ['./userreportconfigcolumns.component.scss']
 })
-export class UserReportConfigColumnsComponent implements OnInit {
+export class UserReportConfigColumnsComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   BaseReportId = 0;
@@ -197,7 +197,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -242,7 +242,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
         (data: any) => {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           if (this.ToUpateCount == 0) {
             this.ToUpateCount = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -254,7 +254,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     this.dataservice.postPatch(this.ReportConfigItemListName, this.ReportConfigItemData, this.ReportConfigItemData.ReportConfigItemId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action=false;
           if (this.ToUpateCount == 0) {
             this.ToUpateCount = -1;
@@ -377,7 +377,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -403,7 +403,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetReportNames() {
@@ -427,7 +427,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       .subscribe((data: any) => {
         this.ReportNames = [...data.value];
         this.GetAvailableReportNames();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetAvailableReportNames() {
@@ -463,7 +463,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ColumnsOfAvailableReports = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

@@ -20,7 +20,7 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
   templateUrl: './feecollectionreport.component.html',
   styleUrls: ['./feecollectionreport.component.scss']
 })
-export class FeecollectionreportComponent implements OnInit {
+export class FeecollectionreportComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
@@ -151,12 +151,12 @@ export class FeecollectionreportComponent implements OnInit {
     var nestedFilter = '';
 
     if (selectedMonth == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (paidNotPaid == '') {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select paid or not paid option.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -207,7 +207,7 @@ export class FeecollectionreportComponent implements OnInit {
             this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month == 0); //.sort((a, b) => a.month - b.month)
           else
             this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month > 0); //.sort((a, b) => a.month - b.month)
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.TotalPaidStudentCount = this.ELEMENT_DATA.length;
           if(this.ELEMENT_DATA.length==0)
           {            
@@ -219,11 +219,11 @@ export class FeecollectionreportComponent implements OnInit {
         }
         else {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText,globalconstants.RedBackground);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
 
       })
   }
@@ -322,7 +322,7 @@ export class FeecollectionreportComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 }

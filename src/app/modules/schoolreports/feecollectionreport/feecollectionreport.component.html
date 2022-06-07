@@ -44,7 +44,10 @@
             </mat-select>
         </mat-form-field> -->
         <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentReport()">
-            <mat-icon>search</mat-icon>
+             <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
         </button>
     </div>
 </form>

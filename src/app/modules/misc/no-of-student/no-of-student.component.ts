@@ -20,7 +20,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './no-of-student.component.html',
   styleUrls: ['./no-of-student.component.scss']
 })
-export class NoOfStudentComponent implements OnInit {
+export class NoOfStudentComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
@@ -141,7 +141,7 @@ export class NoOfStudentComponent implements OnInit {
           this.GetFeeTypes();
         }
         else {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
       }
     }
@@ -196,7 +196,7 @@ export class NoOfStudentComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeTypes);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -286,7 +286,7 @@ export class NoOfStudentComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.dataSource.filterPredicate = this.createFilter();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
       })
 
@@ -342,7 +342,7 @@ export class NoOfStudentComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -383,7 +383,7 @@ export class NoOfStudentComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.StudentClassId = data.StudentClassId;
           row.Action = false;
           this.RowsToUpdate--;
@@ -409,7 +409,7 @@ export class NoOfStudentComponent implements OnInit {
           row.Action = false;
           this.RowsToUpdate--;
           if (this.RowsToUpdate == 0) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -445,7 +445,7 @@ export class NoOfStudentComponent implements OnInit {
   //           }
   //         })
   //       }
-  //       this.loading = false;
+  //       this.loading = false; this.PageLoading=false;
   //     })
   // }
   GetMasterData() {
@@ -462,7 +462,7 @@ export class NoOfStudentComponent implements OnInit {
 
         //this.shareddata.ChangeBatch(this.Batches);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

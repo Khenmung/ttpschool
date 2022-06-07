@@ -14,7 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './family.component.html',
   styleUrls: ['./family.component.scss']
 })
-export class FamilyComponent implements OnInit {
+export class FamilyComponent implements OnInit { PageLoading=true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -154,7 +154,7 @@ export class FamilyComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -187,7 +187,7 @@ export class FamilyComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -243,7 +243,7 @@ export class FamilyComponent implements OnInit {
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
         if (this.EmployeeId > 0)
           this.GetEmployeeFamilys();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

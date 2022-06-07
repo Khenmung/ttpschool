@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classmasterdashboard.component.html',
   styleUrls: ['./classmasterdashboard.component.scss']
 })
-export class ClassmasterdashboardComponent implements OnInit {
+export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
@@ -171,7 +171,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     var _teacherId = this.searchForm.get("searchTeacherId").value.TeacherId;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_teacherId == undefined && _classId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select atleast one of the options", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -187,7 +187,7 @@ export class ClassmasterdashboardComponent implements OnInit {
       filterStr += " and ClassId eq " + _classId;
 
     // else {
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   this.contentservice.openSnackBar("Please select teacher", globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
@@ -267,7 +267,7 @@ export class ClassmasterdashboardComponent implements OnInit {
           })
         }
         this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //this.changeDetectorRefs.detectChanges();
       });
   }
@@ -300,7 +300,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
     // if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
     //   this.contentservice.openSnackBar("Allowed no. subjects selected is exceeded for this subject type.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   return;
     // }
 
@@ -323,7 +323,7 @@ export class ClassmasterdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -365,7 +365,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.dataservice.postPatch(this.TeacherClassSubjectListName, this.ClassSubjectTeacherData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.TeacherClassMappingId = data.TeacherClassMappingId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -376,7 +376,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.dataservice.postPatch(this.TeacherClassSubjectListName, this.ClassSubjectTeacherData, this.ClassSubjectTeacherData.TeacherClassMappingId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
@@ -458,7 +458,7 @@ export class ClassmasterdashboardComponent implements OnInit {
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetTeachers();
         //this.GetClassSubject();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

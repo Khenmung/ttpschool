@@ -14,7 +14,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
   templateUrl: './feereceipt.component.html',
   styleUrls: ['./feereceipt.component.scss'],
 })
-export class FeereceiptComponent implements OnInit {
+export class FeereceiptComponent implements OnInit { PageLoading=true;
   @Input("BillDetail") BillDetail: any[];
   @Input("StudentClass") studentInfoTodisplay: any;
   @Input("OffLineReceiptNo") OffLineReceiptNo: any;
@@ -142,7 +142,7 @@ export class FeereceiptComponent implements OnInit {
       this.GetBills();
     }
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
   }
@@ -167,7 +167,7 @@ export class FeereceiptComponent implements OnInit {
     this.dataservice.postPatch(this.StudentFeeReceiptListName, receipt, this.studentInfoTodisplay.StudentFeeReceiptId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.TotalAmount = 0;
           this.Balance = 0;
           this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -231,7 +231,7 @@ export class FeereceiptComponent implements OnInit {
         if (latestReceipt.length > 0)
           this.viewDetail(latestReceipt[0]);
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
       })
   }
@@ -255,7 +255,7 @@ export class FeereceiptComponent implements OnInit {
         this.ReceiptHeading.forEach(f => {
           f.Logic = f.Logic != null ? JSON.parse("{" + f.Logic + "}") : ''
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
 
   }

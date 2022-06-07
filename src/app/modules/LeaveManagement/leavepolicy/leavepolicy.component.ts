@@ -16,7 +16,7 @@ import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-g
   templateUrl: './leavepolicy.component.html',
   styleUrls: ['./leavepolicy.component.scss']
 })
-export class LeavepolicyComponent implements OnInit {
+export class LeavepolicyComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -210,7 +210,7 @@ export class LeavepolicyComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -250,10 +250,10 @@ export class LeavepolicyComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.LeavePolicyId = data.LeavePolicyId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -264,10 +264,10 @@ export class LeavepolicyComponent implements OnInit {
     this.dataservice.postPatch(this.LeavePolicyListName, this.LeavePolicyData, this.LeavePolicyData.LeavePolicyId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -344,7 +344,7 @@ export class LeavepolicyComponent implements OnInit {
             Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         ////console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
         //this.GetGradeComponents();
       })
@@ -401,7 +401,7 @@ export class LeavepolicyComponent implements OnInit {
         })
         //console.log('LeavePolicyList',this.LeavePolicyList);
 
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.dataSource = new MatTableDataSource<ILeavePolicy>(this.LeavePolicyList);
       })
   }

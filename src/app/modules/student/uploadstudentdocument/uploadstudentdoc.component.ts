@@ -16,7 +16,7 @@ import { FileUploadService } from '../../../shared/upload.service';
   templateUrl: './uploadstudentdoc.component.html',
   styleUrls: ['./uploadstudentdoc.component.scss']
 })
-export class StudentDocumentComponent implements OnInit {
+export class StudentDocumentComponent implements OnInit { PageLoading=true;
   loading = false;
   optionsNoAutoClose = {
     autoClose: false,

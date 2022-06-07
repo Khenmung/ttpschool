@@ -10,7 +10,7 @@ import { List } from '../../interface';
   templateUrl: './landingpage.component.html',
   styleUrls: ['./landingpage.component.scss']
 })
-export class LandingpageComponent implements OnInit {
+export class LandingpageComponent implements OnInit { PageLoading=true;
   images=[];
   constructor(private route:Router,
     private naomitsuService:NaomitsuService,

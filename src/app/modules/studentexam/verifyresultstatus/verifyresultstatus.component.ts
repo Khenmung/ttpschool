@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './verifyresultstatus.component.html',
   styleUrls: ['./verifyresultstatus.component.scss']
 })
-export class VerifyresultstatusComponent implements OnInit {
+export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -88,7 +88,7 @@ export class VerifyresultstatusComponent implements OnInit {
       }
       else
       {
-        this.loading=false;
+        this.loading=false;this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
       }
     }
@@ -167,7 +167,7 @@ export class VerifyresultstatusComponent implements OnInit {
         this.dataSource = new MatTableDataSource(statusdetail);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -201,7 +201,7 @@ export class VerifyresultstatusComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 

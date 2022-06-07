@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>User</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
     <div #container [ngClass]="{'disableDiv': UserId!=0}" style="padding: 15px;display: flex;flex-direction: column;">
         <!-- <div style="height:350px;width: 100%;"> -->
@@ -17,7 +17,10 @@
                     </mat-autocomplete>
                 </mat-form-field>
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetAppUsers()">
-                    <mat-icon>search</mat-icon>
+                     <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </form>
             <mat-table #table [dataSource]="datasource" matSort>
@@ -105,7 +108,7 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <button [disabled]="loading || Permission=='read' 
-                                                    || !element.Action" mat-mini-fab (click)="UpdateOrSave(element)">
+                                                    || !element.Action" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon matTooltip="save">save</mat-icon>
                         </button>
                         &nbsp;

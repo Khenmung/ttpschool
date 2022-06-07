@@ -12,7 +12,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './imgDragAndDrop.html',
   styleUrls: ['./imgDragAndDrop.scss'],
 })
-export class ImgDragAndDropComponent implements OnInit {
+export class ImgDragAndDropComponent implements OnInit { PageLoading=true;
   loading=false;
   options = {
     autoClose: false,

@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './userconfigreportname.component.html',
   styleUrls: ['./userconfigreportname.component.scss']
 })
-export class UserconfigreportnameComponent implements OnInit {
+export class UserconfigreportnameComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   BaseReportId = 0;
@@ -172,7 +172,7 @@ export class UserconfigreportnameComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -217,7 +217,7 @@ export class UserconfigreportnameComponent implements OnInit {
         (data: any) => {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -226,7 +226,7 @@ export class UserconfigreportnameComponent implements OnInit {
     this.dataservice.postPatch(this.ReportConfigItemListName, this.ReportConfigItemData, this.ReportConfigItemData.ReportConfigItemId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -317,7 +317,7 @@ export class UserconfigreportnameComponent implements OnInit {
         });
 
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 
@@ -343,7 +343,7 @@ export class UserconfigreportnameComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetReportNames() {
@@ -368,7 +368,7 @@ export class UserconfigreportnameComponent implements OnInit {
         this.ReportNames = [...data.value];
 
         this.AvailableReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId && a.ParentId == this.BaseReportId);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetAvailableReportNames() {

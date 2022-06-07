@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Daily Time Table</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
@@ -26,7 +26,10 @@
                     </mat-form-field>
                     <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
                         (click)="GetSchoolTimeTable()">
-                        <mat-icon>search</mat-icon>
+                         <mat-icon>search</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                     </button>
                 </div>
             </form>

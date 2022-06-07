@@ -21,7 +21,7 @@ import * as XLSX from 'xlsx';
   templateUrl: './employeesearch.component.html',
   styleUrls: ['./employeesearch.component.scss']
 })
-export class EmployeesearchComponent implements OnInit {
+export class EmployeesearchComponent implements OnInit { PageLoading=true;
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -113,7 +113,7 @@ export class EmployeesearchComponent implements OnInit {
 
       this.GetMasterData();
       this.GetEmployees();
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
     }
   }
   private _filter(name: string): IEmployee[] {
@@ -184,7 +184,7 @@ export class EmployeesearchComponent implements OnInit {
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         //this.getSelectedBatchEmpEmployeeIdRollNo();
 
 
@@ -330,7 +330,7 @@ export class EmployeesearchComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IEmployee>(this.EmployeeData);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
 
   }
@@ -369,7 +369,7 @@ export class EmployeesearchComponent implements OnInit {
             }
           })
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
 }

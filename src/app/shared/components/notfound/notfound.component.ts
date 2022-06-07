@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   templateUrl: './notfound.component.html',
   styleUrls: ['./notfound.component.scss']
 })
-export class NotfoundComponent implements OnInit {
+export class NotfoundComponent implements OnInit { PageLoading=true;
 loading=false;
   constructor(
     private route: Router

@@ -16,7 +16,7 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './menu-config.component.html',
   styleUrls: ['./menu-config.component.scss']
 })
-export class MenuConfigComponent implements OnInit {
+export class MenuConfigComponent implements OnInit { PageLoading=true;
 
   optionsNoAutoClose = {
     autoClose: false,
@@ -163,7 +163,7 @@ export class MenuConfigComponent implements OnInit {
             this.Applications = [...data.value];
           });
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -295,7 +295,7 @@ export class MenuConfigComponent implements OnInit {
   }
   AddNew() {
     if (this.searchForm.get("searchApplicationId").value == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -322,7 +322,7 @@ export class MenuConfigComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.PageList);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
 
   }
   UpdateOrSave(row) {
@@ -410,7 +410,7 @@ export class MenuConfigComponent implements OnInit {
         (data: any) => {
           row.PageId = data.PageId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
           this.GetTopMenu();
@@ -422,7 +422,7 @@ export class MenuConfigComponent implements OnInit {
     this.dataservice.postPatch('Pages', this.MenuConfigData, this.MenuConfigData.PageId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
@@ -469,7 +469,7 @@ export class MenuConfigComponent implements OnInit {
         this.dataSource = new MatTableDataSource<any>(this.PageList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         ////console.log('data',this.PageList)
       });
 

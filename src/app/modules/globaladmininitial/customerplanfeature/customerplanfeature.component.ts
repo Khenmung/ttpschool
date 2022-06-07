@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './customerplanfeature.component.html',
   styleUrls: ['./customerplanfeature.component.scss']
 })
-export class CustomerPlanFeatureComponent implements OnInit {
+export class CustomerPlanFeatureComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -162,7 +162,7 @@ export class CustomerPlanFeatureComponent implements OnInit {
 
     if (row.PlanId == 0) {
       this.contentservice.openSnackBar("Please enter CustomerPlanFeature name.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = false;
       return;
     }
@@ -181,7 +181,7 @@ export class CustomerPlanFeatureComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -200,7 +200,7 @@ export class CustomerPlanFeatureComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -267,7 +267,7 @@ export class CustomerPlanFeatureComponent implements OnInit {
     this.GetFeatures(ApplicationId).subscribe((d: any) => {
       this.Features = [...d.value];
       this.Topfeatures = this.Features.filter(f => f.ParentId == 0);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
     });
   }
   GetFeatures(appId) {
@@ -344,7 +344,7 @@ export class CustomerPlanFeatureComponent implements OnInit {
             this.Applications = [...data.value];
           });
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

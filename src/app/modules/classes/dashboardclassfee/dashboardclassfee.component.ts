@@ -18,7 +18,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
   styleUrls: ['./dashboardclassfee.component.scss']
 })
 
-export class DashboardclassfeeComponent implements OnInit {
+export class DashboardclassfeeComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
@@ -110,7 +110,7 @@ export class DashboardclassfeeComponent implements OnInit {
         if (this.SelectedBatchId == 0) {
           //this.contentservice.openSnackBar("Current batch not defined in master!", this.options);
           this.route.navigate(['/admin']);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
         else {
           this.searchForm.patchValue({ Batch: this.SelectedBatchId });
@@ -129,7 +129,7 @@ export class DashboardclassfeeComponent implements OnInit {
               //this.GetMasterData();
             })
             this.GetDistinctClassFee();
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           }
         }
       }
@@ -178,18 +178,18 @@ export class DashboardclassfeeComponent implements OnInit {
         console.log("getinvoice",data)
         this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.InvoiceCreated =true;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           },
             error => {
-              this.loading = false;
+              this.loading = false; this.PageLoading=false;
               this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
               console.log("error in createInvoice", error);
             })
       },
         error => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
           console.log("error in getinvoice", error);
         })
@@ -269,19 +269,19 @@ export class DashboardclassfeeComponent implements OnInit {
     debugger;
     if (row.Amount == 0) {
       row.Action = false;
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Amount should be greater than zero.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else if (row.Amount > 100000) {
       row.Action = false;
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Amount should be smaller than 100,000.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     // else if (row.Month == 0) {
     //   row.Action = false;
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.RedBackground);
     //   return;
     // }
@@ -304,7 +304,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar("Record already exists!", globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -333,7 +333,7 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.ClassFeeId = data.ClassFeeId;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
@@ -348,7 +348,7 @@ export class DashboardclassfeeComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -386,7 +386,7 @@ export class DashboardclassfeeComponent implements OnInit {
               }
           })
           ////console.log('classes', this.ClassStatuses);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
       })
   }
@@ -435,7 +435,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.DataFromPreviousBatch = 'Data From Previous Batch'
           if (_classFee.length == 0) {
             this.contentservice.openSnackBar("No data from previous batch.", globalconstants.ActionText, globalconstants.RedBackground);
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             return;
           }
           list.filter = [this.StandardFilterWithBatchId + filterstr];
@@ -507,7 +507,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   updateEnable(row, value) {
     row.Action = true;

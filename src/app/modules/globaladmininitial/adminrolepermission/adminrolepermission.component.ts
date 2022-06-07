@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './adminrolepermission.component.html',
   styleUrls: ['./adminrolepermission.component.scss']
 })
-export class AdminrolepermissionComponent implements OnInit {
+export class AdminrolepermissionComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   TopMenu = [];
@@ -121,7 +121,7 @@ export class AdminrolepermissionComponent implements OnInit {
             .subscribe((data: any) => {
               this.Applications = [...data.value];
             })
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
       });
   }
@@ -248,7 +248,7 @@ export class AdminrolepermissionComponent implements OnInit {
         }
         else
           this.PlanFeaturePages = [];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         console.log("PageFeatures", this.TopPageFeatures)
       })
   }
@@ -267,7 +267,7 @@ export class AdminrolepermissionComponent implements OnInit {
     var _customerId = this.searchForm.get("searchCustomerId").value
     if (_customerId == 0) {
       this.contentservice.openSnackBar("Please select customer.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
 
@@ -444,7 +444,7 @@ export class AdminrolepermissionComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
         else {
           var _ParentId = 0;
@@ -490,7 +490,7 @@ export class AdminrolepermissionComponent implements OnInit {
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.ApplicationFeatureRoleId = data.ApplicationFeatureRoleId;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
@@ -504,7 +504,7 @@ export class AdminrolepermissionComponent implements OnInit {
     this.dataservice.postPatch('ApplicationFeatureRolesPerms', this.AppRoleData, this.AppRoleData.ApplicationFeatureRoleId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           row.Action = false;
           if (this.NoOfRowsToUpdate == 0) {
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);

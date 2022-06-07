@@ -17,7 +17,7 @@ import { EventEmitter } from '@angular/core';
   templateUrl: './EvaluationClassSubjectMap.component.html',
   styleUrls: ['./EvaluationClassSubjectMap.component.scss']
 })
-export class EvaluationClassSubjectMapComponent implements OnInit {
+export class EvaluationClassSubjectMapComponent implements OnInit { PageLoading=true;
   @Output() NotifyParent: EventEmitter<number> = new EventEmitter();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -114,7 +114,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
         this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
           .subscribe((data: any) => {
             this.ClassGroupMappings = [...data.value];
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           })
       }
     }
@@ -179,21 +179,21 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     if (row.ExamId > 0)
       checkFilterString = "ExamId eq " + row.ExamId;
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select evaluation session or examination.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (_EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId eq " + _EvaluationMasterId;
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select evaluation.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.ClassGroupId > 0)
       checkFilterString += " and ClassGroupId eq " + row.ClassGroupId;
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select class/class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -211,7 +211,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -251,7 +251,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
     //console.log("inserting",this.EvaluationClassSubjectMapForUpdate);
@@ -325,7 +325,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
     //var _examId = this.searchForm.get("searchExamId").value;
 
     if (_EvaluationMasterId == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select evaluation.", globalconstants.ActionText, globalconstants.BlueBackground);
       return;
     }
@@ -394,7 +394,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetMasterData() {
@@ -406,7 +406,7 @@ export class EvaluationClassSubjectMapComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.GetClassSubjects();
         this.GetExams();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   onBlur(row) {

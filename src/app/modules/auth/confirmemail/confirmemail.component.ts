@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/_services/auth.service';
   templateUrl: './confirmemail.component.html',
   styleUrls: ['./confirmemail.component.scss']
 })
-export class ConfirmemailComponent implements OnInit {
+export class ConfirmemailComponent implements OnInit { PageLoading=true;
   userId = '';
   code = '';
   loading = false;
@@ -36,12 +36,12 @@ export class ConfirmemailComponent implements OnInit {
         localStorage.setItem("userId", data.Id);
         this.contentservice.openSnackBar("Email confirmation success! Please select your plan.", globalconstants.ActionText, globalconstants.BlueBackground);
         this.route.navigate(['/auth/selectplan']);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       },
         err => {
           this.contentservice.openSnackBar("Email confirmation fail", globalconstants.ActionText, globalconstants.RedBackground);
           console.log("confirm email error", err);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         });
     })
 

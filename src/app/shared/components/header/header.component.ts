@@ -7,7 +7,7 @@ import { globalconstants } from '../../globalconstant';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit { PageLoading=true;
   @Input() deviceXs: boolean;
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
   loading: false;

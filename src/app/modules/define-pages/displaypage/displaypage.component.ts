@@ -16,7 +16,7 @@ import { NaomitsuService } from '../../../shared/databaseService'
   templateUrl: './displaypage.component.html',
   styleUrls: ['./displaypage.component.scss']
 })
-export class DisplaypageComponent implements OnInit {
+export class DisplaypageComponent implements OnInit { PageLoading=true;
   images = [];
   Name = {};
   ImgUrl = '';
@@ -119,7 +119,7 @@ export class DisplaypageComponent implements OnInit {
           this.PageBody = pagetodisplay[0].PageHistories.filter(h => h.PageHistoryId == IdtoDisplay)[0].PageBody;
           //this.ParentPage = pagetodisplay[0].PageTitle;
           this.Title = pagetodisplay[0].PageTitle;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         }
       })
 
@@ -182,7 +182,7 @@ export class DisplaypageComponent implements OnInit {
             this.GetParentPage(data.value[0].ParentPageId);
           this.loop = 0;
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getHomePageId() {

@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './reportshome.component.html',
   styleUrls: ['./reportshome.component.scss']
 })
-export class reportshomeComponent implements OnInit {
+export class reportshomeComponent implements OnInit { PageLoading=true;
   openSideBar =true;
   constructor() { }
 

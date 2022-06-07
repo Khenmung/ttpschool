@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./classperiod.component.scss']
 })
 
-export class ClassperiodComponent implements OnInit {
+export class ClassperiodComponent implements OnInit { PageLoading=true;
 
 
   LoginUserDetail: any[] = [];
@@ -115,7 +115,7 @@ export class ClassperiodComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
 
     if (row.PeriodTypeId == 0) {
       this.contentservice.openSnackBar("Please select period type.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -150,7 +150,7 @@ export class ClassperiodComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -193,11 +193,11 @@ export class ClassperiodComponent implements OnInit {
         (data: any) => {
           row.SchoolClassPeriodId = data.SchoolClassPeriodId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
 
@@ -213,7 +213,7 @@ export class ClassperiodComponent implements OnInit {
           this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -295,7 +295,7 @@ export class ClassperiodComponent implements OnInit {
         })
 
         this.dataSource = new MatTableDataSource<ISchoolClassPeriod>(this.SchoolClassPeriodList);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   CheckAll(value) {
@@ -410,7 +410,7 @@ export class ClassperiodComponent implements OnInit {
         this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
         //this.shareddata.ChangeBatch(this.Batches);
         this.Batches = this.tokenstorage.getBatches()
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
 

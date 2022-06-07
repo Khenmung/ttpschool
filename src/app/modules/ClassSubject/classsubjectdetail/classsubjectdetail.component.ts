@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classsubjectdetail.component.html',
   styleUrls: ['./classsubjectdetail.component.scss']
 })
-export class ClassSubjectDetailComponent implements OnInit {
+export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
 
   @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -122,7 +122,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -230,7 +230,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     if (this.searchForm.get("searchClassId").value != 0)
       filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -242,7 +242,7 @@ export class ClassSubjectDetailComponent implements OnInit {
     //   filterStr += ' and ' + this.StandardFilterWithBatchId;
 
     if (filterStr.length == 0) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -325,7 +325,7 @@ export class ClassSubjectDetailComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.dataSource.filterPredicate = this.createFilter();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   clear() {
@@ -387,24 +387,24 @@ export class ClassSubjectDetailComponent implements OnInit {
     this.loading = true;
     if (row.SubjectTypeId == 0) {
       this.contentservice.openSnackBar("Please select subject type.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
     // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
     // if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
     //   this.contentservice.openSnackBar("Allowed no. subjects selected is exceeded for this subject type.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   return;
     // }
     if (row.Credits > 100) {
       this.contentservice.openSnackBar("Credits can not be greater than 100.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
     ////console.log("row.TeacherId", row.TeacherId);
     if (row.TeacherId == 0) {
       this.contentservice.openSnackBar("Please select teacher for the subject.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       return;
     }
     let checkFilterString = "ClassId eq " + row.ClassId +
@@ -426,7 +426,7 @@ export class ClassSubjectDetailComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -472,7 +472,7 @@ export class ClassSubjectDetailComponent implements OnInit {
           row.Action = false;
           row.ClassSubjectId = data.ClassSubjectId;
           if (this.DataCountToSave == 0) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.DataCountToSave = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -485,7 +485,7 @@ export class ClassSubjectDetailComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           if (this.DataCountToSave == 0) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.DataCountToSave = -1;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -557,7 +557,7 @@ export class ClassSubjectDetailComponent implements OnInit {
         this.GetSubjectTypes();
         this.GetTeachers();
 
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

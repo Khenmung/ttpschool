@@ -13,7 +13,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './examstudentsubjectresult.component.html',
   styleUrls: ['./examstudentsubjectresult.component.scss']
 })
-export class ExamstudentsubjectresultComponent implements OnInit {
+export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=true;
   ResultReleased = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -124,12 +124,12 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     //debugger;   
     if(row.Marks > row.FullMark)
     {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Marks cannot be greater than FullMark (" + row.FullMark +").", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if (row.Marks > 1000) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Marks cannot be greater than 1000.", globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
@@ -154,7 +154,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -202,10 +202,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         (data: any) => {
           row.ExamStudentSubjectResultId = data.ExamStudentSubjectResultId;
           row.Action=false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -216,11 +216,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.dataservice.postPatch('ExamStudentSubjectResults', this.ExamStudentSubjectResultData, this.ExamStudentSubjectResultData.ExamStudentSubjectResultId, 'patch')
       .subscribe(
         (data: any) => {
-          //this.loading = false;
+          //this.loading = false; this.PageLoading=false;
           row.Action=false;
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -283,7 +283,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           }
 
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         this.GetSubjectMarkComponents();
       });
   }
@@ -443,7 +443,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         });
         var forDisplay;
         if (filteredStudentSubjects.length == 0 || filteredStudentSubjects[0].Components.length == 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar("Student Subject/Subject components not defined for this class subject!", globalconstants.ActionText,globalconstants.RedBackground);
           this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>([]);
           return;
@@ -517,7 +517,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         ////console.log('this.displayedColumns', this.displayedColumns);
         ////console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult);
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   checkall(value) {

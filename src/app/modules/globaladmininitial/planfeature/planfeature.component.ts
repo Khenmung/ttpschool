@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './planfeature.component.html',
   styleUrls: ['./planfeature.component.scss']
 })
-export class PlanFeatureComponent implements OnInit {
+export class PlanFeatureComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -155,6 +155,10 @@ export class PlanFeatureComponent implements OnInit {
       this.RowToUpdateCount--;
       this.UpdateOrSave(element);
     });
+    if(toUpdate.length==0)
+    {
+      this.loading=false;
+    }
 
   }
   SaveRow(row) {
@@ -168,11 +172,13 @@ export class PlanFeatureComponent implements OnInit {
 
     if (row.PlanId == 0) {
       this.contentservice.openSnackBar("Please enter PlanFeature name.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = false;
       return;
     }
-    let checkFilterString = "PageId eq " + row.PageId + " and PlanId eq " + this.searchForm.get("searchPlanId").value
+    let checkFilterString = "PageId eq " + row.PageId + 
+                            " and PlanId eq " + this.searchForm.get("searchPlanId").value +
+                            " and ApplicationId eq " + row.ApplicationId
 
     if (row.PlanFeatureId > 0)
       checkFilterString += " and PlanFeatureId ne " + row.PlanFeatureId;
@@ -187,7 +193,7 @@ export class PlanFeatureComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -209,7 +215,7 @@ export class PlanFeatureComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -276,7 +282,7 @@ GetTopFeature() {
   this.GetFeatures(ApplicationId).subscribe((d: any) => {
     this.Features = [...d.value];
     this.Topfeatures = this.Features.filter(f => f.ParentId == 0);
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   });
 }
 GetFeatures(appId) {
@@ -381,7 +387,7 @@ GetMasterData() {
             this.Applications = [...data.value];
           });
       this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
     });
 }
 getDropDownData(dropdowntype) {

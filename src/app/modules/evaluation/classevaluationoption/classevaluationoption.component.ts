@@ -15,7 +15,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classevaluationoption.component.html',
   styleUrls: ['./classevaluationoption.component.scss']
 })
-export class ClassEvaluationOptionComponent implements OnInit {
+export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true;
   @Input() ClassEvaluationId: number;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -96,7 +96,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
           );
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
 
       }
     }
@@ -140,7 +140,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
   AddNew() {
     var _AnswerOptionId = this.searchForm.get("searchParent").value.ClassEvaluationAnswerOptionsId;
     // if (_AnswerOptionId == undefined) {
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   this.contentservice.openSnackBar("Please select parent", globalconstants.ActionText, globalconstants.RedBackground);
     //   return;
     // }
@@ -166,7 +166,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
     debugger;
     this.loading = true;
     if (row.Title == undefined) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Title is required.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -188,7 +188,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -227,7 +227,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
 
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
     this.dataservice.postPatch('ClassEvaluationOptions', this.ClassEvaluationOptionForUpdate[0], 0, 'post')
@@ -345,7 +345,7 @@ export class ClassEvaluationOptionComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         //this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   onBlur(row) {

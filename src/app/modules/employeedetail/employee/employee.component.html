@@ -1,5 +1,5 @@
 <div style="font-weight:bold;padding: 15px 15px 15px 0px;">Employee Detail</div>
-<mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
 <form [formGroup]="EmployeeForm">
     <mat-tab-group #changeEvent [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)"
@@ -165,9 +165,14 @@
                 || Permission=='read' 
                 || !Edited 
                 || EmployeeCodeDuplicate.length>0
-                || ShortNameDuplicate.length>0" (click)="SaveOrUpdate()" matTooltip="save"
-                    mat-raised-button color="accent">
-                    <mat-icon>save</mat-icon>
+                || ShortNameDuplicate.length>0" (click)="SaveOrUpdate()" 
+                matTooltip="save"
+                mat-raised-button 
+                color="accent">
+                     <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -314,7 +319,10 @@
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save"
                     mat-raised-button color="accent">
-                    <mat-icon>save</mat-icon>
+                     <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -353,7 +361,10 @@
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save"
                     mat-raised-button color="accent">
-                    <mat-icon>save</mat-icon>
+                     <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -397,7 +408,10 @@
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save"
                     mat-raised-button color="accent">
-                    <mat-icon>save</mat-icon>
+                     <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -531,7 +545,10 @@
                     <mat-icon>arrow_back</mat-icon>
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save" mat-raised-button color="accent">
-                    <mat-icon>save</mat-icon>
+                     <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>

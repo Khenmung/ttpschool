@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './organization.component.html',
   styleUrls: ['./organization.component.scss']
 })
-export class OrganizationComponent implements OnInit {
+export class OrganizationComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   Action = false;
   OrganizationId = 0;
@@ -138,7 +138,7 @@ export class OrganizationComponent implements OnInit {
       this.GetOrganization();
       this.GetStorageFnP(0).subscribe((data: any) => {
         this.StorageFnPList = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
     }
   }
@@ -173,7 +173,7 @@ export class OrganizationComponent implements OnInit {
 
     // if (row.OrganizationName == '') {
     //   this.contentservice.openSnackBar("Please enter organization name.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   this.loading = false;
+    //   this.loading = false; this.PageLoading=false;
     //   row.Action = false;
     //   return;
     // }
@@ -215,7 +215,7 @@ export class OrganizationComponent implements OnInit {
         (data: any) => {
          // row.OrganizationId = data.OrganizationId;
          // row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
           this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -226,7 +226,7 @@ export class OrganizationComponent implements OnInit {
     this.dataservice.postPatch(this.OrganizationListName, this.OrganizationData, this.OrganizationData.OrganizationId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           //row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -248,7 +248,7 @@ export class OrganizationComponent implements OnInit {
           cntrl.disable();
           this.GetOrganizationDetail();
         }
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetOrganizationDetail() {
@@ -309,9 +309,9 @@ export class OrganizationComponent implements OnInit {
         // var _OrgLogoParentId = this.StorageFnPList.filter(f => f.FileName.toLowerCase() == "organization logo")[0].FileId;
         // this.GetStorageFnP(_OrgLogoParentId).subscribe((imgurldata: any) => {
         //   this.imgURL = globalconstants.apiUrl + "/uploads/" + this.LoginUserDetail[0]["org"] + "/organization logo/" + imgurldata.value[0].UpdatedFileFolderName
-        //   this.loading = false;
+        //   this.loading = false; this.PageLoading=false;
 
-        //   //this.loading = false;
+        //   //this.loading = false; this.PageLoading=false;
         // })
       })
   }
@@ -327,7 +327,7 @@ export class OrganizationComponent implements OnInit {
     debugger;
     this.selectedFile = files[0];
     if (this.selectedFile.size > 60000) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -344,7 +344,7 @@ export class OrganizationComponent implements OnInit {
     let error: boolean = false;
     this.loading = true;
     if (this.selectedFile == undefined) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -383,7 +383,7 @@ export class OrganizationComponent implements OnInit {
       keepAfterRouteChange: true
     };
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
       this.LogoPath = this.selectedFile.name;
       //this.Edit = false;

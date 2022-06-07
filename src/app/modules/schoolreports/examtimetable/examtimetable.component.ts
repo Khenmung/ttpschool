@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './examtimetable.component.html',
   styleUrls: ['./examtimetable.component.scss']
 })
-export class ExamtimetableComponent implements OnInit {
+export class ExamtimetableComponent implements OnInit { PageLoading=true;
   @ViewChild('allSelected') private allSelected: MatOption;
 
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -111,7 +111,7 @@ export class ExamtimetableComponent implements OnInit {
   }
 
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
 
   GetClassSubject() {
@@ -149,7 +149,7 @@ export class ExamtimetableComponent implements OnInit {
             ClassId: item.ClassId
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   GetExams() {
@@ -171,7 +171,7 @@ export class ExamtimetableComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetExamSlots() {
@@ -387,7 +387,7 @@ export class ExamtimetableComponent implements OnInit {
           //console.log("SlotNClassSubjects", this.SlotNClassSubjects)
         })
         this.dataSource = new MatTableDataSource<any>(this.SlotNClassSubjects);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   GetMasterData() {

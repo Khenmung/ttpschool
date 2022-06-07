@@ -14,7 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './customerinvoicecomponents.component.html',
   styleUrls: ['./customerinvoicecomponents.component.scss']
 })
-export class CustomerinvoicecomponentsComponent implements OnInit {
+export class CustomerinvoicecomponentsComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -114,7 +114,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
     //   .subscribe((data: any) => {
     //     //debugger;
     //     if (data.value.length > 0) {
-    //       this.loading = false;
+    //       this.loading = false; this.PageLoading=false;
     //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
     //     }
     //     else {
@@ -154,7 +154,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
         (data: any) => {
           row.CustomerInvoiceComponentId = data.CustomerInvoiceComponentId;
           row.Action = false;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -163,7 +163,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
     this.dataservice.postPatch(this.CustomerInvoiceComponentListName, this.CustomerInvoiceComponentData, this.CustomerInvoiceComponentData.CustomerInvoiceComponentId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
@@ -240,7 +240,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
             })
           }
           this.dataSource = new MatTableDataSource<any>(this.CustomerInvoiceComponentList);
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
         })
       })
   }
@@ -275,7 +275,7 @@ export class CustomerinvoicecomponentsComponent implements OnInit {
         // this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         // this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         // this.shareddata.ChangeBatch(this.Batches);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
 

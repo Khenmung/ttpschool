@@ -18,13 +18,19 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <button [disabled]="loading || Permission=='read'" mat-mini-fab matTooltip="select file" style="margin-right: 15px;"
+            <button [disabled]="loading || Permission=='read'" 
+                mat-mini-fab 
+                matTooltip="select file" style="margin-right: 15px;"
                 (click)="inputfile.click()">
                 <mat-icon aria-label="photo">attach_file</mat-icon>
             </button>
-            <button [disabled]="loading || ErrorMessage.length>0 || Permission=='read'" type="submit" (click)="readAsJson()"
-                matTooltip="upload file" mat-mini-fab>
-                <mat-icon aria-label="file_upload">file_upload</mat-icon>
+            <button [disabled]="loading || ErrorMessage.length>0 || Permission=='read'" 
+                type="submit" 
+                (click)="readAsJson()"
+                matTooltip="upload file" 
+                mat-raised-button color="accent">
+                <mat-icon>file_upload</mat-icon>
+                <mat-icon *ngIf="loading"><mat-spinner diameter="20"></mat-spinner></mat-icon>
             </button>&nbsp;&nbsp;
             <!-- <button [disabled]="loading || ErrorMessage.length>0" type="submit" (click)="clear()"
                 matTooltip="upload file" mat-mini-fab>
@@ -63,8 +69,8 @@
 
     </form>
     <div style="display: flex;flex-direction: column;">
-        <!-- <span style="color:red" [innerHTML]="ErrorMessage">
-        </span> -->
+        <span style="color:red;margin: 15px;" [innerHTML]="ErrorMessage">
+        </span>
         <span *ngIf="ErrorMessage.length==0 && ELEMENT_DATA.length>0"
             style="margin:15px;padding: 15px 0px 15px 0px; font-weight: bold;">
             Ready to Upload. Please click on upload button.

@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentattendance.component.html',
   styleUrls: ['./studentattendance.component.scss']
 })
-export class StudentAttendanceComponent implements OnInit {
+export class StudentAttendanceComponent implements OnInit { PageLoading=true;
 
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
@@ -158,7 +158,7 @@ export class StudentAttendanceComponent implements OnInit {
     var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
     _AttendanceDate.setHours(0, 0, 0, 0);
     if (_AttendanceDate.getTime() > today.getTime()) {
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -201,7 +201,7 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe((studentclass: any) => {
 
         if (studentclass.value.length == 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
@@ -269,7 +269,7 @@ export class StudentAttendanceComponent implements OnInit {
             this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-            this.loading = false;
+            this.loading = false; this.PageLoading=false;
           });
         //this.changeDetectorRefs.detectChanges();
       });
@@ -305,10 +305,15 @@ export class StudentAttendanceComponent implements OnInit {
   saveall() {
     var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
     this.NoOfRecordToUpdate = toUpdateAttendance.length;
+    this.loading=true;
     toUpdateAttendance.forEach((record) => {
       this.NoOfRecordToUpdate--;
       this.UpdateOrSave(record);
     })
+    if(toUpdateAttendance.length==0)
+    {
+      this.loading=false;
+    }
   }
   UpdateOrSave(row) {
 
@@ -378,6 +383,7 @@ export class StudentAttendanceComponent implements OnInit {
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
+            this.loading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -390,6 +396,7 @@ export class StudentAttendanceComponent implements OnInit {
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
+            this.loading=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -445,7 +452,7 @@ export class StudentAttendanceComponent implements OnInit {
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.GetClassSubject();
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
   
       });
   }

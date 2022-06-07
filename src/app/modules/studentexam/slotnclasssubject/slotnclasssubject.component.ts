@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './slotnclasssubject.component.html',
   styleUrls: ['./slotnclasssubject.component.scss']
 })
-export class SlotnclasssubjectComponent implements OnInit {
+export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -134,7 +134,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
 
   Save(row) {
@@ -158,7 +158,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.UpdateOrSave(row);
       })
       if (subjectdetail.length == 0) {
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       }
       element.Action = false;
     })
@@ -188,7 +188,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -295,7 +295,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             })
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         console.log("this.ClassSubjectList", this.ClassSubjectList);
       });
   }
@@ -342,7 +342,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         this.Exams.sort((a, b) => {
           return this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   private getTime(date?: Date) {
@@ -549,7 +549,7 @@ export class SlotnclasssubjectComponent implements OnInit {
         }
         //console.log('ClassWiseSubjectDisplay', this.ClassWiseSubjectDisplay)
         this.dataSource = new MatTableDataSource<any>(this.ClassWiseSubjectDisplay);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
   }
   checkall(value) {

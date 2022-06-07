@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './plans.component.html',
   styleUrls: ['./plans.component.scss']
 })
-export class PlansComponent implements OnInit {
+export class PlansComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -155,7 +155,7 @@ export class PlansComponent implements OnInit {
 
     if (row.Title == '') {
       this.contentservice.openSnackBar("Please enter plan name.",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false;
+      this.loading = false; this.PageLoading=false;
       row.Action = false;
       return;
     }
@@ -172,7 +172,7 @@ export class PlansComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -200,7 +200,7 @@ export class PlansComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false;
+    this.loading = false; this.PageLoading=false;
   }
   insert(row) {
 
@@ -267,7 +267,7 @@ export class PlansComponent implements OnInit {
         this.allMasterData = [...data.value];
         //this.Applications = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.bang);
         this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       });
   }
   getDropDownData(dropdowntype) {

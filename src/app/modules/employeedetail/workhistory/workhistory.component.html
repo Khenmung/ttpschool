@@ -2,7 +2,7 @@
     <div style="padding:15px 15px 10px 15px;">
         <div><strong>Work History</strong></div>
     </div>
-    <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
@@ -84,9 +84,13 @@
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" mat-mini-fab
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
+mat-raised-button color="accent"
                             (click)="UpdateOrSave(element)">
-                            <mat-icon>save</mat-icon>
+                             <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                         </button>
                     </mat-cell>
                 </ng-container>

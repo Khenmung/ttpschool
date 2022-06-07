@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   templateUrl: './studenthome.component.html',
   styleUrls: ['./studenthome.component.scss']
 })
-export class StudenthomeComponent implements OnInit {
+export class StudenthomeComponent implements OnInit { PageLoading=true;
 
   constructor(
     private route: Router

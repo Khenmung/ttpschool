@@ -17,7 +17,7 @@
     <mat-card-content style="margin: 0px 20px 20px 20px;">
         <!-- <div style="padding: 0px 0px 15px 15px;" fxLayout="row wrap" fxLayoutGap="100px"> -->
         <!-- <div style="width: 100%;"> -->
-        <mat-spinner *ngIf="loading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <!-- <alert></alert> -->
         <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabChanged($event)">
             <mat-tab>

@@ -19,7 +19,7 @@ import { IEmployee } from '../../employeesalary/employee-gradehistory/employee-g
   templateUrl: './leavebalance.component.html',
   styleUrls: ['./leavebalance.component.scss']
 })
-export class LeaveBalanceComponent implements OnInit {
+export class LeaveBalanceComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -234,7 +234,7 @@ export class LeaveBalanceComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -274,10 +274,10 @@ export class LeaveBalanceComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.LeaveBalanceId = data.LeaveBalanceId;
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -288,10 +288,10 @@ export class LeaveBalanceComponent implements OnInit {
     this.dataservice.postPatch(this.LeaveBalanceListName, this.LeaveBalanceData, this.LeaveBalanceData.LeaveBalanceId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false;
+          this.loading = false; this.PageLoading=false;
           // this.rowCount++;
           // if (this.rowCount == this.displayedColumns.length - 2) {
-          //   this.loading = false;
+          //   this.loading = false; this.PageLoading=false;
           //   this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           // }
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -384,7 +384,7 @@ export class LeaveBalanceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.LeavePolicies = [...data.value];
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
       })
 
   }
@@ -548,7 +548,7 @@ export class LeaveBalanceComponent implements OnInit {
             Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
           }
         })
-        this.loading = false;
+        this.loading = false; this.PageLoading=false;
         ////console.log("employeeid", this.searchForm.get("searchEmployee").value.EmployeeId)
         //this.GetGradeComponents();
       })
