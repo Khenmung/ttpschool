@@ -15,9 +15,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './userreportconfigcolumns.component.html',
   styleUrls: ['./userreportconfigcolumns.component.scss']
 })
-export class UserReportConfigColumnsComponent implements OnInit { PageLoading=true;
+export class UserReportConfigColumnsComponent implements OnInit { 
+  PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  boolEnableButton =false;
   BaseReportId = 0;
   ParentId = 0;
   Permission = '';
@@ -107,7 +109,9 @@ export class UserReportConfigColumnsComponent implements OnInit { PageLoading=tr
     row.Active = value.checked ? 1 : 0;
 
   }
-
+  EnableButton(){
+    this.boolEnableButton=true;
+  }
   addnew() {
     debugger;
     // var appId = this.SelectedApplicationId;
@@ -378,6 +382,7 @@ export class UserReportConfigColumnsComponent implements OnInit { PageLoading=tr
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading=false;
+        this.boolEnableButton=false;
       })
   }
 
@@ -442,6 +447,7 @@ export class UserReportConfigColumnsComponent implements OnInit { PageLoading=tr
     this.AppReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId
       && a.ParentId == this.searchForm.get("searchAvailableReportName").value);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
+    this.boolEnableButton=true;
     this.getAvailableReportColumn();
   }
   getAvailableReportColumn() {

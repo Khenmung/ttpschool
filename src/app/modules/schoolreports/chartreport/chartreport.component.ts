@@ -16,6 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class ChartReportComponent {
   PageLoading=true;
+  ClickedReport =false;
   VariableObjList = [];
   ExpectedAmount = 0.0;
   ReceiptAmount = 0.0;
@@ -195,7 +196,11 @@ export class ChartReportComponent {
         console.log("paymentcount", paymentcount);
         this.pieChartData = [+NonPaymentPercent, +PaymentPercent];
         this.loading = false; this.PageLoading=false;
+        this.ClickedReport=true;
       })
+  }
+  EnableButton(){
+    this.ClickedReport=false;
   }
   ApplyVariables(formula) {
     var filledVar = formula;

@@ -6,23 +6,23 @@
     <!-- <alert></alert> -->
     <div style="padding: 15px;">
         <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Account Nature</mat-label>
                 <mat-select formControlName="searchAccountNatureId" (selectionChange)="SearchAccountNatureChanged()">
-                    <mat-option *ngFor="let option of AccountNatures" [value]="option.MasterDataId">
-                        {{option.MasterDataName}}
+                    <mat-option *ngFor="let option of TopAccountNatures" [value]="option.AccountNatureId">
+                        {{option.AccountName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Account Group</mat-label>
                 <mat-select formControlName="searchAccountGroupId">
-                    <mat-option *ngFor="let option of AccountGroups" [value]="option.MasterDataId">
-                        {{option.MasterDataName}}
+                    <mat-option *ngFor="let option of AccountGroups" [value]="option.AccountnatureId">
+                        {{option.AccountName}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>ledger account</mat-label>
                 <input type="text" matInput formControlName="searchLedgerName" [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -32,15 +32,20 @@
                 </mat-autocomplete>
             </mat-form-field>
             <button [disabled]="loading" class="mat-raised-button" (click)="GetGeneralLedger()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </form>
         <mat-table #table [dataSource]="dataSource">
             <ng-container matColumnDef="GeneralLedgerId">
-                <mat-header-cell *matHeaderCellDef>Id
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
+                        (click)="AddNew()">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                    &nbsp;&nbsp;Id
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.GeneralLedgerId}}
@@ -63,38 +68,36 @@
                     <mat-form-field appearance="outline">
                         <mat-select (selectionChange)="AccountNatureChanged(element)"
                             [(ngModel)]="element.AccountNatureId" [value]="element.AccountNatureId">
-                            <mat-option *ngFor="let item of AccountNatures" [value]="item.MasterDataId">
-                                {{item.MasterDataName}}</mat-option>
+                            <mat-option *ngFor="let item of AccountNatures" [value]="item.AccountNatureId">
+                                {{item.AccountName}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="AccountGroupId">
-                <mat-header-cell *matHeaderCellDef>Account Group
+                <mat-header-cell *matHeaderCellDef>Group
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.AccountGroupId"
                             [value]="element.AccountGroupId">
-                            <mat-option *ngFor="let item of element.AccountGroups" [value]="item.MasterDataId">
-                                {{item.MasterDataName}}</mat-option>
+                            <mat-option *ngFor="let item of element.AccountGroups" [value]="item.AccountNatureId">
+                                {{item.AccountName}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="ParentId">
-                <mat-header-cell *matHeaderCellDef>Parent
+            <ng-container matColumnDef="AccountSubGroupId">
+                <mat-header-cell *matHeaderCellDef>Sub group
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <mat-label>parent account</mat-label>
-                        <input type="text" matInput formControlName="ParentId" [(ngModel)]="element.ParentId"
-                            [value]="element.ParentId" [matAutocomplete]="auto">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                                {{option.GeneralLedgerName}}
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.AccountSubGroupId"
+                            [value]="element.AccountSubGroupId">
+                            <mat-option *ngFor="let option of element.AccountSubGroups" [value]="option.AccountNatureId">
+                                {{option.AccountNatureName}}
                             </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
@@ -149,18 +152,15 @@
             </ng-container>
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab (click)="AddNew()">
-                        <mat-icon>add</mat-icon>
-                    </button>
+
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
-mat-raised-button color="accent"
-                        (click)="UpdateOrSave(element)">
-                         <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                        mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
                 </mat-cell>
             </ng-container>

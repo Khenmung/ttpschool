@@ -22,7 +22,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class VerifyResultsComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
+  ClickedVerified =false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   StandardFilterWithBatchId = '';
@@ -225,6 +225,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
         .subscribe(
           (data: any) => {
             this.loading = false; this.PageLoading=false;
+            this.ClickedVerified =true;
             //row.Action = false;
             this.contentservice.openSnackBar("Exam result verified.", globalconstants.ActionText, globalconstants.BlueBackground);
           }, error => {
@@ -380,12 +381,11 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
               this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
 
             }
+            
+            this.ExamStudentSubjectResult =this.ExamStudentSubjectResult.filter(f=>f["Total"]>0);
             if (this.ExamStudentSubjectResult.length == 0) {
               this.contentservice.openSnackBar("No Result found for this class/section.", globalconstants.ActionText, globalconstants.RedBackground);
             }
-            //console.log("displaycol", this.displayedColumns)
-            //console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
-
 
             this.ExamStudentSubjectResult.sort((a, b) => a.Rank - b.Rank)
             this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);

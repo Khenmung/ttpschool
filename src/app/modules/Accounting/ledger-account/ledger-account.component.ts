@@ -16,17 +16,10 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './ledger-account.component.html',
   styleUrls: ['./ledger-account.component.scss']
 })
-export class GeneralLedgerComponent implements OnInit { PageLoading=true;
+export class GeneralLedgerComponent implements OnInit {
+  PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   SelectedApplicationId = 0;
   StudentClassId = 0;
   Permission = '';
@@ -34,13 +27,11 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
   loading = false;
   GeneralLedgerList: IGeneralLedger[] = [];
   SelectedBatchId = 0;
+  TopAccountNatures=[];
   AccountNatures = [];
   AccountGroups = [];
   GeneralLedgerAutoComplete = [];
-  // Classes = [];
-  // Batches = [];
-  // Sections = [];
-  // Students: IStudent[] = [];
+  AccountNatureList=[];
   filteredOptions: Observable<IGeneralLedger[]>;
   dataSource: MatTableDataSource<IGeneralLedger>;
   allMasterData = [];
@@ -53,7 +44,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     ContactName: '',
     Email: '',
     Address: '',
-    ParentId: 0,
+    AccountSubGroupId: 0,
     AccountNatureId: 0,
     AccountGroupId: 0,
     OrgId: 0,
@@ -63,9 +54,9 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
   displayedColumns = [
     'GeneralLedgerId',
     'GeneralLedgerName',
-    'ParentId',
     'AccountNatureId',
     'AccountGroupId',
+    'AccountSubGroupId',
     'ContactNo',
     'ContactName',
     'Email',
@@ -78,7 +69,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private shareddata: SharedataService,
     private fb: FormBuilder
@@ -94,8 +85,8 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     this.filteredOptions = this.searchForm.get("searchLedgerName").valueChanges
       .pipe(
         startWith(''),
-        map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.GeneralLedgerAutoComplete.slice())
+        map(value => typeof value === 'string' ? value : value.GeneralLedgerName),
+        map(GeneralLedgerName => GeneralLedgerName ? this._filter(GeneralLedgerName) : this.GeneralLedgerAutoComplete.slice())
       );
     //this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.PageLoad();
@@ -103,7 +94,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
   private _filter(name: string): IGeneralLedger[] {
 
     const filterValue = name.toLowerCase();
-    return this.GeneralLedgerList.filter(option => option.GeneralLedgerName.toLowerCase().includes(filterValue));
+    return this.GeneralLedgerAutoComplete.filter(option => option.GeneralLedgerName.toLowerCase().includes(filterValue));
 
   }
   displayFn(ledger: IGeneralLedger): string {
@@ -120,11 +111,13 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
+      debugger;
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
-
+        this.GetAccountNature();
+        this.GetGeneralLedgerAutoComplete();
       }
     }
   }
@@ -137,15 +130,15 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   AddNew() {
     var newItem = {
       GeneralLedgerId: 0,
       GeneralLedgerName: '',
-      ParentId: 0,
+      AccountSubGroupId: 0,
       AccountNatureId: this.searchForm.get("searchAccountNatureId").value,
       AccountGroupId: this.searchForm.get("searchAccountGroupId").value,
       AccountGroups: this.AccountGroups,
@@ -165,29 +158,38 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
 
     //debugger;
     this.loading = true;
+    let checkFilterString = this.StandardFilter;
     if (row.AccountNatureId == 0) {
-      this.loading = false; this.PageLoading=false;
-      //this.contentservice.openSnackBar("Please select account nature.", globalconstants.ActionText,globalconstants.RedBackground);
-      this.contentservice.openSnackBar("Please select account nature.",globalconstants.ActionText,globalconstants.RedBackground);
-      
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select account nature.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
+    }
+    else {
+      checkFilterString += ' and AccountNatureId eq ' + row.AccountNatureId;
     }
     if (row.AccountGroupId == 0) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please select account group.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select account group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
+    }
+    else {
+      checkFilterString += ' and AccountGroupId eq ' + row.AccountGroupId;
     }
     if (row.GeneralLedgerName.length == 0) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please enter account name.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please enter account name.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let checkFilterString = "GeneralLedgerName eq '" + row.GeneralLedgerName + "'";
-
+    else {
+      checkFilterString += " and GeneralLedgerName eq '" + row.GeneralLedgerName + "'";
+    }
+    if (row.AccountSubGroupId > 0) {
+      checkFilterString += " and AccountSubGroupId eq " + row.AccountSubGroupId;
+    }
 
     if (row.GeneralLedgerId > 0)
       checkFilterString += " and GeneralLedgerId ne " + row.GeneralLedgerId;
-    checkFilterString += " and " + this.StandardFilter;
+
     let list: List = new List();
     list.fields = ["GeneralLedgerId"];
     list.PageName = "GeneralLedgers";
@@ -197,23 +199,22 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.GeneralLedgerForUpdate = [];;
-          ////console.log("inserting-1",this.GeneralLedgerForUpdate);
           this.GeneralLedgerData.GeneralLedgerId = row.GeneralLedgerId;
-          this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
           this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
+          this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
+          this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId==null?0:row.AccountSubGroupId;          
           this.GeneralLedgerData.GeneralLedgerName = row.GeneralLedgerName;
-          this.GeneralLedgerData.ContactNo=row.ContactNo,
-          this.GeneralLedgerData.ContactName=row.ContactName,
-          this.GeneralLedgerData.Email=row.Email,
-          this.GeneralLedgerData.Address=row.Address,
-          this.GeneralLedgerData.ParentId = row.ParentId;
+          this.GeneralLedgerData.ContactNo = row.ContactNo;
+          this.GeneralLedgerData.ContactName = row.ContactName;
+          this.GeneralLedgerData.Email = row.Email;
+          this.GeneralLedgerData.Address = row.Address;
+          
           this.GeneralLedgerData.Active = row.Active;
           this.GeneralLedgerData.OrgId = this.LoginUserDetail[0]["orgId"];
 
@@ -223,21 +224,22 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
             this.GeneralLedgerData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.GeneralLedgerData["UpdatedDate"] = new Date();
             delete this.GeneralLedgerData["UpdatedBy"];
-            ////console.log("inserting1",this.GeneralLedgerForUpdate);
+            console.log("inserting1",this.GeneralLedgerData);
             this.insert(row);
           }
           else {
-            this.GeneralLedgerData["CreatedDate"] = new Date(row.CreatedDate);
-            this.GeneralLedgerData["CreatedBy"] = row.CreatedBy;
+            this.GeneralLedgerData["CreatedDate"] = new Date();
+            this.GeneralLedgerData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.GeneralLedgerData["UpdatedDate"] = new Date();
             delete this.GeneralLedgerData["UpdatedBy"];
-            this.insert(row);
+            console.log("inserting2",this.GeneralLedgerData);
+            this.update(row);
           }
         }
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
     //console.log("inserting",this.GeneralLedgerForUpdate);
@@ -257,9 +259,35 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
+  }
+  GetAccountNature() {
+    //debugger;
+    this.loading = true;
+    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    let list: List = new List();
+    list.fields = [
+      'AccountNatureId',
+      'AccountName',
+      'ParentId',
+      'DebitType',
+      'Active'
+    ];
+
+    list.PageName = "AccountNatures";
+    list.filter = [filterStr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.AccountNatures = [...data.value];
+          this.TopAccountNatures = this.AccountNatures.filter(f=>f.ParentId==0);
+        }
+        this.loadingFalse();
+      });
+
   }
   GetGeneralLedgerAutoComplete() {
     //debugger;
@@ -270,7 +298,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     list.fields = [
       'GeneralLedgerId',
       'GeneralLedgerName',
-      'ParentId',
+      'AccountSubGroupId',
       'AccountNatureId',
       'AccountGroupId',
       'Active',
@@ -282,10 +310,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.GeneralLedgerAutoComplete = data.value.map(item => {
-            item.Action = false;
-            return item;
-          });
+          this.GeneralLedgerAutoComplete = [...data.value];
         }
         this.loadingFalse();
       });
@@ -298,11 +323,11 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var AccountNatureId = this.searchForm.get("searchAccountNatureId").value
     var AccountGroupId = this.searchForm.get("searchAccountGroupId").value
-    var LedgerAccountId = this.searchForm.get("searchAccountGroupId").value.LedgerAccountId;
+    var GeneralLedgerId = this.searchForm.get("searchLedgerName").value.GeneralLedgerId;
 
-    if (AccountNatureId == 0 && AccountGroupId == 0 && LedgerAccountId == 0) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please select search criteria", globalconstants.ActionText,globalconstants.RedBackground);
+    if (AccountNatureId == 0 && AccountGroupId == 0 && GeneralLedgerId == 0) {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select search criteria", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (AccountNatureId > 0) {
@@ -311,14 +336,14 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     if (AccountGroupId > 0) {
       filterStr += ' and AccountGroupId eq ' + AccountGroupId;
     }
-    if (LedgerAccountId > 0) {
-      filterStr += ' and ParentId eq ' + LedgerAccountId;
+    if (GeneralLedgerId > 0) {
+      filterStr += ' and GeneralLedgerId eq ' + GeneralLedgerId;
     }
     let list: List = new List();
     list.fields = [
       'GeneralLedgerId',
       'GeneralLedgerName',
-      'ParentId',
+      'AccountSubGroupId',
       'AccountNatureId',
       'AccountGroupId',
       'ContactNo',
@@ -336,8 +361,9 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
         if (data.value.length > 0) {
           var acgroup = [];
           this.GeneralLedgerList = data.value.map(item => {
-            acgroup = this.allMasterData.filter(f => f.ParentId == item.AccountNatureId);
-            item.AccountGroups = acgroup;
+            //acgroup = this.allMasterData.filter(f => f.ParentId == item.AccountNatureId);
+            item.AccountGroups = this.AccountNatures.filter(f=>f.ParentId == item.AccountNatureId);
+            item.AccountSubGroups = this.AccountNatures.filter(f => f.ParentId == item.AccountGroupId);
             item.Action = false;
             return item;
           });
@@ -353,8 +379,8 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.AccountNatures = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTNATURE);
-        this.GetGeneralLedgerAutoComplete();
+        //this.AccountGroups = this.getDropDownData(globalconstants.MasterDefinitions.accounting.ACCOUNTGROUP);
+
       });
   }
   onBlur(row) {
@@ -363,7 +389,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
   AccountNatureChanged(row) {
     debugger;
     row.Action = true;
-    var acgroup = this.allMasterData.filter(f => f.ParentId == row.AccountNatureId);
+    var acgroup = this.AccountNatures.filter(f => f.ParentId == row.AccountNatureId);
     row.AccountGroups = acgroup;
     this.dataSource = new MatTableDataSource(this.GeneralLedgerList);
   }
@@ -371,7 +397,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
     debugger;
     var natureId = this.searchForm.get("searchAccountNatureId").value;
     if (natureId > 0)
-      this.AccountGroups = this.allMasterData.filter(f => f.ParentId == natureId);
+      this.AccountGroups = this.AccountNatures.filter(f => f.ParentId == natureId);
   }
   UpdateActive(row, event) {
     row.Active = event.checked ? 1 : 0;
@@ -397,7 +423,7 @@ export class GeneralLedgerComponent implements OnInit { PageLoading=true;
 export interface IGeneralLedger {
   GeneralLedgerId: number;
   GeneralLedgerName: string;
-  ParentId: number;
+  AccountSubGroupId: number;
   ContactNo: string;
   ContactName: string;
   Email: string;

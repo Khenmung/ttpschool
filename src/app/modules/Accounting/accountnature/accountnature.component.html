@@ -1,0 +1,93 @@
+<div style="padding:15px 15px 15px 15px;">
+    <div><strong>Account Nature</strong></div>
+</div>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+<form [formGroup]="searchForm" style="display:flex;flex-direction: row;">
+
+    <!-- <mat-form-field appearance="outline" [style.width.px]="200">
+        <mat-label>Name</mat-label>
+        <input type="text" matInput formControlName="searchAccountName" [maxlength]="50" autocomplete="Off">
+    </mat-form-field> -->
+    
+    <div style="margin-right:15px;padding: 15px 10px 2px 15px;height: 55px;border:1px solid lightgray">
+        <mat-radio-group formControlName="searchDebitOrCredit">
+            <mat-radio-button class="example-margin" checked="false" value="true">Debit</mat-radio-button>&nbsp;
+            <mat-radio-button class="example-margin" checked="true" value="false">Credit</mat-radio-button>
+        </mat-radio-group>
+    </div>
+    <span>
+        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetAccountNature()">
+            <mat-icon>search</mat-icon>
+            <mat-icon *ngIf="loading">
+                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+            </mat-icon>
+        </button>
+    </span>
+</form>
+<mat-table #table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="AccountNatureId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Id
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.AccountNatureId}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="AccountName">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+                <input matInput autocomplete="Off" 
+                (blur)="onBlur(element)"
+                [(ngModel)]="element.AccountName" [value]="element.AccountName">
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ParentId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Parent </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+               <mat-select 
+               [(ngModel)]="element.ParentId" [value]="element.ParentId"
+               (selectionChange)="onBlur(element)">
+                   <mat-option *ngFor="let item of AccountNatures" [value]="item.AccountNatureId">{{item.AccountName}}</mat-option>
+               </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>    
+    <ng-container matColumnDef="DebitType">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Debit Account (or Credit)</mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateDebit(element,$event)"
+                [checked]="element.DebitType">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Active">
+        <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                [checked]="element.Active==1?true:false">
+            </mat-checkbox>
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="Action">
+        <mat-header-cell *matHeaderCellDef>
+            <button [disabled]="loading || Permission=='read'" matTooltip="new item" class="mat-raised-button"
+                (click)="addnew()" fxFlex="10">
+                <mat-icon>add</mat-icon>
+            </button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+            <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-raised-button
+                color="accent" (click)="UpdateOrSave(element)">
+                <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" style="align-items: baseline;"></mat-row>
+</mat-table>
+<mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>

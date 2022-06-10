@@ -5,6 +5,7 @@ import { JournalEntryComponent } from './JournalEntry/JournalEntry.component';
 import { AccountingboardComponent } from './accountingboard/accountingboard.component';
 import { TrialBalanceComponent } from './trial-balance/trial-balance.component';
 import { GeneralLedgerComponent } from './ledger-account/ledger-account.component';
+import { AccountNatureComponent } from './accountnature/accountnature.component';
 
 const routes: Routes = [
   {
@@ -24,5 +25,6 @@ export const AccountingComponents=[
   JournalEntryComponent,
   TrialBalanceComponent,
   AccountingboardComponent,
-  GeneralLedgerComponent
+  GeneralLedgerComponent,
+  AccountNatureComponent
 ]

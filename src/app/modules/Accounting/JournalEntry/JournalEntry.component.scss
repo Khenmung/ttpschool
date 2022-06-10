@@ -2,15 +2,22 @@ mat-form-field{
     margin-right: 15px;   
     width: 98%;}
 
-.mat-column-DocDate,.mat-column-PostingDate,
-.mat-column-Reference,.mat-column-GeneralLedgerAccountId,
-.mat-column-Amount{   
-    flex:1 1 150px;
+.mat-column-DocDate,.mat-column-PostingDate
+{
+    flex:1 0 120px;
 }
-.mat-column-Active,.mat-column-Action,.mat-column-DebitCreditId{
+.mat-column-Reference,.mat-column-GeneralLedgerAccountId
+{   
+    flex:1 0 150px;
+}
+.mat-column-Amount
+{
+    flex: 1 0 100px;
+}
+.mat-column-Active,.mat-column-Action,.mat-column-Debit{
     justify-content: center;
-    flex: 1 1 100px;
+    flex: 1 0 100px;
 }
 .mat-column-ShortText{
-    flex:1 1 160px;
+    flex:1 0 160px;
 }

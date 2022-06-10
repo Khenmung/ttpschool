@@ -23,15 +23,15 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field> -->
-                <button [disabled]="loading" class="mat-raised-button" (click)="GetExamStudentResults()">
-                     <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetExamStudentResults()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </form>
             <mat-table #table [dataSource]="dataSource">
-               
+
                 <ng-container matColumnDef="ExamName">
                     <mat-header-cell *matHeaderCellDef>Exam Name
                     </mat-header-cell>
@@ -48,7 +48,8 @@
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef> Verified </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-checkbox [disabled]="true" (click)="$event.stopPropagation()" [checked]="element.Active==1?true:false">
+                        <mat-checkbox [disabled]="true" (click)="$event.stopPropagation()"
+                            [checked]="element.Active==1?true:false">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>

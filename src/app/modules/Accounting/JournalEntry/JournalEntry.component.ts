@@ -17,23 +17,14 @@ import { IGeneralLedger } from '../ledger-account/ledger-account.component';
   templateUrl: './JournalEntry.component.html',
   styleUrls: ['./JournalEntry.component.scss']
 })
-export class JournalEntryComponent implements OnInit { PageLoading=true;
-
-
+export class JournalEntryComponent implements OnInit {
+    PageLoading = true;
   @ViewChild("table") mattable;
   GeneralLedgers = [];
   AccountingVoucherListName = 'AccountingVouchers';
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   DummyMasterItemId = 4579;
   AccountingPeriod = {
     StartDate: new Date(),
@@ -59,7 +50,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     ClassFeeId: 0,
     LedgerId: 0,
     GeneralLedgerAccountId: 0,
-    DebitCreditId: 0,
+    Debit: 0,
     Amount: 0,
     ShortText: '',
     OrgId: 0,
@@ -71,7 +62,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     "PostingDate",
     "GeneralLedgerAccountId",
     "Amount",
-    "DebitCreditId",
+    "Debit",
     "Active",
     "Action",
   ];
@@ -83,7 +74,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private contentservice: ContentService,
   ) { }
@@ -134,7 +125,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     return ledger && ledger.GeneralLedgerName ? ledger.GeneralLedgerName : '';
   }
   addnew(debit) {
-    var debitcredit = debit == 'debit' ? 0 : 1
+    //var debitcredit = debit == 'debit' ? 0 : 1
     var newdata = {
       AccountingVoucherId: 0,
       DocDate: new Date(),
@@ -144,7 +135,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
       ClassFeeId: 0,
       LedgerId: 0,
       GeneralLedgerAccountId: this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId,
-      DebitCreditId: debitcredit,
+      Debit: false,
       Amount: 0,
       ShortText: this.searchForm.get("searchShortText").value,
       Active: 0,
@@ -153,7 +144,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     this.AccountingVoucherList.push(newdata);
     this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
   }
-  updateDebitCredit(element, val) { }
+
   GetAccountingVoucher() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     ////debugger;
@@ -189,7 +180,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
       "FeeReceiptId",
       "ClassFeeId",
       "LedgerId",
-      "DebitCreditId",
+      "Debit",
       "Amount",
       "ShortText",
       "Active",
@@ -197,7 +188,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
 
     list.PageName = this.AccountingVoucherListName;
     list.limitTo = 50;
-    list.orderBy ="Reference";
+    list.orderBy = "Reference";
     //list.lookupFields = ["AccountingLedgerTrialBalance"];
     list.filter = [filterStr];
     this.AccountingVoucherList = [];
@@ -221,7 +212,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
 
         }
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   onBlur(row) {
@@ -231,6 +222,13 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
 
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
+  }
+  UpdateDebit(row, event) {
+    if (event.checked)
+      row.Debit = true;
+    else
+      row.Debit = false;
+      this.onBlur(row);
   }
   // delete(element) {
   //   let toupdate = {
@@ -262,9 +260,9 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
       errorMessage += "Amount should be less than 10,00,000 or greater than -10,00,000<br>";
 
     if (errorMessage.length > 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       //this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
-      this.contentservice.openSnackBar(errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -274,7 +272,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
 
     if (row.AccountingVoucherId > 0)
       checkFilterString += " and AccountingVoucherId ne " + row.AccountingVoucherId;
-    checkFilterString += " and " + globalconstants.getStandardFilter;
+    checkFilterString += " and " + globalconstants.getStandardFilter(this.LoginUserDetail);
     let list: List = new List();
     list.fields = ["AccountingVoucherId"];
     list.PageName = this.AccountingVoucherListName;
@@ -284,8 +282,8 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;        
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage,globalconstants.ActionText,globalconstants.RedBackground);
+          this.loading = false; this.PageLoading = false;
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
 
@@ -293,7 +291,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
           this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
           this.AccountingVoucherData.Amount = +row.Amount;
           this.AccountingVoucherData.DocDate = row.DocDate;
-          this.AccountingVoucherData.DebitCreditId = row.DebitCreditId;
+          this.AccountingVoucherData.Debit = row.Debit;
           this.AccountingVoucherData.PostingDate = row.PostingDate;
           this.AccountingVoucherData.Reference = reference;
           this.AccountingVoucherData.LedgerId = row.LedgerId;
@@ -302,12 +300,13 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
           this.AccountingVoucherData.FeeReceiptId = 0;
           this.AccountingVoucherData.ShortText = this.searchForm.get("searchShortText").value;
           this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
+
           if (row.AccountingVoucherId == 0) {
             this.AccountingVoucherData["CreatedDate"] = new Date();
             this.AccountingVoucherData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.AccountingVoucherData["UpdatedDate"];
             delete this.AccountingVoucherData["UpdatedBy"];
-            //console.log('to insert', this.AccountingVoucherData)
+            console.log('to insert', this.AccountingVoucherData)
             this.insert(row);
           }
           else {
@@ -315,7 +314,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
             delete this.AccountingVoucherData["CreatedBy"];
             this.AccountingVoucherData["UpdatedDate"] = new Date();
             this.AccountingVoucherData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            //console.log('to update', this.AccountingVoucherData)
+            console.log('to update', this.AccountingVoucherData)
             this.update(row);
           }
         }
@@ -328,9 +327,9 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.AccountingVoucherId = data.AccountingVoucherId;
-          
+
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -339,10 +338,10 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, this.AccountingVoucherData.AccountingVoucherId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
 
-          
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {
@@ -369,7 +368,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.GeneralLedgers = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetMasterData() {
@@ -377,7 +376,7 @@ export class JournalEntryComponent implements OnInit { PageLoading=true;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -404,7 +403,7 @@ export interface IAccountingVoucher {
   Reference: string;
   LedgerId: number;
   GeneralLedgerAccountId: number;
-  DebitCreditId: number;
+  Debit: boolean;
   Amount: number;
   ShortText: string;
   Active: number;

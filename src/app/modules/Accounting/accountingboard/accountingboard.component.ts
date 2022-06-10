@@ -3,6 +3,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { AccountNatureComponent } from '../accountnature/accountnature.component';
 import { JournalEntryComponent } from '../JournalEntry/JournalEntry.component';
 import { GeneralLedgerComponent } from '../ledger-account/ledger-account.component';
 import { TrialBalanceComponent } from '../trial-balance/trial-balance.component';
@@ -15,14 +16,15 @@ import { TrialBalanceComponent } from '../trial-balance/trial-balance.component'
 export class AccountingboardComponent implements AfterViewInit {
   components = [
     JournalEntryComponent,
-    GeneralLedgerComponent,
-    TrialBalanceComponent,
-    
+    GeneralLedgerComponent,    
+    AccountNatureComponent,
+    TrialBalanceComponent
   ];
   LoginUserDetail=[];
   tabNames = [
     { 'label': 'Plan', 'faIcon': '' },
     { 'label': 'Plan Feature', 'faIcon': '' },  
+    { 'label': 'Plan Feature', 'faIcon': '' },    
     { 'label': 'Plan Feature', 'faIcon': '' }    
   ];
 
@@ -67,10 +69,16 @@ export class AccountingboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.LEDGERACCOUNT)
     var comindx = this.components.indexOf(GeneralLedgerComponent);
     this.GetComponents(perObj,comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.accounting.ACCOUNTNATURE)
+    var comindx = this.components.indexOf(AccountNatureComponent);
+    this.GetComponents(perObj,comindx)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
-      this.renderComponent(0);
+    setTimeout(() => {
+    this.renderComponent(0);
       this.cdr.detectChanges();
+    }, 250); 
   }
   GetComponents(perObj, comindx) {
     if (perObj.length > 0) {

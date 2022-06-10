@@ -19,7 +19,8 @@ import { StudentActivity } from './StudentActivity';
   styleUrls: ['./excel-data-management.component.scss']
 })
 export class ExcelDataManagementComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
+  ReadyForUpload = false;
   constructor(
     private snackbar: MatSnackBar,
     private datepipe: DatePipe,
@@ -255,6 +256,7 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ValidateEmployeeData();
       }
       if (this.ErrorMessage.length == 0 && !this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTPROFILE)) {
+        this.ReadyForUpload = true;
         this.snackbar.open("Data is ready for upload. Please click on file upload button.", globalconstants.ActionText,
           globalconstants.BlueBackground);
       }
@@ -811,11 +813,12 @@ export class ExcelDataManagementComponent implements OnInit {
             .subscribe((result: any) => {
               this.loading = false;
               this.PageLoading = false;
-              this.ELEMENT_DATA =[];
-              
+              this.ELEMENT_DATA = [];
+              this.ReadyForUpload=false;
               this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
             }, error => {
               this.contentservice.openSnackBar("Error occured. Please contact your administrator.", globalconstants.ActionText, globalconstants.RedBackground);
+              this.ReadyForUpload=false;
               console.log(error)
             });
         }
@@ -919,10 +922,12 @@ export class ExcelDataManagementComponent implements OnInit {
         this.dataservice.postPatch('Students', toInsert, 0, 'post')
           .subscribe((result: any) => {
             this.loading = false; this.PageLoading = false;
+            this.ReadyForUpload=false;
             this.ELEMENT_DATA = [];
             this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
           }, error => {
             console.log("error from student upload:", error);
+            this.ReadyForUpload=false;
             this.ErrorMessage = "Something went wrong. Please contact your administrator.";
             this.contentservice.openSnackBar(this.ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
           })

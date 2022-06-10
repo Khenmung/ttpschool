@@ -1,7 +1,5 @@
-<!-- <div style="padding:15px 15px 10px 15px;">
-    <div><strong>Class Evaluation</strong></div>
-</div> -->
-<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+
+<mat-spinner *ngIf="PageLoading" diameter="25" style="margin:15px;position:relative;margin-left: 50%;"></mat-spinner>
 
 <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabchanged($event)">
     <mat-tab>
@@ -12,7 +10,7 @@
             <form [formGroup]="searchForm">
                 <div style="padding: 15px;">
                     <mat-form-field appearance="outline" [style.width.px]="250">
-                        <mat-label>Evaluation</mat-label>
+                        <mat-label>Evaluation type</mat-label>
                         <mat-select formControlName="searchEvaluationMasterId">
                             <mat-option *ngFor="let item of EvaluationNames" [value]="item.EvaluationMasterId">
                                 {{item.EvaluationName}}
@@ -47,7 +45,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="QuestionnaireTypeId">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Type
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Question Type
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">

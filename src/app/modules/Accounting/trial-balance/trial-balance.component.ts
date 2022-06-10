@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import alasql from 'alasql';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -16,7 +17,8 @@ import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
   templateUrl: './trial-balance.component.html',
   styleUrls: ['./trial-balance.component.scss']
 })
-export class TrialBalanceComponent implements OnInit { PageLoading=true;
+export class TrialBalanceComponent implements OnInit {
+  PageLoading = true;
 
 
   @ViewChild("table") mattable;
@@ -34,7 +36,7 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     keepAfterRouteChange: true
   };
   AccountingPeriod = [];
-  SelectedApplicationId=0;
+  SelectedApplicationId = 0;
   Permission = '';
   StandardFilterWithBatchId = '';
   loading = false;
@@ -52,7 +54,7 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     PostingDate: new Date(),
     Reference: '',
     LedgerId: 0,
-    DebitCreditId: 0,
+    Debit: false,
     Amount: '',
     ShortText: '',
     OrgId: 0,
@@ -65,7 +67,7 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     "PostingDate",
     "Reference",
     "LedgerId",
-    "DebitCreditId",
+    "Debit",
     "Amount",
     "ShortText",
     "Active",
@@ -79,7 +81,7 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private contentservice: ContentService,
@@ -104,16 +106,9 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
   // }
 
   PageLoad() {
-
+    debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
-
-    // this.filteredOptions = this.searchForm.get("searchSubjectTeacherId").valueChanges
-    //   .pipe(
-    //     startWith(''),
-    //     map(value => typeof value === 'string' ? value : value.TeacherName),
-    //     map(TeacherName => TeacherName ? this._filter(TeacherName) : this.Teachers.slice())
-    //   );
 
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
@@ -121,22 +116,23 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.AccountingPeriod = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
-    
+
       var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.accounting.TRIALBALANCE);
       if (perObj.length > 0) {
-       
-        this.Permission = perObj[0].permission;
 
-        this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-        //this.GetMasterData();
-        this.GetGLAccounts();
-        //this.GetAccountingPeriod();
+        this.Permission = perObj[0].permission;
+        if (this.Permission != 'deny') {
+          this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+          //this.GetMasterData();
+          this.GetGLAccounts();
+        }
+
       }
     }
   }
-  updateDebitCredit(row,event){
-    row.Active= event.checked?1:0;
-    row.Action=true;
+  updateDebitCredit(row, event) {
+    row.Active = event.checked ? 1 : 0;
+    row.Action = true;
   }
   addnew() {
     var newdata = {
@@ -145,7 +141,7 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
       PostingDate: new Date(),
       Reference: '',
       LedgerId: 0,
-      DebitCreditId: 0,
+      Debit: false,
       Amount: '',
       ShortText: '',
       Active: 0,
@@ -157,24 +153,25 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
 
   GetAccountingVoucher() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    ////debugger;
+    debugger;
     this.loading = true;
 
-    filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
-      "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z
+    //filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
+    //  "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z
     // if (_ClassId != 0)
     //   filterStr += " and ClassId eq " + _ClassId;
 
     let list: List = new List();
     list.fields = [
       "AccountingVoucherId",
-      "DocDate",
-      "PostingDate",
+      //"DocDate",
+      //"PostingDate",
+      "GeneralLedgerAccountId",
       "Reference",
       "LedgerId",
-      "DebitCreditId",
+      "Debit",
       "Amount",
-      "ShortText",
+      //"ShortText",
       "Active",
     ];
 
@@ -185,9 +182,24 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.AccountingVoucherList = [...data.value];
+        //this.AccountingVoucherList = 
+        console.log("data.value", data.value);
+        data.value.forEach(f => {
+          var _generalaccount = this.GLAccounts.filter(g => g.GeneralLedgerId == f.GeneralLedgerAccountId);
+          if (_generalaccount.length > 0) {
+            f.AccountName = _generalaccount[0].GeneralLedgerName;
+            f.DebitAccount = _generalaccount[0].DebitAccount;
+            f.AccountGroupId = _generalaccount[0].AccountGroupId;
+            f.AccountSubGroupId = _generalaccount[0].AccountSubGroupId;
+            f.AccountNatureId = _generalaccount[0].AccountNatureId;
+            this.AccountingVoucherList.push(f);
+          }
+        })
+        console.log("this.AccountingVoucherList", this.AccountingVoucherList)
+        var sum = alasql("select sum(Amount),Debit,GeneralLedgerAccountId from ? GROUP BY GeneralLedgerAccountId,Debit", [this.AccountingVoucherList])
+        console.log("sum", sum);
         this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         //this.changeDetectorRefs.detectChanges();
       });
   }
@@ -217,35 +229,12 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     //debugger;
     this.loading = true;
 
-    // let checkFilterString = "TeacherId eq " + row.TeacherId +
-    //   " and ClassSubjectId eq " + row.ClassSubjectId;
-
-    // if (row.ClassSubjectTeacherId > 0)
-    //   checkFilterString += " and ClassSubjectTeacherId ne " + row.ClassSubjectTeacherId;
-
-    //checkFilterString += ' and ' + this.StandardFilterWithBatchId;
-
-    // let list: List = new List();
-    // list.fields = ["ClassSubjectTeacherId"];
-    // list.PageName = this.AccountingVoucherListName;
-    // list.filter = [checkFilterString];
-
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    //     //debugger;
-    //     if (data.value.length > 0) {
-    //       this.loading = false; this.PageLoading=false;
-    //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-    //       row.Ative = 0;
-    //       return;
-    //     }
-    //     else {
 
     this.AccountingVoucherData.Active = row.Active;
     this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
     this.AccountingVoucherData.Amount = row.Amount;
     this.AccountingVoucherData.DocDate = row.DocDate;
-    this.AccountingVoucherData.DebitCreditId = row.DebitCreditId;
+    this.AccountingVoucherData.Debit = row.Debit;
     this.AccountingVoucherData.PostingDate = row.PostingDate;
     this.AccountingVoucherData.Reference = row.Reference;
     this.AccountingVoucherData.LedgerId = row.LedgerId;
@@ -278,7 +267,7 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.AccountingVoucherId = data.AccountingVoucherId;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -288,9 +277,9 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.AccountingVoucherListName, this.AccountingVoucherData, this.AccountingVoucherData.AccountingVoucherId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
 
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {
@@ -304,26 +293,31 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
 
     let list: List = new List();
     list.fields = [
-      "AccountingTrialBalanceId",
-      "GeneralLedger",
+      "GeneralLedgerId",
+      "GeneralLedgerName",
+      "AccountNatureId",
       "AccountGroupId",
-      "AccountNatureId"
+      "AccountSubGroupId",
+      "Active"
     ];
 
-    list.PageName = "AccountingLedgerTrialBalances";
+    list.PageName = "GeneralLedgers";
+    list.lookupFields = ["AccountNature($select=Active,AccountNatureId,DebitType)"];
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
     this.GLAccounts = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         //  //console.log('data.value', data.value);
-        this.GLAccounts = data.value.map(f => {
-          return {
-            LedgerId: f.AccountingTrialBalanceId,
-            GLAccount: f.GeneralLedger
+        data.value.forEach(f => {
+
+          if (f.AccountNature.Active == true) {
+            f.DebitAccount = f.AccountNature.DebitType
+            this.GLAccounts.push(f)
           }
         });
-        this.loading = false; this.PageLoading=false;
+        this.GetAccountingVoucher();
+        //this.loading = false; this.PageLoading = false;
       })
   }
   GetAccountingPeriod() {
@@ -346,17 +340,17 @@ export class TrialBalanceComponent implements OnInit { PageLoading=true;
             EndDate: f.EndDate
           }
         });
-        this.GetAccountingVoucher();
-        this.loading = false; this.PageLoading=false;
+
+        this.loading = false; this.PageLoading = false;
       })
   }
 
   GetMasterData() {
 
-    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {

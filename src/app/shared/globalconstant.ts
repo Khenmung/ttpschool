@@ -201,7 +201,7 @@ export class globalconstants {
                     'EVALUATIONCLASSSUBJECTMAP': 'evaluation class subject exam',
                     'EVALUATIONQUESTIONNAIRE': 'evaluation questionnaire',
                     'EXECUTEEVALUATION': 'execute evaluation',
-                    'EVALUATIONMASTER': 'evaluation master',
+                    'EVALUATIONTYPE': 'evaluation type',
                     'EVALUATIONRESULT': 'evaluation result',
                     'CLASSEVALUATIONOPTION': 'answer option',
                     'EVALUATIONANDEXAM': 'evaluation and exam'
@@ -232,7 +232,8 @@ export class globalconstants {
                 "ACCOUNTING": "accounting",
                 "JOURNALENTRY": "journal entry",
                 "TRIALBALANCE": "trial balance",
-                "LEDGERACCOUNT": "ledger account"
+                "LEDGERACCOUNT": "ledger account",
+                "ACCOUNTNATURE": "account nature"
             }
         }
 

@@ -56,10 +56,10 @@ export class EvaluationClassSubjectMapComponent implements OnInit { PageLoading=
   EvaluationClassSubjectMapForUpdate = [];
   displayedColumns = [
     'EvaluationClassSubjectMapId',
+    'ExamId',
     'EvaluationName',
     'ClassGroupId',
-    'ClassSubjectId',
-    'ExamId',
+    'ClassSubjectId',    
     'Active',
     'Action'
   ];

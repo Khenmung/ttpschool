@@ -25,6 +25,7 @@ export class StudentAttendanceComponent implements OnInit { PageLoading=true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   edited = false;
+  AnyEnableSave =false;
   EnableSave = true;
   Permission = 'deny';
   LoginUserDetail: any[] = [];
@@ -127,6 +128,7 @@ export class StudentAttendanceComponent implements OnInit { PageLoading=true;
         record.AttendanceStatus = 0;
       record.Action = !record.Action;
     })
+    this.AnyEnableSave=true;
   }
 
   GetStudentAttendance() {
@@ -282,7 +284,7 @@ export class StudentAttendanceComponent implements OnInit { PageLoading=true;
   }
   UpdateActive(element, event) {
     element.Action = true;
-    //debugger;
+    this.AnyEnableSave=true;
     element.AttendanceStatus = event.checked == true ? 1 : 0;
   }
   onChangeEvent(row, value) {
@@ -384,6 +386,7 @@ export class StudentAttendanceComponent implements OnInit { PageLoading=true;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
             this.loading=false;
+            this.AnyEnableSave=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -397,6 +400,7 @@ export class StudentAttendanceComponent implements OnInit { PageLoading=true;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;
             this.loading=false;
+            this.AnyEnableSave=false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });

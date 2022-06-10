@@ -16,7 +16,8 @@ import { NaomitsuService } from '../../../shared/databaseService'
   templateUrl: './displaypage.component.html',
   styleUrls: ['./displaypage.component.scss']
 })
-export class DisplaypageComponent implements OnInit { PageLoading=true;
+export class DisplaypageComponent implements OnInit { 
+  PageLoading=true;
   images = [];
   Name = {};
   ImgUrl = '';

@@ -34,6 +34,16 @@
                 {{element.SportResultId}}
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="Secured">
+            <mat-header-cell *matHeaderCellDef>Secured
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <input matInput [maxlength]="20" (blur)="onBlur(element)" [value]="element.Secured"
+                        [(ngModel)]="element.Secured">
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="Achievement">
             <mat-header-cell *matHeaderCellDef>Achievement
             </mat-header-cell>

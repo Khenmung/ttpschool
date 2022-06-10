@@ -252,7 +252,12 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     let checkFilterString = "Description eq '" + row.Description + "'";
     if (row.QuestionnaireTypeId > 0)
       checkFilterString += " and QuestionnaireTypeId eq " + row.QuestionnaireTypeId
-    // if (row.ClassEvalSubCategoryId > 0)
+    else
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select type.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
 
     if (row.ClassEvaluationId > 0)

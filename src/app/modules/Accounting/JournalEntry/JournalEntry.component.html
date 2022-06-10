@@ -10,6 +10,15 @@
         <mat-datepicker-toggle matSuffix [for]="searchPostingDate"></mat-datepicker-toggle>
         <mat-datepicker #searchPostingDate></mat-datepicker>
     </mat-form-field> -->
+    
+    <mat-form-field appearance="outline" [style.width.px]="200">
+        <mat-label>Reference</mat-label>
+        <input type="text" matInput formControlName="searchReferenceId" [maxlength]="50" autocomplete="Off">
+    </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="200">
+        <mat-label>Short Text</mat-label>
+        <input type="text" matInput formControlName="searchShortText" [maxlength]="250" autocomplete="Off">
+    </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Account</mat-label>
         <input type="text" matInput formControlName="searchGeneralLedgerId" [matAutocomplete]="auto">
@@ -19,20 +28,11 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="200">
-        <mat-label>Reference</mat-label>
-        <input type="text" matInput formControlName="searchReferenceId" [maxlength]="50" autocomplete="Off">        
-    </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="200">
-        <mat-label>Short Text</mat-label>
-        <input type="text" matInput formControlName="searchShortText" [maxlength]="250" autocomplete="Off">        
-    </mat-form-field>
-
     <button [disabled]="loading" class="mat-raised-button" (click)="GetAccountingVoucher()">
-         <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+        <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
     </button>
 </form>
 
@@ -85,11 +85,11 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="DebitCreditId">
+    <ng-container matColumnDef="Debit">
         <mat-header-cell *matHeaderCellDef> Debit</mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-checkbox (click)="$event.stopPropagation()" (change)="updateDebitCredit(element,$event)"
-                [checked]="element.DebitCreditId==0?true:false">
+            <mat-checkbox (click)="$event.stopPropagation()" 
+            (change)="UpdateDebit(element,$event)" [checked]="element.Debit">
             </mat-checkbox>
         </mat-cell>
     </ng-container>
@@ -98,19 +98,21 @@
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <input matInput autocomplete="Off" 
-                [max]="1000000"
-                [(ngModel)]="element.Amount" [value]="element.Amount">
+                (blur)="onBlur(element)" 
+                [max]="1000000" 
+                [(ngModel)]="element.Amount"
+                [value]="element.Amount">
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <!-- <ng-container matColumnDef="ShortText">
+    <ng-container matColumnDef="ShortText">
         <mat-header-cell *matHeaderCellDef> Short Text </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <input matInput autocomplete="Off" [(ngModel)]="element.ShortText" [value]="element.ShortText">
             </mat-form-field>
         </mat-cell>
-    </ng-container> -->
+    </ng-container>
     <ng-container matColumnDef="Active">
         <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -127,13 +129,12 @@
             </button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-            <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" 
-mat-raised-button color="accent"
-                (click)="UpdateOrSave(element)">
-                 <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+            <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" mat-raised-button
+                color="accent" (click)="UpdateOrSave(element)">
+                <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
 
         </mat-cell>

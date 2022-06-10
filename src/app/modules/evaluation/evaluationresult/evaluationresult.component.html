@@ -24,7 +24,7 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Evaluation</mat-label>
+                <mat-label>Evaluation type</mat-label>
                 <mat-select formControlName="searchEvaluationMasterId">
                     <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
                         {{item.EvaluationName}}
@@ -40,24 +40,24 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            
+
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </form>
         <mat-table #table [dataSource]="AssessmentTypeDatasource" *ngIf="AssessmentTypeList.length>0">
             <ng-container matColumnDef="ExamName">
-                <mat-header-cell *matHeaderCellDef>Exam/Evaluation session
+                <mat-header-cell *matHeaderCellDef>Exam/Test/Session
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.ExamName}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="EvaluationName">
-                <mat-header-cell *matHeaderCellDef>Evaluation
+                <mat-header-cell *matHeaderCellDef>Evaluation type
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.EvaluationName}}
@@ -117,23 +117,50 @@
                     <mat-cell *matCellDef="let element" [attr.colspan]="2"
                         style="display:flex; flex-direction: column;justify-content: start;">
                         <!-- <span *ngIf="element.ClassEvalCategoryId>0">{{element.CatName}}</span> -->
-                        <span style="width:100%; margin: 15px;display:flex; flex-direction:column;justify-content: flex-start;">
+
+                        <span
+                            style="width:100%; margin: 15px;display:flex; flex-direction:column;justify-content: flex-start;">
                             <span
                                 *ngIf="element.QuestionnaireType=='Category' || element.QuestionnaireType=='Sub Category'"
                                 style="font-weight: bold; width: 100%;padding: 15px 15px 10px 0px;">
                                 {{element.Description}}</span>
                             <span *ngIf="element.QuestionnaireType=='Questionnaire'"
                                 style="width: 100%;padding: 15px 15px 10px 0px;">
-                               <mat-icon class="icon">star_outline</mat-icon> {{element.Description}}
+                                <mat-icon class="icon">star_outline</mat-icon> {{element.Description}}
                             </span>
-                            <span style="width: 100%;min-height: 50px;padding: 15px;margin-bottom: 15px;border:1px solid lightgray"
+                            <span [innerHTML]="element.AnswerText|encodeHTML" 
+                            style="border:1px solid lightgray; width: 100%;min-height: 50px;padding: 15px;margin: 15px;"
                                 *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.AnswerText.length>0">
-                                {{element.AnswerText}}
+                                <!-- <textarea [rows]="7" [disabled]="true" style="padding:15px; width:100%">
+                                    {{element.AnswerText}}
+                                </textarea> -->
+                            </span>
+                        </span>
+                        <span style="width:100%;">
+                            <span style="padding: 15px 15px 15px 40px;"
+                                *ngIf="element.MultipleAnswer==1 && element.ClassEvaluationAnswerOptionParentId>0">
+                                <mat-checkbox style="margin-right: 15px;"
+                                    *ngFor="let item of element.ClassEvaluationOptions;let i=index"
+                                    (click)="$event.stopPropagation()" name="options_{{i}}"
+                                    [value]="item.ClassEvaluationAnswerOptionsId" [checked]="item.checked">
+                                    {{item.Title}}
+                                </mat-checkbox>
+                            </span>
+                            <span style="padding: 15px 15px 15px 40px;"
+                                *ngIf="element.ClassEvaluationAnswerOptionParentId>0 && (element.MultipleAnswer==0 || element.MultipleAnswer==null)">
+                                <mat-radio-group [name]="'options_'+element.ClassEvaluationId">
+                                    <mat-radio-button style="margin: 10px 10px 0px 0px;"
+                                        [name]="'options_'+element.ClassEvaluationId"
+                                        *ngFor="let item of element.ClassEvaluationOptions;let i=index"
+                                        [value]="item.ClassEvaluationAnswerOptionsId" [checked]="item.checked">
+                                        {{item.Title}}
+                                    </mat-radio-button>
+                                </mat-radio-group>
                             </span>
                         </span>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="AnswerOptionsId">
+                <!-- <ng-container matColumnDef="AnswerOptionsId">
                     <mat-header-cell *matHeaderCellDef style="display:none">
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
@@ -158,7 +185,7 @@
                             </mat-radio-group>
                         </span>
                     </mat-cell>
-                </ng-container>
+                </ng-container> -->
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
                     style="align-items: center;"></mat-row>

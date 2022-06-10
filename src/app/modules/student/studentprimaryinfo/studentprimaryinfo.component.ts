@@ -20,12 +20,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentprimaryinfo.component.html',
   styleUrls: ['./studentprimaryinfo.component.scss']
 })
-export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
+export class studentprimaryinfoComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(AddstudentclassComponent) studentClass: AddstudentclassComponent;
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
-  // @ViewChild(StudentDocumentComponent) studentDocument: StudentDocumentComponent;
-  // @ViewChild(GenerateCertificateComponent) gencertificate: GenerateCertificateComponent;
   Edit = false;
   SelectedBatchId = 0;
   SelectedApplicationId = 0;
@@ -56,7 +55,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
   allMasterData = [];
   ReasonForLeaving = [];
   studentData = [];
-  AdmissionStatuses =[];
+  AdmissionStatuses = [];
   CountryId = 0;
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
@@ -78,7 +77,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
     debugger;
     this.selectedFile = files[0];
     if (this.selectedFile.size > 60000) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -94,7 +93,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
     let error: boolean = false;
     this.loading = true;
     if (this.selectedFile == undefined) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -124,7 +123,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
       keepAfterRouteChange: true
     };
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
 
       this.Edit = false;
@@ -167,8 +166,8 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
       MICRNo: [''],
       AadharNo: [''],
       Photo: [''],
-      ContactNo: [''],
-      WhatsAppNumber: [''],
+      ContactNo: ['',[Validators.required]],
+      WhatsAppNumber: ['',[Validators.required]],
       FatherContactNo: [''],
       MotherContactNo: [''],
       PrimaryContactFatherOrMother: [0],
@@ -181,8 +180,8 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
       TransferFromSchool: [''],
       TransferFromSchoolBoard: [''],
       ClubId: [0],
-      AdmissionStatusId:[0],
-      AdmissionDate:[new Date()],
+      AdmissionStatusId: [0],
+      AdmissionDate: [new Date()],
       Remarks: [''],
       Active: [1]
     });
@@ -209,7 +208,10 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
           this.GetStudent();
         this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
+          this.loading = false;
+          this.PageLoading = false;
         });
+
       }
     }
   }
@@ -327,8 +329,18 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
     if (this.studentForm.get("ClassAdmissionSought").value == 0) {
       errorMessage += "Please select Class for which admission is sought.\n";
     }
+    if (this.studentForm.get("AdmissionStatusId").value == 0) {
+      errorMessage += "Please select admission status.\n";
+    }
+    if (this.studentForm.get("ContactNo").value == 0) {
+      errorMessage += "Please provide contact no..\n";
+    }
+    if (this.studentForm.get("WhatsAppNumber").value == 0) {
+      errorMessage += "Please provide whatsapp no..\n";
+    }
+    
     if (errorMessage.length > 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -339,7 +351,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
       this.contentservice.CheckEmailDuplicate(checkduppayload)
         .subscribe((data: any) => {
           if (data) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.contentservice.openSnackBar("Email already in use.", globalconstants.ActionText, globalconstants.RedBackground);
             return;
           }
@@ -425,7 +437,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
             //this.StudentClassId = this.studentForm.get("ClassAdmissionSought").value;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.tokenService.saveStudentId(this.StudentId + "")
             //this.tokenService.saveStudentClassId(this.StudentClassId + "");
             this.GetStudent();
@@ -433,7 +445,11 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
 
           }
 
-        }, error => console.log(error))
+        }, error => {
+          console.log(error)
+          var errormsg = globalconstants.formatError(error);
+          this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);
+        })
 
 
     })
@@ -444,7 +460,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
 
     this.dataservice.postPatch('Students', this.studentData[0], this.StudentId, 'patch')
       .subscribe((result: any) => {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.Edited = false;
         if (result != null && result.UserId != "")
           this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -472,10 +488,9 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           data.value.forEach(stud => {
-            if (stud.StudentClasses.length > 0)
-            {
-              this.StudentClassId=stud.StudentClasses[0].StudentClassId;            
-              this.tokenService.saveStudentClassId(this.StudentClassId+"");
+            if (stud.StudentClasses.length > 0) {
+              this.StudentClassId = stud.StudentClasses[0].StudentClassId;
+              this.tokenService.saveStudentClassId(this.StudentClassId + "");
             }
             let StudentName = stud.PID + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName +
               ' ' + stud.MotherName + ',';
@@ -515,8 +530,8 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
               TransferFromSchool: stud.TransferFromSchool,
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
               ClubId: stud.ClubId,
-              AdmissionStatusId:stud.AdmissionStatusId,
-              AdmissionDate:stud.AdmissionDate,
+              AdmissionStatusId: stud.AdmissionStatusId,
+              AdmissionDate: stud.AdmissionDate,
               Remarks: stud.Remarks,
               Active: stud.Active,
               ReasonForLeavingId: stud.ReasonForLeavingId
@@ -542,7 +557,7 @@ export class studentprimaryinfoComponent implements OnInit { PageLoading=true;
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
 
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       },
         err => {
           console.log("error", err)

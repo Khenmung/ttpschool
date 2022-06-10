@@ -15,7 +15,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
   styleUrls: ['./addstudentclass.component.scss']
 })
 export class AddstudentclassComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   loading = false;
   breakpoint = 0;
   SaveDisable = false;
@@ -231,10 +231,13 @@ export class AddstudentclassComponent implements OnInit {
             this.contentservice.openSnackBar("Class yet to be defined for this student", globalconstants.ActionText, globalconstants.RedBackground);
           }
           this.loading = false;
+          this.PageLoading = false;
         });
     }
-    else
+    else {
       this.loading = false;
+      this.PageLoading = false;
+    }
   }
   onResize(event) {
     this.breakpoint = (event.target.innerWidth <= 400) ? 1 : 3;

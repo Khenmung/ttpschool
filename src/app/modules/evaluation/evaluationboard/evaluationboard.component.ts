@@ -65,7 +65,7 @@ export class EvaluationboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(StudentEvaluationComponent);
     this.AddRemoveComponent(perObj, comindx);
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONMASTER);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONTYPE);
     var comindx = this.components.indexOf(EvaluationMasterComponent);
     this.AddRemoveComponent(perObj, comindx);
 
@@ -101,8 +101,8 @@ export class EvaluationboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    const component = this.viewContainer.createComponent(factory);
+    //const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
+    const component = this.viewContainer.createComponent(this.components[index]);
 
   }
   AddRemoveComponent(perObj, comindx) {

@@ -1,5 +1,5 @@
 <mat-card>
-    <mat-card-title>Vouchers</mat-card-title>
+    <mat-card-title>Trial Balance</mat-card-title>
     <mat-card-subtitle>&nbsp;</mat-card-subtitle>
     <mat-card-content>
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
@@ -87,11 +87,11 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="DebitCreditId">
+            <ng-container matColumnDef="Debit">
                 <mat-header-cell *matHeaderCellDef> Debit</mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="updateDebitCredit(element,$event)"
-                        [checked]="element.DebitCreditId==0?true:false">
+                        [checked]="element.Debit">
                     </mat-checkbox>
                 </mat-cell>
             </ng-container>

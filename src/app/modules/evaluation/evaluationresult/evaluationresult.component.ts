@@ -16,7 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './evaluationresult.component.html',
   styleUrls: ['./evaluationresult.component.scss']
 })
-export class EvaluationresultComponent implements OnInit { PageLoading=true;
+export class EvaluationresultComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   RowsToUpdate = -1;
   EvaluationStarted = false;
@@ -53,7 +54,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
   ClassGroupMappings = [];
   Result = [];
   StudentName = '';
-  RelevantEvaluationListForSelectedStudent=[];
+  RelevantEvaluationListForSelectedStudent = [];
   EvaluationPlanColumns = [
     'EvaluationName',
     'ExamName',
@@ -77,9 +78,9 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
   StudentEvaluationForUpdate = [];
   displayedColumns = [
     'Description',
-    'AnswerOptionsId',
+    //'AnswerOptionsId',
   ];
-  EvaluationClassGroup=[];
+  EvaluationClassGroup = [];
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
@@ -131,7 +132,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetEvaluationNames();
-        this.GetMasterData();
+
         this.GetEvaluationOption();
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -139,33 +140,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
           });
         }
         this.GetStudentClasses();
-        this.contentservice.GetEvaluationClassGroup(this.LoginUserDetail[0]["orgId"], 1)
-          .subscribe((data: any) => {
-            data.value.forEach(m => {
 
-              let EvaluationObj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId);
-              if (EvaluationObj.length > 0) {
-                m.EvaluationName = EvaluationObj[0].EvaluationName;
-                m.Duration = EvaluationObj[0].Duration;
-
-                var _clsObj = this.ClassGroups.filter(f => f.MasterDataId == m.ClassGroupId);
-                if (_clsObj.length > 0)
-                  m.ClassGroupName = _clsObj[0].MasterDataName;
-                else
-                  m.ClassGroupName = '';
-
-                var _examObj = this.Exams.filter(f => f.ExamId == m.ExamId);
-                if (_examObj.length > 0)
-                  m.ExamName = _examObj[0].ExamName
-                else
-                  m.ExamName = '';
-                m.Action1 = true;
-                this.EvaluationClassGroup.push(m);
-              }
-            })
-            //this.EvaluationClassGroup = [...data.value];
-            this.loading = false; this.PageLoading=false;
-          })
       }
     }
   }
@@ -184,7 +159,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
     if (_examobj.length > 0)
       _studentObj["SessionName"] = _examobj[0].ExamName;
     else {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Exam/Session name must be selected", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -298,7 +273,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
         row.EvaluationStarted = true;
         this.dataSource = new MatTableDataSource<IStudentEvaluation>(this.StudentEvaluationList);
         this.dataSource.paginator = this.paginator;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   ApplyVariables(studentInfo) {
@@ -334,8 +309,33 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        //this.GetEvaluationMapping();
-        //this.loading = false; this.PageLoading=false;
+        this.contentservice.GetEvaluationClassGroup(this.LoginUserDetail[0]["orgId"], 1)
+          .subscribe((data: any) => {
+            data.value.forEach(m => {
+
+              let EvaluationObj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId);
+              if (EvaluationObj.length > 0) {
+                m.EvaluationName = EvaluationObj[0].EvaluationName;
+                m.Duration = EvaluationObj[0].Duration;
+
+                var _clsObj = this.ClassGroups.filter(f => f.MasterDataId == m.ClassGroupId);
+                if (_clsObj.length > 0)
+                  m.ClassGroupName = _clsObj[0].MasterDataName;
+                else
+                  m.ClassGroupName = '';
+
+                var _examObj = this.Exams.filter(f => f.ExamId == m.ExamId);
+                if (_examObj.length > 0)
+                  m.ExamName = _examObj[0].ExamName
+                else
+                  m.ExamName = '';
+                m.Action1 = true;
+                this.EvaluationClassGroup.push(m);
+              }
+            })
+            //this.EvaluationClassGroup = [...data.value];
+            this.loading = false; this.PageLoading = false;
+          })
       })
   }
   GetClassSubjects() {
@@ -377,6 +377,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
           .subscribe((data: any) => {
             this.ClassGroupMappings = [...data.value];
           })
+
       });
   }
   onBlur(row) {
@@ -439,7 +440,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
             return item;
           })
         }
-        //this.loading = false; this.PageLoading=false;
+        this.GetMasterData();
       });
 
   }
@@ -450,7 +451,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
     this.loading = true;
     if (_evaluationMasterId == 0) {
       this.contentservice.openSnackBar("Please select evaluation name.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       return;
     }
 
@@ -465,8 +466,8 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
     if (_examId > 0) {
       filterstr = 'ExamId eq ' + _examId + ' and '
     }
-    
-    var _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _evaluationMasterId 
+
+    var _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _evaluationMasterId
       && f.ExamId == _examId);
     this.RelevantEvaluationListForSelectedStudent = [];
     var __classGroupId = 0;
@@ -475,8 +476,8 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
       __classGroupId = _classGroupIdObj[0].ClassGroupId;
     }
     else {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("No class group defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -530,7 +531,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
         this.StudentEvaluationList = [];
         this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
         this.dataSource.paginator = this.paginator;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetEvaluationOption() {
@@ -593,7 +594,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
           })
           console.log("this.ClassEvaluations", this.ClassEvaluations)
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetStudentClasses() {
@@ -668,7 +669,7 @@ export class EvaluationresultComponent implements OnInit { PageLoading=true;
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 }

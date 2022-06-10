@@ -4,12 +4,12 @@
   <!-- <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="15px"> -->
   <mat-form-field [style.width.px]="250" appearance="outline" style="margin-right: 15px;">
     <mat-label>Month</mat-label>
-    <mat-select formControlName="searchMonth">
+    <mat-select formControlName="searchMonth" (selectionChange)="EnableButton()">
       <mat-option [value]="0">select</mat-option>
       <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <button [disabled]="loading" mat-raised-button color="accent" (click)="GetReport()">
+  <button [disabled]="loading || ClickedReport" mat-raised-button color="accent" (click)="GetReport()">
      <mat-icon>search</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>

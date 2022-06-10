@@ -2,18 +2,23 @@ mat-form-field{
     margin-right: 15px;
     width:98%;
 }
+mat-cell:first-of-type{
+    padding-left: 0px;
+}
 .mat-column-FullMark,
 .mat-column-PassMark,
-.mat-column-Duration,
-.mat-column-EvaluationMasterId{
+.mat-column-Duration
+{
     flex:1 1 100px;
     //justify-content: center;
 }
 .mat-column-ProvideCertificate,
 .mat-column-DisplayResult,
-.mat-column-Active
+.mat-column-Active,
+.mat-column-AppendAnswer,
+.mat-column-EvaluationMasterId
 {
-    flex:1 1 100px;
+    flex:1 1 70px;
     justify-content: center;
 }
 .mat-column-Action{

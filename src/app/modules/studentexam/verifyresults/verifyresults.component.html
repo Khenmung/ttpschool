@@ -42,7 +42,7 @@
         (click)="clear()">
         <mat-icon>clear_all</mat-icon>
     </button>
-    <button [disabled]="loading" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0" mat-raised-button
+    <button [disabled]="loading || ClickedVerified" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0" mat-raised-button
         color="accent" (click)="Verified()">
         <mat-icon>checked</mat-icon>
     </button>

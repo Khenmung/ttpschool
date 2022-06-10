@@ -5,20 +5,21 @@
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
     <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline" [style.width.px]="300">
-                <mat-label>Available Reports</mat-label>
-                <mat-select formControlName="searchAvailableReportName">
-                    <mat-option *ngFor="let item of AvailableReportNames" [value]="item.ReportConfigItemId">
-                        {{item.ReportName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button [disabled]="loading" matTooltip="search" class="mat-raised-button" (click)="GetReportConfigItem()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-            </button>
+        <mat-form-field appearance="outline" [style.width.px]="300">
+            <mat-label>Available Reports</mat-label>
+            <mat-select formControlName="searchAvailableReportName" (selectionChange)="EnableButton()">
+                <mat-option *ngFor="let item of AvailableReportNames" [value]="item.ReportConfigItemId">
+                    {{item.ReportName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button [disabled]="loading || !boolEnableButton" matTooltip="search" mat-raised-button color="accent"
+            (click)="GetReportConfigItem()">
+            <mat-icon>search</mat-icon>
+            <mat-icon *ngIf="loading">
+                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+            </mat-icon>
+        </button>
     </form>
     <mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="ReportName">
@@ -46,13 +47,12 @@
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save" 
-mat-raised-button color="accent"
-                    (click)="UpdateOrSave(element)">
-                     <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <button [disabled]="loading || Permission=='read' || !element.Action" matTooltip="save"
+                    mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-cell>
         </ng-container>

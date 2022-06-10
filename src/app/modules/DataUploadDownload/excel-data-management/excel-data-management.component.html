@@ -24,7 +24,7 @@
                 (click)="inputfile.click()">
                 <mat-icon aria-label="photo">attach_file</mat-icon>
             </button>
-            <button [disabled]="loading || ErrorMessage.length>0 || Permission=='read'" 
+            <button [disabled]="loading || ErrorMessage.length>0 || Permission=='read' || !ReadyForUpload" 
                 type="submit" 
                 (click)="readAsJson()"
                 matTooltip="upload file" 

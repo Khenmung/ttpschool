@@ -170,7 +170,7 @@ export class FeereceiptComponent implements OnInit { PageLoading=true;
           this.loading = false; this.PageLoading=false;
           this.TotalAmount = 0;
           this.Balance = 0;
-          this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
           this.CancelReceiptMode = false;
           this.BillDetail = [];
           this.dataSource = new MatTableDataSource<any>(this.BillDetail);

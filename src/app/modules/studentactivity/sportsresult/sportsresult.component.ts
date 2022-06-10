@@ -46,6 +46,7 @@ export class SportsResultComponent implements OnInit {
   filteredStudents: Observable<IStudent[]>;
   SportsResultData = {
     SportResultId: 0,
+    Secured:'',
     Achievement: '',
     SportsNameId: 0,
     CategoryId: 0,
@@ -59,6 +60,7 @@ export class SportsResultComponent implements OnInit {
   SportsResultForUpdate = [];
   displayedColumns = [    
     "SportResultId",
+    "Secured",
     "Achievement",
     "SportsNameId",
     "CategoryId",
@@ -180,6 +182,7 @@ export class SportsResultComponent implements OnInit {
           this.SportsResultForUpdate.push(
             {
               SportResultId: row.SportResultId,
+              Secured: row.Secured,
               Achievement: row.Achievement,
               SportsNameId: row.SportsNameId,
               CategoryId: row.CategoryId,
@@ -264,6 +267,7 @@ export class SportsResultComponent implements OnInit {
     list.fields = [
       "SportResultId",
       "StudentClassId",
+      "Secured",
       "Achievement",
       "SportsNameId",
       "CategoryId",
@@ -319,6 +323,7 @@ export class SportsResultComponent implements OnInit {
 
     var newdata = {
       SportResultId: 0,
+      Secured:'',
       Achievement: '',
       SportsNameId: 0,
       CategoryId: 0,
@@ -435,6 +440,7 @@ export class SportsResultComponent implements OnInit {
 export interface ISportsResult {
   SportResultId: number;
   Achievement: string;
+  Secured:string;
   SportsNameId: number;
   CategoryId: number;
   SubCategoryId: number;

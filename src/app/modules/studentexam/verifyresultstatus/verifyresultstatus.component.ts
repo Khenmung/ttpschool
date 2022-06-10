@@ -22,7 +22,7 @@ export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
+  ClickedVerified =false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   SelectedClassStudentGrades = [];

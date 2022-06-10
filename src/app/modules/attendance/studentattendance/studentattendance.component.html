@@ -30,11 +30,11 @@
         <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
         <mat-datepicker #AttendanceDate></mat-datepicker>
     </mat-form-field>
-    <button [disabled]="loading" (click)="GetStudentAttendance()" class="mat-raised-button">
-         <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+    <button [disabled]="loading" (click)="GetStudentAttendance()" mat-raised-button color="accent">
+        <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
     </button>
 </form>
 <mat-table #table [dataSource]="dataSource" matSort>
@@ -68,9 +68,8 @@
     </ng-container>
     <ng-container matColumnDef="Action">
         <mat-header-cell *matHeaderCellDef>
-            <button [disabled]="loading || !EnableSave || Permission=='read'" 
-            *ngIf="StudentAttendanceList.length>0" matTooltip="save all"
-                mat-mini-fab (click)="saveall()">
+            <button [disabled]="loading || !EnableSave || Permission=='read' || !AnyEnableSave"
+                *ngIf="StudentAttendanceList.length>0" matTooltip="save all" mat-mini-fab (click)="saveall()">
                 <mat-icon>all_out</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -80,10 +79,10 @@
         <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
             <button [disabled]="loading || !element.Action || Permission=='read' || !EnableSave" matTooltip="view/edit"
                 mat-raised-button color="accent" (click)="UpdateOrSave(element)">
-                 <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </mat-cell>
     </ng-container>
