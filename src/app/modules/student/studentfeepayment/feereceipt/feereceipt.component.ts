@@ -14,7 +14,8 @@ import { SharedataService } from '../../../../shared/sharedata.service';
   templateUrl: './feereceipt.component.html',
   styleUrls: ['./feereceipt.component.scss'],
 })
-export class FeereceiptComponent implements OnInit { PageLoading=true;
+export class FeereceiptComponent implements OnInit {
+    PageLoading = true;
   @Input("BillDetail") BillDetail: any[];
   @Input("StudentClass") studentInfoTodisplay: any;
   @Input("OffLineReceiptNo") OffLineReceiptNo: any;
@@ -142,7 +143,7 @@ export class FeereceiptComponent implements OnInit { PageLoading=true;
       this.GetBills();
     }
     else {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
   }
@@ -164,18 +165,21 @@ export class FeereceiptComponent implements OnInit { PageLoading=true;
     let receipt = {
       Active: 0
     }
-    this.dataservice.postPatch(this.StudentFeeReceiptListName, receipt, this.studentInfoTodisplay.StudentFeeReceiptId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.loading = false; this.PageLoading=false;
-          this.TotalAmount = 0;
-          this.Balance = 0;
-          this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-          this.CancelReceiptMode = false;
-          this.BillDetail = [];
-          this.dataSource = new MatTableDataSource<any>(this.BillDetail);
+    setTimeout(() => {
 
-        });
+      this.dataservice.postPatch(this.StudentFeeReceiptListName, receipt, this.studentInfoTodisplay.StudentFeeReceiptId, 'patch')
+        .subscribe(
+          (data: any) => {
+            this.loading = false; this.PageLoading = false;
+            this.TotalAmount = 0;
+            this.Balance = 0;
+            this.contentservice.openSnackBar("Receipt cancelled successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+            this.CancelReceiptMode = false;
+            this.BillDetail = [];
+            this.dataSource = new MatTableDataSource<any>(this.BillDetail);
+
+          });
+    }, 500)
   }
   edit() {
     this.CancelReceiptMode = true;
@@ -231,7 +235,7 @@ export class FeereceiptComponent implements OnInit { PageLoading=true;
         if (latestReceipt.length > 0)
           this.viewDetail(latestReceipt[0]);
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
 
       })
   }
@@ -255,7 +259,7 @@ export class FeereceiptComponent implements OnInit { PageLoading=true;
         this.ReceiptHeading.forEach(f => {
           f.Logic = f.Logic != null ? JSON.parse("{" + f.Logic + "}") : ''
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
 
   }

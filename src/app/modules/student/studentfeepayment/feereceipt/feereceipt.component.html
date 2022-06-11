@@ -113,8 +113,12 @@
                 <div style="padding:15px;margin-right:15px;border-collapse:collapse;border: 1px solid lightgray;"
                     *ngIf="CancelReceiptMode">Are you sure you want to cancel
                     this receipt?<br>
-                    <button [disabled]="loading || Permission=='read'" matTooltip="yes" (click)="CancelReceipt()" class="mat-raised-button">
+                    <button [disabled]="loading || Permission=='read'" 
+                    matTooltip="yes" (click)="CancelReceipt()" mat-raised-button color="accent">
                         <mat-icon>done</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
                     <button [disabled]="loading || Permission=='read'" matTooltip="no" (click)="done()" class="mat-raised-button">
                         <mat-icon>cancel</mat-icon>

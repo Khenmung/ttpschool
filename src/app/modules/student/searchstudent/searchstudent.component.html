@@ -13,11 +13,11 @@
                 <mat-label>Father</mat-label>
                 <input type="text" matInput formControlName="FatherName" [matAutocomplete]="autoF">
                 <mat-autocomplete #autoF="matAutocomplete" [displayWith]="displayFnF">
-                 <!-- <cdk-virtual-scroll-viewport itemSize="25"> -->
+                    <!-- <cdk-virtual-scroll-viewport itemSize="25"> -->
                     <mat-option *ngFor="let option of filteredFathers | async" [value]="option">
                         {{option.FatherName}}
                     </mat-option>
-                <!-- </cdk-virtual-scroll-viewport> -->
+                    <!-- </cdk-virtual-scroll-viewport> -->
                 </mat-autocomplete>
             </mat-form-field>
             <mat-form-field appearance="outline">
@@ -38,11 +38,12 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button [disabled]="loading" matTooltip="search student" mat-raised-button color="accent" (click)="GetStudent()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+            <button [disabled]="loading" matTooltip="search student" mat-raised-button color="accent"
+                (click)="GetStudent()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
             <button [disabled]="loading" matTooltip="new student" mat-raised-button color="accent" (click)="new()">
                 <mat-icon>fiber_new</mat-icon>
@@ -55,11 +56,13 @@
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         &nbsp;
-                        <button style="margin-left: 15px;" [disabled]="loading" matTooltip="Details" mat-mini-fab (click)="view(element)">
+                        <button style="margin-left: 15px;" [disabled]="loading" matTooltip="Details" mat-mini-fab
+                            (click)="view(element)">
                             <mat-icon>pageview</mat-icon>
                         </button>
                         &nbsp;
-                        <button [disabled]="loading || element.ClassName=='' || FeePaymentPermission=='deny'" matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
+                        <button [disabled]="loading || element.ClassName=='' || FeePaymentPermission=='deny'"
+                            matTooltip="Fees" mat-mini-fab (click)="feepayment(element)">
                             <mat-icon>payments</mat-icon>
                         </button>
                     </mat-cell>

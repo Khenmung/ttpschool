@@ -87,9 +87,21 @@
                     || Permission=='read' 
                     || EvaluationSubmitted 
                     || !EvaluationStarted
-                    || AlreadyAnswered" 
-                    matTooltip="submit" mat-mini-fab color="accent" (click)="SubmitEvaluation()">
+                    || AlreadyAnswered" matTooltip="save as draft" mat-mini-fab color="accent" (click)="SaveAsDraft()">
+                    <mat-icon>edit</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+                <button [disabled]="loading || !element.Action1 
+                    || Permission=='read' 
+                    || EvaluationSubmitted 
+                    || !EvaluationStarted
+                    || AlreadyAnswered" matTooltip="submit" mat-mini-fab color="accent" (click)="SubmitEvaluation()">
                     <mat-icon>done_all</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
                 <span *ngIf="ExamDurationMinutes>0" style="font-weight:bold;padding:15px">Duration:
                     {{ExamDurationMinutes}}</span>
@@ -100,13 +112,6 @@
             style="align-items: center;"></mat-row>
     </mat-table>
     <mat-table #table [dataSource]="dataSource" *ngIf="StudentEvaluationList.length>0">
-        <!-- <ng-container matColumnDef="AutoId">
-            <mat-header-cell *matHeaderCellDef>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.AutoId}}
-            </mat-cell>
-        </ng-container> -->
         <ng-container matColumnDef="Description">
             <mat-header-cell *matHeaderCellDef>
             </mat-header-cell>
@@ -119,8 +124,20 @@
                     <span *ngIf="element.QuestionnaireType=='Questionnaire'"
                         style="font-style: italic; width: 100%;padding: 15px 15px 10px 0px;">
                         {{element.Description}}</span>
-                    <span style="margin:15px 15px 15px 15px;width: 100%;"
+                    <span style="display: flex;flex-direction: column; margin:15px 15px 15px 15px;width: 100%;"
                         *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
+                        <span [innerHTML]="element.History| encodeHTML">
+                        </span>
+                        <mat-form-field appearance="outline" style="width:100%">
+                            <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="300"
+                                (blur)="onBlur(element)" [rows]="5"                                 
+                                [value]="element.AnswerText"
+                                [(ngModel)]="element.AnswerText"></textarea>
+                        </mat-form-field>
+                        <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/300
+                        </mat-hint>
+                    </span>
+                    <span *ngIf="!Updatable">
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
                                 (blur)="onBlur(element)" [value]="element.AnswerText" [rows]="5"

@@ -128,9 +128,9 @@
                                 style="width: 100%;padding: 15px 15px 10px 0px;">
                                 <mat-icon class="icon">star_outline</mat-icon> {{element.Description}}
                             </span>
-                            <span [innerHTML]="element.AnswerText|encodeHTML" 
+                            <span [innerHTML]="element.History|encodeHTML" 
                             style="border:1px solid lightgray; width: 100%;min-height: 50px;padding: 15px;margin: 15px;"
-                                *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.AnswerText.length>0">
+                                *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.History.length>0">
                                 <!-- <textarea [rows]="7" [disabled]="true" style="padding:15px; width:100%">
                                     {{element.AnswerText}}
                                 </textarea> -->

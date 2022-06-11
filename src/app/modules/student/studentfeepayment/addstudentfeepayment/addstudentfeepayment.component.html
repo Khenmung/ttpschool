@@ -153,6 +153,9 @@
                             <button [disabled]="loading || calculateTotal()==0 || Permission=='read'" matTooltip="pay"
                                 mat-mini-fab (click)="billpayment()">
                                 <mat-icon>payments</mat-icon>
+                                <mat-icon *ngIf="loading">
+                                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                                </mat-icon>
                             </button>
                         </div>
                     </div>

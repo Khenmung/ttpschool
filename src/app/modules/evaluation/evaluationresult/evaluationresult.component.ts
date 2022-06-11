@@ -17,8 +17,9 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./evaluationresult.component.scss']
 })
 export class EvaluationresultComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  EvaluationUpdatable = false;
   RowsToUpdate = -1;
   EvaluationStarted = false;
   EvaluationSubmitted = false;
@@ -28,6 +29,7 @@ export class EvaluationresultComponent implements OnInit {
   Ratings = [];
   SelectedApplicationId = 0;
   StudentClassId = 0;
+  StudentId =0;
   ClassId = 0;
   Permission = '';
   StandardFilter = '';
@@ -64,17 +66,6 @@ export class EvaluationresultComponent implements OnInit {
   AssessmentPrintHeading: any[] = [];
   ClassEvaluationOptionList = [];
   filteredStudents: Observable<IStudent[]>;
-  StudentEvaluationData = {
-    StudentEvaluationId: 0,
-    ClassEvaluationId: 0,
-    RatingId: 0,
-    Detail: '',
-    EvaluationMasterId: 0,
-    ExamId: 0,
-    StudentClassId: 0,
-    OrgId: 0,
-    Active: 0
-  };
   StudentEvaluationForUpdate = [];
   displayedColumns = [
     'Description',
@@ -170,10 +161,16 @@ export class EvaluationresultComponent implements OnInit {
 
     this.StudentName = _studentObj.Name;
     this.StudentClassId = _studentObj.StudentClassId;
+    this.StudentId = _studentObj.StudentId;
+
     this.ApplyVariables(_studentObj);
 
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    filterStr += ' and StudentClassId eq ' + this.StudentClassId
+    if (this.EvaluationUpdatable)
+      filterStr += ' and StudentId eq ' + this.StudentId
+    else
+      filterStr += ' and StudentClassId eq ' + this.StudentClassId
+
     filterStr += ' and EvaluationClassSubjectMapId eq ' + row.EvaluationClassSubjectMapId
 
     var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
@@ -181,9 +178,11 @@ export class EvaluationresultComponent implements OnInit {
     list.fields = [
       'StudentEvaluationResultId',
       'StudentClassId',
+      'StudentId',
       'ClassEvaluationId',
       'EvaluationClassSubjectMapId',
       'AnswerText',
+      'History',
       'Active'
     ];
 
@@ -222,11 +221,13 @@ export class EvaluationresultComponent implements OnInit {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentEvaluationAnswers: existing[0].StudentEvaluationAnswers,
               StudentClassId: this.StudentClassId,
+              StudentId: this.StudentId,              
               CatSequence: clseval.DisplayOrder,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationClassSubjectMapId: existing[0].EvaluationClassSubjectMapId,
               Description: clseval.Description,
               AnswerText: existing[0].AnswerText,
+              History: existing[0].History,
               StudentEvaluationResultId: existing[0].StudentEvaluationResultId,
               ClassEvaluationId: clseval.ClassEvaluationId,
               Active: existing[0].Active,
@@ -243,10 +244,12 @@ export class EvaluationresultComponent implements OnInit {
             item = {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentClassId: this.StudentClassId,
+              StudentId: this.StudentId,
               CatSequence: clseval.DisplayOrder,
               AnswerOptionsId: 0,
               Description: clseval.Description,
               AnswerText: '',
+              History: '',
               StudentEvaluationResultId: 0,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
@@ -501,7 +504,9 @@ export class EvaluationresultComponent implements OnInit {
 
         data.value.forEach(m => {
           let EvaluationObj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId);
+
           if (EvaluationObj.length > 0) {
+            this.EvaluationUpdatable = EvaluationObj[0].AppendAnswer;
             m.EvaluationName = EvaluationObj[0].EvaluationName;
             m.Duration = EvaluationObj[0].Duration;
 
@@ -527,11 +532,11 @@ export class EvaluationresultComponent implements OnInit {
         this.EvaluationStarted = false;
         this.EvaluationSubmitted = false;
         this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.AssessmentTypeList);
-        //console.log("this.AssessmentTypeList",this.AssessmentTypeList)
         this.StudentEvaluationList = [];
         this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
         this.dataSource.paginator = this.paginator;
-        this.loading = false; this.PageLoading = false;
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
   GetEvaluationOption() {

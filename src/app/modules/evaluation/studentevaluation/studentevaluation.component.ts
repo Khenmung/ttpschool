@@ -25,6 +25,7 @@ export class StudentEvaluationComponent implements OnInit {
   RowsToUpdate = -1;
   EvaluationStarted = false;
   EvaluationSubmitted = false;
+  boolSaveAsDraft = false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   ClassGroups = [];
@@ -33,6 +34,7 @@ export class StudentEvaluationComponent implements OnInit {
   ClassSubjects = [];
   Ratings = [];
   SelectedApplicationId = 0;
+  StudentId = 0;
   StudentClassId = 0;
   ClassId = 0;
   Permission = '';
@@ -72,6 +74,7 @@ export class StudentEvaluationComponent implements OnInit {
     EvaluationMasterId: 0,
     ExamId: 0,
     StudentClassId: 0,
+    StudentId: 0,
     OrgId: 0,
     Active: 0
   };
@@ -216,9 +219,21 @@ export class StudentEvaluationComponent implements OnInit {
     item.checked = true;
     row.Action = true;
   }
+  SaveAsDraft() {
+    this.RowsToUpdate = this.StudentEvaluationList.length;
+    this.boolSaveAsDraft = true;
+    this.EvaluationSubmitted = false;
+    //clearInterval(this.interval);
+    //console.log("this.StudentEvaluationList", this.StudentEvaluationList);
+    this.StudentEvaluationList.forEach(question => {
+      this.RowsToUpdate--;
+      this.UpdateOrSave(question);
+    })
+  }
   SubmitEvaluation() {
     this.RowsToUpdate = this.StudentEvaluationList.length;
     this.EvaluationSubmitted = true;
+    this.boolSaveAsDraft = false;
     clearInterval(this.interval);
     console.log("this.StudentEvaluationList", this.StudentEvaluationList);
     this.StudentEvaluationList.forEach(question => {
@@ -228,7 +243,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = "StudentClassId eq " + this.StudentClassId +
       " and EvaluationClassSubjectMapId eq " + row.EvaluationClassSubjectMapId +
@@ -254,18 +269,33 @@ export class StudentEvaluationComponent implements OnInit {
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
           this.StudentEvaluationForUpdate = [];
-          var _toappend = ''
-          if(this.Updatable)
-          {
-            _toappend = moment().format('DD/MM/YYYY');
-            
+          var _toappend = '', _answerText = '', _history = '', _studentClassId = 0;
+          if (this.Updatable) {
+            if (this.EvaluationSubmitted && !this.boolSaveAsDraft) {
+              _history = row.AnswerText.length == 0 ? row.History : row.History + "<br><br>" + row.AnswerText + "<br>" + _toappend + "<br><br>"
+              _answerText = '';
+              _toappend = moment().format('DD/MM/YYYY');
+            }
+            else {
+              _history = row.History;
+              _answerText = row.AnswerText;
+            }
+            _studentClassId = 0;
           }
+          else {
+            _studentClassId = row.StudentClassId;
+            _history = '';
+            _answerText = row.AnswerText;
+          }
+
           this.StudentEvaluationForUpdate.push(
             {
               StudentEvaluationResultId: row.StudentEvaluationResultId,
-              StudentClassId: row.StudentClassId,
+              StudentClassId: _studentClassId,
+              StudentId: row.StudentId,
               ClassEvaluationId: row.ClassEvaluationId,
-              AnswerText: row.AnswerText + "<br>" + _toappend  + "<br><br>",
+              AnswerText: _answerText,
+              History: _history,
               EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
               StudentEvaluationAnswers: row.StudentEvaluationAnswers,
               Active: row.Active,
@@ -277,11 +307,11 @@ export class StudentEvaluationComponent implements OnInit {
             this.StudentEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentEvaluationForUpdate[0]["UpdatedDate"];
             delete this.StudentEvaluationForUpdate[0]["UpdatedBy"];
-            //console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
+            console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
             this.insert(row);
           }
           else {
-            //console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
+            console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
             this.StudentEvaluationForUpdate[0]["UpdatedDate"] = new Date();
             this.StudentEvaluationForUpdate[0]["UpdatedBy"];
             delete this.StudentEvaluationForUpdate[0]["CreatedDate"];
@@ -307,6 +337,7 @@ export class StudentEvaluationComponent implements OnInit {
           }
         }, error => {
           this.EvaluationSubmitted = false;
+
           this.loadingFalse();
           console.log("error on student evaluation insert", error);
         });
@@ -317,7 +348,8 @@ export class StudentEvaluationComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          console.log("data update", data.value);
+          this.EvaluationSubmitted = false;
+          //console.log("data update", data.value);
           //this.StartEvaluation(row);
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
@@ -345,8 +377,13 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.StudentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    this.StudentId = this.searchForm.get("searchStudentName").value.StudentId;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    filterStr += ' and StudentClassId eq ' + this.StudentClassId
+    if (this.Updatable)
+      filterStr += ' and StudentId eq ' + this.StudentId
+    else
+      filterStr += ' and StudentClassId eq ' + this.StudentClassId
+
     filterStr += ' and EvaluationClassSubjectMapId eq ' + row.EvaluationClassSubjectMapId
     this.RelevantEvaluationListForSelectedStudent.forEach(mapping => {
       if (mapping.EvaluationClassSubjectMapId != row.EvaluationClassSubjectMapId)
@@ -359,9 +396,11 @@ export class StudentEvaluationComponent implements OnInit {
     list.fields = [
       'StudentEvaluationResultId',
       'StudentClassId',
+      'StudentId',
       'ClassEvaluationId',
       'EvaluationClassSubjectMapId',
       'AnswerText',
+      'History',
       'Active'
     ];
 
@@ -414,11 +453,13 @@ export class StudentEvaluationComponent implements OnInit {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentEvaluationAnswers: existing[0].StudentEvaluationAnswers,
               StudentClassId: this.StudentClassId,
+              StudentId: this.StudentId,
               CatSequence: clseval.DisplayOrder,
               QuestionnaireType: clseval.QuestionnaireType,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationClassSubjectMapId: existing[0].EvaluationClassSubjectMapId,
               Description: clseval.Description,
+              History: existing[0].History == null ? '' : existing[0].History,
               AnswerText: existing[0].AnswerText,
               StudentEvaluationResultId: existing[0].StudentEvaluationResultId,
               ClassEvaluationId: clseval.ClassEvaluationId,
@@ -433,11 +474,13 @@ export class StudentEvaluationComponent implements OnInit {
               AutoId: SlNo,
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentClassId: this.StudentClassId,
+              StudentId: this.StudentId,
               CatSequence: clseval.DisplayOrder,
               QuestionnaireType: clseval.QuestionnaireType,
               AnswerOptionsId: 0,
               Description: clseval.Description,
               AnswerText: '',
+              History: '',
               StudentEvaluationResultId: 0,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
@@ -813,7 +856,9 @@ export interface IStudentEvaluation {
   ClassEvaluationAnswerOptionParentId: number;
   StudentEvaluationResultId: number;
   AnswerText: string;
+  History: string;
   StudentClassId: number;
+  StudentId: number;
   EvaluationMasterId: number;
   Active: number;
   Action: boolean;
