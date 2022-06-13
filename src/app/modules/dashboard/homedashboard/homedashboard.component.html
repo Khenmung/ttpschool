@@ -20,11 +20,11 @@
                     </mat-select>
                 </mat-form-field>
             </span>
-            <button [disabled]="loading" class="mat-raised-button" (click)="submit()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="submit()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </form>
         <!-- <button class="mat-button-raised" (click)="sendmessage()">

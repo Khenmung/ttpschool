@@ -38,7 +38,7 @@ export class EvaluationMasterComponent implements OnInit {
     EvaluationMasterId: 0,
     EvaluationName: '',
     Description: '',
-    Duration: '',
+    Duration: 0,
     DisplayResult: false,
     AppendAnswer: false,
     ProvideCertificate: false,
@@ -113,7 +113,7 @@ export class EvaluationMasterComponent implements OnInit {
       EvaluationMasterId: 0,
       EvaluationName: '',
       Description: '',
-      Duration: '',
+      Duration: 0,
       DisplayResult: false,
       ProvideCertificate: false,
       AppendAnswer: false,
@@ -153,7 +153,7 @@ export class EvaluationMasterComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    //debugger;
+    debugger;
     this.loading = true;
     let checkFilterString = "EvaluationName eq '" + row.EvaluationName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
@@ -179,9 +179,9 @@ export class EvaluationMasterComponent implements OnInit {
           this.EvaluationMasterData.Description = row.Description;
           this.EvaluationMasterData.DisplayResult = row.DisplayResult;
           this.EvaluationMasterData.AppendAnswer = row.AppendAnswer;
-          this.EvaluationMasterData.Duration = row.Duration;
-          this.EvaluationMasterData.FullMark = row.FullMark;
-          this.EvaluationMasterData.PassMark = row.PassMark;
+          this.EvaluationMasterData.Duration = row.Duration==null?0:row.Duration;
+          this.EvaluationMasterData.FullMark = row.FullMark==null?0:row.FullMark;
+          this.EvaluationMasterData.PassMark = row.PassMark==null?0:row.PassMark;
           this.EvaluationMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (this.EvaluationMasterData.EvaluationMasterId == 0) {
@@ -340,7 +340,7 @@ export interface IEvaluationMaster {
   EvaluationMasterId: number;
   EvaluationName: string;
   Description: string;
-  Duration: string;
+  Duration: number;
   DisplayResult: boolean;
   AppendAnswer: boolean;
   ProvideCertificate

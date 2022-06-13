@@ -29,7 +29,7 @@ export class EvaluationresultComponent implements OnInit {
   Ratings = [];
   SelectedApplicationId = 0;
   StudentClassId = 0;
-  StudentId =0;
+  StudentId = 0;
   ClassId = 0;
   Permission = '';
   StandardFilter = '';
@@ -149,7 +149,7 @@ export class EvaluationresultComponent implements OnInit {
     var _examobj = this.Exams.filter(f => f.ExamId == row.ExamId)
     if (_examobj.length > 0)
       _studentObj["SessionName"] = _examobj[0].ExamName;
-    else {
+    else if (!this.EvaluationUpdatable) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Exam/Session name must be selected", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -168,11 +168,10 @@ export class EvaluationresultComponent implements OnInit {
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     if (this.EvaluationUpdatable)
       filterStr += ' and StudentId eq ' + this.StudentId
-    else
+    else {
       filterStr += ' and StudentClassId eq ' + this.StudentClassId
-
-    filterStr += ' and EvaluationClassSubjectMapId eq ' + row.EvaluationClassSubjectMapId
-
+      filterStr += ' and EvaluationClassSubjectMapId eq ' + row.EvaluationClassSubjectMapId
+    }
     var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
     let list: List = new List();
     list.fields = [
@@ -221,7 +220,7 @@ export class EvaluationresultComponent implements OnInit {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentEvaluationAnswers: existing[0].StudentEvaluationAnswers,
               StudentClassId: this.StudentClassId,
-              StudentId: this.StudentId,              
+              StudentId: this.StudentId,
               CatSequence: clseval.DisplayOrder,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationClassSubjectMapId: existing[0].EvaluationClassSubjectMapId,
@@ -426,6 +425,7 @@ export class EvaluationresultComponent implements OnInit {
       'Description',
       'Duration',
       'DisplayResult',
+      'AppendAnswer',
       'ProvideCertificate',
       'FullMark',
       'PassMark',
@@ -447,6 +447,12 @@ export class EvaluationresultComponent implements OnInit {
       });
 
   }
+  GetUpdatable() {
+    debugger;
+    var _evaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
+    if (_evaluationMasterId > 0)
+      this.EvaluationUpdatable = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _evaluationMasterId)[0].AppendAnswer;
+  }
   GetEvaluationMapping() {
     debugger;
 
@@ -466,12 +472,17 @@ export class EvaluationresultComponent implements OnInit {
     // }
     var _examId = this.searchForm.get("searchExamId").value;
     var filterstr = '';
-    if (_examId > 0) {
+    if (_examId > 0 && !this.EvaluationUpdatable) {
       filterstr = 'ExamId eq ' + _examId + ' and '
     }
 
-    var _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _evaluationMasterId
-      && f.ExamId == _examId);
+    var _classGroupIdObj = [];
+    if (this.EvaluationUpdatable)
+      _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _evaluationMasterId);
+    else
+      _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _evaluationMasterId
+        && f.ExamId == _examId);
+
     this.RelevantEvaluationListForSelectedStudent = [];
     var __classGroupId = 0;
     if (_classGroupIdObj.length > 0) {
@@ -484,60 +495,13 @@ export class EvaluationresultComponent implements OnInit {
       return;
     }
 
-    let list: List = new List();
-    list.fields = [
-      'EvaluationClassSubjectMapId',
-      'EvaluationMasterId',
-      'ClassGroupId',
-      'ClassSubjectId',
-      'ExamId',
-      'Active'
-    ];
-    list.PageName = "EvaluationClassSubjectMaps";
-    list.filter = [filterstr + 'ClassGroupId eq ' + __classGroupId +
-      ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and EvaluationMasterId eq ' + this.searchForm.get("searchEvaluationMasterId").value];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.AssessmentTypeList = [];
-
-        data.value.forEach(m => {
-          let EvaluationObj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId);
-
-          if (EvaluationObj.length > 0) {
-            this.EvaluationUpdatable = EvaluationObj[0].AppendAnswer;
-            m.EvaluationName = EvaluationObj[0].EvaluationName;
-            m.Duration = EvaluationObj[0].Duration;
-
-            var _clsObj = this.ClassGroups.filter(f => f.MasterDataId == m.ClassGroupId);
-            if (_clsObj.length > 0)
-              m.ClassGroupName = _clsObj[0].MasterDataName;
-            else
-              m.ClassGroupName = '';
-
-            var _examObj = this.Exams.filter(f => f.ExamId == m.ExamId);
-            if (_examObj.length > 0)
-              m.ExamName = _examObj[0].ExamName
-            else
-              m.ExamName = '';
-            m.Action = true;
-            this.AssessmentTypeList.push(m);
-          }
-        });
-        //console.log("this.AssessmentTypeList", this.AssessmentTypeList)
-        if (this.AssessmentTypeList.length == 0) {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
-        }
-        this.EvaluationStarted = false;
-        this.EvaluationSubmitted = false;
-        this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.AssessmentTypeList);
-        this.StudentEvaluationList = [];
-        this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
-        this.dataSource.paginator = this.paginator;
-        this.loading = false;
-        this.PageLoading = false;
-      })
+    this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
+    this.StudentEvaluationList = [];
+    this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
+    this.dataSource.paginator = this.paginator;
+    this.loading = false;
+    this.PageLoading = false;
+    //      })
   }
   GetEvaluationOption() {
     let list: List = new List();
@@ -576,8 +540,6 @@ export class EvaluationresultComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       'ClassEvaluationId',
-      //'ClassEvalCategoryId',
-      //'ClassEvalSubCategoryId',
       'QuestionnaireTypeId',
       'EvaluationMasterId',
       'DisplayOrder',
@@ -657,21 +619,21 @@ export class EvaluationresultComponent implements OnInit {
               if (_SectionObj.length > 0)
                 _section = _SectionObj[0].MasterDataName;
               _RollNo = studentclassobj[0].RollNo;
-
-              _name = student.FirstName + " " + student.LastName;
-              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-              this.Students.push({
-                StudentClassId: _studentClassId,
-                StudentId: student.StudentId,
-                ClassId: _classId,
-                StudentClass: _className,
-                RollNo: _RollNo,
-                Name: _name,
-                Section: _section,
-                Batch: _batchName,
-                FullName: _fullDescription,
-              });
             }
+            _name = student.FirstName + " " + student.LastName;
+            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+            this.Students.push({
+              StudentClassId: _studentClassId,
+              StudentId: student.StudentId,
+              ClassId: _classId,
+              StudentClass: _className,
+              RollNo: _RollNo,
+              Name: _name,
+              Section: _section,
+              Batch: _batchName,
+              FullName: _fullDescription,
+            });
+
           })
         }
         this.loading = false; this.PageLoading = false;

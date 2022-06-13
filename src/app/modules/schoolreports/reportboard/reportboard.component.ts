@@ -18,7 +18,7 @@ import { DailytimetablereportComponent } from '../dailytimetablereport/dailytime
 })
 export class ReportboardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     TodayCollectionComponent,
     FeecollectionreportComponent,
     ChartReportComponent,
@@ -121,8 +121,9 @@ export class ReportboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    //const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
+    const component =this.viewContainer.createComponent(this.components[index]);
+    
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
   AddRemoveComponent(perObj, comindx) {

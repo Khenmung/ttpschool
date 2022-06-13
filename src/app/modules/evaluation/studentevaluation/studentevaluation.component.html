@@ -4,6 +4,14 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="width: 100%;">
     <form [formGroup]="searchForm">
+        <mat-form-field appearance="outline" [style.width.px]="200">
+            <mat-label>Evaluation type</mat-label>
+            <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="GetAttribute()">
+                <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
+                    {{item.EvaluationName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="300">
             <mat-label>Student</mat-label>
             <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
@@ -13,31 +21,25 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Evaluation type</mat-label>
-            <mat-select formControlName="searchEvaluationMasterId">
-                <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
-                    {{item.EvaluationName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Exam/Test/Session</mat-label>
-            <mat-select formControlName="searchExamId">
-                <mat-option value="0">select</mat-option>
-                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Subject</mat-label>
-            <mat-select formControlName="searchSubjectId">
-                <mat-option value="0">select</mat-option>
-                <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
-                    {{item.SubjectName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+        <span *ngIf="!EvaluationUpdatable && EvaluationUpdatable!=null">
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Exam/Test/Session</mat-label>
+                <mat-select formControlName="searchExamId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Subject</mat-label>
+                <mat-select formControlName="searchSubjectId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
+                        {{item.SubjectName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </span>
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
             <mat-icon>search</mat-icon>
             <mat-icon *ngIf="loading">
@@ -130,14 +132,13 @@
                         </span>
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="300"
-                                (blur)="onBlur(element)" [rows]="5"                                 
-                                [value]="element.AnswerText"
+                                (blur)="onBlur(element)" [rows]="5" [value]="element.AnswerText"
                                 [(ngModel)]="element.AnswerText"></textarea>
                         </mat-form-field>
                         <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/300
                         </mat-hint>
                     </span>
-                    <span *ngIf="!Updatable">
+                    <span *ngIf="!EvaluationUpdatable">
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
                                 (blur)="onBlur(element)" [value]="element.AnswerText" [rows]="5"

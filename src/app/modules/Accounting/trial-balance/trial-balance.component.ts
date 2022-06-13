@@ -47,7 +47,8 @@ export class TrialBalanceComponent implements OnInit {
   dataSource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
   searchForm: FormGroup;
-  //ClassSubjectId = 0;
+  TotalDebit = 0;
+  TotalCredit = 0;
   AccountingVoucherData = {
     AccountingVoucherId: 0,
     DocDate: new Date(),
@@ -63,15 +64,9 @@ export class TrialBalanceComponent implements OnInit {
   };
 
   displayedColumns = [
-    "DocDate",
-    "PostingDate",
-    "Reference",
-    "LedgerId",
-    "Debit",
-    "Amount",
-    "ShortText",
-    "Active",
-    "Action",
+    "AccountName",
+    "Dr",
+    "Cr"
   ];
   //filteredOptions: Observable<IGLAccounts[]>;
   //Students: any;
@@ -195,10 +190,43 @@ export class TrialBalanceComponent implements OnInit {
             this.AccountingVoucherList.push(f);
           }
         })
-        console.log("this.AccountingVoucherList", this.AccountingVoucherList)
-        var sum = alasql("select sum(Amount),Debit,GeneralLedgerAccountId from ? GROUP BY GeneralLedgerAccountId,Debit", [this.AccountingVoucherList])
-        console.log("sum", sum);
-        this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
+        //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
+        var groupbyDebitCredit = alasql("select sum(Amount) as Amount,Debit,AccountName,DebitAccount from ? GROUP BY AccountName,Debit,DebitAccount order by AccountName",
+          [this.AccountingVoucherList])
+        var _AccountName = '', _amount = 0;
+        groupbyDebitCredit.forEach(f => {
+
+          if (f.AccountName == _AccountName) {
+            if (f.DebitAccount) {
+              f.Dr = Math.abs(_amount - f.Amount)
+              f.Cr = 0;
+            }
+            else {
+              f.Cr = Math.abs(_amount - f.Amount)
+              f.Dr = 0;
+            }
+          }
+          else if (groupbyDebitCredit.filter(g => g.AccountName == f.AccountName).length == 1) {
+            if (f.DebitAccount) {
+              f.Dr = Math.abs(_amount - f.Amount)
+              f.Cr = 0;
+            }
+            else {
+              f.Cr = Math.abs(_amount - f.Amount)
+              f.Dr = 0;
+            }
+          }
+          else {
+            _amount = f.Amount;
+            _AccountName = f.AccountName;
+          }
+        })
+
+        var display = groupbyDebitCredit.filter(f => f.Dr != undefined)
+        this.TotalCredit = groupbyDebitCredit.reduce((acc,current)=>acc + +current.Cr,0)
+        this.TotalDebit = groupbyDebitCredit.reduce((acc,current)=>acc + +current.Dr,0)
+
+        this.dataSource = new MatTableDataSource<IAccountingVoucher>(display);
         this.loading = false; this.PageLoading = false;
         //this.changeDetectorRefs.detectChanges();
       });

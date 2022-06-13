@@ -39,7 +39,7 @@
             <mat-header-cell *matHeaderCellDef> Duration (in minutes) </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.Duration"
+                    <input type="number" autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.Duration"
                         [(ngModel)]="element.Duration" [maxlength]="8">
                 </mat-form-field>
             </mat-cell>
@@ -74,7 +74,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.FullMark"
+                    <input type="number" autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.FullMark"
                         [(ngModel)]="element.FullMark" [maxlength]="3">
                 </mat-form-field>
             </mat-cell>
@@ -84,7 +84,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.PassMark"
+                    <input type="number" autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.PassMark"
                         [(ngModel)]="element.PassMark" [maxlength]="3">
                 </mat-form-field>
             </mat-cell>

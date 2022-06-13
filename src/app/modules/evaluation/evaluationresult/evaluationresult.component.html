@@ -6,6 +6,14 @@
 <div style="padding: 15px 15px 15px 0px;">
     <div style="width: 100%;">
         <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Evaluation type</mat-label>
+                <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="GetUpdatable()">
+                    <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
+                        {{item.EvaluationName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="outline" [style.width.px]="350">
                 <mat-label>Student</mat-label>
                 <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
@@ -15,32 +23,25 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Exam/Test/Session</mat-label>
-                <mat-select formControlName="searchExamId">
-                    <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Evaluation type</mat-label>
-                <mat-select formControlName="searchEvaluationMasterId">
-                    <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
-                        {{item.EvaluationName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="150">
-                <mat-label>Subject</mat-label>
-                <mat-select formControlName="searchSubjectId">
-                    <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
-                        {{item.SubjectName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-
+            <span *ngIf="!EvaluationUpdatable">
+                <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-label>Exam/Test/Session</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option value="0">select</mat-option>
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline" [style.width.px]="150">
+                    <mat-label>Subject</mat-label>
+                    <mat-select formControlName="searchSubjectId">
+                        <mat-option value="0">select</mat-option>
+                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
+                            {{item.SubjectName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </span>
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
@@ -48,7 +49,8 @@
                 </mat-icon>
             </button>
         </form>
-        <mat-table #table [dataSource]="AssessmentTypeDatasource" *ngIf="AssessmentTypeList.length>0">
+        <mat-table #table [dataSource]="AssessmentTypeDatasource"
+            *ngIf="RelevantEvaluationListForSelectedStudent.length>0">
             <ng-container matColumnDef="ExamName">
                 <mat-header-cell *matHeaderCellDef>Exam/Test/Session
                 </mat-header-cell>
@@ -81,8 +83,7 @@
                 <mat-header-cell *matHeaderCellDef>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <button style="margin-right: 15px;"
-                        [disabled]="loading || !element.Action || Permission=='read' || element.EvaluationStarted"
+                    <button style="margin-right: 15px;" [disabled]="loading || !element.Action1 || Permission=='read'"
                         matTooltip="display" mat-mini-fab color="accent" (click)="StartEvaluation(element)">
                         <mat-icon>pageview</mat-icon>
                     </button>
@@ -128,8 +129,8 @@
                                 style="width: 100%;padding: 15px 15px 10px 0px;">
                                 <mat-icon class="icon">star_outline</mat-icon> {{element.Description}}
                             </span>
-                            <span [innerHTML]="element.History|encodeHTML" 
-                            style="border:1px solid lightgray; width: 100%;min-height: 50px;padding: 15px;margin: 15px;"
+                            <span [innerHTML]="element.History|encodeHTML"
+                                style="border:1px solid lightgray; width: 100%;min-height: 50px;padding: 15px;margin: 15px;"
                                 *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.History.length>0">
                                 <!-- <textarea [rows]="7" [disabled]="true" style="padding:15px; width:100%">
                                     {{element.AnswerText}}

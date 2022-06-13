@@ -1,22 +1,22 @@
 <div style="display:flex;justify-content:space-between">
     <div style="margin: 15px;display:flex;justify-content:space-between">
       <!-- <div class="btn-group"> -->
-        <div
-          class="btn btn-primary"
+        <div style="margin-right: 10px;"
+          class="mat-raised-button"
           mwlCalendarPreviousView
           [view]="view"
           [(viewDate)]="viewDate"
           (viewDateChange)="closeOpenMonthViewDay()">
           Previous
         </div>
-        <div
+        <div style="margin-right: 10px;"
           class="btn btn-outline-secondary"
           mwlCalendarToday
           [(viewDate)]="viewDate">
           Today
         </div>
-        <div
-          class="btn btn-primary"
+        <div style="margin-right: 10px;"
+          class="mat-raised-button"
           mwlCalendarNextView
           [view]="view"
           [(viewDate)]="viewDate"
@@ -30,20 +30,20 @@
     </div>
     <div style="margin: 15px;">
       <div class="btn-group">
-        <div
-          class="btn btn-primary"
+        <div style="margin-right: 10px;"
+          class="mat-raised-button"
           (click)="setView(CalendarView.Month)"
           [class.active]="view === CalendarView.Month">
           Month
         </div>
-        <div
-          class="btn btn-primary"
+        <div style="margin-right: 10px;"
+          class="mat-raised-button"
           (click)="setView(CalendarView.Week)"
           [class.active]="view === CalendarView.Week">
           Week
         </div>
-        <div
-          class="btn btn-primary"
+        <div style="margin-right: 10px;"
+          class="mat-raised-button"
           (click)="setView(CalendarView.Day)"
           [class.active]="view === CalendarView.Day">
           Day
@@ -61,8 +61,7 @@
       [activeDayIsOpen]="activeDayIsOpen"
       (dayClicked)="dayClicked($event.day)"
       (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-    >
+      (eventTimesChanged)="eventTimesChanged($event)">
     </mwl-calendar-month-view>
     <mwl-calendar-week-view
       *ngSwitchCase="CalendarView.Week"
@@ -70,8 +69,7 @@
       [events]="events"
       [refresh]="refresh"
       (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-    >
+      (eventTimesChanged)="eventTimesChanged($event)">
     </mwl-calendar-week-view>
     <mwl-calendar-day-view
       *ngSwitchCase="CalendarView.Day"
