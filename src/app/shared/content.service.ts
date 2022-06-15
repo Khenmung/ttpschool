@@ -134,20 +134,18 @@ export class ContentService implements OnInit { PageLoading=true;
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
-  GetEvaluationClassGroup(orgId, active) {
+  GetEvaluationExamMaps(orgId, active) {
     var activefilter = active == 1 ? ' and Active eq true' : '';
     let filterStr = 'OrgId eq ' + orgId + activefilter;
     let list: List = new List();
     list.fields = [
-      'EvaluationClassSubjectMapId',
-      'ClassGroupId',
-      'ClassSubjectId',
+      'EvaluationExamMapId',
       'ExamId',
       'EvaluationMasterId',
       'Active',
     ];
 
-    list.PageName = "EvaluationClassSubjectMaps";
+    list.PageName = "EvaluationExamMaps";
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }

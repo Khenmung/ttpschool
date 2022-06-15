@@ -21,25 +21,6 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
-        <span *ngIf="!EvaluationUpdatable && EvaluationUpdatable!=null">
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Exam/Test/Session</mat-label>
-                <mat-select formControlName="searchExamId">
-                    <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Subject</mat-label>
-                <mat-select formControlName="searchSubjectId">
-                    <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
-                        {{item.SubjectName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </span>
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
             <mat-icon>search</mat-icon>
             <mat-icon *ngIf="loading">
@@ -69,13 +50,6 @@
                 {{element.ClassGroupName}}
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Subject">
-            <mat-header-cell *matHeaderCellDef>Subject
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.Subject}}
-            </mat-cell>
-        </ng-container>
         <ng-container matColumnDef="Action1">
             <mat-header-cell *matHeaderCellDef>
             </mat-header-cell>
@@ -95,7 +69,8 @@
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
-                <button [disabled]="loading || !element.Action1 
+                <button [disabled]="loading 
+                    || !element.Action1 
                     || Permission=='read' 
                     || EvaluationSubmitted 
                     || !EvaluationStarted
@@ -138,7 +113,7 @@
                         <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/300
                         </mat-hint>
                     </span>
-                    <span *ngIf="!EvaluationUpdatable">
+                    <span *ngIf="!EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
                                 (blur)="onBlur(element)" [value]="element.AnswerText" [rows]="5"
@@ -228,5 +203,5 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
             style="align-items: center;"></mat-row>
     </mat-table>
-    <mat-paginator [pageSizeOptions]="[1,5,10,20]"></mat-paginator>
+    <mat-paginator style="display:flex;justify-content:center" [pageSizeOptions]="[1,5,10,20]"></mat-paginator>
 </div>

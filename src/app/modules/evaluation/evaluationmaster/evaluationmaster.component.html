@@ -44,11 +44,23 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="ClassGroupId">
+            <mat-header-cell *matHeaderCellDef> Class Group </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-select (selectionChange)="onBlur(element)" [value]="element.ClassGroupId"
+                        [(ngModel)]="element.ClassGroupId">
+                        <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">{{item.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="DisplayResult">
             <mat-header-cell *matHeaderCellDef> Display Result </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                    [checked]="element.DisplayResult==1?true:false">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateDisplayResult(element,$event)"
+                    [checked]="element.DisplayResult">
                 </mat-checkbox>
             </mat-cell>
         </ng-container>
@@ -64,8 +76,8 @@
             <mat-header-cell *matHeaderCellDef style="display:flex; justify-content: center;"> Provide Certificate
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                    [checked]="element.ProvideCertificate==1?true:false">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateProvideCertificate(element,$event)"
+                    [checked]="element.ProvideCertificate">
                 </mat-checkbox>
             </mat-cell>
         </ng-container>

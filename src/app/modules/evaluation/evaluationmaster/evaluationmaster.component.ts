@@ -25,6 +25,7 @@ export class EvaluationMasterComponent implements OnInit {
   CurrentRow: any = {};
   EvaluationMasterListName = 'EvaluationMasters';
   Applications = [];
+  ClassGroups=[];
   loading = false;
   SelectedBatchId = 0;
   EvaluationMasterList: IEvaluationMaster[] = [];
@@ -39,6 +40,7 @@ export class EvaluationMasterComponent implements OnInit {
     EvaluationName: '',
     Description: '',
     Duration: 0,
+    ClassGroupId: 0,
     DisplayResult: false,
     AppendAnswer: false,
     ProvideCertificate: false,
@@ -50,8 +52,9 @@ export class EvaluationMasterComponent implements OnInit {
   displayedColumns = [
     "EvaluationMasterId",
     "EvaluationName",
-    "Description",
+   // "Description",
     "Duration",
+    "ClassGroupId",
     "FullMark",
     "PassMark",
     "AppendAnswer",
@@ -114,6 +117,7 @@ export class EvaluationMasterComponent implements OnInit {
       EvaluationName: '',
       Description: '',
       Duration: 0,
+      ClassGroupId:0,
       DisplayResult: false,
       ProvideCertificate: false,
       AppendAnswer: false,
@@ -133,6 +137,15 @@ export class EvaluationMasterComponent implements OnInit {
   updateActive(row, value) {
     row.Action = true;
     row.Active = value.checked; //? 1: 0;
+  }
+  updateDisplayResult(row,value)
+  {
+    row.Action = true;
+    row.DisplayResult = value.checked;
+  }
+  updateProvideCertificate(row,value){
+    row.Action = true;
+    row.ProvideCertificate = value.checked;
   }
   updateUpdatable(row, value) {
     debugger;
@@ -178,12 +191,14 @@ export class EvaluationMasterComponent implements OnInit {
           this.EvaluationMasterData.EvaluationName = row.EvaluationName;
           this.EvaluationMasterData.Description = row.Description;
           this.EvaluationMasterData.DisplayResult = row.DisplayResult;
+          this.EvaluationMasterData.ProvideCertificate = row.ProvideCertificate;
           this.EvaluationMasterData.AppendAnswer = row.AppendAnswer;
           this.EvaluationMasterData.Duration = row.Duration==null?0:row.Duration;
+          this.EvaluationMasterData.ClassGroupId = row.ClassGroupId;
           this.EvaluationMasterData.FullMark = row.FullMark==null?0:row.FullMark;
           this.EvaluationMasterData.PassMark = row.PassMark==null?0:row.PassMark;
           this.EvaluationMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
-
+          
           if (this.EvaluationMasterData.EvaluationMasterId == 0) {
             this.EvaluationMasterData["CreatedDate"] = new Date();
             this.EvaluationMasterData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -284,6 +299,7 @@ export class EvaluationMasterComponent implements OnInit {
       "Description",
       "AppendAnswer",
       "Duration",
+      "ClassGroupId",
       "FullMark",
       "PassMark",
       "DisplayResult",
@@ -316,6 +332,7 @@ export class EvaluationMasterComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
+        this.ClassGroups =this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.GetEvaluationMaster();
         this.loading = false; this.PageLoading = false;
       });
@@ -341,6 +358,7 @@ export interface IEvaluationMaster {
   EvaluationName: string;
   Description: string;
   Duration: number;
+  ClassGroupId: number;
   DisplayResult: boolean;
   AppendAnswer: boolean;
   ProvideCertificate

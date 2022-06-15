@@ -16,7 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './exams.component.html',
   styleUrls: ['./exams.component.scss']
 })
-export class ExamsComponent implements OnInit { PageLoading=true;
+export class ExamsComponent implements OnInit {
+    PageLoading = true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -31,6 +32,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
   ClassSubjectComponents = [];
   ExamNames = [];
   Batches = [];
+  ExamModes = [];
   ExamStudentSubjectResult = [];
   dataSource: MatTableDataSource<IExams>;
   allMasterData = [];
@@ -44,6 +46,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
     ClassGroupId: 0,
     ReleaseResult: 0,
     ReleaseDate: null,
+    ExamModeId: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 1
@@ -56,6 +59,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
     'ClassGroupId',
     'ReleaseDate',
     'ReleaseResult',
+    'ExamModeId',
     'Active',
     'Action'
   ];
@@ -111,6 +115,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
       ClassGroupId: 0,
       ReleaseResult: 0,
       ReleaseDate: null,
+      ExamModeId: 0,
       BatchId: 0,
       OrgId: 0,
       Active: 0,
@@ -150,7 +155,11 @@ export class ExamsComponent implements OnInit { PageLoading=true;
       " and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
       " and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
 
-
+    if (row.ExamModeId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select exam mode.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (row.ExamId > 0)
       checkFilterString += " and ExamId ne " + row.ExamId;
     checkFilterString += " and " + this.StandardFilter;
@@ -163,7 +172,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -173,6 +182,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
           this.ExamsData.ClassGroupId = row.ClassGroupId;
+          this.ExamsData.ExamModeId = row.ExamModeId;
           this.ExamsData.ReleaseResult = row.ReleaseResult;
           this.ExamsData.BatchId = this.SelectedBatchId;
           if (row.ReleaseResult == 1) {
@@ -208,7 +218,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('Exams', this.ExamsData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.ExamId = data.ExamId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -220,7 +230,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           //this.GetExamStudentSubjectResults(this.ExamsData.ExamId, row);
         });
@@ -232,7 +242,8 @@ export class ExamsComponent implements OnInit { PageLoading=true;
     let list: List = new List();
 
     list.fields = [
-      "ExamId", "ExamNameId", "StartDate", "EndDate", "ClassGroupId",
+      "ExamId", "ExamNameId", "StartDate",
+      "EndDate", "ClassGroupId", "ExamModeId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -256,6 +267,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
               ExamId: 0,
               ExamNameId: e.MasterDataId,
               ExamName: e.MasterDataName,
+              ExamModeId: 0,
               StartDate: new Date(),
               EndDate: new Date(),
               ReleaseResult: 0,
@@ -272,7 +284,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
           return this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
         this.dataSource = new MatTableDataSource<IExams>(this.Exams);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   private getTime(date?: Date) {
@@ -288,6 +300,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
         this.StudentGradeFormula = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
         this.GetExams();
 
       });
@@ -311,7 +324,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
           e.ClassId = e.ClassSubject.ClassId;
           return e;
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetExamStudentSubjectResults(examId, row) {
@@ -427,13 +440,13 @@ export class ExamsComponent implements OnInit { PageLoading=true;
             this.dataservice.postPatch('ExamStudentResults', this.ExamStudentSubjectResult, 0, 'post')
               .subscribe(
                 (data: any) => {
-                  this.loading = false; this.PageLoading=false;
+                  this.loading = false; this.PageLoading = false;
                   row.Action = false;
                   this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
                 }, error => {
                   //console.log("error",error);
                   this.contentservice.openSnackBar("Something went wrong. Please try again.", globalconstants.ActionText, globalconstants.RedBackground);
-                  this.loading = false; this.PageLoading=false;
+                  this.loading = false; this.PageLoading = false;
                 })
           })
       })
@@ -577,7 +590,7 @@ export class ExamsComponent implements OnInit { PageLoading=true;
           }
 
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetStudents() {
@@ -626,6 +639,7 @@ export interface IExams {
   ExamName: string;
   StartDate: Date;
   EndDate: Date;
+  ExamModeId: number;
   ClassGroupId: number;
   ReleaseResult: number;
   ReleaseDate: Date;

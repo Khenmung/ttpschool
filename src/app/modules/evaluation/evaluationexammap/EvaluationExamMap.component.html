@@ -15,14 +15,14 @@
                 </mat-select>
             </mat-form-field>
             <span *ngIf="!EvaluationUpdatable && EvaluationUpdatable!=null">
-                <mat-form-field appearance="outline" [style.width.px]="200">
+                <!-- <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Class/Class group</mat-label>
                     <mat-select formControlName="searchClassGroupId" (selectionChange)="getSelectedClassSubjects()">
                         <mat-option value="0">select</mat-option>
                         <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">{{item.MasterDataName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Exam/Test/Session</mat-label>
                     <mat-select formControlName="searchExamId">
@@ -31,7 +31,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="200">
+                <!-- <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Subject</mat-label>
                     <mat-select formControlName="searchSubjectId">
                         <mat-option [value]="0">select</mat-option>
@@ -39,22 +39,22 @@
                             {{item.ClassSubject}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
             </span>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationClassSubjectMap()">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationExamMap()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
                 </mat-icon>
             </button>
         </form>
-        <!-- <div style="width: 100%;"> -->
+        If evaluation mapping is already in used, it can not be updated.
         <mat-table #table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="EvaluationClassSubjectMapId">
+            <ng-container matColumnDef="EvaluationExamMapId">
                 <mat-header-cell *matHeaderCellDef>Id
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.EvaluationClassSubjectMapId}}
+                    {{element.EvaluationExamMapId}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="EvaluationName">
@@ -64,7 +64,7 @@
                     {{element.EvaluationName}}
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="ClassGroupId">
+            <!-- <ng-container matColumnDef="ClassGroupId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Class/Class Group
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
@@ -78,8 +78,8 @@
                         </mat-select>
                     </mat-form-field>
                 </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ClassSubjectId">
+            </ng-container> -->
+            <!-- <ng-container matColumnDef="ClassSubjectId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Subject
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
@@ -93,7 +93,7 @@
                         </mat-select>
                     </mat-form-field>
                 </mat-cell>
-            </ng-container>
+            </ng-container> -->
             <ng-container matColumnDef="ExamId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Exam/Test/Session
                 </mat-header-cell>
@@ -125,7 +125,12 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                    <button [disabled]="
+                    loading || 
+                    !element.Action || 
+                    Permission=='read' ||
+                    element.AlreadyUsed" 
+                    matTooltip="save"
                         mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>
                         <mat-icon *ngIf="loading">

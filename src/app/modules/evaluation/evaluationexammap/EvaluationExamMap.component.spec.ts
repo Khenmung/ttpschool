@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EvaluationClassSubjectMapComponent } from './EvaluationClassSubjectMap.component';
+import { EvaluationExamMapComponent } from './EvaluationExamMap.component';
 
 describe('EvaluationComponent', () => {
-  let component: EvaluationClassSubjectMapComponent;
-  let fixture: ComponentFixture<EvaluationClassSubjectMapComponent>;
+  let component: EvaluationExamMapComponent;
+  let fixture: ComponentFixture<EvaluationExamMapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EvaluationClassSubjectMapComponent ]
+      declarations: [ EvaluationExamMapComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EvaluationClassSubjectMapComponent);
+    fixture = TestBed.createComponent(EvaluationExamMapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

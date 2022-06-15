@@ -198,7 +198,7 @@ export class globalconstants {
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',
-                    'EVALUATIONCLASSSUBJECTMAP': 'evaluation class subject exam',
+                    'EvaluationExamMap': 'evaluation exam',
                     'EVALUATIONQUESTIONNAIRE': 'evaluation questionnaire',
                     'EXECUTEEVALUATION': 'execute evaluation',
                     'EVALUATIONTYPE': 'evaluation type',
@@ -289,6 +289,7 @@ export class globalconstants {
                 "SECTION": "section",
                 "HOUSE": "house",
                 "CLASSGROUP": "class group",
+                "EXAMMODE": "exam mode",
                 "SUBJECTMARKCOMPONENT": "subject mark component",
                 "LANGUAGESUBJECTLOWERCLS": "language subject lower",
                 "LANGUAGESUBJECTUPPERCLS": "language subject upper",

@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ClassEvaluationComponent } from './classevaluation/classevaluation.component';
 import { ClassEvaluationOptionComponent } from './classevaluationoption/classevaluationoption.component';
-import { EvaluationClassSubjectMapComponent } from './evaluationclasssubjectmap/EvaluationClassSubjectMap.component';
+import { EvaluationExamMapComponent } from './evaluationexammap/EvaluationExamMap.component';
 import { EvaluationboardComponent } from './evaluationboard/evaluationboard.component';
 import { EvaluationandExamComponent } from './evaluationandexam/evaluationandexam.component';
 import { EvaluationMasterComponent } from './evaluationmaster/evaluationmaster.component';
@@ -28,7 +28,7 @@ export class EvaluationRoutingModule { }
 export const EvaluationComponents = [
   ClassEvaluationComponent,
   ClassEvaluationOptionComponent,
-  EvaluationClassSubjectMapComponent,
+  EvaluationExamMapComponent,
   EvaluationboardComponent,  
   EvaluationandExamComponent,  
   EvaluationMasterComponent,

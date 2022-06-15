@@ -32,7 +32,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline" [style.width.px]="150">
+                <!-- <mat-form-field appearance="outline" [style.width.px]="150">
                     <mat-label>Subject</mat-label>
                     <mat-select formControlName="searchSubjectId">
                         <mat-option value="0">select</mat-option>
@@ -40,7 +40,7 @@
                             {{item.SubjectName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
             </span>
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
                 <mat-icon>search</mat-icon>
@@ -72,13 +72,13 @@
                     {{element.ClassGroupName}}
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="Subject">
+            <!-- <ng-container matColumnDef="Subject">
                 <mat-header-cell *matHeaderCellDef>Subject
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     {{element.Subject}}
                 </mat-cell>
-            </ng-container>
+            </ng-container> -->
             <ng-container matColumnDef="Action">
                 <mat-header-cell *matHeaderCellDef>
                 </mat-header-cell>

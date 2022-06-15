@@ -4,7 +4,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassEvaluationComponent } from '../classevaluation/classevaluation.component';
-import { EvaluationClassSubjectMapComponent } from '../evaluationclasssubjectmap/EvaluationClassSubjectMap.component';
+import { EvaluationExamMapComponent } from '../evaluationexammap/EvaluationExamMap.component';
 import { EvaluationMasterComponent } from '../evaluationmaster/evaluationmaster.component';
 import { EvaluationresultComponent } from '../evaluationresult/evaluationresult.component';
 import { StudentEvaluationComponent } from '../studentevaluation/studentevaluation.component';
@@ -17,11 +17,11 @@ import { StudentEvaluationComponent } from '../studentevaluation/studentevaluati
 export class EvaluationboardComponent implements AfterViewInit {
 
   components: any = [
-    EvaluationresultComponent,
     EvaluationMasterComponent,
     ClassEvaluationComponent,
-    EvaluationClassSubjectMapComponent,
-    StudentEvaluationComponent
+    EvaluationExamMapComponent,
+    StudentEvaluationComponent,
+    EvaluationresultComponent
   ];
 
   tabNames = [
@@ -73,8 +73,8 @@ export class EvaluationboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(ClassEvaluationComponent);
     this.AddRemoveComponent(perObj, comindx);
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONCLASSSUBJECTMAP)
-    var comindx = this.components.indexOf(EvaluationClassSubjectMapComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EvaluationExamMap)
+    var comindx = this.components.indexOf(EvaluationExamMapComponent);
     this.AddRemoveComponent(perObj, comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONRESULT)

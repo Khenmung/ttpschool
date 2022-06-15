@@ -127,7 +127,8 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
       //console.log("duplicateCheck",duplicateCheck);
       var _teacherobj = this.ClassSubjects.filter(f => f.TeacherId == row.TeacherId)
       this.contentservice.openSnackBar("Teacher " + _teacherobj[0].TeacherShortName + " already exists in the same period", globalconstants.ActionText, globalconstants.RedBackground);
-      //this.loading = false; this.PageLoading=false;
+      this.loading = false; 
+      
     }
     else {
 
@@ -170,8 +171,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
           row.TimeTableId = data.TimeTableId;
           this.GetAllSchoolTimeTable();
           row.Action = false;
-          this.loading = false; this.PageLoading=false;
-
+          this.loading = false;
           if (this.rowCount == 0) {
             this.rowCount = -1;
             this.loading = false; this.PageLoading=false;
@@ -187,13 +187,11 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
         (data: any) => {
           debugger;
           this.GetAllSchoolTimeTable();
-          //var this.AllTimeTable.filter(f=>)
-          //this.loading = false; this.PageLoading=false;
-          //this.rowCount++;
           row.Action = false;
           if (this.rowCount == 0) {
             this.rowCount = -1;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; 
+            this.PageLoading=false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);

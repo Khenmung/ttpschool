@@ -58,9 +58,8 @@ export class EvaluationresultComponent implements OnInit {
   StudentName = '';
   RelevantEvaluationListForSelectedStudent = [];
   EvaluationPlanColumns = [
-    'EvaluationName',
     'ExamName',
-    'Subject',
+    'EvaluationName',
     'Action'
   ];
   AssessmentPrintHeading: any[] = [];
@@ -311,7 +310,7 @@ export class EvaluationresultComponent implements OnInit {
             ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
           }
         })
-        this.contentservice.GetEvaluationClassGroup(this.LoginUserDetail[0]["orgId"], 1)
+        this.contentservice.GetEvaluationExamMaps(this.LoginUserDetail[0]["orgId"], 1)
           .subscribe((data: any) => {
             data.value.forEach(m => {
 
