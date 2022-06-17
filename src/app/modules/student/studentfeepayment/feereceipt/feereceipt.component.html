@@ -22,7 +22,8 @@
                             {{element.Active==0?'Canceled':'Active'}}</a></mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="ReceiptNo">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content:center"> Receipt No. </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header style="justify-content:center"> Receipt No.
+                    </mat-header-cell>
                     <mat-cell *matCellDef="let element" style="justify-content:center">
                         {{element.ReceiptNo}}</mat-cell>
                 </ng-container>
@@ -34,7 +35,8 @@
     </div>
     <div style="display: flex; flex-direction: column; width: 100%;padding: 15px 0px 15px 0px;">
         <div style="padding: 5px;"><b>Print/Cancel Receipt</b></div>
-        <div style="border:1px solid lightgray;padding-bottom: 15px;" class="divCls" fxLayoutGap="100px" id="printSection">
+        <div style="border:1px solid lightgray;padding-bottom: 15px;" class="divCls" fxLayoutGap="100px"
+            id="printSection">
             <div fxLayout="column" fxLayoutAlign="space-around center">
                 <div *ngFor="let item of ReceiptHeading;let i=index">
                     <span [ngStyle]="item.Logic" [innerHTML]="item.Description"></span>
@@ -64,45 +66,53 @@
                 </span>
             </div>
             <div style="border-collapse: collapse; border: 1px solid lightgray;">
-                    <mat-table [dataSource]="dataSource">
-                        <ng-container matColumnDef="index">
-                            <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
-                            <mat-cell *matCellDef="let element;let i = index;"> {{i+1}} </mat-cell>
-                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="FeeName">
-                            <mat-header-cell *matHeaderCellDef> Particulars </mat-header-cell>
-                            <mat-cell *matCellDef="let element"> {{element.FeeName}} </mat-cell>
-                            <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-                        </ng-container>
-                        <ng-container matColumnDef="Amount">
-                            <mat-header-cell *matHeaderCellDef> Amount &#x20b9;</mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                {{element.Amount}}
-                            </mat-cell>
-                            <mat-footer-cell *matFooterCellDef fxLayout="row" fxLayoutAlign="space-between center">
-                                <div><b>Balance &#x20b9;:</b> {{calculateBalance()}}
-                                </div>
-                                <div><b>Total &#x20b9;:</b> {{ calculateTotal() }}</div>
-                            </mat-footer-cell>
-                        </ng-container>
-                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: displayedColumns;let i=index;" class="element-row">
-                        </mat-row>
-                        <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
-                        </mat-footer-row>
-                    </mat-table> 
-                    <div style="display: flex;justify-content: flex-end;height: 100px;align-items:flex-end;padding: 10px;">                         
-                         <div>Accountant</div>   
-                    </div>           
+                <mat-table [dataSource]="dataSource">
+                    <ng-container matColumnDef="index">
+                        <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
+                        <mat-cell *matCellDef="let element;let i = index;"> {{i+1}} </mat-cell>
+                        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="FeeName">
+                        <mat-header-cell *matHeaderCellDef> Particulars </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.FeeName}} </mat-cell>
+                        <mat-footer-cell *matFooterCellDef>
+                            <b>Total:</b>
+                        </mat-footer-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="BaseAmount">
+                        <mat-header-cell *matHeaderCellDef style="display:flex;justify-content:center"> Fee &#x20b9;
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element"> {{element.BaseAmount}} </mat-cell>
+                        <mat-footer-cell *matFooterCellDef>
+                            <b>{{TotalAmount}}</b>
+                        </mat-footer-cell>
+                    </ng-container>
+                    <ng-container matColumnDef="Balance">
+                        <mat-header-cell *matHeaderCellDef> Balance &#x20b9;</mat-header-cell>
+                        <mat-cell *matCellDef="let element" style="justify-content:flex-end;">
+                            {{element.Balance}}
+                        </mat-cell>
+                        <mat-footer-cell *matFooterCellDef style="justify-content:flex-end;">
+                            <b>{{Balance}}</b>
+                        </mat-footer-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;let i=index;" class="element-row">
+                    </mat-row>
+                    <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
+                    </mat-footer-row>
+                </mat-table>
+                <div style="display: flex;justify-content: flex-end;height: 100px;align-items:flex-end;padding: 10px;">
+                    <div>Accountant</div>
+                </div>
             </div>
         </div>
         <div style="padding: 15px;" fxLayout="row" fxLayoutAlign="center center">
             <div fxLayout="row" fxLayoutAlign="space-around center"
                 *ngIf="studentInfoTodisplay.ReceiptNo>0 && BillStatus==1">
                 <div>
-                    <button [disabled]="loading || Permission=='read'" matTooltip="cancel receipt" *ngIf="!CancelReceiptMode" (click)="edit()"
-                        class="mat-raised-button">
+                    <button [disabled]="loading || Permission=='read'" matTooltip="cancel receipt"
+                        *ngIf="!CancelReceiptMode" (click)="edit()" class="mat-raised-button">
                         <mat-icon>cancel</mat-icon>
                     </button>
                     <button [disabled]="loading || Permission=='read'" matTooltip="print" printSectionId="printSection"
@@ -110,19 +120,23 @@
                         <mat-icon>print</mat-icon>
                     </button>
                 </div>
-                <div style="padding:15px;margin-right:15px;border-collapse:collapse;border: 1px solid lightgray;"
-                    *ngIf="CancelReceiptMode">Are you sure you want to cancel
-                    this receipt?<br>
-                    <button [disabled]="loading || Permission=='read'" 
-                    matTooltip="yes" (click)="CancelReceipt()" mat-raised-button color="accent">
-                        <mat-icon>done</mat-icon>
-                        <mat-icon *ngIf="loading">
-                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                        </mat-icon>
-                    </button>
-                    <button [disabled]="loading || Permission=='read'" matTooltip="no" (click)="done()" class="mat-raised-button">
-                        <mat-icon>cancel</mat-icon>
-                    </button>
+                <div style="display: flex;flex-direction: column; padding:15px;margin-right:15px;border-collapse:collapse;border: 1px solid lightgray;"
+                    *ngIf="CancelReceiptMode">
+                    <span style="margin-bottom: 15px">Are you sure you want to cancel
+                        this receipt?</span>
+                    <span style="display:flex ;">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="yes" (click)="CancelReceipt()"
+                            mat-raised-button color="accent">
+                            <mat-icon>done</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
+                        </button>
+                        <button [disabled]="loading || Permission=='read'" matTooltip="no" (click)="done()"
+                            class="mat-raised-button">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </span>
                 </div>
             </div>
         </div>

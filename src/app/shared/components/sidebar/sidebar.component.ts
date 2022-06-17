@@ -17,6 +17,7 @@ export class SidebarComponent implements OnInit { PageLoading=true;
   sideMenu = [];
   collapse = false;
   SelectedApplicationId = 0;
+  MenuData =[];
   constructor(
     private dataservice: NaomitsuService,
     private shareddata: SharedataService,
@@ -28,8 +29,12 @@ export class SidebarComponent implements OnInit { PageLoading=true;
     this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
     this.loginUserDetail = this.tokenStorage.getUserDetail();
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
-    if (this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)//this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)
-      this.GetMenuData();
+    this.shareddata.CurrentPagesData.subscribe((data:any)=>{
+      this.MenuData =[...data];
+    })
+    //if (this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)//this.SelectedApplicationId != 0 && this.SelectedBatchId != 0)
+    if(this.MenuData.length==0)
+    this.GetMenuData();
 
   }
   open() {

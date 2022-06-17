@@ -314,7 +314,7 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         data.value.forEach(student => {
-          if (student.Student.EmailAddress.length > 0) {
+          if (student.Student.EmailAddress !=null && student.Student.EmailAddress.length > 0) {
             student.ClassName = this.Classes.filter(c => c.ClassId == student.ClassId)[0].ClassName;
             student.EmailAddress = student.Student.EmailAddress;
             student.FullName = student.Student.FirstName + " " + student.Student.LastName;

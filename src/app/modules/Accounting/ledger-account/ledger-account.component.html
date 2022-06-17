@@ -31,14 +31,14 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <button [disabled]="loading" class="mat-raised-button" (click)="GetGeneralLedger()">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetGeneralLedger()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
                 </mat-icon>
             </button>
         </form>
-        <mat-table #table [dataSource]="dataSource">
+        <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="GeneralLedgerId">
                 <mat-header-cell *matHeaderCellDef>
                     <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
@@ -52,7 +52,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="GeneralLedgerName">
-                <mat-header-cell *matHeaderCellDef>Account
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Account
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -62,7 +62,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="AccountNatureId">
-                <mat-header-cell *matHeaderCellDef>Account Nature
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Account Nature
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -75,7 +75,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="AccountGroupId">
-                <mat-header-cell *matHeaderCellDef>Group
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Group
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -88,7 +88,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="AccountSubGroupId">
-                <mat-header-cell *matHeaderCellDef>Sub group
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Sub group
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -102,7 +102,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="ContactNo">
-                <mat-header-cell *matHeaderCellDef>Contact no.
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Contact no.
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -112,7 +112,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="ContactName">
-                <mat-header-cell *matHeaderCellDef>Contact Person
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Contact Person
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -122,7 +122,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Email">
-                <mat-header-cell *matHeaderCellDef>Email
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Email
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -132,7 +132,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Address">
-                <mat-header-cell *matHeaderCellDef>Address
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Address
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
@@ -142,7 +142,7 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;" mat-sort-header>Active
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="justify-content: center;">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"

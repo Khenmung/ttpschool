@@ -2,7 +2,7 @@ mat-header-cell{
     display: grid;
     justify-content: center;
 }
-.mat-cell,.mat-header-cell{
+.mat-cell,.mat-header-cell,.mat-footer-cell{
     border-collapse: collapse;
     border-width: 0px 1px 0px 0px;
     border-color: lightgray;
@@ -19,7 +19,7 @@ mat-header-cell{
     place-items: center;
     flex: 1 1 50px;
 }
-.mat-column-Amount{
+.mat-column-Amount,.mat-column-BaseAmount{
     display: flex;
     justify-content: flex-end;
     flex: 1 1 150px;

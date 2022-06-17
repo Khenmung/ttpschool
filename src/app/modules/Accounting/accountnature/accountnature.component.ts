@@ -229,7 +229,7 @@ export class AccountNatureComponent implements OnInit {
     }
     if (row.DebitType != undefined)
       " or DebitType eq " + row.DebitType
-
+    
 
     if (row.AccountNatureId > 0)
       checkFilterString += " and AccountNatureId ne " + row.AccountNatureId;

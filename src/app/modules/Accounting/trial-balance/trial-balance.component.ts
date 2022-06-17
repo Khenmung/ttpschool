@@ -190,7 +190,7 @@ export class TrialBalanceComponent implements OnInit {
             this.AccountingVoucherList.push(f);
           }
         })
-        //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
+        console.log("this.AccountingVoucherList", this.AccountingVoucherList)
         var groupbyDebitCredit = alasql("select sum(Amount) as Amount,Debit,AccountName,DebitAccount from ? GROUP BY AccountName,Debit,DebitAccount order by AccountName",
           [this.AccountingVoucherList])
         var _AccountName = '', _amount = 0;
@@ -221,7 +221,7 @@ export class TrialBalanceComponent implements OnInit {
             _AccountName = f.AccountName;
           }
         })
-
+        console.log("groupbyDebitCredit",groupbyDebitCredit)
         var display = groupbyDebitCredit.filter(f => f.Dr != undefined)
         this.TotalCredit = groupbyDebitCredit.reduce((acc,current)=>acc + +current.Cr,0)
         this.TotalDebit = groupbyDebitCredit.reduce((acc,current)=>acc + +current.Dr,0)

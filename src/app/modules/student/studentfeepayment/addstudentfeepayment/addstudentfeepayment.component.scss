@@ -1,3 +1,6 @@
+mat-cell,mat-footer-cell{
+    border-right: 1px solid lightgray;
+}
 button {
     outline: none;
 }
@@ -10,7 +13,13 @@ svg {
     padding-bottom: 0px !important;
 }
 
-.mat-column-MonthName{
+.mat-column-MonthName
+{
+    flex: 1 1 100px;
+    padding-left: 5px;
+}
+.mat-column-BaseAmount {
+    justify-content: center;
     flex: 1 1 70px;
 }
 .mat-column-TotalCredit{
@@ -20,20 +29,24 @@ svg {
 .mat-column-FeeName
 {
     flex:1 1 300px;
+    padding-left: 5px;
 }
 .mat-column-Amount
 {
+    justify-content: center;
     flex:1 1 100px;
 }
+.mat-column-TotalDebit,.mat-column-Balance,.mat-column-Action
+{
+    justify-content: center;
+    flex:1 1 70px;
+    
+}
 .mat-column-SlNo,
-.mat-column-SlNo1,
-.mat-column-Action,
-.mat-column-TotalDebit,
-.mat-column-Balance {
+.mat-column-SlNo1
+ {
     flex:1 1 60px;
 }
-
-
 .mat-table {
     overflow    : auto;
     //max-height: 500px;

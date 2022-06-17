@@ -93,6 +93,7 @@ export class EvaluationExamMapComponent implements OnInit {
 
   }
   PageLoad() {
+    debugger;
     console.log("EvaluationUpdatable", this.EvaluationUpdatable)
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();

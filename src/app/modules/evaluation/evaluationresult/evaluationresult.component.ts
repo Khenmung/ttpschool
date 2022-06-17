@@ -58,8 +58,8 @@ export class EvaluationresultComponent implements OnInit {
   StudentName = '';
   RelevantEvaluationListForSelectedStudent = [];
   EvaluationPlanColumns = [
-    'ExamName',
     'EvaluationName',
+    'ExamName',    
     'Action'
   ];
   AssessmentPrintHeading: any[] = [];
@@ -70,7 +70,7 @@ export class EvaluationresultComponent implements OnInit {
     'Description',
     //'AnswerOptionsId',
   ];
-  EvaluationClassGroup = [];
+  EvaluationExamMap = [];
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
@@ -145,14 +145,14 @@ export class EvaluationresultComponent implements OnInit {
     var _searchEvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     var _studentObj = this.searchForm.get("searchStudentName").value;
 
-    var _examobj = this.Exams.filter(f => f.ExamId == row.ExamId)
-    if (_examobj.length > 0)
-      _studentObj["SessionName"] = _examobj[0].ExamName;
-    else if (!this.EvaluationUpdatable) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Exam/Session name must be selected", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // var _examobj = this.Exams.filter(f => f.ExamId == row.ExamId)
+    // if (_examobj.length > 0)
+    //   _studentObj["SessionName"] = _examobj[0].ExamName;
+    // else if (!this.EvaluationUpdatable) {
+    //   this.loading = false; this.PageLoading = false;
+    //   this.contentservice.openSnackBar("Exam/Session name must be selected", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
 
     var _evaluationobj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _searchEvaluationMasterId)
     if (_evaluationobj.length > 0)
@@ -169,7 +169,7 @@ export class EvaluationresultComponent implements OnInit {
       filterStr += ' and StudentId eq ' + this.StudentId
     else {
       filterStr += ' and StudentClassId eq ' + this.StudentClassId
-      filterStr += ' and EvaluationClassSubjectMapId eq ' + row.EvaluationClassSubjectMapId
+      filterStr += ' and EvaluationExamMapId eq ' + row.EvaluationExamMapId
     }
     var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
     let list: List = new List();
@@ -178,7 +178,7 @@ export class EvaluationresultComponent implements OnInit {
       'StudentClassId',
       'StudentId',
       'ClassEvaluationId',
-      'EvaluationClassSubjectMapId',
+      'EvaluationExamMapId',
       'AnswerText',
       'History',
       'Active'
@@ -222,7 +222,7 @@ export class EvaluationresultComponent implements OnInit {
               StudentId: this.StudentId,
               CatSequence: clseval.DisplayOrder,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
-              EvaluationClassSubjectMapId: existing[0].EvaluationClassSubjectMapId,
+              EvaluationExamMapId: existing[0].EvaluationExamMapId,
               Description: clseval.Description,
               AnswerText: existing[0].AnswerText,
               History: existing[0].History,
@@ -250,7 +250,7 @@ export class EvaluationresultComponent implements OnInit {
               History: '',
               StudentEvaluationResultId: 0,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
-              EvaluationClassSubjectMapId: row.EvaluationClassSubjectMapId,
+              EvaluationExamMapId: row.EvaluationExamMapId,
               ClassEvaluationId: clseval.ClassEvaluationId,
               Active: 0,
               EvaluationMasterId: row.EvaluationMasterId,
@@ -324,14 +324,14 @@ export class EvaluationresultComponent implements OnInit {
                   m.ClassGroupName = _clsObj[0].MasterDataName;
                 else
                   m.ClassGroupName = '';
-
+                 m.ClassGroupId = EvaluationObj[0].ClassGroupId; 
                 var _examObj = this.Exams.filter(f => f.ExamId == m.ExamId);
                 if (_examObj.length > 0)
                   m.ExamName = _examObj[0].ExamName
                 else
                   m.ExamName = '';
                 m.Action1 = true;
-                this.EvaluationClassGroup.push(m);
+                this.EvaluationExamMap.push(m);
               }
             })
             //this.EvaluationClassGroup = [...data.value];
@@ -423,6 +423,7 @@ export class EvaluationresultComponent implements OnInit {
       'EvaluationName',
       'Description',
       'Duration',
+      'ClassGroupId',
       'DisplayResult',
       'AppendAnswer',
       'ProvideCertificate',
@@ -458,7 +459,7 @@ export class EvaluationresultComponent implements OnInit {
     var _evaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
     this.loading = true;
     if (_evaluationMasterId == 0) {
-      this.contentservice.openSnackBar("Please select evaluation name.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false; this.PageLoading = false;
       return;
     }
@@ -469,18 +470,18 @@ export class EvaluationresultComponent implements OnInit {
     // if (_classGroupIdObj.length > 0) {
     //   _classGroupId = _classGroupIdObj[0].ClassGroupId;
     // }
-    var _examId = this.searchForm.get("searchExamId").value;
-    var filterstr = '';
-    if (_examId > 0 && !this.EvaluationUpdatable) {
-      filterstr = 'ExamId eq ' + _examId + ' and '
-    }
+    // var _examId = this.searchForm.get("searchExamId").value;
+    // var filterstr = '';
+    // if (_examId > 0 && !this.EvaluationUpdatable) {
+    //   filterstr = 'ExamId eq ' + _examId + ' and '
+    // }
 
     var _classGroupIdObj = [];
-    if (this.EvaluationUpdatable)
-      _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _evaluationMasterId);
-    else
-      _classGroupIdObj = this.EvaluationClassGroup.filter(f => f.EvaluationMasterId == _evaluationMasterId
-        && f.ExamId == _examId);
+    //if (this.EvaluationUpdatable)
+      _classGroupIdObj = this.EvaluationExamMap.filter(f => f.EvaluationMasterId == _evaluationMasterId);
+    // else
+    //   _classGroupIdObj = this.EvaluationExamMap.filter(f => f.EvaluationMasterId == _evaluationMasterId
+    //     && f.ExamId == _examId);
 
     this.RelevantEvaluationListForSelectedStudent = [];
     var __classGroupId = 0;
@@ -642,7 +643,7 @@ export class EvaluationresultComponent implements OnInit {
 export interface IStudentEvaluation {
   StudentEvaluationId: number;
   ClassEvaluationId: number;
-  EvaluationClassSubjectMapId: number;
+  EvaluationExamMapId: number;
   ClassEvaluationAnswerOptionParentId: number;
   StudentEvaluationResultId: number;
   AnswerText: string;

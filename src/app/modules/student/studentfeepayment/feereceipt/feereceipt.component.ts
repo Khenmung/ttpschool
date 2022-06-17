@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Observable } from 'rxjs/internal/Observable';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../../shared/databaseService';
@@ -15,7 +16,7 @@ import { SharedataService } from '../../../../shared/sharedata.service';
   styleUrls: ['./feereceipt.component.scss'],
 })
 export class FeereceiptComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @Input("BillDetail") BillDetail: any[];
   @Input("StudentClass") studentInfoTodisplay: any;
   @Input("OffLineReceiptNo") OffLineReceiptNo: any;
@@ -74,6 +75,7 @@ export class FeereceiptComponent implements OnInit {
   OriginalAmountForCalc = 0;
   TotalAmount = 0;
   Balance = 0;
+
   constructor(private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService,
 
@@ -81,14 +83,15 @@ export class FeereceiptComponent implements OnInit {
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
+   
   }
 
   back() {
 
   }
-  calculateBalance() {
-    return this.Balance;
-  }
+  // calculateBalance() {
+  //   return this.Balance;
+  // }
   public calculateTotal() {
 
     if (this.BillDetail.length > 0) {
@@ -102,7 +105,8 @@ export class FeereceiptComponent implements OnInit {
   displayedColumns = [
     'index',
     'FeeName',
-    'Amount'
+    'BaseAmount',
+    'Balance'
   ];
   ReceiptDisplayedColumns = [
     'ReceiptNo',
@@ -113,6 +117,7 @@ export class FeereceiptComponent implements OnInit {
   PageLoad() {
     debugger;
     this.loading = true;
+    //this.calculateTotal();
     this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
@@ -206,7 +211,7 @@ export class FeereceiptComponent implements OnInit {
     ];
 
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["AccountingVouchers($select=AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
+    list.lookupFields = ["AccountingVouchers($filter=LedgerId gt 0;$select=Reference,BaseAmount,Balance,AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
     list.filter = ["StudentClassId eq " + this.studentInfoTodisplay.StudentClassId];
 
     this.dataservice.get(list)
@@ -215,20 +220,21 @@ export class FeereceiptComponent implements OnInit {
         this.StudentFeePaymentList = [];
         this.FeeReceipt.forEach(f => {
           f.AccountingVouchers.forEach(k => {
-            var _shortText = '';
-            if (k.ShortText.length > 0) {
-              _shortText = " (" + k.ShortText + ")"
+            var _Reference = '';
+            if (k.Reference !=null && k.Reference.length > 0) {
+              _Reference = " (" + k.Reference + ")"
             }
             var feeObj = this.StudentClassFees.filter(f => f.ClassFeeId == k.ClassFeeId);
             if (feeObj.length > 0)
-              k.FeeName = feeObj[0].FeeName + _shortText;
+              k.FeeName = feeObj[0].FeeName + _Reference;
             else
               k.FeeName = '';
-
+            k.BaseAmount = k.BaseAmount;
             this.StudentFeePaymentList.push(k)
           })
         })
-
+        this.calculateTotal();
+        console.log("this.FeeReceipt",this.FeeReceipt)
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
         this.dataReceiptSource.sort = this.sort;
         var latestReceipt = this.FeeReceipt.sort((a, b) => b.ReceiptNo - a.ReceiptNo);

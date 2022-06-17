@@ -16,8 +16,8 @@ import { TrialBalanceComponent } from '../trial-balance/trial-balance.component'
 export class AccountingboardComponent implements AfterViewInit {
   components = [
     JournalEntryComponent,
-    GeneralLedgerComponent,    
     AccountNatureComponent,
+    GeneralLedgerComponent,
     TrialBalanceComponent
   ];
   LoginUserDetail=[];

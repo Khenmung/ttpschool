@@ -8,8 +8,8 @@
         <mat-label>Name</mat-label>
         <input type="text" matInput formControlName="searchAccountName" [maxlength]="50" autocomplete="Off">
     </mat-form-field> -->
-    
-    <div style="margin-right:15px;padding: 15px 10px 2px 15px;height: 55px;border:1px solid lightgray">
+
+    <div style="margin-right:15px;padding: 15px 10px 2px 15px;height: 55px;">
         <mat-radio-group formControlName="searchDebitOrCredit">
             <mat-radio-button class="example-margin" checked="false" value="true">Debit</mat-radio-button>&nbsp;
             <mat-radio-button class="example-margin" checked="true" value="false">Credit</mat-radio-button>
@@ -36,9 +36,8 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-                <input matInput autocomplete="Off" 
-                (blur)="onBlur(element)"
-                [(ngModel)]="element.AccountName" [value]="element.AccountName">
+                <input matInput autocomplete="Off" (blur)="onBlur(element)" [(ngModel)]="element.AccountName"
+                    [value]="element.AccountName">
             </mat-form-field>
         </mat-cell>
     </ng-container>
@@ -46,14 +45,14 @@
         <mat-header-cell *matHeaderCellDef mat-sort-header> Parent </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
-               <mat-select 
-               [(ngModel)]="element.ParentId" [value]="element.ParentId"
-               (selectionChange)="onBlur(element)">
-                   <mat-option *ngFor="let item of AccountNatures" [value]="item.AccountNatureId">{{item.AccountName}}</mat-option>
-               </mat-select>
+                <mat-select [(ngModel)]="element.ParentId" [value]="element.ParentId"
+                    (selectionChange)="onBlur(element)">
+                    <mat-option *ngFor="let item of AccountNatures" [value]="item.AccountNatureId">{{item.AccountName}}
+                    </mat-option>
+                </mat-select>
             </mat-form-field>
         </mat-cell>
-    </ng-container>    
+    </ng-container>
     <ng-container matColumnDef="DebitType">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Debit Account (or Credit)</mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -72,7 +71,7 @@
     </ng-container>
     <ng-container matColumnDef="Action">
         <mat-header-cell *matHeaderCellDef>
-            <button [disabled]="loading || Permission=='read'" matTooltip="new item" class="mat-raised-button"
+            <button [disabled]="loading || Permission=='read'" matTooltip="new item" mat-raised-button color="accent"
                 (click)="addnew()" fxFlex="10">
                 <mat-icon>add</mat-icon>
             </button>

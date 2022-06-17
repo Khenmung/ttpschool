@@ -12,7 +12,8 @@ import { AuthService } from '../_services/auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ContentService implements OnInit { PageLoading=true;
+export class ContentService implements OnInit {
+  PageLoading = true;
   RoleFilter = '';
   Roles = [];
   allMasterData = [];
@@ -116,6 +117,29 @@ export class ContentService implements OnInit { PageLoading=true;
     ];
 
     list.PageName = "FeeDefinitions";
+    list.filter = [filterStr];
+    return this.dataservice.get(list);
+  }
+  GetGeneralAccounts(orgId, active, type) {
+    var activefilter = active == 1 ? ' and Active eq 1' : '';
+    let filterStr = 'OrgId eq ' + orgId + activefilter;
+    if (type == "employee")
+      filterStr += " and (EmployeeId ne null or EmployeeId ne null)"
+    else if (type == "student")
+      filterStr += " and (StudentClassId ne 0 && StudentClassId ne null)"
+    
+      let list: List = new List();
+    list.fields = [
+      "GeneralLedgerId",
+      "GeneralLedgerName",
+      "AccountNatureId",
+      "AccountGroupId",
+      "AccountSubGroupId",
+      "StudentClassId",
+      "EmployeeId"
+    ];
+
+    list.PageName = "GeneralLedgers";
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
@@ -268,7 +292,7 @@ export class ContentService implements OnInit { PageLoading=true;
   GetDropDownDataWithOrgIdnParent(ParentId, OrgId, activeMaster = 1) {
     //debugger;
     var _active = activeMaster == 0 ? '' : "Active eq 1 and ";
-    
+
     let list: List = new List();
     list.fields = [
       "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId", "Active"
@@ -328,6 +352,7 @@ export class ContentService implements OnInit { PageLoading=true;
         Active: 1,
         GeneralLedgerId: 0,
         BatchId: pSelectedBatchId,
+        BaseAmount:inv.Amount,
         Balance: AmountAfterFormulaApplied,
         Month: inv.Month,
         StudentClassId: inv.StudentClassId,
@@ -336,9 +361,9 @@ export class ContentService implements OnInit { PageLoading=true;
         TotalCredit: 0,
       });
     });
-    var query = "select SUM(TotalCredit) TotalCredit,SUM(TotalDebit) TotalDebit, SUM(Balance) Balance, StudentClassId," +
-      "LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
-      "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
+    var query = "select SUM(BaseAmount) BaseAmount,SUM(TotalCredit) TotalCredit,SUM(TotalDebit) TotalDebit, SUM(Balance) Balance,"+ 
+      "StudentClassId,LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
+      "FROM ? GROUP BY BaseAmount,StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
     console.log("_LedgerData", _LedgerData);
     //console.log("sumFeeData",sumFeeData);

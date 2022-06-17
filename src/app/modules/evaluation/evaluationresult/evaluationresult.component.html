@@ -23,7 +23,7 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
-            <span *ngIf="!EvaluationUpdatable">
+            <!-- <span *ngIf="!EvaluationUpdatable">
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Exam/Test/Session</mat-label>
                     <mat-select formControlName="searchExamId">
@@ -32,7 +32,7 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <!-- <mat-form-field appearance="outline" [style.width.px]="150">
+                <mat-form-field appearance="outline" [style.width.px]="150">
                     <mat-label>Subject</mat-label>
                     <mat-select formControlName="searchSubjectId">
                         <mat-option value="0">select</mat-option>
@@ -40,8 +40,8 @@
                             {{item.SubjectName}}
                         </mat-option>
                     </mat-select>
-                </mat-form-field> -->
-            </span>
+                </mat-form-field>
+            </span> -->
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationMapping()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">

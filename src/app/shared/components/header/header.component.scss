@@ -41,7 +41,9 @@ button{
 //     }
 
 //   }
-
+.mat-toolbar {
+    position: relative;
+  }
 .transparent {
     color                    : transparent;
     -webkit-text-stroke-width: 1px;
