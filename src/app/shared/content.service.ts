@@ -128,7 +128,7 @@ export class ContentService implements OnInit {
     else if (type == "student")
       filterStr += " and (StudentClassId ne 0 && StudentClassId ne null)"
     
-      let list: List = new List();
+    let list: List = new List();
     list.fields = [
       "GeneralLedgerId",
       "GeneralLedgerName",
@@ -363,7 +363,7 @@ export class ContentService implements OnInit {
     });
     var query = "select SUM(BaseAmount) BaseAmount,SUM(TotalCredit) TotalCredit,SUM(TotalDebit) TotalDebit, SUM(Balance) Balance,"+ 
       "StudentClassId,LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
-      "FROM ? GROUP BY BaseAmount,StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
+      "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
     console.log("_LedgerData", _LedgerData);
     //console.log("sumFeeData",sumFeeData);

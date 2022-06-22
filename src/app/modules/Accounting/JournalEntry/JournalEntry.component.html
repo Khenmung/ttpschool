@@ -93,15 +93,16 @@
             </mat-checkbox>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="Amount">
+    <ng-container matColumnDef="BaseAmount">
         <mat-header-cell *matHeaderCellDef> Amount </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field appearance="outline">
                 <input matInput autocomplete="Off" 
+                type="number"
                 (blur)="onBlur(element)" 
                 [max]="1000000" 
-                [(ngModel)]="element.Amount"
-                [value]="element.Amount">
+                [(ngModel)]="element.BaseAmount"
+                [value]="element.BaseAmount">
             </mat-form-field>
         </mat-cell>
     </ng-container>

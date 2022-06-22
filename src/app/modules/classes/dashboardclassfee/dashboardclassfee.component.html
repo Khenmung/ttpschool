@@ -38,6 +38,9 @@
                 <button [disabled]="loading || InvoiceCreated" matTooltip="create invoice" mat-raised-button color="accent"
                     style="margin-right: 15px;" (click)="CreateInvoice()">
                     <mat-icon>receipt_long</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </span>
         </span>

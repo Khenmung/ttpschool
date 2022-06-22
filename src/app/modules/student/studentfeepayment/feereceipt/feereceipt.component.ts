@@ -83,7 +83,7 @@ export class FeereceiptComponent implements OnInit {
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
-   
+
   }
 
   back() {
@@ -106,6 +106,7 @@ export class FeereceiptComponent implements OnInit {
     'index',
     'FeeName',
     'BaseAmount',
+    'Amount',
     'Balance'
   ];
   ReceiptDisplayedColumns = [
@@ -118,14 +119,15 @@ export class FeereceiptComponent implements OnInit {
     debugger;
     this.loading = true;
     //this.calculateTotal();
-    this.dataSource = new MatTableDataSource<any>(this.BillDetail);
+    //this.dataSource = new MatTableDataSource<any>(this.BillDetail);
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
     if (perObj.length > 0) {
       this.Permission = perObj[0].permission;
     }
     if (this.Permission != 'deny') {
-
+      this.TotalAmount = 0;
+      this.Balance = 0;
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
         var obj = this.Classes.filter(f => f.ClassId == this.studentInfoTodisplay.ClassId)
@@ -211,7 +213,7 @@ export class FeereceiptComponent implements OnInit {
     ];
 
     list.PageName = "StudentFeeReceipts";
-    list.lookupFields = ["AccountingVouchers($filter=LedgerId gt 0;$select=Reference,BaseAmount,Balance,AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
+    list.lookupFields = ["AccountingVouchers($filter=LedgerId gt 0 and ClassFeeId gt 0;$select=Reference,BaseAmount,Balance,AccountingVoucherId,ShortText,LedgerId,FeeReceiptId,Amount,ClassFeeId)"];
     list.filter = ["StudentClassId eq " + this.studentInfoTodisplay.StudentClassId];
 
     this.dataservice.get(list)
@@ -221,20 +223,27 @@ export class FeereceiptComponent implements OnInit {
         this.FeeReceipt.forEach(f => {
           f.AccountingVouchers.forEach(k => {
             var _Reference = '';
-            if (k.Reference !=null && k.Reference.length > 0) {
+            if (k.Reference != null && k.Reference.length > 0) {
               _Reference = " (" + k.Reference + ")"
             }
             var feeObj = this.StudentClassFees.filter(f => f.ClassFeeId == k.ClassFeeId);
-            if (feeObj.length > 0)
+            if (feeObj.length > 0) {
               k.FeeName = feeObj[0].FeeName + _Reference;
+              if (k.FeeName == 'Discount')
+                k.indx = 1
+              else
+                k.indx = 0
+
+            }
             else
               k.FeeName = '';
-            k.BaseAmount = k.BaseAmount;
+            //k.BaseAmount = k.BaseAmount;
             this.StudentFeePaymentList.push(k)
           })
         })
         this.calculateTotal();
-        console.log("this.FeeReceipt",this.FeeReceipt)
+        console.log("this.FeeReceipt", this.FeeReceipt)
+        this.StudentFeePaymentList = this.StudentFeePaymentList.sort((a,b)=>a.indx - b.indx);
         this.dataReceiptSource = new MatTableDataSource<any>(this.FeeReceipt);
         this.dataReceiptSource.sort = this.sort;
         var latestReceipt = this.FeeReceipt.sort((a, b) => b.ReceiptNo - a.ReceiptNo);

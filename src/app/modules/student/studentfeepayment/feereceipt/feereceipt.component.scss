@@ -19,10 +19,10 @@ mat-header-cell{
     place-items: center;
     flex: 1 1 50px;
 }
-.mat-column-Amount,.mat-column-BaseAmount{
+.mat-column-Amount,.mat-column-BaseAmount,.mat-column-Balance{
     display: flex;
     justify-content: flex-end;
-    flex: 1 1 150px;
+    flex: 1 1 100px;
 }
 .mat-column-ReceiptNo{
     flex: 1 1 100px;

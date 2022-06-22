@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
@@ -8,7 +10,6 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
 
@@ -19,9 +20,11 @@ import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
 })
 export class TrialBalanceComponent implements OnInit {
   PageLoading = true;
-
-
   @ViewChild("table") mattable;
+  @ViewChild(MatPaginator) paginator:MatPaginator;
+  @ViewChild(MatSort) matsort:MatSort;
+
+
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   AccountingVoucherListName = 'AccountingVouchers';
   LoginUserDetail: any[] = [];
@@ -147,7 +150,7 @@ export class TrialBalanceComponent implements OnInit {
   }
 
   GetAccountingVoucher() {
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'FeeReceiptId gt 0 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     debugger;
     this.loading = true;
 
@@ -165,6 +168,7 @@ export class TrialBalanceComponent implements OnInit {
       "Reference",
       "LedgerId",
       "Debit",
+      "BaseAmount",
       "Amount",
       //"ShortText",
       "Active",
@@ -176,9 +180,6 @@ export class TrialBalanceComponent implements OnInit {
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        //this.AccountingVoucherList = 
-        console.log("data.value", data.value);
         data.value.forEach(f => {
           var _generalaccount = this.GLAccounts.filter(g => g.GeneralLedgerId == f.GeneralLedgerAccountId);
           if (_generalaccount.length > 0) {
@@ -191,7 +192,7 @@ export class TrialBalanceComponent implements OnInit {
           }
         })
         console.log("this.AccountingVoucherList", this.AccountingVoucherList)
-        var groupbyDebitCredit = alasql("select sum(Amount) as Amount,Debit,AccountName,DebitAccount from ? GROUP BY AccountName,Debit,DebitAccount order by AccountName",
+        var groupbyDebitCredit = alasql("select sum(BaseAmount) as Amount,Debit,AccountName,DebitAccount from ? GROUP BY AccountName,FeeReceiptId,Debit,DebitAccount order by AccountName",
           [this.AccountingVoucherList])
         var _AccountName = '', _amount = 0;
         groupbyDebitCredit.forEach(f => {
@@ -223,10 +224,12 @@ export class TrialBalanceComponent implements OnInit {
         })
         console.log("groupbyDebitCredit",groupbyDebitCredit)
         var display = groupbyDebitCredit.filter(f => f.Dr != undefined)
-        this.TotalCredit = groupbyDebitCredit.reduce((acc,current)=>acc + +current.Cr,0)
-        this.TotalDebit = groupbyDebitCredit.reduce((acc,current)=>acc + +current.Dr,0)
+        this.TotalCredit = display.reduce((acc,current)=>acc + current.Cr,0)
+        this.TotalDebit = display.reduce((acc,current)=>acc + current.Dr,0)
 
         this.dataSource = new MatTableDataSource<IAccountingVoucher>(display);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.matsort;
         this.loading = false; this.PageLoading = false;
         //this.changeDetectorRefs.detectChanges();
       });

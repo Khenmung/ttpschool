@@ -2,10 +2,10 @@
 
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 
-<mat-table #table [dataSource]="dataSource">
+<mat-table #table [dataSource]="dataSource" matSort>
 
     <ng-container matColumnDef="AccountName">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Account
+        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Account
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.AccountName}}
@@ -14,7 +14,7 @@
         </mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="Dr">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Dr.
+        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Dr.
         </mat-header-cell>
         <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
             {{element.Dr}}
@@ -24,7 +24,7 @@
         </mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="Cr">
-        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Cr.
+        <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>Cr.
         </mat-header-cell>
         <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
             {{element.Cr}}
@@ -33,9 +33,9 @@
             {{TotalCredit}}
         </mat-footer-cell>
     </ng-container>
-
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
     <mat-footer-row class="sticky-footer" *matFooterRowDef="displayedColumns">
     </mat-footer-row>
 </mat-table>
+<mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>

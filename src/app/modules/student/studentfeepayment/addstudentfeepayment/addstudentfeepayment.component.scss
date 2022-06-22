@@ -1,6 +1,12 @@
 mat-cell,mat-footer-cell{
     border-right: 1px solid lightgray;
 }
+mat-cell:last-of-type,mat-header-cell:last-of-type{
+    padding-right: 0px;
+}
+mat-footer-cell:last-of-type{
+    padding-right: 0px;
+}
 button {
     outline: none;
 }
@@ -15,70 +21,35 @@ svg {
 
 .mat-column-MonthName
 {
-    flex: 1 1 100px;
+    flex: 1 0 70px;
     padding-left: 5px;
 }
-.mat-column-BaseAmount {
+ 
+.mat-column-BaseAmount,.mat-column-TotalCredit,.mat-column-TotalDebit,
+.mat-column-Amount,.mat-column-Balance{
     justify-content: center;
-    flex: 1 1 70px;
-}
-.mat-column-TotalCredit{
-    justify-content: center;
-    flex:1 1 60px;
+    flex:1 0 60px;
 }
 .mat-column-FeeName
 {
-    flex:1 1 300px;
+    flex:1 0 250px;
     padding-left: 5px;
 }
-.mat-column-Amount
+// .mat-column-Amount
+// {
+//     //justify-content: center;
+//     flex:1 0 100px;
+// }
+.mat-column-Action,.mat-column-Action1
 {
     justify-content: center;
-    flex:1 1 100px;
-}
-.mat-column-TotalDebit,.mat-column-Balance,.mat-column-Action
-{
-    justify-content: center;
-    flex:1 1 70px;
+    flex:1 0 60px;
     
 }
 .mat-column-SlNo,
 .mat-column-SlNo1
  {
-    flex:1 1 60px;
-}
-.mat-table {
-    overflow    : auto;
-    //max-height: 500px;
-}
-
-.element-row {
-    position: relative;
-}
-
-.element-row:not(.expanded) {
-    cursor: pointer;
-}
-
-.element-row:not(.expanded):hover {
-    background: #f5f5f5;
-}
-
-.element-row.expanded {
-    border-bottom-color: transparent;
-}
-
-table {
-    width        : 80%;
-    padding      : 10px;
-    margin-bottom: 5px;
-}
-
-td {
-    padding        : 5px;
-    border-collapse: collapse;
-    border         : 1px solid lightgray;
-    text-align     : center;
+    flex:1 0 60px;
 }
 
 .mat-column-PaymentAmt {

@@ -51,7 +51,8 @@ export class JournalEntryComponent implements OnInit {
     LedgerId: 0,
     GeneralLedgerAccountId: 0,
     Debit: 0,
-    Amount: 0,
+    BaseAmount: 0,
+    Amount:0,
     ShortText: '',
     OrgId: 0,
     Active: 0,
@@ -61,7 +62,7 @@ export class JournalEntryComponent implements OnInit {
     "DocDate",
     "PostingDate",
     "GeneralLedgerAccountId",
-    "Amount",
+    "BaseAmount",
     "Debit",
     "Active",
     "Action",
@@ -136,7 +137,8 @@ export class JournalEntryComponent implements OnInit {
       LedgerId: 0,
       GeneralLedgerAccountId: this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId,
       Debit: false,
-      Amount: 0,
+      BaseAmount: 0,
+      Amount:0,
       ShortText: this.searchForm.get("searchShortText").value,
       Active: 0,
       Action: true
@@ -147,7 +149,7 @@ export class JournalEntryComponent implements OnInit {
 
   GetAccountingVoucher() {
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    ////debugger;
+    debugger;
     this.loading = true;
     var FinancialStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
     filterStr += " and PostingDate ge " + this.datepipe.transform(FinancialStartEnd.StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
@@ -158,17 +160,13 @@ export class JournalEntryComponent implements OnInit {
       filterStr += " and GeneralLedgerAccountId eq " + AccountId
     }
     var referenceId = this.searchForm.get("searchReferenceId").value;
-    if (referenceId != "") {
+    if (referenceId !=null && referenceId != "") {
       filterStr += " and Reference eq '" + referenceId + "'"
     }
     var shorttext = this.searchForm.get("searchShortText").value;
     if (shorttext != "") {
       filterStr += " and ShortText eq '" + shorttext + "'"
     }
-    // if(this.searchForm.get("searchPostingDate").value!="")
-    // {
-    //   filterStr += " and PostingDate eq " + this.datepipe.transform(this.searchForm.get("searchPostingDate").value,'dd/MM/yyyy');
-    // }
 
     let list: List = new List();
     list.fields = [
@@ -181,6 +179,7 @@ export class JournalEntryComponent implements OnInit {
       "ClassFeeId",
       "LedgerId",
       "Debit",
+      "BaseAmount",
       "Amount",
       "ShortText",
       "Active",
@@ -188,9 +187,9 @@ export class JournalEntryComponent implements OnInit {
 
     list.PageName = this.AccountingVoucherListName;
     list.limitTo = 50;
-    list.orderBy = "Reference";
+    list.orderBy = "ShortText";
     //list.lookupFields = ["AccountingLedgerTrialBalance"];
-    list.filter = [filterStr];
+    list.filter = ["GeneralLedgerAccountId ne null and " + filterStr];
     this.AccountingVoucherList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -289,6 +288,7 @@ export class JournalEntryComponent implements OnInit {
 
           this.AccountingVoucherData.Active = row.Active;
           this.AccountingVoucherData.AccountingVoucherId = row.AccountingVoucherId;
+          this.AccountingVoucherData.BaseAmount = +row.BaseAmount;
           this.AccountingVoucherData.Amount = +row.Amount;
           this.AccountingVoucherData.DocDate = row.DocDate;
           this.AccountingVoucherData.Debit = row.Debit;
@@ -405,6 +405,7 @@ export interface IAccountingVoucher {
   GeneralLedgerAccountId: number;
   Debit: boolean;
   Amount: number;
+  BaseAmount: number;
   ShortText: string;
   Active: number;
   Action: boolean
