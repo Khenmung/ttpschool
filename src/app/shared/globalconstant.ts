@@ -45,7 +45,7 @@ export class globalconstants {
                     'studentactivity': 'studentactivity'
                 },
                 'timetable': {
-                    'classperiod': 'classperiod',
+                    'classperiod': 'classperiod',   
                     'timetable': 'timetable',
                 },
                 'attendance': {

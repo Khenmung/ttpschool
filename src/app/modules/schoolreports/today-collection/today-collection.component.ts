@@ -29,7 +29,8 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
     ]),
   ],
 })
-export class TodayCollectionComponent implements OnInit { PageLoading=true;
+export class TodayCollectionComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   allRowsExpanded: boolean = false;
@@ -53,7 +54,7 @@ export class TodayCollectionComponent implements OnInit { PageLoading=true;
     "ReceiptNo",
     "ReceiptDate",
     "Student",
-    "ClassName",    
+    "ClassName",
     "PaymentType",
     "Status",
     "TotalAmount"
@@ -153,7 +154,7 @@ export class TodayCollectionComponent implements OnInit { PageLoading=true;
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = [
-      "AccountingVouchers($select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
+      "AccountingVouchers($filter=ClassFeeId gt 0 and FeeReceiptId gt 0;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
 
     ]
     list.filter = [filterstring];
@@ -162,15 +163,15 @@ export class TodayCollectionComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         //console.log('paymentd ata', data.value);
-        this.GrandTotalAmount = data.value.filter(f=>f.Active==1)
-        .reduce((acc, current) => acc + current.TotalAmount, 0);
-        this.CancelledAmount = data.value.filter(f=>f.Active==0)
-        .reduce((acc, current) => acc + current.TotalAmount, 0);
+        this.GrandTotalAmount = data.value.filter(f => f.Active == 1)
+          .reduce((acc, current) => acc + current.TotalAmount, 0);
+        this.CancelledAmount = data.value.filter(f => f.Active == 0)
+          .reduce((acc, current) => acc + current.TotalAmount, 0);
         this.DateWiseCollection = data.value.map(d => {
           d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
           d.ClassName = d.StudentClass.Class.ClassName
           d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
-          d.Status = d.Active==0?'Cancelled':'Active';
+          d.Status = d.Active == 0 ? 'Cancelled' : 'Active';
           //d.ReceiptDate = this.datepipe.transform(d.ReceiptDate,'dd/MM/yyyy') 
           //d.FeeName = this.FeeDefinitions.filter(f=>f.FeeDefinitionId == d.AccountingVouchers[0].ClassFeeId)[0].FeeName;
           return d;
@@ -181,19 +182,21 @@ export class TodayCollectionComponent implements OnInit { PageLoading=true;
         data.value.forEach(d => {
           d.AccountingVouchers.forEach(v => {
             var _feeCategoryName = '';
-            var _feeCategoryId = v.ClassFee.FeeDefinition.FeeCategoryId;
-            var objCategory = this.FeeCategories.filter(f => f.MasterDataId == _feeCategoryId)
-            if (objCategory.length > 0)
-              _feeCategoryName = objCategory[0].MasterDataName;
-            this.HeadsWiseCollection.push({
-              ClassFeeId: v.ClassFeeId,
-              Amount: v.Amount,
-              PaymentType: this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName,
-              Student: d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName,
-              ClassName: d.StudentClass.Class.ClassName,
-              FeeCategoryId: _feeCategoryId,
-              FeeCategory: _feeCategoryName,            
-            })
+            if (v.ClassFee != null) {
+              var _feeCategoryId = v.ClassFee.FeeDefinition.FeeCategoryId;
+              var objCategory = this.FeeCategories.filter(f => f.MasterDataId == _feeCategoryId)
+              if (objCategory.length > 0)
+                _feeCategoryName = objCategory[0].MasterDataName;
+              this.HeadsWiseCollection.push({
+                ClassFeeId: v.ClassFeeId,
+                Amount: v.Amount,
+                PaymentType: this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName,
+                Student: d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName,
+                ClassName: d.StudentClass.Class.ClassName,
+                FeeCategoryId: _feeCategoryId,
+                FeeCategory: _feeCategoryName,
+              })
+            }
           })
           return d.AccountingVouchers;
         })
@@ -211,7 +214,7 @@ export class TodayCollectionComponent implements OnInit { PageLoading=true;
         this.dataSource = new MatTableDataSource(rows);
         //this.dataSource.paginator = this.paginator;
         //this.dataSource.sort = this.sort;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetMasterData() {
@@ -279,7 +282,7 @@ export class TodayCollectionComponent implements OnInit { PageLoading=true;
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   getDropDownData(dropdowntype) {

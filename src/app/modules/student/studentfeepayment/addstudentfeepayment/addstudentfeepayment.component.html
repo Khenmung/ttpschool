@@ -23,9 +23,9 @@
                     <mat-icon>payments</mat-icon>&nbsp;Payments
                 </ng-template>
                 <div style="display:flex;width: 100%;">
-                    <div style="width:45%;margin-top:15px;display: flex;flex-direction: column;border: 1px solid lightgray;">
-                        <div id="printSection">
-                            <mat-table #table [dataSource]="dataSource" style="width:100%;overflow: auto;">
+                    <div style="min-width:400px; margin-top:15px;display: flex;flex-direction: column;border: 1px solid lightgray;">
+                        <div id="printSection" style="width: 100%;">
+                            <mat-table #table [dataSource]="dataSource">
                                 <ng-container matColumnDef="SlNo1">
                                     <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                                     <mat-cell *matCellDef="let element"> {{element.SlNo1}} </mat-cell>
@@ -37,11 +37,11 @@
                                         {{element.MonthName}}
                                     </mat-cell>
                                 </ng-container>
-                                <ng-container matColumnDef="BaseAmount">
+                                <ng-container matColumnDef="BaseAmount1">
                                     <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Fee
                                     </mat-header-cell>
                                     <mat-cell *matCellDef="let element">
-                                        {{element.BaseAmount}}
+                                        {{element.BaseAmount1}}
                                     </mat-cell>
                                 </ng-container>
                                 <ng-container matColumnDef="TotalCredit">
@@ -57,16 +57,16 @@
                                         {{element.TotalDebit}}
                                     </mat-cell>
                                 </ng-container>
-                                <ng-container matColumnDef="Balance">
+                                <ng-container matColumnDef="Balance1">
                                     <mat-header-cell *matHeaderCellDef> Balance </mat-header-cell>
                                     <mat-cell *matCellDef="let element">
-                                        {{element.Balance}}
+                                        {{element.Balance1}}
                                     </mat-cell>
                                 </ng-container>
                                 <ng-container matColumnDef="Action">
                                     <mat-header-cell *matHeaderCellDef></mat-header-cell>
                                     <mat-cell *matCellDef="let element">
-                                        <mat-checkbox [disabled]="loading || element.Balance==0 || Permission=='read'"
+                                        <mat-checkbox [disabled]="loading || element.Balance1==0 || Permission=='read'"
                                             mat-mini-fab (change)="SelectRow(element,$event)"
                                             [checked]="element.Action">
                                         </mat-checkbox>
@@ -85,8 +85,8 @@
                         </div>
                     </div>
                     <!-- <div style="background-color: lightgray;width:1px">&nbsp;asdf</div> -->
-                    <div style="width:55%;margin: 15px 0px 0px 15px;border: 1px solid lightgray;">
-                        <mat-table [dataSource]="billdataSource" style="overflow: auto;">
+                    <div style="width:100%; margin: 15px 0px 0px 15px;border: 1px solid lightgray;">
+                        <mat-table [dataSource]="billdataSource">
                             <ng-container matColumnDef="SlNo">
                                 <mat-header-cell *matHeaderCellDef> Sr.No. </mat-header-cell>
                                 <mat-cell *matCellDef="let element"> {{element.SlNo}} </mat-cell>
@@ -98,7 +98,7 @@
                                 <mat-cell *matCellDef="let element">
                                     <span style="margin-right: 10px;">{{element.FeeName}}</span>
                                     <div *ngIf="element.AmountEditable==1" style="margin-right: 10px;">
-                                        <mat-form-field style="width: 200px;">
+                                        <mat-form-field style="width: 170px;">
                                             <input matInput [(ngModel)]="element.Reference" [value]="element.Reference"
                                                 autocomplete="Off" [maxlength]="30">
                                         </mat-form-field>
@@ -112,10 +112,10 @@
                                 <mat-header-cell *matHeaderCellDef style="display:flex;justify-content:center"> 
                                     <span>Balance</span>
                                 </mat-header-cell>
-                                <mat-cell *matCellDef="let element">
+                                <mat-cell *matCellDef="let element" style="padding-right:15px;">
                                     {{element.Balance}}
                                 </mat-cell>
-                                <mat-footer-cell *matFooterCellDef style="display:flex;justify-content:center">                                    
+                                <mat-footer-cell *matFooterCellDef style="display:flex;justify-content:flex-end;padding-right: 15px;">                                    
                                         {{Balance}}                                    
                                 </mat-footer-cell>
                             </ng-container>
@@ -134,14 +134,15 @@
                                 <mat-cell *matCellDef="let element" style="justify-content: end;">
                                     <mat-form-field>
                                         <input style="text-align: right" (keyup)="onBlur(element)"
-                                            [disabled]="element.AmountEditable==0" matInput type="number" max="100000"
-                                            [(ngModel)]="element.Amount" [value]="element.Amount" autocomplete="Off">
+                                            [disabled]="element.AmountEditable==0" matInput max="100000"
+                                            [(ngModel)]="element.Amount" 
+                                            [value]="element.Amount" 
+                                            [maxlength]="5"
+                                            autocomplete="Off">
                                     </mat-form-field>
                                 </mat-cell>
-                                <mat-footer-cell *matFooterCellDef style="display:flex;justify-content:flex-end">
-                                    <span style="margin-right: 15px;">
+                                <mat-footer-cell *matFooterCellDef style="display:flex;justify-content:flex-end;padding-right: 15px;">
                                     {{ TotalAmount}}
-                                </span>
                                 </mat-footer-cell>
                             </ng-container>
                             <mat-header-row *matHeaderRowDef="billDisplayedColumns"></mat-header-row>

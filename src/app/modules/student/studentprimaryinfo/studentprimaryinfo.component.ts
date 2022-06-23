@@ -21,7 +21,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./studentprimaryinfo.component.scss']
 })
 export class studentprimaryinfoComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(AddstudentclassComponent) studentClass: AddstudentclassComponent;
   @ViewChild(AddstudentfeepaymentComponent) studentFeePayment: AddstudentfeepaymentComponent;
   @ViewChild(FeereceiptComponent) feeReceipt: FeereceiptComponent;
@@ -166,8 +166,8 @@ export class studentprimaryinfoComponent implements OnInit {
       MICRNo: [''],
       AadharNo: [''],
       Photo: [''],
-      ContactNo: ['',[Validators.required]],
-      WhatsAppNumber: ['',[Validators.required]],
+      ContactNo: ['', [Validators.required]],
+      WhatsAppNumber: ['', [Validators.required]],
       FatherContactNo: [''],
       MotherContactNo: [''],
       PrimaryContactFatherOrMother: [0],
@@ -338,7 +338,7 @@ export class studentprimaryinfoComponent implements OnInit {
     if (this.studentForm.get("WhatsAppNumber").value == 0) {
       errorMessage += "Please provide whatsapp no..\n";
     }
-    
+
     if (errorMessage.length > 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -415,6 +415,7 @@ export class studentprimaryinfoComponent implements OnInit {
   }
 
   save() {
+    debugger;
     this.studentForm.patchValue({ AlternateContact: "" });
     this.contentservice.GetStudentMaxPID(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
       var _MaxPID = 1;
@@ -440,6 +441,7 @@ export class studentprimaryinfoComponent implements OnInit {
             this.loading = false; this.PageLoading = false;
             this.tokenService.saveStudentId(this.StudentId + "")
             //this.tokenService.saveStudentClassId(this.StudentClassId + "");
+            this.CreateInvoice();
             this.GetStudent();
             this.Edited = false;
 
@@ -467,6 +469,25 @@ export class studentprimaryinfoComponent implements OnInit {
         else
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
       })
+  }
+  CreateInvoice() {
+    this.contentservice.getInvoice(+this.loginUserDetail[0]["orgId"], this.SelectedBatchId, this.StudentClassId)
+      .subscribe((data: any) => {
+
+        this.contentservice.createInvoice(data, this.SelectedBatchId, this.loginUserDetail[0]["orgId"])
+          .subscribe((data: any) => {
+            //this.loading = false; this.PageLoading=false;
+            //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          },
+            error => {
+              this.loading = false; 
+              console.log("error in createInvoice", error);
+            })
+      },
+        error => {
+          this.loading = false; 
+          console.log("error in getinvoice", error);
+        })
   }
   adjustDateForTimeOffset(dateToAdjust) {
     ////console.log(dateToAdjust)

@@ -84,7 +84,7 @@
                 </div>
                 <div style="display:flex;flex-direction: row;" *ngFor="let voucher of row.element.AccountingVouchers">
                     <div style="padding-bottom: 5px;border-bottom: 1px solid lightgray; width: 150px;">
-                        {{voucher.ClassFee.FeeDefinition.FeeName}}</div>
+                        {{voucher.ClassFee==null?'':voucher.ClassFee.FeeDefinition.FeeName}}</div>
                     <div
                         style="display:flex;justify-content: end;border-bottom: 1px solid lightgray; padding-bottom: 5px;width: 150px;">
                         {{voucher.Amount}}</div>
