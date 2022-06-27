@@ -102,7 +102,7 @@
                         style="font-style: italic; width: 100%;padding: 15px 15px 10px 0px;">
                         {{element.Description}}</span>
                     <span style="display: flex;flex-direction: column; margin:15px 15px 15px 15px;width: 100%;"
-                        *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
+                        *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
                         <span [innerHTML]="element.History| encodeHTML">
                         </span>
                         <mat-form-field appearance="outline" style="width:100%">

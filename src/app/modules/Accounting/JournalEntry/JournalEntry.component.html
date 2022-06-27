@@ -11,15 +11,12 @@
         <mat-datepicker #searchPostingDate></mat-datepicker>
     </mat-form-field> -->
     
-    <mat-form-field appearance="outline" [style.width.px]="200">
+    <!-- <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Reference</mat-label>
         <input type="text" matInput formControlName="searchReferenceId" [maxlength]="50" autocomplete="Off">
-    </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="200">
-        <mat-label>Short Text</mat-label>
-        <input type="text" matInput formControlName="searchShortText" [maxlength]="250" autocomplete="Off">
-    </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="200">
+    </mat-form-field> -->
+    
+    <mat-form-field appearance="outline" [style.width.px]="350">
         <mat-label>Account</mat-label>
         <input type="text" matInput formControlName="searchGeneralLedgerId" [matAutocomplete]="auto">
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
@@ -27,6 +24,10 @@
                 {{option.GeneralLedgerName}}
             </mat-option>
         </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="350">
+        <mat-label>Short Text</mat-label>
+        <input type="text" matInput formControlName="searchShortText" [maxlength]="250" autocomplete="Off">
     </mat-form-field>
     <button [disabled]="loading" mat-raised-button color="accent" (click)="GetAccountingVoucher()">
         <mat-icon>search</mat-icon>

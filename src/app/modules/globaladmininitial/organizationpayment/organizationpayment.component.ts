@@ -202,6 +202,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
         (data: any) => {
           row.OrganizationPaymentId = data.OrganizationPaymentId;
           row.Action = false;
+          
           this.loading = false; this.PageLoading=false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
@@ -350,7 +351,7 @@ export class OrganizationpaymentComponent implements OnInit { PageLoading=true;
 
   onBlur(element) {
     debugger;
-    if (element.OrganizationPaymentId == 0) {
+    if (element.OrganizationPaymentId > 0) {
       element.Action = true;
       element.Amount = element["AmountPerMonth"] * element.PaidMonths;
     }

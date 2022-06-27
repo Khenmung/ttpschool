@@ -315,8 +315,8 @@ export class globalconstants {
                 "EVALUATIONTYPE": "evaluation type",
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
                 "STUDENTGRADETYPE": "student grade type",
-                "ASSESSMENTPRINTHEADING": "Assessment Print Heading"
-
+                "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
+                "STUDENTREMARKS":"student remark"
             },
             "leave": {
                 "REPORTNAMES": "leave report name",

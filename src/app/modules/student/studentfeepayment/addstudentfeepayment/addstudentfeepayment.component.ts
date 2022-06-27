@@ -208,6 +208,10 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.PaymentName = this.PaymentTypes.filter(f => f.MasterDataId == this.PaymentTypeId)[0].MasterDataName.toLowerCase();
 
   }
+  detail() {
+    if (this.studentInfoTodisplay.StudentId > 0)
+      this.nav.navigate(['/edu/addstudent/' + this.studentInfoTodisplay.StudentId]);
+  }
   PageLoad() {
     debugger;
     this.shareddata.CurrentFeeDefinitions.subscribe(fy => (this.FeeDefinitions = fy));
@@ -255,29 +259,27 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   onBlur(row) {
     debugger;
-    if(row.Amount =='' || row.Amount==null)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please enter amount.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.Amount == '' || row.Amount == null) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter amount.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else if(isNaN(row.Amount))
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please enter numeric only for amount.",globalconstants.ActionText,globalconstants.RedBackground);
+    else if (isNaN(row.Amount)) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter numeric only for amount.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    row.Amount = row.Amount == null ? 0 : row.Amount;
-    row.Balance = row.BaseAmountForCalc - row.Amount;
+    row.Amount = row.Amount == null ? 0 : +row.Amount;
+    row.Balance = row.BaseAmountForCalc - +row.Amount;
     this.calculateTotal();
   }
   public calculateTotal() {
     debugger;
     if (this.MonthlyDueDetail.length > 0) {
       var _discountRemoved = this.MonthlyDueDetail.filter(f => f.FeeName != this.DiscountText);
-      this.TotalAmount = _discountRemoved.reduce((accum, curr) => accum + curr.Amount, 0);
+      this.TotalAmount = _discountRemoved.reduce((accum, curr) => accum + +curr.Amount, 0);
 
-      this.Balance = _discountRemoved.reduce((accum, curr) => accum + curr.Balance, 0);
+      this.Balance = _discountRemoved.reduce((accum, curr) => accum + +curr.Balance, 0);
       //this.Balance = this.OriginalAmountForCalc - this.TotalAmount;
       if (this.Balance < 0)
         this.Balance = 0;
@@ -702,7 +704,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   miscelenous() {
     var _rowWithoutDiscount = this.MonthlyDueDetail.filter(f => f.FeeName != 'Discount');
-    this.DiscountAmount = _rowWithoutDiscount.reduce((accum, curr) => accum + (curr.BaseAmount - curr.Amount), 0);
+    this.DiscountAmount = _rowWithoutDiscount.reduce((accum, curr) => accum + (curr.BaseAmount - +curr.Amount), 0);
     var _discountAccountId = 0;
     var _obj = this.GeneralLedgerAccounts.filter(f => f.GeneralLedgerName == this.DiscountText + " Allowed")
     if (_obj.length > 0)
@@ -711,8 +713,8 @@ export class AddstudentfeepaymentComponent implements OnInit {
     var DiscountRow = this.MonthlyDueDetail.filter(f => f.FeeName == this.DiscountText);
     // var _BalanceForACReceivable = JSON.parse(JSON.stringify(DiscountRow))
     if (DiscountRow.length == 0) {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please define discount in feedefinition.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false;
+      this.contentservice.openSnackBar("Please define discount in feedefinition.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
@@ -782,7 +784,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   }
   UpdateOrSave() {
     debugger;
-    
+
     if (this.StudentLedgerData.LedgerId == 0)
       this.insert();
     else

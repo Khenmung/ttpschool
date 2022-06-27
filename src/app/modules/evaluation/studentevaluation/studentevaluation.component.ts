@@ -146,8 +146,8 @@ export class StudentEvaluationComponent implements OnInit {
           })
         this.GetEvaluationNames();
         this.GetMasterData();
-       
-       
+
+
 
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -247,7 +247,7 @@ export class StudentEvaluationComponent implements OnInit {
     this.StudentEvaluationList.forEach(question => {
       this.RowsToUpdate--;
       this.UpdateOrSave(question);
-    })    
+    })
   }
   UpdateOrSave(row) {
 
@@ -282,13 +282,19 @@ export class StudentEvaluationComponent implements OnInit {
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          
+
           var _toappend = '', _answerText = '', _history = '', _studentClassId = 0;
           if (this.EvaluationUpdatable) {
             if (this.EvaluationSubmitted && !this.boolSaveAsDraft) {
-              _history = row.AnswerText.length == 0 ? row.History : row.History + "<br><br>" + row.AnswerText + "<br>" + _toappend + "<br><br>"
-              _answerText = '';
+              var _borderwidth = "border-width:0px 1px 1px 1px;"
+              if (row.History == "") {
+                _borderwidth = "border-width:1px 1px 1px 1px;"
+              }
+
               _toappend = moment().format('DD/MM/YYYY');
+              _history = row.AnswerText.length == 0 ? row.History : row.History + "<div style='border-style:solid; " + _borderwidth + "border-color:lightgray;padding:15px'>" +
+                row.AnswerText + "<br>" + _toappend + "</div>"
+              _answerText = '';
             }
             else {
               _history = row.History;
@@ -607,7 +613,7 @@ export class StudentEvaluationComponent implements OnInit {
         this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
         this.GetExams();
         this.GetEvaluationOption();
-  
+
       });
   }
   onBlur(row) {
@@ -770,7 +776,7 @@ export class StudentEvaluationComponent implements OnInit {
         else {
           this.contentservice.openSnackBar("No answer option found.", globalconstants.ActionText, globalconstants.BlueBackground);
         }
-        
+
         //this.loadingFalse();
       });
 

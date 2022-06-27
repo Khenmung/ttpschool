@@ -36,6 +36,7 @@ export class StudentboardComponent implements AfterViewInit {
       DataDownloadPermission: '',
       DataUploadPermission: ''
     };
+  StudentId = 0;
   StudentName = '';
   LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -48,6 +49,7 @@ export class StudentboardComponent implements AfterViewInit {
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private componentFactoryResolver: ComponentFactoryResolver) {
+    this.StudentId = tokenStorage.getStudentId();
   }
 
   public ngAfterViewInit(): void {
@@ -121,7 +123,11 @@ export class StudentboardComponent implements AfterViewInit {
       this.tabNames.splice(comindx, 1);
     }
   }
+  fee() {
+    this.nav.navigate(['/edu/feepayment'])
+    //http://localhost:4200/#/edu/addstudent/1044
+  }
   back() {
-    this.nav.navigate(['/edu'])
+    this.nav.navigate(['/edu']);
   }
 }

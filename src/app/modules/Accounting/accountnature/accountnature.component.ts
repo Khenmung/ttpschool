@@ -12,7 +12,6 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { IGeneralLedger } from '../ledger-account/ledger-account.component';
 
 @Component({
   selector: 'app-accountnature',
@@ -22,8 +21,8 @@ import { IGeneralLedger } from '../ledger-account/ledger-account.component';
 export class AccountNatureComponent implements OnInit {
   PageLoading = true;
   @ViewChild("table") mattable;
-  @ViewChild(MatPaginator) paginator:MatPaginator;
-  @ViewChild(MatSort) sort:MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   GeneralLedgers = [];
   AccountNatureListName = 'AccountNatures';
   LoginUserDetail: any[] = [];
@@ -63,8 +62,7 @@ export class AccountNatureComponent implements OnInit {
     "Active",
     "Action",
   ];
-  filteredOptions: Observable<IGeneralLedger[]>;
-  //Students: any;
+  filteredAccounts: Observable<IAccountNature[]>;
 
   constructor(
     private datepipe: DatePipe,
@@ -78,8 +76,15 @@ export class AccountNatureComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      searchDebitOrCredit: [false],
+      searchParentId: [0],
+      searchAccountName: ['']
     });
+    this.filteredAccounts = this.searchForm.get("searchAccountName").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.AccountName),
+        map(Name => Name ? this._filter(Name) : this.AccountNatures.slice())
+      );
     this.PageLoad();
   }
 
@@ -104,10 +109,10 @@ export class AccountNatureComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
-        this.GetTopAccountNature();
+        this.GetAccountNatureAutoComplete();
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-        this.GetGeneralLedgerAutoComplete();
+
       }
     }
 
@@ -115,11 +120,12 @@ export class AccountNatureComponent implements OnInit {
   private _filter(name: string): IAccountNature[] {
 
     const filterValue = name.toLowerCase();
-    return this.GeneralLedgers.filter(option => option.GeneralLedgerName.toLowerCase().includes(filterValue));
+    return this.AccountNatures.filter(option => option.AccountName.toLowerCase().includes(filterValue));
 
   }
-  displayFn(ledger: IGeneralLedger): string {
-    return ledger && ledger.GeneralLedgerName ? ledger.GeneralLedgerName : '';
+
+  displayFn(ledger: IAccountNature): string {
+    return ledger && ledger.AccountName ? ledger.AccountName : '';
   }
   addnew() {
     //var debitcredit = debit == 'debit' ? 0 : 1
@@ -136,14 +142,22 @@ export class AccountNatureComponent implements OnInit {
   }
 
   GetAccountNature() {
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    ////debugger;
+
+    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
+    debugger;
     this.loading = true;
 
-    var searchDebitOrCredit = this.searchForm.get("searchDebitOrCredit").value;
-
-    if (searchDebitOrCredit != "") {
-      filterStr += " and DebitType eq " + searchDebitOrCredit
+    var _searchAccountId = this.searchForm.get("searchAccountName").value.AccountNatureId;
+    var _searchParentId = this.searchForm.get("searchParentId").value;
+    if (_searchAccountId == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select account.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_searchParentId > 0)
+      filterStr += " and ParentId eq " + _searchParentId
+    else if (_searchAccountId != undefined) {
+      filterStr += " and ParentId eq " + _searchAccountId
     }
 
     let list: List = new List();
@@ -167,13 +181,13 @@ export class AccountNatureComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IAccountNature>(this.AccountNatureList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        
+
         this.loading = false;
         this.PageLoading = false;
       });
   }
-  GetTopAccountNature() {
-    let filterStr = 'ParentId eq 0 and Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+  GetAccountNatureAutoComplete() {
+    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ")";
     this.loading = true;
 
     let list: List = new List();
@@ -229,7 +243,7 @@ export class AccountNatureComponent implements OnInit {
     }
     if (row.DebitType != undefined)
       " or DebitType eq " + row.DebitType
-    
+
 
     if (row.AccountNatureId > 0)
       checkFilterString += " and AccountNatureId ne " + row.AccountNatureId;
@@ -308,25 +322,25 @@ export class AccountNatureComponent implements OnInit {
 
 
 
-  GetGeneralLedgerAutoComplete() {
+  // GetGeneralLedgerAutoComplete() {
 
-    let list: List = new List();
-    list.fields = [
-      "GeneralLedgerId",
-      "GeneralLedgerName",
-      "AccountNatureId",
-      "AccountGroupId"
-    ];
+  //   let list: List = new List();
+  //   list.fields = [
+  //     "GeneralLedgerId",
+  //     "GeneralLedgerName",
+  //     "AccountNatureId",
+  //     "AccountGroupId"
+  //   ];
 
-    list.PageName = "GeneralLedgers";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
-    this.GLAccounts = [];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.GeneralLedgers = [...data.value];
-        this.loading = false; this.PageLoading = false;
-      })
-  }
+  //   list.PageName = "GeneralLedgers";
+  //   list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+  //   this.GLAccounts = [];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.GeneralLedgers = [...data.value];
+  //       this.loading = false; this.PageLoading = false;
+  //     })
+  // }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)

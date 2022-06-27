@@ -215,6 +215,7 @@ export class EvaluationresultComponent implements OnInit {
                 cls.StudentEvaluationAnswerId = 0;
               }
             })
+           
             item = {
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentEvaluationAnswers: existing[0].StudentEvaluationAnswers,
@@ -491,6 +492,7 @@ export class EvaluationresultComponent implements OnInit {
     }
     else {
       this.loading = false; this.PageLoading = false;
+      this.RelevantEvaluationListForSelectedStudent =[];
       this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }

@@ -5,6 +5,23 @@
         <!-- <alert></alert> -->
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <form [formGroup]="studentSearchForm" fxLayout="row wrap" fxLayoutAlign="center center">
+            <mat-form-field appearance="outline" style="width: 150px;">
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="searchClassId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                        {{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 150px;">
+                <mat-label>Remarks</mat-label>
+                <mat-select formControlName="searchRemarkId">
+                    <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
             <mat-form-field appearance="outline" style="width: 100px;">
                 <mat-label>PID</mat-label>
                 <input formControlName="searchPID" autocomplete="Off" matInput [maxlength]="10">
@@ -29,6 +46,7 @@
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>
+
             <mat-form-field appearance="outline" [style.width.px]="350">
                 <mat-label>Student</mat-label>
                 <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
@@ -50,7 +68,7 @@
             </button>
         </form>
         <br>
-        <div style="overflow:auto;max-width: 1200px;">
+        <div style="max-width: 1200px;">
             <mat-table #table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef> </mat-header-cell>
@@ -124,7 +142,7 @@
 
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"
-                    [ngClass]="{ 'highlight': row.ReasonForLeaving.toLowerCase() == 'admitted and left' }">
+                    [ngClass]="{ 'highlight': row.Remarks.toLowerCase() == 'orphan' }">
                 </mat-row>
             </mat-table>
             <mat-paginator [pageSizeOptions]="[10,25,50]"></mat-paginator>

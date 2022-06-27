@@ -34,7 +34,8 @@ export class ExcelDataManagementComponent implements OnInit {
   ) {
 
   }
-
+  NoOfStudent = 0;
+  NoOfStudentInPlan =0;
   UploadType = {
     CLASSROLLNOMAPPING: 'rollno class mapping',
     STUDENTDATA: 'student upload',
@@ -95,6 +96,7 @@ export class ExcelDataManagementComponent implements OnInit {
       this.GetMasterData();
       //else
       this.GetStudents();
+      this.GetStudentsInPlan();
     }
   }
   NotMandatory = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
@@ -139,6 +141,7 @@ export class ExcelDataManagementComponent implements OnInit {
   AdmissionStatuses = [];
   PrimaryContact = [];
   Location = [];
+  Remarks = [];
   ActivityCategory = [];
   ActivitySubCategory = [];
   PrimaryContactFatherOrMother = [];
@@ -209,6 +212,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "ReasonForLeavingId",
         "Club",
         "House",
+        "Remarks",
         "OrgId",
         "CreatedDate",
         "CreatedBy",
@@ -709,6 +713,20 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.ClubId = ClubObj[0].MasterDataId;
       }
+      if (element.House.length > 0) {
+        let houseObj = this.Houses.filter(g => g.MasterDataName.toLowerCase() == element.House.toLowerCase());
+        if (houseObj.length == 0)
+          this.ErrorMessage += "Invalid house at row " + slno + ":" + element.House + "<br>";
+        else
+          element.HouseId = houseObj[0].MasterDataId;
+      }
+      if (element.Remarks.length > 0) {
+        let remarkObj = this.Remarks.filter(g => g.MasterDataName.toLowerCase() == element.Remarks.toLowerCase());
+        if (remarkObj.length == 0)
+          this.ErrorMessage += "Invalid remark at row " + slno + ":" + element.Remarks + "<br>";
+        else
+          element.RemarkId = remarkObj[0].MasterDataId;
+      }
       if (element.PermanentAddressCountry.length > 0) {
         let CountryObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressCountry.toLowerCase());
         if (CountryObj.length == 0)
@@ -814,11 +832,11 @@ export class ExcelDataManagementComponent implements OnInit {
               this.loading = false;
               this.PageLoading = false;
               this.ELEMENT_DATA = [];
-              this.ReadyForUpload=false;
+              this.ReadyForUpload = false;
               this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
             }, error => {
               this.contentservice.openSnackBar("Error occured. Please contact your administrator.", globalconstants.ActionText, globalconstants.RedBackground);
-              this.ReadyForUpload=false;
+              this.ReadyForUpload = false;
               console.log(error)
             });
         }
@@ -852,8 +870,16 @@ export class ExcelDataManagementComponent implements OnInit {
           _MaxPID = data.value[0].PID + 1;
         }
         debugger;
-        if (this.ELEMENT_DATA.length > globalconstants.RowUploadLimit) {
+        var UploadedStudent = this.NoOfStudent + this.ELEMENT_DATA.length;
+        if ( this.ELEMENT_DATA.length > globalconstants.RowUploadLimit) {
           this.ELEMENT_DATA.splice(globalconstants.RowUploadLimit);
+        }
+        else if(this.NoOfStudent + this.ELEMENT_DATA.length > this.NoOfStudentInPlan)
+        {
+          this.loading=false;
+          this.contentservice.openSnackBar("No. of student exceeded no. of students in the plan.",globalconstants.ActionText,globalconstants.RedBackground);
+          return;
+           
         }
 
 
@@ -911,9 +937,11 @@ export class ExcelDataManagementComponent implements OnInit {
             "CreatedDate": this.datepipe.transform(row["CreatedDate"], 'yyyy/MM/dd'),
             "WhatsAppNumber": row["WhatsAppNumber"],
             "ClubId": +row["ClubId"],
+            "HouseId": +row["HouseId"],
             "AdmissionStatusId": +row["AdmissionStatusId"],
             "AdmissionDate": row["AdmissionDate"],
-            "BatchId": +row["BatchId"]
+            "BatchId": +row["BatchId"],
+            "RemarkId": +row["RemarkId"]
 
           });
         });
@@ -922,12 +950,12 @@ export class ExcelDataManagementComponent implements OnInit {
         this.dataservice.postPatch('Students', toInsert, 0, 'post')
           .subscribe((result: any) => {
             this.loading = false; this.PageLoading = false;
-            this.ReadyForUpload=false;
+            this.ReadyForUpload = false;
             this.ELEMENT_DATA = [];
             this.contentservice.openSnackBar("Data uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
           }, error => {
             console.log("error from student upload:", error);
-            this.ReadyForUpload=false;
+            this.ReadyForUpload = false;
             this.ErrorMessage = "Something went wrong. Please contact your administrator.";
             this.contentservice.openSnackBar(this.ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
           })
@@ -978,6 +1006,22 @@ export class ExcelDataManagementComponent implements OnInit {
     return this.dataservice.get(list);
 
   }
+  GetStudentsInPlan() {
+
+    let list: List = new List();
+    list.fields = ["*"];
+    list.PageName = "CustomerPlans";
+    list.filter = ["Active eq 1 and " + this.filterOrgId];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //this.StudentInPlan = [...data.value];
+        this.NoOfStudentInPlan = data.value.length;
+       
+
+      })
+  }
   GetStudents() {
 
     let list: List = new List();
@@ -989,6 +1033,7 @@ export class ExcelDataManagementComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentList = [...data.value];
+        this.NoOfStudent = this.StudentList.length;
         this.GetStudentClasses();
 
       })
@@ -1018,6 +1063,7 @@ export class ExcelDataManagementComponent implements OnInit {
           this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
           this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
           this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+          this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
           this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         }

@@ -233,7 +233,7 @@ export class EvaluationExamMapComponent implements OnInit {
             this.EvaluationExamMapForUpdate[0]["UpdatedDate"] = new Date();
             delete this.EvaluationExamMapForUpdate[0]["UpdatedBy"];
             delete this.EvaluationExamMapForUpdate[0]["SubCategories"];
-            console.log("inserting1", this.EvaluationExamMapForUpdate);
+            //console.log("inserting1", this.EvaluationExamMapForUpdate);
             this.insert(row);
           }
           else {
@@ -390,7 +390,7 @@ export class EvaluationExamMapComponent implements OnInit {
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         }
-
+        this.loading=false;
       });
 
   }

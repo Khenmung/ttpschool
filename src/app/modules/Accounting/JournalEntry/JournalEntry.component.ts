@@ -30,6 +30,7 @@ export class JournalEntryComponent implements OnInit {
     StartDate: new Date(),
     EndDate: new Date()
   }
+  ParentId =0;
   Permission = '';
   StandardFilterWithBatchId = '';
   SelectedApplicationId = 0;
@@ -47,6 +48,7 @@ export class JournalEntryComponent implements OnInit {
     PostingDate: new Date(),
     Reference: '',
     FeeReceiptId: 0,
+    ParentId:0,
     ClassFeeId: 0,
     LedgerId: 0,
     GeneralLedgerAccountId: 0,
@@ -133,6 +135,7 @@ export class JournalEntryComponent implements OnInit {
       PostingDate: new Date(),
       Reference: this.searchForm.get("searchReferenceId").value,
       FeeReceiptId: 0,
+      ParentId:0,
       ClassFeeId: 0,
       LedgerId: 0,
       GeneralLedgerAccountId: this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId,
@@ -143,6 +146,7 @@ export class JournalEntryComponent implements OnInit {
       Active: 0,
       Action: true
     }
+    this.AccountingVoucherList =[];
     this.AccountingVoucherList.push(newdata);
     this.dataSource = new MatTableDataSource<IAccountingVoucher>(this.AccountingVoucherList);
   }
@@ -176,6 +180,7 @@ export class JournalEntryComponent implements OnInit {
       "GeneralLedgerAccountId",
       "Reference",
       "FeeReceiptId",
+      "ParentId",
       "ClassFeeId",
       "LedgerId",
       "Debit",
@@ -298,6 +303,8 @@ export class JournalEntryComponent implements OnInit {
           this.AccountingVoucherData.GeneralLedgerAccountId = row.GeneralLedgerAccountId;
           this.AccountingVoucherData.ClassFeeId = 0;
           this.AccountingVoucherData.FeeReceiptId = 0;
+          this.AccountingVoucherData.ParentId = this.ParentId;
+
           this.AccountingVoucherData.ShortText = this.searchForm.get("searchShortText").value;
           this.AccountingVoucherData.OrgId = this.LoginUserDetail[0]["orgId"];
 
@@ -329,7 +336,7 @@ export class JournalEntryComponent implements OnInit {
         (data: any) => {
           this.loading = false; this.PageLoading = false;
           row.AccountingVoucherId = data.AccountingVoucherId;
-
+          this.ParentId = data.ParentId;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
@@ -403,6 +410,7 @@ export interface IAccountingVoucher {
   Reference: string;
   LedgerId: number;
   GeneralLedgerAccountId: number;
+  ParentId:number;
   Debit: boolean;
   Amount: number;
   BaseAmount: number;

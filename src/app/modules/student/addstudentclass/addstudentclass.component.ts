@@ -38,7 +38,6 @@ export class AddstudentclassComponent implements OnInit {
     StudentId: 0,
     ClassId: 0,
     SectionId: 0,
-    HouseId: 0,
     RollNo: '',
     BatchId: 0,
     FeeTypeId: 0,
@@ -65,7 +64,6 @@ export class AddstudentclassComponent implements OnInit {
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
       SectionId: [0],
-      HouseId: [0],
       RollNo: [''],
       FeeTypeId: [0],
       Remarks: [''],
@@ -192,7 +190,10 @@ export class AddstudentclassComponent implements OnInit {
     if (this.StudentId > 0 && this.StudentClassId > 0) {
 
       let list: List = new List();
-      list.fields = ["StudentClassId", "ClassId", "StudentId", "RollNo", "SectionId", "HouseId", "BatchId", "FeeTypeId",
+      list.fields = [
+        "StudentClassId", "ClassId",
+        "StudentId", "RollNo", "SectionId",
+        "BatchId", "FeeTypeId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
       list.filter = ["StudentClassId eq " + this.StudentClassId + " and " + filterOrgIdNBatchId];
@@ -205,7 +206,6 @@ export class AddstudentclassComponent implements OnInit {
               StudentId: data.value[0].StudentId,
               ClassId: data.value[0].ClassId,
               SectionId: data.value[0].SectionId,
-              HouseId: data.value[0].HouseId,
               RollNo: data.value[0].RollNo,
               BatchId: data.value[0].BatchId,
               FeeTypeId: data.value[0].FeeTypeId,
@@ -220,7 +220,6 @@ export class AddstudentclassComponent implements OnInit {
               StudentName: this.StudentName,
               ClassId: 0,
               SectionId: 0,
-              HouseId: 0,
               RollNo: '',
               BatchId: this.SelectedBatchId,
               FeeTypeId: 0,
@@ -272,11 +271,9 @@ export class AddstudentclassComponent implements OnInit {
       this.loading = true;
       this.studentclassData.Active = 1;
       this.studentclassData.BatchId = this.SelectedBatchId;
-
       this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
       this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
       this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
-      this.studentclassData.HouseId = this.studentclassForm.value.HouseId;
       this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
       this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
       this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;

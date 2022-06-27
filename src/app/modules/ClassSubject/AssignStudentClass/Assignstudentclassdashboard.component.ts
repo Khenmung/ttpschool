@@ -55,6 +55,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
   Classes = [];
   FeeTypes = [];
   Sections = [];
+  Remarks=[];
   StudentGrades = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;

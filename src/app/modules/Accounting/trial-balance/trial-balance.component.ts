@@ -6,12 +6,15 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
+import { IGeneralLedger } from '../ledger-account/ledger-account.component';
 
 @Component({
   selector: 'app-trial-balance',
@@ -21,8 +24,8 @@ import { IAccountingVoucher } from '../JournalEntry/JournalEntry.component';
 export class TrialBalanceComponent implements OnInit {
   PageLoading = true;
   @ViewChild("table") mattable;
-  @ViewChild(MatPaginator) paginator:MatPaginator;
-  @ViewChild(MatSort) matsort:MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) matsort: MatSort;
 
 
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
@@ -30,20 +33,14 @@ export class TrialBalanceComponent implements OnInit {
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
+  filteredOptions: Observable<IGeneralLedger[]>;
   AccountingPeriod = [];
   SelectedApplicationId = 0;
   Permission = '';
   StandardFilterWithBatchId = '';
   loading = false;
   GLAccounts = [];
+  GeneralLedgers = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   AccountingVoucherList: IAccountingVoucher[] = [];
@@ -87,9 +84,14 @@ export class TrialBalanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
-      searchSubjectTeacherId: [0],
-      searchClassId: [0]
+      searchGeneralLedgerId: [0]
     });
+    this.filteredOptions = this.searchForm.get("searchGeneralLedgerId").valueChanges
+      .pipe(
+        startWith(''),
+        map(value => typeof value === 'string' ? value : value.TeacherName),
+        map(TeacherName => TeacherName ? this._filter(TeacherName) : this.GeneralLedgers.slice())
+      );
     this.PageLoad();
     //        this.GetTeachers();
   }
@@ -102,7 +104,15 @@ export class TrialBalanceComponent implements OnInit {
   // displayFn(teacher: ITeachers): string {
   //   return teacher && teacher.TeacherName ? teacher.TeacherName : '';
   // }
+  private _filter(name: string): IAccountingVoucher[] {
 
+    const filterValue = name.toLowerCase();
+    return this.GeneralLedgers.filter(option => option.GeneralLedgerName.toLowerCase().includes(filterValue));
+
+  }
+  displayFn(ledger: IGeneralLedger): string {
+    return ledger && ledger.GeneralLedgerName ? ledger.GeneralLedgerName : '';
+  }
   PageLoad() {
     debugger;
     this.loading = true;
@@ -123,6 +133,7 @@ export class TrialBalanceComponent implements OnInit {
           this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
           //this.GetMasterData();
           this.GetGLAccounts();
+          this.GetGeneralLedgerAutoComplete();
         }
 
       }
@@ -154,6 +165,16 @@ export class TrialBalanceComponent implements OnInit {
     debugger;
     this.loading = true;
 
+    var _GeneralLedgerId = this.searchForm.get("searchGeneralLedgerId").value.GeneralLedgerId;
+    if (_GeneralLedgerId == undefined) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select account.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else {
+      filterStr += " and GeneralLedgerAccountId eq " + _GeneralLedgerId
+    }
+
     //filterStr += " and PostingDate ge datetime'" + this.datepipe.transform(this.AccountingPeriod[0].StartDate, 'yyyy-MM-dd') + //T00:00:00.000Z
     //  "' and  PostingDate le datetime'" + this.datepipe.transform(this.AccountingPeriod[0].EndDate, 'yyyy-MM-dd') + "'";//T00:00:00.000Z
     // if (_ClassId != 0)
@@ -162,15 +183,12 @@ export class TrialBalanceComponent implements OnInit {
     let list: List = new List();
     list.fields = [
       "AccountingVoucherId",
-      //"DocDate",
-      //"PostingDate",
       "GeneralLedgerAccountId",
       "Reference",
       "LedgerId",
       "Debit",
       "BaseAmount",
       "Amount",
-      //"ShortText",
       "Active",
     ];
 
@@ -191,41 +209,23 @@ export class TrialBalanceComponent implements OnInit {
             this.AccountingVoucherList.push(f);
           }
         })
-        console.log("this.AccountingVoucherList", this.AccountingVoucherList)
-        var groupbyDebitCredit = alasql("select sum(BaseAmount) as Amount,Debit,AccountName,DebitAccount from ? GROUP BY AccountName,FeeReceiptId,Debit,DebitAccount order by AccountName",
+        //console.log("this.AccountingVoucherList", this.AccountingVoucherList)
+        var groupbyDebitCredit = alasql("select sum(BaseAmount) as Amount,Debit,AccountName from ? GROUP BY AccountName,Debit order by AccountName",
           [this.AccountingVoucherList])
-        var _AccountName = '', _amount = 0;
         groupbyDebitCredit.forEach(f => {
-
-          if (f.AccountName == _AccountName) {
-            if (f.DebitAccount) {
-              f.Dr = Math.abs(_amount - f.Amount)
-              f.Cr = 0;
-            }
-            else {
-              f.Cr = Math.abs(_amount - f.Amount)
-              f.Dr = 0;
-            }
-          }
-          else if (groupbyDebitCredit.filter(g => g.AccountName == f.AccountName).length == 1) {
-            if (f.DebitAccount) {
-              f.Dr = Math.abs(_amount - f.Amount)
-              f.Cr = 0;
-            }
-            else {
-              f.Cr = Math.abs(_amount - f.Amount)
-              f.Dr = 0;
-            }
+          if (f.Debit) {
+            f.Dr = f.Amount
+            f.Cr = 0;
           }
           else {
-            _amount = f.Amount;
-            _AccountName = f.AccountName;
+            f.Cr = f.Amount
+            f.Dr = 0;
           }
         })
-        console.log("groupbyDebitCredit",groupbyDebitCredit)
+        console.log("groupbyDebitCredit", groupbyDebitCredit)
         var display = groupbyDebitCredit.filter(f => f.Dr != undefined)
-        this.TotalCredit = display.reduce((acc,current)=>acc + current.Cr,0)
-        this.TotalDebit = display.reduce((acc,current)=>acc + current.Dr,0)
+        this.TotalCredit = display.reduce((acc, current) => acc + current.Cr, 0)
+        this.TotalDebit = display.reduce((acc, current) => acc + current.Dr, 0)
 
         this.dataSource = new MatTableDataSource<IAccountingVoucher>(display);
         this.dataSource.paginator = this.paginator;
@@ -233,6 +233,25 @@ export class TrialBalanceComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
         //this.changeDetectorRefs.detectChanges();
       });
+  }
+  GetGeneralLedgerAutoComplete() {
+
+    let list: List = new List();
+    list.fields = [
+      "GeneralLedgerId",
+      "GeneralLedgerName",
+      "AccountNatureId",
+      "AccountGroupId"
+    ];
+
+    list.PageName = "GeneralLedgers";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    this.GLAccounts = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GeneralLedgers = [...data.value];
+        this.loading = false; this.PageLoading = false;
+      })
   }
   onBlur(row) {
     row.Action = true;
@@ -347,7 +366,7 @@ export class TrialBalanceComponent implements OnInit {
             this.GLAccounts.push(f)
           }
         });
-        this.GetAccountingVoucher();
+
         //this.loading = false; this.PageLoading = false;
       })
   }

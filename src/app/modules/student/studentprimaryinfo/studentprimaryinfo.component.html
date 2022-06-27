@@ -187,7 +187,7 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" class="mat-raised-button" matTooltip="go to search">
+                <button [disabled]="loading" (click)="back()" class="mat-raised-button" matTooltip="dashboard">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save"
@@ -337,7 +337,7 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" matTooltip="go to search student"
+                <button [disabled]="loading" (click)="back()" matTooltip="dashboard"
                     class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
@@ -379,10 +379,32 @@
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
+                        <mat-label>House</mat-label>
+                        <mat-select formControlName="HouseId" (selectionChange)="OnBlur()">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Houses" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    </div>
+                    <div style="padding: 15px 15px 0px 15px">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Remarks</mat-label>
+                        <mat-select formControlName="RemarkId" (selectionChange)="OnBlur()">
+                            <mat-option value="0">---</mat-option>
+                            <mat-option *ngFor="let p of Remarks" [value]="p.MasterDataId">
+                                {{p.MasterDataName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <!-- <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
                         <input formControlName="Remarks" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
                             [maxlength]="250">
-                    </mat-form-field>
+                    </mat-form-field> -->
+                    
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
                     <mat-form-field *ngIf="StudentLeaving" appearance="outline">
@@ -401,7 +423,7 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_before</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" alt="back" class="mat-raised-button">
+                <button [disabled]="loading" (click)="back()" matTooltip="back" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"

@@ -44,7 +44,6 @@ export class GeneralLedgerComponent implements OnInit {
     ContactName: '',
     Email: '',
     Address: '',
-    AccountSubGroupId: 0,
     AccountNatureId: 0,
     AccountGroupId: 0,
     OrgId: 0,
@@ -56,7 +55,6 @@ export class GeneralLedgerComponent implements OnInit {
     'GeneralLedgerName',
     'AccountNatureId',
     'AccountGroupId',
-    'AccountSubGroupId',
     'ContactNo',
     'ContactName',
     'Email',
@@ -208,7 +206,7 @@ export class GeneralLedgerComponent implements OnInit {
           this.GeneralLedgerData.GeneralLedgerId = row.GeneralLedgerId;
           this.GeneralLedgerData.AccountNatureId = row.AccountNatureId;
           this.GeneralLedgerData.AccountGroupId = row.AccountGroupId;
-          this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId==null?0:row.AccountSubGroupId;          
+          // this.GeneralLedgerData.AccountSubGroupId = row.AccountSubGroupId==null?0:row.AccountSubGroupId;          
           this.GeneralLedgerData.GeneralLedgerName = row.GeneralLedgerName;
           this.GeneralLedgerData.ContactNo = row.ContactNo;
           this.GeneralLedgerData.ContactName = row.ContactName;
@@ -266,7 +264,7 @@ export class GeneralLedgerComponent implements OnInit {
   GetAccountNature() {
     //debugger;
     this.loading = true;
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let filterStr = 'Active eq true and (OrgId eq 0 or OrgId eq ' + this.LoginUserDetail[0]["orgId"] +")";
 
     let list: List = new List();
     list.fields = [

@@ -118,7 +118,6 @@
                     <mat-cell *matCellDef="let element" [attr.colspan]="2"
                         style="display:flex; flex-direction: column;justify-content: start;">
                         <!-- <span *ngIf="element.ClassEvalCategoryId>0">{{element.CatName}}</span> -->
-
                         <span
                             style="width:100%; margin: 15px;display:flex; flex-direction:column;justify-content: flex-start;">
                             <span
@@ -129,12 +128,13 @@
                                 style="width: 100%;padding: 15px 15px 10px 0px;">
                                 <mat-icon class="icon">star_outline</mat-icon> {{element.Description}}
                             </span>
-                            <span [innerHTML]="element.History|encodeHTML"
+                            <span [innerHTML]="element.AnswerText|encodeHTML"
                                 style="border:1px solid lightgray; width: 100%;min-height: 50px;padding: 15px;margin: 15px;"
-                                *ngIf="element.ClassEvaluationAnswerOptionParentId==0 && element.History.length>0">
-                                <!-- <textarea [rows]="7" [disabled]="true" style="padding:15px; width:100%">
-                                    {{element.AnswerText}}
-                                </textarea> -->
+                                *ngIf="!EvaluationUpdatable &&element.ClassEvaluationAnswerOptionParentId==0 && element.History.length>0">
+                            </span>
+                            <span [innerHTML]="element.History|encodeHTML"
+                                class="history"
+                                *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.History.length>0">
                             </span>
                         </span>
                         <span style="width:100%;">
@@ -198,7 +198,7 @@
                 printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
             </button>
-            <mat-paginator [pageSizeOptions]="[50,100]"></mat-paginator>
+            <mat-paginator [pageSizeOptions]="[1,5,50,100]"></mat-paginator>
         </span>
     </div>
 </div>

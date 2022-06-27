@@ -20,8 +20,8 @@ import { ContentService } from 'src/app/shared/content.service';
   templateUrl: './searchstudent.component.html',
   styleUrls: ['./searchstudent.component.scss']
 })
-export class searchstudentComponent implements OnInit { 
-  PageLoading=true;
+export class searchstudentComponent implements OnInit {
+  PageLoading = true;
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -51,6 +51,7 @@ export class searchstudentComponent implements OnInit {
   Category = [];
   Religion = [];
   States = []
+  Remarks = [];
   PrimaryContact = [];
   Location = [];
   LanguageSubjUpper = [];
@@ -74,7 +75,7 @@ export class searchstudentComponent implements OnInit {
   filteredFathers: Observable<IStudent[]>;
   filteredMothers: Observable<IStudent[]>;
   LoginUserDetail;
-  FeePaymentPermission='';
+  FeePaymentPermission = '';
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -93,8 +94,7 @@ export class searchstudentComponent implements OnInit {
     }
     else {
       var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.FEEPAYMENT);
-      if(perObj.length>0)
-      {
+      if (perObj.length > 0) {
         this.FeePaymentPermission = perObj[0].permission;
       }
       //var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
@@ -104,6 +104,8 @@ export class searchstudentComponent implements OnInit {
       this.filterOrgIdOnly = globalconstants.getStandardFilter(this.LoginUserDetail);
       this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
       this.studentSearchForm = this.fb.group({
+        searchRemarkId: [0],
+        searchClassId: [0],
         searchPID: [''],
         searchStudentName: [''],
         FatherName: [''],
@@ -207,7 +209,7 @@ export class searchstudentComponent implements OnInit {
 
         this.LanguageSubjLower = this.getDropDownData(globalconstants.MasterDefinitions.school.LANGUAGESUBJECTLOWERCLS);
         this.shareddata.ChangeLanguageSubjectLower(this.LanguageSubjLower);
-
+        this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
         this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((f: any) => {
           this.FeeDefinitions = [...f.value];
           this.shareddata.ChangeFeeDefinition(this.FeeDefinitions);
@@ -222,7 +224,7 @@ export class searchstudentComponent implements OnInit {
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.getSelectedBatchStudentIDRollNo();
         this.GetStudentClasses();
 
@@ -347,7 +349,7 @@ export class searchstudentComponent implements OnInit {
       .subscribe((data: any) => {
         this.FeeType = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeType);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetStudent() {
@@ -355,13 +357,23 @@ export class searchstudentComponent implements OnInit {
     this.loading = true;
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
     var studentName = this.studentSearchForm.get("searchStudentName").value.Name;
+    var _ClassId = this.studentSearchForm.get("searchClassId").value;
+    var _remarkId = this.studentSearchForm.get("searchRemarkId").value;
+
     var _PID = this.studentSearchForm.get("searchPID").value;
     var _fatherName = this.studentSearchForm.get("FatherName").value.FatherName;
     var _motherName = this.studentSearchForm.get("MotherName").value.MotherName;
-    if (_PID == 0 && studentName == undefined && _fatherName == undefined && _motherName == undefined) {
-      this.loading = false; this.PageLoading=false;
+    if (_remarkId == 0 && _ClassId == 0 && _PID == 0 && studentName == undefined && _fatherName == undefined && _motherName == undefined) {
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
+    }
+    if (_remarkId > 0) {
+      checkFilterString += " and RemarkId eq " + _remarkId;
+    }
+    var classfilter = '';
+    if (_ClassId > 0) {
+      classfilter = 'ClassId eq ' + _ClassId + ' and '
     }
     if (_PID > 0)
       checkFilterString += " and PID eq " + _PID;
@@ -376,9 +388,9 @@ export class searchstudentComponent implements OnInit {
     list.fields = ["StudentId", "PID",
       "FirstName", "LastName", "FatherName",
       "MotherName", "FatherContactNo",
-      "MotherContactNo", "Active",
+      "MotherContactNo", "Active", "RemarkId",
       "ReasonForLeavingId"];
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks)"];
+    list.lookupFields = ["StudentClasses($filter=" + classfilter + "BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";
@@ -387,7 +399,14 @@ export class searchstudentComponent implements OnInit {
       .subscribe((data: any) => {
         ////console.log(data.value);
         if (data.value.length > 0) {
-          var formattedData = data.value.filter(sc => {
+          var formattedData = [];
+          if (_ClassId > 0) {
+            formattedData = data.value.filter(f => f.StudentClasses.length > 0);
+          }
+          else {
+            formattedData = [...data.value];
+          }
+          formattedData = formattedData.filter(sc => {
             let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
             if (sc.StudentClasses.length > 0) {
               var obj = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId);
@@ -403,13 +422,16 @@ export class searchstudentComponent implements OnInit {
           });
           this.ELEMENT_DATA = formattedData.map(item => {
             item.Name = item.FirstName + " " + item.LastName;
-
-            if (item.StudentClasses.length == 0) {
+            if (item.RemarkId > 0)
+              item.Remarks = this.Remarks.filter(f => f.MasterDataId == item.RemarkId)[0].MasterDataName;
+            else
               item.Remarks = '';
+            if (item.StudentClasses.length == 0) {
+              //item.Remarks = '';
               item.ClassName = '';
             }
             else {
-              item.Remarks = item.StudentClasses[0].Remarks;
+              //item.Remarks = item.StudentClasses[0].Remarks;
               var clsobj = this.Classes.filter(cls => {
                 return cls.ClassId == item.StudentClasses[0].ClassId
               })
@@ -431,7 +453,7 @@ export class searchstudentComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
 
   }
@@ -464,7 +486,7 @@ export class searchstudentComponent implements OnInit {
       'ContactNo',
       'RelationshipId',
       'Active',
-      'Remarks'
+      'RemarkId'
     ];
     list.PageName = StudentFamilyNFriendListName;
     list.filter = [filterStr];
@@ -501,14 +523,14 @@ export class searchstudentComponent implements OnInit {
 
       var _studentId = localStorage.getItem('studentId');
       standardfilter += ' and ( StudentId eq ' + _studentId
-      if (this.Siblings.length > 0) {        
+      if (this.Siblings.length > 0) {
         //siblings
         this.Siblings.forEach(s => {
           standardfilter += ' or StudentId eq ' + s.SiblingId;
         })
       }
       standardfilter += ')'
-    }  
+    }
 
 
     list.filter = [standardfilter];
@@ -568,7 +590,7 @@ export class searchstudentComponent implements OnInit {
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 

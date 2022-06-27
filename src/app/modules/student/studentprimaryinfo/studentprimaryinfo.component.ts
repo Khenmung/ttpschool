@@ -60,6 +60,8 @@ export class studentprimaryinfoComponent implements OnInit {
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
   displayContactPerson = false;
+  Houses=[];
+  Remarks=[];
   studentForm: FormGroup;
   Edited = false;
   public files: NgxFileDropEntry[] = [];
@@ -182,7 +184,8 @@ export class studentprimaryinfoComponent implements OnInit {
       ClubId: [0],
       AdmissionStatusId: [0],
       AdmissionDate: [new Date()],
-      Remarks: [''],
+      HouseId: [0],
+      RemarkId: [0],
       Active: [1]
     });
     this.StudentId = this.tokenService.getStudentId();
@@ -271,6 +274,8 @@ export class studentprimaryinfoComponent implements OnInit {
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.PrimaryContact = this.getDropDownData(globalconstants.MasterDefinitions.school.PRIMARYCONTACT);
         this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+        this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+        this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
         this.AdmissionStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.ADMISSIONSTATUS);
 
         this.Location = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
@@ -393,9 +398,11 @@ export class studentprimaryinfoComponent implements OnInit {
       TransferFromSchool: this.studentForm.get("TransferFromSchool").value,
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
       ClubId: this.studentForm.get("ClubId").value,
+      HouseId: this.studentForm.get("HouseId").value,
+      RemarkId: this.studentForm.get("RemarkId").value,
       AdmissionStatusId: this.studentForm.get("AdmissionStatusId").value,
       AdmissionDate: this.studentForm.get("AdmissionDate").value,
-      Remarks: this.studentForm.get("Remarks").value,
+      //Remarks: this.studentForm.get("Remarks").value,
       EmailAddress: _email,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
       ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
@@ -448,12 +455,11 @@ export class studentprimaryinfoComponent implements OnInit {
           }
 
         }, error => {
-          console.log(error)
+          console.log("student insert",error)
           var errormsg = globalconstants.formatError(error);
+          this.loading=false;
           this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);
         })
-
-
     })
   }
 
@@ -468,6 +474,9 @@ export class studentprimaryinfoComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.UserLoginCreated, globalconstants.ActionText, globalconstants.BlueBackground);
         else
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+      },error=>{
+        this.loading=false;
+        console.log("student update",error);
       })
   }
   CreateInvoice() {
@@ -551,16 +560,14 @@ export class studentprimaryinfoComponent implements OnInit {
               TransferFromSchool: stud.TransferFromSchool,
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
               ClubId: stud.ClubId,
+              HouseId: stud.HouseId,
               AdmissionStatusId: stud.AdmissionStatusId,
               AdmissionDate: stud.AdmissionDate,
-              Remarks: stud.Remarks,
+              RemarkId: stud.RemarkId,
               Active: stud.Active,
               ReasonForLeavingId: stud.ReasonForLeavingId
             })
-            // if(this.studentForm.get("EmailAddress").value !="")
-            // {
-            //   this.studentForm.get("EmailAddress").disable();
-            // }
+
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)
               this.displayContactPerson = true;
             else
