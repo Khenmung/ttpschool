@@ -18,9 +18,10 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classdetail.component.html',
   styleUrls: ['./classdetail.component.scss']
 })
-export class ClassdetailComponent implements OnInit { PageLoading=true;
-@ViewChild(MatPaginator) paginator :MatPaginator;
-@ViewChild(MatSort) sort :MatSort;
+export class ClassdetailComponent implements OnInit {
+    PageLoading = true;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   optionsNoAutoClose = {
@@ -83,7 +84,7 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -168,7 +169,7 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
 
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
@@ -177,8 +178,8 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
     //debugger;
 
     if (row.Sequence > 250) {
-      this.contentservice.openSnackBar("Sequence can not be greater than 250",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.contentservice.openSnackBar("Sequence can not be greater than 250", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
       return;
     }
     // if(row.MinStudent<1)
@@ -188,8 +189,8 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
     //   return;
     // }
     if (row.MaxStudent > 1000) {
-      this.contentservice.openSnackBar("Maximum can not be greater than 1000",globalconstants.ActionText,globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+      this.contentservice.openSnackBar("Maximum can not be greater than 1000", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
       return;
     }
     this.loading = true;
@@ -206,7 +207,7 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -245,7 +246,7 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -265,7 +266,7 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -292,6 +293,7 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
       "EndDate",
       "StudyAreaId",
       "StudyModeId",
+      "Sequence",
       "BatchId",
       "Active"
     ];
@@ -303,10 +305,14 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.ClassMasterList = [...data.value];
+          this.ClassMasterList = data.value.map(f => {
+            if (!f.Active)
+              f.Sequence = 100
+            return f;
+          });
         }
-        this.ClassMasterList.sort((a,b)=>a.Sequence - b.Sequence);
-        
+        this.ClassMasterList.sort((a, b) => a.Sequence - b.Sequence);
+
         this.dataSource = new MatTableDataSource<IClassMaster>(this.ClassMasterList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -324,7 +330,7 @@ export class ClassdetailComponent implements OnInit { PageLoading=true;
         this.Durations = this.getDropDownData(globalconstants.MasterDefinitions.school.DURATION);
         this.StudyArea = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYAREA);
         this.StudyMode = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDYMODE);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {

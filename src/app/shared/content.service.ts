@@ -120,6 +120,36 @@ export class ContentService implements OnInit {
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
+  getSelectedReportColumn(pOrgId,pSelectedApplicationId) {
+
+    debugger;
+    //var MyReportNameId = this.searchForm.get("searchReportName").value;
+
+    // if (pModuleName == 0) {
+    //   this.contentservice.openSnackBar("Please select report name", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // this.loading = true;
+    let list: List = new List();
+    list.fields = [
+      "ReportConfigItemId",
+      "ReportName",
+      "DisplayName",
+      "Formula",
+      "ParentId",
+      "ApplicationId",
+      "ColumnSequence",
+      "TableNames",
+      "OrgId",
+      "UserId",
+      "Active"]
+    list.PageName = 'ReportConfigItems';
+    list.filter = ["Deleted eq false and (OrgId eq 0 or OrgId eq " + pOrgId + 
+    ") and (ApplicationId eq 0 or ApplicationId eq " + pSelectedApplicationId +')'];
+
+    return this.dataservice.get(list)
+      
+  }
   GetGeneralAccounts(orgId, active, type) {
     var activefilter = active == 1 ? ' and Active eq 1' : '';
     let filterStr = 'OrgId eq ' + orgId + activefilter;

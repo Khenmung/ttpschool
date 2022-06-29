@@ -91,12 +91,12 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Gender</mat-label>
-                        <mat-select formControlName="GenderId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Gender" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
                         </mat-select>
-                        <span class="text-danger" *ngIf="f.GenderId.touched && f.GenderId.hasError('required')">Gender
+                        <span class="text-danger" *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
                             is required.</span>
                     </mat-form-field>
                 </mat-grid-tile>
@@ -121,7 +121,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Blood group</mat-label>
-                        <mat-select formControlName="BloodgroupId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Bloodgroup" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -131,7 +131,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Category</mat-label>
-                        <mat-select formControlName="CategoryId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Category" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -141,7 +141,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Religion</mat-label>
-                        <mat-select formControlName="ReligionId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Religion" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -151,7 +151,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Department</mat-label>
-                        <mat-select formControlName="DepartmentId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Department" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of Departments" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -161,7 +161,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Designation</mat-label>
-                        <mat-select formControlName="DesignationId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Designation" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of Designations" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -171,7 +171,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Grade</mat-label>
-                        <mat-select formControlName="EmpGradeId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="EmpGrade" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of Grades" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -181,7 +181,7 @@
                 <mat-grid-tile [colspan]="1" [rowspan]="1">
                     <mat-form-field appearance="outline" fxFlex>
                         <mat-label>Work Category</mat-label>
-                        <mat-select formControlName="WorkAccountId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="WorkAccount" (selectionChange)="OnBlur()">
                             <mat-option *ngFor="let p of WorkAccounts" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
                             </mat-option>
@@ -262,7 +262,7 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>Country</mat-label>
-                            <mat-select formControlName="PresentAddressCountryId"
+                            <mat-select formControlName="PresentAddressCountry"
                                 (selectionChange)="SelectPresentState($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Country" [value]="p.MasterDataId">
@@ -272,7 +272,7 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>State/Province/Division</mat-label>
-                            <mat-select formControlName="PresentAddressStateId"
+                            <mat-select formControlName="PresentAddressState"
                                 (selectionChange)="SelectPresentCity($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of PresentState" [value]="p.MasterDataId">
@@ -282,7 +282,7 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>City</mat-label>
-                            <mat-select formControlName="PresentAddressCityId" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="PresentAddressCity" (selectionChange)="OnBlur()">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of PresentCity" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
@@ -307,7 +307,7 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>Country</mat-label>
-                            <mat-select formControlName="PermanentAddressCountryId"
+                            <mat-select formControlName="PermanentAddressCountry"
                                 (selectionChange)="SelectPermanentState($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of Country" [value]="p.MasterDataId">
@@ -317,7 +317,7 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>State/Province/Division</mat-label>
-                            <mat-select formControlName="PermanentAddressStateId"
+                            <mat-select formControlName="PermanentAddressState"
                                 (selectionChange)="SelectPermanentCity($event.value)">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of PermanentState" [value]="p.MasterDataId">
@@ -327,7 +327,7 @@
                         </mat-form-field>
                         <mat-form-field appearance="outline">
                             <mat-label>City</mat-label>
-                            <mat-select formControlName="PermanentAddressCityId" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="PermanentAddressCity" (selectionChange)="OnBlur()">
                                 <mat-option value="0">---</mat-option>
                                 <mat-option *ngFor="let p of PermanentCity" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
@@ -448,7 +448,7 @@
             <div class="content" fxLayout="row wrap" fxLayoutGap="100px">
                 <mat-form-field appearance="outline">
                     <mat-label>Employment Type</mat-label>
-                    <mat-select formControlName="EmploymentTypeId" (selectionChange)="OnBlur()">
+                    <mat-select formControlName="EmploymentType" (selectionChange)="OnBlur()">
                         <mat-option value="0">---</mat-option>
                         <mat-option *ngFor="let p of EmploymentTypes" [value]="p.MasterDataId">
                             {{p.MasterDataName}}
@@ -457,7 +457,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Employment Status</mat-label>
-                    <mat-select formControlName="EmploymentStatusId" (selectionChange)="OnBlur()">
+                    <mat-select formControlName="EmploymentStatus" (selectionChange)="OnBlur()">
                         <mat-option value="0">---</mat-option>
                         <mat-option *ngFor="let p of EmploymentStatus" [value]="p.MasterDataId">
                             {{p.MasterDataName}}
@@ -486,7 +486,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Marital Status</mat-label>
-                    <mat-select formControlName="MaritalStatusId" (selectionChange)="OnBlur()">
+                    <mat-select formControlName="MaritalStatus" (selectionChange)="OnBlur()">
                         <mat-option value="0">---</mat-option>
                         <mat-option *ngFor="let p of MaritalStatus" [value]="p.MasterDataId">
                             {{p.MasterDataName}}
@@ -504,7 +504,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Work Nature</mat-label>
-                    <mat-select formControlName="NatureId" (selectionChange)="OnBlur()">
+                    <mat-select formControlName="Nature" (selectionChange)="OnBlur()">
                         <mat-option value="0">---</mat-option>
                         <mat-option *ngFor="let p of WorkNature" [value]="p.MasterDataId">
                             {{p.MasterDataName}}

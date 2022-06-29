@@ -12,7 +12,7 @@ import { GetreportComponent } from '../getreport/getreport.component';
   styleUrls: ['./generalreportboard.component.scss']
 })
 export class GeneralReportboardComponent implements AfterViewInit {
-  components = [
+  components:any = [
     GetreportComponent,
     ExcelDataManagementComponent
   ];
@@ -105,6 +105,6 @@ export class GeneralReportboardComponent implements AfterViewInit {
 
   private renderComponent(index: number): any {
     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    this.viewContainer.createComponent(this.components[index]);
   }
 }

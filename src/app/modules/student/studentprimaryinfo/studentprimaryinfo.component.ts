@@ -56,6 +56,7 @@ export class studentprimaryinfoComponent implements OnInit {
   ReasonForLeaving = [];
   studentData = [];
   AdmissionStatuses = [];
+  ColumnsOfSelectedReports =[];
   CountryId = 0;
   PrimaryContactDefaultId = 0;
   PrimaryContactOtherId = 0;
@@ -146,30 +147,31 @@ export class studentprimaryinfoComponent implements OnInit {
     //if (this.Genders.length == 0)
     //  this.route.navigate(["/edu"]);
     //else {
+    
     this.studentForm = this.fb.group({
-      ReasonForLeavingId: [0],
+      ReasonForLeaving: [0],
       StudentId: [0],
       FirstName: ['', [Validators.required]],
       LastName: [''],
-      FatherName: ['', [Validators.required]],
-      FatherOccupation: ['', [Validators.required]],
-      MotherName: ['', [Validators.required]],
-      MotherOccupation: ['', [Validators.required]],
-      GenderId: [0, [Validators.required]],
+      FatherName: [''],
+      FatherOccupation: [''],
+      MotherName: [''],
+      MotherOccupation: [''],
+      Gender: [0, [Validators.required]],
       PresentAddress: ['', [Validators.required]],
       PermanentAddress: ['', [Validators.required]],
       DOB: [new Date(), [Validators.required]],
-      BloodgroupId: [0, [Validators.required]],
-      CategoryId: [0, [Validators.required]],
+      Bloodgroup: [0, [Validators.required]],
+      Category: [0, [Validators.required]],
       ClassAdmissionSought: [0, [Validators.required]],
-      ReligionId: [0, [Validators.required]],
+      Religion: [0, [Validators.required]],
       BankAccountNo: [''],
       IFSCCode: [''],
       MICRNo: [''],
       AadharNo: [''],
       Photo: [''],
       ContactNo: ['', [Validators.required]],
-      WhatsAppNumber: ['', [Validators.required]],
+      WhatsAppNumber: [''],
       FatherContactNo: [''],
       MotherContactNo: [''],
       PrimaryContactFatherOrMother: [0],
@@ -181,11 +183,14 @@ export class studentprimaryinfoComponent implements OnInit {
       LastSchoolPercentage: [''],
       TransferFromSchool: [''],
       TransferFromSchoolBoard: [''],
-      ClubId: [0],
-      AdmissionStatusId: [0],
+      Club: [0],
+      AdmissionStatus: [0],
       AdmissionDate: [new Date()],
-      HouseId: [0],
-      RemarkId: [0],
+      House: [0],
+      Remarks: [0],
+      IdentificationMark: [''],
+      Weight: [0],
+      Height: [0],
       Active: [1]
     });
     this.StudentId = this.tokenService.getStudentId();
@@ -204,7 +209,7 @@ export class studentprimaryinfoComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-
+        this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
         this.GetMasterData();
         if (this.StudentId > 0)
@@ -307,46 +312,58 @@ export class studentprimaryinfoComponent implements OnInit {
   OnBlur() {
     this.Edited = true;
   }
+  ErrorMessage='';
   SaveOrUpdate() {
-    var errorMessage = '';
-    if (this.studentForm.get("FirstName").value == 0) {
-      errorMessage += "First Name is required.\n";
-    }
-    if (this.studentForm.get("FatherName").value == 0) {
-      errorMessage += "Father name is required.\n";
+    
+    var _MandatoryColumns = this.ColumnsOfSelectedReports.filter(f => f.Active == 1);
+    this.ErrorMessage ='';
+      _MandatoryColumns.forEach(b => {
+        if (this.studentForm.get(b.ReportName).value == undefined 
+        || this.studentForm.get(b.ReportName).value == null 
+        || this.studentForm.get(b.ReportName).value.length == 0
+        || this.studentForm.get(b.ReportName).value==0) {
+          this.ErrorMessage += b.ReportName + " is required.\n";
+        }
+      })
 
-    }
-    if (this.studentForm.get("BloodgroupId").value == 0) {
-      errorMessage += "Please select blood group.\n";
+    // if (this.studentForm.get("FirstName").value == 0) {
+    //   errorMessage += "First Name is required.\n";
+    // }
+    // if (this.studentForm.get("FatherName").value == 0) {
+    //   errorMessage += "Father name is required.\n";
 
-    }
-    if (this.studentForm.get("GenderId").value == 0) {
-      errorMessage += "Please select gender.\n";
+    // }
+    // if (this.studentForm.get("BloodgroupId").value == 0) {
+    //   errorMessage += "Please select blood group.\n";
 
-    }
-    if (this.studentForm.get("ReligionId").value == 0) {
-      errorMessage += "Please select religion.\n";
+    // }
+    // if (this.studentForm.get("GenderId").value == 0) {
+    //   errorMessage += "Please select gender.\n";
 
-    }
-    if (this.studentForm.get("CategoryId").value == 0) {
-      errorMessage += "Please select Category.\n";
-    }
-    if (this.studentForm.get("ClassAdmissionSought").value == 0) {
-      errorMessage += "Please select Class for which admission is sought.\n";
-    }
-    if (this.studentForm.get("AdmissionStatusId").value == 0) {
-      errorMessage += "Please select admission status.\n";
-    }
-    if (this.studentForm.get("ContactNo").value == 0) {
-      errorMessage += "Please provide contact no..\n";
-    }
-    if (this.studentForm.get("WhatsAppNumber").value == 0) {
-      errorMessage += "Please provide whatsapp no..\n";
-    }
+    // }
+    // if (this.studentForm.get("ReligionId").value == 0) {
+    //   errorMessage += "Please select religion.\n";
 
-    if (errorMessage.length > 0) {
+    // }
+    // if (this.studentForm.get("CategoryId").value == 0) {
+    //   errorMessage += "Please select Category.\n";
+    // }
+    // if (this.studentForm.get("ClassAdmissionSought").value == 0) {
+    //   errorMessage += "Please select Class for which admission is sought.\n";
+    // }
+    // if (this.studentForm.get("AdmissionStatusId").value == 0) {
+    //   errorMessage += "Please select admission status.\n";
+    // }
+    // if (this.studentForm.get("ContactNo").value == 0) {
+    //   errorMessage += "Please provide contact no..\n";
+    // }
+    // if (this.studentForm.get("WhatsAppNumber").value == 0) {
+    //   errorMessage += "Please provide whatsapp no..\n";
+    // }
+
+    if (this.ErrorMessage.length > 0) {
       this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar(this.ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -372,18 +389,18 @@ export class studentprimaryinfoComponent implements OnInit {
       FatherOccupation: this.studentForm.get("FatherOccupation").value,
       MotherName: this.studentForm.get("MotherName").value,
       MotherOccupation: this.studentForm.get("MotherOccupation").value,
-      GenderId: this.studentForm.get("GenderId").value,
+      GenderId: this.studentForm.get("Gender").value,
       PermanentAddress: this.studentForm.get("PermanentAddress").value,
       PresentAddress: this.studentForm.get("PresentAddress").value,
       DOB: this.adjustDateForTimeOffset(this.studentForm.get("DOB").value),
-      BloodgroupId: this.studentForm.get("BloodgroupId").value,
-      CategoryId: this.studentForm.get("CategoryId").value,
+      BloodgroupId: this.studentForm.get("Bloodgroup").value,
+      CategoryId: this.studentForm.get("Category").value,
       BankAccountNo: this.studentForm.get("BankAccountNo").value,
       IFSCCode: this.studentForm.get("IFSCCode").value,
       MICRNo: this.studentForm.get("MICRNo").value,
       AadharNo: this.studentForm.get("AadharNo").value,
       Photo: this.studentForm.get("Photo").value,
-      ReligionId: this.studentForm.get("ReligionId").value,
+      ReligionId: this.studentForm.get("Religion").value,
       ContactNo: this.studentForm.get("ContactNo").value,
       WhatsAppNumber: this.studentForm.get("WhatsAppNumber").value,
       FatherContactNo: this.studentForm.get("FatherContactNo").value,
@@ -397,16 +414,19 @@ export class studentprimaryinfoComponent implements OnInit {
       LastSchoolPercentage: this.studentForm.get("LastSchoolPercentage").value,
       TransferFromSchool: this.studentForm.get("TransferFromSchool").value,
       TransferFromSchoolBoard: this.studentForm.get("TransferFromSchoolBoard").value,
-      ClubId: this.studentForm.get("ClubId").value,
-      HouseId: this.studentForm.get("HouseId").value,
-      RemarkId: this.studentForm.get("RemarkId").value,
-      AdmissionStatusId: this.studentForm.get("AdmissionStatusId").value,
+      ClubId: this.studentForm.get("Club").value,
+      HouseId: this.studentForm.get("House").value,
+      RemarkId: this.studentForm.get("Remarks").value,
+      AdmissionStatusId: this.studentForm.get("AdmissionStatus").value,
       AdmissionDate: this.studentForm.get("AdmissionDate").value,
       //Remarks: this.studentForm.get("Remarks").value,
       EmailAddress: _email,
       Active: this.studentForm.get("Active").value == true ? 1 : 0,
-      ReasonForLeavingId: this.studentForm.get("ReasonForLeavingId").value,
+      ReasonForLeavingId: this.studentForm.get("ReasonForLeaving").value,
       OrgId: this.loginUserDetail[0]["orgId"],
+      IdentificationMark: this.studentForm.get("IdentificationMark").value,
+      Height: this.studentForm.get("Height").value,
+      Weight: this.studentForm.get("Weight").value,
       BatchId: this.tokenService.getSelectedBatchId()
     });
     //debugger;
@@ -503,7 +523,33 @@ export class studentprimaryinfoComponent implements OnInit {
     var offsetMs = dateToAdjust.getTimezoneOffset() * 60000;
     return new Date(dateToAdjust.getTime() - offsetMs);
   }
+  getFields(pModuleName){
+    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    .subscribe((data: any) => {
+      var _baseReportId = 0;
+      if(data.value.length>0)
+      {
+        _baseReportId = data.value.filter(f=>f.ReportName =='Reports' && f.ParentId ==0)[0].ReportConfigItemId;
+        var _studentModuleObj = data.value.filter(f=>f.ReportName ==pModuleName && f.ParentId ==_baseReportId)
+        var _studentModuleId=0;
+        if(_studentModuleObj.length>0)
+        {
+          _studentModuleId = _studentModuleObj[0].ReportConfigItemId; 
+        }
 
+        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId && f.Active==1);
+        var _orgStudentModuleId=0;
+        if(_orgStudentModuleObj.length>0)
+        {
+          _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId; 
+        }
+
+        this.ColumnsOfSelectedReports = data.value.filter(f=>f.ParentId == _orgStudentModuleId)
+
+      }
+      
+    })
+  }
   GetStudent() {
     //debugger;
     this.loading = true;
@@ -536,10 +582,10 @@ export class studentprimaryinfoComponent implements OnInit {
               PresentAddress: stud.PresentAddress,
               PermanentAddress: stud.PermanentAddress,
               DOB: new Date(stud.DOB),//this.formatdate.transform(stud.DOB,'dd/MM/yyyy'),
-              GenderId: stud.GenderId,
-              BloodgroupId: stud.BloodgroupId,
-              CategoryId: stud.CategoryId,
-              ReligionId: stud.ReligionId,
+              Gender: stud.GenderId,
+              Bloodgroup: stud.BloodgroupId,
+              Category: stud.CategoryId,
+              Religion: stud.ReligionId,
               BankAccountNo: stud.BankAccountNo,
               IFSCCode: stud.IFSCCode,
               MICRNo: stud.MICRNo,
@@ -559,13 +605,16 @@ export class studentprimaryinfoComponent implements OnInit {
               ClassAdmissionSought: stud.ClassAdmissionSought,
               TransferFromSchool: stud.TransferFromSchool,
               TransferFromSchoolBoard: stud.TransferFromSchoolBoard,
-              ClubId: stud.ClubId,
-              HouseId: stud.HouseId,
-              AdmissionStatusId: stud.AdmissionStatusId,
+              Club: stud.ClubId,
+              House: stud.HouseId,
+              AdmissionStatus: stud.AdmissionStatusId,
               AdmissionDate: stud.AdmissionDate,
-              RemarkId: stud.RemarkId,
+              Remarks: stud.RemarkId,
               Active: stud.Active,
-              ReasonForLeavingId: stud.ReasonForLeavingId
+              ReasonForLeaving: stud.ReasonForLeavingId,
+              IdentificationMark: stud.IdentificationMark,
+              Weight: stud.Weight,
+              Height: stud.Height
             })
 
             if (stud.PrimaryContactFatherOrMother == this.PrimaryContactOtherId)

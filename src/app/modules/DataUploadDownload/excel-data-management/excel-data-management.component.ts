@@ -12,6 +12,7 @@ import { DatePipe } from '@angular/common';
 import { employee } from './employee';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StudentActivity } from './StudentActivity';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-excel-data-management',
@@ -35,7 +36,7 @@ export class ExcelDataManagementComponent implements OnInit {
 
   }
   NoOfStudent = 0;
-  NoOfStudentInPlan =0;
+  NoOfStudentInPlan = 0;
   UploadType = {
     CLASSROLLNOMAPPING: 'rollno class mapping',
     STUDENTDATA: 'student upload',
@@ -50,6 +51,8 @@ export class ExcelDataManagementComponent implements OnInit {
   SelectedBatchId = 0;
   loginDetail = [];
   Permission = '';
+  ColumnsOfSelectedReports = [];
+  ReportConfigItemListName = "ReportConfigItems";
   ngOnInit() {
     //this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
     //this.GetMasterData();
@@ -93,20 +96,22 @@ export class ExcelDataManagementComponent implements OnInit {
     }
     else {
       //if (this.UploadTypes.length == 0)
+      //var _moduleName = 'Student Module'
+      //this.getFields(_moduleName);
       this.GetMasterData();
       //else
       this.GetStudents();
       this.GetStudentsInPlan();
     }
   }
-  NotMandatory = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
-    "MotherContactNo", "AlternateContact", "EmailAddress",
-    "TransferFromSchool", "TransferFromSchoolBoard", "Remarks"];
-  NoNeedToCheckBlank = ["StudentId", "BatchId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
-    "MotherContactNo", "AlternateContact", "EmailAddress",
-    "TransferFromSchool", "TransferFromSchoolBoard",
-    "Gender", "Religion", "Category", "Bloodgroup", "Club", "House",
-    "PrimaryContactFatherOrMother", "Remarks"];
+  // NotMandatory = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
+  //   "MotherContactNo", "AlternateContact", "EmailAddress",
+  //   "TransferFromSchool", "TransferFromSchoolBoard", "Remarks"];
+  // NoNeedToCheckBlank = ["StudentId", "BatchId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
+  //   "MotherContactNo", "AlternateContact", "EmailAddress",
+  //   "TransferFromSchool", "TransferFromSchoolBoard",
+  //   "Gender", "Religion", "Category", "Bloodgroup", "Club", "House",
+  //   "PrimaryContactFatherOrMother", "Remarks"];
 
   ErrorMessage = '';
   StudentList = [];
@@ -160,9 +165,14 @@ export class ExcelDataManagementComponent implements OnInit {
     //    //console.log('event', event);
     this.SelectedUploadtype = this.UploadTypes.filter(item => item.MasterDataId == event.value)[0].MasterDataName
 
-    if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING))
+    if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.CLASSROLLNOMAPPING)) {
       this.displayedColumns = ["StudentId", "Class", "Section", "RollNo"];
-    else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTDATA))
+    }
+    else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.EMPLOYEEDETAIL)) {
+      this.getFields('Employee Module');
+    }
+    else if (this.SelectedUploadtype.toLowerCase().includes(this.UploadType.STUDENTDATA)) {
+      this.getFields('Student Module');
       this.displayedColumns = [
         "StudentId",
         "FirstName",
@@ -220,8 +230,33 @@ export class ExcelDataManagementComponent implements OnInit {
         "UpdatedBy",
         "BatchId"
       ];
+    }
     //  this.readExcel();
     //    this.uploadedFile(event);
+  }
+  getFields(pModuleName) {
+    this.contentservice.getSelectedReportColumn(this.loginDetail[0]["orgId"], this.SelectedApplicationId)
+      .subscribe((data: any) => {
+        var _baseReportId = 0;
+        if (data.value.length > 0) {
+          _baseReportId = data.value.filter(f => f.ReportName == 'Reports' && f.ParentId == 0)[0].ReportConfigItemId;
+          var _studentModuleObj = data.value.filter(f => f.ReportName == pModuleName && f.ParentId == _baseReportId)
+          var _studentModuleId = 0;
+          if (_studentModuleObj.length > 0) {
+            _studentModuleId = _studentModuleObj[0].ReportConfigItemId;
+          }
+
+          var _orgStudentModuleObj = data.value.filter(f => f.ParentId == _studentModuleId && f.OrgId != 0 && f.Active == 1);
+          var _orgStudentModuleId = 0;
+          if (_orgStudentModuleObj.length > 0) {
+            _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId;
+          }
+
+          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId)
+
+        }
+
+      })
   }
   browseOnChange(event) {
     this.fileUploaded = event.target.files[0];
@@ -281,13 +316,16 @@ export class ExcelDataManagementComponent implements OnInit {
       element.NoticePeriodDays = +element.NoticePeriodDays;
       element.ProbationPeriodDays = +element.ProbationPeriodDays;
 
-      if (element.FirstName == undefined || element.FirstName.length == 0)
-        this.ErrorMessage += 'First name at row ' + indx + ' is required.\n';
-      if (element.FatherName == undefined || element.FatherName.length == 0)
-        this.ErrorMessage += 'Father name at row ' + indx + ' is required.\n';
-      if (element.WorkAccount == '')
-        this.ErrorMessage += 'Work Account at row ' + indx + ' is required.\n';
-      else {
+      var _MandatoryColumns = this.ColumnsOfSelectedReports.filter(f => f.Active == 1);
+
+      _MandatoryColumns.forEach(b => {
+        if (element[b.ReportName] == undefined || element[b.ReportName] == null || element[b.ReportName].length == 0) {
+          //_MadatoryField = b.ReportName;
+          this.ErrorMessage += b.ReportName + " is required at row " + indx + ".<br>";
+        }
+      })
+      if (element.WorkAccount != '') {
+
         var workaccountobj = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == element.WorkAccount.toLowerCase())
         if (workaccountobj.length > 0) {
           element.WorkAccountId = workaccountobj[0].MasterDataId;
@@ -296,9 +334,7 @@ export class ExcelDataManagementComponent implements OnInit {
           this.ErrorMessage += 'Invalid work account at row ' + indx + '.\n';
       }
 
-      if (element.Gender == '')
-        this.ErrorMessage += 'Gender at row ' + indx + ' is required.\n';
-      else {
+      if (element.Gender != '') {
         var Genderobj = this.Genders.filter(f => f.MasterDataName.toLowerCase() == element.Gender.toLowerCase())
         if (Genderobj.length > 0) {
           element.GenderId = Genderobj[0].MasterDataId;
@@ -306,6 +342,7 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           this.ErrorMessage += 'Invalid gender at row ' + indx + '.\n';
       }
+
       if (element.Bloodgroup != '') {
         var bloodgroupobj = this.Bloodgroup.filter(f => f.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase())
         if (bloodgroupobj.length == 0)
@@ -539,6 +576,17 @@ export class ExcelDataManagementComponent implements OnInit {
         element.PermanentAddressPincode = '';
 
       element.OrgId = this.loginDetail[0]["orgId"];
+
+      var _nonManadatory = this.ColumnsOfSelectedReports.filter(f => f.Active == 0);
+      _nonManadatory.forEach(f => {
+        if (element[f.ReportName] == undefined || element[f.ReportName] == null) {
+          element[f.ReportName] = '';
+        }
+        else if (element[f.ReportName] == NaN) {
+          element[f.ReportName] = 0;
+        }
+      })
+
       if (this.ErrorMessage.length == 0)
         this.ELEMENT_DATA.push(element);
     });
@@ -644,103 +692,169 @@ export class ExcelDataManagementComponent implements OnInit {
     this.ErrorMessage = '';
     this.jsonData.forEach((element, indx) => {
       slno = parseInt(indx) + 1;
-      //let checkProperty = [];
-      this.displayedColumns.forEach(d => {
 
-        if (d == "DOB" || d == "CreatedDate" || d == "UpdatedDate") {
-          if (element[d] != undefined)
-            element[d] = new Date(element[d]);
-          else
-            element[d] = new Date();
+      if (element.DOB != undefined && element.DOB != '')
+        element.DOB = new Date(element.DOB);
+      else
+        element.DOB = new Date();
+      if (element.CreatedDate != undefined && element.CreatedDate != '')
+        element.CreatedDate = new Date(element.CreatedDate);
+      else
+        element.CreatedDate = new Date();
+      if (element.UpdatedDate != undefined && element.UpdatedDate != '')
+        element.UpdatedDate = new Date(element.UpdatedDate);
+      else
+        element.UpdatedDate = new Date();
+
+      var _MadatoryField = ''
+      var _MandatoryColumns = this.ColumnsOfSelectedReports.filter(f => f.Active == 1);
+
+      _MandatoryColumns.forEach(b => {
+        if (element[b.ReportName] == undefined || element[b.ReportName] == null || element[b.ReportName].length == 0) {
+          //_MadatoryField = b.ReportName;
+          this.ErrorMessage += b.ReportName + " is required at row " + slno + ".<br>";
         }
-
-        if (element[d] == undefined && this.NoNeedToCheckBlank.filter(b => b == d).length == 0)
-          this.ErrorMessage += d + " is required at row " + slno + ".<br>";
       })
+
+      // if (_MadatoryField.length > 0)
+      //   this.ErrorMessage += _MadatoryField + " is required at row " + slno + ".<br>";
+
       debugger;
-      //if (element.StudentId == undefined || element.StudentId == '' || element.StudentId == 0) {
-      let GenderFilter = this.Genders.filter(g => g.MasterDataName.toLowerCase() == element.Gender.toLowerCase());
-      if (GenderFilter.length == 0)
-        this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
+      if (element.Gender != undefined) {
+        let GenderFilter = this.Genders.filter(g => g.MasterDataName.toLowerCase() == element.Gender.toLowerCase());
+        if (GenderFilter.length == 0)
+          this.ErrorMessage += "Invalid Gender at row " + slno + ":" + element.Gender + "<br>";
+        else
+          element.GenderId = GenderFilter[0].MasterDataId;
+      }
       else
-        element.GenderId = GenderFilter[0].MasterDataId;
-      // let houseFilter = this.Houses.filter(g => g.MasterDataName.toLowerCase() == element.House.toLowerCase());
-      // if (houseFilter.length == 0)
-      //   this.ErrorMessage += "Invalid House at row " + slno + ":" + element.House + "<br>";
-      // else
-      //   element.HouseId = houseFilter[0].MasterDataId;
+        element.GenderId = 0;
 
-      let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase());
-      if (BloodgroupFilter.length == 0)
-        this.ErrorMessage += "Invalid Bloodgroup at row " + slno + ":" + element.Bloodgroup + "<br>";
+      if (element.House != undefined) {
+        let houseFilter = this.Houses.filter(g => g.MasterDataName.toLowerCase() == element.House.toLowerCase());
+        if (houseFilter.length == 0)
+          this.ErrorMessage += "Invalid House at row " + slno + ":" + element.House + "<br>";
+        else
+          element.HouseId = houseFilter[0].MasterDataId;
+      }
       else
-        element.BloodgroupId = BloodgroupFilter[0].MasterDataId;
+        element.HouseId = 0;
 
-      let Categoryfilter = this.Category.filter(g => g.MasterDataName.toLowerCase() == element.Category.toLowerCase());
-      if (Categoryfilter.length == 0)
-        this.ErrorMessage += "Invalid Category at row " + slno + ":" + element.Category + "<br>";
+      if (element.Bloodgroup != undefined) {
+        let BloodgroupFilter = this.Bloodgroup.filter(g => g.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase());
+        if (BloodgroupFilter.length == 0)
+          this.ErrorMessage += "Invalid Bloodgroup at row " + slno + ":" + element.Bloodgroup + "<br>";
+        else
+          element.BloodgroupId = BloodgroupFilter[0].MasterDataId;
+      }
       else
-        element.CategoryId = Categoryfilter[0].MasterDataId;
+        element.BloodgroupId = 0;
 
-      let ReligionFilter = this.Religion.filter(g => g.MasterDataName.toLowerCase() == element.Religion.toLowerCase());
-      if (ReligionFilter.length == 0)
-        this.ErrorMessage += "Invalid Religion at row " + slno + ":" + element.Religion + "<br>";
+      if (element.Section != undefined) {
+        let SectionFilter = this.Sections.filter(g => g.MasterDataName.toLowerCase() == element.Section.toLowerCase());
+        if (SectionFilter.length == 0)
+          this.ErrorMessage += "Invalid Section at row " + slno + ":" + element.Section + "<br>";
+        else
+          element.SectionId = SectionFilter[0].MasterDataId;
+      }
       else
-        element.ReligionId = ReligionFilter[0].MasterDataId;
+        element.SectionId = 0;
 
-      let AdmissionStatusFilter = this.AdmissionStatuses.filter(g => g.MasterDataName.toLowerCase() == element.AdmissionStatus.toLowerCase());
-      if (AdmissionStatusFilter.length == 0)
-        this.ErrorMessage += "Invalid admission status at row " + slno + ":" + element.AdmissionStatus + "<br>";
+      if (element.Category != undefined) {
+        let Categoryfilter = this.Category.filter(g => g.MasterDataName.toLowerCase() == element.Category.toLowerCase());
+        if (Categoryfilter.length == 0)
+          this.ErrorMessage += "Invalid Category at row " + slno + ":" + element.Category + "<br>";
+        else
+          element.CategoryId = Categoryfilter[0].MasterDataId;
+      }
       else
-        element.AdmissionStatusId = AdmissionStatusFilter[0].MasterDataId;
+        element.CategoryId = 0;
 
-      let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName.toLowerCase() == element.PrimaryContactFatherOrMother.toLowerCase());
-      if (PrimaryContactFatherOrMotherFilter.length == 0)
-        this.ErrorMessage += "Invalid PrimaryContactFatherOrMother at row " + slno + ":" + element.PrimaryContactFatherOrMother + "<br>";
+      if (element.Religion != undefined) {
+        let ReligionFilter = this.Religion.filter(g => g.MasterDataName.toLowerCase() == element.Religion.toLowerCase());
+        if (ReligionFilter.length == 0)
+          this.ErrorMessage += "Invalid Religion at row " + slno + ":" + element.Religion + "<br>";
+        else
+          element.ReligionId = ReligionFilter[0].MasterDataId;
+      }
       else
-        element.PrimaryContactFatherOrMother = PrimaryContactFatherOrMotherFilter[0].MasterDataId;
+        element.ReligionId = 0;
 
-      let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.ClassName.toLowerCase() == element.ClassAdmissionSought.toLowerCase());
-      if (ClassAdmissionSoughtFilter.length == 0)
-        this.ErrorMessage += "Invalid ClassAdmissionSought at row " + slno + ":" + element.ClassAdmissionSought + "<br>";
+      if (element.AdmissionStatus != undefined) {
+        let AdmissionStatusFilter = this.AdmissionStatuses.filter(g => g.MasterDataName.toLowerCase() == element.AdmissionStatus.toLowerCase());
+        if (AdmissionStatusFilter.length == 0)
+          this.ErrorMessage += "Invalid admission status at row " + slno + ":" + element.AdmissionStatus + "<br>";
+        else
+          element.AdmissionStatusId = AdmissionStatusFilter[0].MasterDataId;
+      }
       else
-        element.ClassAdmissionSought = ClassAdmissionSoughtFilter[0].ClassId;
+        element.AdmissionStatusId = 0;
 
-      if (element.Club.length > 0) {
+      if (element.PrimaryContactFatherOrMother != undefined) {
+        let PrimaryContactFatherOrMotherFilter = this.PrimaryContact.filter(g => g.MasterDataName.toLowerCase() == element.PrimaryContactFatherOrMother.toLowerCase());
+        if (PrimaryContactFatherOrMotherFilter.length == 0)
+          this.ErrorMessage += "Invalid PrimaryContactFatherOrMother at row " + slno + ":" + element.PrimaryContactFatherOrMother + "<br>";
+        else
+          element.PrimaryContactFatherOrMother = PrimaryContactFatherOrMotherFilter[0].MasterDataId;
+      }
+      else
+        element.PrimaryContactFatherOrMother = 0;
+
+      if (element.ClassAdmissionSought != undefined) {
+        let ClassAdmissionSoughtFilter = this.Classes.filter(g => g.ClassName.toLowerCase() == element.ClassAdmissionSought.toLowerCase());
+        if (ClassAdmissionSoughtFilter.length == 0)
+          this.ErrorMessage += "Invalid ClassAdmissionSought at row " + slno + ":" + element.ClassAdmissionSought + "<br>";
+        else
+          element.ClassAdmissionSought = ClassAdmissionSoughtFilter[0].ClassId;
+      }
+      else
+        element.ClassAdmissionSought = 0;
+
+
+      if (element.Club != undefined) {
         let ClubObj = this.Clubs.filter(g => g.MasterDataName.toLowerCase() == element.Club.toLowerCase());
         if (ClubObj.length == 0)
           this.ErrorMessage += "Invalid Club at row " + slno + ":" + element.Club + "<br>";
         else
           element.ClubId = ClubObj[0].MasterDataId;
       }
-      if (element.House.length > 0) {
+      else
+        element.ClubId = 0;
+
+      if (element.House != undefined) {
         let houseObj = this.Houses.filter(g => g.MasterDataName.toLowerCase() == element.House.toLowerCase());
         if (houseObj.length == 0)
           this.ErrorMessage += "Invalid house at row " + slno + ":" + element.House + "<br>";
         else
           element.HouseId = houseObj[0].MasterDataId;
       }
-      if (element.Remarks.length > 0) {
+      else
+        element.HouseId = 0;
+
+      if (element.Remarks != undefined) {
         let remarkObj = this.Remarks.filter(g => g.MasterDataName.toLowerCase() == element.Remarks.toLowerCase());
         if (remarkObj.length == 0)
           this.ErrorMessage += "Invalid remark at row " + slno + ":" + element.Remarks + "<br>";
         else
           element.RemarkId = remarkObj[0].MasterDataId;
       }
-      if (element.PermanentAddressCountry.length > 0) {
+      else
+        element.RemarkId = 0;
+
+      if (element.PermanentAddressCountry != undefined) {
         let CountryObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressCountry.toLowerCase());
         if (CountryObj.length == 0)
           this.ErrorMessage += "Invalid country at row " + slno + ":" + element.PermanentAddressCountry + "<br>";
         else {
           element.PermanentAddressCountryId = CountryObj[0].MasterDataId;
-          if (element.PermanentAddressState.length > 0) {
+          if (element.PermanentAddressState != undefined) {
             let stateObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressState.toLowerCase()
               && g.ParentId == element.PermanentAddressCountryId);
             if (stateObj.length == 0)
               this.ErrorMessage += "Invalid state at row " + slno + ":" + element.PermanentAddressState + "<br>";
             else {
               element.PermanentAddressStateId = stateObj[0].MasterDataId;
-              if (element.PermanentAddressCity.length > 0) {
+              if (element.PermanentAddressCity != undefined) {
                 let CityObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PermanentAddressCity.toLowerCase()
                   && g.ParentId == element.PermanentAddressStateId);
                 if (CityObj.length == 0)
@@ -748,24 +862,36 @@ export class ExcelDataManagementComponent implements OnInit {
                 else
                   element.PermanentAddressCityId = CityObj[0].MasterDataId;
               }
+              else
+                element.PermanentAddressCityId = 0;
             }
+          }
+          else {
+            element.PermanentAddressStateId = 0;
+            element.PermanentAddressCityId = 0;
           }
         }
       }
-      if (element.PresentAddressCountry.length > 0) {
+      else {
+        element.PermanentAddressCountryId = 0;
+        element.PermanentAddressStateId = 0;
+        element.PermanentAddressCityId = 0;
+
+      }
+      if (element.PresentAddressCountry != undefined) {
         let CountryObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PresentAddressCountry.toLowerCase());
         if (CountryObj.length == 0)
           this.ErrorMessage += "Invalid country at row " + slno + ":" + element.PresentAddressCountry + "<br>";
         else {
           element.PresentAddressCountryId = CountryObj[0].MasterDataId;
-          if (element.PresentAddressState.length > 0) {
+          if (element.PresentAddressState != undefined) {
             let stateObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PresentAddressState.toLowerCase()
               && g.ParentId == element.PresentAddressCountryId);
             if (stateObj.length == 0)
               this.ErrorMessage += "Invalid state at row " + slno + ":" + element.PresentAddressState + "<br>";
             else {
               element.PresentAddressStateId = stateObj[0].MasterDataId;
-              if (element.PresentAddressCity.length > 0) {
+              if (element.PresentAddressCity != undefined) {
                 let CityObj = this.AllMasterData.filter(g => g.MasterDataName.toLowerCase() == element.PresentAddressCity.toLowerCase()
                   && g.ParentId == element.PresentAddressStateId);
                 if (CityObj.length == 0)
@@ -773,15 +899,36 @@ export class ExcelDataManagementComponent implements OnInit {
                 else
                   element.PresentAddressCityId = CityObj[0].MasterDataId;
               }
+              else
+                element.PresentAddressCityId = 0;
             }
           }
+          else {
+            element.PresentAddressStateId = 0;
+            element.PresentAddressCityId = 0;
+          }
         }
+      }
+      else {
+        element.PresentAddressCountryId = 0;
+        element.PresentAddressStateId = 0;
+        element.PresentAddressCityId = 0;
       }
 
       element.StudentId = +element.StudentId;
 
       element.OrgId = this.loginDetail[0]["orgId"];
       element.BatchId = this.SelectedBatchId;
+
+      var _nonManadatory = this.ColumnsOfSelectedReports.filter(f => f.Active == 0);
+      _nonManadatory.forEach(f => {
+        if (element[f.ReportName] == undefined || element[f.ReportName] == null) {
+          element[f.ReportName] = '';
+        }
+        else if (element[f.ReportName] == NaN) {
+          element[f.ReportName] = 0;
+        }
+      })
 
       this.ELEMENT_DATA.push(element);
 
@@ -871,15 +1018,14 @@ export class ExcelDataManagementComponent implements OnInit {
         }
         debugger;
         var UploadedStudent = this.NoOfStudent + this.ELEMENT_DATA.length;
-        if ( this.ELEMENT_DATA.length > globalconstants.RowUploadLimit) {
+        if (this.ELEMENT_DATA.length > globalconstants.RowUploadLimit) {
           this.ELEMENT_DATA.splice(globalconstants.RowUploadLimit);
         }
-        else if(this.NoOfStudent + this.ELEMENT_DATA.length > this.NoOfStudentInPlan)
-        {
-          this.loading=false;
-          this.contentservice.openSnackBar("No. of student exceeded no. of students in the plan.",globalconstants.ActionText,globalconstants.RedBackground);
+        else if (this.NoOfStudent + this.ELEMENT_DATA.length > this.NoOfStudentInPlan) {
+          this.loading = false;
+          this.contentservice.openSnackBar("No. of student exceeded no. of students in the plan.", globalconstants.ActionText, globalconstants.RedBackground);
           return;
-           
+
         }
 
 
@@ -941,12 +1087,16 @@ export class ExcelDataManagementComponent implements OnInit {
             "AdmissionStatusId": +row["AdmissionStatusId"],
             "AdmissionDate": row["AdmissionDate"],
             "BatchId": +row["BatchId"],
-            "RemarkId": +row["RemarkId"]
-
+            "RemarkId": +row["RemarkId"],
+            "IdentificationMark": row["IdentificationMark"],
+            "Weight": +row["Weight"],
+            "Height": +row["Height"],
+            "SectionId": +row["SectionId"],
+            "RollNo": row["RollNo"]
           });
         });
 
-        //console.log("toInsert", toInsert)
+        console.log("toInsert", toInsert)
         this.dataservice.postPatch('Students', toInsert, 0, 'post')
           .subscribe((result: any) => {
             this.loading = false; this.PageLoading = false;
@@ -956,6 +1106,7 @@ export class ExcelDataManagementComponent implements OnInit {
           }, error => {
             console.log("error from student upload:", error);
             this.ReadyForUpload = false;
+            this.loading = false;
             this.ErrorMessage = "Something went wrong. Please contact your administrator.";
             this.contentservice.openSnackBar(this.ErrorMessage, globalconstants.ActionText, globalconstants.RedBackground);
           })
@@ -994,6 +1145,7 @@ export class ExcelDataManagementComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
+
   GetClassEvaluations() {
     //this.filterOrgIdNBatchId = globalconstants.gt.getStandardFilterWithBatchId(this.tokenservice);
 
@@ -1017,8 +1169,11 @@ export class ExcelDataManagementComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //this.StudentInPlan = [...data.value];
-        this.NoOfStudentInPlan = data.value.length;
-       
+        if (data.value.length)
+          this.NoOfStudentInPlan = data.value[0].PersonOrItemCount;
+        else
+          this.contentservice.openSnackBar("No. Of Student is zero", globalconstants.ActionText, globalconstants.RedBackground);
+        //console.log("this.NoOfStudentInPlan",this.NoOfStudentInPlan)
 
       })
   }

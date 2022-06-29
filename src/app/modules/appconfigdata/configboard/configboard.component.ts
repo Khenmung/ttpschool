@@ -83,13 +83,13 @@ GenerateComponent(featureName){
   var comindx =0;
   switch(featureName)
   {
-    case "report name":
+    case globalconstants.Pages.edu.REPORTCONFIGURATION.REPORTNAME:
       comindx =this.components.indexOf(UserconfigreportnameComponent);
       break;
-    case "report column":
+    case globalconstants.Pages.edu.REPORTCONFIGURATION.REPORTCOLUMN:
       comindx =this.components.indexOf(UserReportConfigColumnsComponent);
       break;
-    case "variable config":
+    case globalconstants.Pages.edu.REPORTCONFIGURATION.VARIABLECONFIG:
       comindx =this.components.indexOf(VariableConfigComponent);
       break;    
   } 

@@ -95,20 +95,20 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Gender</mat-label>
-                            <mat-select formControlName="GenderId" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="Gender" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Genders" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
                             <span class="text-danger"
-                                *ngIf="f.GenderId.touched && f.GenderId.hasError('required')">Gender
+                                *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
                                 is required.</span>
                         </mat-form-field>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Religion</mat-label>
-                            <mat-select formControlName="ReligionId" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="Religion" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Religion" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
@@ -118,20 +118,20 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Blood group</mat-label>
-                            <mat-select formControlName="BloodgroupId" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="Bloodgroup" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Bloodgroup" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                         <span class="text-danger"
-                            *ngIf="f.BloodgroupId.touched && f.BloodgroupId.hasError('required')">Blood group
+                            *ngIf="f.Bloodgroup.touched && f.Bloodgroup.hasError('required')">Blood group
                             is required.</span>
                     </mat-grid-tile>
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Category</mat-label>
-                            <mat-select formControlName="CategoryId" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="Category" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of Category" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
@@ -160,7 +160,7 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline">
                             <mat-label>Admission Status</mat-label>
-                            <mat-select formControlName="AdmissionStatusId" (selectionChange)="OnBlur()">
+                            <mat-select formControlName="AdmissionStatus" (selectionChange)="OnBlur()">
                                 <mat-option *ngFor="let p of AdmissionStatuses" [value]="p.MasterDataId">
                                     {{p.MasterDataName}}
                                 </mat-option>
@@ -207,7 +207,7 @@
             <div style="padding:15px 15px 10px 15px;"><strong>Contact</strong></div>
             <div class="content" fxLayout="row wrap" fxLayoutGap="130px">
                 <mat-form-field appearance="outline" fxFlex>
-                    <mat-label>Student's Contact no.</mat-label>
+                    <mat-label>Contact no.</mat-label>
                     <input formControlName="ContactNo" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
                         [maxlength]="10">
                 </mat-form-field>
@@ -371,7 +371,7 @@
                 <div style="padding: 15px 15px 0px 15px">
                     <mat-form-field appearance="outline">
                         <mat-label>Club</mat-label>
-                        <mat-select formControlName="ClubId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Club" (selectionChange)="OnBlur()">
                             <mat-option value="0">---</mat-option>
                             <mat-option *ngFor="let p of Clubs" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
@@ -380,7 +380,7 @@
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>House</mat-label>
-                        <mat-select formControlName="HouseId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="House" (selectionChange)="OnBlur()">
                             <mat-option value="0">---</mat-option>
                             <mat-option *ngFor="let p of Houses" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
@@ -391,7 +391,7 @@
                     <div style="padding: 15px 15px 0px 15px">
                     <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
-                        <mat-select formControlName="RemarkId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="Remarks" (selectionChange)="OnBlur()">
                             <mat-option value="0">---</mat-option>
                             <mat-option *ngFor="let p of Remarks" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}
@@ -399,17 +399,30 @@
                         </mat-select>
                     </mat-form-field>
 
-                    <!-- <mat-form-field appearance="outline">
-                        <mat-label>Remarks</mat-label>
-                        <input formControlName="Remarks" (blur)="OnBlur()" autocomplete="Off" #Pincode matInput
-                            [maxlength]="250">
-                    </mat-form-field> -->
+                    <mat-form-field appearance="outline">
+                        <mat-label>Identification Mark</mat-label>
+                        <input formControlName="IdentificationMark" (blur)="OnBlur()" 
+                        autocomplete="Off" matInput
+                            [maxlength]="50">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Height</mat-label>
+                        <input formControlName="Height" (blur)="OnBlur()" 
+                        autocomplete="Off" matInput
+                            [maxlength]="5">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Weight</mat-label>
+                        <input formControlName="Weight" (blur)="OnBlur()" 
+                        autocomplete="Off" matInput
+                            [maxlength]="5">
+                    </mat-form-field>
                     
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
                     <mat-form-field *ngIf="StudentLeaving" appearance="outline">
                         <mat-label>Reason For Leaving</mat-label>
-                        <mat-select formControlName="ReasonForLeavingId" (selectionChange)="OnBlur()">
+                        <mat-select formControlName="ReasonForLeaving" (selectionChange)="OnBlur()">
                             <mat-option value="0">---</mat-option>
                             <mat-option *ngFor="let p of ReasonForLeaving" [value]="p.MasterDataId">
                                 {{p.MasterDataName}}

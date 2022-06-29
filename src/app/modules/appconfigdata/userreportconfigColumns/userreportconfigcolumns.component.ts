@@ -15,20 +15,19 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './userreportconfigcolumns.component.html',
   styleUrls: ['./userreportconfigcolumns.component.scss']
 })
-export class UserReportConfigColumnsComponent implements OnInit { 
-  PageLoading=true;
+export class UserReportConfigColumnsComponent implements OnInit {
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  boolEnableButton =false;
+  boolEnableButton = false;
   BaseReportId = 0;
   ParentId = 0;
   Permission = '';
   DisplayColumns = [
+    "ReportConfigItemId",
     "ReportName",
-    "DisplayName",
-    // "Formula",
-    // "TableNames",
-    "ColumnSequence",   
+    //"DisplayName",
+    //"ColumnSequence",   
     "Active",
     "Action"
   ];
@@ -68,14 +67,21 @@ export class UserReportConfigColumnsComponent implements OnInit {
     UserId: '',
     Active: 0
   };
-  SelectedApplicationId=0;
+  ModuleName ='';
+  StudentAllMustMandatory = ['FirstName', 'Gender', 'DOB', 'Bloodgroup', 'Category', 'Religion', 'ContactNo',
+    'ClassAdmissionSought',
+    'House', 'AdmissionStatus'];
+  EmployeeAllMustMandatory = ['FirstName', 'Gender', 'DOB', 'Bloodgroup', 'Category', 'Religion', 'ContactNo',
+    'EmploymentStatus', 'EmploymentType', 'MaritalStatus', 'Nature', 'PresentAddress', 'PermanentAddress', 'Department',
+    'EmpGrade', 'Designation']
+  SelectedApplicationId = 0;
   ApplicationName = '';
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage: TokenStorageService,
-    
+
     private nav: Router,
     private fb: FormBuilder
   ) {
@@ -105,20 +111,16 @@ export class UserReportConfigColumnsComponent implements OnInit {
   }
   updateActive(row, value) {
     debugger;
-    row.Action = true;
+    if (this.StudentAllMustMandatory.indexOf(row.ReportName) == -1)
+      row.Action = true;
     row.Active = value.checked ? 1 : 0;
 
   }
-  EnableButton(){
-    this.boolEnableButton=true;
+  EnableButton() {
+    this.boolEnableButton = true;
   }
   addnew() {
     debugger;
-    // var appId = this.SelectedApplicationId;
-    // if (appId == 0) {
-    //   this.contentservice.openSnackBar("Please select application", globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
 
     var newdata = {
       ReportConfigItemId: 0,
@@ -127,7 +129,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       ParentId: 0,
       Formula: '',
       ColumnSequence: 0,
-      OldSequence:0,
+      OldSequence: 0,
       ApplicationId: this.SelectedApplicationId,
       TableNames: '',
       OrgId: 0,
@@ -152,16 +154,15 @@ export class UserReportConfigColumnsComponent implements OnInit {
     })
   }
   SaveAll() {
-    var edited = this.ReportConfigItemList.filter(f => f.Action);
+    var edited = this.ReportConfigItemList.filter(f => f.Action || f.ReportConfigItemId == 0);
     this.ToUpateCount = edited.length;
     edited.forEach(f => {
       this.ToUpateCount--;
       this.UpdateOrSave(f);
     })
   }
-  Save(row)
-  {
-    this.ToUpateCount=0;
+  Save(row) {
+    this.ToUpateCount = 0;
     this.UpdateOrSave(row)
   }
   UpdateOrSave(row) {
@@ -175,11 +176,11 @@ export class UserReportConfigColumnsComponent implements OnInit {
     //   return;
     // }
     if (AvailableReportId == 0) {
-      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (MyReportNameId == 0) {
-      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -201,7 +202,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -246,7 +247,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
         (data: any) => {
           row.ReportConfigItemId = data.ReportConfigItemId;
           row.Action = false;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           if (this.ToUpateCount == 0) {
             this.ToUpateCount = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -258,11 +259,11 @@ export class UserReportConfigColumnsComponent implements OnInit {
     this.dataservice.postPatch(this.ReportConfigItemListName, this.ReportConfigItemData, this.ReportConfigItemData.ReportConfigItemId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
-          row.Action=false;
+          this.loading = false; this.PageLoading = false;
+          row.Action = false;
           if (this.ToUpateCount == 0) {
             this.ToUpateCount = -1;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
@@ -295,7 +296,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
           currentrow.Action = true;
         })
       }
-      
+
       editedrow.OldSequence = editedrow.ColumnSequence;
       this.ReportConfigItemList.sort((a, b) => a.ColumnSequence - b.ColumnSequence);
       this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
@@ -308,27 +309,30 @@ export class UserReportConfigColumnsComponent implements OnInit {
   get f() {
     return this.searchForm.controls;
   }
+  GetReportNameNColumns(){
+  
+  }
   GetReportConfigItem() {
     debugger;
 
     this.ReportConfigItemList = [];
     //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var filterstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     var ApplicationId = this.SelectedApplicationId;  //this.SelectedApplicationId;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     var MyReportNameId = this.searchForm.get("searchReportName").value;
-
+    
     if (ApplicationId == 0) {
-      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select application name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (AvailableReportId == undefined || AvailableReportId == 0) {
-      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select available report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (MyReportNameId == undefined || MyReportNameId == 0) {
-      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select my report name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -371,23 +375,39 @@ export class UserReportConfigColumnsComponent implements OnInit {
             a.Action = false;
             a.ReportConfigItemId = 0;
             a.OldSequence = a.ColumnSequence;
+            a.ColumnSequence = 100;
             a.ParentId = MyReportNameId;
-      
+
             this.ReportConfigItemList.push(a);
           }
         })
 
-        this.ReportConfigItemList.sort((a,b)=>a.ColumnSequence - b.ColumnSequence);
+        this.ReportConfigItemList.forEach(f => {
+          if (this.ModuleName == 'Student Module') {
+            if (this.StudentAllMustMandatory.indexOf(f.ReportName) > -1) {
+              f.Active = 1;
+              f.Action = false;
+            }
+          }
+          else if (this.ModuleName == 'Employee Module') {
+            if (this.EmployeeAllMustMandatory.indexOf(f.ReportName) > -1) {
+              f.Active = 1;
+              f.Action = false;
+            }
+          }
+        })
+        this.ReportConfigItemList.sort((a, b) => b.Active - a.Active || a.ColumnSequence - b.ColumnSequence);
         this.dataSource = new MatTableDataSource<IReportConfigItem>(this.ReportConfigItemList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false; this.PageLoading=false;
-        this.boolEnableButton=false;
+        this.loading = false; this.PageLoading = false;
+        this.boolEnableButton = false;
       })
   }
 
   onBlur(element) {
-    element.Action = true;
+    if (this.StudentAllMustMandatory.indexOf(element.ReportName) == -1)
+      element.Action = true;
   }
   GetBaseReportId() {
 
@@ -406,9 +426,9 @@ export class UserReportConfigColumnsComponent implements OnInit {
           this.GetReportNames();
         }
         else {
-          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Base report Id not found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetReportNames() {
@@ -432,7 +452,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
       .subscribe((data: any) => {
         this.ReportNames = [...data.value];
         this.GetAvailableReportNames();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetAvailableReportNames() {
@@ -444,10 +464,13 @@ export class UserReportConfigColumnsComponent implements OnInit {
   }
   GetMyReportNames() {
     this.ReportConfigItemList = [];
+    var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;
     this.AppReportNames = this.ReportNames.filter(a => a.ApplicationId == this.SelectedApplicationId
-      && a.ParentId == this.searchForm.get("searchAvailableReportName").value);
+      && a.ParentId == AvailableReportId);
     this.dataSource = new MatTableDataSource(this.ReportConfigItemList);
-    this.boolEnableButton=true;
+    this.boolEnableButton = true;
+    
+    this.ModuleName = this.AvailableReportNames.filter(f => f.ReportConfigItemId == AvailableReportId)[0].ReportName;
     this.getAvailableReportColumn();
   }
   getAvailableReportColumn() {
@@ -469,7 +492,7 @@ export class UserReportConfigColumnsComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ColumnsOfAvailableReports = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {

@@ -215,6 +215,7 @@ export class EmployeeComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
+        this.getFields('Student Module');
         if (this.EmployeeId > 0)
           this.GetEmployee();
         this.GetMasterData();
@@ -257,6 +258,34 @@ export class EmployeeComponent implements OnInit {
       this.EmployeeLeaving = false;
       this.EmployeeForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
     }
+  }
+  ColumnsOfSelectedReports =[];
+  getFields(pModuleName){
+    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
+    .subscribe((data: any) => {
+      var _baseReportId = 0;
+      if(data.value.length>0)
+      {
+        _baseReportId = data.value.filter(f=>f.ReportName =='Reports' && f.ParentId ==0)[0].ReportConfigItemId;
+        var _studentModuleObj = data.value.filter(f=>f.ReportName ==pModuleName && f.ParentId ==_baseReportId)
+        var _studentModuleId=0;
+        if(_studentModuleObj.length>0)
+        {
+          _studentModuleId = _studentModuleObj[0].ReportConfigItemId; 
+        }
+
+        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId && f.Active==1);
+        var _orgStudentModuleId=0;
+        if(_orgStudentModuleObj.length>0)
+        {
+          _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId; 
+        }
+
+        this.ColumnsOfSelectedReports = data.value.filter(f=>f.ParentId == _orgStudentModuleId)
+
+      }
+      
+    })
   }
   GetMasterData() {
 
@@ -309,34 +338,45 @@ export class EmployeeComponent implements OnInit {
     this.loading = true;
     //setTimeout(()=>{
     var errorMessage = '';
-    if (this.EmployeeForm.get("FirstName").value == '') {
-      errorMessage += "First name is required.<br>";
-      return;
-    }
-    if (this.EmployeeForm.get("FatherName").value == '') {
-      errorMessage += "Father name is required.<br>";
+    var _MandatoryColumns = this.ColumnsOfSelectedReports.filter(f => f.Active == 1);
+      _MandatoryColumns.forEach(b => {
+        if (this.EmployeeForm.get(b.ReportName).value == undefined 
+        || this.EmployeeForm.get(b.ReportName).value == null 
+        || this.EmployeeForm.get(b.ReportName).value.length == 0
+        || this.EmployeeForm.get(b.ReportName).value==0) {
+          errorMessage += b.ReportName + " is required.\n";
+        }
+      })
 
-    }
-    if (this.EmployeeForm.get("DOB").value == '') {
-      errorMessage += "DOB is required.<br>";
-    }
-    if (this.EmployeeForm.get("DOJ").value == '') {
-      errorMessage += "DOJ is required.<br>";
-    }
-    if (this.EmployeeForm.get("DepartmentId").value == 0) {
-      errorMessage += "Department is required.<br>";
-    }
-    if (this.EmployeeForm.get("DesignationId").value == 0) {
-      errorMessage += "Designation is required.<br>";
+    
+    // if (this.EmployeeForm.get("FirstName").value == '') {
+    //   errorMessage += "First name is required.<br>";
+    //   return;
+    // }
+    // if (this.EmployeeForm.get("FatherName").value == '') {
+    //   errorMessage += "Father name is required.<br>";
 
-    }
-    if (this.EmployeeForm.get("EmpGradeId").value == 0) {
-      errorMessage += "Grade is required.<br>";
+    // }
+    // if (this.EmployeeForm.get("DOB").value == '') {
+    //   errorMessage += "DOB is required.<br>";
+    // }
+    // if (this.EmployeeForm.get("DOJ").value == '') {
+    //   errorMessage += "DOJ is required.<br>";
+    // }
+    // if (this.EmployeeForm.get("DepartmentId").value == 0) {
+    //   errorMessage += "Department is required.<br>";
+    // }
+    // if (this.EmployeeForm.get("DesignationId").value == 0) {
+    //   errorMessage += "Designation is required.<br>";
 
-    }
-    if (this.EmployeeForm.get("WorkAccountId").value == 0) {
-      errorMessage += "Work Account is required.<br>";
-    }
+    // }
+    // if (this.EmployeeForm.get("EmpGradeId").value == 0) {
+    //   errorMessage += "Grade is required.<br>";
+
+    // }
+    // if (this.EmployeeForm.get("WorkAccountId").value == 0) {
+    //   errorMessage += "Work Account is required.<br>";
+    // }
     if (errorMessage.length > 0) {
       this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false; this.PageLoading = false;
@@ -363,50 +403,50 @@ export class EmployeeComponent implements OnInit {
       LastName: this.EmployeeForm.get("LastName").value,
       FatherName: this.EmployeeForm.get("FatherName").value,
       MotherName: this.EmployeeForm.get("MotherName").value,
-      GenderId: this.EmployeeForm.get("GenderId").value,
+      GenderId: this.EmployeeForm.get("Gender").value,
       DOB: new Date(this.EmployeeForm.get("DOB").value),
       DOJ: new Date(this.EmployeeForm.get("DOJ").value),
-      BloodgroupId: this.EmployeeForm.get("BloodgroupId").value,
-      CategoryId: this.EmployeeForm.get("CategoryId").value,
+      BloodgroupId: this.EmployeeForm.get("Bloodgroup").value,
+      CategoryId: this.EmployeeForm.get("Category").value,
       BankAccountNo: this.EmployeeForm.get("BankAccountNo").value,
       IFSCcode: this.EmployeeForm.get("IFSCcode").value,
       MICRNo: this.EmployeeForm.get("MICRNo").value,
       AdhaarNo: this.EmployeeForm.get("AdhaarNo").value,
       PhotoPath: this.EmployeeForm.get("PhotoPath").value,
-      ReligionId: this.EmployeeForm.get("ReligionId").value,
+      ReligionId: this.EmployeeForm.get("Religion").value,
       ContactNo: this.EmployeeForm.get("ContactNo").value,
       WhatsappNo: this.EmployeeForm.get("WhatsappNo").value,
       AlternateContactNo: this.EmployeeForm.get("AlternateContactNo").value,
       EmailAddress: this.EmployeeForm.get("EmailAddress").value,
       EmergencyContactNo: this.EmployeeForm.get("EmergencyContactNo").value,
-      EmploymentStatusId: this.EmployeeForm.get("EmploymentStatusId").value,
-      EmploymentTypeId: this.EmployeeForm.get("EmploymentTypeId").value,
+      EmploymentStatusId: this.EmployeeForm.get("EmploymentStatus").value,
+      EmploymentTypeId: this.EmployeeForm.get("EmploymentType").value,
       ConfirmationDate: this.EmployeeForm.get("ConfirmationDate").value,
       NoticePeriodDays: this.EmployeeForm.get("NoticePeriodDays").value,
       ProbationPeriodDays: this.EmployeeForm.get("ProbationPeriodDays").value,
       PAN: this.EmployeeForm.get("PAN").value,
       PassportNo: this.EmployeeForm.get("PassportNo").value,
-      MaritalStatusId: this.EmployeeForm.get("MaritalStatusId").value,
+      MaritalStatusId: this.EmployeeForm.get("MaritalStatus").value,
       MarriedDate: new Date(this.EmployeeForm.get("MarriedDate").value),
       PFAccountNo: this.EmployeeForm.get("PFAccountNo").value,
-      NatureId: this.EmployeeForm.get("NatureId").value,
+      NatureId: this.EmployeeForm.get("Nature").value,
       EmployeeCode: this.EmployeeForm.get("EmployeeCode").value,
       Active: _active ? 1 : 0,
       Remarks: this.EmployeeForm.get("Remarks").value,
       PresentAddress: this.EmployeeForm.get("PresentAddress").value,
-      PresentAddressCityId: this.EmployeeForm.get("PresentAddressCityId").value,
-      PresentAddressStateId: this.EmployeeForm.get("PresentAddressStateId").value,
-      PresentAddressCountryId: this.EmployeeForm.get("PresentAddressCountryId").value,
-      PermanentAddressCityId: this.EmployeeForm.get("PermanentAddressCityId").value,
+      PresentAddressCityId: this.EmployeeForm.get("PresentAddressCity").value,
+      PresentAddressStateId: this.EmployeeForm.get("PresentAddressState").value,
+      PresentAddressCountryId: this.EmployeeForm.get("PresentAddressCountry").value,
+      PermanentAddressCityId: this.EmployeeForm.get("PermanentAddressCity").value,
       PresentAddressPincode: this.EmployeeForm.get("PresentAddressPincode").value,
       PermanentAddressPincode: this.EmployeeForm.get("PermanentAddressPincode").value,
-      PermanentAddressStateId: this.EmployeeForm.get("PermanentAddressStateId").value,
-      PermanentAddressCountryId: this.EmployeeForm.get("PermanentAddressCountryId").value,
+      PermanentAddressStateId: this.EmployeeForm.get("PermanentAddressState").value,
+      PermanentAddressCountryId: this.EmployeeForm.get("PermanentAddressCountry").value,
       PermanentAddress: this.EmployeeForm.get("PermanentAddress").value,
-      DepartmentId: this.EmployeeForm.get("DepartmentId").value,
-      DesignationId: this.EmployeeForm.get("DesignationId").value,
-      WorkAccountId: this.EmployeeForm.get("WorkAccountId").value,
-      EmpGradeId: this.EmployeeForm.get("EmpGradeId").value,
+      DepartmentId: this.EmployeeForm.get("Department").value,
+      DesignationId: this.EmployeeForm.get("Designation").value,
+      WorkAccountId: this.EmployeeForm.get("WorkAccount").value,
+      EmpGradeId: this.EmployeeForm.get("EmpGrade").value,
       OrgId: this.loginUserDetail[0]["orgId"]
     }]
 
@@ -600,51 +640,51 @@ export class EmployeeComponent implements OnInit {
               "LastName": stud.LastName,
               "FatherName": stud.FatherName,
               "MotherName": stud.MotherName,
-              "GenderId": stud.GenderId,
+              "Gender": stud.GenderId,
               "DOB": stud.DOB,
               "DOJ": stud.DOJ,
-              "BloodgroupId": stud.BloodgroupId,
-              "CategoryId": stud.CategoryId,
+              "Bloodgroup": stud.BloodgroupId,
+              "Category": stud.CategoryId,
               "BankAccountNo": stud.BankAccountNo,
               "IFSCcode": stud.IFSCcode,
               "MICRNo": stud.MICRNo,
               "AdhaarNo": stud.AdhaarNo,
               "PhotoPath": stud.PhotoPath,
-              "ReligionId": stud.ReligionId,
+              "Religion": stud.ReligionId,
               "ContactNo": stud.ContactNo,
               "WhatsappNo": stud.WhatsappNo,
               "AlternateContactNo": stud.AlternateContactNo,
               "EmailAddress": stud.EmailAddress,
               "EmergencyContactNo": stud.EmergencyContactNo,
-              "EmploymentStatusId": stud.EmploymentStatusId,
-              "EmploymentTypeId": stud.EmploymentTypeId,
+              "EmploymentStatus": stud.EmploymentStatusId,
+              "EmploymentType": stud.EmploymentTypeId,
               "ConfirmationDate": stud.ConfirmationDate,
               "NoticePeriodDays": stud.NoticePeriodDays,
               "ProbationPeriodDays": stud.ProbationPeriodDays,
               "PAN": stud.PAN,
               "PassportNo": stud.PassportNo,
               "AadharNo": stud.AadharNo,
-              "MaritalStatusId": stud.MaritalStatusId,
+              "MaritalStatus": stud.MaritalStatusId,
               "MarriedDate": stud.MarriedDate,
               "PFAccountNo": stud.PFAccountNo,
-              "NatureId": stud.NatureId,
+              "Nature": stud.NatureId,
               "EmployeeCode": stud.EmployeeCode,
               "Active": stud.Active,
               "Remarks": stud.Remarks,
               "PresentAddress": stud.PresentAddress,
-              "PresentAddressCityId": stud.PresentAddressCityId,
-              "PresentAddressStateId": stud.PresentAddressStateId,
-              "PresentAddressCountryId": stud.PresentAddressCountryId,
+              "PresentAddressCity": stud.PresentAddressCityId,
+              "PresentAddressState": stud.PresentAddressStateId,
+              "PresentAddressCountry": stud.PresentAddressCountryId,
               "PermanentAddress,": stud.PermanentAddress,
-              "PermanentAddressCityId": stud.PermanentAddressCityId,
-              "PermanentAddressStateId": stud.PermanentAddressStateId,
-              "PermanentAddressCountryId": stud.PermanentAddressCountryId,
+              "PermanentAddressCity": stud.PermanentAddressCityId,
+              "PermanentAddressState": stud.PermanentAddressStateId,
+              "PermanentAddressCountry": stud.PermanentAddressCountryId,
               "PresentAddressPincode": stud.PresentAddressPincode,
               "PermanentAddressPincode": stud.PermanentAddressPincode,
-              "DepartmentId": stud.DepartmentId,
-              "DesignationId": stud.DesignationId,
-              "EmpGradeId": stud.EmpGradeId,
-              "WorkAccountId": stud.WorkAccountId
+              "Department": stud.DepartmentId,
+              "Designation": stud.DesignationId,
+              "EmpGrade": stud.EmpGradeId,
+              "WorkAccount": stud.WorkAccountId
             });
             // if (this.EmployeeForm.get("EmailAddress").value != "") {
             //   this.EmployeeForm.get("EmailAddress").disable();
