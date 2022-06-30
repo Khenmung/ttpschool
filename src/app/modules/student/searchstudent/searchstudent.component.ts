@@ -108,6 +108,7 @@ export class searchstudentComponent implements OnInit {
         searchClassId: [0],
         searchPID: [''],
         searchStudentName: [''],
+        searchAdmissionNo:[0],
         FatherName: [''],
         MotherName: ['']
       })
@@ -361,9 +362,10 @@ export class searchstudentComponent implements OnInit {
     var _remarkId = this.studentSearchForm.get("searchRemarkId").value;
 
     var _PID = this.studentSearchForm.get("searchPID").value;
+    var _searchAdmissionNo = this.studentSearchForm.get("searchAdmissionNo").value;
     var _fatherName = this.studentSearchForm.get("FatherName").value.FatherName;
     var _motherName = this.studentSearchForm.get("MotherName").value.MotherName;
-    if (_remarkId == 0 && _ClassId == 0 && _PID == 0 && studentName == undefined && _fatherName == undefined && _motherName == undefined) {
+    if (_searchAdmissionNo ==0 && _remarkId == 0 && _ClassId == 0 && _PID == 0 && studentName == undefined && _fatherName == undefined && _motherName == undefined) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -375,6 +377,8 @@ export class searchstudentComponent implements OnInit {
     if (_ClassId > 0) {
       classfilter = 'ClassId eq ' + _ClassId + ' and '
     }
+    if(_searchAdmissionNo>0)
+      classfilter = 'StudentClassId eq ' + _searchAdmissionNo + ' and '
     if (_PID > 0)
       checkFilterString += " and PID eq " + _PID;
 
@@ -400,7 +404,7 @@ export class searchstudentComponent implements OnInit {
         ////console.log(data.value);
         if (data.value.length > 0) {
           var formattedData = [];
-          if (_ClassId > 0) {
+          if (_ClassId > 0 || _searchAdmissionNo>0) {
             formattedData = data.value.filter(f => f.StudentClasses.length > 0);
           }
           else {

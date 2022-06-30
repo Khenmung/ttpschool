@@ -84,7 +84,8 @@ export class employee {
                 DepartmentId: +row.DepartmentId,
                 DesignationId: +row.DesignationId,
                 EmpGradeId: +row.EmpGradeId,
-                WorkAccountId: +row.WorkAccountId
+                WorkAccountId: +row.WorkAccountId,
+                IDMark:row.IDMark
             });
         });
         ////console.log("toInsert", toInsert)

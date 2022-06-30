@@ -158,7 +158,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       "MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId"
     ];
     list.PageName = "MasterItems";
-    list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + this.UserDetails[0]["planId"] + ";$select=MasterDataId,PlanAndMasterDataId)"];
+    //list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + this.UserDetails[0]["planId"] + ";$select=MasterDataId,PlanAndMasterDataId)"];
 
     list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
@@ -166,7 +166,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
     return this.dataservice.get(list).subscribe((data: any) => {
       var result = [];
       data.value.forEach(d => {
-        if (d.PlanAndMasterItems.length > 0) {
+        //if (d.PlanAndMasterItems.length > 0) {
           result.push({
             MasterDataId: d.MasterDataId,
             MasterDataName: d.MasterDataName,
@@ -175,7 +175,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
             Description: d.Description,
             OrgId: d.OrgId,
           });
-        }
+        //}
       })
 
       this.MasterData = result.sort((a, b) => a.ParentId - b.ParentId);

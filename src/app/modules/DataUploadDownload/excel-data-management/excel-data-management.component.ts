@@ -12,7 +12,7 @@ import { DatePipe } from '@angular/common';
 import { employee } from './employee';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { StudentActivity } from './StudentActivity';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-excel-data-management',
@@ -41,7 +41,7 @@ export class ExcelDataManagementComponent implements OnInit {
     CLASSROLLNOMAPPING: 'rollno class mapping',
     STUDENTDATA: 'student upload',
     STUDENTPROFILE: 'student profile',
-    EMPLOYEEDETAIL: 'employee'
+    EMPLOYEEDETAIL: 'employee upload'
   }
   SelectedApplicationId = 0;
   filterOrgIdNBatchId = '';
@@ -95,13 +95,20 @@ export class ExcelDataManagementComponent implements OnInit {
       this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
+      var PermittedApplications = this.tokenservice.getPermittedApplications();
+      var apps = PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
+      if (apps.length > 0) {
+        this.SelectedApplicationName = apps[0].appShortName;
+      }
       //if (this.UploadTypes.length == 0)
       //var _moduleName = 'Student Module'
       //this.getFields(_moduleName);
       this.GetMasterData();
       //else
-      this.GetStudents();
-      this.GetStudentsInPlan();
+      // if (this.SelectedApplicationName == 'edu') {
+      //   this.GetStudents();
+      //   this.GetStudentsInPlan();
+      // }
     }
   }
   // NotMandatory = ["StudentId", "BankAccountNo", "IFSCCode", "MICRNo", "ContactNo",
@@ -196,7 +203,7 @@ export class ExcelDataManagementComponent implements OnInit {
         "BankAccountNo",
         "IFSCCode",
         "MICRNo",
-        "AadharNo",
+        "AdhaarNo",
         "Photo",
         "Religion",
         "ContactNo",
@@ -333,6 +340,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           this.ErrorMessage += 'Invalid work account at row ' + indx + '.\n';
       }
+      else
+        element.WorkAccountId = 0;
+
 
       if (element.Gender != '') {
         var Genderobj = this.Genders.filter(f => f.MasterDataName.toLowerCase() == element.Gender.toLowerCase())
@@ -342,6 +352,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           this.ErrorMessage += 'Invalid gender at row ' + indx + '.\n';
       }
+      else
+        element.GenderId = 0;
+
 
       if (element.Bloodgroup != '') {
         var bloodgroupobj = this.Bloodgroup.filter(f => f.MasterDataName.toLowerCase() == element.Bloodgroup.toLowerCase())
@@ -350,6 +363,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.BloodgroupId = bloodgroupobj[0].MasterDataId;
       }
+      else
+        element.BloodgroupId = 0;
+
       if (element.Category != '') {
         var categoryobj = this.Category.filter(f => f.MasterDataName.toLowerCase() == element.Category.toLowerCase())
         if (categoryobj.length == 0)
@@ -357,6 +373,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.CategoryId = categoryobj[0].MasterDataId;
       }
+      else
+        element.CategoryId = 0;
+
       if (element.EmploymentStatus != '') {
         var EmploymentStatusIdobj = this.EmployeeStatus.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentStatus.toLowerCase())
         if (EmploymentStatusIdobj.length == 0)
@@ -364,6 +383,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.EmploymentStatusId = EmploymentStatusIdobj[0].MasterDataId;
       }
+      else
+        element.EmploymentStatusId = 0;
+
       if (element.Religion != '') {
         var ReligionIdobj = this.Religion.filter(f => f.MasterDataName.toLowerCase() == element.Religion.toLowerCase())
         if (ReligionIdobj.length == 0)
@@ -371,6 +393,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.ReligionId = ReligionIdobj[0].MasterDataId;
       }
+      else
+        element.ReligionId = 0;
+
       if (element.EmploymentType != '') {
         var EmploymentTypeIdobj = this.EmployeeTypes.filter(f => f.MasterDataName.toLowerCase() == element.EmploymentType.toLowerCase())
         if (EmploymentTypeIdobj.length == 0)
@@ -378,6 +403,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.EmploymentTypeId = EmploymentTypeIdobj[0].MasterDataId;
       }
+      else
+        element.EmploymentTypeId = 0;
+
       if (element.MaritalStatus != '') {
         var MaritalStatusobj = this.MaritalStatus.filter(f => f.MasterDataName.toLowerCase() == element.MaritalStatus.toLowerCase())
         if (MaritalStatusobj.length == 0)
@@ -385,6 +413,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.MaritalStatusId = MaritalStatusobj[0].MasterDataId;
       }
+      else
+        element.MaritalStatusId = 0;
+
       if (element.Nature != '') {
         var Natureobj = this.WorkNatures.filter(f => f.MasterDataName.toLowerCase() == element.Nature.toLowerCase())
         if (Natureobj.length == 0)
@@ -392,6 +423,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.NatureId = Natureobj[0].MasterDataId;
       }
+      else
+        element.NatureId = 0;
+
 
       if (element.PermanentAddressCountry != '') {
         var PermanentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PermanentAddressCountry.toLowerCase())
@@ -417,10 +451,22 @@ export class ExcelDataManagementComponent implements OnInit {
                       element.PermanentAddressCityId = +CityObj[0].MasterDataId;
                   }
                 }
+                else {
+                  element.PermanentAddressCityId = 0;
+                }
               }
             }
           }
+          else {
+            element.PermanentAddressStateId = 0;
+            element.PermanentAddressCityId = 0;
+          }
         }
+      }
+      else {
+        element.PermanentAddressCountryId = 0;
+        element.PermanentAddressStateId = 0;
+        element.PermanentAddressCityId = 0;
       }
       if (element.PresentAddressCountry != '') {
         var PresentAddressCountryIdobj = this.Country.filter(f => f.MasterDataName.toLowerCase() == element.PresentAddressCountry.toLowerCase())
@@ -445,11 +491,25 @@ export class ExcelDataManagementComponent implements OnInit {
                     else
                       element.PresentAddressCityId = +CityObj[0].MasterDataId;
                   }
+                  else
+                    element.PresentAddressCityId = 0;
+                }
+                else {
+                  element.PermanentAddressCityId = 0;
                 }
               }
             }
           }
+          else {
+            element.PermanentAddressStateId = 0;
+            element.PermanentAddressCityId = 0;
+          }
         }
+      }
+      else {
+        element.PermanentAddressCountryId = 0;
+        element.PermanentAddressStateId = 0;
+        element.PermanentAddressCityId = 0;
       }
       if (element.Department != '') {
         var DepartmentIdobj = this.Departments.filter(f => f.MasterDataName.toLowerCase() == element.Department.toLowerCase())
@@ -458,6 +518,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.DepartmentId = DepartmentIdobj[0].MasterDataId;
       }
+      else
+        element.DepartmentId = 0;
+
       if (element.Designation != '') {
         var DesignationIdobj = this.Designations.filter(f => f.MasterDataName.toLowerCase() == element.Designation.toLowerCase())
         if (DesignationIdobj.length == 0)
@@ -465,6 +528,9 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.DesignationId = DesignationIdobj[0].MasterDataId;
       }
+      else
+        element.DesignationId = 0;
+
       if (element.EmpGrade != '') {
         var EmpGradeIdobj = this.EmployeeGrades.filter(f => f.MasterDataName.toLowerCase() == element.EmpGrade.toLowerCase())
         if (EmpGradeIdobj.length == 0)
@@ -472,30 +538,41 @@ export class ExcelDataManagementComponent implements OnInit {
         else
           element.EmpGradeId = EmpGradeIdobj[0].MasterDataId;
       }
-      if (element.NoticePeriodDays != '' && isNaN(element.NoticePeriodDays))
-        this.ErrorMessage += 'NoticePeriodDays at row ' + indx + ' must be numeric.\n';
-      if (element.ProbationPeriodDays != '' && isNaN(element.ProbationPeriodDays))
-        this.ErrorMessage += 'ProbationPeriodDays at row ' + indx + ' must be numeric.\n';
+      else
+        element.EmpGradeId = 0;
+
+      if (element.NoticePeriodDays == NaN)
+        element.NoticePeriodDays = 0;
+      //  this.ErrorMessage += 'NoticePeriodDays at row ' + indx + ' must be numeric.\n';
+      //else
+
+
+      if (element.ProbationPeriodDays == NaN)
+        element.ProbationPeriodDays = 0;
+      // this.ErrorMessage += 'ProbationPeriodDays at row ' + indx + ' must be numeric.\n';
+      // else
+      //   element.ProbationPeriodDays = 0;
 
       if (element.DOB != undefined && isNaN(Date.parse(element.DOB)))
         this.ErrorMessage += 'Invalid DOB at row ' + indx;
-      else if (element.DOB != undefined)
-        element.DOB = new Date(element.DOB);
+      // else if (element.DOB != undefined)
+      //   element.DOB = new Date(element.DOB).toISOString();
+
 
       if (element.DOJ != undefined && isNaN(Date.parse(element.DOJ)))
-        this.ErrorMessage += 'Invalid DOJ at row ' + indx;
-      else if (element.DOJ != undefined)
-        element.DOJ = new Date(element.DOJ);
+        this.ErrorMessage += 'Invalid DOJ at row ' + indx + ":" + element.DOJ + "; ";
+      // else if (element.DOJ != undefined)
+      //   element.DOJ = new Date(element.DOJ).toISOString();
 
-      if (element.ConfirmationDate != undefined && isNaN(Date.parse(element.ConfirmationDate)))
+      if (element.ConfirmationDate != undefined && !isNaN(Date.parse(element.ConfirmationDate)))
         this.ErrorMessage += 'Invalid ConfirmationDate at row ' + indx;
-      else if (element.ConfirmationDate != undefined)
-        element.ConfirmationDate = new Date(element.ConfirmationDate);
+      // else if (element.ConfirmationDate != undefined)
+      //   element.ConfirmationDate = new Date(element.ConfirmationDate).toISOString();
 
-      if (element.MarriedDate != undefined && isNaN(Date.parse(element.MarriedDate)))
+      if (element.MarriedDate != undefined && !isNaN(Date.parse(element.MarriedDate)))
         this.ErrorMessage += 'Invalid MarriedDate at row ' + indx;
-      else if (element.MarriedDate != undefined)
-        element.MarriedDate = new Date(element.MarriedDate);
+      // else if (element.MarriedDate != undefined)
+      //   element.MarriedDate = new Date(element.MarriedDate).toISOString();
 
       if (element.ShortName != undefined && element.ShortName.length > 10)
         this.ErrorMessage += 'ShortName must be less than 11 characters at row ' + indx + '.\n';
@@ -522,21 +599,21 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'AdhaarNo must be less than 16 characters at row ' + indx + '.\n';
       if (element.PhotoPath != undefined && element.PhotoPath.length > 50)
         this.ErrorMessage += 'PhotoPath must be less than 51 characters at row ' + indx + '.\n';
-      if (element.ContactNo != undefined && element.ContactNo.length > 12)
-        this.ErrorMessage += 'ContactNo must be less than 13 characters at row ' + indx + '.\n';
-      if (element.WhatsappNo != undefined && element.WhatsappNo.length > 12)
-        this.ErrorMessage += 'WhatsappNo must be less than 13 characters at row ' + indx + '.\n';
-      if (element.AlternateContactNo != undefined && element.AlternateContactNo.length > 12)
-        this.ErrorMessage += 'AlternateContactNo should be less than 13 characters at row ' + indx + '.\n';
+      if (element.ContactNo != undefined && element.ContactNo.length > 50)
+        this.ErrorMessage += 'ContactNo must be less than 51 characters at row ' + indx + '.\n';
+      if (element.WhatsappNo != undefined && element.WhatsappNo.length > 30)
+        this.ErrorMessage += 'WhatsappNo must be less than 31 characters at row ' + indx + '.\n';
+      if (element.AlternateContactNo != undefined && element.AlternateContactNo.length > 30)
+        this.ErrorMessage += 'AlternateContactNo should be less than 31 characters at row ' + indx + '.\n';
 
 
-      if (element.EmailAddress != undefined && element.EmailAddress.length > 30)
-        this.ErrorMessage += 'EmailAddress must be less than 31 characters at row ' + indx + '.\n';
+      if (element.EmailAddress != undefined && element.EmailAddress.length > 50)
+        this.ErrorMessage += 'EmailAddress must be less than 51 characters at row ' + indx + '.\n';
       else if (element.EmailAddress == undefined)
         element.EmailAddress = '';
 
-      if (element.EmergencyContactNo != undefined && element.EmergencyContactNo.length > 12)
-        this.ErrorMessage += 'EmergencyContactNo must be less than 13 characters at row ' + indx + '.\n';
+      if (element.EmergencyContactNo != undefined && element.EmergencyContactNo.length > 30)
+        this.ErrorMessage += 'EmergencyContactNo must be less than 31 characters at row ' + indx + '.\n';
       else if (element.EmergencyContactNo == undefined)
         element.EmergencyContactNo = ''
 
@@ -558,12 +635,17 @@ export class ExcelDataManagementComponent implements OnInit {
       if (element["Remarks"] == undefined) {
         element["Remarks"] = '';
       }
-      if (element["Remarks"] != undefined && element.Remarks.length > 20)
-        this.ErrorMessage += 'Remarks must be less 21 characters at row ' + indx + '.\n';
+      if (element["Remarks"] != undefined && element.Remarks.length > 250)
+        this.ErrorMessage += 'Remarks must be less 250 characters at row ' + indx + '.\n';
       if (element.PresentAddress.length > 256)
         this.ErrorMessage += 'PresentAddress must be less 257 characters at row ' + indx + '.\n';
       else if (element.PresentAddress == undefined)
         element.PresentAddress = '';
+
+      if (element.PermanentAddress.length > 256)
+        this.ErrorMessage += 'PermanentAddress must be less 257 characters at row ' + indx + '.\n';
+      else if (element.PermanentAddress == undefined)
+        element.PermanentAddress = '';
 
       if (element.PresentAddressPincode.length > 10)
         this.ErrorMessage += 'PresentAddressPincode must be less 11 characters at row ' + indx + '.\n';
@@ -574,6 +656,10 @@ export class ExcelDataManagementComponent implements OnInit {
         this.ErrorMessage += 'PermanentAddressPincode must be less 11 characters at row ' + indx + '.\n';
       else if (element.PermanentAddressPincode == undefined)
         element.PermanentAddressPincode = '';
+      if (element.IDMark.length > 100)
+        this.ErrorMessage += 'IDMark must be less 100 characters at row ' + indx + '.\n';
+      else if (element.IDMark == undefined)
+        element.IDMark = '';
 
       element.OrgId = this.loginDetail[0]["orgId"];
 
@@ -590,8 +676,15 @@ export class ExcelDataManagementComponent implements OnInit {
       if (this.ErrorMessage.length == 0)
         this.ELEMENT_DATA.push(element);
     });
-    //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA)
+    console.log("this.ELEMENT_DATA", this.ELEMENT_DATA)
   }
+  // DateCheck(datestr){
+  //     var strArray = datestr.split('/');
+  //     if(strArray.length>0)
+  //     {
+  //       if(strArray[0]<)
+  //     }
+  // }
   ValidateStudentActivity() {
     debugger;
     let slno: any = 0;
@@ -1033,7 +1126,7 @@ export class ExcelDataManagementComponent implements OnInit {
           toInsert.push({
             "PID": _MaxPID++,
             "StudentId": row["StudentId"],
-            "AadharNo": row["AadharNo"],
+            "AdhaarNo": row["AdhaarNo"],
             "Active": +row["Active"],
             "AlternateContact": row["AlternateContact"],
             "BankAccountNo": row["BankAccountNo"],
@@ -1193,15 +1286,12 @@ export class ExcelDataManagementComponent implements OnInit {
 
       })
   }
+  SelectedApplicationName = '';
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.loginDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
-        var SelectedApplicationName = '';
-        var PermittedApplications = this.tokenservice.getPermittedApplications();
-        var apps = PermittedApplications.filter(f => f.applicationId == this.SelectedApplicationId)
-        if (apps.length > 0) {
-          SelectedApplicationName = apps[0].appShortName;
-        }
+        //var SelectedApplicationName = '';
+
 
 
         this.AllMasterData = [...data.value];
@@ -1210,7 +1300,7 @@ export class ExcelDataManagementComponent implements OnInit {
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         //this.States = this.getDropDownData(globalconstants.MasterDefinitions.common.STATE);
-        if (SelectedApplicationName == 'edu') {
+        if (this.SelectedApplicationName == 'edu') {
           this.AdmissionStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.ADMISSIONSTATUS);
           this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
@@ -1221,8 +1311,10 @@ export class ExcelDataManagementComponent implements OnInit {
           this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
           this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
           this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
+          this.GetStudents();
+          this.GetStudentsInPlan();
         }
-        else if (SelectedApplicationName == 'employee') {
+        else if (this.SelectedApplicationName == 'employee') {
           this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.employee.GENDER);
 
           this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.employee.EMPLOYEEUPLOADTYPE);
@@ -1241,7 +1333,9 @@ export class ExcelDataManagementComponent implements OnInit {
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Batches = this.tokenservice.getBatches();
         this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();
-        this.GetStudents();
+        this.loading = false;
+        this.PageLoading = false;
+
       });
 
   }

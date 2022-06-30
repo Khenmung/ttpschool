@@ -151,12 +151,12 @@ export class EmployeeComponent implements OnInit {
       LastName: [''],
       FatherName: ['', [Validators.required]],
       MotherName: [''],
-      GenderId: [0, [Validators.required]],
+      Gender: [0, [Validators.required]],
       DOB: ['', [Validators.required]],
       DOJ: ['', [Validators.required]],
-      BloodgroupId: [0, [Validators.required]],
-      CategoryId: [0, [Validators.required]],
-      ReligionId: [0, [Validators.required]],
+      Bloodgroup: [0, [Validators.required]],
+      Category: [0, [Validators.required]],
+      Religion: [0, [Validators.required]],
       AdhaarNo: [''],
       BankAccountNo: [''],
       IFSCcode: [''],
@@ -167,35 +167,36 @@ export class EmployeeComponent implements OnInit {
       AlternateContactNo: [''],
       EmailAddress: [''],
       EmergencyContactNo: [''],
-      EmploymentStatusId: [0],
-      EmploymentTypeId: [0],
+      EmploymentStatus: [0],
+      EmploymentType: [0],
       ConfirmationDate: [''],
       NoticePeriodDays: [0],
       ProbationPeriodDays: [0],
       PAN: [''],
       PassportNo: [''],
       AadharNo: [''],
-      MaritalStatusId: [0],
+      MaritalStatus: [0],
       MarriedDate: [''],
       PFAccountNo: [''],
-      NatureId: [0],
+      Nature: [0],
       EmployeeCode: [''],
       Active: [1, [Validators.required]],
       Remarks: [''],
       PresentAddress: [''],
       PermanentAddress: [''],
-      PresentAddressCityId: [0],
-      PresentAddressStateId: [0],
-      PresentAddressCountryId: [0],
-      PermanentAddressCityId: [0],
-      PermanentAddressStateId: [0],
-      PermanentAddressCountryId: [0],
+      PresentAddressCity: [0],
+      PresentAddressState: [0],
+      PresentAddressCountry: [0],
+      PermanentAddressCity: [0],
+      PermanentAddressState: [0],
+      PermanentAddressCountry: [0],
       PresentAddressPincode: [''],
       PermanentAddressPincode: [''],
-      DepartmentId: [0, Validators.required],
-      DesignationId: [0, Validators.required],
-      WorkAccountId: [0, Validators.required],
-      EmpGradeId: [0, Validators.required]
+      Department: [0, Validators.required],
+      Designation: [0, Validators.required],
+      WorkAccount: [0, Validators.required],
+      EmpGrade: [0, Validators.required],
+      IDMark: ['']
     });
     //}
   }
@@ -215,7 +216,7 @@ export class EmployeeComponent implements OnInit {
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
-        this.getFields('Student Module');
+        this.getFields('Employee Module');
         if (this.EmployeeId > 0)
           this.GetEmployee();
         this.GetMasterData();
@@ -274,7 +275,7 @@ export class EmployeeComponent implements OnInit {
           _studentModuleId = _studentModuleObj[0].ReportConfigItemId; 
         }
 
-        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId && f.Active==1);
+        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId && f.OrgId>0);
         var _orgStudentModuleId=0;
         if(_orgStudentModuleObj.length>0)
         {
@@ -447,7 +448,8 @@ export class EmployeeComponent implements OnInit {
       DesignationId: this.EmployeeForm.get("Designation").value,
       WorkAccountId: this.EmployeeForm.get("WorkAccount").value,
       EmpGradeId: this.EmployeeForm.get("EmpGrade").value,
-      OrgId: this.loginUserDetail[0]["orgId"]
+      OrgId: this.loginUserDetail[0]["orgId"],
+      IDMark:this.EmployeeForm.get("IDMark").value
     }]
 
     if (this.EmployeeData["MarriedDate"] == "") {
@@ -642,7 +644,7 @@ export class EmployeeComponent implements OnInit {
               "MotherName": stud.MotherName,
               "Gender": stud.GenderId,
               "DOB": stud.DOB,
-              "DOJ": stud.DOJ,
+              "DOJ": new Date(stud.DOJ),
               "Bloodgroup": stud.BloodgroupId,
               "Category": stud.CategoryId,
               "BankAccountNo": stud.BankAccountNo,
@@ -675,7 +677,7 @@ export class EmployeeComponent implements OnInit {
               "PresentAddressCity": stud.PresentAddressCityId,
               "PresentAddressState": stud.PresentAddressStateId,
               "PresentAddressCountry": stud.PresentAddressCountryId,
-              "PermanentAddress,": stud.PermanentAddress,
+              "PermanentAddress": stud.PermanentAddress,
               "PermanentAddressCity": stud.PermanentAddressCityId,
               "PermanentAddressState": stud.PermanentAddressStateId,
               "PermanentAddressCountry": stud.PermanentAddressCountryId,
@@ -684,7 +686,8 @@ export class EmployeeComponent implements OnInit {
               "Department": stud.DepartmentId,
               "Designation": stud.DesignationId,
               "EmpGrade": stud.EmpGradeId,
-              "WorkAccount": stud.WorkAccountId
+              "WorkAccount": stud.WorkAccountId,
+              "IDMark":stud.IDMark
             });
             // if (this.EmployeeForm.get("EmailAddress").value != "") {
             //   this.EmployeeForm.get("EmailAddress").disable();
