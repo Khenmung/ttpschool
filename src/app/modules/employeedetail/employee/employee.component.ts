@@ -78,9 +78,9 @@ export class EmployeeComponent implements OnInit {
       return;
     }
     this.selectedFile = files[0];
-    if (this.selectedFile.size > 60000) {
+    if (this.selectedFile.size > 120000) {
       this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Image size should be less than 100kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var reader = new FileReader();

@@ -138,6 +138,7 @@ export class FeereceiptComponent implements OnInit {
       this.Batches = this.tokenservice.getBatches();
       this.shareddata.CurrentSection.subscribe(pr => (this.Sections = pr));
 
+      //this.studentInfoTodisplay.AdmissionNo = this.tokenservice.getStudentId();
       this.studentInfoTodisplay.StudentId = this.tokenservice.getStudentId();
       this.studentInfoTodisplay.StudentClassId = this.tokenservice.getStudentClassId();
       this.SelectedBatchId = +this.tokenservice.getSelectedBatchId();

@@ -134,9 +134,9 @@ export class PromoteclassComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
-      perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.PROMOTESTUDENT);
-      if (perObj.length > 0)
-        this.PromotePermission = perObj[0].permission;
+      // perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SUBJECT.PROMOTESTUDENT);
+      // if (perObj.length > 0)
+      //   this.PromotePermission = perObj[0].permission;
 
       this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
       ////console.log('selected batchid', this.SelectedBatchId);

@@ -8,8 +8,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
-import { ClassdetailComponent } from '../../classes/classdetail/classdetail.component';
-import { PromoteclassComponent } from '../promoteclass/promoteclass.component';
+import { TeachersubjectComponent } from '../teachersubject/teachersubject.component';
 
 @Component({
   selector: 'app-subjectboard',
@@ -21,10 +20,11 @@ export class SubjectBoardComponent implements AfterViewInit {
   components = [
     SubjectTypesComponent,
     ClassSubjectDetailComponent,
+    TeachersubjectComponent,
     StudentSubjectMarkCompComponent,
     studentsubjectdashboardComponent,
-    AssignStudentclassdashboardComponent,
-    // PromoteclassComponent
+    AssignStudentclassdashboardComponent
+    
   ];
 
   tabNames = [
@@ -33,9 +33,8 @@ export class SubjectBoardComponent implements AfterViewInit {
     { "label": "Subject Mark Component", "faIcon": '' },
     { "label": "Student Subject", "faIcon": '' },
     { "label": "example", "faIcon": '' },
-    // { "label": "example", "faIcon": '' }
+    { "label": "example", "faIcon": '' }
   ];
-  //tabNames = ["Subject Type","Subject Detail","Subject Mark Component", "Class Student", "Student Subject"];
   Permissions =
     {
       ParentPermission: '',
@@ -88,9 +87,9 @@ export class SubjectBoardComponent implements AfterViewInit {
     comindx = this.components.indexOf(studentsubjectdashboardComponent);
     this.GetComponents(perObj, comindx)
 
-    // perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.PROMOTESTUDENT)
-    // comindx = this.components.indexOf(PromoteclassComponent);
-    // this.GetComponents(perObj, comindx)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.TEACHERSUBJECT)
+    comindx = this.components.indexOf(TeachersubjectComponent);
+    this.GetComponents(perObj, comindx)
 
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

@@ -3,6 +3,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { DatadumpComponent } from '../datadump/datadump.component';
 import { ExcelDataManagementComponent } from '../excel-data-management/excel-data-management.component';
 import { GetreportComponent } from '../getreport/getreport.component';
 
@@ -13,7 +14,7 @@ import { GetreportComponent } from '../getreport/getreport.component';
 })
 export class GeneralReportboardComponent implements AfterViewInit {
   components:any = [
-    GetreportComponent,
+    DatadumpComponent,
     ExcelDataManagementComponent
   ];
 
@@ -52,7 +53,7 @@ export class GeneralReportboardComponent implements AfterViewInit {
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.DOWNLOAD)
-    var comindx = this.components.indexOf(GetreportComponent);
+    var comindx = this.components.indexOf(DatadumpComponent);
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {
         this.components.splice(comindx, 1);

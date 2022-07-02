@@ -1007,6 +1007,119 @@ export class ExcelDataManagementComponent implements OnInit {
         element.PresentAddressStateId = 0;
         element.PresentAddressCityId = 0;
       }
+      
+      
+      if(element.ContactNo!=undefined && element.ContactNo.length>32)
+      {
+        this.ErrorMessage += 'Contact no length is more than 32 characters.';
+      }
+      if(element.FirstName!=undefined && element.ContactNo.length>50)
+      {
+        this.ErrorMessage += 'Firstname should not be greater than 50 characters.';
+      }
+      if(element.LastName!=undefined && element.LastName.length>50)
+      {
+        this.ErrorMessage += 'LastName should not be greater than 50 characters.';
+      }
+      if(element.FatherName!=undefined && element.FatherName.length>50)
+      {
+        this.ErrorMessage += 'FatherName should not be greater than 50 characters.';
+      }
+      if(element.MotherName!=undefined && element.MotherName.length>50)
+      {
+        this.ErrorMessage += 'MotherName should not be greater than 50 characters.';
+      }
+      if(element.PermanentAddress!=undefined && element.PermanentAddress.length>250)
+      {
+        this.ErrorMessage += 'PermanentAddress should not be greater than 250 characters.';
+      }
+      if(element.PresentAddress!=undefined && element.PresentAddress.length>250)
+      {
+        this.ErrorMessage += 'PresentAddress should not be greater than 250 characters.';
+      }
+      if(element.WhatsAppNumber!=undefined && element.WhatsAppNumber.length>15)
+      {
+        this.ErrorMessage += 'WhatsAppNumber should not be greater than 15 characters.';
+      }
+      if(element.PermanentAddressPincode!=undefined && element.PermanentAddressPincode.length>15)
+      {
+        this.ErrorMessage += 'PermanentAddressPincode should not be greater than 10 characters.';
+      }
+      if(element.BankAccountNo!=undefined && element.BankAccountNo.length>30)
+      {
+        this.ErrorMessage += 'BankAccountNo should not be greater than 30 characters.';
+      }
+      if(element.IFSCCode!=undefined && element.IFSCCode.length>30)
+      {
+        this.ErrorMessage += 'IFSCCode should not be greater than 30 characters.';
+      }
+
+      if(element.MICRNo!=undefined && element.MICRNo.length>30)
+      {
+        this.ErrorMessage += 'MICRNo should not be greater than 30 characters.';
+      }
+
+      if(element.AdhaarNo!=undefined && element.AdhaarNo.length>15)
+      {
+        this.ErrorMessage += 'AdhaarNo should not be greater than 15 characters.';
+      }
+      if(element.Photo!=undefined && element.Photo.length>50)
+      {
+        this.ErrorMessage += 'Photo should not be greater than 50 characters.';
+      }
+      if(element.AlternateContact!=undefined && element.AlternateContact.length>32)
+      {
+        this.ErrorMessage += 'AlternateContact should not be greater than 32 characters.';
+      }
+      if(element.EmailAddress!=undefined && element.EmailAddress.length>50)
+      {
+        this.ErrorMessage += 'EmailAddress should not be greater than 50 characters.';
+      }
+      if(element.LastSchoolPercentage!=undefined && element.LastSchoolPercentage.length>10)
+      {
+        this.ErrorMessage += 'LastSchoolPercentage should not be greater than 10 characters.';
+      }
+
+      if(element.TransferFromSchool!=undefined && element.TransferFromSchool.length>100)
+      {
+        this.ErrorMessage += 'TransferFromSchool should not be greater than 100 characters.';
+      }
+      if(element.TransferFromSchoolBoard!=undefined && element.TransferFromSchoolBoard.length>100)
+      {
+        this.ErrorMessage += 'TransferFromSchoolBoard should not be greater than 100 characters.';
+      }
+      if(element.FatherOccupation!=undefined && element.FatherOccupation.length>100)
+      {
+        this.ErrorMessage += 'FatherOccupation should not be greater than 100 characters.';
+      }
+      if(element.FatherContactNo!=undefined && element.FatherContactNo.length>20)
+      {
+        this.ErrorMessage += 'FatherContactNo should not be greater than 20 characters.';
+      }
+      if(element.MotherContactNo!=undefined && element.MotherContactNo.length>20)
+      {
+        this.ErrorMessage += 'MotherContactNo should not be greater than 20 characters.';
+      }
+      if(element.NameOfContactPerson!=undefined && element.NameOfContactPerson.length>30)
+      {
+        this.ErrorMessage += 'NameOfContactPerson should not be greater than 30 characters.';
+      }
+      if(element.RelationWithContactPerson!=undefined && element.RelationWithContactPerson.length>30)
+      {
+        this.ErrorMessage += 'RelationWithContactPerson should not be greater than 30 characters.';
+      }
+      if(element.ContactPersonContactNo!=undefined && element.ContactPersonContactNo.length>20)
+      {
+        this.ErrorMessage += 'ContactPersonContactNo should not be greater than 20 characters.';
+      }
+      if(element.RollNo!=undefined && element.RollNo.length>30)
+      {
+        this.ErrorMessage += 'RollNo should not be greater than 30 characters.';
+      }
+      if(element.AdmissionNo!=undefined && element.AdmissionNo.length>15)
+      {
+        this.ErrorMessage += 'AdmissionNo should not be greater than 15 characters.';
+      }
 
       element.StudentId = +element.StudentId;
 
@@ -1185,7 +1298,8 @@ export class ExcelDataManagementComponent implements OnInit {
             "Weight": +row["Weight"],
             "Height": +row["Height"],
             "SectionId": +row["SectionId"],
-            "RollNo": row["RollNo"]
+            "RollNo": row["RollNo"],
+            "AdmissionNo":row["AdmissionNo"]
           });
         });
 

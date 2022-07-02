@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { DatadumpComponent } from './datadump/datadump.component';
 import { ExcelDataManagementComponent } from './excel-data-management/excel-data-management.component';
 import { GeneralReportboardComponent } from './generalreportboard/generalreportboard.component';
 import { GetreportComponent } from './getreport/getreport.component';
@@ -22,5 +23,6 @@ export class GeneralreportRoutingModule { }
 export const GeneralreportComponents = [
   GeneralReportboardComponent,
   GetreportComponent,
-  ExcelDataManagementComponent
+  ExcelDataManagementComponent,
+  DatadumpComponent
 ];

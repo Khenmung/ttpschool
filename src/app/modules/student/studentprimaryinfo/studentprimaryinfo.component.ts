@@ -79,9 +79,9 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     debugger;
     this.selectedFile = files[0];
-    if (this.selectedFile.size > 60000) {
+    if (this.selectedFile.size > 120000) {
       this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Image size should be less than 100kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var reader = new FileReader();
@@ -537,7 +537,8 @@ export class studentprimaryinfoComponent implements OnInit {
           _studentModuleId = _studentModuleObj[0].ReportConfigItemId; 
         }
 
-        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId && f.Active==1);
+        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId 
+          && f.OrgId== this.loginUserDetail[0]["orgId"] && f.Active==1);
         var _orgStudentModuleId=0;
         if(_orgStudentModuleObj.length>0)
         {

@@ -8,6 +8,8 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DatadumpComponent } from './datadump/datadump.component';
+import { NgxPrintModule } from 'ngx-print';
 
 
 @NgModule({
@@ -21,8 +23,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    MatDialogModule
-
+    MatDialogModule,
+    NgxPrintModule
   ],
   exports:[GeneralreportComponents]
 })

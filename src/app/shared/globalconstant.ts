@@ -182,7 +182,7 @@ export class globalconstants {
                     'SUBJECTMARKCOMPONENT': 'subject mark component',
                     'CLASSSTUDENT': 'class student',
                     'SUBJECTTYPE': 'subject type',
-                    'PROMOTESTUDENT': 'promote student'
+                    'TEACHERSUBJECT': 'teacher subject'
                 },
                 'TIMETABLE': {
                     'TIMETABLE': 'time table',

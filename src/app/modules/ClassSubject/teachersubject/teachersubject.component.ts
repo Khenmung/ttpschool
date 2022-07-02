@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormControl, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,28 +12,19 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-classsubjectdetail',
-  templateUrl: './classsubjectdetail.component.html',
-  styleUrls: ['./classsubjectdetail.component.scss']
+  selector: 'app-teachersubject',
+  templateUrl: './teachersubject.component.html',
+  styleUrls: ['./teachersubject.component.scss']
 })
-export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
-
+export class TeachersubjectComponent implements OnInit {
+  PageLoading = false;
   @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  ClassSubjectListName = "ClassSubjects";
+  TeacherSubjectListName = "TeacherSubjects";
   Permission = '';
   SelectedApplicationId = 0;
   StandardFilterWithBatchId = '';
@@ -50,34 +41,26 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
   CheckBatchIDForEdit = 1;
   DataCountToSave = -1;
   Batches = [];
-  //WorkAccounts = [];
-  ClassSubjectList: IClassSubject[] = [];
-  dataSource: MatTableDataSource<IClassSubject>;
+  ClassSubjects=[];
+  TeacherSubjectList: ITeacherSubject[] = [];
+  dataSource: MatTableDataSource<ITeacherSubject>;
   allMasterData = [];
   searchForm = this.fb.group({
-    //searchBatchId: [0],
-    //searchSubjectId: [0],
-    //searchSubjectTypeId: [0],
     searchClassId: [0],
   });
-  ClassSubjectId = 0;
+  TeacherSubjectId = 0;
 
-  ClassSubjectData = {
+  TeacherSubjectData = {
+    TeacherSubjectId: 0,
     ClassSubjectId: 0,
-    ClassId: 0,
-    Credits: 0,
+    EmployeeId: 0,
     OrgId: 0,
-    //  BatchId: 0,
-    TeacherId: 0,
-    SubjectId: 0,
-    SubjectTypeId: 0,
     Active: 1
   };
   displayedColumns = [
-    'SubjectName',
-    'SubjectTypeId',
-    'Credits',
-    //'TeacherId',
+    'TeacherSubjectId',
+    'EmployeeId',
+    'ClassSubjectId',
     'Active',
     'Action'
   ];
@@ -122,7 +105,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission == 'deny') {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -130,7 +113,6 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
         this.StandardFilterWithPreviousBatchId = globalconstants.getStandardFilterWithPreviousBatchId(this.tokenstorage);
         this.shareddata.CurrentSubjects.subscribe(r => this.Subjects = r);
         this.GetMasterData();
-        this.GetSubjectTypes();
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
@@ -193,27 +175,32 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     });
     return monthArray;
   }
-  GetClassSubjectId(event) {
-    this.ClassSubjectId = event;
+  GetTeacherSubjectId(event) {
+    this.TeacherSubjectId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
-    this.GetClassSubject();
+    this.GetTeacherSubject();
   }
 
   View(element) {
     // //debugger;
-    // this.ClassSubjectId = element.ClassSubjectId;
+    // this.TeacherSubjectId = element.TeacherSubjectId;
     // this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     // setTimeout(() => {
-    //   this.classSubjectAdd.PageLoad();
+    //   this.TeacherSubjectAdd.PageLoad();
     // }, 50);
   }
 
   addnew() {
-    // this.ClassSubjectId = -1;
-    // this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
-    // setTimeout(() => {
-    //   this.classSubjectAdd.PageLoad();
-    // }, 50);
+    let toadd = {
+      TeacherSubjectId: 0,
+      EmployeeId: 0,
+      ClassSubjectId:0,
+      Active: 1,
+      Action: false
+    };
+    this.TeacherSubjectList.push(toadd);
+    this.dataSource = new MatTableDataSource<ITeacherSubject>(this.TeacherSubjectList);
+
   }
   // CopyFromPreviousBatch() {
   //   //console.log("here ", this.PreviousBatchId)
@@ -221,111 +208,59 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
   //   if (this.PreviousBatchId == -1)
   //     this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
   //   else
-  //     this.GetClassSubject(1)
+  //     this.GetTeacherSubject(1)
   // }
-  GetClassSubject() {
+  GetTeacherSubject() {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;
     this.loading = true;
-    if (this.searchForm.get("searchClassId").value != 0)
-      filterStr += "ClassId eq " + this.searchForm.get("searchClassId").value;
-    else {
-      this.loading = false; this.PageLoading=false;
+    var _classId = this.searchForm.get("searchClassId").value;
+    if (this.searchForm.get("searchClassId").value == 0) {
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class/course", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
-    filterStr += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    // if (previousbatch == 1)
-    //   filterStr += ' and ' + this.StandardFilterWithPreviousBatchId;
-    // else
-    //   filterStr += ' and ' + this.StandardFilterWithBatchId;
+    filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     if (filterStr.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false;
+      this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     let list: List = new List();
     list.fields = [
+      'TeacherSubjectId',
       'ClassSubjectId',
-      'SubjectId',
-      'ClassId',
-      'Credits',
-      'SubjectTypeId',
-      'TeacherId',
+      'EmployeeId',
       'Active',
     ];
 
-    list.PageName = this.ClassSubjectListName;
-    list.lookupFields = ["SubjectType($select=SelectHowMany)"];
+    list.PageName = this.TeacherSubjectListName;
+    list.lookupFields = ["ClassSubject($select=ClassSubjectId,ClassId,SubjectId)"];
     list.filter = [filterStr];
-    this.ClassSubjectList = [];
+    this.TeacherSubjectList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
-        //  //console.log('data.value', data.value);
-        let classSubjects = data.value.map(item => {
+        if (_classId > 0) {
+          this.TeacherSubjectList = data.value.filter(f => f.ClassSubject.ClassId == _classId);
+        }
+        else {
+          this.TeacherSubjectList = [...data.value]
+        }
+        if(this.TeacherSubjectList.length==0)
+        {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+        }
+        this.TeacherSubjectList.sort((a, b) => b.Active - a.Active);
 
-          return {
-            ClassSubjectId: item.ClassSubjectId,
-            SubjectId: item.SubjectId,
-            SubjectTypeId: item.SubjectTypeId,
-            ClassId: item.ClassId,
-            Credits: item.Credits,
-            TeacherId: item.TeacherId,
-            SelectHowMany: item.SubjectType.SelectHowMany,
-            Active: item.Active
-          }
-        })
-        var filteredSubjects = [...this.Subjects];
-        // if (this.searchForm.get("searchSubjectId").value > 0) {
-        //   filteredSubjects = this.Subjects.filter(sf => sf.MasterDataId == this.searchForm.get("searchSubjectId").value)
-        // }
-        filteredSubjects.forEach(s => {
-          //this.SubjectTypes.forEach(st => {
-
-          let existing = classSubjects.filter(e => e.SubjectId == s.MasterDataId);
-          if (existing.length > 0) {
-            this.ClassSubjectList.push({
-              //ClassSubjectId: previousbatch==1?0:existing[0].ClassSubjectId,
-              ClassSubjectId: existing[0].ClassSubjectId,
-              SubjectId: existing[0].SubjectId,
-              SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
-              SubjectTypeId: existing[0].SubjectTypeId,
-              SelectHowMany: existing[0].SelectHowMany,
-              TeacherId: existing[0].TeacherId,
-              Credits: existing[0].Credits,
-              ClassId: existing[0].ClassId,
-              Active: existing[0].Active,
-              Action: false
-            });
-          }
-          else {
-
-            this.ClassSubjectList.push({
-              ClassSubjectId: 0,
-              SubjectId: s.MasterDataId,
-              SubjectTypeId: 0,
-              SelectHowMany: 0,
-              Credits: 0,
-              ClassId: this.searchForm.get("searchClassId").value,
-              SubjectName: s.MasterDataName,
-              TeacherId: 0,
-              Active: 0,
-              Action: false
-            });
-          }
-          //})
-        })
-        this.ClassSubjectList.sort((a, b) => b.Active - a.Active);
-
-        this.dataSource = new MatTableDataSource<IClassSubject>(this.ClassSubjectList);
+        this.dataSource = new MatTableDataSource<ITeacherSubject>(this.TeacherSubjectList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.dataSource.filterPredicate = this.createFilter();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   clear() {
@@ -343,26 +278,15 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
 
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
-    // let toupdate = {
-    //   //ApplicationId:element.ApplicationId,      
-    //   Active: element.Active == 1 ? 0 : 1
-    // }
-    // this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'patch')
-    //   .subscribe(
-    //     (data: any) => {
-    //       // this.GetApplicationRoles();
-    //       this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
 
-    //     });
   }
   delete(element) {
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
     }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
+    this.dataservice.postPatch('TeacherSubjects', toupdate, element.TeacherSubjectId, 'delete')
       .subscribe(
         (data: any) => {
-          // this.GetApplicationRoles();
           this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
@@ -373,8 +297,8 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     row.Action = true;
   }
   SaveAll() {
-    this.DataCountToSave = this.ClassSubjectList.length;
-    var toUpdate = this.ClassSubjectList.filter(f => f.Action);
+    this.DataCountToSave = this.TeacherSubjectList.length;
+    var toUpdate = this.TeacherSubjectList.filter(f => f.Action);
     toUpdate.forEach(row => {
       this.DataCountToSave--;
       this.UpdateOrSave(row);
@@ -385,75 +309,59 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     this.DataCountToSave = 0;
     //debugger;
     this.loading = true;
-    if (row.SubjectTypeId == 0) {
-      this.contentservice.openSnackBar("Please select subject type.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
-      return;
-    }
-    // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
-    // if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
-    //   this.contentservice.openSnackBar("Allowed no. subjects selected is exceeded for this subject type.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   this.loading = false; this.PageLoading=false;
-    //   return;
-    // }
-    if (row.Credits > 100) {
-      this.contentservice.openSnackBar("Credits can not be greater than 100.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
-      return;
-    }
     ////console.log("row.TeacherId", row.TeacherId);
-    if (row.TeacherId == 0) {
-      this.contentservice.openSnackBar("Please select teacher for the subject.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
+    if (row.EmployeeId == 0) {
+      this.contentservice.openSnackBar("Please select teacher.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false;
       return;
     }
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
-    // " and Active eq " + row.Active +
+    if (row.ClassSubjectId == 0) {
+      this.contentservice.openSnackBar("Please select subject.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false;
+      return;
+    }
+    let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
+      " and EmployeeId eq " + row.EmployeeId + ' and Active eq 1 ';
 
 
-    if (row.ClassSubjectId > 0)
-      checkFilterString += " and ClassSubjectId ne " + row.ClassSubjectId;
+    if (row.TeacherSubjectId > 0)
+      checkFilterString += " and TeacherSubjectId ne " + row.TeacherSubjectId;
 
     checkFilterString += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
-    list.fields = ["ClassSubjectId"];
-    list.PageName = this.ClassSubjectListName;
+    list.fields = ["TeacherSubjectId"];
+    list.PageName = this.TeacherSubjectListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
         }
         else {
 
-          this.ClassSubjectData.Active = row.Active;
-          this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
-          this.ClassSubjectData.ClassId = row.ClassId;
-          this.ClassSubjectData.Credits = row.Credits;
-          this.ClassSubjectData.SubjectId = row.SubjectId;
-          this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
-          this.ClassSubjectData.TeacherId = row.TeacherId;
-          this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          //this.ClassSubjectData.BatchId = this.SelectedBatchId;
-          if (this.ClassSubjectData.ClassSubjectId == 0) {
-            this.ClassSubjectData["CreatedDate"] = new Date();
-            this.ClassSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.ClassSubjectData["UpdatedDate"];
-            delete this.ClassSubjectData["UpdatedBy"];
+          this.TeacherSubjectData.Active = row.Active;
+          this.TeacherSubjectData.TeacherSubjectId = row.TeacherSubjectId;
+          this.TeacherSubjectData.ClassSubjectId = row.ClassSubjectId;
+          this.TeacherSubjectData.EmployeeId = row.EmployeeId;
+          this.TeacherSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
+          if (this.TeacherSubjectData.TeacherSubjectId == 0) {
+            this.TeacherSubjectData["CreatedDate"] = new Date();
+            this.TeacherSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.TeacherSubjectData["UpdatedDate"];
+            delete this.TeacherSubjectData["UpdatedBy"];
             this.insert(row);
           }
           else {
-            delete this.ClassSubjectData["CreatedDate"];
-            delete this.ClassSubjectData["CreatedBy"];
-            this.ClassSubjectData["UpdatedDate"] = new Date();
-            this.ClassSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.TeacherSubjectData["CreatedDate"];
+            delete this.TeacherSubjectData["CreatedBy"];
+            this.TeacherSubjectData["UpdatedDate"] = new Date();
+            this.TeacherSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
         }
@@ -463,16 +371,16 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
 
   insert(row) {
 
-    //console.log('this.ClassSubjectData', this.ClassSubjectData)
+    //console.log('this.TeacherSubjectData', this.TeacherSubjectData)
     //debugger;
-    this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, 0, 'post')
+    this.dataservice.postPatch('TeacherSubjects', this.TeacherSubjectData, 0, 'post')
       .subscribe(
         (data: any) => {
 
           row.Action = false;
-          row.ClassSubjectId = data.ClassSubjectId;
+          row.TeacherSubjectId = data.TeacherSubjectId;
           if (this.DataCountToSave == 0) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.DataCountToSave = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -480,12 +388,12 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
   }
   update(row) {
 
-    this.dataservice.postPatch('ClassSubjects', this.ClassSubjectData, this.ClassSubjectData.ClassSubjectId, 'patch')
+    this.dataservice.postPatch('TeacherSubjects', this.TeacherSubjectData, this.TeacherSubjectData.TeacherSubjectId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
           if (this.DataCountToSave == 0) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.DataCountToSave = -1;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -513,6 +421,40 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
         this.shareddata.ChangeSubjectTypes(this.SubjectTypes);
 
       })
+  }
+  GetClassSubject() {
+    debugger;
+    let list: List = new List();
+    list.fields = [
+      'ClassSubjectId',
+      'SubjectId',
+      'ClassId',
+    ];
+
+    list.PageName = "ClassSubjects";
+    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"]];
+    this.ClassSubjects = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.ClassSubjects = data.value.map(item => {
+
+          var _subjectName = '';
+          var objsubject = this.Subjects.filter(f => f.MasterDataId == item.SubjectId)
+          if (objsubject.length > 0)
+            _subjectName = objsubject[0].MasterDataName;
+
+          return {
+            ClassSubjectId: item.ClassSubjectId,
+            ClassSubject: _subjectName,
+            ClassId: item.ClassId
+          }
+        })
+      })
+  }
+  TempClassSubject=[];
+  GetSelectedClassSubjects(){
+    
+    this.TempClassSubject = this.ClassSubjects.filter(f=>f.ClassId==this.searchForm.get("searchClassId").value);
   }
   GetTeachers() {
 
@@ -549,15 +491,11 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
-        //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Batches = this.tokenstorage.getBatches()
-
         this.shareddata.ChangeSubjects(this.Subjects);
-        //this.shareddata.ChangeBatch(this.Batches);
-        this.GetSubjectTypes();
         this.GetTeachers();
-
-        this.loading = false; this.PageLoading=false;
+        this.GetClassSubject();
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -577,17 +515,12 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
   }
 
 }
-export interface IClassSubject {
+export interface ITeacherSubject {
+  TeacherSubjectId: number;
   ClassSubjectId: number;
-  ClassId: number;
-  Credits: number;
-  SubjectId: number;
-  SubjectName: string;
-  SubjectTypeId: number;
-  SelectHowMany: number;
-  TeacherId: number,
-  Active;
-  Action: false;
+  EmployeeId: number;
+  Active: number;
+  Action: boolean;
 }
 export interface ITeachers {
   TeacherId: number;

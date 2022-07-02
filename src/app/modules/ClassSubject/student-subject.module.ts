@@ -11,9 +11,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { PromoteclassComponent } from './promoteclass/promoteclass.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { TeachersubjectComponent } from './teachersubject/teachersubject.component';
 
 @NgModule({
-  declarations: [StudentSubjectComponents, PromoteclassComponent],
+  declarations: [StudentSubjectComponents],
   imports: [
     CommonModule,
     SharedhomepageModule,

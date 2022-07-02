@@ -153,7 +153,7 @@ export class UserconfigreportnameComponent implements OnInit {
     }
     this.loading = true;
     let checkFilterString = "ReportName eq '" + row.ReportName + "'" +
-      " and ApplicationId eq " + row.ApplicationId + //" and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ApplicationId eq " + row.ApplicationId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ParentId eq " + AvailableReportId;
 
     if (row.ReportConfigItemId > 0)
@@ -270,7 +270,7 @@ export class UserconfigreportnameComponent implements OnInit {
   GetReportConfigItem() {
     debugger;
     this.ReportConfigItemList = [];
-    var filterstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var filterstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     //var ApplicationId = this.searchForm.get("searchApplicationId").value;
     var AvailableReportId = this.searchForm.get("searchAvailableReportName").value;

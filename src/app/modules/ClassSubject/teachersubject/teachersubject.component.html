@@ -1,0 +1,101 @@
+<div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div style="padding: 15px;"><strong>Class Subject Detail</strong></div>
+
+        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+        <!-- <alert></alert> -->
+        <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline">
+                <mat-label>Class</mat-label>
+                <mat-select formControlName="searchClassId" (selectionChange)="GetSelectedClassSubjects()">
+                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                        {{item.ClassName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetTeacherSubject()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </form>
+        <mat-table #table [dataSource]="dataSource" matSort *ngIf="TeacherSubjectList.length>0">
+            <ng-container matColumnDef="TeacherId">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>
+                    Teacher
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Teacher</mat-label>
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId"
+                            [value]="element.TeacherId">
+                            <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
+                                {{option.TeacherName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ClassSubjectId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    <div style="align-items: flex-start;">Subject<br>
+                        <mat-form-field style="width: 150px;">
+                            <mat-label>Search</mat-label>
+                            <input matInput [formControl]="nameFilter" autocomplete="Off">
+                        </mat-form-field>
+                    </div>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Teacher</mat-label>
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassSubjectId"
+                            [value]="element.ClassSubjectId">
+                            <mat-option *ngFor="let option of TempClassSubject" [value]="option.ClassSubjectId">
+                                {{option.SubjectName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Active">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Active </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox *ngIf="TeacherSubjectList.length>0" (click)="$event.stopPropagation()"
+                        (change)="updateActive(element,$event)" [checked]="element.Active==1?true:false">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+                <mat-header-cell *matHeaderCellDef>
+                    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
+                        (click)="addnew()">
+                        <mat-icon>add</mat-icon>
+                    </button>&nbsp;
+                    <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
+                        (click)="SaveAll()">
+                        <mat-icon>all_out</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                        mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
+
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" style="display:flex;align-items: baseline;">
+            </mat-row>
+        </mat-table>
+        <mat-paginator [pageSizeOptions]="[5,10,25,100]"></mat-paginator>
+    </div>
+</div>

@@ -7,6 +7,7 @@ import { studentsubjectdashboardComponent } from './studentsubjectdashboard/stud
 import { SubjectTypesComponent } from './subject-types/subject-types.component';
 import { SubjectBoardComponent } from './subjectboard/subjectboard.component';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { TeachersubjectComponent } from './teachersubject/teachersubject.component';
 
 const routes: Routes = [
   {
@@ -33,5 +34,6 @@ export const StudentSubjectComponents=[
   SubjectTypesComponent,
   StudentSubjectMarkCompComponent, 
   SubjectBoardComponent,
-  AssignStudentclassdashboardComponent
+  AssignStudentclassdashboardComponent,
+  TeachersubjectComponent
   ]
