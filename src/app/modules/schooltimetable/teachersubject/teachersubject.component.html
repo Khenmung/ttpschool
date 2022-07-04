@@ -1,7 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div style="padding: 15px;"><strong>Class Subject Detail</strong></div>
-
+        <div style="padding: 15px;"><strong>Teacher Subject</strong></div>
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <!-- <alert></alert> -->
         <form [formGroup]="searchForm">
@@ -20,16 +19,24 @@
                 </mat-icon>
             </button>
         </form>
-        <mat-table #table [dataSource]="dataSource" matSort *ngIf="TeacherSubjectList.length>0">
-            <ng-container matColumnDef="TeacherId">
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="TeacherSubjectId">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>
+                    Id
+                </mat-header-cell>
+                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                    {{element.TeacherSubjectId}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="EmployeeId">
                 <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>
                     Teacher
                 </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     <mat-form-field appearance="outline">
                         <mat-label>Teacher</mat-label>
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId"
-                            [value]="element.TeacherId">
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.EmployeeId"
+                            [value]="element.EmployeeId">
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
                                 {{option.TeacherName}}
                             </mat-option>
@@ -40,20 +47,21 @@
 
             <ng-container matColumnDef="ClassSubjectId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    <div style="align-items: flex-start;">Subject<br>
+                    Subject
+                    <!-- <div style="align-items: flex-start;">Subject<br>
                         <mat-form-field style="width: 150px;">
                             <mat-label>Search</mat-label>
                             <input matInput [formControl]="nameFilter" autocomplete="Off">
                         </mat-form-field>
-                    </div>
+                    </div> -->
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <mat-label>Teacher</mat-label>
+                        <mat-label>Class Subject</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassSubjectId"
                             [value]="element.ClassSubjectId">
                             <mat-option *ngFor="let option of TempClassSubject" [value]="option.ClassSubjectId">
-                                {{option.SubjectName}}
+                                {{option.ClassSubject}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

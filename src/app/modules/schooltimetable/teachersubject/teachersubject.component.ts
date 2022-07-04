@@ -178,6 +178,8 @@ export class TeachersubjectComponent implements OnInit {
   GetTeacherSubjectId(event) {
     this.TeacherSubjectId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
+    this.TeacherSubjectList =[];
+    this.dataSource = new MatTableDataSource<any>(this.TeacherSubjectList);
     this.GetTeacherSubject();
   }
 
@@ -321,7 +323,7 @@ export class TeachersubjectComponent implements OnInit {
       return;
     }
     let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
-      " and EmployeeId eq " + row.EmployeeId + ' and Active eq 1 ';
+      " and EmployeeId eq " + row.EmployeeId;
 
 
     if (row.TeacherSubjectId > 0)
@@ -453,7 +455,7 @@ export class TeachersubjectComponent implements OnInit {
   }
   TempClassSubject=[];
   GetSelectedClassSubjects(){
-    
+    debugger;
     this.TempClassSubject = this.ClassSubjects.filter(f=>f.ClassId==this.searchForm.get("searchClassId").value);
   }
   GetTeachers() {
@@ -480,7 +482,7 @@ export class TeachersubjectComponent implements OnInit {
             TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
           })
         })
-
+        
       })
   }
 

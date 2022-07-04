@@ -269,7 +269,7 @@ export class GenerateCertificateComponent implements OnInit {
         "BankAccountNo," +
         "IFSCCode," +
         "MICRNo," +
-        "AadharNo," +
+        "AdhaarNo," +
         "Religion," +
         "ContactNo," +
         "AlternateContact," +
@@ -277,7 +277,7 @@ export class GenerateCertificateComponent implements OnInit {
         "LastSchoolPercentage," +
         "TransferFromSchool," +
         "TransferFromSchoolBoard," +
-        "Remarks," +
+        "RemarkId," +
         "FatherOccupation," +
         "FatherContactNo," +
         "MotherContactNo," +
@@ -316,7 +316,10 @@ export class GenerateCertificateComponent implements OnInit {
           var _bloodgroup = d.Student.Bloodgroup == null ? '' : this.BloodGroup.filter(c => c.MasterDataId == d.Student.Bloodgroup)[0].MasterDataName;
           var _category = d.Student.Category == null ? '' : this.Category.filter(c => c.MasterDataId == d.Student.Category)[0].MasterDataName;
           var _religion = d.Student.Religion == null ? '' : this.Religion.filter(c => c.MasterDataId == d.Student.Religion)[0].MasterDataName;
-          var _reason = d.Student.ReasonForLeavingId == null ? '' : this.ReasonForLeaving.filter(c => c.MasterDataId == d.Student.ReasonForLeavingId)[0].MasterDataName;
+          var _reasonobj = d.Student.ReasonForLeavingId == null ? '' : this.ReasonForLeaving.filter(c => c.MasterDataId == d.Student.ReasonForLeavingId)
+          var _reason = '';
+          if (_reasonobj.length > 0)
+            _reason = _reasonobj[0].MasterDataName;
           var _batch = this.Batches.filter(c => c.BatchId == d.BatchId)[0].BatchName;
           var _house = '';
           var objhouse = this.Houses.filter(c => c.MasterDataId == d.HouseId);
@@ -343,7 +346,7 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "BankAccountNo", val: d.Student.BankAccountNo },
             { name: "IFSCCode", val: d.Student.IFSCCode },
             { name: "MICRNo", val: d.Student.MICRNo },
-            { name: "AadharNo", val: d.Student.AadharNo },
+            { name: "AdhaarNo", val: d.Student.AdhaarNo },
             { name: "Religion", val: _religion },
             { name: "ContactNo", val: d.Student.ContactNo },
             { name: "AlternateContact", val: d.Student.AlternateContact },
@@ -551,7 +554,7 @@ export class GenerateCertificateComponent implements OnInit {
         if (data.value.length > 0) {
 
           var _students = [...data.value];
-         
+
           _students.map(student => {
             var _RollNo = '';
             var _name = '';
@@ -758,20 +761,21 @@ export class GenerateCertificateComponent implements OnInit {
     //console.log("hi")
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+  return this.contentservice.getDropDownData(dropdowntype,this.tokenstorage,this.allMasterData);
+    //   let Id = 0;
+  //   let Ids = this.allMasterData.filter((item, indx) => {
+  //     return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+  //   })
+  //   if (Ids.length > 0) {
+  //     Id = Ids[0].MasterDataId;
+  //     return this.allMasterData.filter((item, index) => {
+  //       return item.ParentId == Id
+  //     })
+  //   }
+  //   else
+  //     return [];
 
-  }
+   }
 
 }
 export interface IExamStudentSubjectResult {

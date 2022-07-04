@@ -8,7 +8,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
-import { TeachersubjectComponent } from '../teachersubject/teachersubject.component';
+import { TeachersubjectComponent } from '../../schooltimetable/teachersubject/teachersubject.component';
 
 @Component({
   selector: 'app-subjectboard',
@@ -20,7 +20,7 @@ export class SubjectBoardComponent implements AfterViewInit {
   components = [
     SubjectTypesComponent,
     ClassSubjectDetailComponent,
-    TeachersubjectComponent,
+    //TeachersubjectComponent,
     StudentSubjectMarkCompComponent,
     studentsubjectdashboardComponent,
     AssignStudentclassdashboardComponent
@@ -87,9 +87,7 @@ export class SubjectBoardComponent implements AfterViewInit {
     comindx = this.components.indexOf(studentsubjectdashboardComponent);
     this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.SUBJECT.TEACHERSUBJECT)
-    comindx = this.components.indexOf(TeachersubjectComponent);
-    this.GetComponents(perObj, comindx)
+    
 
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

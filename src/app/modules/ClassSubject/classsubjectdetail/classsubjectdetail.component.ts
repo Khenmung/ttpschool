@@ -77,7 +77,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     'SubjectName',
     'SubjectTypeId',
     'Credits',
-    //'TeacherId',
+    'TeacherId',
     'Active',
     'Action'
   ];

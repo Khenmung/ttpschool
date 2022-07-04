@@ -24,14 +24,6 @@ export class ClassdetailComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   ClassMasterListName = 'ClassMasters';
   Applications = [];
   loading = false;
@@ -57,6 +49,7 @@ export class ClassdetailComponent implements OnInit {
     EndDate: Date,
     StudyAreaId: 0,
     StudyModeId: 0,
+    Confidential:false,
     Sequence: 0,
     BatchId: 0,
     OrgId: 0,
@@ -76,6 +69,7 @@ export class ClassdetailComponent implements OnInit {
     "EndDate",
     "StudyAreaId",
     "StudyModeId",
+    "Confidential",
     "Active",
     "Action"
   ];
@@ -146,6 +140,7 @@ export class ClassdetailComponent implements OnInit {
       EndDate: new Date(),
       StudyAreaId: 0,
       StudyModeId: 0,
+      Confidential:false,
       BatchId: 0,
       Active: 0,
       Action: true
@@ -160,6 +155,10 @@ export class ClassdetailComponent implements OnInit {
   updateActive(row, value) {
     row.Action = true;
     row.Active = value.checked ? 1 : 0;
+  }
+  updateConfidential(row, value) {
+    row.Action = true;
+    row.Confidential = value.checked;
   }
   delete(element) {
     let toupdate = {
@@ -222,6 +221,7 @@ export class ClassdetailComponent implements OnInit {
           this.ClassMasterData.MinStudent = row.MinStudent;
           this.ClassMasterData.StudyAreaId = row.StudyAreaId;
           this.ClassMasterData.StudyModeId = row.StudyModeId;
+          this.ClassMasterData.Confidential = row.Confidential;
           this.ClassMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
           //this.ClassMasterData.BatchId = this.SelectedBatchId;
 
@@ -293,6 +293,7 @@ export class ClassdetailComponent implements OnInit {
       "EndDate",
       "StudyAreaId",
       "StudyModeId",
+      "Confidential",
       "Sequence",
       "BatchId",
       "Active"
@@ -360,6 +361,7 @@ export interface IClassMaster {
   StudyAreaId: number;
   StudyModeId: number;
   Sequence: number;
+  Confidential:boolean;
   BatchId: number;
   Active: number;
   Action: boolean;

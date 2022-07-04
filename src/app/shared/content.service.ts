@@ -120,7 +120,7 @@ export class ContentService implements OnInit {
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
-  getSelectedReportColumn(pOrgId,pSelectedApplicationId) {
+  getSelectedReportColumn(pOrgId, pSelectedApplicationId) {
 
     debugger;
     //var MyReportNameId = this.searchForm.get("searchReportName").value;
@@ -144,11 +144,11 @@ export class ContentService implements OnInit {
       "UserId",
       "Active"]
     list.PageName = 'ReportConfigItems';
-    list.filter = ["Deleted eq false and (OrgId eq 0 or OrgId eq " + pOrgId + 
-    ") and (ApplicationId eq 0 or ApplicationId eq " + pSelectedApplicationId +')'];
+    list.filter = ["Deleted eq false and (OrgId eq 0 or OrgId eq " + pOrgId +
+      ") and (ApplicationId eq 0 or ApplicationId eq " + pSelectedApplicationId + ')'];
 
     return this.dataservice.get(list)
-      
+
   }
   GetGeneralAccounts(orgId, active, type) {
     var activefilter = active == 1 ? ' and Active eq 1' : '';
@@ -157,7 +157,7 @@ export class ContentService implements OnInit {
       filterStr += " and (EmployeeId ne null or EmployeeId ne null)"
     else if (type == "student")
       filterStr += " and (StudentClassId ne 0 && StudentClassId ne null)"
-    
+
     let list: List = new List();
     list.fields = [
       "GeneralLedgerId",
@@ -312,7 +312,11 @@ export class ContentService implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId", "Active"
+      "MasterDataId", "ParentId",
+      "MasterDataName", "Description",
+      "Logic", "Sequence",
+      "ApplicationId", "Active",
+      "Confidential"
     ];
     list.PageName = "MasterItems";
     list.filter = [_active + "ParentId eq " + ParentId + " and " + applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
@@ -325,28 +329,59 @@ export class ContentService implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "MasterDataId", "ParentId", "MasterDataName", "Description", "Logic", "Sequence", "ApplicationId", "Active"
+      "MasterDataId", "ParentId", "MasterDataName",
+      "Description", "Logic", "Sequence",
+      "ApplicationId", "Active", "Confidential"
     ];
     list.PageName = "MasterItems";
     list.filter = [_active + "ParentId eq " + ParentId + " and OrgId eq " + OrgId];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     return this.dataservice.get(list)
 
   }
-  getDropDownData(dropdowntype) {
+  getDropDownData(dropdowntype, token, pAllMasterData) {
     let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
+    let Ids = pAllMasterData.filter((item, indx) => item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase());//globalconstants.GENDER
+    let Permission = '';
     if (Ids.length > 0) {
       Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
+      var dropvalues = pAllMasterData.filter(item => item.ParentId == Id);
+      //var confidentialdatalist = dropvalues.filter(f => f.Confidential == 1)
+      for (var i = 0; i < dropvalues.length; i++) {
+        if (dropvalues[i].Confidential) {
+
+          var perObj = globalconstants.getPermission(token, dropvalues[i].MasterDataName);
+          if (perObj.length > 0) {
+            Permission = perObj[0].permission;
+            if (Permission == 'deny') {
+              dropvalues.splice(i, 1);
+            }
+          }
+          else
+          dropvalues.splice(i, 1);
+        }
+      }
+      return dropvalues;
     }
     else
       return [];
 
   }
+  ///////
+  // var result = item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();
+  // if (item.Confidential == 1) {
+  //   var perObj = globalconstants.getPermission(token, dropdowntype)
+  //   if (perObj.length > 0) {
+  //     Permission = perObj[0].permission;
+  //   }
+  //   if (Permission != 'deny') {
+  //     if (result)
+  //       Ids.push(item);
+  //   }
+  // }
+  // else if (result) {
+  //   Ids.push(item);
+  // }
+  /////
   getInvoice(pOrgId, pSelectedBatchId, pStudentClassId) {
     //var selectedMonth = this.searchForm.get("searchMonth").value;
     var _function = "";
@@ -382,7 +417,7 @@ export class ContentService implements OnInit {
         Active: 1,
         GeneralLedgerId: 0,
         BatchId: pSelectedBatchId,
-        BaseAmount:inv.Amount,
+        BaseAmount: inv.Amount,
         Balance: AmountAfterFormulaApplied,
         Month: inv.Month,
         StudentClassId: inv.StudentClassId,
@@ -391,7 +426,7 @@ export class ContentService implements OnInit {
         TotalCredit: 0,
       });
     });
-    var query = "select SUM(BaseAmount) BaseAmount,SUM(TotalCredit) TotalCredit,SUM(TotalDebit) TotalDebit, SUM(Balance) Balance,"+ 
+    var query = "select SUM(BaseAmount) BaseAmount,SUM(TotalCredit) TotalCredit,SUM(TotalDebit) TotalDebit, SUM(Balance) Balance," +
       "StudentClassId,LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
       "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
@@ -490,7 +525,7 @@ export class ContentService implements OnInit {
     var roletext = globalconstants.MasterDefinitions.common.ROLE;
 
     let list: List = new List();
-    list.fields = ["MasterDataId", "MasterDataName"];
+    list.fields = ["MasterDataId", "MasterDataName", "Confidential"];
     list.PageName = "MasterItems";
     list.filter = ["MasterDataName eq '" + applicationtext +
       "' or MasterDataName eq '" + roletext + "'"];
@@ -514,9 +549,9 @@ export class ContentService implements OnInit {
               //this.shareddata.ChangeMasterData(data.value);
               this.allMasterData = [...data.value];
 
-              this.Applications = this.getDropDownData(applicationtext);
+              this.Applications = this.getDropDownData(applicationtext, this.tokenService, Ids);
 
-              this.Roles = this.getDropDownData(roletext);
+              this.Roles = this.getDropDownData(roletext, this.tokenService, Ids);
 
               this.RoleFilter = ' and (RoleId eq 0';
               var __organization = '';
@@ -629,7 +664,15 @@ export class ContentService implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["MasterDataId", "MasterDataName", "ParentId", "Description", "Logic", "Sequence", "Active"];
+    list.fields = [
+      "MasterDataId",
+      "MasterDataName",
+      "ParentId",
+      "Description",
+      "Logic",
+      "Sequence",
+      "Confidential",
+      "Active"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     return this.dataservice.get(list);
@@ -643,21 +686,11 @@ export class ContentService implements OnInit {
       "MasterDataName",
       "Description",
       "ApplicationId",
+      "Confidential",
       "Active",
       "OrgId"];
     list.PageName = "MasterItems";
     list.filter = ["ParentId eq 0 and Active eq 1"];
     return this.dataservice.get(list);
-    // .subscribe((data: any) => {
-    //   if (data.value.length > 0) {
-    //     this.MasterData = [...data.value];
-    //     var applicationId = this.MasterData.filter(m => m.MasterDataName.toLowerCase() == "application")[0].MasterDataId;
-    //     this.contentservice.GetDropDownDataFromDB(applicationId,0,0)
-    //     .subscribe((data:any)=>{
-    //       this.Applications =[...data.value];
-    //     })
-    //     this.loading=false;this.PageLoading=false;
-    //   }
-    // });
   }
 }

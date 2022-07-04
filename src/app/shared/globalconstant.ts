@@ -187,7 +187,8 @@ export class globalconstants {
                 'TIMETABLE': {
                     'TIMETABLE': 'time table',
                     'CLASSPERIOD': 'class period',
-                    'CLASSTIMETABLE': 'class time table'
+                    'CLASSTIMETABLE': 'class time table',
+                    'TEACHERSUBJECT': 'teacher subject'
                 },
                 'ATTENDANCE': {
                     'ATTENDANCE': 'attendance',

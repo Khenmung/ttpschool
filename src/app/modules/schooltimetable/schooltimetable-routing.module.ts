@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { ClassperiodComponent } from './classperiod/classperiod.component';
 import { SchooltimetableComponent } from './schooltimetable/schooltimetable.component';
+import { TeachersubjectComponent } from './teachersubject/teachersubject.component';
 import { TimetableboardComponent } from './timetableboard/timetableboard.component';
 
 const routes: Routes = [
@@ -22,5 +23,6 @@ export class SchooltimetableRoutingModule { }
 export const SchoolTimeTableComponents = [
   SchooltimetableComponent,
   ClassperiodComponent,
-  TimetableboardComponent
+  TimetableboardComponent,  
+  TeachersubjectComponent
 ]

@@ -57,6 +57,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
     "Description",
     "Logic",
     "Sequence",
+    "Confidential",
     "Active",
     "Action"
   ];
@@ -155,7 +156,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       ") and (ApplicationId eq " + this.SelectedApplicationId + " or ApplicationId eq " + commonAppId + ")";
     let list: List = new List();
     list.fields = [
-      "MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId"
+      "MasterDataId,ParentId,MasterDataName,Description,ApplicationId,OrgId,Confidential"
     ];
     list.PageName = "MasterItems";
     //list.lookupFields = ["PlanAndMasterItems($filter=PlanId eq " + this.UserDetails[0]["planId"] + ";$select=MasterDataId,PlanAndMasterDataId)"];
@@ -173,6 +174,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
             ParentId: d.ParentId,
             ApplicationId: d.ApplicationId,
             Description: d.Description,
+            Confidential:d.Confidential,
             OrgId: d.OrgId,
           });
         //}
@@ -285,6 +287,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       "ParentId": _ParentId,
       "OrgId": 0,
       "Active": 0,
+      "Confidential":0,
       "ApplicationId": _appId,
       "Action": false
     }
@@ -385,6 +388,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
             "ParentId": item.ParentId,
             "ApplicationId": item.ApplicationId,
             "OrgId": item.OrgId,
+            "Confidential":item.Confidential,
             "Active": item.Active,
             "Action": false
           }
@@ -417,6 +421,11 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       row.Active = 0;
     row.Action = true;
   }
+  updateConfidential(row, value) {
+    debugger;
+      row.Confidential = value.checked;
+    row.Action = true;
+  }
 
   selected(event) {
     this.selectedData = event.target.value;
@@ -441,16 +450,16 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       return;
     }
     if (this.searchForm.get("ParentId").value == 0) {
-      this.SubMasters = [];
-      let duplicate = this.TopMasters.filter(item => item.OrgId == this.UserDetails[0]["orgId"]
-        && item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
-        && item.ApplicationId == row.ApplicationId)
-      if (duplicate.length > 0) {
+      // this.SubMasters = [];
+      // let duplicate = this.TopMasters.filter(item => item.OrgId == this.UserDetails[0]["orgId"]
+      //   && item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
+      //   && item.ApplicationId == row.ApplicationId)
+      // if (duplicate.length > 0) {
         this.loading = false; this.PageLoading=false;
-        //this.contentservice.openSnackBar("Data already exists in this master", this.optionNoAutoClose);
-        this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        this.contentservice.openSnackBar("Please select parent master.", globalconstants.ActionText, globalconstants.RedBackground);
+        //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         return;
-      }
+      //}
     }
     else {
       let duplicate = this.MasterData.filter(item => item.MasterDataName.toLowerCase() == row.MasterDataName.toLowerCase()
@@ -486,6 +495,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       Sequence: row.Sequence == null ? 0 : row.Sequence,
       ParentId: _ParentId,// this.SearchParentId,
       ApplicationId: row.ApplicationId,
+      Confidential:row.Confidential,
       Active: row.Active == true ? 1 : 0
     }
 
@@ -531,12 +541,13 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
   }
 
   getDropDownData(dropdowntype) {
-    let Id = this.MasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.MasterData.filter((item, index) => {
-      return item.ParentId == Id
-    });
+    return this.contentservice.getDropDownData(dropdowntype,this.tokenStorage,this.MasterData);
+    // let Id = this.MasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    // })[0].MasterDataId;
+    // return this.MasterData.filter((item, index) => {
+    //   return item.ParentId == Id
+    // });
   }
 }
 export interface IMaster {

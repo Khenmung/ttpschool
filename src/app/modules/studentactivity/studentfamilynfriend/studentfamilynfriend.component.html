@@ -12,31 +12,41 @@
             </mat-option>
         </mat-autocomplete>
     </mat-form-field>
+    <mat-form-field appearance="outline" [style.width.px]="350">
+        <mat-label>Same school sibling or friend</mat-label>
+        <input type="text" formControlName="searchSiblings" matInput [matAutocomplete]="auto1">
+        <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFnS">
+            <mat-option *ngFor="let option of filteredSiblings | async" [value]="option">
+                {{option.Name}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
     <mat-form-field appearance="outline" [style.width.px]="200">
-        <mat-label>same school sibling or friend</mat-label>
+        <mat-label>Relationship</mat-label>
         <mat-select formControlName="searchSiblingOrFriend">
             <mat-option [value]="0">All</mat-option>
             <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
                 {{item.MasterDataName}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <button [disabled]="loading" matTooltip="search sibling or friend" mat-raised-button color="accent"
+    <button [disabled]="loading"
+    style="margin-right: 15px;"
+    matTooltip="search sibling or friend" mat-raised-button color="accent"
         (click)="GetStudentFamilyNFriends()">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20" color="Blue"></mat-spinner>
         </mat-icon>
     </button>
+    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
+        (click)="AddNew()">
+        <mat-icon>add</mat-icon>
+    </button>
 </form>
 <div style="overflow: auto;max-width: 1200px;">
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="StudentFamilyNFriendId">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading || Permission=='read' || StudentId==0" matTooltip="add new" mat-mini-fab
-                    (click)="AddNew()">
-                    <mat-icon>add</mat-icon>
-                </button>
-                &nbsp;
                 Id
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -47,15 +57,12 @@
             <mat-header-cell *matHeaderCellDef>Same school Sibling or Friend
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-form-field appearance="outline">
-                    <mat-label>Same school sibling or friend</mat-label>
-                    <input type="text" [(ngModel)]="element.SiblingName" (blur)="onBlur(element)"
-                        [value]="element.SiblingName" matInput [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete">
-                        <mat-option *ngFor="let option of Students" [value]="option.Name">
-                            {{option.Name}}
-                        </mat-option>
-                    </mat-autocomplete>
+                <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-label>Siblings or Friend</mat-label>
+                    <mat-select [(ngModel)]="element.SiblingId" [value]="element.SiblingId">
+                        <mat-option *ngFor="let item of Students" [value]="item.StudentId">
+                            {{item.Name}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </mat-cell>
         </ng-container>

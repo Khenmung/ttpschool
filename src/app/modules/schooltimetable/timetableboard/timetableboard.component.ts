@@ -4,6 +4,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassperiodComponent } from '../classperiod/classperiod.component';
 import { SchooltimetableComponent } from '../schooltimetable/schooltimetable.component';
+import { TeachersubjectComponent } from '../teachersubject/teachersubject.component';
 
 @Component({
   selector: 'app-timetableboard',
@@ -13,12 +14,14 @@ import { SchooltimetableComponent } from '../schooltimetable/schooltimetable.com
 export class TimetableboardComponent implements AfterViewInit {
 
   components = [
+    TeachersubjectComponent,
     ClassperiodComponent,
     SchooltimetableComponent
   ];
 
   tabNames = [
     { label: 'Class Period', faIcon: '' },
+    { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
   ];
 
@@ -51,37 +54,16 @@ export class TimetableboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.CLASSPERIOD)
     var comindx = this.components.indexOf(ClassperiodComponent);
-    if (perObj.length > 0) {
-      if (perObj[0].permission == 'deny') {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
-      else {
-        this.tabNames[comindx].faIcon = perObj[0].faIcon;
-        this.tabNames[comindx].label = perObj[0].label;
-      }
-    }
-    else {
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
+    this.addRemovecomponent(perObj,comindx);
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.CLASSTIMETABLE)
     var comindx = this.components.indexOf(SchooltimetableComponent);
-    if (perObj.length > 0) {
-      if (perObj[0].permission == 'deny') {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
-      else {
-        this.tabNames[comindx].faIcon = perObj[0].faIcon;
-        this.tabNames[comindx].label = perObj[0].label;
-      }
-    }
-    else {
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
+    this.addRemovecomponent(perObj,comindx);
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.TEACHERSUBJECT)
+    var comindx = this.components.indexOf(TeachersubjectComponent);
+    this.addRemovecomponent(perObj,comindx);
+
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
         this.renderComponent(0);
@@ -95,10 +77,26 @@ export class TimetableboardComponent implements AfterViewInit {
     //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
-    }, 800);
+    }, 550);
 
   }
+  addRemovecomponent(perObj,comindx){
+    if (perObj.length > 0) {
+      if (perObj[0].permission == 'deny') {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      else {
+        this.tabNames[comindx].faIcon = perObj[0].faIcon;
+        this.tabNames[comindx].label = perObj[0].label;
+      }
+    }
+    else {
+      this.components.splice(comindx, 1);
+      this.tabNames.splice(comindx, 1);
+    }
 
+  }
 
 
   private renderComponent(index: number): any {
