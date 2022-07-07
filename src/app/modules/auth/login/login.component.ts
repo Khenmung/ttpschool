@@ -243,11 +243,13 @@ export class LoginComponent implements OnInit { PageLoading=true;
               if (this.RoleFilter.length > 0)
                 this.RoleFilter += ')';
               this.tokenStorage.saveCheckEqualBatchId
+              //this.GetCustomFeature();
               this.GetApplicationRolesPermission();
             })
         })
     })
   }
+  
   get f() {
     return this.loginForm.controls;
   }

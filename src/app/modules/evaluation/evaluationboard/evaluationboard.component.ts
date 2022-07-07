@@ -101,7 +101,7 @@ export class EvaluationboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    //const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
+    //
     const component = this.viewContainer.createComponent(this.components[index]);
 
   }

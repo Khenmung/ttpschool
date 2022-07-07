@@ -45,7 +45,7 @@ export class StudentfamilynfriendComponent implements OnInit {
   StudentFamilyNFriendData = {
     StudentFamilyNFriendId: 0,
     StudentId: 0,
-    SiblingId: 0,
+    ParentStudentId: 0,
     Name: '',
     ContactNo: '',
     RelationshipId: 0,
@@ -55,16 +55,13 @@ export class StudentfamilynfriendComponent implements OnInit {
     OrgId: 0,
   };
   displayedColumns = [
-    'Action',
-    'Active',    
-    'SiblingId',
+    'SiblingName',
+    'RelationshipId',
     'FeeType',
     'FeeTypeRemarks',
-    'Name',
-    'ContactNo',
-    'RelationshipId',
-    'Remarks',
-    'StudentFamilyNFriendId'
+    'Remarks',    
+    'Active',    
+    'Action'
   ];
   searchForm: FormGroup;
   constructor(
@@ -78,9 +75,10 @@ export class StudentfamilynfriendComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
+      searchContactNo :[''],
       searchStudentName:[''],
       searchSiblings :[''],
-      searchSiblingOrFriend: ['']
+      searchRelationshipId: ['']
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
       .pipe(
@@ -160,14 +158,14 @@ export class StudentfamilynfriendComponent implements OnInit {
       return;
     }
     var _relationship =0;
-    if(this.searchForm.get("searchSiblingOrFriend").value!='')
+    if(this.searchForm.get("searchRelationshipId").value!='')
     {
-      _relationship = this.searchForm.get("searchSiblingOrFriend").value;
+      _relationship = this.searchForm.get("searchRelationshipId").value;
     }
     var newdata = {
       StudentFamilyNFriendId: 0,
-      StudentId: 0,
-      SiblingId: this.searchForm.get("searchSiblings").value.StudentId,
+      StudentId: this.searchForm.get("searchSiblings").value.StudentId,
+      ParentStudentId: this.searchForm.get("searchStudentName").value.StudentId,
       SiblingName: this.searchForm.get("searchSiblings").value.Name,
       Name: '',
       ContactNo: '',
@@ -213,12 +211,12 @@ export class StudentfamilynfriendComponent implements OnInit {
       this.StudentId = this.searchForm.get("searchStudentName").value.StudentId
     }
 
-    if(row.SiblingId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select siblings or friend.",globalconstants.ActionText,globalconstants.RedBackground);
-      return;
-    }
+    // if(row.SiblingId==0)
+    // {
+    //   this.loading=false;
+    //   this.contentservice.openSnackBar("Please select siblings or friend.",globalconstants.ActionText,globalconstants.RedBackground);
+    //   return;
+    // }
 
     this.loading = true;
     if (row.Name.length == 0 && row.SiblingName == '') {
@@ -239,8 +237,8 @@ export class StudentfamilynfriendComponent implements OnInit {
     }
 
     let checkFilterString = "";// "StudentFamilyNFriendId eq " + row.StudentFamilyNFriendId
-    checkFilterString +='SiblingId eq ' + row.SiblingId
-    checkFilterString +=' and StudentId eq ' + this.StudentId;
+    checkFilterString +='ParentStudentId eq ' + row.ParentStudentId
+    checkFilterString +=' and StudentId eq ' + row.StudentId;
 
     if (row.StudentFamilyNFriendId > 0)
       checkFilterString += " and StudentFamilyNFriendId ne " + row.StudentFamilyNFriendId;
@@ -266,9 +264,9 @@ export class StudentfamilynfriendComponent implements OnInit {
           this.StudentFamilyNFriendData.StudentFamilyNFriendId = row.StudentFamilyNFriendId;
           this.StudentFamilyNFriendData.Active = row.Active;
           this.StudentFamilyNFriendData.ContactNo = row.ContactNo;
-          this.StudentFamilyNFriendData.StudentId = this.StudentId;
+          this.StudentFamilyNFriendData.StudentId = row.StudentId;
           this.StudentFamilyNFriendData.RelationshipId = row.RelationshipId;
-          this.StudentFamilyNFriendData.SiblingId = _studentId;
+          this.StudentFamilyNFriendData.ParentStudentId = this.StudentId;
           this.StudentFamilyNFriendData.Name = row.Name;
           this.StudentFamilyNFriendData.Remarks = row.Remarks;
           this.StudentFamilyNFriendData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -328,9 +326,9 @@ export class StudentfamilynfriendComponent implements OnInit {
     }
 
     this.StudentId =_studentId;
-    let filterStr = 'StudentId eq ' + this.StudentId;
-    var siblingOrFriendId = this.searchForm.get("searchSiblingOrFriend").value;
-    var siblingOrFriendId = this.searchForm.get("searchSiblingOrFriend").value;
+    let filterStr = 'ParentStudentId eq ' + this.StudentId;
+    var siblingOrFriendId = this.searchForm.get("searchRelationshipId").value;
+    //var siblingOrFriendId = this.searchForm.get("searchRelationshipId").value;
 
     //var siblingOrFriendId = this.FamilyRelationship.filter(f => f.MasterDataName.toLowerCase() == 'friend')[0].MasterDataId;
     if (siblingOrFriendId > 0) {
@@ -346,7 +344,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     list.fields = [
       'StudentFamilyNFriendId',
       'StudentId',
-      'SiblingId',
+      'ParentStudentId',
       'Name',
       'ContactNo',
       'RelationshipId',
@@ -362,8 +360,8 @@ export class StudentfamilynfriendComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.StudentFamilyNFriendList = data.value.map(m => {
-            if (m.SiblingId > 0) {
-              var obj = this.Students.filter(f => f.StudentId == m.SiblingId);
+            if (m.StudentId > 0) {
+              var obj = this.Students.filter(f => f.StudentId == m.StudentId);
               if (obj.length > 0) {
                 m.SiblingName = obj[0].Name;
                 m.FeeType = obj[0].FeeType;
@@ -511,7 +509,7 @@ export class StudentfamilynfriendComponent implements OnInit {
 export interface IStudentFamilyNFriends {
   StudentFamilyNFriendId: number;
   StudentId: number;
-  SiblingId: number;
+  ParentStudentId: number;
   Name: string;
   ContactNo: string;
   RelationshipId: number;

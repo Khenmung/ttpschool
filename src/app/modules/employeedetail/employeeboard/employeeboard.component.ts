@@ -19,7 +19,7 @@ import { WorkhistoryComponent } from '../workhistory/workhistory.component';
   styleUrls: ['./employeeboard.component.scss']
 })
 export class EmployeeboardComponent implements AfterViewInit {
-  components = [
+  components:any = [
     EmployeeComponent,
     EmployeedocumentsComponent,
     FamilyComponent,
@@ -99,8 +99,8 @@ export class EmployeeboardComponent implements AfterViewInit {
   selectedIndex = 0;
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
   }
   GenerateComponent(featureName) {
 

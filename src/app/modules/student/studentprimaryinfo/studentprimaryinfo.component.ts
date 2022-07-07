@@ -168,7 +168,7 @@ export class studentprimaryinfoComponent implements OnInit {
       BankAccountNo: [''],
       IFSCCode: [''],
       MICRNo: [''],
-      AadharNo: [''],
+      AdhaarNo: [''],
       Photo: [''],
       ContactNo: ['', [Validators.required]],
       WhatsAppNumber: [''],
@@ -399,7 +399,7 @@ export class studentprimaryinfoComponent implements OnInit {
       BankAccountNo: this.studentForm.get("BankAccountNo").value,
       IFSCCode: this.studentForm.get("IFSCCode").value,
       MICRNo: this.studentForm.get("MICRNo").value,
-      AadharNo: this.studentForm.get("AadharNo").value,
+      AdhaarNo: this.studentForm.get("AdhaarNo").value,
       Photo: this.studentForm.get("Photo").value,
       ReligionId: this.studentForm.get("Religion").value,
       ContactNo: this.studentForm.get("ContactNo").value,
@@ -431,7 +431,7 @@ export class studentprimaryinfoComponent implements OnInit {
       BatchId: this.tokenService.getSelectedBatchId()
     });
     //debugger;
-    //console.log("studentData", this.studentData)
+    console.log("studentData", this.studentData)
     if (this.studentForm.get("StudentId").value == 0) {
       //this.studentData[0].EmailAddress =this.studentForm.get("EmailAddress").value;
       this.save();
@@ -591,7 +591,7 @@ export class studentprimaryinfoComponent implements OnInit {
               BankAccountNo: stud.BankAccountNo,
               IFSCCode: stud.IFSCCode,
               MICRNo: stud.MICRNo,
-              AadharNo: stud.AadharNo,
+              AdhaarNo: stud.AdhaarNo,
               Photo: stud.Photo,
               ContactNo: stud.ContactNo,
               WhatsAppNumber: stud.WhatsAppNumber,

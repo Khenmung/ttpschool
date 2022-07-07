@@ -17,7 +17,7 @@ import { TeachersubjectComponent } from '../../schooltimetable/teachersubject/te
 })
 export class SubjectBoardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     SubjectTypesComponent,
     ClassSubjectDetailComponent,
     //TeachersubjectComponent,
@@ -111,8 +111,8 @@ export class SubjectBoardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
   GetComponents(perObj, comindx) {

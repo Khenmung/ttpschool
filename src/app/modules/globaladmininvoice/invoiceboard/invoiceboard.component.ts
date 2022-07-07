@@ -15,7 +15,7 @@ import { ReportConfigItemComponent } from '../reportconfigitem/reportconfigitem.
 })
 export class InvoiceboardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     ReportConfigItemComponent,
     CustomerinvoiceComponent,
     CustomerinvoicecomponentsComponent,
@@ -108,8 +108,8 @@ export class InvoiceboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
 }

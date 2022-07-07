@@ -21,7 +21,7 @@ import { PhotosComponent } from '../photos/photos.component';
 export class PhotofileboardComponent implements OnInit {
     PageLoading = true;
 
-  components = [
+  components:any = [
     AlbumsComponent,
     CarouselComponent,
     FiledragAndDropComponent,
@@ -120,8 +120,8 @@ export class PhotofileboardComponent implements OnInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
 }

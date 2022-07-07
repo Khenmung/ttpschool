@@ -5,9 +5,10 @@ import { NaomitsuService } from "./databaseService";
 import { List } from "./interface";
 
 
+
 export class globalconstants {
     ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "https://api.ttpsolutions.in";//"http://localhost:8020";//"http://localhost:44394";//
+    public static apiUrl: string = "http://localhost:8020";//"http://localhost:8020";//"http://localhost:44394";//
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -113,7 +114,8 @@ export class globalconstants {
                     'USERS': 'user',
                     'MASTERS': 'Essential Data',
                     'ORGANIZATION': 'organization',
-                    'MYPLAN': 'my plan'
+                    'MYPLAN': 'my plan',
+                    'CUSTOMFEATUREPERMISSION': 'custom feature permission'
                 },
                 "misc": {
                     "FRONTOFFICE": "front office",

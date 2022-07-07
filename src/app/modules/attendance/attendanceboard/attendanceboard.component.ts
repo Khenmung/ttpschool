@@ -13,7 +13,7 @@ import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendan
 })
 export class AttendanceboardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     StudentAttendanceComponent,
     TeacherAttendanceComponent
   ];
@@ -102,7 +102,7 @@ export class AttendanceboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
   }
 }

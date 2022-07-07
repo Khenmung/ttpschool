@@ -14,7 +14,7 @@ import { VariableConfigComponent } from '../variable-config/variable-config.comp
 })
 export class ConfigboardComponent implements AfterViewInit {
 
-  components = [  
+  components:any = [  
   UserconfigreportnameComponent,
   UserReportConfigColumnsComponent,
   VariableConfigComponent,
@@ -74,8 +74,8 @@ selectedIndex = 0;
 
 
 private renderComponent(index: number): any {
-  const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-  this.viewContainer.createComponent(factory);
+  
+  this.viewContainer.createComponent(this.components[index]);
 }
 GenerateComponent(featureName){
   

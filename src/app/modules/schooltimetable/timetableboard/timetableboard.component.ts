@@ -13,7 +13,7 @@ import { TeachersubjectComponent } from '../teachersubject/teachersubject.compon
 })
 export class TimetableboardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     TeachersubjectComponent,
     ClassperiodComponent,
     SchooltimetableComponent
@@ -100,7 +100,7 @@ export class TimetableboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
   }
 }

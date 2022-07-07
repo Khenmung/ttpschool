@@ -17,7 +17,7 @@ import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
 })
 export class MiscboardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     NoOfStudentComponent,
     DemoComponent,
     EventComponent,
@@ -85,8 +85,8 @@ export class MiscboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
   }
   GenerateComponent(featureName) {
 

@@ -537,7 +537,7 @@ export class ContentService implements OnInit {
           var ApplicationMasterDataId = Ids.filter(f => f.MasterDataName.toLowerCase() == applicationtext)[0].MasterDataId;
           var RoleMasterDataId = Ids.filter(f => f.MasterDataName.toLowerCase() == roletext)[0].MasterDataId;
           let list: List = new List();
-          list.fields = ["MasterDataId,MasterDataName,Description,ParentId"];
+          list.fields = ["MasterDataId,MasterDataName,Description,ParentId,Confidential"];
           list.PageName = "MasterItems";
           list.filter = ["(ParentId eq " + ApplicationMasterDataId + " or ParentId eq " + RoleMasterDataId +
             " or MasterDataId eq " + ApplicationMasterDataId + " or MasterDataId eq " + RoleMasterDataId +
@@ -549,9 +549,9 @@ export class ContentService implements OnInit {
               //this.shareddata.ChangeMasterData(data.value);
               this.allMasterData = [...data.value];
 
-              this.Applications = this.getDropDownData(applicationtext, this.tokenService, Ids);
+              this.Applications = this.getDropDownData(applicationtext, this.tokenService, this.allMasterData);
 
-              this.Roles = this.getDropDownData(roletext, this.tokenService, Ids);
+              this.Roles = this.getDropDownData(roletext, this.tokenService, this.allMasterData);
 
               this.RoleFilter = ' and (RoleId eq 0';
               var __organization = '';
@@ -574,7 +574,7 @@ export class ContentService implements OnInit {
                     return false;
                 })
 
-
+              debugger;  
               //login detail is save even though roles are not defined.
               //so that user can continue their settings.
               this.tokenService.saveUserdetail(this.UserDetail);
@@ -583,6 +583,7 @@ export class ContentService implements OnInit {
               this.tokenService.saveCheckEqualBatchId
               this.GetApplicationRolesPermission();
             }, error => {
+              console.log("getmasterdata error",error);
               this.tokenService.signOut();
             });
         }
@@ -605,6 +606,7 @@ export class ContentService implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
+        //hilai hi ei.
         var LoginUserDetail = this.tokenService.getUserDetail();
         var planfilteredFeature = data.value.filter(f => f.PlanFeature.PlanId == LoginUserDetail[0]["planId"]);
         if (planfilteredFeature.length > 0) {
@@ -638,7 +640,8 @@ export class ContentService implements OnInit {
               });
             }
           });
-          //console.log("this.UserDetail", this.UserDetail);
+          debugger;
+          console.log("this.UserDetail", this.UserDetail);
           this.tokenService.saveUserdetail(this.UserDetail);
         }
       })

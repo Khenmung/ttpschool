@@ -16,7 +16,7 @@ import { SportsResultComponent } from '../../studentactivity/sportsresult/sports
   styleUrls: ['./studentboard.component.scss']
 })
 export class StudentboardComponent implements AfterViewInit {
-  components = [
+  components:any = [
     studentprimaryinfoComponent,
     AddstudentclassComponent,
     StudentattendancereportComponent,
@@ -86,8 +86,8 @@ export class StudentboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    //
+    this.viewContainer.createComponent(this.components[index]);
   }
   GenerateComponent(featureName) {
 

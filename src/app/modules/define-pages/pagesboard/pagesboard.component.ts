@@ -15,7 +15,7 @@ import { TextEditorComponent } from '../texteditor/texteditor.component';
 export class PagesboardComponent implements OnInit { PageLoading=true;
 
   
-  components = [
+  components:any = [
     DisplaypageComponent,
     TextEditorComponent,
     NewsdashboardComponent    
@@ -99,8 +99,8 @@ ngOnInit(){}
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
 }

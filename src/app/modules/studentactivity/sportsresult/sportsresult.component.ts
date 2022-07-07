@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./sportsresult.component.scss']
 })
 export class SportsResultComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   RowsToUpdate = -1;
   EvaluationStarted = false;
@@ -46,7 +46,7 @@ export class SportsResultComponent implements OnInit {
   filteredStudents: Observable<IStudent[]>;
   SportsResultData = {
     SportResultId: 0,
-    Secured:'',
+    Secured: '',
     Achievement: '',
     SportsNameId: 0,
     CategoryId: 0,
@@ -58,15 +58,15 @@ export class SportsResultComponent implements OnInit {
     Active: 0
   };
   SportsResultForUpdate = [];
-  displayedColumns = [    
+  displayedColumns = [
     "SportResultId",
     "Secured",
     "Achievement",
-    "SportsNameId",
+    //"SportsNameId",
+    //"SessionId",
     "CategoryId",
     "SubCategoryId",
-    "SessionId",
-    "AchievementDate",    
+    "AchievementDate",
     "Active",
     "Action"
   ];
@@ -81,8 +81,12 @@ export class SportsResultComponent implements OnInit {
 
   ngOnInit(): void {
     debugger;
+
     this.searchForm = this.fb.group({
-      searchStudentName: [0]
+      searchStudentName: [0],
+      searchSportsNameId: [0],
+      searchCategoryId: [0],
+      searchSessionId: [0]
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
       .pipe(
@@ -144,10 +148,13 @@ export class SportsResultComponent implements OnInit {
         });
   }
   SetStudentClassId() {
+    debugger;
     var obj = this.searchForm.get("searchStudentName").value;
     if (obj != "") {
       this.StudentClassId = obj.StudentClassId;
     }
+    else
+      this.StudentClassId = 0;
   }
 
   UpdateOrSave(row) {
@@ -250,19 +257,32 @@ export class SportsResultComponent implements OnInit {
 
   GetSportsResult() {
     debugger;
+    var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
 
-    var obj = this.searchForm.get("searchStudentName").value;
-    if (obj != 0) {
-      this.StudentClassId = obj.StudentClassId;
+
+    var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    var _SportsNameId = this.searchForm.get("searchSportsNameId").value.StudentClassId;
+    var _categoryId = this.searchForm.get("searchCategoryId").value.StudentClassId;
+    var _SessionId = this.searchForm.get("searchSessionId").value.StudentClassId;
+    if (_studentclassId != undefined) {
+      filterStr += " and StudentClassId eq " + _studentclassId;
     }
     else {
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+    if (_SportsNameId > 0) {
+      filterStr += " and SportsNameId eq " + _SportsNameId;
+    }
+    if (_categoryId > 0) {
+      filterStr += " and CategoryId eq " + _categoryId;
+    }
+    if (_SessionId > 0) {
+      filterStr += " and SessionId eq " + _SessionId;
+    }
     this.loading = true;
     this.SportsResultList = [];
-    var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and StudentClassId eq " + this.StudentClassId;
+
     let list: List = new List();
     list.fields = [
       "SportResultId",
@@ -316,14 +336,14 @@ export class SportsResultComponent implements OnInit {
         this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
         this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
 
-        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);       
+        this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
       });
   }
   AddNew() {
 
     var newdata = {
       SportResultId: 0,
-      Secured:'',
+      Secured: '',
       Achievement: '',
       SportsNameId: 0,
       CategoryId: 0,
@@ -354,7 +374,7 @@ export class SportsResultComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    return this.contentservice.getDropDownData(dropdowntype,this.tokenstorage,this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
@@ -403,7 +423,7 @@ export class SportsResultComponent implements OnInit {
         debugger;
         this.Students = [];
         if (data.value.length > 0) {
-          
+
           data.value.forEach(student => {
             var _RollNo = '';
             var _name = '';
@@ -441,7 +461,7 @@ export class SportsResultComponent implements OnInit {
 export interface ISportsResult {
   SportResultId: number;
   Achievement: string;
-  Secured:string;
+  Secured: string;
   SportsNameId: number;
   CategoryId: number;
   SubCategoryId: number;

@@ -14,7 +14,8 @@ import { SharedataService } from '../../../shared/sharedata.service';
   templateUrl: './homedashboard.component.html',
   styleUrls: ['./homedashboard.component.scss']
 })
-export class HomeDashboardComponent implements OnInit { PageLoading=true;
+export class HomeDashboardComponent implements OnInit {
+  PageLoading = true;
   loading = false;
   searchForm: FormGroup;
   NewsNEventPageId = 0;
@@ -29,6 +30,7 @@ export class HomeDashboardComponent implements OnInit { PageLoading=true;
   Batches = [];
   PermittedApplications = [];
   SelectedAppName = '';
+  CustomFeatures = [];
   constructor(
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
@@ -88,6 +90,23 @@ export class HomeDashboardComponent implements OnInit { PageLoading=true;
       }
     }
   }
+
+  GetCustomFeature(pSelectedAppId, pRoleId) {
+    let list: List = new List();
+    list.fields = [
+      'CustomFeatureId',
+      'RoleId',
+      'PermissionId'
+    ];
+    var _denyPermissionId = globalconstants.PERMISSIONTYPES.filter(f=>f.type=='deny')[0].val;
+    list.PageName = "CustomFeatureRolePermissions";
+    list.lookupFields = ["CustomFeature($select=CustomFeatureName)"]
+    list.filter = ["Active eq true and ApplicationId eq " + pSelectedAppId + " and RoleId eq " + pRoleId];
+    //"PermissionId ne "+ _denyPermissionId+" and
+    debugger;
+    return this.dataservice.get(list);
+
+  }
   ChangeApplication() {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
@@ -98,7 +117,7 @@ export class HomeDashboardComponent implements OnInit { PageLoading=true;
     if (selectedBatchId > 0)
       this.SaveBatchIds(selectedBatchId);
     else {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select batch.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -116,12 +135,32 @@ export class HomeDashboardComponent implements OnInit { PageLoading=true;
         this.tokenStorage.saveSelectedBatchName('');
 
       this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
-      this.SelectedAppName = selectedApp[0].applicationName;
-      this.route.navigate(['/', selectedApp[0].appShortName])
+      this.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
+        .subscribe((data: any) => {
+          data.value.forEach(item => {
+            var indx = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.permission == item.CustomFeature.CustomFeatureName)
+            if (indx == 0) {
+              this.loginUserDetail[0]['applicationRolePermission'].push({
+                'pageId': 0,
+                'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
+                'roleId': item.RoleId,
+                'permissionId': item.PermissionId,
+                'permission': globalconstants.PERMISSIONTYPES.filter(f=>f.val==item.PermissionId)[0].type,
+                'applicationName': selectedApp[0].applicationName,
+                'applicationId': item.ApplicationId,
+                'appShortName': selectedApp[0].appShortName,
+                'faIcon': '',
+                'label': '',
+                'link': ''
+              })
+            }
+          });
+          this.SelectedAppName = selectedApp[0].applicationName;
+          this.route.navigate(['/', selectedApp[0].appShortName])
+        });
     }
-    else
-    {
-      this.loading = false; this.PageLoading=false;
+    else {
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select application.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -188,7 +227,7 @@ export class HomeDashboardComponent implements OnInit { PageLoading=true;
       this.shareddata.ChangeCurrentBatchId(this.CurrentBatchId);
       if (this.SelectedBatchId > 0)
         this.generateBatchIds(this.SelectedBatchId);
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
     });
   }
   sendmessage() {

@@ -15,7 +15,7 @@ import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudent
   styleUrls: ['./studentactivityboard.component.scss']
 })
 export class StudentactivityboardComponent implements AfterViewInit {
-  components = [
+  components:any = [
     GenerateCertificateComponent,
     StudentDocumentComponent,
     SportsResultComponent,
@@ -76,15 +76,15 @@ export class StudentactivityboardComponent implements AfterViewInit {
   public tabChange(index: number) {
     setTimeout(() => {
       this.renderComponent(index);
-    }, 550);
+    }, 750);
 
   }
   selectedIndex = 0;
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
   }
   GenerateComponent(featureName) {
 

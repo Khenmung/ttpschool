@@ -287,7 +287,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       "ParentId": _ParentId,
       "OrgId": 0,
       "Active": 0,
-      "Confidential":0,
+      "Confidential":false,
       "ApplicationId": _appId,
       "Action": false
     }
@@ -503,7 +503,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
       mastertoUpdate["CreatedBy"] = this.UserDetails[0]["userId"];
       mastertoUpdate["OrgId"] = this.UserDetails[0]["orgId"];
       //mastertoUpdate["ApplicationId"] = this.SelectedApplicationId;
-
+      console.log("kjhk",mastertoUpdate)
       this.dataservice.postPatch('MasterItems', mastertoUpdate, 0, 'post')
         .subscribe((res: any) => {
           if (res != undefined) {
@@ -525,7 +525,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
         });
     }
     else {
-      //console.log('data to update', mastertoUpdate);
+      console.log('data to update', mastertoUpdate);
       this.dataservice.postPatch('MasterItems', mastertoUpdate, row.MasterDataId, 'patch')
         .subscribe(res => {
           row.Action = false;

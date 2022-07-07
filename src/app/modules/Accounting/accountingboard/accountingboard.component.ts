@@ -14,7 +14,7 @@ import { TrialBalanceComponent } from '../trial-balance/trial-balance.component'
   styleUrls: ['./accountingboard.component.scss']
 })
 export class AccountingboardComponent implements AfterViewInit {
-  components = [
+  components:any = [
     JournalEntryComponent,
     AccountNatureComponent,
     GeneralLedgerComponent,
@@ -107,8 +107,8 @@ export class AccountingboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
 }

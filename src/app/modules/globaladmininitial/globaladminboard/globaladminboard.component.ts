@@ -20,7 +20,7 @@ import { CustomerPlanFeatureComponent } from '../customerplanfeature/customerpla
 })
 export class GlobaladminboardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     OrganizationpaymentComponent,
     MenuConfigComponent,
     PlansComponent,
@@ -147,8 +147,8 @@ export class GlobaladminboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    //
+    this.viewContainer.createComponent(this.components[index]);
     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
   }
 }

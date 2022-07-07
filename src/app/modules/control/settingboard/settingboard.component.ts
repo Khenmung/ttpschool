@@ -10,6 +10,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { OrganizationComponent } from '../organization/organization.component';
 import { CustomerPlansComponent } from '../customerplans/customerplans.component';
+import { CustomfeaturerolepermissionComponent } from '../customfeaturerolepermission/customfeaturerolepermission.component';
 
 @Component({
   selector: 'app-signup',
@@ -17,14 +18,15 @@ import { CustomerPlansComponent } from '../customerplans/customerplans.component
   styleUrls: ['./settingboard.component.scss']
 })
 export class settingboardComponent implements AfterViewInit {
-  components = [
+  components:any = [
     AddMasterDataComponent,
     AppuserdashboardComponent,
     roleuserdashboardComponent,
     RoleAppPermissiondashboardComponent,
     BatchdashboardComponent,
     OrganizationComponent,
-    CustomerPlansComponent
+    CustomerPlansComponent,
+    CustomfeaturerolepermissionComponent
   ];
 
   tabNames = [
@@ -32,6 +34,7 @@ export class settingboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
+    { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' },
     { "label": "Khat peuhpeuh", "faIcon": '' }
@@ -99,6 +102,10 @@ export class settingboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.MYPLAN);
       var comindx = this.components.indexOf(CustomerPlansComponent);
       this.GetComponents(perObj, comindx);
+      
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.common.CONTROL.CUSTOMFEATUREPERMISSION);
+      var comindx = this.components.indexOf(CustomfeaturerolepermissionComponent);
+      this.GetComponents(perObj, comindx);
     }
     else {
       var comindx = this.components.indexOf(BatchdashboardComponent);
@@ -144,8 +151,8 @@ export class settingboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
   }
   GetComponents(perObj, comindx) {
     if (perObj.length > 0) {

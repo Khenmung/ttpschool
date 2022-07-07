@@ -429,6 +429,7 @@ export class DatadumpComponent implements OnInit {
                 else
                 element.ClassName = '';
                 element.RollNo = studcls.RollNo;
+                element.StudentClassId =studcls.StudentClassId;
               })
               //delete element.ClassId;
             }

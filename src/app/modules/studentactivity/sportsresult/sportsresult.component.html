@@ -4,30 +4,59 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="width: 100%;">
     <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline" [style.width.px]="300">
-            <mat-label>Student</mat-label>
-            <input type="text" matInput (click)="SetStudentClassId()" formControlName="searchStudentName"
-                [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                    {{option.Name}}
-                </mat-option>
-            </mat-autocomplete>
-        </mat-form-field>
-        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetSportsResult()">
-            <mat-icon>search</mat-icon>
-            <mat-icon *ngIf="loading">
-                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-            </mat-icon>
-        </button>
+        <div>
+            <mat-form-field appearance="outline" [style.width.px]="300">
+                <mat-label>Student</mat-label>
+                <input type="text" matInput (change)="SetStudentClassId()"                 
+                formControlName="searchStudentName"
+                    [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                        {{option.Name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Activity</mat-label>
+                <mat-select formControlName="searchSportsNameId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="searchCategoryId">
+                    <mat-option *ngFor="let item of ActivityCategory" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Session</mat-label>
+                <mat-select formControlName="searchSessionId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div style="width:100%;display: flex; justify-content: center;">
+            <button [disabled]="loading" style="margin-right:15px" mat-raised-button color="accent"
+                (click)="GetSportsResult()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+            <button [disabled]="loading || Permission=='read' || StudentClassId==0" matTooltip="add new" mat-mini-fab
+                (click)="AddNew()">
+                <mat-icon>add</mat-icon>
+            </button>
+        </div>
     </form>
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="SportResultId">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading || Permission=='read' || StudentClassId==0" matTooltip="add new"
-                    mat-mini-fab (click)="AddNew()">
-                    <mat-icon>add</mat-icon>
-                </button>
                 Id
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -35,7 +64,7 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Secured">
-            <mat-header-cell *matHeaderCellDef>Secured
+            <mat-header-cell *matHeaderCellDef>Title
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
@@ -45,16 +74,17 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Achievement">
-            <mat-header-cell *matHeaderCellDef>Achievement
+            <mat-header-cell *matHeaderCellDef>Description
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input matInput [maxlength]="250" (blur)="onBlur(element)" [value]="element.Achievement"
-                        [(ngModel)]="element.Achievement">
+                    <textarea matInput [rows]="5" [maxlength]="250" (blur)="onBlur(element)"
+                        [value]="element.Achievement" [(ngModel)]="element.Achievement">
+                        </textarea>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="SportsNameId">
+        <!-- <ng-container matColumnDef="SportsNameId">
             <mat-header-cell *matHeaderCellDef>Activity
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -66,7 +96,7 @@
                     </mat-select>
                 </mat-form-field>
             </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="CategoryId">
             <mat-header-cell *matHeaderCellDef>Category
             </mat-header-cell>
@@ -93,7 +123,7 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="SessionId">
+        <!-- <ng-container matColumnDef="SessionId">
             <mat-header-cell *matHeaderCellDef>Session
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -105,9 +135,9 @@
                     </mat-select>
                 </mat-form-field>
             </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="AchievementDate">
-            <mat-header-cell *matHeaderCellDef> Achievement Date </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
                     <mat-label>End Date</mat-label>

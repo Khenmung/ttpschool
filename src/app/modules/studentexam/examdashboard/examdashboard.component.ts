@@ -19,7 +19,7 @@ import { VerifyresultstatusComponent } from '../verifyresultstatus/verifyresults
 
 export class ExamdashboardComponent implements AfterViewInit {
 
-  components = [
+  components:any = [
     ExamsComponent,
     StudentgradeComponent,
     ExamslotComponent,
@@ -93,8 +93,8 @@ export class ExamdashboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-    this.viewContainer.createComponent(factory);
+    
+    this.viewContainer.createComponent(this.components[index]);
   }
   GenerateComponent(featureName) {
 
@@ -280,8 +280,8 @@ export class ExamdashboardComponent implements AfterViewInit {
 
 
 //   private renderComponent(index: number): any {
-//     const factory = this.componentFactoryResolver.resolveComponentFactory<any>(this.components[index]);
-//     this.viewContainer.createComponent(factory);
+//     
+//     this.viewContainer.createComponent(this.components[index]);
 //     //ClassprerequisiteComponent this.componentFactoryResolver.resolveComponentFactory
 //   }
 // }

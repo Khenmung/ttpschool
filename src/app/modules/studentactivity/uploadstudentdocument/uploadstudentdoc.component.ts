@@ -77,7 +77,7 @@ export class StudentDocumentComponent implements OnInit {
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
     debugger;
-    this.StudentClassId = this.tokenService.getStudentClassId();
+    //this.StudentClassId = this.tokenService.getStudentClassId();
 
     // if (this.StudentClassId == 0) {
     //   this.contentservice.openSnackBar("Student Class Id not found.",globalconstants.ActionText,globalconstants.RedBackground);
@@ -131,6 +131,12 @@ export class StudentDocumentComponent implements OnInit {
   }
   uploadFile() {
 
+    if(this.uploadForm.get("searchStudentName").value=='')
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar('Please select student!', globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (this.selectedFile.length == 0) {
       this.contentservice.openSnackBar('Please select a file!', globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -141,6 +147,10 @@ export class StudentDocumentComponent implements OnInit {
     }
     debugger;
     let error: boolean = false;
+
+    this.StudentId = this.uploadForm.get("searchStudentName").value.StudentId;
+    this.StudentClassId = this.uploadForm.get("searchStudentName").value.StudentClassId;
+
     this.formdata = new FormData();
     this.formdata.append("batchId", this.SelectedBatchId.toString());
     this.formdata.append("fileOrPhoto", "0");

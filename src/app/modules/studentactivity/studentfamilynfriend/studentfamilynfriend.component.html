@@ -3,43 +3,56 @@
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="searchForm">
-    <mat-form-field appearance="outline" [style.width.px]="350">
-        <mat-label>Student</mat-label>
-        <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-            <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                {{option.Name}}
-            </mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
-    <mat-form-field appearance="outline" [style.width.px]="350">
-        <mat-label>Same school sibling or friend</mat-label>
-        <input type="text" formControlName="searchSiblings" matInput [matAutocomplete]="auto1">
-        <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFnS">
-            <mat-option *ngFor="let option of filteredSiblings | async" [value]="option">
-                {{option.Name}}
-            </mat-option>
-        </mat-autocomplete>
-    </mat-form-field>
+    <div style="display:flex;flex-direction:column">
+        <mat-form-field appearance="outline" [style.width.px]="350">
+            <mat-label>For Student</mat-label>
+            <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                    {{option.Name}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        <span style="width:100%;border-bottom:1px solid lightgray;margin-bottom: 10px;"></span>
+    </div>
+    <div style="display:flex;">
+        <mat-form-field appearance="outline" [style.width.px]="250">
+            <mat-label>Same school sibling or friend</mat-label>
+            <input type="text" formControlName="searchSiblings" matInput [matAutocomplete]="auto1">
+            <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFnS">
+                <mat-option *ngFor="let option of filteredSiblings | async" [value]="option">
+                    {{option.Name}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+        <span style="margin:15px 15px 15px 0px;font-weight: bold;">or</span>
+        <div style="border:1px solid lightgray;padding:15px;width:515px;margin: 5px 10px 10px 0px;">
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Other sibling or friend</mat-label>
+                <input matInput autocomplete="Off" [maxlength]="50" formControlName="searchOtherSiblingorFriend">
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Contact No.</mat-label>
+                <input matInput autocomplete="Off" [maxlength]="20" formControlName="searchContactNo">
+            </mat-form-field>
+        </div>
+    </div>
     <mat-form-field appearance="outline" [style.width.px]="200">
         <mat-label>Relationship</mat-label>
-        <mat-select formControlName="searchSiblingOrFriend">
+        <mat-select formControlName="searchRelationshipId">
             <mat-option [value]="0">All</mat-option>
             <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
                 {{item.MasterDataName}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <button [disabled]="loading"
-    style="margin-right: 15px;"
-    matTooltip="search sibling or friend" mat-raised-button color="accent"
-        (click)="GetStudentFamilyNFriends()">
+    <button [disabled]="loading" style="margin-right: 15px;" matTooltip="search sibling or friend" mat-raised-button
+        color="accent" (click)="GetStudentFamilyNFriends()">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20" color="Blue"></mat-spinner>
         </mat-icon>
     </button>
-    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
-        (click)="AddNew()">
+    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
         <mat-icon>add</mat-icon>
     </button>
 </form>
@@ -53,17 +66,18 @@
                 {{element.StudentFamilyNFriendId}}
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="SiblingId">
-            <mat-header-cell *matHeaderCellDef>Same school Sibling or Friend
+        <ng-container matColumnDef="SiblingName">
+            <mat-header-cell *matHeaderCellDef>Name
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <mat-form-field appearance="outline" [style.width.px]="200">
+                {{element.SiblingName}}
+                <!-- <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Siblings or Friend</mat-label>
-                    <mat-select [(ngModel)]="element.SiblingId" [value]="element.SiblingId">
+                    <mat-select [(ngModel)]="element.StudentId" [value]="element.StudentId">
                         <mat-option *ngFor="let item of Students" [value]="item.StudentId">
                             {{item.Name}}</mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="FeeType">
@@ -86,24 +100,11 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Name">
-            <mat-header-cell *matHeaderCellDef>Other Sibbling or friend
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <mat-form-field appearance="outline">
-                    <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="50" [value]="element.Name"
-                        [(ngModel)]="element.Name">
-                </mat-form-field>
-            </mat-cell>
-        </ng-container>
         <ng-container matColumnDef="ContactNo">
             <mat-header-cell *matHeaderCellDef>Contact No
             </mat-header-cell>
             <mat-cell style="display: flex;" *matCellDef="let element">
-                <mat-form-field appearance="outline">
-                    <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="20"
-                        [value]="element.ContactNo" [(ngModel)]="element.ContactNo">
-                </mat-form-field>
+
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="RelationshipId">
