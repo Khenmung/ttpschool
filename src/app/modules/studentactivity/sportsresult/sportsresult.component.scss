@@ -3,14 +3,16 @@ mat-form-field {
     width       : 98%;
     max-width   : 250px;
   }
-  
+  mat-cell:first-of-type{
+    padding-left: 15px;
+  }
   button {
     margin-right: 15px;
   }
  
 .mat-column-SportResultId
 {
-    flex:1 0 60px;
+    flex:1 0 40px;
 }
 .mat-column-Secured,
 .mat-column-Active,

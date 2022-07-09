@@ -249,7 +249,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     //   return;
     // }
 
-    let checkFilterString = "Description eq '" + row.Description + "'";
+    let checkFilterString = "Description eq '" + row.Description.replaceAll("'","''") + "'";
     if (row.QuestionnaireTypeId > 0)
       checkFilterString += " and QuestionnaireTypeId eq " + row.QuestionnaireTypeId
     else
@@ -289,7 +289,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
               MultipleAnswer: row.MultipleAnswer,
               ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
               EvaluationMasterId: row.EvaluationMasterId,
-              Description: this.EscapeSpecialCharacter(row.Description),
+              Description: this.EscapeSpecialCharacter(row.Description.replaceAll("'","''")),
               DisplayOrder: row.DisplayOrder,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
@@ -452,7 +452,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     list.fields = [
       'ClassEvaluationAnswerOptionsId',
       'Title',
-      'Value',
+      'Description',
       'Point',
       'Correct',
       'ParentId',

@@ -236,7 +236,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
     }
   }
   GetExamStudentSubjectResults() {
-
+    this.ClickedVerified =false;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;

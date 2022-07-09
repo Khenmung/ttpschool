@@ -528,7 +528,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetExams() {
 
-    var _onLineExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == 'online')[0].MasterDataId;
+    var _onLineExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == globalconstants.ExamGrading.toLowerCase())[0].MasterDataId;
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
       ' and BatchId eq ' + this.SelectedBatchId +
       ' and ExamModeId eq ' + _onLineExamModeId;
@@ -751,7 +751,7 @@ export class StudentEvaluationComponent implements OnInit {
     list.fields = [
       'ClassEvaluationAnswerOptionsId',
       'Title',
-      'Value',
+      'Description',
       'Point',
       'Correct',
       'ParentId',

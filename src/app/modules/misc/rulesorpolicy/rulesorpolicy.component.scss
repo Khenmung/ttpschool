@@ -1,0 +1,21 @@
+mat-form-field{
+    width:98%;
+    margin-right: 15px;
+}
+.mat-column-Description
+{
+    flex:1 1 400px;
+}
+.mat-column-RulesOrPolicyCategoryId,
+.mat-column-RulesOrPolicySubCategoryId
+{
+    flex:1 1 120px;
+}
+.mat-column-Active,.mat-column-Action{
+    justify-content: center;
+    flex:1 1 100px;
+}
+.mat-column-RulesOrPolicyId
+{
+    flex:1 0 50px;
+}

@@ -357,7 +357,7 @@ export class ContentService implements OnInit {
             }
           }
           else
-          dropvalues.splice(i, 1);
+            dropvalues.splice(i, 1);
         }
       }
       return dropvalues;
@@ -574,7 +574,7 @@ export class ContentService implements OnInit {
                     return false;
                 })
 
-              debugger;  
+              debugger;
               //login detail is save even though roles are not defined.
               //so that user can continue their settings.
               this.tokenService.saveUserdetail(this.UserDetail);
@@ -583,13 +583,29 @@ export class ContentService implements OnInit {
               this.tokenService.saveCheckEqualBatchId
               this.GetApplicationRolesPermission();
             }, error => {
-              console.log("getmasterdata error",error);
+              console.log("getmasterdata error", error);
               this.tokenService.signOut();
             });
         }
       })
   }
+  GetCustomFeature(pSelectedAppId, pRoleId) {
+    let list: List = new List();
+    list.fields = [
+      'CustomFeatureId',
+      'RoleId',
+      'PermissionId',
+      'ApplicationId'
+    ];
+    var _denyPermissionId = globalconstants.PERMISSIONTYPES.filter(f => f.type == 'deny')[0].val;
+    list.PageName = "CustomFeatureRolePermissions";
+    list.lookupFields = ["CustomFeature($select=CustomFeatureName)"]
+    list.filter = ["Active eq true and ApplicationId eq " + pSelectedAppId + " and RoleId eq " + pRoleId];
+    //"PermissionId ne "+ _denyPermissionId+" and
+    debugger;
+    return this.dataservice.get(list);
 
+  }
   private GetApplicationRolesPermission() {
 
     let list: List = new List();
@@ -640,8 +656,34 @@ export class ContentService implements OnInit {
               });
             }
           });
-          debugger;
-          console.log("this.UserDetail", this.UserDetail);
+          var _customFeature = this.tokenService.getCustomFeature();
+          _customFeature.forEach(item => {
+            _applicationName = '';
+            _appShortName = '';
+            var appobj = this.Applications.filter(f => f.MasterDataId == item.ApplicationId);
+            if (appobj.length > 0) {
+              _applicationName = appobj[0].Description;
+              _appShortName = appobj[0].MasterDataName
+            }
+
+            var feature = this.UserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
+            if (feature.length == 0) {
+              this.UserDetail[0]['applicationRolePermission'].push({
+                'planFeatureId': 0,
+                'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
+                'roleId': item.RoleId,
+                'permissionId': item.PermissionId,
+                'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
+                'applicationName': _applicationName,
+                'applicationId': item.ApplicationId,
+                'appShortName': _appShortName,
+                'faIcon': '',
+                'label': '',
+                'link': ''
+              })
+            }
+          });
+//          console.log("this.UserDetail", this.UserDetail);
           this.tokenService.saveUserdetail(this.UserDetail);
         }
       })

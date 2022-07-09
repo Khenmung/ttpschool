@@ -712,7 +712,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
 
     var DiscountRow = this.MonthlyDueDetail.filter(f => f.FeeName == this.DiscountText);
     // var _BalanceForACReceivable = JSON.parse(JSON.stringify(DiscountRow))
-    if (DiscountRow.length == 0) {
+    if (DiscountRow.length == 0 && this.DiscountAmount > 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please define discount in feedefinition.", globalconstants.ActionText, globalconstants.RedBackground);
       return;

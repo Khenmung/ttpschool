@@ -25,6 +25,7 @@ import {
   NgxMatTimepickerModule,
   //NGX_MAT_DATE_FORMATS
 } from '@angular-material-components/datetime-picker';
+import { RulesorpolicyComponent } from './rulesorpolicy/rulesorpolicy.component';
 //import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {

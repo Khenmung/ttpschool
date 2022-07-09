@@ -109,7 +109,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
-
+        debugger;
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         });
@@ -260,7 +260,8 @@ export class ResultComponent implements OnInit { PageLoading=true;
           d["Student"] = _className + "-" + d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
           d.Grade = _gradeObj[0].GradeName;
           d.GradeType = _gradeObj[0].GradeType;
-          d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
+          //d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
+          d["Rank"] = d["Rank"]==0?500:d["Rank"];
           //d["Percent"] = d.GradeType == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
           return d;
 
@@ -274,7 +275,9 @@ export class ResultComponent implements OnInit { PageLoading=true;
       })
   }
   GetClassGroupMapping() {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] 
+    //classgrouping is not batch wise
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
 
@@ -287,7 +290,9 @@ export class ResultComponent implements OnInit { PageLoading=true;
       })
   }
   GetStudentGradeDefn(classgroupmapping) {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    //student grade is not batch wise
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
     list.fields = ["StudentGradeId,GradeName,ClassGroupId,GradeTypeId,Formula"];
@@ -317,6 +322,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
       })
   }
   GetSelectedClassStudentGrade() {
+    debugger;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
       this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
@@ -334,9 +340,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.GradeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADETYPE);
-        //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.Batches = this.tokenstorage.getBatches()
-        //this.shareddata.ChangeBatch(this.Batches);
         this.GetExams();
         this.GetStudentSubjects();
         this.GetClassGroupMapping();

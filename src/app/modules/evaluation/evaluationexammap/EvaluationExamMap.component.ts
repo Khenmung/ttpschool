@@ -396,17 +396,16 @@ export class EvaluationExamMapComponent implements OnInit {
   }
   GetExams() {
 
-    var _onLineExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == 'online')[0].MasterDataId;
+    var _gradingExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == globalconstants.ExamGrading.toLowerCase())[0].MasterDataId;
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
       ' and BatchId eq ' + this.SelectedBatchId +
-      ' and ExamModeId eq ' + _onLineExamModeId;
+      ' and ExamModeId eq ' + _gradingExamModeId;
 
     let list: List = new List();
 
     list.fields = ["ExamId", "ExamNameId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -424,10 +423,8 @@ export class EvaluationExamMapComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
-        //this.GetClassSubjects();
         this.GetExams();
         this.loading = false; this.PageLoading = false;
       });
@@ -436,20 +433,10 @@ export class EvaluationExamMapComponent implements OnInit {
     row.Action = true;
   }
 
-  // getSelectedClassSubjects() {
-  //   debugger;
-  //   //var _classGroupId = this.searchForm.get("searchClassGroupId").value;
-  //   var classgroupmapping = this.ClassGroupMappings.filter(f => f.ClassGroupId == _classGroupId);
-  //   //only if _classGroupId has one classid, subjects can be selected.
-  //   if (classgroupmapping.length == 1)
-  //     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classgroupmapping[0].ClassId);
-  //   else
-  //     this.SelectedClassSubjects = [];
-  // }
   GetEvaluationMasterId() {
     this.EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     this.EvaluationUpdatable = this.EvaluationNames.filter(f => f.EvaluationMasterId == this.EvaluationMasterId)[0].AppendAnswer;
-    console.log("EvaluationUpdatable", this.EvaluationUpdatable);
+    //console.log("EvaluationUpdatable", this.EvaluationUpdatable);
   }
   UpdateActive(row, event) {
     row.Active = event.checked;

@@ -29,10 +29,10 @@
                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
             </mat-icon>
         </button>
-        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
+        <!-- <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
                 (click)="AddNew()">
                 <mat-icon>add</mat-icon>
-            </button>
+            </button> -->
     </form>
     <mat-divider></mat-divider>
     <mat-table [dataSource]="datasource" matSort>

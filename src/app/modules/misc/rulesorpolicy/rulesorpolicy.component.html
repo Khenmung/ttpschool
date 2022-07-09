@@ -1,0 +1,125 @@
+<div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div><strong>Rules or Policies</strong></div>
+    </div>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <!-- <alert></alert> -->
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <form [formGroup]="searchForm">
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="searchCategoryId">
+                    <mat-option *ngFor="let item of RulesOrPolicyCategory" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Sub Category</mat-label>
+                <mat-select formControlName="searchSubCategoryId">
+                    <mat-option *ngFor="let item of RulesOrPolicySubCategory" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetRulesOrPolicy()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </form>
+        <div style="width: 100%;">
+            <mat-table style="overflow: auto;min-width: 60vw;min-height: 60vh;" #table [dataSource]="dataSource">
+                <ng-container matColumnDef="RulesOrPolicyId">
+                    <mat-header-cell *matHeaderCellDef>Id
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        {{element.RulesOrPolicyId}}
+                    </mat-cell>
+                </ng-container>
+                <!-- <ng-container matColumnDef="Description">
+                    <mat-header-cell *matHeaderCellDef>Holiday
+                    </mat-header-cell>
+                    <mat-cell style="display: flex;" *matCellDef="let element">
+                        <mat-form-field appearance="outline" [style.width.px]="150">
+                            <input autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.Title"
+                                [(ngModel)]="element.Title" [maxlength]="100">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container> -->
+                <ng-container matColumnDef="Description">
+                    <mat-header-cell *matHeaderCellDef>Description
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <textarea matInput (blur)="onBlur(element)" [value]="element.Description"
+                                [(ngModel)]="element.Description" [maxlength]="300"></textarea>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="RulesOrPolicyCategoryId">
+                    <mat-header-cell *matHeaderCellDef>Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select [value]="element.RulesOrPolicyCategoryId"
+                                [(ngModel)]="element.RulesOrPolicyCategoryId">
+                                <mat-option *ngFor="let item of RulesOrPolicyCategory" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="RulesOrPolicySubCategoryId">
+                    <mat-header-cell *matHeaderCellDef>Sub Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select [value]="element.RulesOrPolicySubCategoryId"
+                                [(ngModel)]="element.RulesOrPolicySubCategoryId">
+                                <mat-option *ngFor="let item of RulesOrPolicySubCategory" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Active">
+                    <mat-header-cell *matHeaderCellDef>Active
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
+                            [checked]="element.Active">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="Action">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
+                            (click)="AddNew()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
+                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                            mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row style="width: 100%;" *matRowDef="let row; columns: displayedColumns;" class="element-row">
+                </mat-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[10,20,100]"></mat-paginator>
+        </div>
+        <!-- <button type="button" class="btn btn-outline-secondary mr-2" placement="top"
+            ngbPopover="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." popoverTitle="Popover on top">
+            Popover on top
+        </button> -->
+    </div>
+</div>

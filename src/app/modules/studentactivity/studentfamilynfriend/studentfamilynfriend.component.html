@@ -4,15 +4,32 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="searchForm">
     <div style="display:flex;flex-direction:column">
-        <mat-form-field appearance="outline" [style.width.px]="350">
-            <mat-label>For Student</mat-label>
-            <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                    {{option.Name}}
-                </mat-option>
-            </mat-autocomplete>
-        </mat-form-field>
+        <div>
+            <mat-form-field appearance="outline" [style.width.px]="350">
+                <mat-label>For Student</mat-label>
+                <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
+                        {{option.Name}}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>Relationship</mat-label>
+                <mat-select formControlName="searchRelationshipId">
+                    <mat-option [value]="0">All</mat-option>
+                    <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button [disabled]="loading" style="margin-right: 15px;" matTooltip="search sibling or friend"
+                mat-raised-button color="accent" (click)="GetStudentFamilyNFriends()">
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </div>
         <span style="width:100%;border-bottom:1px solid lightgray;margin-bottom: 10px;"></span>
     </div>
     <div style="display:flex;">
@@ -36,25 +53,10 @@
                 <input matInput autocomplete="Off" [maxlength]="20" formControlName="searchContactNo">
             </mat-form-field>
         </div>
+        <button [disabled]="loading || Permission=='read'" style="margin-top: 10px;" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+            <mat-icon>add</mat-icon>
+        </button>
     </div>
-    <mat-form-field appearance="outline" [style.width.px]="200">
-        <mat-label>Relationship</mat-label>
-        <mat-select formControlName="searchRelationshipId">
-            <mat-option [value]="0">All</mat-option>
-            <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
-                {{item.MasterDataName}}</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <button [disabled]="loading" style="margin-right: 15px;" matTooltip="search sibling or friend" mat-raised-button
-        color="accent" (click)="GetStudentFamilyNFriends()">
-        <mat-icon>search</mat-icon>
-        <mat-icon *ngIf="loading">
-            <mat-spinner diameter="20" color="Blue"></mat-spinner>
-        </mat-icon>
-    </button>
-    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
-        <mat-icon>add</mat-icon>
-    </button>
 </form>
 <div style="overflow: auto;max-width: 1200px;">
     <mat-table #table [dataSource]="dataSource">
@@ -80,6 +82,13 @@
                 </mat-form-field> -->
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="ContactNo">
+            <mat-header-cell *matHeaderCellDef>Contact No.
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.ContactNo}}
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="FeeType">
             <mat-header-cell *matHeaderCellDef>Fee Type
             </mat-header-cell>
@@ -98,13 +107,6 @@
                     <input type="text" [(ngModel)]="element.FeeTypeRemarks" [disabled]="true"
                         [value]="element.FeeTypeRemarks" matInput>
                 </mat-form-field>
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="ContactNo">
-            <mat-header-cell *matHeaderCellDef>Contact No
-            </mat-header-cell>
-            <mat-cell style="display: flex;" *matCellDef="let element">
-
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="RelationshipId">

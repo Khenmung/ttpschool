@@ -388,7 +388,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
             "ParentId": item.ParentId,
             "ApplicationId": item.ApplicationId,
             "OrgId": item.OrgId,
-            "Confidential":item.Confidential,
+            "Confidential":item.Confidential==null?false:item.Confidential,
             "Active": item.Active,
             "Action": false
           }

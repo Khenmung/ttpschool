@@ -37,7 +37,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
   ClassEvaluationOptionData = {
     ClassEvaluationAnswerOptionsId: 0,
     Title: '',
-    Value: '',
+    Description: '',
     Point: 0,
     Correct: 0,
     ClassEvaluationId: 0,
@@ -48,8 +48,8 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
   displayedColumns = [
     'ClassEvaluationAnswerOptionsId',
     'Title',
+    'Description',
     'ParentId',
-    'Value',
     'Point',
     'Correct',
     'Active',
@@ -128,7 +128,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
     var parentItem = {
       ClassEvaluationAnswerOptionsId: 0,
       Title: _title,
-      Value: '0',
+      Description: '0',
       Point: 0,
       Correct: 0,
       ClassEvaluationId: 0,
@@ -149,7 +149,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
     var newItem = {
       ClassEvaluationAnswerOptionsId: 0,
       Title: '',
-      Value: '',
+      Description: '',
       Point: 0,
       Correct: 0,
       ClassEvaluationId: 0,
@@ -197,8 +197,8 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
           this.ClassEvaluationOptionForUpdate.push(
             {
               ClassEvaluationAnswerOptionsId: row.ClassEvaluationAnswerOptionsId,
-              Title: row.Title,
-              Value: row.Value,
+              Title: row.Title.replaceAll("'","''"),
+              Description: row.Description.replaceAll("'","''"),
               Point: row.Point,
               Correct: row.Correct,
               ClassEvaluationId: this.ClassEvaluationId,
@@ -279,7 +279,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
     list.fields = [
       'ClassEvaluationAnswerOptionsId',
       'Title',
-      'Value',
+      'Description',
       'Point',
       'Correct',
       'ParentId',
@@ -320,7 +320,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
     list.fields = [
       'ClassEvaluationAnswerOptionsId',
       'Title',
-      'Value',
+      'Description',
       'Point',
       'Correct',
       'ParentId',
@@ -379,7 +379,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
 export interface IClassEvaluationOption {
   ClassEvaluationAnswerOptionsId: number;
   Title: string;
-  Value: string;
+  Description: string;
   Point: number;
   Correct: number;
   ClassEvaluationId: number;

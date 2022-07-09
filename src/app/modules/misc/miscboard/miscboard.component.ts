@@ -5,10 +5,10 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { DemoComponent } from '../calendar/calendar.component';
 import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
-//import { CalendarComponent } from '../calendar/calendar.component';
 import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
 import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
+import { RulesorpolicyComponent } from '../rulesorpolicy/rulesorpolicy.component';
 
 @Component({
   selector: 'app-miscboard',
@@ -22,7 +22,8 @@ export class MiscboardComponent implements AfterViewInit {
     DemoComponent,
     EventComponent,
     HolidayComponent,
-    ClassprerequisiteComponent
+    //ClassprerequisiteComponent,
+    RulesorpolicyComponent
   ];
 
   tabNames = [
@@ -31,6 +32,7 @@ export class MiscboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
+    { "label": "khat peuhpeuh", "faIcon": '' }
   ];
   Permissions =
     {
@@ -46,8 +48,7 @@ export class MiscboardComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
-    private shareddata: SharedataService,
-    private componentFactoryResolver: ComponentFactoryResolver
+    private shareddata: SharedataService
   ) {
   }
 
@@ -64,7 +65,8 @@ export class MiscboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.common.misc.HOLIDAY)
     this.GenerateComponent(globalconstants.Pages.common.misc.EVENT)
     this.GenerateComponent(globalconstants.Pages.common.misc.NOOFSTUDENT)
-    this.GenerateComponent(globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
+    this.GenerateComponent(globalconstants.Pages.common.misc.RULESORPOLICY)
+    //this.GenerateComponent(globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -107,6 +109,9 @@ export class MiscboardComponent implements AfterViewInit {
         break;
       case "pre-requisite":
         comindx = this.components.indexOf(ClassprerequisiteComponent);
+        break;
+      case "rules or policies":
+        comindx = this.components.indexOf(RulesorpolicyComponent);
         break;
     }
 

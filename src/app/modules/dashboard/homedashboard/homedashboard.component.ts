@@ -91,22 +91,7 @@ export class HomeDashboardComponent implements OnInit {
     }
   }
 
-  GetCustomFeature(pSelectedAppId, pRoleId) {
-    let list: List = new List();
-    list.fields = [
-      'CustomFeatureId',
-      'RoleId',
-      'PermissionId'
-    ];
-    var _denyPermissionId = globalconstants.PERMISSIONTYPES.filter(f=>f.type=='deny')[0].val;
-    list.PageName = "CustomFeatureRolePermissions";
-    list.lookupFields = ["CustomFeature($select=CustomFeatureName)"]
-    list.filter = ["Active eq true and ApplicationId eq " + pSelectedAppId + " and RoleId eq " + pRoleId];
-    //"PermissionId ne "+ _denyPermissionId+" and
-    debugger;
-    return this.dataservice.get(list);
-
-  }
+  
   ChangeApplication() {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
@@ -135,13 +120,13 @@ export class HomeDashboardComponent implements OnInit {
         this.tokenStorage.saveSelectedBatchName('');
 
       this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
-      this.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
+      this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
         .subscribe((data: any) => {
           data.value.forEach(item => {
-            var indx = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.permission == item.CustomFeature.CustomFeatureName)
-            if (indx == 0) {
+            var feature = this.loginUserDetail[0]['applicationRolePermission'].filter(f => f.applicationFeature == item.CustomFeature.CustomFeatureName)
+            if (feature.length == 0) {
               this.loginUserDetail[0]['applicationRolePermission'].push({
-                'pageId': 0,
+                'planFeatureId': 0,
                 'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
                 'roleId': item.RoleId,
                 'permissionId': item.PermissionId,
@@ -155,6 +140,8 @@ export class HomeDashboardComponent implements OnInit {
               })
             }
           });
+          this.tokenStorage.saveUserdetail(this.loginUserDetail);
+          this.tokenStorage.saveCustomFeature(data.value);
           this.SelectedAppName = selectedApp[0].applicationName;
           this.route.navigate(['/', selectedApp[0].appShortName])
         });

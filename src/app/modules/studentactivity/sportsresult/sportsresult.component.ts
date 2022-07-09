@@ -84,7 +84,7 @@ export class SportsResultComponent implements OnInit {
 
     this.searchForm = this.fb.group({
       searchStudentName: [0],
-      searchSportsNameId: [0],
+      searchActivityId: [0],
       searchCategoryId: [0],
       searchSessionId: [0]
     });
@@ -149,9 +149,9 @@ export class SportsResultComponent implements OnInit {
   }
   SetStudentClassId() {
     debugger;
-    var obj = this.searchForm.get("searchStudentName").value;
-    if (obj != "") {
-      this.StudentClassId = obj.StudentClassId;
+    var obj = this.searchForm.get("searchStudentName").value.StudentClassId;
+    if (obj != undefined) {
+      this.StudentClassId = obj
     }
     else
       this.StudentClassId = 0;
@@ -161,10 +161,30 @@ export class SportsResultComponent implements OnInit {
 
     debugger;
     this.loading = true;
+    if(row.Secured.length==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please enter title.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    if(row.Achievement.length==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please enter description.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    if(row.CategoryId==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let checkFilterString = "StudentClassId eq " + this.StudentClassId +
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +
+      " and CategoryId eq " + row.CategoryId +
       " and BatchId eq " + this.SelectedBatchId;
     this.RowsToUpdate = 0;
 
@@ -190,8 +210,8 @@ export class SportsResultComponent implements OnInit {
             {
               SportResultId: row.SportResultId,
               Secured: row.Secured,
-              Achievement: row.Achievement,
-              SportsNameId: row.SportsNameId,
+              Achievement: row.Achievement.replaceAll("'","''"),
+              SportsNameId: this.searchForm.get("searchActivityId").value,
               CategoryId: row.CategoryId,
               SubCategoryId: row.SubCategoryId,
               StudentClassId: this.StudentClassId,
@@ -261,9 +281,9 @@ export class SportsResultComponent implements OnInit {
 
 
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
-    var _SportsNameId = this.searchForm.get("searchSportsNameId").value.StudentClassId;
-    var _categoryId = this.searchForm.get("searchCategoryId").value.StudentClassId;
-    var _SessionId = this.searchForm.get("searchSessionId").value.StudentClassId;
+    var _SportsNameId = this.searchForm.get("searchActivityId").value;
+    var _categoryId = this.searchForm.get("searchCategoryId").value;
+    var _SessionId = this.searchForm.get("searchSessionId").value;
     if (_studentclassId != undefined) {
       filterStr += " and StudentClassId eq " + _studentclassId;
     }
@@ -274,8 +294,18 @@ export class SportsResultComponent implements OnInit {
     if (_SportsNameId > 0) {
       filterStr += " and SportsNameId eq " + _SportsNameId;
     }
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     if (_categoryId > 0) {
       filterStr += " and CategoryId eq " + _categoryId;
+    }
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
     }
     if (_SessionId > 0) {
       filterStr += " and SessionId eq " + _SessionId;
@@ -333,24 +363,48 @@ export class SportsResultComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
-        this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
+        //this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
         this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
 
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
       });
   }
+  SetCategory() {
+    var _activityId = this.searchForm.get("searchActivityId").value;
+    this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
+  }
   AddNew() {
-
+    var _activityId = this.searchForm.get("searchActivityId").value;
+    var _categoryId = this.searchForm.get("searchCategoryId").value;
+    var _sessionId = this.searchForm.get("searchSessionId").value;
+    if(_activityId==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select activity.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    if(_categoryId==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    if(_sessionId==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select session.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     var newdata = {
       SportResultId: 0,
       Secured: '',
       Achievement: '',
-      SportsNameId: 0,
-      CategoryId: 0,
+      SportsNameId: _activityId,
+      CategoryId: _categoryId,
       SubCategoryId: 0,
       StudentClassId: this.StudentClassId,
       AchievementDate: new Date(),
-      SessionId: 0,
+      SessionId: this.searchForm.get("searchSessionId").value,
       Active: 0,
       Action: false
     };

@@ -7,15 +7,15 @@ import { List } from "./interface";
 
 
 export class globalconstants {
-    ////"https://api.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:8020";//"http://localhost:8020";//"http://localhost:44394";//
+    ////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in";
+    public static apiUrl: string = "http://localhost:8020";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
     public static RowUploadLimit = 1000; //536870912;
     public static TrialPeriod = 3;
-    public static BlueBackground = {duration:3000,panelClass:'blue-snackbar'};
-    public static RedBackground = {duration:10000,panelClass:'red-snackbar'};
+    public static BlueBackground = { duration: 3000, panelClass: 'blue-snackbar' };
+    public static RedBackground = { duration: 10000, panelClass: 'red-snackbar' };
     public static AddedMessage = 'Data saved sucessfully.';
     public static UpdatedMessage = 'Data updated sucessfully.';
     public static DeletedMessage = 'Data deleted sucessfully.';
@@ -25,6 +25,8 @@ export class globalconstants {
     public static TechnicalIssueMessage = 'There is a technical issue! Please contact your administrator.';
     public static PermissionDeniedMessage = 'Permission Denied!';
     public static ActionText = 'X';
+    public static ExamGrading = 'Grading';
+    public static ExamMarkingNGrading = 'MarkingNGrading';
     public static BuildCommand = "ng build --configuration production --aot=true --build-optimizer=true --outputHashing=all";
     public static AppAndMenuAndFeatures =
         {
@@ -46,7 +48,7 @@ export class globalconstants {
                     'studentactivity': 'studentactivity'
                 },
                 'timetable': {
-                    'classperiod': 'classperiod',   
+                    'classperiod': 'classperiod',
                     'timetable': 'timetable',
                 },
                 'attendance': {
@@ -123,7 +125,8 @@ export class globalconstants {
                     "NEWS": "news",
                     "EVENT": "event",
                     "HOLIDAY": "holiday",
-                    "NOOFSTUDENT": "no of students"
+                    "NOOFSTUDENT": "no of students",
+                    "RULESORPOLICY": "rules or policies"
                 }
             },
             "emp": {
@@ -148,7 +151,7 @@ export class globalconstants {
                     'STUDENTDETAIL': 'student detail',
                     'STUDENTCLASS': 'student class',
                     'GENERATECERTIFICATE': 'generate certificate',
-                    'DOCUMENT': 'documents',                    
+                    'DOCUMENT': 'documents',
                     'ATTENDANCEREPORT': 'student attendance record',
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',
@@ -165,8 +168,8 @@ export class globalconstants {
                     'FEETYPE': 'fee type',
                     'PREREQUISITE': 'pre-requisite',
                     'CLASSTEACHER': 'class teacher',
-                    'CLASSEVALUATION':'class evaluation',
-                    'CLASSGROUPING':'class grouping'
+                    'CLASSEVALUATION': 'class evaluation',
+                    'CLASSGROUPING': 'class grouping'
                 },
                 'EXAM': {
                     'EXAM': 'Exam',
@@ -252,11 +255,12 @@ export class globalconstants {
                 "CATEGORY": "category",
                 "BLOODGROUP": "blood group",
                 "HOLIDAYLIST": "holiday type",
-                "ROLE": "role",                
+                "ROLE": "role",
                 "CONFIGTYPE": "Variable config type",
-                "ACTIVITYNAME":"activity name",                
-                "ACTIVITYCATEGORY":"activity category",                
-                "ACTIVITYSESSION":"activity session"                
+                "ACTIVITYNAME": "activity name",
+                "ACTIVITYCATEGORY": "activity category",
+                "ACTIVITYSESSION": "activity session",
+                "RULEORPOLICYCATEGORY": "rule or policy category"
             },
             "ttpapps": {
                 "REPORTNAMES": "ttp report name",
@@ -270,7 +274,7 @@ export class globalconstants {
                 "PAYMENTSTATUS": "payment status"
             },
             "school": {
-                "ADMISSIONSTATUS":"admission status",
+                "ADMISSIONSTATUS": "admission status",
                 "RESTRICTION": "information restriction",
                 "REPORTNAMES": "edu report name",
                 "DURATION": "duration",
@@ -319,7 +323,7 @@ export class globalconstants {
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
                 "STUDENTGRADETYPE": "student grade type",
                 "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
-                "STUDENTREMARKS":"student remark"
+                "STUDENTREMARKS": "student remark"
             },
             "leave": {
                 "REPORTNAMES": "leave report name",
@@ -348,7 +352,7 @@ export class globalconstants {
                 "EMPLOYEEPROFILECATEGORY": "employee profile category",
                 "EMPLOYEEPROFILESUBCATEGORY": "employee profile sub category",
                 "EMPLOYEEUPLOADTYPE": "employee upload type"
-            
+
             },
             "StudentVariableName": [
                 "Today",
@@ -392,7 +396,7 @@ export class globalconstants {
                 "ReasonForLeaving",
                 "Attendance",
                 "FeePaidTill"
-                
+
             ],
             "EmployeeVariableName": [
                 "Grade",
@@ -458,7 +462,7 @@ export class globalconstants {
     //public static 
     constructor(
         private dataservice: NaomitsuService,
-        private snackbar:MatSnackBar
+        private snackbar: MatSnackBar
     ) {
 
     }
@@ -511,44 +515,54 @@ export class globalconstants {
         return filterstr;
 
     }
-    public static formatError(err)
-    {
-        var errorMessage='';
-          var modelState;
-          if (err.error.ModelState != null)
+    public static formatError(err) {
+        var errorMessage = '';
+        var modelState;
+        if (err.error.ModelState != null)
             modelState = JSON.parse(JSON.stringify(err.error.ModelState));
-          else if (err.error != null)
+        else if (err.error != null)
             modelState = JSON.parse(JSON.stringify(err.error));
-          else
+        else
             modelState = JSON.parse(JSON.stringify(err));
-  
-          //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
-          for (var key in modelState) {
+
+        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        for (var key in modelState) {
             if (modelState.hasOwnProperty(key) && (key.toLowerCase() == 'errors' || key.toLowerCase() == 'error')) {
-              for(var key1 in modelState[key])
-              errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key][key1];
+                for (var key1 in modelState[key])
+                    errorMessage += (errorMessage == "" ? "" : errorMessage + "<br/>") + modelState[key][key1];
             }
-          }
-          return  errorMessage;
+        }
+        return errorMessage;
     }
     public static getPermission(tokenservice: TokenStorageService, feature: any) {
         var checkBatchIdNSelectedId = 0;
         var loginUserDetail = tokenservice.getUserDetail();
         checkBatchIdNSelectedId = +tokenservice.getCheckEqualBatchId();
 
-        //shareddata.CurrentSelectedNCurrentBatchIdEqual.subscribe(t => checkBatchIdNSelectedId = t);
-        //user is viewing old data
-        // if (checkBatchIdNSelectedId == 0 && feature.toLowerCase().indexOf('promote') == -1)
-        //     return [{'permission':'read'}];
-        // else {
-            var _permission = loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
-            if (_permission.length > 0)
-                return [_permission[0]];
-            else
-                return [];
-        //}
+        var _permission = loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == feature.toLowerCase().trim());
+        if (_permission.length > 0)
+            return [_permission[0]];
+        else
+            return [];
     }
-    
+    EscapeSpecialCharacter(str) {
+
+        if ((str === null) || (str === ''))
+            return false;
+        else
+            str = str.toString();
+
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        var format = /[!@#$&%^&*_+\=\[\]{};:'"\\|<>]+/;
+        return str.replace(format, function (m) { return map[m]; });
+        //return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
     GetApplicationRolesPermission(tokenservice: TokenStorageService, Applications: any[]) {
 
         let list: List = new List();

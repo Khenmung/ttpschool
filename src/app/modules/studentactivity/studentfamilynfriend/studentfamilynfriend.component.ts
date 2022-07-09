@@ -16,8 +16,8 @@ import { IStudent } from '../../student/searchstudent/searchstudent.component';
   templateUrl: './studentfamilynfriend.component.html',
   styleUrls: ['./studentfamilynfriend.component.scss']
 })
-export class StudentfamilynfriendComponent implements OnInit { 
-  PageLoading=true;
+export class StudentfamilynfriendComponent implements OnInit {
+  PageLoading = true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -57,10 +57,11 @@ export class StudentfamilynfriendComponent implements OnInit {
   displayedColumns = [
     'SiblingName',
     'RelationshipId',
+    'ContactNo',
     'FeeType',
     'FeeTypeRemarks',
-    'Remarks',    
-    'Active',    
+    'Remarks',
+    'Active',
     'Action'
   ];
   searchForm: FormGroup;
@@ -75,10 +76,11 @@ export class StudentfamilynfriendComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchContactNo :[''],
-      searchStudentName:[''],
-      searchSiblings :[''],
-      searchRelationshipId: ['']
+      searchContactNo: [''],
+      searchStudentName: [''],
+      searchSiblings: [''],
+      searchRelationshipId: [''],
+      searchOtherSiblingorFriend: ['']
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
       .pipe(
@@ -86,7 +88,7 @@ export class StudentfamilynfriendComponent implements OnInit {
         map(value => typeof value === 'string' ? value : value.Name),
         map(Name => Name ? this._filter(Name) : this.Students.slice())
       );
-      this.filteredSiblings = this.searchForm.get("searchSiblings").valueChanges
+    this.filteredSiblings = this.searchForm.get("searchSiblings").valueChanges
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.Name),
@@ -94,7 +96,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       );
 
     this.PageLoad();
-  
+
   }
 
   PageLoad() {
@@ -113,7 +115,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       }
 
       if (this.Permission == 'deny') {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
       else {
@@ -144,31 +146,45 @@ export class StudentfamilynfriendComponent implements OnInit {
   // }
   AddNew() {
     debugger;
-    if(this.searchForm.get("searchStudentName").value=='')
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select student.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (this.searchForm.get("searchStudentName").value == '') {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var siblingNamefromOthers = this.searchForm.get("searchOtherSiblingorFriend").value;
+    if (this.searchForm.get("searchSiblings").value == '' && siblingNamefromOthers == '') {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select siblings or friend.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (siblingNamefromOthers.length > 0 && this.searchForm.get("searchContactNo").value == '') {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter contact number..", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var _relationship = 0;
+    if (this.searchForm.get("searchRelationshipId").value != '') {
+      _relationship = this.searchForm.get("searchRelationshipId").value;
+    }
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select relationship.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
-    if(this.searchForm.get("searchSiblings").value=='')
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select siblings or friend.",globalconstants.ActionText,globalconstants.RedBackground);
-      return;
-    }
-    var _relationship =0;
-    if(this.searchForm.get("searchRelationshipId").value!='')
-    {
-      _relationship = this.searchForm.get("searchRelationshipId").value;
-    }
+    var siblingorfriendName = '';
+    if (this.searchForm.get("searchSiblings").value.Name == undefined)
+      siblingorfriendName = this.searchForm.get("searchOtherSiblingorFriend").value;
+    else
+      siblingorfriendName = this.searchForm.get("searchSiblings").value.Name;
+
     var newdata = {
       StudentFamilyNFriendId: 0,
       StudentId: this.searchForm.get("searchSiblings").value.StudentId,
       ParentStudentId: this.searchForm.get("searchStudentName").value.StudentId,
-      SiblingName: this.searchForm.get("searchSiblings").value.Name,
-      Name: '',
-      ContactNo: '',
+      SiblingName: siblingorfriendName,
+      Name: this.searchForm.get("searchOtherSiblingorFriend").value,
+      ContactNo: this.searchForm.get("searchContactNo").value,
       RelationshipId: _relationship,
       Remarks: '',
       Active: 0,
@@ -200,45 +216,38 @@ export class StudentfamilynfriendComponent implements OnInit {
   UpdateOrSave(row) {
 
     debugger;
-    if(this.searchForm.get("searchStudentName").value=='')
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select student.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (this.searchForm.get("searchStudentName").value == '') {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else
-    {
+    else {
       this.StudentId = this.searchForm.get("searchStudentName").value.StudentId
     }
 
-    // if(row.SiblingId==0)
-    // {
-    //   this.loading=false;
-    //   this.contentservice.openSnackBar("Please select siblings or friend.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
-
     this.loading = true;
     if (row.Name.length == 0 && row.SiblingName == '') {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter name or select name.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.RelationshipId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select relationship..", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     var relationship = this.FamilyRelationship.filter(f => f.MasterDataId == row.RelationshipId)[0].MasterDataName;
     if (relationship.toLowerCase() == 'friend' && row.ContactNo.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter friend's contact no..", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
     let checkFilterString = "";// "StudentFamilyNFriendId eq " + row.StudentFamilyNFriendId
-    checkFilterString +='ParentStudentId eq ' + row.ParentStudentId
-    checkFilterString +=' and StudentId eq ' + row.StudentId;
+    if (row.StudentId > 0)
+      checkFilterString += 'ParentStudentId eq ' + row.ParentStudentId + ' and StudentId eq ' + row.StudentId;
+    if (row.Name.length > 0)
+      checkFilterString += "ParentStudentId eq " + row.ParentStudentId + " and Name eq '" + row.Name + "'";
 
     if (row.StudentFamilyNFriendId > 0)
       checkFilterString += " and StudentFamilyNFriendId ne " + row.StudentFamilyNFriendId;
@@ -251,8 +260,8 @@ export class StudentfamilynfriendComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; 
-          this.PageLoading=false;
+          this.loading = false;
+          this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -270,7 +279,6 @@ export class StudentfamilynfriendComponent implements OnInit {
           this.StudentFamilyNFriendData.Name = row.Name;
           this.StudentFamilyNFriendData.Remarks = row.Remarks;
           this.StudentFamilyNFriendData.OrgId = this.LoginUserDetail[0]["orgId"];
-
 
           if (this.StudentFamilyNFriendData.StudentFamilyNFriendId == 0) {
             this.StudentFamilyNFriendData["CreatedDate"] = new Date();
@@ -292,7 +300,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -319,24 +327,17 @@ export class StudentfamilynfriendComponent implements OnInit {
   GetStudentFamilyNFriends() {
     debugger;
     var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
-    if(_studentId==undefined)
-    {
-      this.contentservice.openSnackBar("Please select student.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (_studentId == undefined) {
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
-    this.StudentId =_studentId;
+    this.StudentId = _studentId;
     let filterStr = 'ParentStudentId eq ' + this.StudentId;
-    var siblingOrFriendId = this.searchForm.get("searchRelationshipId").value;
-    //var siblingOrFriendId = this.searchForm.get("searchRelationshipId").value;
 
-    //var siblingOrFriendId = this.FamilyRelationship.filter(f => f.MasterDataName.toLowerCase() == 'friend')[0].MasterDataId;
-    if (siblingOrFriendId > 0) {
-      filterStr += ' and RelationshipId eq ' + siblingOrFriendId;
-    }
-    // else if (siblingOrFriend != '') {
-    //   filterStr += ' and RelationshipId ne ' + siblingOrFriendId;
-    // }
+    var _RelationshipId = this.searchForm.get("searchRelationshipId").value;
+    if (_RelationshipId > 0)
+      filterStr = 'RelationshipId eq ' + _RelationshipId;
 
     this.loading = true;
 
@@ -369,11 +370,13 @@ export class StudentfamilynfriendComponent implements OnInit {
               }
             }
             else
-              m.SiblingName = ''
+              m.SiblingName = m.Name;
             return m;
           });
         }
-        console.log("this.StudentFamilyNFriendList", this.StudentFamilyNFriendList)
+        if (this.StudentFamilyNFriendList.length == 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+        }
         this.dataSource = new MatTableDataSource<IStudentFamilyNFriends>(this.StudentFamilyNFriendList);
         this.loadingFalse();
       });
@@ -430,7 +433,7 @@ export class StudentfamilynfriendComponent implements OnInit {
               var feetypeobj = this.FeeType.filter(f => f.FeeTypeId == studentclassobj[0].FeeTypeId)
               if (feetypeobj.length > 0)
                 _feeType = feetypeobj[0].FeeTypeName;
-                
+
               _remarks = studentclassobj[0].Remarks;
               var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
 
@@ -455,9 +458,9 @@ export class StudentfamilynfriendComponent implements OnInit {
               });
             }
           })
-          this.Students.sort((a,b)=>a.Name - b.Name);
+          this.Students.sort((a, b) => a.Name - b.Name);
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetFeeTypes() {
@@ -471,7 +474,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.FeeType = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetMasterData() {
@@ -487,7 +490,7 @@ export class StudentfamilynfriendComponent implements OnInit {
           this.GetStudentClasses();
         });
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {

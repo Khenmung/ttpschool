@@ -510,7 +510,7 @@ export class EvaluationresultComponent implements OnInit {
     list.fields = [
       'ClassEvaluationAnswerOptionsId',
       'Title',
-      'Value',
+      'Description',
       'Point',
       'Correct',
       'ParentId',

@@ -120,6 +120,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
         if (data.value.length > 0) {
           this.CustomFeatures = [...data.value];
         }
+        //console.log("custom feature",this.CustomFeatures);
       });
   }
   GetTopMasters() {

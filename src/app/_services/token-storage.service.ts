@@ -22,6 +22,7 @@ const SELECTEDBATCHNAME ='selectedbatchname';
 const CURRENTBATCHID ='currentbatchid';
 const SELECTEDAPPNAME ='selectedappname';
 const BATCHES ='batches';
+const CUSTOM_FEATURE ='customfeatures';
 
 @Injectable({
   providedIn: 'root'
@@ -201,6 +202,10 @@ export class TokenStorageService {
     localStorage.removeItem(USER_DETAIL);
     localStorage.setItem(USER_DETAIL, JSON.stringify(userdetail));
   }
+  public saveCustomFeature(customfeature: any): void {
+    localStorage.removeItem(CUSTOM_FEATURE);
+    localStorage.setItem(CUSTOM_FEATURE, JSON.stringify(customfeature));
+  }
   public savePermittedApplications(perApp: any): void {
     localStorage.removeItem(PERMITTED_APPS);
     localStorage.setItem(PERMITTED_APPS, JSON.stringify(perApp));
@@ -228,6 +233,14 @@ export class TokenStorageService {
     const userdetail = localStorage.getItem(USER_DETAIL);
     if (userdetail) {
       return JSON.parse(userdetail);
+    }
+
+    return "";
+  }
+  public getCustomFeature(): any {
+    const customfeature = localStorage.getItem(CUSTOM_FEATURE);
+    if (customfeature) {
+      return JSON.parse(customfeature);
     }
 
     return "";
