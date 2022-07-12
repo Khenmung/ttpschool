@@ -6,8 +6,6 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule)
-    //loadChildren: () => import('./modules/website.module').then(m => m.WebsiteModule)
-    //loadChildren:()=>import('./shared/components/landingpage/landingpage.module').then(c=>c.LandingpageModule)
   },
   {
     path: 'web/photo',

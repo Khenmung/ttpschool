@@ -5,7 +5,7 @@
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <!-- <alert></alert> -->
         <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" [style.width.px]="250">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="searchClassId">
                     <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
@@ -14,10 +14,10 @@
                 </mat-select>
             </mat-form-field>
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassSubject()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
             <!-- <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button" 
             (click)="CopyFromPreviousBatch()">
@@ -59,6 +59,19 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
+            <ng-container matColumnDef="SubjectCategoryId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Category </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-label>subject category</mat-label>
+                        <mat-select (selectionChange)="onBlur(element)" [value]="element.SubjectCategoryId"
+                            [(ngModel)]="element.SubjectCategoryId">
+                            <mat-option *ngFor="let item of SubjectCategory" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="Credits">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Credits </mat-header-cell>
                 <mat-cell *matCellDef="let element">
@@ -70,10 +83,10 @@
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="TeacherId">
-                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef mat-sort-header>
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
                     Teacher
                 </mat-header-cell>
-                <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
+                <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
                         <mat-label>Teacher</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherId"
@@ -88,7 +101,7 @@
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Active </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-checkbox *ngIf="ClassSubjectList.length>0" (click)="$event.stopPropagation()"
+                    <mat-checkbox (click)="$event.stopPropagation()"
                         (change)="updateActive(element,$event)" [checked]="element.Active==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
@@ -98,19 +111,18 @@
                     <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
                         (click)="SaveAll()">
                         <mat-icon>all_out</mat-icon>
-                <mat-icon *ngIf="loading">
-                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                </mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
-mat-raised-button color="accent"
-                        (click)="UpdateOrSave(element)">
-                         <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                        mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
 
                 </mat-cell>

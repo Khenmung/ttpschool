@@ -11,11 +11,11 @@ import { StudentboardComponent } from './studentboard/studentboard.component';
 import { StudentprogressreportComponent } from './studentprogressreport/studentprogressreport.component';
 import { StudentEvaluationComponent } from '../evaluation/studentevaluation/studentevaluation.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
-import { StudentfamilynfriendComponent } from '../studentactivity/studentfamilynfriend/studentfamilynfriend.component';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
 
 const routes: Routes = [
   {
-    path: '', component: StudenthomeComponent,canActivate:[AuthGuard],
+    path: '', component: HomeComponent,canActivate:[AuthGuard],
     children: [
       { path: '', component: searchstudentComponent },
       { path: 'addstudent/:id', component: StudentboardComponent },

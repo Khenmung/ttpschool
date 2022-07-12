@@ -4,10 +4,27 @@
 // }
 mat-form-field{
     margin-right:15px;
+    width:98%;
 }
 button{
     margin-right:15px;
 }
-.mat-column-SubjectTypeId,.mat-column-Credits,.mat-column-TeacherId{
+.mat-column-SubjectName{
     flex:1 1 120px;
-} 
+}
+.mat-column-SubjectTypeId,
+.mat-column-SubjectCategoryId,
+.mat-column-TeacherId{
+    flex:1 1 110px;
+}
+.mat-column-Credits,
+.mat-column-Action
+{
+    flex:1 1 100px;
+}
+.mat-column-Active
+{
+    justify-content: center;
+    flex:1 1 100px;
+}
+

@@ -6,7 +6,6 @@ import { EventComponent } from './event/event.component';
 import { HolidayComponent } from './holiday/holiday.component';
 import { NoOfStudentComponent } from './no-of-student/no-of-student.component';
 import { DemoComponent } from './calendar/calendar.component';
-import { ClassprerequisiteComponent } from './classprerequisite/classprerequisite.component';
 import { RulesorpolicyComponent } from './rulesorpolicy/rulesorpolicy.component';
 
 const routes: Routes = [
@@ -25,7 +24,6 @@ const routes: Routes = [
 })
 export class MiscRoutingModule { }
 export const MiscComponents = [
-  ClassprerequisiteComponent,  
   DemoComponent,
   NoOfStudentComponent,
   EventComponent,

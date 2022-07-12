@@ -4,7 +4,6 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { DemoComponent } from '../calendar/calendar.component';
-import { ClassprerequisiteComponent } from '../classprerequisite/classprerequisite.component';
 import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
 import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
@@ -22,7 +21,6 @@ export class MiscboardComponent implements AfterViewInit {
     DemoComponent,
     EventComponent,
     HolidayComponent,
-    //ClassprerequisiteComponent,
     RulesorpolicyComponent
   ];
 
@@ -32,7 +30,6 @@ export class MiscboardComponent implements AfterViewInit {
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
-    { "label": "khat peuhpeuh", "faIcon": '' }
   ];
   Permissions =
     {
@@ -106,9 +103,6 @@ export class MiscboardComponent implements AfterViewInit {
         break;
       case "no of students":
         comindx = this.components.indexOf(NoOfStudentComponent);
-        break;
-      case "pre-requisite":
-        comindx = this.components.indexOf(ClassprerequisiteComponent);
         break;
       case "rules or policies":
         comindx = this.components.indexOf(RulesorpolicyComponent);

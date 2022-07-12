@@ -250,11 +250,15 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         //this.shareddata.ChangeBatch(this.Batches);
         this.Batches = this.tokenstorage.getBatches()
         //this.GetCurrentBatchIDnAssign();
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.ClassGroups =[...data.value];
+        });
         this.GetExams();
       });
   }

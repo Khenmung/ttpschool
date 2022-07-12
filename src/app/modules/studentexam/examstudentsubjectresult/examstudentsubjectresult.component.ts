@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { evaluate } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -13,11 +14,12 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './examstudentsubjectresult.component.html',
   styleUrls: ['./examstudentsubjectresult.component.scss']
 })
-export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=true;
+export class ExamstudentsubjectresultComponent implements OnInit {
+    PageLoading = true;
   ResultReleased = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  ClassSubjects=[];
+  ClassSubjects = [];
   AllowedSubjectIds = [];
   StandardFilterWithBatchId = '';
   loading = false;
@@ -37,8 +39,8 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
   Exams = [];
   Batches = [];
   StudentSubjects = [];
-  SelectedClassSubjects =[];
-  Students=[];
+  SelectedClassSubjects = [];
+  Students = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
   Permission = 'deny';
@@ -50,6 +52,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
     StudentClassSubjectId: 0,
     ClassSubjectMarkComponentId: 0,
     Marks: 0,
+    Grade: '',
     ExamStatus: 0,
     OrgId: 0,
     BatchId: 0,
@@ -62,7 +65,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private contentservice: ContentService,
     private nav: Router,
     private fb: FormBuilder
@@ -94,8 +97,8 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
       if (this.Permission != 'deny') {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetStudents();
-        
-        
+        this.GetClassGroupMapping();
+
       }
     }
   }
@@ -115,22 +118,21 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
       .subscribe(
         (data: any) => {
           // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
   UpdateOrSave(row) {
 
     //debugger;   
-    if(row.Marks > row.FullMark)
-    {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Marks cannot be greater than FullMark (" + row.FullMark +").", globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.Marks > row.FullMark) {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Marks cannot be greater than FullMark (" + row.FullMark + ").", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.Marks > 1000) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Marks cannot be greater than 1000.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Marks cannot be greater than 1000.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -154,7 +156,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -174,6 +176,9 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
           this.ExamStudentSubjectResultData.BatchId = this.SelectedBatchId;
           this.ExamStudentSubjectResultData.ExamStatus = _examstatus;
           this.ExamStudentSubjectResultData.Marks = row.Marks;
+          var rows = [];
+          rows.push(row);
+          this.SetGrade(rows); 
           ////console.log('data', this.ClassSubjectData);
           if (this.ExamStudentSubjectResultData.ExamStudentSubjectResultId == 0) {
             this.ExamStudentSubjectResultData["CreatedDate"] = new Date();
@@ -201,12 +206,12 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
       .subscribe(
         (data: any) => {
           row.ExamStudentSubjectResultId = data.ExamStudentSubjectResultId;
-          row.Action=false;
-          this.loading = false; this.PageLoading=false;
+          row.Action = false;
+          this.loading = false; this.PageLoading = false;
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
-            this.loading = false; this.PageLoading=false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.loading = false; this.PageLoading = false;
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -217,11 +222,11 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
       .subscribe(
         (data: any) => {
           //this.loading = false; this.PageLoading=false;
-          row.Action=false;
+          row.Action = false;
           this.rowCount++;
           if (this.rowCount == this.displayedColumns.length - 2) {
-            this.loading = false; this.PageLoading=false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+            this.loading = false; this.PageLoading = false;
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
@@ -242,7 +247,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId)", "StudentClass($select=StudentId,RollNo,SectionId)"]
+    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)", "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -250,15 +255,15 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
         var _subject = '';
         var _section = '';
         var _studname = '';
-        this.StudentSubjects = data.value.filter(x=>x.ClassSubject.Active==1)
-        console.log("this.StudentSubjects",this.StudentSubjects);
+        this.StudentSubjects = data.value.filter(x => x.ClassSubject.Active == 1)
+        console.log("this.StudentSubjects", this.StudentSubjects);
         this.StudentSubjects = this.StudentSubjects.map(s => {
           _class = '';
           _subject = '';
-          _studname ='';
+          _studname = '';
           let _studentObj = this.Students.filter(c => c.StudentId == s.StudentClass.StudentId);
           if (_studentObj.length > 0)
-          _studname = _studentObj[0].FirstName + " " + _studentObj[0].LastName;
+            _studname = _studentObj[0].FirstName + " " + _studentObj[0].LastName;
 
           let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
           if (_stdClass.length > 0)
@@ -279,16 +284,18 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
             SubjectId: s.ClassSubject.SubjectId,
             ClassId: s.ClassSubject.ClassId,
             StudentId: s.StudentClass.StudentId,
-            SectionId: s.StudentClass.SectionId
+            SectionId: s.StudentClass.SectionId,
+            SubjectCategoryId: s.ClassSubject.SubjectCategoryId
           }
 
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.GetSubjectMarkComponents();
       });
   }
-  SelectClassSubject(){
-    this.SelectedClassSubjects= this.ClassSubjects.filter(f=>f.ClassId == this.searchForm.get("searchClassId").value);
+  SelectClassSubject() {
+    this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
+    this.GetStudentGrade();
   }
   GetStudents() {
 
@@ -305,10 +312,10 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Students =[...data.value];
+        this.Students = [...data.value];
         this.GetMasterData();
       });
-    }
+  }
   GetClassSubject() {
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
@@ -318,7 +325,8 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
       "ClassSubjectId",
       "Active",
       "SubjectId",
-      "ClassId"
+      "ClassId",
+      "SubjectCategoryId"
     ];
     list.PageName = "ClassSubjects";
     list.filter = [filterStr];
@@ -341,10 +349,11 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
             SubjectId: cs.SubjectId,
             ClassId: cs.ClassId,
             ClassSubject: _class + ' - ' + _subject,
-            SubjectName: _subject
+            SubjectName: _subject,
+            SubjectCategoryId: cs.SubjectCategoryId
           }
         })
-   
+
       })
   }
   GetSubjectMarkComponents() {
@@ -370,7 +379,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.SubjectMarkComponents = data.value.filter(x=>x.ClassSubject.Active==1)
+        this.SubjectMarkComponents = data.value.filter(x => x.ClassSubject.Active == 1)
         this.SubjectMarkComponents = this.SubjectMarkComponents.map(c => {
           return {
             "ClassSubjectMarkComponentId": c.ClassSubjectMarkComponentId,
@@ -393,23 +402,23 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
-    this.StoredForUpdate =[];
+    this.StoredForUpdate = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
-      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchSectionId").value == 0) {
-      this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (this.searchForm.get("searchSubjectId").value == 0) {
-      this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -423,6 +432,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
       "StudentClassSubjectId",
       "ClassSubjectMarkComponentId",
       "Marks",
+      "Grade",
       "ExamStatus",
       "Active"
     ];
@@ -443,8 +453,8 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
         });
         var forDisplay;
         if (filteredStudentSubjects.length == 0 || filteredStudentSubjects[0].Components.length == 0) {
-          this.loading = false; this.PageLoading=false;
-          this.contentservice.openSnackBar("Student Subject/Subject components not defined for this class subject!", globalconstants.ActionText,globalconstants.RedBackground);
+          this.loading = false; this.PageLoading = false;
+          this.contentservice.openSnackBar("Student Subject/Subject components not defined for this class subject!", globalconstants.ActionText, globalconstants.RedBackground);
           this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>([]);
           return;
         }
@@ -474,6 +484,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
                 FullMark: component.FullMark,
                 PassMark: component.PassMark,
                 Marks: existing[0].Marks,
+                Grade: existing[0].Grade,
                 ExamStatus: existing[0].ExamStatus,
                 Active: existing[0].Active,
                 Action: true
@@ -499,6 +510,7 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
                 FullMark: component.FullMark,
                 PassMark: component.PassMark,
                 Marks: 0,
+                Grade: '',
                 ExamStatus: 0,
                 Active: 0,
                 Action: true
@@ -514,11 +526,81 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
         })
 
         this.displayedColumns.push("Action");
-        ////console.log('this.displayedColumns', this.displayedColumns);
-        ////console.log('this.ExamStudentSubjectResult', this.ExamStudentSubjectResult);
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
+  }
+  StudentGrades = [];
+  SelectedClassStudentGrades = [];
+
+  GetClassGroupMapping() {
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
+
+    let list: List = new List();
+
+    list.fields = ["ClassId,ClassGroupId"];
+    list.PageName = "ClassGroupMappings";
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GetStudentGradeDefn(data.value);
+      })
+  }
+  GetStudentGradeDefn(classgroupmapping) {
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    //batch wise not necessary
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
+    let list: List = new List();
+
+    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula"];
+    list.PageName = "StudentGrades";
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+    this.StudentGrades = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        classgroupmapping.forEach(f => {
+          var mapped = data.value.filter(d => d.ClassGroupId == f.ClassGroupId)
+          var _grades = [];
+          mapped.forEach(m => {
+            _grades.push(
+              {
+                StudentGradeId: m.StudentGradeId,
+                GradeName: m.GradeName,
+                SubjectCategoryId: m.SubjectCategoryId,
+                Formula: m.Formula,
+                ClassGroupId: m.ClassGroupId
+              })
+          })
+          f.grades = _grades;
+          this.StudentGrades.push(f);
+        })
+      })
+  }
+  GetStudentGrade() {
+    var _classId = this.searchForm.get("searchClassId").value;
+    if (_classId > 0)
+      this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
+  }
+  SetGrade(pMarks:any[]){
+    if (this.SelectedClassStudentGrades.length > 0) {
+      this.SelectedClassStudentGrades[0].grades.sort((a, b) => a.Sequence - b.Sequence);
+      pMarks.forEach((result: any, index) => {
+        for (var i = 0; i < this.SelectedClassStudentGrades[0].grades.length; i++) {
+          var formula = this.SelectedClassStudentGrades[0].grades[i].Formula
+            .replaceAll("[Mark]", result.Marks)
+          if (evaluate(formula)) {
+            result.Grade = this.SelectedClassStudentGrades[0].grades[i].StudentGradeId;
+            break;
+          }
+        }    
+      })
+    }
+    else {
+      this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+
+    }
   }
   checkall(value) {
     this.ExamStudentSubjectResult.forEach(record => {
@@ -576,17 +658,21 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.ClassGroups =[...data.value];
+        });
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.GetClassSubject();
         })
-        
+
         //if role is teacher, only their respective class and subject will be allowed.
         if (this.LoginUserDetail[0]['RoleUsers'][0].role == 'Teacher') {
           this.GetAllowedSubjects();
         }
-  
+
         this.GetExams();
 
       });
@@ -602,8 +688,8 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
     ];
 
     list.PageName = "ClassSubjects"
-    list.filter = ['Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId') + 
-    ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']];
+    list.filter = ['Active eq 1 and TeacherId eq ' + localStorage.getItem('nameId') +
+      ' and OrgId eq ' + this.LoginUserDetail[0]['orgId']];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.AllowedSubjectIds = [...data.value];
@@ -627,7 +713,6 @@ export class ExamstudentsubjectresultComponent implements OnInit { PageLoading=t
     list.fields = ["ExamId", "ExamNameId", "ReleaseResult"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -669,6 +754,7 @@ export interface IExamStudentSubjectResult {
   FullMark: number;
   PassMark: number;
   Marks: number;
+  Grade: string;
   ExamStatus: number;
   Active: number;
   Action: boolean;

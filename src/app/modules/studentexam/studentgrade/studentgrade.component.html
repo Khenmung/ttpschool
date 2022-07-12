@@ -3,25 +3,23 @@
         <div><strong>Student Grade</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
     <div style="padding: 15px;">
         <div style="flex-direction: row;">
-        <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Class group</mat-label>
-                <mat-select formControlName="searchClassGroupId" >
-                    <mat-option value="0">All</mat-option>
-                    <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentGrade()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-            </button>
+            <form [formGroup]="searchForm">
+                <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-label>Class group</mat-label>
+                    <mat-select formControlName="searchClassGroupId">
+                        <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
+                            {{item.GroupName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentGrade()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
             </form>
         </div>
         <div style="width: 100%;">
@@ -46,7 +44,7 @@
                 <ng-container matColumnDef="Formula">
                     <mat-header-cell *matHeaderCellDef>Formula
                     </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
                             <textarea matInput (blur)="onBlur(element)" [value]="element.Formula"
                                 [(ngModel)]="element.Formula" [maxlength]="256"></textarea>
@@ -56,47 +54,53 @@
                 <ng-container matColumnDef="Sequence">
                     <mat-header-cell *matHeaderCellDef>Sequence
                     </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <input autocomplete="Off" matInput 
-                            type="number" 
-                            (blur)="onBlur(element)" 
-                            [value]="element.Sequence"
-                                [(ngModel)]="element.Sequence" [max]="30">
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="GradeTypeId">
-                    <mat-header-cell *matHeaderCellDef>Grade Type
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-select 
-                            (selectionChange)="onBlur(element)"
-                            [value]="element.GradeTypeId" 
-                            [(ngModel)]="element.GradeTypeId">
-                                <mat-option *ngFor="let item of StudentGradeTypes" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}</mat-option>
-                            </mat-select>
+                            <input autocomplete="Off" matInput type="number" (blur)="onBlur(element)"
+                                [value]="element.Sequence" [(ngModel)]="element.Sequence" [max]="30">
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="ClassGroupId">
                     <mat-header-cell *matHeaderCellDef>Class Group
                     </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-select 
-                            (selectionChange)="onBlur(element)"
-                            [value]="element.ClassGroupId" 
-                            [(ngModel)]="element.ClassGroupId">
-                                <mat-option value="0">All</mat-option>
-                                <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.ClassGroupId"
+                                [(ngModel)]="element.ClassGroupId">
+                                <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
+                                    {{item.GroupName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="SubjectCategoryId">
+                    <mat-header-cell *matHeaderCellDef>Subject Category
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.SubjectCategoryId"
+                                [(ngModel)]="element.SubjectCategoryId">
+                                <mat-option *ngFor="let item of SubjectCategory" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="GradeStatusId">
+                    <mat-header-cell *matHeaderCellDef>Grade Status
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.GradeStatusId"
+                                [(ngModel)]="element.GradeStatusId">
+                                <mat-option *ngFor="let item of ExamStatus" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+
                 <ng-container matColumnDef="Active">
                     <mat-header-cell *matHeaderCellDef>Active
                     </mat-header-cell>
@@ -116,7 +120,7 @@
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
                             mat-raised-button color="accent" (click)="UpdateOrSave(element)">
-                             <mat-icon>save</mat-icon>
+                            <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>

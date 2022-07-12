@@ -4,8 +4,6 @@ import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
 import { List } from "./interface";
 
-
-
 export class globalconstants {
     ////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in";
     public static apiUrl: string = "http://localhost:8020";//"http://localhost:8020";
@@ -166,7 +164,7 @@ export class globalconstants {
                     'CLASSFEE': 'class fee',
                     'FEEDEFINITION': 'fee definition',
                     'FEETYPE': 'fee type',
-                    'PREREQUISITE': 'pre-requisite',
+                    'CLASSGROUP': 'class group',
                     'CLASSTEACHER': 'class teacher',
                     'CLASSEVALUATION': 'class evaluation',
                     'CLASSGROUPING': 'class grouping'
@@ -296,6 +294,7 @@ export class globalconstants {
                 "SECTION": "section",
                 "HOUSE": "house",
                 "CLASSGROUP": "class group",
+                "CLASSGROUPTYPE": "class group type",
                 "EXAMMODE": "exam mode",
                 "SUBJECTMARKCOMPONENT": "subject mark component",
                 "LANGUAGESUBJECTLOWERCLS": "language subject lower",
@@ -321,7 +320,7 @@ export class globalconstants {
                 "RATINGOPTION": "rating option",
                 "EVALUATIONTYPE": "evaluation type",
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
-                "STUDENTGRADETYPE": "student grade type",
+                "SUBJECTCATEGORY": "subject category",
                 "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
                 "STUDENTREMARKS": "student remark"
             },

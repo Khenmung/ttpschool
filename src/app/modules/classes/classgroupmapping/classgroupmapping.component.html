@@ -6,21 +6,21 @@
     <!-- <alert></alert> -->
     <div style="padding: 15px;">
         <div style="flex-direction: row;">
-        <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Class Group</mat-label>
-                <mat-select formControlName="searchClassGroupId">
-                    <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassGroupMapping()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-            </button>
+            <form [formGroup]="searchForm">
+                <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-label>Class Group</mat-label>
+                    <mat-select formControlName="searchClassGroupId">
+                        <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
+                            {{item.GroupName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassGroupMapping()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
             </form>
         </div>
         <div style="width: 100%;">
@@ -37,11 +37,10 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-select [value]="element.ClassGroupId" 
-                            (selectionChange)="onBlur(element)"
-                            [(ngModel)]="element.ClassGroupId">
-                                <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}</mat-option>
+                            <mat-select [value]="element.ClassGroupId" (selectionChange)="onBlur(element)"
+                                [(ngModel)]="element.ClassGroupId">
+                                <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
+                                    {{item.GroupName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </mat-cell>
@@ -51,9 +50,8 @@
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-select [value]="element.ClassId"
-                            (selectionChange)="onBlur(element)"
-                            [(ngModel)]="element.ClassId">
+                            <mat-select [value]="element.ClassId" (selectionChange)="onBlur(element)"
+                                [(ngModel)]="element.ClassId">
                                 <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
                                     {{item.ClassName}}</mat-option>
                             </mat-select>
@@ -79,7 +77,7 @@
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
                             mat-raised-button color="accent" (click)="UpdateOrSave(element)">
-                             <mat-icon>save</mat-icon>
+                            <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>

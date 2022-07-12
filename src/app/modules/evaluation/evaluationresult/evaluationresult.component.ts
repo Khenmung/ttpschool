@@ -145,15 +145,6 @@ export class EvaluationresultComponent implements OnInit {
     var _searchEvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     var _studentObj = this.searchForm.get("searchStudentName").value;
 
-    // var _examobj = this.Exams.filter(f => f.ExamId == row.ExamId)
-    // if (_examobj.length > 0)
-    //   _studentObj["SessionName"] = _examobj[0].ExamName;
-    // else if (!this.EvaluationUpdatable) {
-    //   this.loading = false; this.PageLoading = false;
-    //   this.contentservice.openSnackBar("Exam/Session name must be selected", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-
     var _evaluationobj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _searchEvaluationMasterId)
     if (_evaluationobj.length > 0)
       _studentObj["AssessmentName"] = _evaluationobj[0].EvaluationName;
@@ -265,7 +256,7 @@ export class EvaluationresultComponent implements OnInit {
           }
 
         })
-        if (this.Result.length == 0) {
+        if (this.StudentEvaluationList.length == 0) {
           this.StudentEvaluationList = [];
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
@@ -366,12 +357,17 @@ export class EvaluationresultComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.AssessmentPrintHeading = this.getDropDownData(globalconstants.MasterDefinitions.school.ASSESSMENTPRINTHEADING);
         //console.log("this.AssessmentPrintHeading",this.AssessmentPrintHeading)
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.ClassGroups =[...data.value];
+        });
+        
         this.GetExams();
         this.GetClassSubjects();
         this.GetClassEvaluations();
@@ -457,32 +453,23 @@ export class EvaluationresultComponent implements OnInit {
   GetEvaluationMapping() {
     debugger;
 
+    var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
+    if(_studentId==undefined)
+    {
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     var _evaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
     this.loading = true;
     if (_evaluationMasterId == 0) {
       this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading = false;
+      this.loading = false; 
+      
       return;
     }
 
-    // this.ClassId = this.searchForm.get("searchStudentName").value.ClassId;
-    // var _classGroupIdObj = this.ClassGroupMappings.filter(f => f.ClassId == this.ClassId)
-    // var _classGroupId = 0;
-    // if (_classGroupIdObj.length > 0) {
-    //   _classGroupId = _classGroupIdObj[0].ClassGroupId;
-    // }
-    // var _examId = this.searchForm.get("searchExamId").value;
-    // var filterstr = '';
-    // if (_examId > 0 && !this.EvaluationUpdatable) {
-    //   filterstr = 'ExamId eq ' + _examId + ' and '
-    // }
-
     var _classGroupIdObj = [];
-    //if (this.EvaluationUpdatable)
       _classGroupIdObj = this.EvaluationExamMap.filter(f => f.EvaluationMasterId == _evaluationMasterId);
-    // else
-    //   _classGroupIdObj = this.EvaluationExamMap.filter(f => f.EvaluationMasterId == _evaluationMasterId
-    //     && f.ExamId == _examId);
 
     this.RelevantEvaluationListForSelectedStudent = [];
     var __classGroupId = 0;

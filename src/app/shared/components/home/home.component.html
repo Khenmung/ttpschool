@@ -1,5 +1,23 @@
 <app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
-<app-sidebar></app-sidebar>
+
+<mat-sidenav-container style="margin-top:20px ;" class="flex-container" autosize="true">
+    <mat-sidenav style="padding: 17px;" mode="side" opened (click)="toggleSidebar()">
+        <div mat-menu-item *ngFor="let i of sideMenu" [routerLink]="[i.link]" 
+        routerLinkActive="active-list-item"
+        [routerLinkActiveOptions]="{exact: true}"
+        (click)="$event.stopPropagation()">
+            <mat-icon [matTooltip]="i.label">{{ i.faIcon}}</mat-icon>&nbsp;
+            <span [hidden]="collapse">{{i.label}}</span>
+        </div>
+    </mat-sidenav>
+    <mat-sidenav-content class="maincontent">
+
+        <router-outlet></router-outlet>
+
+    </mat-sidenav-content>
+</mat-sidenav-container>
+
+<!-- <app-sidebar></app-sidebar> -->
 <app-footer></app-footer>
 <!-- <div fxLayout="column" fxLayoutAlign="start">-->
 <!-- <app-header [deviceXs]="deviceXs"></app-header>

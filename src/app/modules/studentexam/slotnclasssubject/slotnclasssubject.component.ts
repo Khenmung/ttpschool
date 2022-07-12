@@ -305,7 +305,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate",
+    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate","ClassGroupId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -330,6 +330,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
               StartDate: new Date(),
               EndDate: new Date(),
               ReleaseResult: 0,
+              ClassGroupId:0,
               ReleaseDate: null,
               OrgId: 0,
               //BatchId: 0,

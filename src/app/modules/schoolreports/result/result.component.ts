@@ -18,7 +18,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './result.component.html',
   styleUrls: ['./result.component.scss']
 })
-export class ResultComponent implements OnInit { PageLoading=true;
+export class ResultComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -46,7 +47,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
   ExamNames = [];
   Exams = [];
   Batches = [];
-  GradeTypes = [];
+  SubjectCategory = [];
   StudentSubjects = [];
   dataSource: MatTableDataSource<IExamStudentResult>;
   allMasterData = [];
@@ -173,7 +174,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
           }
 
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetStudents(classId) {
@@ -225,7 +226,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
       "Grade",
       "MarkPercent",
       "Rank",
-      "Active"      
+      "Active"
     ];
     list.PageName = "ExamStudentResults";
     list.lookupFields = ["StudentClass($select=ClassId,RollNo,SectionId;$expand=Student($select=FirstName,LastName))"];
@@ -242,7 +243,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
           this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId && f["StudentClass"].SectionId == _sectionId);
         else
           this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId);
-          //console.log("this.ExamStudentResult",this.ExamStudentResult);
+        //console.log("this.ExamStudentResult",this.ExamStudentResult);
         this.ExamStudentResult = this.ExamStudentResult.map(d => {
           var _section = '';
           var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
@@ -261,7 +262,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
           d.Grade = _gradeObj[0].GradeName;
           d.GradeType = _gradeObj[0].GradeType;
           //d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
-          d["Rank"] = d["Rank"]==0?500:d["Rank"];
+          d["Rank"] = d["Rank"] == 0 ? 500 : d["Rank"];
           //d["Percent"] = d.GradeType == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
           return d;
 
@@ -271,11 +272,11 @@ export class ResultComponent implements OnInit { PageLoading=true;
         this.dataSource = new MatTableDataSource(this.ExamStudentResult);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetClassGroupMapping() {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] 
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //classgrouping is not batch wise
     //+ ' and BatchId eq ' + this.SelectedBatchId;
 
@@ -290,16 +291,8 @@ export class ResultComponent implements OnInit { PageLoading=true;
       })
   }
   GetStudentGradeDefn(classgroupmapping) {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    //student grade is not batch wise
-    //+ ' and BatchId eq ' + this.SelectedBatchId;
-    let list: List = new List();
-
-    list.fields = ["StudentGradeId,GradeName,ClassGroupId,GradeTypeId,Formula"];
-    list.PageName = "StudentGrades";
-    list.filter = ["Active eq 1" + orgIdSearchstr];
     this.StudentGrades = [];
-    this.dataservice.get(list)
+    this.contentservice.GetStudentGrade(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
         debugger;
         classgroupmapping.forEach(f => {
@@ -310,8 +303,8 @@ export class ResultComponent implements OnInit { PageLoading=true;
               {
                 StudentGradeId: m.StudentGradeId,
                 GradeName: m.GradeName,
-                GradeTypeId: m.GradeTypeId,
-                GradeType: this.GradeTypes.filter(f => f.MasterDataId == m.GradeTypeId)[0].MasterDataName,
+                SubjectCategoryId: m.SubjectCategoryId,
+                GradeType: this.SubjectCategory.filter(f => f.MasterDataId == m.SubjectCategoryId)[0].MasterDataName,
                 Formula: m.Formula,
                 ClassGroupId: m.ClassGroupId
               })
@@ -338,9 +331,12 @@ export class ResultComponent implements OnInit { PageLoading=true;
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.GradeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADETYPE);
+        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
         this.Batches = this.tokenstorage.getBatches()
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+          .subscribe((data: any) => {
+            this.ClassGroups = [...data.value];
+          });
         this.GetExams();
         this.GetStudentSubjects();
         this.GetClassGroupMapping();
@@ -387,7 +383,7 @@ export class ResultComponent implements OnInit { PageLoading=true;
           e.ClassId = e.ClassSubject.ClassId;
           return e;
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 

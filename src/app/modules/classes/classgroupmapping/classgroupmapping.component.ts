@@ -16,8 +16,10 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classgroupmapping.component.html',
   styleUrls: ['./classgroupmapping.component.scss']
 })
-export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
+export class ClassgroupmappingComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paging: MatPaginator;
+  ClassGroupTypes = [];
   ClassGroups = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -89,6 +91,7 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
       else {
 
         this.GetMasterData();
+        this.Getclassgroups();
       }
     }
   }
@@ -130,8 +133,9 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "ClassId eq " + row.ClassId + " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and ClassGroupId eq " + row.ClassGroupId + " and BatchId eq " + this.SelectedBatchId;
+    let checkFilterString = "ClassId eq " + row.ClassId +
+      " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ClassGroupId eq " + row.ClassGroupId
 
     if (row.ClassGroupMappingId > 0)
       checkFilterString += " and ClassGroupMappingId ne " + row.ClassGroupMappingId;
@@ -144,7 +148,8 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false;
+          this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -174,7 +179,7 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -198,6 +203,39 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
           this.loadingFalse();
         });
   }
+  classgroupList = [];
+  Getclassgroups() {
+    this.loading=true;
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+    .subscribe((data:any)=>{
+      this.ClassGroups = [...data.value];
+      this.loading=false;
+    })
+    // this.loading = true;
+    // let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]['orgId']; // BatchId eq  + this.SelectedBatchId
+    // let list: List = new List();
+    // list.fields = [
+    //   "ClassGroupId",
+    //   "GroupName",
+    //   "ClassGroupTypeId",
+    //   "Active"
+    // ];
+
+    // list.PageName = "ClassGroups";
+    // list.filter = [filterStr];
+    // this.ClassGroups = [];
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    //     if (data.value.length > 0) {
+    //       this.ClassGroups = [...data.value];
+    //     }
+    //     else {
+    //       this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    //     }
+
+    //   });
+
+  }
   GetClassGroupMapping() {
     debugger;
 
@@ -207,7 +245,7 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
     if (_ClassGroupId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -227,6 +265,9 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
         if (data.value.length > 0) {
           this.ClassGroupMappingList = [...data.value];
         }
+        if (this.ClassGroupMappingList.length == 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+        }
         this.dataSource = new MatTableDataSource<IClassGroupMapping>(this.ClassGroupMappingList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
@@ -239,10 +280,10 @@ export class ClassgroupmappingComponent implements OnInit { PageLoading=true;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
+        this.ClassGroupTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUPTYPE)
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         });
 
 

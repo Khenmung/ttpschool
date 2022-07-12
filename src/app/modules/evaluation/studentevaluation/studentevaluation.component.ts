@@ -606,7 +606,11 @@ export class StudentEvaluationComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.ClassGroups =[...data.value];
+        })
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);

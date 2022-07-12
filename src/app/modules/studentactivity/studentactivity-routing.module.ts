@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
+import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
 import { SportsResultComponent } from './sportsresult/sportsresult.component';
 import { StudentactivityboardComponent } from './studentactivityboard/studentactivityboard.component';
@@ -10,7 +11,7 @@ import { StudentDocumentComponent } from './uploadstudentdocument/uploadstudentd
 
 const routes: Routes = [
   {
-    path: '', component: StudentactivityhomeComponent,canActivate:[AuthGuard],
+    path: '', component: HomeComponent,canActivate:[AuthGuard],
     children: [
       { path: '', component: StudentactivityboardComponent },
     ]

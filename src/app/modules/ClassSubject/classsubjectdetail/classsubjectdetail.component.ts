@@ -45,6 +45,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
   Classes = [];
   Subjects = [];
   SubjectTypes = [];
+  SubjectCategory = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   CheckBatchIDForEdit = 1;
@@ -67,15 +68,16 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     ClassId: 0,
     Credits: 0,
     OrgId: 0,
-    //  BatchId: 0,
     TeacherId: 0,
     SubjectId: 0,
     SubjectTypeId: 0,
+    SubjectCategoryId:0,
     Active: 1
   };
   displayedColumns = [
     'SubjectName',
     'SubjectTypeId',
+    'SubjectCategoryId',
     'Credits',
     'TeacherId',
     'Active',
@@ -254,6 +256,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
       'ClassId',
       'Credits',
       'SubjectTypeId',
+      'SubjectCategoryId',
       'TeacherId',
       'Active',
     ];
@@ -272,6 +275,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
             ClassSubjectId: item.ClassSubjectId,
             SubjectId: item.SubjectId,
             SubjectTypeId: item.SubjectTypeId,
+            SubjectCategoryId: item.SubjectCategoryId,
             ClassId: item.ClassId,
             Credits: item.Credits,
             TeacherId: item.TeacherId,
@@ -294,6 +298,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
               SubjectId: existing[0].SubjectId,
               SubjectName: this.Subjects.filter(c => c.MasterDataId == existing[0].SubjectId)[0].MasterDataName,
               SubjectTypeId: existing[0].SubjectTypeId,
+              SubjectCategoryId: existing[0].SubjectCategoryId,              
               SelectHowMany: existing[0].SelectHowMany,
               TeacherId: existing[0].TeacherId,
               Credits: existing[0].Credits,
@@ -308,6 +313,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
               ClassSubjectId: 0,
               SubjectId: s.MasterDataId,
               SubjectTypeId: 0,
+              SubjectCategoryId:0,
               SelectHowMany: 0,
               Credits: 0,
               ClassId: this.searchForm.get("searchClassId").value,
@@ -385,9 +391,16 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     this.DataCountToSave = 0;
     //debugger;
     this.loading = true;
+
     if (row.SubjectTypeId == 0) {
       this.contentservice.openSnackBar("Please select subject type.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false; this.PageLoading=false;
+      return;
+    }
+    if (row.SubjectCategoryId == 0) {
+      this.contentservice.openSnackBar("Please select subject category.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.loading = false; 
+      this.PageLoading=false;
       return;
     }
     // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
@@ -439,6 +452,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
           this.ClassSubjectData.Credits = row.Credits;
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
+          this.ClassSubjectData.SubjectCategoryId = row.SubjectCategoryId;          
           this.ClassSubjectData.TeacherId = row.TeacherId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
           //this.ClassSubjectData.BatchId = this.SelectedBatchId;
@@ -549,6 +563,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
         this.allMasterData = [...data.value];
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
+        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Batches = this.tokenstorage.getBatches()
 
@@ -584,6 +599,7 @@ export interface IClassSubject {
   SubjectId: number;
   SubjectName: string;
   SubjectTypeId: number;
+  SubjectCategoryId:number;
   SelectHowMany: number;
   TeacherId: number,
   Active;

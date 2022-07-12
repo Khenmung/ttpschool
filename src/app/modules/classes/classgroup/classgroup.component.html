@@ -1,12 +1,11 @@
 <div style="width: 100%;">
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Pre-requisite</strong></div>
+        <div><strong>Class Group</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
     <div style="padding: 15px;" fxLayout="row wrap">
         <div style="width: 100%;">
-            <form [formGroup]="searchForm">
+            <!-- <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline" [style.width.pc]="25">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassId">
@@ -15,29 +14,41 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetPrerequisites()">
-                     <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="Getclassgroups()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
-            </form>
+            </form> -->
             <mat-table #table [dataSource]="dataSource">
-                <ng-container matColumnDef="PrerequisiteId">
+                <ng-container matColumnDef="ClassGroupId">
                     <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Sr. No.
                     </mat-header-cell>
-                    <mat-cell *matCellDef="let element">                      
-                            {{element.PrerequisiteId}}                      
+                    <mat-cell *matCellDef="let element">
+                        {{element.ClassGroupId}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="Description">
-                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Pre-requisite
+                <ng-container matColumnDef="GroupName">
+                    <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Group Name
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <textarea matInput (blur)="onBlur(element)" [maxlength]="250" [value]="element.Description"
-                                [(ngModel)]="element.Description">
-                        </textarea>
+                            <input matInput (blur)="onBlur(element)" [maxlength]="50" [value]="element.GroupName"
+                                [(ngModel)]="element.GroupName">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ClassGroupTypeId">
+                    <mat-header-cell *matHeaderCellDef>Group Type
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.ClassGroupTypeId"
+                                [(ngModel)]="element.ClassGroupTypeId">
+                                <mat-option *ngFor="let item of ClassGroupType" [value]="item.MasterDataId">
+                                    {{item.MasterDataName}}</mat-option>
+                            </mat-select>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -52,15 +63,15 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || IscurrentBatchSelect==0 || Permission=='deny'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+                        <button [disabled]="loading || IscurrentBatchSelect==0 || Permission=='deny'"
+                            matTooltip="add new" mat-mini-fab (click)="AddNew()">
                             <mat-icon>add</mat-icon>
                         </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || IscurrentBatchSelect==0 || Permission=='deny'" matTooltip="save" 
-mat-raised-button color="accent"
-                            (click)="UpdateOrSave(element)">
-                             <mat-icon>save</mat-icon>
+                        <button [disabled]="loading || !element.Action || IscurrentBatchSelect==0 || Permission=='deny'"
+                            matTooltip="save" mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                            <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>

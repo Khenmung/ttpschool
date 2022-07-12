@@ -214,12 +214,15 @@ export class StudentSubjectMarkCompComponent implements OnInit { PageLoading=tru
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         //this.shareddata.CurrentBatch.subscribe(c => (this.Batches = c));
         this.Batches = this.token.getBatches()
-
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+        .subscribe((data:any)=>{
+          this.ClassGroups = [...data.value];
+        })
         //this.shareddata.ChangeBatch(this.Batches);
 
         if (this.Classes.length == 0) {

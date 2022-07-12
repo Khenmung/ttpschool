@@ -16,10 +16,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentgrade.component.html',
   styleUrls: ['./studentgrade.component.scss']
 })
-export class StudentgradeComponent implements OnInit { PageLoading=true;
+export class StudentgradeComponent implements OnInit {
+  PageLoading = true;
   @ViewChild(MatPaginator) paging: MatPaginator;
-  ClassGroups =[];
-  StudentGradeTypes = [];
+  ClassGroups = [];
+  SubjectCategory = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   StudentGradeListName = 'StudentGrades';
@@ -32,13 +33,15 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
   allMasterData = [];
   StudentGrade = [];
   Permission = 'deny';
-  Classes =[];
+  Classes = [];
+  ExamStatus = [];
   StudentGradeData = {
     StudentGradeId: 0,
     GradeName: '',
     Formula: '',
-    ClassGroupId:0,
-    GradeTypeId: 0,
+    ClassGroupId: 0,
+    SubjectCategoryId: 0,
+    GradeStatusId: 0,
     Sequence: 0,
     OrgId: 0,
     BatchId: 0,
@@ -49,7 +52,8 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
     "GradeName",
     "Formula",
     "ClassGroupId",
-    "GradeTypeId",
+    "SubjectCategoryId",
+    "GradeStatusId",
     "Sequence",
     "Active",
     "Action"
@@ -96,6 +100,7 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
       else {
 
         this.GetMasterData();
+        this.Getclassgroups();
       }
     }
   }
@@ -106,11 +111,12 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
       StudentGradeId: 0,
       GradeName: '',
       Formula: '',
-      ClassGroupId:0,
-      GradeTypeId: 0,
+      ClassGroupId: 0,
+      SubjectCategoryId: 0,
+      GradeStatusId: 0,
       Sequence: 0,
       Active: 0,
-      Action:false
+      Action: false
     };
     this.StudentGradeList = [];
     this.StudentGradeList.push(newdata);
@@ -140,8 +146,13 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "GradeName eq '" + row.GradeName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] + 
-    " and ClassGroupId eq "+ row.ClassGroupId +" and BatchId eq " + this.SelectedBatchId;
+    if (row.ClassGroupId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    let checkFilterString = "GradeName eq '" + row.GradeName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ClassGroupId eq " + row.ClassGroupId + " and BatchId eq " + this.SelectedBatchId;
 
     if (row.StudentGradeId > 0)
       checkFilterString += " and StudentGradeId ne " + row.StudentGradeId;
@@ -152,9 +163,8 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -163,16 +173,16 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
           this.StudentGradeData.Active = row.Active;
           this.StudentGradeData.GradeName = row.GradeName;
           this.StudentGradeData.ClassGroupId = row.ClassGroupId;
-          this.StudentGradeData.GradeTypeId = row.GradeTypeId;
+          this.StudentGradeData.SubjectCategoryId = row.SubjectCategoryId;
+          this.StudentGradeData.GradeStatusId = row.GradeStatusId;
           this.StudentGradeData.Formula = row.Formula;
           this.StudentGradeData.Sequence = row.Sequence;
           this.StudentGradeData.BatchId = this.SelectedBatchId;
           this.StudentGradeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          console.log("this.StudentGradeData",this.StudentGradeData)
           if (this.StudentGradeData.StudentGradeId == 0) {
-            this.StudentGradeData["CreatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+            this.StudentGradeData["CreatedDate"] = new Date();
             this.StudentGradeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.StudentGradeData["UpdatedDate"] = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+            this.StudentGradeData["UpdatedDate"] = new Date();
             delete this.StudentGradeData["UpdatedBy"];
             this.insert(row);
           }
@@ -187,7 +197,7 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -211,16 +221,26 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
           this.loadingFalse();
         });
   }
+  Getclassgroups() {
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]['orgId'])
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.ClassGroups = [...data.value];
+        }
+        else {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        }
+      });
+  }
   GetStudentGrade() {
     debugger;
 
     this.loading = true;
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]  
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //" and BatchId eq " + this.SelectedBatchId;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
-    if(_ClassGroupId>0)
-    {
+    if (_ClassGroupId > 0) {
       filterStr += " and ClassGroupId eq " + _ClassGroupId;
     }
 
@@ -248,14 +268,15 @@ export class StudentgradeComponent implements OnInit { PageLoading=true;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.StudentGradeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADETYPE)
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
+        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY)
+        this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP)
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         });
 
-       
+
       });
   }
   getDropDownData(dropdowntype) {
@@ -278,8 +299,9 @@ export interface IStudentGrade {
   StudentGradeId: number;
   GradeName: string;
   Formula: string;
-  GradeTypeId: number;
-  ClassGroupId:number;
+  SubjectCategoryId: number;
+  GradeStatusId: number;
+  ClassGroupId: number;
   Sequence: number;
   Active: number;
   Action: boolean;

@@ -182,7 +182,7 @@ export class EvaluationExamMapComponent implements OnInit {
     if (!this.EvaluationUpdatable) {
 
       if (row.ExamId > 0)
-        checkFilterString = "ExamId eq " + row.ExamId;
+        checkFilterString += " and ExamId eq " + row.ExamId;
       else {
         this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar("Please select evaluation session or examination.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -396,10 +396,10 @@ export class EvaluationExamMapComponent implements OnInit {
   }
   GetExams() {
 
-    var _gradingExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == globalconstants.ExamGrading.toLowerCase())[0].MasterDataId;
+    //var _gradingExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == globalconstants.ExamGrading.toLowerCase())[0].MasterDataId;
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId +
-      ' and ExamModeId eq ' + _gradingExamModeId;
+      ' and BatchId eq ' + this.SelectedBatchId 
+    //  ' and ExamModeId eq ' + _gradingExamModeId;
 
     let list: List = new List();
 

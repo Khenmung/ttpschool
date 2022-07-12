@@ -4,14 +4,13 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import alasql from 'alasql';
 import { evaluate, i } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -48,7 +47,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
   Exams = [];
   Batches = [];
   StudentSubjects = [];
-  GradeTypes = [];
+  SubjectCategory = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
   allMasterData = [];
   Permission = 'deny';
@@ -250,10 +249,6 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    // if (this.searchForm.get("searchSectionId").value == 0) {
-    //   this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
 
     this.loading = true;
     filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
@@ -405,8 +400,9 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.GradeTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADETYPE);
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+        this.GetClassGroup();
         this.GetClassGroupMapping();
         //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         //this.shareddata.ChangeBatch(this.Batches);
@@ -414,19 +410,29 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
         this.GetStudentSubjects();
       });
   }
+  GetClassGroup(){
+    this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+    .subscribe((data:any)=>{
+      this.ClassGroups = [...data.value];
+    })
+  }
   GetClassGroupMapping() {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]; 
-    //+ ' and BatchId eq ' + this.SelectedBatchId;
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"],1)
+    .subscribe((data: any) => {
+      this.GetStudentGradeDefn(data.value);
+    })
+    // var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]; 
+    // //+ ' and BatchId eq ' + this.SelectedBatchId;
 
-    let list: List = new List();
+    // let list: List = new List();
 
-    list.fields = ["ClassId,ClassGroupId"];
-    list.PageName = "ClassGroupMappings";
-    list.filter = ["Active eq 1" + orgIdSearchstr];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.GetStudentGradeDefn(data.value);
-      })
+    // list.fields = ["ClassId,ClassGroupId"];
+    // list.PageName = "ClassGroupMappings";
+    // list.filter = ["Active eq 1" + orgIdSearchstr];
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    //     this.GetStudentGradeDefn(data.value);
+    //   })
   }
   GetStudentGradeDefn(classgroupmapping) {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] 
@@ -434,7 +440,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
     //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
-    list.fields = ["StudentGradeId,GradeName,ClassGroupId,GradeTypeId,Formula"];
+    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula"];
     list.PageName = "StudentGrades";
     list.filter = ["Active eq 1" + orgIdSearchstr];
     this.StudentGrades = [];
@@ -449,7 +455,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
               {
                 StudentGradeId: m.StudentGradeId,
                 GradeName: m.GradeName,
-                GradeTypeId: m.GradeTypeId,
+                SubjectCategoryId: m.SubjectCategoryId,
                 Formula: m.Formula,
                 ClassGroupId: m.ClassGroupId
               })
@@ -463,8 +469,6 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
       this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
-    //console.log("this.studentgrade", this.StudentGrades)
-    //console.log("this.SelectedClassStudentGrades", this.SelectedClassStudentGrades)
   }
   GetExams() {
 

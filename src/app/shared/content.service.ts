@@ -90,6 +90,32 @@ export class ContentService implements OnInit {
     list.orderBy = "Sequence";
     return this.dataservice.get(list);
   }
+  GetClassGroups(pOrgId) {
+
+    let filterStr = 'OrgId eq ' + pOrgId; // BatchId eq  + this.SelectedBatchId
+    let list: List = new List();
+    list.fields = [
+      "ClassGroupId",
+      "GroupName",
+      "ClassGroupTypeId",
+      "Active"
+    ];
+
+    list.PageName = "ClassGroups";
+    list.filter = [filterStr];
+    return this.dataservice.get(list);    
+  }
+  GetStudentGrade(pOrgId) {
+    var orgIdSearchstr = ' and OrgId eq ' + pOrgId
+    //student grade is not batch wise
+    //+ ' and BatchId eq ' + this.SelectedBatchId;
+    let list: List = new List();
+
+    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula"];
+    list.PageName = "StudentGrades";
+    list.filter = ["Active eq 1" + orgIdSearchstr];
+    return this.dataservice.get(list)
+  }
   GetStudentMaxPID(orgId) {
     let list: List = new List();
     list.fields = ["PID"];

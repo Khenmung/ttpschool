@@ -492,7 +492,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.CertificateTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.CERTIFICATETYPE);
         this.CommonStyles = this.getDropDownData(globalconstants.MasterDefinitions.school.COMMONSTYLE);
@@ -502,6 +502,10 @@ export class GenerateCertificateComponent implements OnInit {
         this.CommonHeader.sort((a, b) => a.Sequence - b.Sequence)
         this.CommonFooter.sort((a, b) => a.Sequence - b.Sequence)
         //this.shareddata.ChangeBatch(this.Batches);
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.ClassGroups =[...data.value];
+        });
         this.Batches = this.tokenstorage.getBatches()
         this.GetStudentClasses();
         this.GetOrganization();

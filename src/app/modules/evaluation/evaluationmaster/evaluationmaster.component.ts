@@ -19,13 +19,13 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./evaluationmaster.component.scss']
 })
 export class EvaluationMasterComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paging: MatPaginator;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   EvaluationMasterListName = 'EvaluationMasters';
   Applications = [];
-  ClassGroups=[];
+  ClassGroups = [];
   loading = false;
   SelectedBatchId = 0;
   EvaluationMasterList: IEvaluationMaster[] = [];
@@ -52,9 +52,8 @@ export class EvaluationMasterComponent implements OnInit {
   displayedColumns = [
     "EvaluationMasterId",
     "EvaluationName",
-   // "Description",
-    "Duration",
     "ClassGroupId",
+    "Duration",
     "FullMark",
     "PassMark",
     "AppendAnswer",
@@ -117,7 +116,7 @@ export class EvaluationMasterComponent implements OnInit {
       EvaluationName: '',
       Description: '',
       Duration: 0,
-      ClassGroupId:0,
+      ClassGroupId: 0,
       DisplayResult: false,
       ProvideCertificate: false,
       AppendAnswer: false,
@@ -138,12 +137,11 @@ export class EvaluationMasterComponent implements OnInit {
     row.Action = true;
     row.Active = value.checked; //? 1: 0;
   }
-  updateDisplayResult(row,value)
-  {
+  updateDisplayResult(row, value) {
     row.Action = true;
     row.DisplayResult = value.checked;
   }
-  updateProvideCertificate(row,value){
+  updateProvideCertificate(row, value) {
     row.Action = true;
     row.ProvideCertificate = value.checked;
   }
@@ -169,13 +167,12 @@ export class EvaluationMasterComponent implements OnInit {
     debugger;
     this.loading = true;
     let checkFilterString = "EvaluationName eq '" + row.EvaluationName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-    if(row.ClassGroupId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select class group.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.ClassGroupId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    
+
     if (row.EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId ne " + row.EvaluationMasterId;
     let list: List = new List();
@@ -199,12 +196,12 @@ export class EvaluationMasterComponent implements OnInit {
           this.EvaluationMasterData.DisplayResult = row.DisplayResult;
           this.EvaluationMasterData.ProvideCertificate = row.ProvideCertificate;
           this.EvaluationMasterData.AppendAnswer = row.AppendAnswer;
-          this.EvaluationMasterData.Duration = row.Duration==null?0:row.Duration;
+          this.EvaluationMasterData.Duration = row.Duration == null ? 0 : row.Duration;
           this.EvaluationMasterData.ClassGroupId = row.ClassGroupId;
-          this.EvaluationMasterData.FullMark = row.FullMark==null?0:row.FullMark;
-          this.EvaluationMasterData.PassMark = row.PassMark==null?0:row.PassMark;
+          this.EvaluationMasterData.FullMark = row.FullMark == null ? 0 : row.FullMark;
+          this.EvaluationMasterData.PassMark = row.PassMark == null ? 0 : row.PassMark;
           this.EvaluationMasterData.OrgId = this.LoginUserDetail[0]["orgId"];
-          
+
           if (this.EvaluationMasterData.EvaluationMasterId == 0) {
             this.EvaluationMasterData["CreatedDate"] = new Date();
             this.EvaluationMasterData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -338,7 +335,12 @@ export class EvaluationMasterComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.ClassGroups =this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
+
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        .subscribe((data:any)=>{
+          this.ClassGroups =[...data.value];
+        });
+
         this.GetEvaluationMaster();
         this.loading = false; this.PageLoading = false;
       });

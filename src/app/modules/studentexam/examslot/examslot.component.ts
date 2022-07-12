@@ -283,9 +283,12 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
     _startDate.setHours(0, 0, 0, 0);
     _endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
+    _filterExamDate.setHours(0, 0, 0, 0);
+    
     var higherdate = new Date(this.searchForm.get("searchExamDate").value);
     higherdate.setDate(_filterExamDate.getDate() + 1);
-
+    higherdate.setHours(0, 0, 0, 0);
+    
     if (!_filterExamDate != null) {
 
       filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');

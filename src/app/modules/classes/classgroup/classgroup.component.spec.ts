@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ClassprerequisiteComponent } from './classprerequisite.component';
+import { ClassgroupComponent } from './classgroup.component';
 
-describe('ClassprerequisiteComponent', () => {
-  let component: ClassprerequisiteComponent;
-  let fixture: ComponentFixture<ClassprerequisiteComponent>;
+describe('ClassgroupComponent', () => {
+  let component: ClassgroupComponent;
+  let fixture: ComponentFixture<ClassgroupComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-    declarations: [ClassprerequisiteComponent],
+    declarations: [ClassgroupComponent],
     teardown: { destroyAfterEach: false }
 })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ClassprerequisiteComponent);
+    fixture = TestBed.createComponent(ClassgroupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

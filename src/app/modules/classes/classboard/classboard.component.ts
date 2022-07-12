@@ -3,6 +3,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassdetailComponent } from '../classdetail/classdetail.component';
+import { ClassgroupComponent } from '../classgroup/classgroup.component';
 import { ClassgroupmappingComponent } from '../classgroupmapping/classgroupmapping.component';
 import { ClassmasterdashboardComponent } from '../classsmastermapping/classmasterdashboard.component';
 import { DashboardclassfeeComponent } from '../dashboardclassfee/dashboardclassfee.component';
@@ -21,6 +22,7 @@ export class ClassboardComponent implements AfterViewInit {
     DashboardclassfeeComponent,
     SchoolFeeTypesComponent,
     ClassmasterdashboardComponent,
+    ClassgroupComponent,
     ClassgroupmappingComponent
   ];
 
@@ -29,6 +31,7 @@ export class ClassboardComponent implements AfterViewInit {
     { "label": "Fee", "faIcon": '' },
     { "label": "Pre-requisite", "faIcon": '' },
     { "label": "Class Master", "faIcon": '' },
+    { "label": "Fee Type", "faIcon": '' },
     { "label": "Fee Type", "faIcon": '' },
     { "label": "Fee Type", "faIcon": '' }
   ];
@@ -42,6 +45,7 @@ export class ClassboardComponent implements AfterViewInit {
       ClassMasterPermission: '',
       FeeTypePermission: '',
       FeeDefinition: '',
+      ClassGroup: ''
     };
 
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -85,6 +89,10 @@ export class ClassboardComponent implements AfterViewInit {
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.FEEDEFINITION)
     var comindx = this.components.indexOf(FeeDefinitionComponent);
     this.GetComponents(perObj, comindx)
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.CLASSCOURSE.CLASSGROUP)
+    var comindx = this.components.indexOf(ClassgroupComponent);
+    this.GetComponents(perObj, comindx)
 
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
@@ -110,7 +118,6 @@ export class ClassboardComponent implements AfterViewInit {
     }
   }
   public tabChange(index: number) {
-    //    //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
     }, 550);
