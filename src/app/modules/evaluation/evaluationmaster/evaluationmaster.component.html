@@ -5,7 +5,22 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <!-- <alert></alert> -->
 <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
-
+<form [formGroup]="searchForm">
+    <mat-form-field appearance="outline" [style.width.px]="350">
+        <mat-label>class group</mat-label>
+        <mat-select formControlName="searchClassGroupId">
+            <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">{{item.GroupName}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button [disabled]="loading" matTooltip="save" mat-raised-button
+        color="accent" (click)="GetEvaluationMaster()">
+        <mat-icon>search</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
+    </button>
+</form>
 <div style="width: 100%;">
     <mat-table style="overflow: auto;min-width: 60vw;min-height: 60vh;" #table [dataSource]="dataSource">
         <ng-container matColumnDef="EvaluationMasterId">

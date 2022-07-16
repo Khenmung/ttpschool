@@ -333,7 +333,7 @@ export class AppuserdashboardComponent implements OnInit {
     //this.contentservice.openSnackBar(this.authservice.CallAPI("","SendSMS"),)
     debugger;
     this.loading = true;
-    let filterStr = " and OrgId eq " + this.LoginDetail[0]["orgId"];
+    let filterStr = "OrgId eq " + this.LoginDetail[0]["orgId"];
     var searchObj = this.searchForm.get("searchUserName").value;
     if (searchObj != "") {
       filterStr += " and Id eq '" + searchObj.Id + "'";
@@ -359,7 +359,7 @@ export class AppuserdashboardComponent implements OnInit {
       "Active",
     ];
     list.PageName = "AuthManagement";
-    list.filter = ["Active eq 1" + filterStr];
+    list.filter = [filterStr];
 
     this.authservice.get(list)
       .subscribe((data: any) => {
@@ -569,7 +569,7 @@ export class AppuserdashboardComponent implements OnInit {
     if (row.Id == '')
       this.insert(row);
     else {
-      this.update();
+      this.update(row);
     }
 
   }
@@ -582,7 +582,7 @@ export class AppuserdashboardComponent implements OnInit {
     this.authservice.CallAPI(this.AppUsersData, 'Register')
       .subscribe(
         (data: any) => {
-
+          row.Action=false;
           row.Id = data.Id;
           this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -611,11 +611,12 @@ export class AppuserdashboardComponent implements OnInit {
         });
 
   }
-  update() {
+  update(row) {
 
     this.authservice.CallAPI(this.AppUsersData, 'UpdateUser')
       .subscribe(
         (data: any) => {
+          row.Action=false;
           this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground)
         });

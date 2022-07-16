@@ -16,7 +16,8 @@ import * as moment from 'moment';
   templateUrl: './examslot.component.html',
   styleUrls: ['./examslot.component.scss']
 })
-export class ExamslotComponent implements OnInit { PageLoading=true;
+export class ExamslotComponent implements OnInit {
+  PageLoading = true;
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   LoginUserDetail: any[] = [];
@@ -139,12 +140,12 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
     this.loading = true;
 
     if (row.ExamDate == null) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Exam date is mandatory!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.StartTime.length == 0 || row.EndTime.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Start time and end time are mandatory!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -168,7 +169,7 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -212,7 +213,7 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('ExamSlots', this.ExamSlotsData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.ExamSlotId = data.ExamSlotId;
           row.Action = false;
           if (this.DataCountToUpdate == 0) {
@@ -226,7 +227,7 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch('ExamSlots', this.ExamSlotsData, this.ExamSlotsData.ExamSlotId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.Action = false;
           if (this.DataCountToUpdate == 0) {
             this.DataCountToUpdate = -1;
@@ -235,11 +236,11 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
         });
   }
   GetExams() {
-
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId, this.ExamNames);
     //var orgIdSearchstr = this.StandardFilterWithBatchId;// ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate"];
+    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate", "ClassGroupId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId];
     //list.orderBy = "ParentId";
@@ -247,21 +248,24 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         var _examName = '';
-        var _startDate, _endDate = null;
-        this.Exams = data.value.map(e => {
+        //var _startDate, _endDate = null;
+        data.value.forEach(e => {
           _examName = '';
           var examobj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
           if (examobj.length > 0) {
             _examName = examobj[0].MasterDataName + " (" + this.datepipe.transform(e.StartDate, 'dd/MM/yyyy') + " - " + this.datepipe.transform(e.EndDate, 'dd/MM/yyyy') + ")";
-          }
-          return {
-            ExamId: e.ExamId,
-            ExamName: _examName,
-            StartDate: e.StartDate,
-            EndDate: e.EndDate
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: _examName,
+              StartDate: e.StartDate,
+              EndDate: e.EndDate,
+              ClassGroupId: e.ClassGroupId
+            })
           }
         })
-        this.loading = false; this.PageLoading=false;
+        //console.log("exam", this.Exams)
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
   GetExamSlots() {
@@ -284,11 +288,11 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
     _endDate.setHours(0, 0, 0, 0);
     var _filterExamDate = new Date(this.searchForm.get("searchExamDate").value);
     _filterExamDate.setHours(0, 0, 0, 0);
-    
+
     var higherdate = new Date(this.searchForm.get("searchExamDate").value);
     higherdate.setDate(_filterExamDate.getDate() + 1);
     higherdate.setHours(0, 0, 0, 0);
-    
+
     if (!_filterExamDate != null) {
 
       filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
@@ -360,7 +364,7 @@ export class ExamslotComponent implements OnInit { PageLoading=true;
         //}
         ////console.log('this', this.ExamSlots)
         this.dataSource = new MatTableDataSource<IExamSlots>(this.ExamSlots);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   onBlur(row) {

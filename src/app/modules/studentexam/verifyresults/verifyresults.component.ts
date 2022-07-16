@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -18,16 +17,18 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './verifyresults.component.html',
   styleUrls: ['./verifyresults.component.scss']
 })
-export class VerifyResultsComponent implements OnInit { PageLoading=true;
+export class VerifyResultsComponent implements OnInit {
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  ClickedVerified =false;
+  ClickedVerified = false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
+  ExamStudentSubjectGrading: any[] = [];
   ClassFullMark = 0;
   ClassSubjectComponents = [];
   SelectedBatchId = 0;
@@ -49,9 +50,11 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
   StudentSubjects = [];
   SubjectCategory = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
+  GradingDataSource: MatTableDataSource<any[]>;
   allMasterData = [];
   Permission = 'deny';
   ExamId = 0;
+
   ExamStudentSubjectResultData = {
     ExamStudentSubjectResultId: 0,
     ExamId: 0,
@@ -63,7 +66,14 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
     BatchId: 0,
     Active: 0
   };
+  VerifiedResult = {
+    "ExamStudentResult": [],
+    "ExamResultSubjectMark": []
+  }
   displayedColumns = [
+    'Student',
+  ];
+  GradingDisplayedColumns = [
     'Student',
   ];
   searchForm: FormGroup;
@@ -113,7 +123,20 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
       }
     }
   }
-  clear() { }
+  FilteredClasses = [];
+  FilterClass() {
+    var _examId = this.searchForm.get("searchExamId").value
+    var _classGroupId = 0;
+    var obj = this.Exams.filter(f => f.ExamId == _examId);
+    if (obj.length > 0)
+      _classGroupId = obj[0].ClassGroupId;
+    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
+  }
+  clear() {
+      this.searchForm.patchValue({searchExamId:0});
+      this.searchForm.patchValue({searchClassId:0});
+      this.searchForm.patchValue({searchSectionId:0});
+   }
   GetStudentSubjects() {
 
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
@@ -130,7 +153,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId)",
+    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)",
       "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
@@ -138,8 +161,9 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
         var _class = '';
         var _subject = '';
         var _section = '';
-        this.StudentSubjects = data.value.filter(x => x.ClassSubject.Active == 1);
-        this.StudentSubjects = this.StudentSubjects.map(s => {
+        this.StudentSubjects = [];
+        var _data = data.value.filter(x => x.ClassSubject.Active == 1);
+        this.StudentSubjects = _data.map(s => {
           _class = '';
           _subject = '';
 
@@ -163,11 +187,12 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
             Subject: _subject,
             ClassId: s.ClassSubject.ClassId,
             StudentId: s.StudentClass.StudentId,
-            SectionId: s.StudentClass.SectionId
+            SectionId: s.StudentClass.SectionId,
+            SubjectCategoryId: s.ClassSubject.SubjectCategoryId
           }
 
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetStudents(classId) {
@@ -191,18 +216,18 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
 
   }
   Verified() {
-    
-    var _resultToInsert = [];
-    if (this.ExamStudentSubjectResult.length == 0) {
-      this.loading = false; this.PageLoading=false;
+    debugger;
+    if (this.ExamStudentSubjectResult.length == 0 && this.ExamStudentSubjectGrading.length == 0) {
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("No data to verified.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     else {
       this.loading = true;
+      this.VerifiedResult.ExamStudentResult = [];
       this.ExamStudentSubjectResult.forEach(d => {
 
-        _resultToInsert.push({
+        this.VerifiedResult.ExamStudentResult.push({
           "ExamStudentResultId": 0,
           "ExamId": this.searchForm.get("searchExamId").value,
           "StudentClassId": d["StudentClassId"],
@@ -219,25 +244,26 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
         });
 
       })
-      console.log("_resultToInsert", _resultToInsert)
-      this.dataservice.postPatch('ExamStudentResults', _resultToInsert, 0, 'post')
+      console.log("verifiedresult", this.VerifiedResult)
+      this.dataservice.postPatch('ExamStudentResults', this.VerifiedResult, 0, 'post')
         .subscribe(
           (data: any) => {
-            this.loading = false; this.PageLoading=false;
-            this.ClickedVerified =true;
-            //row.Action = false;
+            this.loading = false;
+            this.PageLoading = false;
+            this.ClickedVerified = true;
             this.contentservice.openSnackBar("Exam result verified.", globalconstants.ActionText, globalconstants.BlueBackground);
           }, error => {
             //console.log("error",error);
             this.contentservice.openSnackBar("Something went wrong. Please try again.", globalconstants.ActionText, globalconstants.RedBackground);
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
           })
     }
   }
   GetExamStudentSubjectResults() {
-    this.ClickedVerified =false;
+    this.ClickedVerified = false;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
+    this.ExamStudentSubjectGrading = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
     if (this.searchForm.get("searchExamId").value == 0) {
@@ -269,6 +295,9 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
     this.displayedColumns = [
       'Student'
     ];
+    this.GradingDisplayedColumns = [
+      'Student'
+    ];
     this.dataservice.get(list)
       .subscribe((examComponentResult: any) => {
         debugger;
@@ -280,7 +309,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
         this.GetStudents(_classId)
           .subscribe((data: any) => {
             this.Students = [...data.value];
-            var StudentOwnSubjects;
+            var StudentOwnSubjects = [];
             if (this.searchForm.get("searchSectionId").value != "") {
               StudentOwnSubjects = this.StudentSubjects.filter(studentsubject => {
                 return studentsubject.ClassId == _classId
@@ -292,19 +321,26 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
                 return studentsubject.ClassId == _classId
               });
             }
-            var forDisplay;
+            var ForGrading, ForNonGrading;
             StudentOwnSubjects.forEach(f => {
               var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
               if (stud.length > 0)
-                f.Student = f.Student + "-" + stud[0].Student.FirstName + "-" + stud[0].Student.LastName;
+                f.Student = stud[0].Student.FirstName + "-" + stud[0].Student.LastName;
             })
 
             var filteredIndividualStud = alasql("select distinct Student,StudentClassId from ? ", [StudentOwnSubjects]);
-
+            var _subjectCategoryName = '';
+            this.VerifiedResult.ExamResultSubjectMark = [];
+            //for each student
             filteredIndividualStud.forEach(ss => {
 
               //intial columns
-              forDisplay = {
+              ForGrading = {
+                "StudentClassId": ss.StudentClassId,
+                "Student": ss.Student,
+                "Grade": 0
+              }
+              ForNonGrading = {
                 "StudentClassId": ss.StudentClassId,
                 "Student": ss.Student,
                 "Total": 0,
@@ -314,81 +350,175 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
                 "FailCount": 0,
                 "PassCount": 0
               }
-              var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.Student == ss.Student)
-              forEachSubjectOfStud.forEach(each => {
 
-                var markObtained = alasql("select StudentClassSubjectId,SUM(Marks) as Marks FROM ? where StudentClassSubjectId = ? GROUP BY StudentClassSubjectId",
-                  [examComponentResult.value, each.StudentClassSubjectId]);
+
+              var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.Student == ss.Student)
+              //var _subjectDetailToInsert ={}
+
+              forEachSubjectOfStud.forEach(eachsubj => {
+
+                var _objSubjectCategory = this.SubjectCategory.filter(f => f.MasterDataId == eachsubj.SubjectCategoryId)
+                if (_objSubjectCategory.length > 0)
+                  _subjectCategoryName = _objSubjectCategory[0].MasterDataName.toLowerCase();
+
+                var markObtained = alasql("select ExamId,StudentClassSubjectId,SUM(Marks) as Marks FROM ? where StudentClassSubjectId = ? GROUP BY StudentClassSubjectId,ExamId",
+                  [examComponentResult.value, eachsubj.StudentClassSubjectId]);
                 var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
-                  [_classMarks, each.ClassSubjectId]);
+                  [_classMarks, eachsubj.ClassSubjectId]);
+
 
                 var _statusFail = true;
+
                 if (markObtained.length > 0) {
-                  _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
+                  var ExamResultSubjectMarkData = {
+                    ExamResultSubjectMarkId: 0,
+                    StudentClassId: 0,
+                    ExamId: 0,
+                    StudentClassSubjectId: 0,
+                    Marks: 0,
+                    Grade: '',
+                    OrgId: 0,
+                    Active: 0,
+                    BatchId: 0
+                  }
+                  ExamResultSubjectMarkData.Active = 1;
+                  ExamResultSubjectMarkData.BatchId = this.SelectedBatchId;
+                  ExamResultSubjectMarkData.ExamId = markObtained[0].ExamId;
+                  ExamResultSubjectMarkData.ExamResultSubjectMarkId = 0;
+                  ExamResultSubjectMarkData.Marks = markObtained[0].Marks;
+                  ExamResultSubjectMarkData.OrgId = this.LoginUserDetail[0]['orgId'];
+                  ExamResultSubjectMarkData.StudentClassId = ss.StudentClassId;
+                  ExamResultSubjectMarkData.StudentClassSubjectId = eachsubj.StudentClassSubjectId;
+                  ExamResultSubjectMarkData.Grade = '';
 
-                  if (_statusFail)
-                    forDisplay["FailCount"]++;
-                  else
-                    forDisplay["PassCount"]++;
-                }
+                  if (_subjectCategoryName == 'grading') {
 
-                if (this.displayedColumns.indexOf(each.Subject) == -1 && each.Subject.length > 0)
-                  this.displayedColumns.push(each.Subject)
-                if (markObtained.length > 0) {
-                  forDisplay[each.Subject] = markObtained[0].Marks;
-                  forDisplay["Total"] += +markObtained[0].Marks;
-                }
-              })
+                    if (markObtained[0].Marks != undefined) {
+                      //var rows = [];
+                      //rows.push(markObtained[0]);
 
-              this.ExamStudentSubjectResult.push(forDisplay);
-            })
-            this.displayedColumns.push("Total","Percentage", "Rank", "Division");
+                      var _grade = this.SetGrade(markObtained, eachsubj.SubjectCategoryId);
+                      markObtained[0].Grade = globalconstants.decodeSpecialChars(_grade);
+                      ForGrading[eachsubj.Subject] = markObtained[0].Grade;
+                      ExamResultSubjectMarkData.Grade = markObtained[0].Grade;
+                    }
+                    else
+                      ForGrading[eachsubj.Subject] = '';
 
-            this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
-            if (this.SelectedClassStudentGrades.length > 0) {
-              this.SelectedClassStudentGrades[0].grades.sort((a, b) => a.Sequence - b.Sequence);
-              var rankCount = 0;
-              this.ExamStudentSubjectResult.forEach((result: any, index) => {
-                for (var i = 0; i < this.SelectedClassStudentGrades[0].grades.length; i++) {
-                  var formula = this.SelectedClassStudentGrades[0].grades[i].Formula
-                    .replaceAll("[TotalMark]", result.Total)
-                    .replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
-                    .replaceAll("[PassCount]", result.PassCount)
-                    .replaceAll("[FailCount]", result.FailCount);
+                    if (this.GradingDisplayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
+                      this.GradingDisplayedColumns.push(eachsubj.Subject)
+                  }
+                  else if (_subjectCategoryName == 'marking') {
+                    _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
+                    if (_statusFail)
+                      ForNonGrading["FailCount"]++;
+                    else
+                      ForNonGrading["PassCount"]++;
 
-                  if (evaluate(formula)) {
-                    //if (r.FailCount == 0) {
-                    result.Grade = this.SelectedClassStudentGrades[0].grades[i].StudentGradeId;
-                    result.Division = this.SelectedClassStudentGrades[0].grades[i].GradeName;
-                    break;
-                    //}
+                    if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
+                      this.displayedColumns.push(eachsubj.Subject)
+                    if (markObtained.length > 0) {
+                      ForNonGrading[eachsubj.Subject] = markObtained[0].Marks;
+                      ForNonGrading["Total"] += +markObtained[0].Marks;
+                    }
                   }
                 }
-                result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
-
-                if (result.FailCount == 0) {
-                  rankCount++;
-                  result.Rank = rankCount;
-                }
+                //preparing each subject for insert.
+                if (ExamResultSubjectMarkData != undefined)
+                  this.VerifiedResult.ExamResultSubjectMark.push(JSON.parse(JSON.stringify(ExamResultSubjectMarkData)))
               })
-            }
-            else {
-              this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+              //for each subject display 
+              this.ExamStudentSubjectResult.push(ForNonGrading);
+              this.ExamStudentSubjectGrading.push(ForGrading);
+            })
 
-            }
-            
-            this.ExamStudentSubjectResult =this.ExamStudentSubjectResult.filter(f=>f["Total"]>0);
-            if (this.ExamStudentSubjectResult.length == 0) {
-              this.contentservice.openSnackBar("No Result found for this class/section.", globalconstants.ActionText, globalconstants.RedBackground);
+            //for each student
+            if (_subjectCategoryName == 'marking') {
+              var _markingId = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')[0].MasterDataId;
+              this.displayedColumns.push("Total", "Percentage", "Rank", "Division");
+              this.SelectedClassStudentGrades = this.SelectedClassStudentGrades.filter(f => f.SubjectCategoryId == _markingId);
+              this.ExamStudentSubjectResult.sort((a: any, b: any) => b.Total - a.Total);
+              if (this.SelectedClassStudentGrades.length > 0) {
+                this.SelectedClassStudentGrades.sort((a, b) => a.Sequence - b.Sequence);
+                var rankCount = 0;
+                var previousTotal = 0;
+                this.ExamStudentSubjectResult.forEach((result: any, index) => {
+                  for (var i = 0; i < this.SelectedClassStudentGrades.length; i++) {
+                    var formula = this.SelectedClassStudentGrades[i].Formula
+                      .replaceAll("[TotalMark]", result.Total)
+                      .replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
+                      .replaceAll("[PassCount]", result.PassCount)
+                      .replaceAll("[FailCount]", result.FailCount);
+
+                    if (evaluate(formula)) {
+                      //if (r.FailCount == 0) {
+                      result.Grade = this.SelectedClassStudentGrades[i].StudentGradeId;
+                      result.Division = this.SelectedClassStudentGrades[i].GradeName;
+                      break;
+                      //}
+                    }
+                  }
+
+                  if (result.FailCount == 0) {
+                    result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
+                    if (previousTotal != result.Total)
+                      rankCount++;
+                    result.Rank = rankCount;
+                  }
+                  else
+                    result.Division = '';
+
+                  previousTotal = result.Total
+                })
+              }
+              else {
+                this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+
+              }
+              this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.filter(f => f["Total"] > 0);
+              this.ExamStudentSubjectResult.sort((a, b) => a.Rank - b.Rank)
             }
 
-            this.ExamStudentSubjectResult.sort((a, b) => a.Rank - b.Rank)
+            if (this.ExamStudentSubjectResult.length == 0 || this.displayedColumns.length < 2) {
+              this.ExamStudentSubjectResult = [];
+            }
+            if (this.GradingDisplayedColumns.length == 1)
+              this.ExamStudentSubjectGrading = [];
+            if (this.ExamStudentSubjectResult.length == 0 && this.ExamStudentSubjectGrading.length == 0) {
+              this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+            }
+
+            //console.log("this.VerifiedResult.ExamResultSubjectMark", this.VerifiedResult.ExamResultSubjectMark)
             this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
+            this.GradingDataSource = new MatTableDataSource<any[]>(this.ExamStudentSubjectGrading);
             this.dataSource.sort = this.sort;
             this.dataSource.paginator = this.paginator;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
+
           })
       })
+  }
+  SetGrade(pMarks: any[], gradingTypeId) {
+    var _StudentGrade = '';
+    var _gradeDefinitionsForSpecificSubjectCategory = this.SelectedClassStudentGrades.filter(f => f.SubjectCategoryId == gradingTypeId)
+    if (_gradeDefinitionsForSpecificSubjectCategory.length > 0) {
+      _gradeDefinitionsForSpecificSubjectCategory.sort((a, b) => a.Sequence - b.Sequence);
+      pMarks.forEach((result: any) => {
+        for (var i = 0; i < _gradeDefinitionsForSpecificSubjectCategory.length; i++) {
+          var formula = _gradeDefinitionsForSpecificSubjectCategory[i].Formula
+            .replaceAll("[Mark]", result.Marks)
+          if (evaluate(formula)) {
+            _StudentGrade = _gradeDefinitionsForSpecificSubjectCategory[i].GradeName;
+            break;
+          }
+        }
+      })
+    }
+    return _StudentGrade;
+    // else {
+    //   this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+
+    // }
   }
   GetMasterData() {
 
@@ -400,42 +530,39 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
         this.GetClassGroup();
         this.GetClassGroupMapping();
-        //this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        //this.shareddata.ChangeBatch(this.Batches);
         this.GetExams();
         this.GetStudentSubjects();
+        this.GetStudentGradeDefn();
       });
   }
-  GetClassGroup(){
+  GetClassGroup() {
     this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-    .subscribe((data:any)=>{
-      this.ClassGroups = [...data.value];
-    })
+      .subscribe((data: any) => {
+        this.ClassGroups = [...data.value];
+      })
   }
+  ClassGroupMapping = [];
   GetClassGroupMapping() {
-    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"],1)
-    .subscribe((data: any) => {
-      this.GetStudentGradeDefn(data.value);
-    })
-    // var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]; 
-    // //+ ' and BatchId eq ' + this.SelectedBatchId;
-
-    // let list: List = new List();
-
-    // list.fields = ["ClassId,ClassGroupId"];
-    // list.PageName = "ClassGroupMappings";
-    // list.filter = ["Active eq 1" + orgIdSearchstr];
-    // this.dataservice.get(list)
-    //   .subscribe((data: any) => {
-    //     this.GetStudentGradeDefn(data.value);
-    //   })
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMapping = data.value.map(f => {
+          f.ClassName = f.Class.ClassName;
+          return f;
+        });
+      })
   }
-  GetStudentGradeDefn(classgroupmapping) {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] 
+  GetStudentGradeDefn() {
+    this.contentservice.GetStudentGrade(this.LoginUserDetail[0]["orgId"])
+      .subscribe((data: any) => {
+        this.StudentGrades = [...data.value];
+      })
+  }
+
+  GetStudentGradeDefn_old(classgroupmapping) {
+    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //batch wise not necessary
     //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
@@ -467,8 +594,25 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
   }
   GetStudentGrade() {
     var _classId = this.searchForm.get("searchClassId").value;
-    if (_classId > 0)
-      this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
+    // if (_classId > 0)
+    //   this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
+    this.GetSpecificStudentGrades();
+  }
+  GetSpecificStudentGrades() {
+    debugger;
+    var _classId = this.searchForm.get("searchClassId").value;
+    var _classGroupId = 0;
+    if (_classId > 0) {
+      var obj = this.ClassGroupMapping.filter(f => f.ClassId == _classId)
+      if (obj.length > 0) {
+        _classGroupId = obj[0].ClassGroupId;
+        this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
+      }
+      else {
+        this.contentservice.openSnackBar("Class group not found for selected class.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+    }
   }
   GetExams() {
 
@@ -476,17 +620,24 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId"];
+    list.fields = ["ExamId", "ExamNameId", "ClassGroupId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and (ReleaseResult eq 0 or ReleaseResult eq null) " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
+        this.Exams = [];
+        data.value.forEach(e => {
+          //var _examName = '';
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)
+          if (obj.length > 0) {
+            //_examName = obj[0].MasterDataName
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: e.ClassGroupId
+            })
           }
         })
       })
@@ -510,7 +661,7 @@ export class VerifyResultsComponent implements OnInit { PageLoading=true;
           e.ClassId = e.ClassSubject.ClassId;
           return e;
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 

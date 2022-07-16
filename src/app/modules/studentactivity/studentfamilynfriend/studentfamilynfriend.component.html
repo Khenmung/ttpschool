@@ -13,15 +13,7 @@
                         {{option.Name}}
                     </mat-option>
                 </mat-autocomplete>
-            </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="200">
-                <mat-label>Relationship</mat-label>
-                <mat-select formControlName="searchRelationshipId">
-                    <mat-option [value]="0">All</mat-option>
-                    <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
-                        {{item.MasterDataName}}</mat-option>
-                </mat-select>
-            </mat-form-field>
+            </mat-form-field>            
             <button [disabled]="loading" style="margin-right: 15px;" matTooltip="search sibling or friend"
                 mat-raised-button color="accent" (click)="GetStudentFamilyNFriends()">
                 <mat-icon>search</mat-icon>
@@ -33,6 +25,14 @@
         <span style="width:100%;border-bottom:1px solid lightgray;margin-bottom: 10px;"></span>
     </div>
     <div style="display:flex;">
+        <mat-form-field appearance="outline" [style.width.px]="200">
+            <mat-label>Relationship</mat-label>
+            <mat-select formControlName="searchRelationshipId">
+                <mat-option [value]="0">All</mat-option>
+                <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
+                    {{item.MasterDataName}}</mat-option>
+            </mat-select>
+        </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="250">
             <mat-label>Same school sibling or friend</mat-label>
             <input type="text" formControlName="searchSiblings" matInput [matAutocomplete]="auto1">

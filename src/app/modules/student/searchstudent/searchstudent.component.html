@@ -15,6 +15,15 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline" style="width: 150px;">
+                <mat-label>Section</mat-label>
+                <mat-select formControlName="searchSectionId">
+                    <mat-option value="0">select</mat-option>
+                    <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
+                        {{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="width: 150px;">
                 <mat-label>Remarks</mat-label>
                 <mat-select formControlName="searchRemarkId">
                     <mat-option value="0">select</mat-option>

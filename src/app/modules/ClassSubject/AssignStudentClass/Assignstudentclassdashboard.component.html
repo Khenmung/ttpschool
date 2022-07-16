@@ -30,20 +30,28 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="outline" style="width: 150px;">
+            <mat-label>Remarks</mat-label>
+            <mat-select formControlName="searchRemarkId">
+                <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">
+                    {{item.MasterDataName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
         <button [disabled]="loading" style="margin-right: 10px;" mat-raised-button color="accent" (click)="GetData('')">
             <mat-icon>search</mat-icon>
             <mat-icon *ngIf="loading">
                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
             </mat-icon>
         </button>
-        <button [disabled]="loading" style="margin-right: 10px;" matTooltip="Data from previous batch & previous class"
+        <!-- <button [disabled]="loading" style="margin-right: 10px;" matTooltip="Data from previous batch & previous class"
             class="mat-raised-button" (click)="CopyFromPreviousClassAndBatch()">
             <mat-icon>copy_all</mat-icon>
         </button>
         <button [disabled]="loading" matTooltip="Data from previous batch & same class" class="mat-raised-button"
             (click)="CopyFromSameClassPreviousBatch()">
             <mat-icon>content_copy</mat-icon>
-        </button>
+        </button> -->
     </div>
     <div style="padding:15px;border:1px solid lightgray">
         <span style="padding: 15px;">{{RollNoGenerationSortBy}}</span>
@@ -55,18 +63,18 @@
 </form>
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
-    <ng-container matColumnDef="PID">
+    <ng-container matColumnDef="StudentClassId">
         <mat-header-cell *matHeaderCellDef mat-sort-header style="display:flex ;">
             <span style="display: flex;flex-direction: column;justify-content: flex-start;">
-                <span style="justify-content: flex-start;display: flex;">PID</span>
+                <span style="justify-content: flex-start;display: flex;">Admission Id</span>
                 <mat-form-field style="width: 80px;">
-                    <mat-label>search PID</mat-label>
+                    <mat-label>Admission Id</mat-label>
                     <input matInput [formControl]="IdFilter" autocomplete="Off">
                 </mat-form-field>
             </span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.PID}}
+            {{element.StudentClassId}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StudentName">
@@ -131,8 +139,20 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
+    <ng-container matColumnDef="RemarkId">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Remark </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-select (selectionChange)="onBlur(element)" [value]="element.RemarkId"
+                    [(ngModel)]="element.RemarkId">
+                    <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">{{item.MasterDataName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-cell>
+    </ng-container>
     <ng-container matColumnDef="Remarks">
-        <mat-header-cell *matHeaderCellDef mat-sort-header>Remarks
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Notes
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             <mat-form-field>

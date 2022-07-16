@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassperiodComponent } from '../classperiod/classperiod.component';
 import { SchooltimetableComponent } from '../schooltimetable/schooltimetable.component';
+import { TeacherperiodComponent } from '../teacherperiod/teacherperiod.component';
 import { TeachersubjectComponent } from '../teachersubject/teachersubject.component';
 
 @Component({
@@ -16,6 +17,7 @@ export class TimetableboardComponent implements AfterViewInit {
   components:any = [
     TeachersubjectComponent,
     ClassperiodComponent,
+    TeacherperiodComponent,
     SchooltimetableComponent
   ];
 
@@ -23,6 +25,7 @@ export class TimetableboardComponent implements AfterViewInit {
     { label: 'Class Period', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
+    { label: 'Class time table', faIcon: '' }
   ];
 
   Permissions =
@@ -39,8 +42,7 @@ export class TimetableboardComponent implements AfterViewInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
-    private contentservice: ContentService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    private contentservice: ContentService) {
   }
 
   public ngAfterViewInit(): void {
@@ -64,13 +66,16 @@ export class TimetableboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(TeachersubjectComponent);
     this.addRemovecomponent(perObj,comindx);
 
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.TEACHERPERIOD)
+    var comindx = this.components.indexOf(TeacherperiodComponent);
+    this.addRemovecomponent(perObj,comindx);
+
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
         this.renderComponent(0);
       }, 550);
       this.cdr.detectChanges();
     }
-
   }
 
   public tabChange(index: number) {

@@ -164,13 +164,13 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
     list.filter = [applicationFilter];// + ") or (OrgId eq " + this.OrgId + " and " + applicationFilter + ")"];
     //debugger;
     //console.log("GetMastersForAutoComplete",this.SelectedApplicationId)  
-    return this.dataservice.get(list).subscribe((data: any) => {
+    this.dataservice.get(list).subscribe((data: any) => {
       var result = [];
       data.value.forEach(d => {
-        //if (d.PlanAndMasterItems.length > 0) {
-          result.push({
+        var description = d.Description==null|| d.Description==''?"": "-" + d.Description
+        result.push({
             MasterDataId: d.MasterDataId,
-            MasterDataName: d.MasterDataName,
+            MasterDataName: d.MasterDataName + description,
             ParentId: d.ParentId,
             ApplicationId: d.ApplicationId,
             Description: d.Description,

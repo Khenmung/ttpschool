@@ -21,7 +21,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './Assignstudentclassdashboard.component.html',
   styleUrls: ['./Assignstudentclassdashboard.component.scss']
 })
-export class AssignStudentclassdashboardComponent implements OnInit { PageLoading=true;
+export class AssignStudentclassdashboardComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
@@ -55,7 +56,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
   Classes = [];
   FeeTypes = [];
   Sections = [];
-  Remarks=[];
+  Remarks = [];
   StudentGrades = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
@@ -78,17 +79,18 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     RollNo: 0,
     SectionId: 0,
     FeeTypeId: 0,
-    Remarks:'',
+    Remarks: '',
     Active: 1
   };
   displayedColumns = [
-    'PID',
+    'StudentClassId',
     'StudentName',
     'GenderName',
     'ClassName',
     'SectionId',
     'RollNo',
     'FeeTypeId',
+    'RemarkId',
     'Remarks',
     'Active',
     'Action'
@@ -96,7 +98,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
   nameFilter = new FormControl('');
   IdFilter = new FormControl('');
   filterValues = {
-    PID:0,
+    PID: 0,
     StudentId: 0,
     StudentName: ''
   };
@@ -119,7 +121,8 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     this.searchForm = this.fb.group({
       searchFeeTypeId: [0],
       searchSectionId: [0],
-      searchClassId: [0]
+      searchClassId: [0],
+      searchRemarkId: [0]
     });
     this.nameFilter.valueChanges
       .subscribe(
@@ -159,7 +162,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
         this.Classes = [...data.value.sort((a, b) => a.Sequence - b.Sequence)];
       })
       this.Batches = this.tokenstorage.getBatches()
-      
+
       //this.shareddata.CurrentBatchId.subscribe(c => this.CurrentBatchId = c);
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
       this.NextBatchId = +this.tokenstorage.getNextBatchId();
@@ -195,7 +198,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
         this.GetFeeTypes();
       }
       else {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       }
       //this.GetStudents();
     }
@@ -255,7 +258,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
       this.dataSource.filterPredicate = this.createFilter();
     }
     else {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("No student to assign roll no.", globalconstants.ActionText, globalconstants.RedBackground);
 
     }
@@ -268,7 +271,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     if (this.searchForm.get("searchClassId").value > 0)
       filterStr += " and ClassId eq " + this.searchForm.get("searchClassId").value;
     else {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -283,7 +286,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -383,7 +386,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.dataSource.filterPredicate = this.createFilter();
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         }
       })
   }
@@ -460,12 +463,12 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeTypes);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   CopyFromSameClassPreviousBatch() {
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -530,7 +533,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
               this.dataSource.sort = this.sort;
               this.dataSource.paginator = this.paginator;
               this.dataSource.filterPredicate = this.createFilter();
-              this.loading = false; this.PageLoading=false;
+              this.loading = false; this.PageLoading = false;
 
             })
         })
@@ -539,7 +542,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
   CopyFromPreviousClassAndBatch() {
     debugger;
     if (this.searchForm.get("searchClassId").value == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -605,7 +608,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
               this.dataSource.sort = this.sort;
               this.dataSource.paginator = this.paginator;
               this.dataSource.filterPredicate = this.createFilter();
-              this.loading = false; this.PageLoading=false;
+              this.loading = false; this.PageLoading = false;
             })
         })
     }
@@ -616,6 +619,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     this.loading = true;
     var _classId = this.searchForm.get("searchClassId").value;
     var _FeeTypeId = this.searchForm.get("searchFeeTypeId").value;
+
     //this.HeaderTitle = '';
 
     if (previousbatch == this.SameClassPreviousBatch) {//SameClassPreviousBatch
@@ -632,7 +636,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
         filterStr += " and ClassId eq " + previousClassId;
       }
       else {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.contentservice.openSnackBar("Previous class not defined.", globalconstants.ActionText, globalconstants.RedBackground);
         //return;
       }
@@ -651,7 +655,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
     if (filterStr.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return null;
     }
@@ -669,7 +673,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
       ];
 
       list.PageName = "StudentClasses";
-      list.lookupFields = ["Student($select=PID,FirstName,LastName,Gender)"];
+      list.lookupFields = ["Student($select=PID,FirstName,LastName,Gender,RemarkId)"];
       list.filter = ['Active eq 1 and ' + filterStr];
       this.StudentClassList = [];
       return this.dataservice.get(list);
@@ -679,7 +683,12 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     this.GetStudentClasses('')
       .subscribe((StudentClassesdb: any) => {
         var result;
-        result = [...StudentClassesdb.value];
+        var _RemarkId = this.searchForm.get("searchRemarkId").value;
+        if (_RemarkId > 0)
+          result = StudentClassesdb.value.filter(f => f.RemarkId == _RemarkId);
+        else
+          result = [...StudentClassesdb.value];
+
         var _defaultTypeId = 0;
         var defaultFeeTypeObj = this.FeeTypes.filter(f => f.defaultType == 1);
         if (defaultFeeTypeObj.length > 0)
@@ -695,7 +704,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
             _feetype = feetype[0].FeeTypeName;
 
           this.StudentClassList.push({
-            PID:s.Student.PID,
+            PID: s.Student.PID,
             StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
@@ -723,7 +732,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.dataSource.filterPredicate = this.createFilter();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
 
       })
   }
@@ -796,7 +805,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -838,12 +847,12 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
     this.dataservice.postPatch('StudentClasses', this.StudentClassData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
-          row.ClassName= this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName,
-          row.StudentClassId = data.StudentClassId;
-          
+          this.loading = false; this.PageLoading = false;
+          row.ClassName = this.Classes.filter(c => c.ClassId == data.ClassId)[0].ClassName,
+            row.StudentClassId = data.StudentClassId;
+
           row.Action = false;
-          
+
           this.RowsToUpdate--;
           // if (row.Promote == 1)
           //   this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
@@ -868,7 +877,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
           this.RowsToUpdate--;
           this.CreateInvoice();
           if (this.RowsToUpdate == 0) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -883,12 +892,12 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
             //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           },
             error => {
-              this.loading = false; this.PageLoading=false;
+              this.loading = false; this.PageLoading = false;
               console.log("error in createInvoice", error);
             })
       },
         error => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           console.log("error in getinvoice", error);
         })
   }
@@ -925,7 +934,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetMasterData() {
@@ -938,8 +947,9 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
         this.Genders = this.getDropDownData(globalconstants.MasterDefinitions.school.SCHOOLGENDER);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
+        this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {
@@ -960,7 +970,7 @@ export class AssignStudentclassdashboardComponent implements OnInit { PageLoadin
 
 }
 export interface IStudentClass {
-  PID:number;
+  PID: number;
   StudentClassId: number;
   ClassId: number;
   ClassName: string;

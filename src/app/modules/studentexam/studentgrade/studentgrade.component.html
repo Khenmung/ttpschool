@@ -14,6 +14,15 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <mat-form-field appearance="outline" [style.width.px]="200">
+                    <mat-label>Subject Category</mat-label>
+                    <mat-select formControlName="searchSubjectCategoryId">
+                        <mat-option value="0">select</mat-option>
+                        <mat-option *ngFor="let item of SubjectCategory" [value]="item.MasterDataId">
+                            {{item.MasterDataName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentGrade()">
                     <mat-icon>search</mat-icon>
                     <mat-icon *ngIf="loading">

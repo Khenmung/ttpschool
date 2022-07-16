@@ -18,11 +18,12 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './verifyresultstatus.component.html',
   styleUrls: ['./verifyresultstatus.component.scss']
 })
-export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
+export class VerifyresultstatusComponent implements OnInit {
+    PageLoading = true;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  ClickedVerified =false;
+  ClickedVerified = false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   SelectedClassStudentGrades = [];
@@ -85,11 +86,11 @@ export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
+        this.GetClassGroupMapping();
       }
-      else
-      {
-        this.loading=false;this.PageLoading=false;
-        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      else {
+        this.loading = false; this.PageLoading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
   }
@@ -100,23 +101,27 @@ export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
     this.ExamStudentResult = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchExamId").value == 0) {
+    var _examId = this.searchForm.get("searchExamId").value;
+    if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    //var _classId = this.searchForm.get("searchClassId").value;
-
+    var _examClassGroupId = 0
+    var obj = this.Exams.filter(f => f.ExamId == _examId);
+    if (obj.length > 0) {
+      _examClassGroupId = obj[0].ClassGroupId;
+    }
     this.loading = true;
     filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
 
     let list: List = new List();
     list.fields = [
-      "ExamStudentResultId",
+      "ExamResultSubjectMarkId",
       "ExamId",
       "StudentClassId",
       "Active"
     ];
-    list.PageName = "ExamStudentResults";
+    list.PageName = "ExamResultSubjectMarks";
     list.lookupFields = ["StudentClass($select=ClassId)"];
     list.filter = [filterstr + orgIdSearchstr];
     this.dataservice.get(list)
@@ -125,22 +130,23 @@ export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
         // if (_classId > 0)
         //   this.ExamStudentResult = data.value.filter(f => f["StudentClass"].ClassId == _classId);
         // else
-          this.ExamStudentResult = [...data.value]
+        //var alldatafromdb = [...data.value]
         //  console.log("this.ExamStudentResult",this.ExamStudentResult)
-        this.ExamStudentResult = this.ExamStudentResult.map(d => {
+        var filteredClassGroupMapping =this.ClassGroupMapping.filter(s => s.ClassGroupId == _examClassGroupId);
+        data.value.forEach(d => {
           var _className = '';
-          var _classObj = this.Classes.filter(s => s.ClassId == d.StudentClass["ClassId"]);
-          if (_classObj.length > 0)
-            _className = _classObj[0].ClassName;
-          d["ClassName"] = _className;
-          d["ClassId"] = d.StudentClass["ClassId"];
-          d["ExamName"] = this.Exams.filter(f => f.ExamId == d.ExamId)[0].ExamName;
-          return d;
-
+          var _classgroupObj = filteredClassGroupMapping.filter(s => s.ClassId == d.StudentClass["ClassId"]);
+          if (_classgroupObj.length > 0) {
+            _className = _classgroupObj[0].ClassName;
+            d["ClassName"] = _className;
+            d["ClassId"] = d.StudentClass["ClassId"];
+            d["ExamName"] = this.Exams.filter(f => f.ExamId == d.ExamId)[0].ExamName;
+            this.ExamStudentResult.push(d);
+          }
         })
-        var _distinctExamClass = alasql("select distinct ExamId,ExamName,ClassId,ClassName,Active from ? where Active =1", [this.ExamStudentResult])
+        var _distinctExamClass = alasql("select distinct ExamId,ExamName,ClassId,ClassName,Active from ? where Active =true", [this.ExamStudentResult])
         var statusdetail = [];
-        this.Classes.forEach(cls => {
+        filteredClassGroupMapping.forEach(cls => {
           var verified = _distinctExamClass.filter(f => f.ClassId == cls.ClassId)
           if (verified.length > 0) {
             statusdetail.push(
@@ -151,23 +157,22 @@ export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
               }
             )
           }
-          else
-          {
+          else {
             var _examId = this.searchForm.get("searchExamId").value;
             statusdetail.push(
               {
-                ExamName: this.Exams.filter(f=>f.ExamId ==_examId)[0].ExamName,
+                ExamName: this.Exams.filter(f => f.ExamId == _examId)[0].ExamName,
                 ClassName: cls.ClassName,
                 Active: 0
               }
             )
           }
         })
-        statusdetail = statusdetail.sort((a,b)=>a.Active-b.Active);
+        statusdetail = statusdetail.sort((a, b) => b.Active - a.Active);
         this.dataSource = new MatTableDataSource(statusdetail);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 
@@ -188,23 +193,40 @@ export class VerifyresultstatusComponent implements OnInit { PageLoading=true;
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId"];
+    list.fields = ["ExamId", "ExamNameId","ClassGroupId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and ReleaseResult eq 0 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
+        this.Exams = [];
+        data.value.forEach(e => {
+          //var _examName = '';
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)
+          if (obj.length > 0) {
+            //_examName = obj[0].MasterDataName
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: e.ClassGroupId
+            })
           }
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
-
+  ClassGroupMapping = [];
+  GetClassGroupMapping() {
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMapping = data.value.map(f => {
+          f.ClassName = f.Class.ClassName;
+          return f;
+        });
+      })
+  }
   getDropDownData(dropdowntype) {
     let Id = 0;
     let Ids = this.allMasterData.filter((item, indx) => {

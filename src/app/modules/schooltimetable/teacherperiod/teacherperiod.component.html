@@ -1,6 +1,6 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div style="padding: 15px;"><strong>Teacher Subject</strong></div>
+        <div style="padding: 15px;"><strong>Teacher Period</strong></div>
         <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
         <!-- <alert></alert> -->
         <form [formGroup]="searchForm">
@@ -22,7 +22,7 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetTeacherSubject()">
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetTeacherPeriod()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -30,12 +30,12 @@
             </button>
         </form>
         <mat-table #table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="TeacherSubjectId">
+            <ng-container matColumnDef="TeacherPeriodId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>
                     Id
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.TeacherSubjectId}}
+                    {{element.TeacherPeriodId}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="EmployeeId">
@@ -46,8 +46,7 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Teacher</mat-label>
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.EmployeeId"
-                            [value]="element.EmployeeId">
-                      
+                            [value]="element.EmployeeId">                      
                             <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
                                 {{option.TeacherName}}
                             </mat-option>
@@ -55,23 +54,15 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="ClsName">
+            <ng-container matColumnDef="SchoolClassPeriodId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Class/Course
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element" style="display:flex;justify-content:center">
-                    {{element.ClsName}}
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="ClassSubjectId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Subject
+                    Class Period
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <mat-label>Class Subject</mat-label>
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassSubjectId"
-                            [value]="element.ClassSubjectId">
+                        <mat-label>Class Period</mat-label>
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.SchoolClassPeriodId"
+                            [value]="element.SchoolClassPeriodId">
                             <mat-option value="0">select</mat-option>
                             <mat-option *ngFor="let option of TempClassSubject" [value]="option.ClassSubjectId">
                                 {{option.ClassSubject}}
@@ -80,10 +71,35 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
+            <ng-container matColumnDef="TeacherSubjectId">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Teacher Subject
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Class Subject</mat-label>
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherSubjectId"
+                            [value]="element.TeacherSubjectId">
+                            <mat-option value="0">select</mat-option>
+                            <mat-option *ngFor="let option of TempClassSubject" [value]="option.ClassSubjectId">
+                                {{option.ClassSubject}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>            
+            <ng-container matColumnDef="OffPeriod">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Off Period </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox *ngIf="TeacherPeriodList.length>0" (click)="$event.stopPropagation()"
+                        (change)="updateActive(element,$event)" [checked]="element.OffPeriod">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Active </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    <mat-checkbox *ngIf="TeacherSubjectList.length>0" (click)="$event.stopPropagation()"
+                    <mat-checkbox *ngIf="TeacherPeriodList.length>0" (click)="$event.stopPropagation()"
                         (change)="updateActive(element,$event)" [checked]="element.Active==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
@@ -110,7 +126,6 @@
                             <mat-spinner diameter="20" color="Blue"></mat-spinner>
                         </mat-icon>
                     </button>
-
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

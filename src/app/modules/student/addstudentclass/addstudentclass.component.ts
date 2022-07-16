@@ -309,7 +309,7 @@ export class AddstudentclassComponent implements OnInit {
 
           this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.studentclassData.BatchId, this.StudentClassId)
             .subscribe((data: any) => {
-
+//debugger;
               this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
                 .subscribe((data: any) => {
                   this.loading = false; this.PageLoading = false;

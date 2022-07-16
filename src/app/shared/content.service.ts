@@ -211,6 +211,7 @@ export class ContentService implements OnInit {
     ];
 
     list.PageName = "ClassGroupMappings";
+    list.lookupFields = ["Class($select=ClassName,ClassId)"];
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }

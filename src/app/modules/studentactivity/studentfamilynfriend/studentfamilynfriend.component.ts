@@ -326,18 +326,23 @@ export class StudentfamilynfriendComponent implements OnInit {
   }
   GetStudentFamilyNFriends() {
     debugger;
-    var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
-    if (_studentId == undefined) {
+    var _ParentStudentId = this.searchForm.get("searchStudentName").value.ParentStudentId;
+    if (_ParentStudentId == undefined) {
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
-    this.StudentId = _studentId;
-    let filterStr = 'ParentStudentId eq ' + this.StudentId;
+    //this.StudentId = _studentId;
+
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]['orgId']
+    if (_ParentStudentId > 0)
+      filterStr += ' and ParentStudentId eq ' + _ParentStudentId;
+    else
+      filterStr += ' and ParentStudentId eq ' + this.searchForm.get("searchStudentName").value.StudentId;
 
     var _RelationshipId = this.searchForm.get("searchRelationshipId").value;
     if (_RelationshipId > 0)
-      filterStr = 'RelationshipId eq ' + _RelationshipId;
+      filterStr += ' and RelationshipId eq ' + _RelationshipId;
 
     this.loading = true;
 
@@ -412,6 +417,8 @@ export class StudentfamilynfriendComponent implements OnInit {
     ];
 
     list.PageName = "Students";
+    list.lookupFields = ["StudentFamilyNFriends($select=ParentStudentId)"];
+
     list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
@@ -447,12 +454,14 @@ export class StudentfamilynfriendComponent implements OnInit {
               _RollNo = studentclassobj[0].RollNo;
               _name = student.FirstName + " " + student.LastName;
               var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+              var _ParentId = student.StudentFamilyNFriends.length > 0 ? student.StudentFamilyNFriends[0].ParentStudentId : 0;
               this.Students.push({
                 StudentClassId: _studentClassId,
                 StudentId: student.StudentId,
                 Name: _fullDescription,
                 FatherName: student.FatherName,
                 MotherName: student.MotherName,
+                ParentStudentId: _ParentId,
                 FeeType: _feeType,
                 Remarks: _remarks
               });

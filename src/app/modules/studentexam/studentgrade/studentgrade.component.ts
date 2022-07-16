@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { EncodeHTMLPipe } from 'src/app/encode-html.pipe';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -72,7 +73,8 @@ export class StudentgradeComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchClassGroupId: [0]
+      searchClassGroupId: [0],
+      searchSubjectCategoryId: [0]
     });
     this.PageLoad();
   }
@@ -151,8 +153,21 @@ export class StudentgradeComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+
+    row.GradeName = globalconstants.encodeSpecialChars(row.GradeName);
+
+
     let checkFilterString = "GradeName eq '" + row.GradeName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and ClassGroupId eq " + row.ClassGroupId + " and BatchId eq " + this.SelectedBatchId;
+      " and ClassGroupId eq " + row.ClassGroupId
+    if (row.SubjectCategoryId == null || row.SubjectCategoryId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select subject category.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
+    checkFilterString += " and SubjectCategoryId eq " + row.SubjectCategoryId
+
+    //+ " and BatchId eq " + this.SelectedBatchId;
 
     if (row.StudentGradeId > 0)
       checkFilterString += " and StudentGradeId ne " + row.StudentGradeId;
@@ -179,6 +194,7 @@ export class StudentgradeComponent implements OnInit {
           this.StudentGradeData.Sequence = row.Sequence;
           this.StudentGradeData.BatchId = this.SelectedBatchId;
           this.StudentGradeData.OrgId = this.LoginUserDetail[0]["orgId"];
+          console.log("this.StudentGradeData", this.StudentGradeData);
           if (this.StudentGradeData.StudentGradeId == 0) {
             this.StudentGradeData["CreatedDate"] = new Date();
             this.StudentGradeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -206,6 +222,7 @@ export class StudentgradeComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.StudentGradeId = data.StudentGradeId;
+          row.GradeName = globalconstants.decodeSpecialChars(row.GradeName);
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
@@ -217,6 +234,7 @@ export class StudentgradeComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
+          row.GradeName = globalconstants.decodeSpecialChars(row.GradeName);
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
@@ -233,17 +251,19 @@ export class StudentgradeComponent implements OnInit {
       });
   }
   GetStudentGrade() {
-    debugger;
 
     this.loading = true;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //" and BatchId eq " + this.SelectedBatchId;
 
     var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
+    var _SubjectCategoryId = this.searchForm.get("searchSubjectCategoryId").value;
     if (_ClassGroupId > 0) {
       filterStr += " and ClassGroupId eq " + _ClassGroupId;
     }
-
+    if (_SubjectCategoryId > 0) {
+      filterStr += " and SubjectCategoryId eq " + _SubjectCategoryId;
+    }
     let list: List = new List();
     list.fields = ["*"];
 
@@ -254,13 +274,16 @@ export class StudentgradeComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.StudentGradeList = [...data.value];
+          this.StudentGradeList = data.value.map(f => {
+            f.GradeName = globalconstants.decodeSpecialChars(f.GradeName);
+            return f;
+          });
+          this.StudentGradeList = this.StudentGradeList.sort((a, b) => a.Sequence - b.Sequence);
         }
         this.dataSource = new MatTableDataSource<IStudentGrade>(this.StudentGradeList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
-
   }
 
   GetMasterData() {

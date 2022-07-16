@@ -6,7 +6,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     ////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in";
-    public static apiUrl: string = "http://localhost:8020";//"http://localhost:8020";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -191,7 +191,8 @@ export class globalconstants {
                     'TIMETABLE': 'time table',
                     'CLASSPERIOD': 'class period',
                     'CLASSTIMETABLE': 'class time table',
-                    'TEACHERSUBJECT': 'teacher subject'
+                    'TEACHERSUBJECT': 'teacher subject',
+                    'TEACHERPERIOD': 'teacher period'
                 },
                 'ATTENDANCE': {
                     'ATTENDANCE': 'attendance',
@@ -543,6 +544,46 @@ export class globalconstants {
             return [_permission[0]];
         else
             return [];
+    }
+    public static encodeSpecialChars(val) {
+        var specialchars = globalconstants.SpecialCharEncodeCharacters()
+        specialchars.forEach(f => {
+            val = val.replaceAll(f.Text, f.UTF);
+        });
+        return val;
+    }
+    public static decodeSpecialChars(val) {
+        var specialchars = globalconstants.SpecialCharEncodeCharacters()
+        specialchars.forEach(f => {
+            val = val.replaceAll(f.UTF, f.Text);
+        });
+        return val;
+    }
+    public static SpecialCharEncodeCharacters(): any[] {
+        var textArray = [
+            { Text: '!', Windows: '21%', UTF: '21%' },
+            { Text: '"', Windows: '22%', UTF: '22%' },
+            { Text: '#', Windows: '23%', UTF: '23%' },
+            { Text: '$', Windows: '24%', UTF: '24%' },
+            { Text: '%', Windows: '25%', UTF: '25%' },
+            { Text: '&', Windows: '26%', UTF: '26%' },
+            { Text: "'", Windows: '27%', UTF: '27%' },
+            { Text: '(', Windows: '28%', UTF: '28%' },
+            { Text: ')', Windows: '29%', UTF: '29%' },
+            { Text: '*', Windows: '%2A', UTF: '%2A' },
+            { Text: '+', Windows: '%2B', UTF: '%2B' },
+            { Text: ',', Windows: '%2C', UTF: '%2C' },
+            { Text: '-', Windows: '%2D', UTF: '%2D' },
+            { Text: '.', Windows: '%2E', UTF: '%2E' },
+            { Text: '/', Windows: '%2F', UTF: '%2F' },
+            { Text: ':', Windows: '%3A', UTF: '%3A' },
+            { Text: ';', Windows: '%3B', UTF: '%3B' },
+            { Text: '<', Windows: '%3C', UTF: '%3C' },
+            { Text: '=', Windows: '%3D', UTF: '%3D' },
+            { Text: '>', Windows: '%3E', UTF: '%3E' },
+            { Text: '?', Windows: '%3F', UTF: '%3F' }
+        ]
+        return textArray;
     }
     EscapeSpecialCharacter(str) {
 

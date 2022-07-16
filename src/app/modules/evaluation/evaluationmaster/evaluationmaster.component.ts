@@ -34,7 +34,6 @@ export class EvaluationMasterComponent implements OnInit {
   allMasterData = [];
   EvaluationMaster = [];
   Permission = 'deny';
-  //EmployeeId = 0;
   EvaluationMasterData = {
     EvaluationMasterId: 0,
     EvaluationName: '',
@@ -57,8 +56,8 @@ export class EvaluationMasterComponent implements OnInit {
     "FullMark",
     "PassMark",
     "AppendAnswer",
-    "DisplayResult",
-    "ProvideCertificate",
+    //"DisplayResult",
+    //"ProvideCertificate",
     "Active",
     "Action"
   ];
@@ -77,7 +76,7 @@ export class EvaluationMasterComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchClassName: [0]
+      searchClassGroupId: [0]
     });
     this.PageLoad();
   }
@@ -104,7 +103,7 @@ export class EvaluationMasterComponent implements OnInit {
       else {
 
         this.GetMasterData();
-        this.GetEvaluationMaster();
+        //this.GetEvaluationMaster();
       }
     }
   }
@@ -294,7 +293,19 @@ export class EvaluationMasterComponent implements OnInit {
 
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
+    var _classGroupId = this.searchForm.get("searchClassGroupId").value;
+    // if(_classGroupId==0)
+    // {
+    //   this.loading=false;
+    //   this.contentservice.openSnackBar("Please select class group.",globalconstants.ActionText,globalconstants.RedBackground);
+    //   return;
+    // }
+    // else
+    // {
+      if(_classGroupId>0)
+      filterStr += ' and ClassGroupId eq ' +  _classGroupId
+    //}
+      
     let list: List = new List();
     list.fields = [
       "EvaluationMasterId",
@@ -337,11 +348,11 @@ export class EvaluationMasterComponent implements OnInit {
         this.allMasterData = [...data.value];
 
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-        .subscribe((data:any)=>{
-          this.ClassGroups =[...data.value];
-        });
+          .subscribe((data: any) => {
+            this.ClassGroups = [...data.value];
+          });
 
-        this.GetEvaluationMaster();
+        //this.GetEvaluationMaster();
         this.loading = false; this.PageLoading = false;
       });
   }

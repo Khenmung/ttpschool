@@ -130,11 +130,13 @@
                             </span>
                             <span [innerHTML]="element.AnswerText|encodeHTML"
                                 style="border:1px solid lightgray; width: 100%;min-height: 50px;padding: 15px;margin: 15px;"
-                                *ngIf="!EvaluationUpdatable &&element.ClassEvaluationAnswerOptionParentId==0 && element.History.length>0">
+                                *ngIf="!EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0
+                                && element.QuestionnaireType=='Questionnaire'">
                             </span>
                             <span [innerHTML]="element.History|encodeHTML"
                                 class="history"
-                                *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.History.length>0">
+                                *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 
+                                && element.History.length>0">
                             </span>
                         </span>
                         <span style="width:100%;">

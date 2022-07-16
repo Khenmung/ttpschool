@@ -319,6 +319,7 @@ export class StudentEvaluationComponent implements OnInit {
               EvaluationExamMapId: row.EvaluationExamMapId,
               StudentEvaluationAnswers: row.StudentEvaluationAnswers,
               Active: row.Active,
+              Submitted: this.EvaluationSubmitted,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
           if (this.StudentEvaluationForUpdate.length == this.StudentEvaluationList.length) {
@@ -424,6 +425,7 @@ export class StudentEvaluationComponent implements OnInit {
       'EvaluationExamMapId',
       'AnswerText',
       'History',
+      'Submitted',
       'Active'
     ];
 
@@ -435,13 +437,10 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger
-        //console.log("data.value", data.value);
+        if (data.value.length > 0)
+          this.AlreadyAnswered = data.value[0].Submitted;
         if (!this.EvaluationUpdatable && this.ExamDurationMinutes > 0 && data.value.length == 0) {
-          this.AlreadyAnswered = false;
           this.startTimer();
-        }
-        else if (data.value.length > 0 && !this.EvaluationUpdatable) {
-          this.AlreadyAnswered = true;
         }
 
         var item, indx = 0, SlNo = '';
@@ -608,9 +607,9 @@ export class StudentEvaluationComponent implements OnInit {
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
         //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-        .subscribe((data:any)=>{
-          this.ClassGroups =[...data.value];
-        })
+          .subscribe((data: any) => {
+            this.ClassGroups = [...data.value];
+          })
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
@@ -775,12 +774,12 @@ export class StudentEvaluationComponent implements OnInit {
             item.StudentEvaluationAnswerId = 0;
             return item;
           })
-          this.GetClassEvaluations();
-        }
-        else {
-          this.contentservice.openSnackBar("No answer option found.", globalconstants.ActionText, globalconstants.BlueBackground);
-        }
 
+        }
+        // else {
+        //   this.contentservice.openSnackBar("No answer option found.", globalconstants.ActionText, globalconstants.BlueBackground);
+        // }
+        this.GetClassEvaluations();
         //this.loadingFalse();
       });
 

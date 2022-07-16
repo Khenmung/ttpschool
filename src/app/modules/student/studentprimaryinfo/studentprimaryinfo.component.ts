@@ -198,6 +198,7 @@ export class studentprimaryinfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.imgURL ='';
     this.loginUserDetail = this.tokenService.getUserDetail();
     if (this.loginUserDetail.length == 0)
       this.route.navigate(['/auth/login'])
@@ -214,6 +215,7 @@ export class studentprimaryinfoComponent implements OnInit {
         this.GetMasterData();
         if (this.StudentId > 0)
           this.GetStudent();
+        
         this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.loading = false;

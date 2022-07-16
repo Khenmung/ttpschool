@@ -19,7 +19,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./result.component.scss']
 })
 export class ResultComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -275,27 +275,27 @@ export class ResultComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
-  GetClassGroupMapping() {
-    var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
-    //classgrouping is not batch wise
-    //+ ' and BatchId eq ' + this.SelectedBatchId;
+  // GetClassGroupMapping() {
+  //   var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+  //   //classgrouping is not batch wise
+  //   //+ ' and BatchId eq ' + this.SelectedBatchId;
 
-    let list: List = new List();
+  //   let list: List = new List();
 
-    list.fields = ["ClassId,ClassGroupId"];
-    list.PageName = "ClassGroupMappings";
-    list.filter = ["Active eq 1" + orgIdSearchstr];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.GetStudentGradeDefn(data.value);
-      })
-  }
-  GetStudentGradeDefn(classgroupmapping) {
+  //   list.fields = ["ClassId,ClassGroupId"];
+  //   list.PageName = "ClassGroupMappings";
+  //   list.filter = ["Active eq 1" + orgIdSearchstr];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.GetStudentGradeDefn(data.value);
+  //     })
+  // }
+  GetStudentGradeDefn() {
     this.StudentGrades = [];
     this.contentservice.GetStudentGrade(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
         debugger;
-        classgroupmapping.forEach(f => {
+        this.ClassGroupMapping.forEach(f => {
           var mapped = data.value.filter(d => d.ClassGroupId == f.ClassGroupId)
           var _grades = [];
           mapped.forEach(m => {
@@ -314,13 +314,33 @@ export class ResultComponent implements OnInit {
         })
       })
   }
+
   GetSelectedClassStudentGrade() {
     debugger;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId > 0)
       this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassId == _classId);
   }
-
+  ClassGroupMapping = [];
+  FilteredClasses = [];
+  GetClassGroupMapping() {
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMapping = data.value.map(f => {
+          f.ClassName = f.Class.ClassName;
+          return f;
+        });
+        this.GetStudentGradeDefn();
+      })
+  }
+  FilterClass() {
+    var _examId = this.searchForm.get("searchExamId").value
+    var _classGroupId = 0;
+    var obj = this.Exams.filter(f => f.ExamId == _examId);
+    if (obj.length > 0)
+      _classGroupId = obj[0].ClassGroupId;
+    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)

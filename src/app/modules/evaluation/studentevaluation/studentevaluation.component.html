@@ -94,14 +94,16 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element" style="display:flex; flex-direction: column;justify-content: start;">
                 <span style="margin:15px;width:100%">
-                    {{element.AutoId}}.
-                    <span *ngIf="element.QuestionnaireType=='Category' || element.QuestionnaireType=='Sub Category'"
-                        style="width: 100%;padding: 15px 15px 10px 0px;font-weight: bold;">
-                        {{element.Description}}</span>
-                    <span *ngIf="element.QuestionnaireType=='Questionnaire'"
-                        style="font-style: italic; width: 100%;padding: 15px 15px 10px 0px;">
-                        {{element.Description}}</span>
-                    <span style="display: flex;flex-direction: column; margin:15px 15px 15px 15px;width: 100%;"
+                    <div style="display:flex;">
+                        <div *ngIf="element.AutoId>0" style="padding: 15px 5px 10px 0px;">{{element.AutoId}}.</div>
+                        <div *ngIf="element.QuestionnaireType=='Category' || element.QuestionnaireType=='Sub Category'"
+                            style="width: 100%;padding: 15px 15px 10px 0px;font-weight: bold;">
+                            {{element.Description}}</div>
+                        <div *ngIf="element.QuestionnaireType=='Questionnaire'"
+                            style="font-style: italic; width: 100%;padding: 15px 15px 10px 0px;">
+                            {{element.Description}}</div>
+                    </div>
+                    <div style="display: flex;flex-direction: column; margin:15px 15px 15px 15px;width: 100%;"
                         *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
                         <span [innerHTML]="element.History| encodeHTML">
                         </span>
@@ -112,8 +114,9 @@
                         </mat-form-field>
                         <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/300
                         </mat-hint>
-                    </span>
-                    <span *ngIf="!EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
+                    </div>
+                    <div
+                        *ngIf="!EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
                                 (blur)="onBlur(element)" [value]="element.AnswerText" [rows]="5"
@@ -121,7 +124,7 @@
                         </mat-form-field>
                         <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/1000
                         </mat-hint>
-                    </span>
+                    </div>
                 </span>
                 <span style="margin:15px 15px 15px 100px;width:100%">
                     <span style="padding: 15px 15px 15px 0px;"
@@ -203,5 +206,5 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
             style="align-items: center;"></mat-row>
     </mat-table>
-    <mat-paginator style="display:flex;justify-content:center" [pageSizeOptions]="[1,5,10,20]"></mat-paginator>
+    <mat-paginator style="display:flex;justify-content:center" [pageSizeOptions]="[3,5,10,20]"></mat-paginator>
 </div>

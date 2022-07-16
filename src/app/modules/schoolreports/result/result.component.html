@@ -18,7 +18,7 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassId" (selectionChange)="GetSelectedClassStudentGrade()">
-                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                        <mat-option *ngFor="let item of FilteredClasses" [value]="item.ClassId">
                             {{item.ClassName}}
                         </mat-option>
                     </mat-select>

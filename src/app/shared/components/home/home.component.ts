@@ -112,7 +112,7 @@ export class HomeComponent implements OnInit {
     list.filter = [strFilter];
     var permission;
     this.dataservice.get(list).subscribe((data: any) => {
-      //this.sideMenu = [...data.value];
+      this.sideMenu = [];
       data.value.forEach(m => {
         permission = this.loginUserDetail[0]["applicationRolePermission"].filter(r => r.applicationFeature.toLowerCase().trim() == m.Page.PageTitle.toLowerCase().trim() && m.Page.ParentId == 0)
         if (permission.length > 0 && permission[0].permission != 'deny') {

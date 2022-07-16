@@ -16,10 +16,13 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './slotnclasssubject.component.html',
   styleUrls: ['./slotnclasssubject.component.scss']
 })
-export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
+export class SlotnclasssubjectComponent implements OnInit {
+    PageLoading = true;
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
+  ClassGroupMapping = [];
+  FilteredClasses = [];
 
   DistinctExamDate = [];
   Permission = 'deny';
@@ -95,6 +98,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
         this.GetMasterData();
+        this.GetClassGroupMapping();
 
       }
     }
@@ -134,7 +138,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
         });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
 
   Save(row) {
@@ -158,7 +162,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
         this.UpdateOrSave(row);
       })
       if (subjectdetail.length == 0) {
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       }
       element.Action = false;
     })
@@ -188,7 +192,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -295,9 +299,27 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
             })
           }
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         console.log("this.ClassSubjectList", this.ClassSubjectList);
       });
+  }
+
+  GetClassGroupMapping() {
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMapping = data.value.map(f => {
+          f.ClassName = f.Class.ClassName;
+          return f;
+        });
+      })
+  }
+  FilterClass() {
+    var _examId = this.searchForm.get("searchExamId").value
+    var _classGroupId = 0;
+    var obj = this.Exams.filter(f => f.ExamId == _examId);
+    if (obj.length > 0)
+      _classGroupId = obj[0].ClassGroupId;
+    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
   }
   GetExams() {
 
@@ -305,7 +327,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate","ClassGroupId",
+    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate", "ClassGroupId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -330,7 +352,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
               StartDate: new Date(),
               EndDate: new Date(),
               ReleaseResult: 0,
-              ClassGroupId:0,
+              ClassGroupId: 0,
               ReleaseDate: null,
               OrgId: 0,
               //BatchId: 0,
@@ -343,7 +365,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
         this.Exams.sort((a, b) => {
           return this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   private getTime(date?: Date) {
@@ -404,6 +426,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
       .sort((a, b) => moment.utc(a.ExamDate).diff(moment.utc(b.ExamDate)));
     this.emptyresult();
     this.GetSelectedSubjectsForSelectedExam();
+    this.FilterClass();
   }
   GetSelectedSubjectsForSelectedExam() {
 
@@ -463,7 +486,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StoreForUpdate = [];
-        this.Classes.forEach(cls => {
+        this.FilteredClasses.forEach(cls => {
           this.ClassWiseSubjectDisplay.push({
             ClassName: cls.ClassName,
             Subject: []
@@ -550,7 +573,7 @@ export class SlotnclasssubjectComponent implements OnInit { PageLoading=true;
         }
         //console.log('ClassWiseSubjectDisplay', this.ClassWiseSubjectDisplay)
         this.dataSource = new MatTableDataSource<any>(this.ClassWiseSubjectDisplay);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   checkall(value) {

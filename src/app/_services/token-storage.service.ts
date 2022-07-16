@@ -23,6 +23,7 @@ const CURRENTBATCHID ='currentbatchid';
 const SELECTEDAPPNAME ='selectedappname';
 const BATCHES ='batches';
 const CUSTOM_FEATURE ='customfeatures';
+const STUDENTSEARCH ='studentsearch';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,18 @@ export class TokenStorageService {
   }
   public getBatches(): object[]|null {
     var batch=localStorage.getItem(BATCHES);
+    if (batch) {
+      return JSON.parse(batch);
+    }
+    return [{}];
+    
+  }
+  public saveStudentSearch(token: any): void {
+    localStorage.removeItem(STUDENTSEARCH);
+    localStorage.setItem(STUDENTSEARCH, JSON.stringify(token));
+  }
+  public getStudentSearch(): object[]|null {
+    var batch=localStorage.getItem(STUDENTSEARCH);
     if (batch) {
       return JSON.parse(batch);
     }

@@ -12,11 +12,11 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-teachersubject',
-  templateUrl: './teachersubject.component.html',
-  styleUrls: ['./teachersubject.component.scss']
+  selector: 'app-teacherperiod',
+  templateUrl: './teacherperiod.component.html',
+  styleUrls: ['./teacherperiod.component.scss']
 })
-export class TeachersubjectComponent implements OnInit {
+export class TeacherperiodComponent implements OnInit {
   PageLoading = false;
   @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -24,7 +24,7 @@ export class TeachersubjectComponent implements OnInit {
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  TeacherSubjectListName = "TeacherSubjects";
+  TeacherPeriodListName = "TeacherPeriods";
   Permission = '';
   SelectedApplicationId = 0;
   StandardFilterWithBatchId = '';
@@ -35,34 +35,36 @@ export class TeachersubjectComponent implements OnInit {
   Teachers = [];
   Classes = [];
   Subjects = [];
-  SubjectTypes = [];
   CurrentBatchId = 0;
   SelectedBatchId = 0;
   CheckBatchIDForEdit = 1;
   DataCountToSave = -1;
   Batches = [];
   ClassSubjects = [];
-  TeacherSubjectList: ITeacherSubject[] = [];
-  dataSource: MatTableDataSource<ITeacherSubject>;
+  TeacherPeriodList: ITeacherPeriod[] = [];
+  dataSource: MatTableDataSource<ITeacherPeriod>;
   allMasterData = [];
   searchForm = this.fb.group({
     searchClassId: [0],
     searchEmployeeId: [0]
   });
 
-  TeacherSubjectId = 0;
-  TeacherSubjectData = {
-    TeacherSubjectId: 0,
-    ClassSubjectId: 0,
+  TeacherPeriodId = 0;
+  TeacherPeriodData = {
+    TeacherPeriodId: 0,
     EmployeeId: 0,
+    SchoolClassPeriodId: 0,
+    TeacherSubjectId: 0,
+    OffPeriod: false,
     OrgId: 0,
     Active: 1
   };
   displayedColumns = [
+    'TeacherPeriodId',
+    'EmployeeId',
+    'SchoolClassPeriodId',
     'TeacherSubjectId',
-    'EmployeeId',    
-    'ClassSubjectId',
-    'ClsName',
+    'OffPeriod',
     'Active',
     'Action'
   ];
@@ -177,33 +179,35 @@ export class TeachersubjectComponent implements OnInit {
     });
     return monthArray;
   }
-  GetTeacherSubjectId(event) {
-    this.TeacherSubjectId = event;
+  GetTeacherPeriodId(event) {
+    this.TeacherPeriodId = event;
     this.mattable._elementRef.nativeElement.style.backgroundColor = "";
-    this.TeacherSubjectList = [];
-    this.dataSource = new MatTableDataSource<any>(this.TeacherSubjectList);
-    this.GetTeacherSubject();
+    this.TeacherPeriodList = [];
+    this.dataSource = new MatTableDataSource<any>(this.TeacherPeriodList);
+    this.GetTeacherPeriod();
   }
 
   View(element) {
     // //debugger;
-    // this.TeacherSubjectId = element.TeacherSubjectId;
+    // this.TeacherPeriodId = element.TeacherPeriodId;
     // this.mattable._elementRef.nativeElement.style.backgroundColor = "grey";
     // setTimeout(() => {
-    //   this.TeacherSubjectAdd.PageLoad();
+    //   this.TeacherPeriodAdd.PageLoad();
     // }, 50);
   }
 
   addnew() {
     let toadd = {
-      TeacherSubjectId: 0,
+      TeacherPeriodId: 0,
       EmployeeId: 0,
-      ClassSubjectId: 0,
-      Active: 1,
+      SchoolClassPeriodId: 0,
+      TeacherSubjectId: 0,
+      OffPeriod: false,
+      Active: false,
       Action: false
     };
-    this.TeacherSubjectList.push(toadd);
-    this.dataSource = new MatTableDataSource<ITeacherSubject>(this.TeacherSubjectList);
+    this.TeacherPeriodList.push(toadd);
+    this.dataSource = new MatTableDataSource<ITeacherPeriod>(this.TeacherPeriodList);
 
   }
   // CopyFromPreviousBatch() {
@@ -212,17 +216,17 @@ export class TeachersubjectComponent implements OnInit {
   //   if (this.PreviousBatchId == -1)
   //     this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
   //   else
-  //     this.GetTeacherSubject(1)
+  //     this.GetTeacherPeriod(1)
   // }
-  GetTeacherSubject() {
+  GetTeacherPeriod() {
     let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     //debugger;
     this.loading = true;
 
     var _classId = this.searchForm.get("searchClassId").value;
     var _employeeId = this.searchForm.get("searchEmployeeId").value;
-    if (_classId == 0 && _employeeId ==0) {
-      this.loading = false; 
+    if (_classId == 0 && _employeeId == 0) {
+      this.loading = false;
       this.contentservice.openSnackBar("Please select class/course or teacher", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -238,39 +242,40 @@ export class TeachersubjectComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
     let list: List = new List();
     list.fields = [
+      'TeacherPeriodId',
+      'SchoolClassPeriodId',
       'TeacherSubjectId',
-      'ClassSubjectId',
       'EmployeeId',
-      'Active',
+      'OffPeriod',
+      'Active'
     ];
 
-    list.PageName = this.TeacherSubjectListName;
+    list.PageName = this.TeacherPeriodListName;
     //list.lookupFields = ["ClassSubject($select=ClassSubjectId,ClassId,SubjectId)"];
     list.filter = [filterStr];
-    this.TeacherSubjectList = [];
+    this.TeacherPeriodList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (_classId > 0)
           this.ClassSubjects = this.ClassSubjects.filter(f => f.ClassId == _classId);
-debugger;
-        data.value.forEach(teachersubject => {
-          var objClsSubject = this.ClassSubjects.filter(clssubject => clssubject.ClassSubjectId == teachersubject.ClassSubjectId)
+        debugger;
+        data.value.forEach(TeacherPeriod => {
+          var objClsSubject = this.ClassSubjects.filter(clssubject => clssubject.ClassSubjectId == TeacherPeriod.ClassSubjectId)
           if (objClsSubject.length > 0) {
-            teachersubject["ClsName"] = objClsSubject[0]["ClsName"];
-            this.TeacherSubjectList.push(teachersubject);
+            TeacherPeriod["ClsName"] = objClsSubject[0]["ClsName"];
+            this.TeacherPeriodList.push(TeacherPeriod);
           }
 
         })
-        if (this.TeacherSubjectList.length == 0) {
+        if (this.TeacherPeriodList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
-        this.TeacherSubjectList.sort((a, b) => b.Active - a.Active);
-        console.log("TeacherSubjectList", this.TeacherSubjectList);
-        //console.log("TeacherSubjectList", this.TeacherSubjectList);
-        this.dataSource = new MatTableDataSource<ITeacherSubject>(this.TeacherSubjectList);
+        //this.TeacherPeriodList.sort((a, b) => b.Active - a.Active);
+        //console.log("TeacherPeriodList", this.TeacherPeriodList);
+        //console.log("TeacherPeriodList", this.TeacherPeriodList);
+        this.dataSource = new MatTableDataSource<ITeacherPeriod>(this.TeacherPeriodList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.dataSource.filterPredicate = this.createFilter();
@@ -298,21 +303,17 @@ debugger;
     let toupdate = {
       Active: element.Active == 1 ? 0 : 1
     }
-    this.dataservice.postPatch('TeacherSubjects', toupdate, element.TeacherSubjectId, 'delete')
+    this.dataservice.postPatch('TeacherPeriods', toupdate, element.TeacherPeriodId, 'delete')
       .subscribe(
         (data: any) => {
           this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
-  updateSelectHowMany(row) {
-    //debugger;
-    row.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == row.SubjectTypeId)[0].SelectHowMany;
-    row.Action = true;
-  }
+  
   SaveAll() {
-    this.DataCountToSave = this.TeacherSubjectList.length;
-    var toUpdate = this.TeacherSubjectList.filter(f => f.Action);
+    this.DataCountToSave = this.TeacherPeriodList.length;
+    var toUpdate = this.TeacherPeriodList.filter(f => f.Action);
     toUpdate.forEach(row => {
       this.DataCountToSave--;
       this.UpdateOrSave(row);
@@ -329,23 +330,23 @@ debugger;
       this.loading = false;
       return;
     }
-    if (row.ClassSubjectId == 0) {
+    if (row.TeacherSubjectId == 0) {
       this.contentservice.openSnackBar("Please select subject.", globalconstants.ActionText, globalconstants.RedBackground);
       this.loading = false;
       return;
     }
-    let checkFilterString = "ClassSubjectId eq " + row.ClassSubjectId +
+    let checkFilterString = "TeacherSubjectId eq " + row.TeacherSubjectId +
       " and EmployeeId eq " + row.EmployeeId;
 
 
-    if (row.TeacherSubjectId > 0)
-      checkFilterString += " and TeacherSubjectId ne " + row.TeacherSubjectId;
+    if (row.TeacherPeriodId > 0)
+      checkFilterString += " and TeacherPeriodId ne " + row.TeacherPeriodId;
 
     checkFilterString += ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     let list: List = new List();
-    list.fields = ["TeacherSubjectId"];
-    list.PageName = this.TeacherSubjectListName;
+    list.fields = ["TeacherPeriodId"];
+    list.PageName = this.TeacherPeriodListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -359,23 +360,24 @@ debugger;
         }
         else {
 
-          this.TeacherSubjectData.Active = row.Active;
-          this.TeacherSubjectData.TeacherSubjectId = row.TeacherSubjectId;
-          this.TeacherSubjectData.ClassSubjectId = row.ClassSubjectId;
-          this.TeacherSubjectData.EmployeeId = row.EmployeeId;
-          this.TeacherSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
-          if (this.TeacherSubjectData.TeacherSubjectId == 0) {
-            this.TeacherSubjectData["CreatedDate"] = new Date();
-            this.TeacherSubjectData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.TeacherSubjectData["UpdatedDate"];
-            delete this.TeacherSubjectData["UpdatedBy"];
+          this.TeacherPeriodData.Active = row.Active;
+          this.TeacherPeriodData.TeacherPeriodId = row.TeacherPeriodId;
+          this.TeacherPeriodData.SchoolClassPeriodId = row.SchoolClassPeriodId;
+          this.TeacherPeriodData.EmployeeId = row.EmployeeId;
+          this.TeacherPeriodData.OffPeriod = row.OffPeriod;
+          this.TeacherPeriodData.OrgId = this.LoginUserDetail[0]["orgId"];
+          if (this.TeacherPeriodData.TeacherPeriodId == 0) {
+            this.TeacherPeriodData["CreatedDate"] = new Date();
+            this.TeacherPeriodData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.TeacherPeriodData["UpdatedDate"];
+            delete this.TeacherPeriodData["UpdatedBy"];
             this.insert(row);
           }
           else {
-            delete this.TeacherSubjectData["CreatedDate"];
-            delete this.TeacherSubjectData["CreatedBy"];
-            this.TeacherSubjectData["UpdatedDate"] = new Date();
-            this.TeacherSubjectData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.TeacherPeriodData["CreatedDate"];
+            delete this.TeacherPeriodData["CreatedBy"];
+            this.TeacherPeriodData["UpdatedDate"] = new Date();
+            this.TeacherPeriodData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
         }
@@ -385,14 +387,14 @@ debugger;
 
   insert(row) {
 
-    //console.log('this.TeacherSubjectData', this.TeacherSubjectData)
+    //console.log('this.TeacherPeriodData', this.TeacherPeriodData)
     //debugger;
-    this.dataservice.postPatch('TeacherSubjects', this.TeacherSubjectData, 0, 'post')
+    this.dataservice.postPatch('TeacherPeriods', this.TeacherPeriodData, 0, 'post')
       .subscribe(
         (data: any) => {
 
           row.Action = false;
-          row.TeacherSubjectId = data.TeacherSubjectId;
+          row.TeacherPeriodId = data.TeacherPeriodId;
           if (this.DataCountToSave == 0) {
             this.loading = false; this.PageLoading = false;
             this.DataCountToSave = -1;
@@ -402,7 +404,7 @@ debugger;
   }
   update(row) {
 
-    this.dataservice.postPatch('TeacherSubjects', this.TeacherSubjectData, this.TeacherSubjectData.TeacherSubjectId, 'patch')
+    this.dataservice.postPatch('TeacherPeriods', this.TeacherPeriodData, this.TeacherPeriodData.TeacherPeriodId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -418,24 +420,7 @@ debugger;
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
-  GetSubjectTypes() {
-
-    //var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    let list: List = new List();
-
-    list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
-    list.PageName = "SubjectTypes";
-    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and Active eq 1 "];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        this.SubjectTypes = [...data.value];
-        this.shareddata.ChangeSubjectTypes(this.SubjectTypes);
-
-      })
-  }
+  
   GetClassSubject() {
     debugger;
     let list: List = new List();
@@ -479,6 +464,24 @@ debugger;
       this.TempClassSubject = [...this.ClassSubjects];
 
   }
+  SchoolClassPeriod=[];
+  GetSchoolClassPeriod(){
+    
+    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    
+    let list: List = new List();
+
+    list.fields = ["*"];
+    list.PageName = "SchoolClassPeriods";
+    list.filter = [orgIdSearchstr + " and Active eq 1"];
+    this.Teachers = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        
+        this.SchoolClassPeriod = [...data.value];
+
+      })
+  }
   GetTeachers() {
 
     var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -512,7 +515,6 @@ debugger;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Batches = this.tokenstorage.getBatches()
         this.shareddata.ChangeSubjects(this.Subjects);
@@ -538,11 +540,13 @@ debugger;
   }
 
 }
-export interface ITeacherSubject {
-  TeacherSubjectId: number;
-  ClassSubjectId: number;
+export interface ITeacherPeriod {
+  TeacherPeriodId: number;
   EmployeeId: number;
-  Active: number;
+  SchoolClassPeriodId: number;
+  TeacherSubjectId: number;
+  OffPeriod: boolean;
+  Active: boolean;
   Action: boolean;
 }
 export interface ITeachers {

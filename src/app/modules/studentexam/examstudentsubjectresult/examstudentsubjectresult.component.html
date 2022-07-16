@@ -18,7 +18,7 @@
                 <mat-form-field appearance="outline">
                     <mat-label>Class</mat-label>
                     <mat-select formControlName="searchClassId" (selectionChange)="SelectClassSubject()">
-                        <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
+                        <mat-option *ngFor="let item of FilteredClasses" [value]="item.ClassId">
                             {{item.ClassName}}
                         </mat-option>
                     </mat-select>
@@ -40,36 +40,38 @@
                     </mat-select>
                 </mat-form-field>
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetExamStudentSubjectResults()">
-                     <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-                </button>                
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
             </form>
 
-            <mat-table #table style="overflow: auto;" [dataSource]="dataSource" *ngIf="ExamStudentSubjectResult.length>0">
+            <mat-table #table style="overflow: auto;" [dataSource]="dataSource"
+                *ngIf="ExamStudentSubjectResult.length>0">
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>{{disCol!='Action'?disCol:''}}
                         <div *ngIf="ExamStudentSubjectResult.length>0" fxLayoutAlign="center center">
-                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read' || ResultReleased==1"
-                                matTooltip="save all" mat-mini-fab (click)="UpdateAll()">
+                            <button *ngIf="disCol=='Action'"
+                                [disabled]="loading || Permission=='read' || ResultReleased==1" matTooltip="save all"
+                                mat-mini-fab (click)="UpdateAll()">
                                 <mat-icon>all_out</mat-icon>
-                <mat-icon *ngIf="loading">
-                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                </mat-icon>
+                                <mat-icon *ngIf="loading">
+                                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                                </mat-icon>
                             </button>
                         </div>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field style="text-align: center;" 
+                        <mat-form-field style="text-align: center;"
                             *ngIf="disCol !='StudentClassSubject' && disCol !='Action'">
                             <input matInput type="number" (blur)="onBlur(element,$event)" [attr.name]="disCol"
                                 [value]="element[disCol]" [(ngModel)]="element[disCol]">
                         </mat-form-field>
                         <button *ngIf="disCol=='Action'"
-                            [disabled]="loading || Permission=='read' || !element.Action || ResultReleased==1" matTooltip="save"
-                            mat-mini-fab (click)="SaveRow(element)">
-                             <mat-icon>save</mat-icon>
+                            [disabled]="loading || Permission=='read' || !element.Action || ResultReleased==1"
+                            matTooltip="save" mat-mini-fab (click)="SaveRow(element)">
+                            <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>
