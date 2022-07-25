@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { List } from './interface';
 import { globalconstants } from './globalconstant';
+import { environment } from 'src/environments/environment';
 
 //import { isNull } from 'util';
 

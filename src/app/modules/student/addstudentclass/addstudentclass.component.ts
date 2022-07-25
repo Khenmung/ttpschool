@@ -331,11 +331,13 @@ export class AddstudentclassComponent implements OnInit {
         });
   }
   getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
-    });
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    
+    // let Id = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    // })[0].MasterDataId;
+    // return this.allMasterData.filter((item, index) => {
+    //   return item.ParentId == Id
+    // });
   }
 }

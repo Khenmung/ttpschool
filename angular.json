@@ -49,6 +49,22 @@
             "namedChunks": true
           },
           "configurations": {
+            "dev": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.dev.ts"
+                }
+              ]
+            },
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.test.ts"
+                }
+              ]
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -86,16 +102,18 @@
             
           },
           "configurations": {
+            "dev": {
+              "browserTarget": "schoolapp:build:dev",
+              "proxyConfig": "src/proxy.prod.Conf.json"
+            },
+            "test": {
+              "browserTarget": "schoolapp:build:test",
+              "proxyConfig": "src/proxy.prod.Conf.json"
+            },
             "production": {
               "browserTarget": "schoolapp:build:production",
               "proxyConfig": "src/proxy.prod.Conf.json"
-            },
-            "demo": {
-              "browserTarget": "schoolapp:build:demo",
-              "optimization": false,
-              "aot": false,
-              "sourceMap": true
-            }
+            }          
           }
         },
         "extract-i18n": {

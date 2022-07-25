@@ -4,6 +4,7 @@ import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { ActivatedRoute, Router } from '@angular/router';
 import {globalconstants } from '../../../shared/globalconstant';
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'carousel, [carousel]',
   templateUrl: './carousel.component.html',

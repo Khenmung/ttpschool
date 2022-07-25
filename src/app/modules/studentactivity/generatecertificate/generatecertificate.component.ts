@@ -742,22 +742,17 @@ export class GenerateCertificateComponent implements OnInit {
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
-          }
+        this.Exams = [];
+        data.value.map(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0)
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: obj[0].ClassGroupId
+            })
         })
       })
   }

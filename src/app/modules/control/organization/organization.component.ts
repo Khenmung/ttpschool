@@ -10,13 +10,15 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-organization',
   templateUrl: './organization.component.html',
   styleUrls: ['./organization.component.scss']
 })
-export class OrganizationComponent implements OnInit { PageLoading=true;
+export class OrganizationComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   Action = false;
   OrganizationId = 0;
@@ -94,9 +96,9 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
       StateId: [0],
       CityId: [0],
       Contact: [0],
-      ValidTo: [{value:new Date(),disabled:true}],
-      CreatedDate: [{value:new Date(),disabled:true}],
-      WebSite:[''],
+      ValidTo: [{ value: new Date(), disabled: true }],
+      CreatedDate: [{ value: new Date(), disabled: true }],
+      WebSite: [''],
       Active: [0]
     });
     this.dataSource = new MatTableDataSource<IOrganization>([]);
@@ -108,6 +110,7 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
   PageLoad() {
     debugger;
     this.loading = true;
+
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     if (this.LoginUserDetail.length != 0) {
       this.UserId = this.LoginUserDetail[0]["userId"];
@@ -138,7 +141,8 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
       this.GetOrganization();
       this.GetStorageFnP(0).subscribe((data: any) => {
         this.StorageFnPList = [...data.value];
-        this.loading = false; this.PageLoading=false;
+        this.loading = false;
+        this.PageLoading = false;
       })
     }
   }
@@ -149,7 +153,7 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         this.States = [...data.value];
         this.Action = true;
-      })      
+      })
   }
   PopulateCity(element) {
     var commonAppId = this.Applications.filter(f => f.appShortName == 'common')[0].applicationId;
@@ -213,9 +217,9 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.OrganizationListName, this.OrganizationData, 0, 'post')
       .subscribe(
         (data: any) => {
-         // row.OrganizationId = data.OrganizationId;
-         // row.Action = false;
-          this.loading = false; this.PageLoading=false;
+          // row.OrganizationId = data.OrganizationId;
+          // row.Action = false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }, error => {
           this.contentservice.openSnackBar("error occured. Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -226,7 +230,7 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.OrganizationListName, this.OrganizationData, this.OrganizationData.OrganizationId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           //row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
@@ -248,7 +252,7 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
           cntrl.disable();
           this.GetOrganizationDetail();
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetOrganizationDetail() {
@@ -287,32 +291,22 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //var customerapp;
         //console.log("data.value[0]",data.value[0])
-        if(data.value.length>0)
-        {
-          data.value[0].CreatedDate= moment(data.value[0].CreatedDate).format("DD/MM/YYYY")
-          data.value[0].ValidTo= moment(data.value[0].ValidTo).format("DD/MM/YYYY")
-        this.searchForm.patchValue(data.value[0])
-        this.OrganizationId = data.value[0].OrganizationId;
-        this.imgURL = globalconstants.apiUrl + "/uploads/"+ this.LoginUserDetail[0]["org"] +"/organization logo/"+ data.value[0].LogoPath;
-        this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].CountryId,this.LoginUserDetail[0]["orgId"])
-        .subscribe((data:any)=>{
-          this.States = [...data.value];
-        });
-        this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].StateId,this.LoginUserDetail[0]["orgId"])
-        .subscribe((data:any)=>{
-          this.City =  [...data.value];
-        });
+        if (data.value.length > 0) {
+          data.value[0].CreatedDate = moment(data.value[0].CreatedDate).format("DD/MM/YYYY")
+          data.value[0].ValidTo = moment(data.value[0].ValidTo).format("DD/MM/YYYY")
+          this.searchForm.patchValue(data.value[0])
+          this.OrganizationId = data.value[0].OrganizationId;
+          this.imgURL = globalconstants.apiUrl + "/uploads/" + this.LoginUserDetail[0]["org"] + "/organization logo/" + data.value[0].LogoPath;
+          this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].CountryId, this.LoginUserDetail[0]["orgId"])
+            .subscribe((data: any) => {
+              this.States = [...data.value];
+            });
+          this.contentservice.GetDropDownDataWithOrgIdnParent(data.value[0].StateId, this.LoginUserDetail[0]["orgId"])
+            .subscribe((data: any) => {
+              this.City = [...data.value];
+            });
         }
-        //this.dataSource = new MatTableDataSource<any>(this.OrganizationList);
-        //this.dataSource.paginator = this.paginator;
-
-        // var _OrgLogoParentId = this.StorageFnPList.filter(f => f.FileName.toLowerCase() == "organization logo")[0].FileId;
-        // this.GetStorageFnP(_OrgLogoParentId).subscribe((imgurldata: any) => {
-        //   this.imgURL = globalconstants.apiUrl + "/uploads/" + this.LoginUserDetail[0]["org"] + "/organization logo/" + imgurldata.value[0].UpdatedFileFolderName
-        //   this.loading = false; this.PageLoading=false;
-
-        //   //this.loading = false; this.PageLoading=false;
-        // })
+        this.loading = false; this.PageLoading = false;
       })
   }
   preview(files) {
@@ -327,7 +321,7 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
     debugger;
     this.selectedFile = files[0];
     if (this.selectedFile.size > 60000) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Image size should be less than 80kb", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -344,7 +338,7 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
     let error: boolean = false;
     this.loading = true;
     if (this.selectedFile == undefined) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -383,7 +377,7 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
       keepAfterRouteChange: true
     };
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
       this.LogoPath = this.selectedFile.name;
       //this.Edit = false;
@@ -404,18 +398,19 @@ export class OrganizationComponent implements OnInit { PageLoading=true;
     }
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 
@@ -429,7 +424,7 @@ export interface IOrganization {
   StateId: number;
   CountryId: number;
   RegistrationNo: string;
-  WebSite:string;
+  WebSite: string;
   Contact: string;
   ValidFrom: Date;
   ValidTo: Date;

@@ -25,7 +25,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" style="width: 150px;">
                 <mat-label>Remarks</mat-label>
-                <mat-select formControlName="searchRemarkId">
+                    <mat-select formControlName="searchRemarkId">
                     <mat-option value="0">select</mat-option>
                     <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">
                         {{item.MasterDataName}}

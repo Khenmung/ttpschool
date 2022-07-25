@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { evaluate } from 'mathjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -247,6 +246,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     if (obj.length > 0)
       _classGroupId = obj[0].ClassGroupId;
     this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
+    this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
   }
   GetStudentSubjects() {
     debugger;
@@ -264,7 +264,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)", "StudentClass($select=StudentId,RollNo,SectionId)"]
+    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)", 
+    "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -308,6 +309,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             })
           }
         })
+        console.log("this.StudentSubjects",this.StudentSubjects)
         this.loading = false; this.PageLoading = false;
         this.GetSubjectMarkComponents();
       });
@@ -315,7 +317,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   SelectClassSubject() {
     debugger;
     this.SelectedClassSubjects = this.ClassSubjects.filter(f => f.ClassId == this.searchForm.get("searchClassId").value);
-    this.GetSpecificStudentGrades();
+    //this.GetSpecificStudentGrades();
   }
   GetStudents() {
 
@@ -418,7 +420,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       })
   }
   GetExamStudentSubjectResults() {
-
+debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
@@ -465,7 +467,10 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;
+        //debugger;\
+        console.log("this.searchForm.get(searchClassId).value",this.searchForm.get("searchClassId").value);
+        console.log("this.searchForm.get(searchSubjectId).value",this.searchForm.get("searchSubjectId").value);
+        console.log("this.searchForm.get(searchSectionId).value",this.searchForm.get("searchSectionId").value);
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == this.searchForm.get("searchClassId").value
             && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value
@@ -578,10 +583,11 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetSpecificStudentGrades() {
     debugger;
-    var _classId = this.searchForm.get("searchClassId").value;
+    var _examId = this.searchForm.get("searchExamId").value;
     var _classGroupId = 0;
-    if (_classId > 0) {
-      var obj = this.ClassGroupMapping.filter(f => f.ClassId == _classId)
+    
+    if (_examId > 0) {
+      var obj = this.Exams.filter(f => f.ExamId == _examId)
       if (obj.length > 0) {
         _classGroupId = obj[0].ClassGroupId;
         this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
@@ -731,18 +737,19 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

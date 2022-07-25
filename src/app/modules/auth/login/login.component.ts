@@ -8,6 +8,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
+import { environment } from 'src/environments/environment';
 import { AuthService } from '../../../_services/auth.service';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 
@@ -16,7 +17,8 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit { PageLoading=true;
+export class LoginComponent implements OnInit {
+    PageLoading = true;
   jwtHelper = new JwtHelperService();
   userInfo = [];
   loading = false;
@@ -39,10 +41,10 @@ export class LoginComponent implements OnInit { PageLoading=true;
   show = false;
   IsSubmitted = false;
   constructor(private authService: AuthService,
-    
+
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
-    private route: Router,   
+    private route: Router,
     private mediaObserver: MediaObserver,
     private fb: FormBuilder,
     private contentservice: ContentService
@@ -74,14 +76,12 @@ export class LoginComponent implements OnInit { PageLoading=true;
     this.username = this.loginForm.get("username").value;
     var password = this.loginForm.get("password").value;
     debugger;
-    if(this.username.length==0)
-    {
-      this.contentservice.openSnackBar("Please enter user name",globalconstants.ActionText,globalconstants.RedBackground);
+    if (this.username.length == 0) {
+      this.contentservice.openSnackBar("Please enter user name", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(password.length==0)
-    {
-      this.contentservice.openSnackBar("Please enter password",globalconstants.ActionText,globalconstants.RedBackground);
+    if (password.length == 0) {
+      this.contentservice.openSnackBar("Please enter password", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
@@ -105,9 +105,9 @@ export class LoginComponent implements OnInit { PageLoading=true;
 
         //console.log("decodedUser.iss",decodedUser.iss)
         //if PlanId is zero, redirect to select plan.
-         if (+decodedUser.planId == 0 && decodedUser.role.toLowerCase() =='admin')
-           this.route.navigate(['/auth/selectplan']);
-         else {
+        if (+decodedUser.planId == 0 && decodedUser.role.toLowerCase() == 'admin')
+          this.route.navigate(['/auth/selectplan']);
+        else {
           //  localStorage.setItem('userInfo',decodedUser);
           this.isLoginFailed = false;
           this.isLoggedIn = true;
@@ -118,9 +118,9 @@ export class LoginComponent implements OnInit { PageLoading=true;
       },
       err => {
         debugger;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         //this.errorMessage = '';
-        this.errorMessage =globalconstants.formatError(err);
+        this.errorMessage = globalconstants.formatError(err);
         // var modelState;
         // if (err.error.ModelState != null)
         //   modelState = JSON.parse(JSON.stringify(err.error.ModelState));
@@ -137,7 +137,7 @@ export class LoginComponent implements OnInit { PageLoading=true;
         //     //errors.push(modelState[key]);//list of error messages in an array
         //   }
         // }
-        this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        this.contentservice.openSnackBar(this.errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
         this.isLoginFailed = true;
       }
     );
@@ -172,7 +172,7 @@ export class LoginComponent implements OnInit { PageLoading=true;
           if (data.value[0].Org.Active == 1)
             this.GetMasterData(data.value);
           else {
-            this.contentservice.openSnackBar("User's Organization not active!, Please contact your administrator!",globalconstants.ActionText,globalconstants.RedBackground);
+            this.contentservice.openSnackBar("User's Organization not active!, Please contact your administrator!", globalconstants.ActionText, globalconstants.RedBackground);
           }
         }
         else {
@@ -213,7 +213,7 @@ export class LoginComponent implements OnInit { PageLoading=true;
                 orgId: UserRole[0].OrgId,
                 org: __organization,
                 planId: localStorage.getItem("planId"),
-                logoPath: globalconstants.apiUrl + "/uploads/"+ __organization + "/organization logo/" + UserRole[0].Org.LogoPath,
+                logoPath: globalconstants.apiUrl + "/uploads/" + __organization + "/organization logo/" + UserRole[0].Org.LogoPath,
                 RoleUsers: UserRole.map(roleuser => {
                   if (roleuser.Active == 1 && roleuser.RoleId != null) {
                     this.RoleFilter += ' or RoleId eq ' + roleuser.RoleId
@@ -224,7 +224,7 @@ export class LoginComponent implements OnInit { PageLoading=true;
                       _role = _roleobj[0].MasterDataName;
                     }
                     else {
-                      this.contentservice.openSnackBar("No matching role found.",globalconstants.ActionText,globalconstants.RedBackground);
+                      this.contentservice.openSnackBar("No matching role found.", globalconstants.ActionText, globalconstants.RedBackground);
                     }
                     return {
                       roleId: roleuser.RoleId,
@@ -249,24 +249,25 @@ export class LoginComponent implements OnInit { PageLoading=true;
         })
     })
   }
-  
+ 
   get f() {
     return this.loginForm.controls;
   }
-  visibility='visibility';
-  showhidePassword(){
-    
+  visibility = 'visibility';
+  showhidePassword() {
+
     if (this.password === 'password') {
       this.password = 'text';
       this.show = true;
-      this.visibility ='visibility';
+      this.visibility = 'visibility';
     } else {
       this.password = 'password';
       this.show = false;
-      this.visibility ='visibility_off';
+      this.visibility = 'visibility_off';
     }
-    
+
   }
+
   GetApplicationRolesPermission() {
 
     let list: List = new List();
@@ -314,7 +315,7 @@ export class LoginComponent implements OnInit { PageLoading=true;
               });
             }
           });
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.tokenStorage.saveUserdetail(this.UserDetail);
           this.isLoginFailed = false;
           this.isLoggedIn = true;
@@ -325,7 +326,7 @@ export class LoginComponent implements OnInit { PageLoading=true;
           this.route.navigate([gotoUrl]);
         }
         else {
-          this.contentservice.openSnackBar("Initial minimal settings must be done.",globalconstants.ActionText,globalconstants.RedBackground);
+          this.contentservice.openSnackBar("Initial minimal settings must be done.", globalconstants.ActionText, globalconstants.RedBackground);
           this.route.navigate(['edu/setting']);
         }
       })

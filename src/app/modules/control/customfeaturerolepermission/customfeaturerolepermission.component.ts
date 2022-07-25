@@ -113,7 +113,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       "Active",
       "OrgId"];
     list.PageName = "CustomFeatures";
-    list.filter = ["Active eq true and ApplicationId eq " + this.SelectedApplicationId];
+    list.filter = ["Active eq true and (ApplicationId eq " + globalconstants.CommonPanelID + " or ApplicationId eq " + this.SelectedApplicationId +")"];
     //debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -328,11 +328,20 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
       this.contentservice.openSnackBar("Please select role.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    var _featureId = this.searchForm.get("searchFeatureName").value;
+    if (_featureId == 0) {
+      this.contentservice.openSnackBar("Please select feature.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
+    var _featureName =this.CustomFeatures.filter(f=>f.CustomFeatureId == _featureId)[0].CustomFeatureName;
+
     var newdata = {
       CustomFeatureRolePermissionId: 0,
-      FeatureName: '',
+      FeatureName: _featureName,
       RoleId: _roleId,
       PermissionId: 0,
+      CustomFeatureId:_featureId,
       ApplicationId: this.SelectedApplicationId,
       Active: false,
       Action: true
@@ -471,12 +480,13 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    let Id = this.MasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.MasterData.filter((item, index) => {
-      return item.ParentId == Id
-    });
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.MasterData);
+    // let Id = this.MasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    // })[0].MasterDataId;
+    // return this.MasterData.filter((item, index) => {
+    //   return item.ParentId == Id
+    // });
   }
 }
 export interface ICustomFeatureRolePermission {

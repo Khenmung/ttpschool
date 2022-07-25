@@ -285,24 +285,18 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
-
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
-          }
+        this.Exams = [];
+        data.value.map(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0)
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: obj[0].ClassGroupId
+            })
         })
-        this.loading = false; this.PageLoading=false;
       })
   }
   // GetSelectedClassSubject() {
@@ -371,18 +365,19 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
   GetClassEvaluations() {

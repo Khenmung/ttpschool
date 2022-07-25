@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { NaomitsuService } from '../../databaseService';
 import { globalconstants } from '../../globalconstant';

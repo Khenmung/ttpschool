@@ -5,6 +5,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
+import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
   selector: 'app-user',
@@ -18,16 +19,7 @@ loading=false;
 
 title ='';
   breakpoint = 0;
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionsAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   SaveDisable = false;
-  //ApplicationUserId = 0;
   allMasterData = [];
   AppUsers = [];
   Departments=[];
@@ -56,7 +48,7 @@ title ='';
   constructor(
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    
+    private tokenstorage:TokenStorageService,
     private fb: FormBuilder,
     private sharedData: SharedataService) { }
 
@@ -235,11 +227,12 @@ title ='';
         });
   }
   getDropDownData(dropdowntype) {
-    let Id = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })[0].MasterDataId;
-    return this.allMasterData.filter((item, index) => {
-      return item.ParentId == Id
-    });
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    // })[0].MasterDataId;
+    // return this.allMasterData.filter((item, index) => {
+    //   return item.ParentId == Id
+    // });
   }
 }

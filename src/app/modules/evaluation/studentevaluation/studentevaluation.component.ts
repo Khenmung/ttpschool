@@ -20,8 +20,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class StudentEvaluationComponent implements OnInit {
   PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  EvaluationUpdatable: any = null;
-  AlreadyAnswered = false;
+  //EvaluationUpdatable: any = null;
+  //AlreadyAnswered = false;
   RowsToUpdate = -1;
   EvaluationStarted = false;
   EvaluationSubmitted = false;
@@ -63,7 +63,7 @@ export class StudentEvaluationComponent implements OnInit {
     'ExamName',
     'Action1'
   ];
-  ExamDurationMinutes = 0;
+  //ExamDurationMinutes = 0;
   ClassEvaluationOptionList = [];
   filteredStudents: Observable<IStudent[]>;
   StudentEvaluationData = {
@@ -103,8 +103,8 @@ export class StudentEvaluationComponent implements OnInit {
     debugger;
     this.searchForm = this.fb.group({
       searchStudentName: [0],
-      searchEvaluationMasterId: [0],
-      searchSubjectId: [0],
+      // searchEvaluationMasterId: [0],
+      // searchSubjectId: [0],
       //searchExamId: [0]
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
@@ -146,8 +146,6 @@ export class StudentEvaluationComponent implements OnInit {
           })
         this.GetEvaluationNames();
         this.GetMasterData();
-
-
 
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -231,8 +229,6 @@ export class StudentEvaluationComponent implements OnInit {
     this.RowsToUpdate = this.StudentEvaluationList.length;
     this.boolSaveAsDraft = true;
     this.EvaluationSubmitted = false;
-    //clearInterval(this.interval);
-    //console.log("this.StudentEvaluationList", this.StudentEvaluationList);
     this.StudentEvaluationList.forEach(question => {
       this.RowsToUpdate--;
       this.UpdateOrSave(question);
@@ -254,14 +250,13 @@ export class StudentEvaluationComponent implements OnInit {
     debugger;
     this.loading = true;
     let checkFilterString = "ClassEvaluationId eq " + row.ClassEvaluationId;
-    if (!this.EvaluationUpdatable) {
+    if (!row.Updatable) {
       checkFilterString += " and EvaluationExamMapId eq " + row.EvaluationExamMapId +
         " and StudentClassId eq " + this.StudentClassId
     }
     else {
       checkFilterString += " and StudentId eq " + this.StudentId;
     }
-
 
     if (row.StudentEvaluationResultId > 0)
       checkFilterString += " and StudentEvaluationResultId ne " + row.StudentEvaluationResultId;
@@ -277,14 +272,15 @@ export class StudentEvaluationComponent implements OnInit {
         if (data.value.length > 0) {
           this.loading = false;
           this.PageLoading = false;
-          this.EvaluationSubmitted = false;
+          //row.EvaluationSubmitted = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
           var _toappend = '', _answerText = '', _history = '', _studentClassId = 0;
-          if (this.EvaluationUpdatable) {
+          _answerText = row.AnswerText;
+          if (row.Updatable) {
             if (this.EvaluationSubmitted && !this.boolSaveAsDraft) {
               var _borderwidth = "border-width:0px 1px 1px 1px;"
               if (row.History == "") {
@@ -292,21 +288,23 @@ export class StudentEvaluationComponent implements OnInit {
               }
 
               _toappend = moment().format('DD/MM/YYYY');
+
               _history = row.AnswerText.length == 0 ? row.History : row.History + "<div style='border-style:solid; " + _borderwidth + "border-color:lightgray;padding:15px'>" +
-                row.AnswerText + "<br>" + _toappend + "</div>"
+                _answerText + "<br>" + _toappend + "</div>"
               _answerText = '';
             }
             else {
               _history = row.History;
-              _answerText = row.AnswerText;
+              //_answerText = row.AnswerText;
             }
-            _studentClassId = 0;
+            //_studentClassId = 0;
           }
           else {
-            _studentClassId = row.StudentClassId;
+            //_studentClassId = row.StudentClassId;
             _history = '';
-            _answerText = row.AnswerText;
+            //_answerText = row.AnswerText;
           }
+          _studentClassId = row.StudentClassId;
 
           this.StudentEvaluationForUpdate.push(
             {
@@ -318,7 +316,7 @@ export class StudentEvaluationComponent implements OnInit {
               History: _history,
               EvaluationExamMapId: row.EvaluationExamMapId,
               StudentEvaluationAnswers: row.StudentEvaluationAnswers,
-              Active: row.Active,
+              Active: 1,
               Submitted: this.EvaluationSubmitted,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
@@ -329,11 +327,11 @@ export class StudentEvaluationComponent implements OnInit {
               this.StudentEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
               delete this.StudentEvaluationForUpdate[0]["UpdatedDate"];
               delete this.StudentEvaluationForUpdate[0]["UpdatedBy"];
-              console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
+              //console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
               this.insert(row);
             }
             else {
-              console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
+              //console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
               this.StudentEvaluationForUpdate[0]["UpdatedDate"] = new Date();
               this.StudentEvaluationForUpdate[0]["UpdatedBy"];
               delete this.StudentEvaluationForUpdate[0]["CreatedDate"];
@@ -351,13 +349,18 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataservice.postPatch('StudentEvaluationResults', this.StudentEvaluationForUpdate, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.StudentEvaluationResultId = data.StudentEvaluationResultId;
-          row.Action = false;
           if (this.RowsToUpdate == 0) {
             this.RowsToUpdate = -1;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.loadingFalse();
+            this.StudentEvaluationList = [];
+            this.RelevantEvaluationListForSelectedStudent = [];
+            this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
+            this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
           }
+          row.StudentEvaluationResultId = data.StudentEvaluationResultId;
+          row.Action = false;
+
         }, error => {
           this.EvaluationSubmitted = false;
 
@@ -372,20 +375,22 @@ export class StudentEvaluationComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           this.EvaluationSubmitted = false;
-          //console.log("data update", data.value);
-          //this.StartEvaluation(row);
+          this.StudentEvaluationList = [];
+          this.RelevantEvaluationListForSelectedStudent = [];
+          this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
+          this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
   interval;
-  startTimer() {
-    this.ExamDurationMinutes *= 60;
+  startTimer(row) {
+    row.Duration *= 60;
     this.interval = setInterval(() => {
-      if (this.ExamDurationMinutes > 0) {
-        this.ExamDurationMinutes--;
+      if (row.Duration > 0) {
+        row.Duration--;
       }
-      else if (this.ExamDurationMinutes == 0) {
+      else if (row.Duration == 0) {
         clearInterval(this.interval);
         this.SubmitEvaluation();
       }
@@ -395,26 +400,29 @@ export class StudentEvaluationComponent implements OnInit {
   StartEvaluation(row) {
     debugger;
     this.loading = true;
-    //this.AlreadyAnswered=false;
     this.StudentEvaluationList = [];
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.StudentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     this.StudentId = this.searchForm.get("searchStudentName").value.StudentId;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    if (this.EvaluationUpdatable)
-      filterStr += ' and StudentId eq ' + this.StudentId
-    else {
-      filterStr += ' and StudentClassId eq ' + this.StudentClassId
-      filterStr += ' and EvaluationExamMapId eq ' + row.EvaluationExamMapId
-    }
+
+    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    filterStr += ' and StudentClassId eq ' + this.StudentClassId
+    filterStr += ' and EvaluationExamMapId eq ' + row.EvaluationExamMapId
 
     this.RelevantEvaluationListForSelectedStudent.forEach(mapping => {
       if (mapping.EvaluationExamMapId != row.EvaluationExamMapId)
         mapping.Action = false;
     })
     var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
-
+    //delete row all except selected one
+    for (var i = 0; i < this.RelevantEvaluationListForSelectedStudent.length; i++) {
+      if (this.RelevantEvaluationListForSelectedStudent[i].EvaluationExamMapId != row.EvaluationExamMapId) {
+        this.RelevantEvaluationListForSelectedStudent.splice(i, 1);
+        i--;
+      }
+    }
+    this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
 
     let list: List = new List();
     list.fields = [
@@ -437,10 +445,11 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger
-        if (data.value.length > 0)
-          this.AlreadyAnswered = data.value[0].Submitted;
-        if (!this.EvaluationUpdatable && this.ExamDurationMinutes > 0 && data.value.length == 0) {
-          this.startTimer();
+        if (data.value.length > 0) {
+          row.Submitted = data.value[0].Submitted;
+        }
+        if (!row.Updatable && row.Duration > 0 && data.value.length == 0) {
+          this.startTimer(row);
         }
 
         var item, indx = 0, SlNo = '';
@@ -480,9 +489,10 @@ export class StudentEvaluationComponent implements OnInit {
               QuestionnaireType: clseval.QuestionnaireType,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationExamMapId: existing[0].EvaluationExamMapId,
-              Description: clseval.Description,
-              History: existing[0].History == null ? '' : existing[0].History,
-              AnswerText: existing[0].AnswerText,
+              Updatable:row.Updatable,
+              Description: globalconstants.decodeSpecialChars(clseval.Description),
+              History: existing[0].History == null ? '' : "<pre>" + globalconstants.decodeSpecialChars(existing[0].History) + "</pre>",
+              AnswerText: globalconstants.decodeSpecialChars(existing[0].AnswerText),
               StudentEvaluationResultId: existing[0].StudentEvaluationResultId,
               ClassEvaluationId: clseval.ClassEvaluationId,
               Active: existing[0].Active,
@@ -500,9 +510,10 @@ export class StudentEvaluationComponent implements OnInit {
               CatSequence: clseval.DisplayOrder,
               QuestionnaireType: clseval.QuestionnaireType,
               AnswerOptionsId: 0,
-              Description: clseval.Description,
+              Description: globalconstants.decodeSpecialChars(clseval.Description),
               AnswerText: '',
               History: '',
+              Updatable:row.Updatable,
               StudentEvaluationResultId: 0,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationExamMapId: row.EvaluationExamMapId,
@@ -515,26 +526,24 @@ export class StudentEvaluationComponent implements OnInit {
           }
           this.StudentEvaluationList.push(JSON.parse(JSON.stringify(item)));
         })
-        //console.log("1this.StudentEvaluationList", this.StudentEvaluationList)
-        //var firstrow =[];
-        //this.StudentEvaluationList = this.StudentEvaluationList.sort((a,b)=>a.DisplayOrder - b.DisplayOrder);
-        this.EvaluationStarted = true;
+        //console.log("this.StudentEvaluationList", this.StudentEvaluationList);
+        row.EvaluationStarted = true;
         this.dataSource = new MatTableDataSource<IStudentEvaluation>(this.StudentEvaluationList);
         this.dataSource.paginator = this.paginator;
+        //this.SaveAsDraft();
         this.loadingFalse();
       });
 
   }
   GetExams() {
 
-    var _onLineExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == globalconstants.ExamGrading.toLowerCase())[0].MasterDataId;
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId +
-      ' and ExamModeId eq ' + _onLineExamModeId;
+      ' and BatchId eq ' + this.SelectedBatchId //+
+
 
     let list: List = new List();
     this.Exams = [];
-    list.fields = ["ExamId", "ExamNameId"];
+    list.fields = ["ExamId", "ExamNameId", "ClassGroupId"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     this.dataservice.get(list)
@@ -546,18 +555,19 @@ export class StudentEvaluationComponent implements OnInit {
             _examName = obj[0].MasterDataName;
             this.Exams.push({
               ExamId: e.ExamId,
-              ExamName: _examName
+              ExamName: _examName,
+              ClassGroupId: e.ClassGroupId
             })
           }
         })
         this.contentservice.GetEvaluationExamMaps(this.LoginUserDetail[0]["orgId"], 1)
           .subscribe((data: any) => {
             data.value.forEach(m => {
-
               let EvaluationObj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == m.EvaluationMasterId);
               if (EvaluationObj.length > 0) {
                 m.EvaluationName = EvaluationObj[0].EvaluationName;
                 m.Duration = EvaluationObj[0].Duration;
+                m.Updatable = EvaluationObj[0].AppendAnswer;
 
                 var _clsObj = this.ClassGroups.filter(f => f.MasterDataId == m.ClassGroupId);
                 if (_clsObj.length > 0)
@@ -574,7 +584,8 @@ export class StudentEvaluationComponent implements OnInit {
                 this.EvaluationExamMaps.push(m);
               }
             })
-            this.loading = false; this.PageLoading = false;
+            this.loading = false;
+            this.PageLoading = false;
           })
 
       })
@@ -635,18 +646,19 @@ export class StudentEvaluationComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
   GetEvaluationNames() {
@@ -681,73 +693,92 @@ export class StudentEvaluationComponent implements OnInit {
       });
 
   }
-  GetAttribute() {
-    var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
+  // GetAttribute() {
+  //   var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
 
-    var _obj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _EvaluationMasterId)
-    if (_obj.length > 0) {
-      this.EvaluationUpdatable = _obj[0].AppendAnswer;
-      this.ExamDurationMinutes = _obj[0].Duration;
-    }
+  //   var _obj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _EvaluationMasterId)
+  //   if (_obj.length > 0) {
+  //     this.EvaluationUpdatable = _obj[0].AppendAnswer;
+  //     this.ExamDurationMinutes = _obj[0].Duration;
+  //   }
+  // }
+  StudentSubmittedEvaluations = [];
+  CheckIfEvaluationWasSubmitted() {
+    var studentobj = this.searchForm.get("searchStudentName").value;
+    var _studentClassId = studentobj.StudentClassId;
+    var _filter = 'OrgId eq ' + this.LoginUserDetail[0]['orgId'] +
+      ' and StudentClassId eq ' + _studentClassId +
+      //' and Submitted eq true' +
+      ' and Active eq 1';
+
+    let list: List = new List();
+    list.fields = [
+      'StudentEvaluationResultId',
+      // 'StudentClassId',
+      // 'StudentId',
+      // 'ClassEvaluationId',
+      'EvaluationExamMapId',
+      'Submitted',
+      // 'Active'
+    ];
+
+    list.PageName = "StudentEvaluationResults";
+    list.filter = [_filter];
+    return this.dataservice.get(list);
   }
   GetEvaluationMapping() {
     debugger;
     this.loading = true;
-    var __classGroupIdsForThisStudent = [];
     var studentobj = this.searchForm.get("searchStudentName").value;
-    var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     if (studentobj.ClassId == undefined) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else {
-      __classGroupIdsForThisStudent = this.ClassGroupMappings.filter(f => f.ClassId == studentobj.ClassId);
-    }
-    if (_EvaluationMasterId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select evaluation name.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    var _classgroupsOfSelectedStudent = this.ClassGroupMappings.filter(f => f.ClassId == studentobj.ClassId)
+    var _EvaluationExamMapSelectedStudentObj = [];
 
-    var _classGroupIdObj = [];
-    if (this.EvaluationUpdatable) {
-      _classGroupIdObj = this.EvaluationExamMaps.filter(f => f.EvaluationMasterId == _EvaluationMasterId);
-    }
-    else {
-      _classGroupIdObj = this.EvaluationExamMaps.filter(f =>
-        f.EvaluationMasterId == _EvaluationMasterId
-        && __classGroupIdsForThisStudent.filter(g => g.ClassGroupId == f.ClassGroupId)[0].ClassGroupId);
-    }
-    this.RelevantEvaluationListForSelectedStudent = [];
-    //var __classGroupId = 0;
-    if (_classGroupIdObj.length > 0) {
-      this.RelevantEvaluationListForSelectedStudent = [..._classGroupIdObj];
-      //__classGroupId = _classGroupIdObj[0].ClassGroupId;
-    }
-    else {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("No class group/evaluation defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
+    _EvaluationExamMapSelectedStudentObj = this.EvaluationExamMaps.filter(f => _classgroupsOfSelectedStudent.filter(s => s.ClassGroupId == f.ClassGroupId).length > 0);
+    this.CheckIfEvaluationWasSubmitted()
+      .subscribe((data: any) => {
+        this.StudentSubmittedEvaluations = [...data.value];
+        this.RelevantEvaluationListForSelectedStudent = [];
+        if (_EvaluationExamMapSelectedStudentObj.length > 0) {
+          _EvaluationExamMapSelectedStudentObj.forEach(m => {
+            // this.EvaluationUpdatable = m.Updatable;
+            // this.ExamDurationMinutes = m.Duration;
+            m.EvaluationStarted = false;
+            var existing = this.StudentSubmittedEvaluations.filter(f => f.EvaluationExamMapId == m.EvaluationExamMapId)
+            if (existing.length > 0) {
+              if (!existing[0].Submitted || m.Updatable) {
+                m.StudentEvaluationResultId = existing[0].StudentEvaluationResultId
+                this.RelevantEvaluationListForSelectedStudent.push(m);
+              }
+            }
+            else {
+              m.StudentEvaluationResultId = 0;
+              this.RelevantEvaluationListForSelectedStudent.push(m);
+            }
+          });
+        }
+        else {
+          this.loading = false; this.PageLoading = false;
+          this.contentservice.openSnackBar("No class group/evaluation defined for this class.", globalconstants.ActionText, globalconstants.RedBackground);
+          return;
+        }
+        if (this.RelevantEvaluationListForSelectedStudent.length == 0) {
+          this.contentservice.openSnackBar("No pending exam found for this student.", globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        //console.log("this.RelevantEvaluationListForSelectedStudent", this.RelevantEvaluationListForSelectedStudent);
+        this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
 
-    }
+        this.StudentEvaluationList = [];
+        this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
+        this.dataSource.paginator = this.paginator;
 
-    this.EvaluationStarted = false;
-    this.EvaluationSubmitted = false;
-    this.AssessmentTypeDatasource = new MatTableDataSource<any>(this.RelevantEvaluationListForSelectedStudent);
-
-    this.StudentEvaluationList = [];
-    this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
-    this.dataSource.paginator = this.paginator;
-
-    // var selectedEvaluationType = this.EvaluationMaster.filter(f => f.EvaluationMasterId == this.searchForm.get("searchEvaluationMasterId").value)
-    // if (selectedEvaluationType.length > 0) {
-
-    //   this.EvaluationUpdatable = selectedEvaluationType[0].AppendAnswer;
-    //   this.ExamDurationMinutes = selectedEvaluationType[0].Duration;
-    // }
-    this.loading = false;
-    this.PageLoading = false;
-
+        this.loading = false;
+        this.PageLoading = false;
+      })
   }
   GetEvaluationOption() {
     let list: List = new List();
@@ -776,13 +807,8 @@ export class StudentEvaluationComponent implements OnInit {
           })
 
         }
-        // else {
-        //   this.contentservice.openSnackBar("No answer option found.", globalconstants.ActionText, globalconstants.BlueBackground);
-        // }
         this.GetClassEvaluations();
-        //this.loadingFalse();
       });
-
   }
   GetClassEvaluations() {
 
@@ -810,7 +836,6 @@ export class StudentEvaluationComponent implements OnInit {
           })
           this.ClassEvaluations = this.ClassEvaluations.sort((a, b) => a.DisplayOrder - b.DisplayOrder)
         }
-        //      console.log("this.ClassEvaluations", this.ClassEvaluations)
         this.loadingFalse();
       })
   }

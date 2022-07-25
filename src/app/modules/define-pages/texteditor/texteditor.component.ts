@@ -7,6 +7,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
+import { environment } from 'src/environments/environment';
 //import { FormsModule} from '@angular/forms';
 @Component({
 

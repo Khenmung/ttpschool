@@ -12,6 +12,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-EvaluationMaster',
@@ -85,7 +86,7 @@ export class EvaluationMasterComponent implements OnInit {
 
     debugger;
     this.loading = true;
-
+    console.log("environment", globalconstants.apiUrl);
     this.LoginUserDetail = this.tokenstorage.getUserDetail();
     //this.EmployeeId = +this.tokenstorage.getEmployeeId();
     if (this.LoginUserDetail == null)
@@ -294,18 +295,9 @@ export class EvaluationMasterComponent implements OnInit {
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _classGroupId = this.searchForm.get("searchClassGroupId").value;
-    // if(_classGroupId==0)
-    // {
-    //   this.loading=false;
-    //   this.contentservice.openSnackBar("Please select class group.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
-    // else
-    // {
-      if(_classGroupId>0)
-      filterStr += ' and ClassGroupId eq ' +  _classGroupId
-    //}
-      
+    if (_classGroupId > 0)
+      filterStr += ' and ClassGroupId eq ' + _classGroupId
+
     let list: List = new List();
     list.fields = [
       "EvaluationMasterId",
@@ -357,18 +349,19 @@ export class EvaluationMasterComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 }

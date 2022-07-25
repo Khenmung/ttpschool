@@ -7,9 +7,16 @@
     <div style="width: 100%;">
         <form [formGroup]="searchForm">
             <mat-form-field appearance="outline" [style.width.px]="200">
+                <mat-label>class group</mat-label>
+                    <mat-select formControlName="searchClassGroupId" (selectionChange)="SelectEvaluation()">
+                    <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">{{item.GroupName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Evaluation type</mat-label>
                 <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="GetEvaluationMasterId()">
-                    <mat-option *ngFor="let item of EvaluationNames" [value]="item.EvaluationMasterId">
+                    <mat-option *ngFor="let item of EvaluationMasterForClassGroup" [value]="item.EvaluationMasterId">
                         {{item.EvaluationName}}
                     </mat-option>
                 </mat-select>

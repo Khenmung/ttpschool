@@ -53,45 +53,99 @@ export class HomeDashboardComponent implements OnInit {
       this.route.navigate(['/auth/login']);
     }
     else {
-      debugger;
-      this.loading = true;
-      this.userName = localStorage.getItem('userName');
-      var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
-      var _roleName = this.loginUserDetail[0]['RoleUsers'][0].role;
-      if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
-        this.route.navigate(["/auth/selectplan"]);
-      }
-      else {
-        var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
-        if (_roleName.toLowerCase() != 'admin')
-          this.PermittedApplications = _UniquePermittedApplications.filter(f => f.applicationName.toLowerCase() != 'common panel');
-        else
-          this.PermittedApplications = [..._UniquePermittedApplications];
+      this.CheckLocalStorage();
+      this.GetOrganization()
+        .subscribe((data: any) => {
+          if (data.value.length > 0) {
+            var _validTo = new Date(data.value[0].ValidTo);//.setHours(0,0,0,0);
+            var _today = new Date();//.setHours(0,0,0,0);
+            console.log("_validTo", _validTo)
+            if (_validTo.getTime() < _today.getTime()) {
+              this.tokenStorage.signOut();
+              this.contentservice.openSnackBar("Login expired! Please contact administrator.", globalconstants.ActionText, globalconstants.RedBackground);
+              //setTimeout(() => {
+                this.route.navigate(['/auth/login'])
+              //}, 3000);
+            }
+            else {
+              debugger;
+              this.loading = true;
+              this.userName = localStorage.getItem('userName');
+              var PermittedApps = this.loginUserDetail[0]["applicationRolePermission"];
+              var _roleName = this.loginUserDetail[0]['RoleUsers'][0].role;
+              if (PermittedApps.length == 0 && _roleName.toLowerCase() == 'admin') {
+                this.route.navigate(["/auth/selectplan"]);
+              }
+              else {
+                var _UniquePermittedApplications = PermittedApps.filter((v, i, a) => a.findIndex(t => (t.applicationId === v.applicationId)) === i)
+                if (_roleName.toLowerCase() != 'admin')
+                  this.PermittedApplications = _UniquePermittedApplications.filter(f => f.applicationName.toLowerCase() != 'common panel');
+                else
+                  this.PermittedApplications = [..._UniquePermittedApplications];
 
-        if (this.PermittedApplications.length == 0) {
-          this.tokenStorage.signOut();
-          this.route.navigate(['/auth/login']);
-        }
-        this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);
-        if (this.userName === undefined || this.userName === null || this.userName == '')
-          this.loggedIn = false;
-        else
-          this.loggedIn = true;
-        //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
-        this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
-        this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
-        this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
-        this.SelectedAppName = this.tokenStorage.getSelectedAppName();
-        //console.log("this.SelectedAppName",this.SelectedAppName);
-        this.getBatches();
+                if (this.PermittedApplications.length == 0) {
+                  this.tokenStorage.signOut();
+                  this.route.navigate(['/auth/login']);
+                }
+                this.tokenStorage.savePermittedApplications(_UniquePermittedApplications);
+                if (this.userName === undefined || this.userName === null || this.userName == '')
+                  this.loggedIn = false;
+                else
+                  this.loggedIn = true;
+                //this.shareddata.CurrentPagesData.subscribe(m => (this.MenuData = m))
+                this.shareddata.CurrentNewsNEventId.subscribe(n => (this.NewsNEventPageId = n));
+                this.SelectedBatchId = +this.tokenStorage.getSelectedBatchId();
+                this.SelectedAppId = +this.tokenStorage.getSelectedAPPId();
+                this.SelectedAppName = this.tokenStorage.getSelectedAppName();
+                this.getBatches();
 
-        //this.searchForm.patchValue({ searchBatchId: this.SelectedBatchId });
-        //this.searchForm.patchValue({ searchApplicationId: this.SelectedAppId });
-      }
+              }
+            }
+          }
+          this.loading = false;
+          this.PageLoading = false;
+        });
+    }
+
+  }
+  /* 
+ * function body that test if storage is available
+ * returns true if localStorage is available and false if it's not
+ */
+  lsTest() {
+    var test = 'test';
+    try {
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
-  
+  /* 
+  * execute Test and run our custom script 
+  */
+  CheckLocalStorage() {
+    if (this.lsTest()) {
+      console.log('localStorage where used'); // log
+    } else {
+      this.contentservice.openSnackBar("Browser does not support this application.", globalconstants.ActionText, globalconstants.RedBackground);
+      document.cookie = "name=1; expires=Mon, 28 Mar 2016 12:00:00 UTC";
+      console.log('Cookie where used'); // log
+    }
+  }
+
+  GetOrganization() {
+    this.loading = true;
+    let list: List = new List();
+    list.fields = ["OrganizationId", "OrganizationName", "ValidTo", "ValidFrom"];
+    list.PageName = "Organizations";
+    list.filter = ["Active eq 1 and OrganizationId eq " + this.loginUserDetail[0]["orgId"]];
+    //debugger;
+    return this.dataservice.get(list)
+
+  }
   ChangeApplication() {
     var SelectedAppId = this.searchForm.get("searchApplicationId").value;
     this.SelectedAppName = this.PermittedApplications.filter(f => f.applicationId == SelectedAppId)[0].applicationName
@@ -130,7 +184,7 @@ export class HomeDashboardComponent implements OnInit {
                 'applicationFeature': item.CustomFeature.CustomFeatureName,//_applicationFeature,
                 'roleId': item.RoleId,
                 'permissionId': item.PermissionId,
-                'permission': globalconstants.PERMISSIONTYPES.filter(f=>f.val==item.PermissionId)[0].type,
+                'permission': globalconstants.PERMISSIONTYPES.filter(f => f.val == item.PermissionId)[0].type,
                 'applicationName': selectedApp[0].applicationName,
                 'applicationId': item.ApplicationId,
                 'appShortName': selectedApp[0].appShortName,

@@ -66,6 +66,7 @@ export class EvaluationExamMapComponent implements OnInit {
     'Active',
     'Action'
   ];
+  ClassGroups = [];
   searchForm: FormGroup;
   constructor(
     private contentservice: ContentService,
@@ -79,6 +80,7 @@ export class EvaluationExamMapComponent implements OnInit {
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({
       searchEvaluationMasterId: [0],
+      searchClassGroupId: [0],
       searchExamId: [0]
     })
     this.PageLoad();
@@ -114,6 +116,10 @@ export class EvaluationExamMapComponent implements OnInit {
             this.Classes = [...data.value];
           });
         }
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+          .subscribe((data: any) => {
+            this.ClassGroups = [...data.value];
+          });
         // this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
         //   .subscribe((data: any) => {
         //     this.ClassGroupMappings = [...data.value];
@@ -285,7 +291,7 @@ export class EvaluationExamMapComponent implements OnInit {
       'EvaluationMasterId',
       'EvaluationName',
       'Description',
-      //'ClassGroupId',
+      'ClassGroupId',
       'Duration',
       'DisplayResult',
       'AppendAnswer',
@@ -310,6 +316,11 @@ export class EvaluationExamMapComponent implements OnInit {
       });
 
   }
+  SelectEvaluation(){
+    var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
+    this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
+  }
+  EvaluationMasterForClassGroup=[];
   GetEvaluationExamMap() {
     //debugger;
     this.loading = true;
@@ -321,102 +332,131 @@ export class EvaluationExamMapComponent implements OnInit {
     //var _subjectId = this.searchForm.get("searchSubjectId").value;
     var _EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
     var _searchExamId = this.searchForm.get("searchExamId").value;
-    //var _examId = this.searchForm.get("searchExamId").value;
+    var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
 
-    if (_EvaluationMasterId == 0) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please select evaluation.", globalconstants.ActionText, globalconstants.BlueBackground);
+
+    if (_searchClassGroupId == 0) {
+      this.loading = false;
+      this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.BlueBackground);
       return;
     }
-    else {
-      filterStr += " and EvaluationMasterId eq " + _EvaluationMasterId;
-    }
 
-    // if (_classGroupId > 0)
-    //   filterStr += " and ClassGroupId eq " + _classGroupId;
-    // if (_subjectId > 0)
-    //   filterStr += " and ClassSubjectId eq " + _subjectId;
+    if (_EvaluationMasterId > 0)
+      filterStr += " and EvaluationMasterId eq " + _EvaluationMasterId;
+
     if (_searchExamId > 0)
       filterStr += " and ExamId eq " + _searchExamId;
 
     let list: List = new List();
     list.fields = [
       'EvaluationExamMapId',
-      //'ClassGroupId',
-      //'ClassSubjectId',
       'ExamId',
       'EvaluationMasterId',
       'Active',
     ];
 
     list.PageName = "EvaluationExamMaps";
-    //list.lookupFields=["StudentEvaluationResult($top eq 1;$select=StudentEvaluationResultId)"];
     list.filter = [filterStr];
     this.EvaluationExamMapList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
         if (data.value.length > 0) {
-          var _filter = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and (";
-          data.value.forEach((mapdata, indx) => {
-            _filter += 'EvaluationExamMapId eq ' + mapdata.EvaluationExamMapId
-            if (indx < data.value.length - 1)
-              _filter += " or "
-            else
-              _filter += ")"
-          })
-
-          list.fields = ['EvaluationExamMapId'];
-          list.PageName = "StudentEvaluationResults";
-          list.filter = [_filter];
-          this.dataservice.get(list)
-            .subscribe((useddata: any) => {
-              this.EvaluationExamMapList = data.value.map(item => {
-                item.EvaluationName = this.EvaluationNames.filter(f => f.EvaluationMasterId == item.EvaluationMasterId)[0].EvaluationName
-                item.AlreadyUsed = useddata.value.filter(f => f.EvaluationExamMapId == item.EvaluationExamMapId).length > 0;
-                item.Action = false;
-                return item;
-              })
-              this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
-              this.dataSource.paginator = this.paginator;
-              this.dataSource.sort = this.sort;
-              this.loadingFalse();
+          
+          if (this.EvaluationMasterForClassGroup.length > 0) {
+            var _evaluationMappedForSelectedClassGroup = data.value.filter(f => {
+              return this.EvaluationMasterForClassGroup.filter(e => e.EvaluationMasterId == f.EvaluationMasterId).length > 0
+            });
+            var _filter = "OrgId eq " + this.LoginUserDetail[0]["orgId"] + " and (";
+            _evaluationMappedForSelectedClassGroup.forEach((mapdata, indx) => {
+              _filter += 'EvaluationExamMapId eq ' + mapdata.EvaluationExamMapId
+              if (indx < _evaluationMappedForSelectedClassGroup.length - 1)
+                _filter += " or "
+              else
+                _filter += ")"
             })
+
+            list.fields = ['EvaluationExamMapId'];
+            list.PageName = "StudentEvaluationResults";
+            list.filter = [_filter];
+            this.dataservice.get(list)
+              .subscribe((useddata: any) => {
+                this.EvaluationExamMapList = _evaluationMappedForSelectedClassGroup.map(item => {
+                  item.EvaluationName = this.EvaluationNames.filter(f => f.EvaluationMasterId == item.EvaluationMasterId)[0].EvaluationName
+                  item.AlreadyUsed = useddata.value.filter(f => f.EvaluationExamMapId == item.EvaluationExamMapId).length > 0;
+                  item.Action = false;
+                  return item;
+                })
+                this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+                this.loadingFalse();
+              })
+          }
+          else {
+            this.loadingFalse();
+            this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          }  
         }
         else {
-          this.EvaluationExamMapList = [];
+          this.loadingFalse();
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.dataSource = new MatTableDataSource<IEvaluationExamMap>(this.EvaluationExamMapList);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         }
-        this.loading=false;
+        
+
+        //this.loading = false;
       });
 
   }
   GetExams() {
-
-    //var _gradingExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == globalconstants.ExamGrading.toLowerCase())[0].MasterDataId;
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      ' and BatchId eq ' + this.SelectedBatchId 
-    //  ' and ExamModeId eq ' + _gradingExamModeId;
-
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
+        this.Exams = [];
+        data.value.map(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0) {
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: obj[0].ClassGroupId
+            })
           }
         })
         this.loading = false; this.PageLoading = false;
       })
+    //this.Exams =
+    // //var _gradingExamModeId = this.ExamModes.filter(f => f.MasterDataName.toLowerCase() == globalconstants.ExamGrading.toLowerCase())[0].MasterDataId;
+    // var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+    //   ' and BatchId eq ' + this.SelectedBatchId
+    // //  ' and ExamModeId eq ' + _gradingExamModeId;
+
+    // let list: List = new List();
+
+    // list.fields = ["ExamId", "ExamNameId","ClassGroupId"];
+    // list.PageName = "Exams";
+    // list.filter = ["Active eq 1 " + orgIdSearchstr];
+
+    // this.dataservice.get(list)
+    // .subscribe((data: any) => {
+    //   this.Exams = data.value.map(e => {
+    //     var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+    //     if (obj.length > 0) {
+    //       this.Exams.push({
+    //         ExamId: e.ExamId,
+    //         ExamName: obj[0].MasterDataName,
+    //         ClassGroupId:obj[0].ClassGroupId
+    //       })
+    //     }
+    //   })
+    //   this.loading = false; this.PageLoading = false;
+    // })
   }
   GetMasterData() {
 
@@ -443,18 +483,19 @@ export class EvaluationExamMapComponent implements OnInit {
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 }

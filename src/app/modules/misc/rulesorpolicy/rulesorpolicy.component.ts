@@ -136,9 +136,20 @@ export class RulesorpolicyComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "Description eq '" + row.Description + 
+    let checkFilterString = "Description eq '" + globalconstants.encodeSpecialChars(row.Description) + 
     "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-
+    if(row.Description.length==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please enter description.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+    if(row.RulesOrPolicyCategoryId==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     if (row.RulesOrPolicyId > 0)
       checkFilterString += " and RulesOrPolicyId ne " + row.RulesOrPolicyId;
     let list: List = new List();
@@ -158,7 +169,7 @@ export class RulesorpolicyComponent implements OnInit {
           this.RulesOrPolicyData.RulesOrPolicyId = row.RulesOrPolicyId;
           this.RulesOrPolicyData.Active = row.Active;
           this.RulesOrPolicyData.RulesOrPolicyCategoryId = row.RulesOrPolicyCategoryId;
-          this.RulesOrPolicyData.Description = row.Description.replaceAll("'","''");
+          this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(row.Description);
           this.RulesOrPolicyData.RulesOrPolicySubCategoryId = row.RulesOrPolicySubCategoryId;
           this.RulesOrPolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
 
@@ -233,7 +244,10 @@ export class RulesorpolicyComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.RulesOrPolicyList = [...data.value];
+          this.RulesOrPolicyList = data.value.map(map=>{
+            map.Description = globalconstants.decodeSpecialChars(map.Description);
+            return map;
+          })
         }
         this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
         this.dataSource.paginator = this.paging;
@@ -253,18 +267,19 @@ export class RulesorpolicyComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 }

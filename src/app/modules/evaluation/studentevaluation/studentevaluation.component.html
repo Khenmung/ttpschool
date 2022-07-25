@@ -4,14 +4,6 @@
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="width: 100%;">
     <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Evaluation type</mat-label>
-            <mat-select formControlName="searchEvaluationMasterId" (selectionChange)="GetAttribute()">
-                <mat-option *ngFor="let item of EvaluationMaster" [value]="item.EvaluationMasterId">
-                    {{item.EvaluationName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="300">
             <mat-label>Student</mat-label>
             <input type="text" matInput formControlName="searchStudentName" [matAutocomplete]="auto">
@@ -55,33 +47,38 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <button style="margin-right: 15px;"
-                    [disabled]="loading || !element.Action1 || Permission=='read' || EvaluationStarted"
+                    [disabled]="loading 
+                    || !element.Action1 
+                    || Permission=='read' 
+                    || element.EvaluationStarted"
                     matTooltip="start" mat-mini-fab color="accent" (click)="StartEvaluation(element)">
                     <mat-icon>start</mat-icon>
                 </button>
-                <button [disabled]="loading || !element.Action1 
+                <button [disabled]="
+                    loading 
+                    || !element.Action1 
                     || Permission=='read' 
-                    || EvaluationSubmitted 
-                    || !EvaluationStarted
-                    || AlreadyAnswered" matTooltip="save as draft" mat-mini-fab color="accent" (click)="SaveAsDraft()">
+                    || !element.EvaluationStarted" matTooltip="save as draft" mat-mini-fab color="accent"
+                    (click)="SaveAsDraft()">
                     <mat-icon>edit</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
-                <button [disabled]="loading 
-                    || !element.Action1 
-                    || Permission=='read' 
-                    || EvaluationSubmitted 
-                    || !EvaluationStarted
-                    || AlreadyAnswered" matTooltip="submit" mat-mini-fab color="accent" (click)="SubmitEvaluation()">
+                <button [disabled]="
+                    loading 
+                    || Permission=='read'     
+                    || !element.Action1                     
+                    || !element.EvaluationStarted" 
+                    matTooltip="submit" mat-mini-fab color="accent"
+                    (click)="SubmitEvaluation()">
                     <mat-icon>done_all</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
-                <span *ngIf="ExamDurationMinutes>0" style="font-weight:bold;padding:15px">Duration:
-                    {{ExamDurationMinutes}}</span>
+                <span *ngIf="element.Duration>0" style="font-weight:bold;padding:15px">Duration:
+                    {{element.Duration}}</span>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="EvaluationPlanColumns"></mat-header-row>
@@ -96,7 +93,7 @@
                 <span style="margin:15px;width:100%">
                     <div style="display:flex;">
                         <div *ngIf="element.AutoId>0" style="padding: 15px 5px 10px 0px;">{{element.AutoId}}.</div>
-                        <div *ngIf="element.QuestionnaireType=='Category' || element.QuestionnaireType=='Sub Category'"
+                        <div *ngIf="element.QuestionnaireType=='Heading' || element.QuestionnaireType=='Sub Heading'"
                             style="width: 100%;padding: 15px 15px 10px 0px;font-weight: bold;">
                             {{element.Description}}</div>
                         <div *ngIf="element.QuestionnaireType=='Questionnaire'"
@@ -104,19 +101,19 @@
                             {{element.Description}}</div>
                     </div>
                     <div style="display: flex;flex-direction: column; margin:15px 15px 15px 15px;width: 100%;"
-                        *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
+                        *ngIf="element.Updatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
                         <span [innerHTML]="element.History| encodeHTML">
                         </span>
                         <mat-form-field appearance="outline" style="width:100%">
-                            <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="300"
+                            <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="600"
                                 (blur)="onBlur(element)" [rows]="5" [value]="element.AnswerText"
                                 [(ngModel)]="element.AnswerText"></textarea>
                         </mat-form-field>
-                        <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/300
+                        <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/600
                         </mat-hint>
                     </div>
                     <div
-                        *ngIf="!EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
+                        *ngIf="!element.Updatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
                                 (blur)="onBlur(element)" [value]="element.AnswerText" [rows]="5"

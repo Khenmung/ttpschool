@@ -17,7 +17,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./slotnclasssubject.component.scss']
 })
 export class SlotnclasssubjectComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -336,33 +336,20 @@ export class SlotnclasssubjectComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //this.Exams = [...data.value];
-        this.Exams = this.ExamNames.map(e => {
+        this.Exams = [];
+        this.ExamNames.forEach(e => {
           let existing = data.value.filter(db => db.ExamNameId == e.MasterDataId);
           if (existing.length > 0) {
-            existing[0].ExamName = this.ExamNames.filter(f => f.MasterDataId == existing[0].ExamNameId)[0].MasterDataName;
-            existing[0].Action = false;
-            return existing[0];
-          }
-          else {
-            return {
-              ExamId: 0,
-              ExamNameId: e.MasterDataId,
-              ExamName: e.MasterDataName,
-              StartDate: new Date(),
-              EndDate: new Date(),
-              ReleaseResult: 0,
-              ClassGroupId: 0,
-              ReleaseDate: null,
-              OrgId: 0,
-              //BatchId: 0,
-              Active: 0,
-              Action: false
+            var obj = this.ExamNames.filter(f => f.MasterDataId == existing[0].ExamNameId);
+            if (obj.length > 0) {
+              existing[0].ExamName = obj[0].MasterDataName;
+              existing[0].Action = false;
+              this.Exams.push(existing[0]);
             }
           }
         })
         ////console.log('this', this.Exams)
-        this.Exams.sort((a, b) => {
+        this.Exams = this.Exams.sort((a, b) => {
           return this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
         this.loading = false; this.PageLoading = false;
@@ -647,18 +634,19 @@ export class SlotnclasssubjectComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

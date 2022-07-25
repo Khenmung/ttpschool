@@ -10,6 +10,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-employee',
@@ -17,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./employee.component.scss']
 })
 export class EmployeeComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   ShortNameDuplicate = '';
   EmployeeCodeDuplicate = '';
   Edited = false;
@@ -260,33 +261,30 @@ export class EmployeeComponent implements OnInit {
       this.EmployeeForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
     }
   }
-  ColumnsOfSelectedReports =[];
-  getFields(pModuleName){
-    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"],this.SelectedApplicationId)
-    .subscribe((data: any) => {
-      var _baseReportId = 0;
-      if(data.value.length>0)
-      {
-        _baseReportId = data.value.filter(f=>f.ReportName =='Reports' && f.ParentId ==0)[0].ReportConfigItemId;
-        var _studentModuleObj = data.value.filter(f=>f.ReportName ==pModuleName && f.ParentId ==_baseReportId)
-        var _studentModuleId=0;
-        if(_studentModuleObj.length>0)
-        {
-          _studentModuleId = _studentModuleObj[0].ReportConfigItemId; 
+  ColumnsOfSelectedReports = [];
+  getFields(pModuleName) {
+    this.contentservice.getSelectedReportColumn(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
+      .subscribe((data: any) => {
+        var _baseReportId = 0;
+        if (data.value.length > 0) {
+          _baseReportId = data.value.filter(f => f.ReportName == 'Reports' && f.ParentId == 0)[0].ReportConfigItemId;
+          var _studentModuleObj = data.value.filter(f => f.ReportName == pModuleName && f.ParentId == _baseReportId)
+          var _studentModuleId = 0;
+          if (_studentModuleObj.length > 0) {
+            _studentModuleId = _studentModuleObj[0].ReportConfigItemId;
+          }
+
+          var _orgStudentModuleObj = data.value.filter(f => f.ParentId == _studentModuleId && f.OrgId > 0);
+          var _orgStudentModuleId = 0;
+          if (_orgStudentModuleObj.length > 0) {
+            _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId;
+          }
+
+          this.ColumnsOfSelectedReports = data.value.filter(f => f.ParentId == _orgStudentModuleId)
+
         }
 
-        var _orgStudentModuleObj = data.value.filter(f=>f.ParentId ==_studentModuleId && f.OrgId>0);
-        var _orgStudentModuleId=0;
-        if(_orgStudentModuleObj.length>0)
-        {
-          _orgStudentModuleId = _orgStudentModuleObj[0].ReportConfigItemId; 
-        }
-
-        this.ColumnsOfSelectedReports = data.value.filter(f=>f.ParentId == _orgStudentModuleId)
-
-      }
-      
-    })
+      })
   }
   GetMasterData() {
 
@@ -308,22 +306,23 @@ export class EmployeeComponent implements OnInit {
         this.Designations = this.getDropDownData(globalconstants.MasterDefinitions.employee.DESIGNATION);
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.loading = false;
-        this.PageLoading=false;
+        this.PageLoading = false;
       });
 
   }
   getDropDownData(dropdowntype) {
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    });
-    if (Ids.length > 0) {
-      var Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      });
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenService, this.allMasterData);
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    // });
+    // if (Ids.length > 0) {
+    //   var Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   });
+    // }
+    // else
+    //   return [];
   }
   displayContact(event) {
     if (event.value == this.PrimaryContactOtherId) {
@@ -340,16 +339,29 @@ export class EmployeeComponent implements OnInit {
     //setTimeout(()=>{
     var errorMessage = '';
     var _MandatoryColumns = this.ColumnsOfSelectedReports.filter(f => f.Active == 1);
-      _MandatoryColumns.forEach(b => {
-        if (this.EmployeeForm.get(b.ReportName).value == undefined 
-        || this.EmployeeForm.get(b.ReportName).value == null 
-        || this.EmployeeForm.get(b.ReportName).value.length == 0
-        || this.EmployeeForm.get(b.ReportName).value==0) {
-          errorMessage += b.ReportName + " is required.\n";
+    if (_MandatoryColumns.length > 0) {
+      for (var i = 0; i < _MandatoryColumns.length; i++) {
+        const formControl = this.EmployeeForm.get(_MandatoryColumns[i].ReportName);
+        if (formControl) {
+          if (formControl.value == undefined
+            || formControl.value == null
+            || formControl.value.length == 0
+            || formControl.value == 0) {
+            errorMessage += _MandatoryColumns[i].ReportName + " is required.\n";
+          }
         }
-      })
+        else {
+          this.contentservice.openSnackBar("Invalid field name: " + _MandatoryColumns[i].ReportName, globalconstants.ActionText, globalconstants.RedBackground);
+          break;
+        }
+      }
+    }
+    else {
+      this.loading=false;
+      this.contentservice.openSnackBar("Mandatory fields not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
 
-    
     // if (this.EmployeeForm.get("FirstName").value == '') {
     //   errorMessage += "First name is required.<br>";
     //   return;
@@ -449,7 +461,7 @@ export class EmployeeComponent implements OnInit {
       WorkAccountId: this.EmployeeForm.get("WorkAccount").value,
       EmpGradeId: this.EmployeeForm.get("EmpGrade").value,
       OrgId: this.loginUserDetail[0]["orgId"],
-      IDMark:this.EmployeeForm.get("IDMark").value
+      IDMark: this.EmployeeForm.get("IDMark").value
     }]
 
     if (this.EmployeeData["MarriedDate"] == "") {
@@ -687,7 +699,7 @@ export class EmployeeComponent implements OnInit {
               "Designation": stud.DesignationId,
               "EmpGrade": stud.EmpGradeId,
               "WorkAccount": stud.WorkAccountId,
-              "IDMark":stud.IDMark
+              "IDMark": stud.IDMark
             });
             // if (this.EmployeeForm.get("EmailAddress").value != "") {
             //   this.EmployeeForm.get("EmailAddress").disable();

@@ -17,12 +17,14 @@ import { ClassEvaluationOptionComponent } from '../classevaluationoption/classev
   templateUrl: './classevaluation.component.html',
   styleUrls: ['./classevaluation.component.scss']
 })
-export class ClassEvaluationComponent implements OnInit { PageLoading=true;
+export class ClassEvaluationComponent implements OnInit {
+  PageLoading = true;
   @ViewChild("table") mattable;
   @ViewChild(ClassEvaluationOptionComponent) option: ClassEvaluationOptionComponent;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
+  ClassGroups = [];
   CurrentRow: any = {};
   selectedIndex = 0;
   selectedRowIndex = -1;
@@ -61,6 +63,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     OrgId: 0,
     Active: 0,
   };
+  EvaluationMasterForClassGroup = [];
   ClassEvaluationForUpdate = [];
   displayedColumns = [
     'ClassEvaluationId',
@@ -86,6 +89,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     debugger;
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({
+      searchClassGroupId: [0],
       searchEvaluationMasterId: [0],
     })
     this.PageLoad();
@@ -113,51 +117,55 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
           });
           //this.GetClassEvaluation();
         }
+        this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+          .subscribe((data: any) => {
+            this.ClassGroups = [...data.value];
+          });
       }
     }
   }
   EscapeSpecialCharacter(str) {
-  
-    if ((str===null) || (str===''))
-          return false;
+
+    if ((str === null) || (str === ''))
+      return false;
     else
       str = str.toString();
-     
-     var map = {
-       '&': '&amp;',
-     '<': '&lt;',
-     '>': '&gt;',
-     '"': '&quot;',
-     "'": '&#039;'
-     };
-     var format = /[!@#$&%^&*_+\=\[\]{};:'"\\|<>]+/;
-     return str.replace(format, function(m) { return map[m]; });
-     //return str.replace(/[&<>"']/g, function(m) { return map[m]; });
-   }
+
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    var format = /[!@#$&%^&*_+\=\[\]{};:'"\\|<>]+/;
+    return str.replace(format, function (m) { return map[m]; });
+    //return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+  }
+  SelectEvaluation() {
+    debugger;
+    var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
+    this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
+  }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
-
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
-          }
-        })
-        //this.loading = false; this.PageLoading=false;
+        this.Exams = [];
+        data.value.forEach(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0)
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: obj[0].ClassGroupId
+            })
+        });
+        this.loading = false; this.PageLoading = false;
       })
   }
   SelectSubCategory(pCategoryId) {
@@ -222,23 +230,22 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
       this.UpdateOrSave(question);
     })
   }
-  SaveRow(row)
-  {
-    this.RowToUpdate=0;
-    this.UpdateOrSave(row);  
+  SaveRow(row) {
+    this.RowToUpdate = 0;
+    this.UpdateOrSave(row);
   }
   UpdateOrSave(row) {
 
     debugger;
     this.loading = true;
     if (row.Description.length == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter description", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     //this.EvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value
     if (row.EvaluationMasterId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("No Evaluation type Id selected.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -249,13 +256,12 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     //   return;
     // }
 
-    let checkFilterString = "Description eq '" + row.Description.replaceAll("'","''") + "'";
+    let checkFilterString = "Description eq '" + globalconstants.encodeSpecialChars(row.Description) + "'";
     if (row.QuestionnaireTypeId > 0)
       checkFilterString += " and QuestionnaireTypeId eq " + row.QuestionnaireTypeId
-    else
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select type.",globalconstants.ActionText,globalconstants.RedBackground);
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
@@ -272,7 +278,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
@@ -289,7 +295,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
               MultipleAnswer: row.MultipleAnswer,
               ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
               EvaluationMasterId: row.EvaluationMasterId,
-              Description: this.EscapeSpecialCharacter(row.Description.replaceAll("'","''")),
+              Description: globalconstants.encodeSpecialChars(row.Description),
               DisplayOrder: row.DisplayOrder,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
@@ -320,7 +326,7 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
     //console.log("inserting",this.ClassEvaluationForUpdate);
@@ -366,7 +372,11 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     //   filterStr += " and EvaluationMasterId eq " + this.EvaluationMasterId;
     if (_EvaluationMasterId > 0)
       filterStr += " and EvaluationMasterId eq " + _EvaluationMasterId
-
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     //filterStr += ' and StudentClassId eq ' + this.StudentClassId
     let list: List = new List();
     list.fields = [
@@ -389,17 +399,23 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
         debugger;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
-          this.ClassEvaluationList = data.value.map(item => {
-            item.Action = false;
-            //item.SubCategories = this.allMasterData.filter(f => f.ParentId == item.ClassEvalCategoryId);
-            return item;
+          data.value.forEach(item => {
+            var _updatable = false;
+            var obj = this.EvaluationNames.filter(f => f.EvaluationMasterId == item.EvaluationMasterId);
+            if (obj.length > 0) {
+              _updatable = obj[0].AppendAnswer;
+              item.Action = false;
+              item.Description = globalconstants.decodeSpecialChars(item.Description);
+              item.Updatable = _updatable;
+              this.ClassEvaluationList.push(item);
+            }
+            //return item;
           })
         }
         else {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
 
-        //console.log('ClassEvaluation', this.ClassEvaluationList)
         this.ClassEvaluationList = this.ClassEvaluationList.sort((a, b) => a.DisplayOrder - b.DisplayOrder);
         this.dataSource = new MatTableDataSource<IClassEvaluation>(this.ClassEvaluationList);
         this.dataSource.paginator = this.paginator;
@@ -418,8 +434,10 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     list.fields = [
       'EvaluationMasterId',
       'EvaluationName',
+      'ClassGroupId',
       'Description',
       'Duration',
+      'AppendAnswer',
       'DisplayResult',
       'ProvideCertificate',
       'FullMark',
@@ -470,8 +488,6 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
             return item;
           })
         }
-        //console.log("ClassEvaluationAnswerOptionsId",this.ClassEvaluationOptionList)
-        //this.loadingFalse();
       });
 
   }
@@ -505,18 +521,11 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        //this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.QuestionnaireTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.QUESTIONNAIRETYPE);
-        // this.contentservice.GetExams(this.LoginUserDetail[0],this.SelectedBatchId,this.ExamNames)
-        // .subscribe((data:any)=>{
-        //   this.Exams =[...data.value];
-        // })
         this.GetExams();
-        //this.loading = false; this.PageLoading=false;
         this.GetClassSubjects();
         this.GetClassEvaluationOption();
-        //this.GetClassEvaluation();
         this.loading = false
       });
   }
@@ -527,7 +536,6 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     debugger;
     editedrow.Action = true;
     var editedrowindx = this.ClassEvaluationList.findIndex(x => x.ClassEvaluationId == editedrow.ClassEvaluationId);
-    //this.ClassEvaluationList = this.ClassEvaluationList.filter(f=>f.DisplayOrder>editedrow.DisplayOrder)
     var numbering = 0;
     this.ClassEvaluationList.forEach((listrow, indx) => {
       if (indx > editedrowindx) {
@@ -551,18 +559,19 @@ export class ClassEvaluationComponent implements OnInit { PageLoading=true;
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -17,13 +16,17 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentprogressreport.component.html',
   styleUrls: ['./studentprogressreport.component.scss']
 })
-export class StudentprogressreportComponent implements OnInit { PageLoading=true;
+export class StudentprogressreportComponent implements OnInit {
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-
+  StudentAttendanceList =[];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-
+  ExamStudentResults = [];
+  GradedMarksResults = [];
+  NonGradedMarkResults = [];
+  SubjectCategory = [];
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
@@ -45,6 +48,8 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
   Batches = [];
   StudentSubjects = [];
   dataSource: MatTableDataSource<IExamStudentSubjectResult>;
+  GradedSubjectsDataSource: MatTableDataSource<any[]>;
+  NonGradedSubjectsDataSource: MatTableDataSource<any[]>;
   allMasterData = [];
   Permission = 'deny';
   ExamId = 0;
@@ -61,6 +66,12 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
     Active: 0
   };
   DisplayColumns = [
+    "FirstCol"
+  ];
+  GradedDisplayColumns = [
+    "Subject"
+  ];
+  NonGradedDisplayColumns = [
     "Subject"
   ];
   searchForm: FormGroup;
@@ -98,13 +109,12 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
+        //this.GetStudentAttendance();
       }
       else {
-        this.loading=false;this.PageLoading=false;
-        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        this.loading = false; this.PageLoading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
-
-
     }
   }
   GetStudentSubject() {
@@ -113,27 +123,164 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
 
     let list: List = new List();
     list.fields = [
+      "StudentClassSubjectId",
       "ClassSubjectId",
       "StudentClassId",
       "Active",
       "SubjectId"
     ];
     list.PageName = "StudentClassSubjects";
+    list.lookupFields = ["ClassSubject($select=SubjectCategoryId)"]
     list.filter = [filterStr];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.StudentSubjects = data.value.map(ss => {
           ss.Subject = this.Subjects.filter(s => s.MasterDataId == ss.SubjectId)[0].MasterDataName;
+          ss.SubjectCategoryId = ss.ClassSubject.SubjectCategoryId;
           return ss;
         })
         this.GetStudentSubjectResults();
       })
   }
-  GetStudentSubjectResults() {
+
+  GetExamGrandTotal() {
     debugger;
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    filterStr += ' and StudentClassId eq ' + this.StudentClassId;
+
+    let list: List = new List();
+    list.fields = [
+      "ExamId",
+      "StudentClassId",
+      "TotalMarks",
+      "MarkPercent",
+      "Attendance",
+      "ClassStrength",
+      "Division",
+      "Rank",
+      "Active"
+    ];
+
+    list.PageName = "ExamStudentResults";
+    list.filter = [filterStr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.ExamStudentResults = [];
+        this.ExamStudentResults.push(
+          { "FirstCol": "Grand Total" },
+          { "FirstCol": "Percentage (%)" },
+          { "FirstCol": "Division" },
+          { "FirstCol": "Rank" },
+          { "FirstCol": "Attendance" },
+          { "FirstCol": "Class Strength" });
+        var ToInclude = [
+          { "ColumnName": "TotalMarks", "Display": "Grand Total" },
+          { "ColumnName": "MarkPercent", "Display": "Percentage (%)" },
+          { "ColumnName": "Division", "Display": "Division" },
+          { "ColumnName": "Rank", "Display": "Rank" },
+          { "ColumnName": "Attendance", "Display": "Attendance" },
+          { "ColumnName": "ClassStrength", "Display": "Class Strength" }
+        ]
+
+        data.value.map(eachexam => {
+          var _ExamName = '';
+          var obj = this.Exams.filter(exam => exam.ExamId == eachexam.ExamId);
+          if (obj.length > 0) {
+            _ExamName = obj[0].ExamName;
+            eachexam.ExamName = _ExamName;
+            if (this.DisplayColumns.indexOf(_ExamName) == -1)
+              this.DisplayColumns.push(_ExamName);
+            Object.keys(eachexam).forEach(col => {
+              var objcolumn = ToInclude.filter(include => include.ColumnName == col);
+              if (objcolumn.length > 0) {
+                var resultrow = this.ExamStudentResults.filter(f => f.FirstCol == objcolumn[0].Display)
+                resultrow[0][_ExamName] = eachexam[objcolumn[0].ColumnName]
+              }
+            })
+          }
+        })
+        this.loading = false;
+        this.PageLoading = false;
+        //console.log("result",result)
+        this.dataSource = new MatTableDataSource<any>(this.ExamStudentResults);
+      });
+  }
+  GetGradedNonGradedSubjectMark() {
+    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+
+    filterStr += ' and StudentClassId eq ' + this.StudentClassId;
+
+    let list: List = new List();
+    list.fields = [
+      "ExamResultSubjectMarkId",
+      "StudentClassId",
+      "ExamId",
+      "StudentClassSubjectId",
+      "Marks",
+      "Grade"
+    ];
+
+    list.PageName = "ExamResultSubjectMarks";
+    list.filter = [filterStr];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GradedMarksResults = [];
+        this.NonGradedMarkResults = [];
+
+        data.value.map(eachexam => {
+          var examName = '';
+          var objSubject = this.StudentSubjects.filter(subject => subject.StudentClassSubjectId == eachexam.StudentClassSubjectId);
+          if (objSubject.length > 0) {
+            eachexam.Subject = objSubject[0].Subject;
+            var _subjectCategory = this.SubjectCategory.filter(f => f.MasterDataId == objSubject[0].SubjectCategoryId);
+            var objExam = this.Exams.filter(exam => exam.ExamId == eachexam.ExamId);
+            if (objExam.length > 0) {
+              examName = objExam[0].ExamName;
+              eachexam.ExamName = examName;
+              var currentSubjectrow = [];
+              if (_subjectCategory[0].MasterDataName.toLowerCase() == 'grading') {
+                if (this.GradedDisplayColumns.indexOf(examName) == -1)
+                this.GradedDisplayColumns.push(examName);
+             
+                currentSubjectrow = this.GradedMarksResults.filter(f => f.Subject.toLowerCase() == eachexam["Subject"]);
+                if (currentSubjectrow.length == 0)
+                  this.GradedMarksResults.push({ "Subject": eachexam["Subject"], [examName]: eachexam["Grade"] });
+                else
+                  currentSubjectrow[0][examName] = eachexam["Grade"]
+              }
+              else {
+                if (this.NonGradedDisplayColumns.indexOf(examName) == -1)
+                this.NonGradedDisplayColumns.push(examName);
+             
+                currentSubjectrow = this.NonGradedMarkResults.filter(f => f.Subject.toLowerCase() == eachexam["Subject"].toLowerCase());
+                if (currentSubjectrow.length == 0)
+                  this.NonGradedMarkResults.push({ "Subject": eachexam["Subject"], [examName]: eachexam["Marks"] });
+                else
+                  currentSubjectrow[0][examName] = eachexam["Marks"]
+              }
+            }
+          }
+        })
+        this.loading = false;
+        this.PageLoading = false;
+       // console.log("graded",this.GradedMarksResults);
+       // console.log(";non graded",this.NonGradedMarkResults);
+        this.GradedSubjectsDataSource = new MatTableDataSource<any>(this.GradedMarksResults);
+        this.NonGradedSubjectsDataSource = new MatTableDataSource<any>(this.NonGradedMarkResults);
+      });
+  }
+  
+  GetStudentSubjectResults() {
+    this.GetExamGrandTotal();
+    this.GetGradedNonGradedSubjectMark();
+  }
+  GetStudentSubjectResults_old() {
+    debugger;
+
+    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
+    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     filterStr += ' and StudentClassId eq ' + this.StudentClassId;
 
@@ -236,7 +383,7 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
         this.dataSource = new MatTableDataSource<any>(progressreport);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
 
@@ -250,15 +397,13 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        //this.shareddata.ChangeBatch(this.Batches);
+        this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
         this.Batches = this.tokenstorage.getBatches()
-        //this.GetCurrentBatchIDnAssign();
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-        .subscribe((data:any)=>{
-          this.ClassGroups =[...data.value];
-        });
+          .subscribe((data: any) => {
+            this.ClassGroups = [...data.value];
+          });
         this.GetExams();
       });
   }
@@ -275,11 +420,13 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
-          }
+        data.value.forEach(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0)
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName
+            })
         })
         this.GetStudentSubject();
 
@@ -287,18 +434,19 @@ export class StudentprogressreportComponent implements OnInit { PageLoading=true
   }
 
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

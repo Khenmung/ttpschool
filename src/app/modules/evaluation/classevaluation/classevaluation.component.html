@@ -9,10 +9,17 @@
         <div style="padding: 15px 15px 15px 0px;">
             <form [formGroup]="searchForm">
                 <div style="padding: 15px;">
+                    <mat-form-field appearance="outline" [style.width.px]="200">
+                        <mat-label>class group</mat-label>
+                            <mat-select formControlName="searchClassGroupId" (selectionChange)="SelectEvaluation()">
+                            <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">{{item.GroupName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
                     <mat-form-field appearance="outline" [style.width.px]="250">
                         <mat-label>Evaluation type</mat-label>
                         <mat-select formControlName="searchEvaluationMasterId">
-                            <mat-option *ngFor="let item of EvaluationNames" [value]="item.EvaluationMasterId">
+                            <mat-option *ngFor="let item of EvaluationMasterForClassGroup" [value]="item.EvaluationMasterId">
                                 {{item.EvaluationName}}
                             </mat-option>
                         </mat-select>
@@ -57,25 +64,12 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <!-- <ng-container matColumnDef="ClassEvalSubCategoryId">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Sub Category
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassEvalSubCategoryId"
-                                [value]="element.ClassEvalSubCategoryId">
-                                <mat-option *ngFor="let item of element.SubCategories" [value]="item.MasterDataId">
-                                    {{item.MasterDataName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container> -->
                 <ng-container matColumnDef="ClassEvaluationAnswerOptionParentId">
                     <mat-header-cell *matHeaderCellDef mat-sort-header>Answer Option
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-select [(ngModel)]="element.ClassEvaluationAnswerOptionParentId"
+                            <mat-select [disabled]="element.Updatable" [(ngModel)]="element.ClassEvaluationAnswerOptionParentId"
                                 (selectionChange)="onBlur(element)"
                                 [value]="element.ClassEvaluationAnswerOptionParentId">
                                 <mat-option [value]="0">--Answer option--</mat-option>

@@ -6,6 +6,7 @@ import { List } from '../../../shared/interface';
 import { TokenStorageService } from '../../../_services/token-storage.service';
 import { globalconstants } from '../../../shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-photos',

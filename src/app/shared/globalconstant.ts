@@ -1,12 +1,13 @@
 //import { ListItemComponent } from "ng-material-multilevel-menu/lib/list-item/list-item.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { environment } from "src/environments/environment";
 import { TokenStorageService } from "../_services/token-storage.service";
 import { NaomitsuService } from "./databaseService";
 import { List } from "./interface";
 
 export class globalconstants {
-    ////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in";
-    public static apiUrl: string = "https://ettest.ttpsolutions.in";//"http://localhost:8020";
+    //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiURL
+    public static apiUrl: string = "https://ettest.ttpsolutions.in";// "https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -25,7 +26,7 @@ export class globalconstants {
     public static ActionText = 'X';
     public static ExamGrading = 'Grading';
     public static ExamMarkingNGrading = 'MarkingNGrading';
-    public static BuildCommand = "ng build --configuration production --aot=true --build-optimizer=true --outputHashing=all";
+    public static BuildCommand = "ng build --configuration production --aot=true --build-optimizer=true --output-Hashing=all";
     public static AppAndMenuAndFeatures =
         {
             'edu': {
@@ -547,16 +548,20 @@ export class globalconstants {
     }
     public static encodeSpecialChars(val) {
         var specialchars = globalconstants.SpecialCharEncodeCharacters()
-        specialchars.forEach(f => {
-            val = val.replaceAll(f.Text, f.UTF);
-        });
+        if (val !=null && val.length > 0) {
+            specialchars.forEach(f => {
+                val = val.replaceAll(f.Text, f.UTF);
+            });
+        }
         return val;
     }
     public static decodeSpecialChars(val) {
         var specialchars = globalconstants.SpecialCharEncodeCharacters()
-        specialchars.forEach(f => {
-            val = val.replaceAll(f.UTF, f.Text);
-        });
+        if (val !=null && val.length > 0) {
+            specialchars.forEach(f => {
+                val = val.replaceAll(f.UTF, f.Text);
+            });
+        }
         return val;
     }
     public static SpecialCharEncodeCharacters(): any[] {

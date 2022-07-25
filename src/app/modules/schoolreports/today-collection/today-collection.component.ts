@@ -286,18 +286,19 @@ export class TodayCollectionComponent implements OnInit {
       })
   }
   getDropDownData(dropdowntype) {
-    let IdObj = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    })
-    var Id = 0;
-    if (IdObj.length > 0) {
-      Id = IdObj[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      });
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenStorage, this.allMasterData);
+    // let IdObj = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
+    // })
+    // var Id = 0;
+    // if (IdObj.length > 0) {
+    //   Id = IdObj[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   });
+    // }
+    // else
+    //   return [];
   }
 }
 export interface ITodayReceipt {

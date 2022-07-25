@@ -60,7 +60,7 @@ export class TeachersubjectComponent implements OnInit {
   };
   displayedColumns = [
     'TeacherSubjectId',
-    'EmployeeId',    
+    'EmployeeId',
     'ClassSubjectId',
     'ClsName',
     'Active',
@@ -77,8 +77,6 @@ export class TeachersubjectComponent implements OnInit {
     private fb: FormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-
-    private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
   ) { }
@@ -127,9 +125,6 @@ export class TeachersubjectComponent implements OnInit {
     let filterFunction = function (data, filter): boolean {
       let searchTerms = JSON.parse(filter);
       return data.SubjectName.toLowerCase().indexOf(searchTerms.SubjectName) !== -1
-      // && data.id.toString().toLowerCase().indexOf(searchTerms.id) !== -1
-      // && data.colour.toLowerCase().indexOf(searchTerms.colour) !== -1
-      // && data.pet.toLowerCase().indexOf(searchTerms.pet) !== -1;
     }
     return filterFunction;
   }
@@ -221,8 +216,8 @@ export class TeachersubjectComponent implements OnInit {
 
     var _classId = this.searchForm.get("searchClassId").value;
     var _employeeId = this.searchForm.get("searchEmployeeId").value;
-    if (_classId == 0 && _employeeId ==0) {
-      this.loading = false; 
+    if (_classId == 0 && _employeeId == 0) {
+      this.loading = false;
       this.contentservice.openSnackBar("Please select class/course or teacher", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -253,11 +248,15 @@ export class TeachersubjectComponent implements OnInit {
     this.TeacherSubjectList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        var _classSubject = [];
         if (_classId > 0)
-          this.ClassSubjects = this.ClassSubjects.filter(f => f.ClassId == _classId);
-debugger;
+          _classSubject = this.ClassSubjects.filter(f => f.ClassId == _classId);
+        else
+          _classSubject = [...this.ClassSubjects];
+
+        debugger;
         data.value.forEach(teachersubject => {
-          var objClsSubject = this.ClassSubjects.filter(clssubject => clssubject.ClassSubjectId == teachersubject.ClassSubjectId)
+          var objClsSubject = _classSubject.filter(clssubject => clssubject.ClassSubjectId == teachersubject.ClassSubjectId)
           if (objClsSubject.length > 0) {
             teachersubject["ClsName"] = objClsSubject[0]["ClsName"];
             this.TeacherSubjectList.push(teachersubject);
@@ -522,18 +521,19 @@ debugger;
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

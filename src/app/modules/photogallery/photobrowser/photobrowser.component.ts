@@ -7,6 +7,7 @@ import { globalconstants } from '../../../shared/globalconstant';
 import { Subscription } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout';
 import { ContentService } from 'src/app/shared/content.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-photobrowser',

@@ -238,9 +238,8 @@ export class TeacherAttendanceComponent implements OnInit { PageLoading=true;
   UpdateOrSave(row, indx) {
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and TeacherId eq " + row.TeacherId +
-      //" and AttendanceDate eq " + this.datepipe.transform(row.AttendanceDate, 'yyyy-MM-dd') +
-      " and AttendanceDate ge " + moment(row.AttendanceDate).format('YYYY-MM-DD')
-      " and AttendanceDate lt " + moment(row.AttendanceDate).add(1,'day').format('YYYY-MM-DD')
+      " and AttendanceDate ge " + moment(row.AttendanceDate).format('YYYY-MM-DD') +
+      " and AttendanceDate lt " + moment(row.AttendanceDate).add(1,'day').format('YYYY-MM-DD') +
       " and " + this.StandardFilter;
 
     if (row.AttendanceId > 0)
@@ -330,18 +329,19 @@ export class TeacherAttendanceComponent implements OnInit { PageLoading=true;
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

@@ -70,7 +70,7 @@ export class ResultComponent implements OnInit {
     "TotalMarks",
     "Percent",
     "Rank",
-    "Grade",
+    "Division",
 
   ];
   searchForm: FormGroup;
@@ -223,7 +223,7 @@ export class ResultComponent implements OnInit {
       "ExamId",
       "StudentClassId",
       "TotalMarks",
-      "Grade",
+      "Division",
       "MarkPercent",
       "Rank",
       "Active"
@@ -246,7 +246,7 @@ export class ResultComponent implements OnInit {
         //console.log("this.ExamStudentResult",this.ExamStudentResult);
         this.ExamStudentResult = this.ExamStudentResult.map(d => {
           var _section = '';
-          var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
+          //var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
           var _sectionObj = this.Sections.filter(s => s.SectionId == d.StudentClass["SectionId"]);
           if (_sectionObj.length > 0)
             _section = _sectionObj[0].MasterDataName;
@@ -259,8 +259,8 @@ export class ResultComponent implements OnInit {
           d["ClassName"] = _className;
           d["RollNo"] = d.StudentClass["RollNo"]
           d["Student"] = _className + "-" + d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
-          d.Grade = _gradeObj[0].GradeName;
-          d.GradeType = _gradeObj[0].GradeType;
+          //d.D = d.Division;
+          //d.GradeType = _gradeObj[0].GradeType;
           //d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
           d["Rank"] = d["Rank"] == 0 ? 500 : d["Rank"];
           //d["Percent"] = d.GradeType == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
@@ -268,7 +268,7 @@ export class ResultComponent implements OnInit {
 
         })
 
-        this.ExamStudentResult = this.ExamStudentResult.filter(f => f.Grade != 'Fail').sort((a, b) => a.Rank - b.Rank)
+        this.ExamStudentResult = this.ExamStudentResult.filter(f => f.Division != 'Fail').sort((a, b) => a.Rank - b.Rank)
         this.dataSource = new MatTableDataSource(this.ExamStudentResult);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -334,11 +334,12 @@ export class ResultComponent implements OnInit {
       })
   }
   FilterClass() {
+   debugger;
     var _examId = this.searchForm.get("searchExamId").value
     var _classGroupId = 0;
-    var obj = this.Exams.filter(f => f.ExamId == _examId);
-    if (obj.length > 0)
-      _classGroupId = obj[0].ClassGroupId;
+    var objExam = this.Exams.filter(f => f.ExamId == _examId);
+    if (objExam.length > 0)
+      _classGroupId = objExam[0].ClassGroupId;
     this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
   }
   GetMasterData() {
@@ -365,22 +366,17 @@ export class ResultComponent implements OnInit {
 
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 and ReleaseResult eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
-          }
+        this.Exams = [];
+        data.value.map(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0)
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: e.ClassGroupId
+            })
         })
       })
   }
@@ -408,18 +404,20 @@ export class ResultComponent implements OnInit {
   }
 
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 
@@ -430,7 +428,7 @@ export interface IExamStudentResult {
   StudentClassId: number;
   StudentClass: {},
   TotalMarks: number;
-  Grade: string;
+  Division: string;
   GradeId: number;
   GradeType: string;
   Rank: number;

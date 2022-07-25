@@ -16,7 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './evaluationandexam.component.html',
   styleUrls: ['./evaluationandexam.component.scss']
 })
-export class EvaluationandExamComponent implements OnInit { PageLoading=true;
+export class EvaluationandExamComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   LoginUserDetail: any[] = [];
@@ -98,7 +99,7 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
           });
 
         }
@@ -107,25 +108,19 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
     }
   }
   GetExams() {
-
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];// + ' and BatchId eq ' + this.SelectedBatchId;
-
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
-          }
-        })
-        this.loading = false; this.PageLoading=false;
+        this.Exams = [];
+        data.value.forEach(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0)
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: obj[0].ClassGroupId
+            })
+        });
+        this.loading = false; this.PageLoading = false;
       })
   }
   SelectSubCategory(pCategoryId) {
@@ -179,21 +174,19 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
     let checkFilterString = this.StandardFilter;
 
     if (row.EvaluationMasterId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select evaluation master.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else
-    {
+    else {
       checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
     }
     if (row.ExamId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else
-    {
+    else {
       checkFilterString += " and ExamId eq " + row.ExamId;
     }
 
@@ -210,7 +203,7 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -228,7 +221,7 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
             this.EvaluationExamData["UpdatedDate"] = new Date();
             delete this.EvaluationExamData["UpdatedBy"];
             delete this.EvaluationExamData["SubCategories"];
-            console.log("this.EvaluationExamData",this.EvaluationExamData)
+            console.log("this.EvaluationExamData", this.EvaluationExamData)
             this.insert(row);
           }
           else {
@@ -237,15 +230,15 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
             //this.EvaluationExamData["CreatedBy"] = row.CreatedBy;
             this.EvaluationExamData["UpdatedDate"] = new Date();
             //delete this.EvaluationExamData["SubCategories"];
-            this.EvaluationExamData["UpdatedBy"]=this.LoginUserDetail[0]["userId"];
-            console.log("this.EvaluationExamData",this.EvaluationExamData)
+            this.EvaluationExamData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            console.log("this.EvaluationExamData", this.EvaluationExamData)
             this.update(row);
           }
         }
       });
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
     this.dataservice.postPatch('EvaluationExams', this.EvaluationExamData, 0, 'post')
@@ -353,7 +346,7 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
         this.EvaluationTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.EVALUATIONTYPE);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.GetExams();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         this.GetEvaluationMasters();
       });
   }
@@ -369,18 +362,19 @@ export class EvaluationandExamComponent implements OnInit { PageLoading=true;
     row.Action = true;
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

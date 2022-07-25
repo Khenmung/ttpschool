@@ -152,6 +152,7 @@ export class ExamsComponent implements OnInit {
     this.loading = true;
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
+      " and BatchId eq " + this.SelectedBatchId +
       " and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
       " and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
 
@@ -251,7 +252,7 @@ export class ExamsComponent implements OnInit {
       "EndDate", "ClassGroupId", "ExamModeId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and BatchId eq " + this.SelectedBatchId];
     //list.orderBy = "ParentId";
 
@@ -285,8 +286,8 @@ export class ExamsComponent implements OnInit {
           }
         })
         ////console.log('this', this.Exams)
-        this.Exams.sort((a, b) => {
-          return this.getTime(a.StartDate) - this.getTime(b.StartDate)
+        this.Exams = this.Exams.sort((a, b) => {
+          return b.Active - a.Active || this.getTime(a.StartDate) - this.getTime(b.StartDate)
         })
         this.dataSource = new MatTableDataSource<IExams>(this.Exams);
         this.loading = false; this.PageLoading = false;
@@ -311,11 +312,11 @@ export class ExamsComponent implements OnInit {
 
       });
   }
-  GetClassGroup(){
+  GetClassGroup() {
     this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-    .subscribe((data:any)=>{
-      this.ClassGroups =[...data.value];
-    })
+      .subscribe((data: any) => {
+        this.ClassGroups = [...data.value];
+      })
   }
   GetSubjectComponents() {
 
@@ -514,18 +515,19 @@ export class ExamsComponent implements OnInit {
     element.Action = true;
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

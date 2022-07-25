@@ -18,7 +18,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './examtimetable.component.html',
   styleUrls: ['./examtimetable.component.scss']
 })
-export class ExamtimetableComponent implements OnInit { PageLoading=true;
+export class ExamtimetableComponent implements OnInit {
+    PageLoading = true;
   @ViewChild('allSelected') private allSelected: MatOption;
 
   weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -111,7 +112,7 @@ export class ExamtimetableComponent implements OnInit { PageLoading=true;
   }
 
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
 
   GetClassSubject() {
@@ -149,30 +150,24 @@ export class ExamtimetableComponent implements OnInit { PageLoading=true;
             ClassId: item.ClassId
           }
         })
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
       .subscribe((data: any) => {
-        this.Exams = data.value.map(e => {
-          return {
-            ExamId: e.ExamId,
-            ExamName: this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)[0].MasterDataName
-          }
+        this.Exams = [];
+        data.value.map(e => {
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+          if (obj.length > 0)
+            this.Exams.push({
+              ExamId: e.ExamId,
+              ExamName: obj[0].MasterDataName,
+              ClassGroupId: obj[0].ClassGroupId
+            })
         })
-        this.loading = false; this.PageLoading=false;
-      })
+      });
   }
   GetExamSlots() {
     //debugger;
@@ -214,8 +209,8 @@ export class ExamtimetableComponent implements OnInit { PageLoading=true;
             ExamDate: moment(s.ExamDate).format('DD/MM/yyyy'),
             StartTime: s.StartTime,
             EndTime: s.EndTime,
-            ExamId:s.ExamId,
-            Sequence:s.Sequence
+            ExamId: s.ExamId,
+            Sequence: s.Sequence
           }
         })
         this.NoOfColumn = this.ExamSlots.length;
@@ -327,11 +322,11 @@ export class ExamtimetableComponent implements OnInit { PageLoading=true;
 
             if (this.displayedColumns.indexOf("Slot" + index) == -1)
               this.displayedColumns.push("Slot" + index);
-            
+
             //filtering only for one slot in one exam date
             filteredOneSlotSubjects = filteredData.filter(f => f.SlotId == slot.SlotId
               && moment(f.Slot.ExamDate).format('dd/MM/yyyy') == moment(edate.ExamDate).format('dd/MM/yyyy'))
-              .sort((a,b)=>a.Slot.Sequence - b.Slot.Sequence);
+              .sort((a, b) => a.Slot.Sequence - b.Slot.Sequence);
             //timeTableRow["ExamDate"]["slot" + index]["ClassSubject"] = [];
             //console.log("filteredOneSlotSubjects",filteredOneSlotSubjects)
 
@@ -387,7 +382,7 @@ export class ExamtimetableComponent implements OnInit { PageLoading=true;
           //console.log("SlotNClassSubjects", this.SlotNClassSubjects)
         })
         this.dataSource = new MatTableDataSource<any>(this.SlotNClassSubjects);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetMasterData() {
@@ -408,18 +403,19 @@ export class ExamtimetableComponent implements OnInit { PageLoading=true;
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

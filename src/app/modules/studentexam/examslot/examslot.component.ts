@@ -236,19 +236,10 @@ export class ExamslotComponent implements OnInit {
         });
   }
   GetExams() {
-    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId, this.ExamNames);
-    //var orgIdSearchstr = this.StandardFilterWithBatchId;// ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    let list: List = new List();
-
-    list.fields = ["ExamId", "ExamNameId", "StartDate", "EndDate", "ClassGroupId"];
-    list.PageName = "Exams";
-    list.filter = ["Active eq 1 and " + this.StandardFilterWithBatchId];
-    //list.orderBy = "ParentId";
-
-    this.dataservice.get(list)
+    this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
       .subscribe((data: any) => {
         var _examName = '';
-        //var _startDate, _endDate = null;
+        this.Exams =[];
         data.value.forEach(e => {
           _examName = '';
           var examobj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
@@ -381,18 +372,19 @@ export class ExamslotComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 

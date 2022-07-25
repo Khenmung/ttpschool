@@ -56,8 +56,8 @@ export class StudentfamilynfriendComponent implements OnInit {
   };
   displayedColumns = [
     'SiblingName',
-    'RelationshipId',
     'ContactNo',
+    'RelationshipId',    
     'FeeType',
     'FeeTypeRemarks',
     'Remarks',
@@ -177,11 +177,18 @@ export class StudentfamilynfriendComponent implements OnInit {
       siblingorfriendName = this.searchForm.get("searchOtherSiblingorFriend").value;
     else
       siblingorfriendName = this.searchForm.get("searchSiblings").value.Name;
+    var Id = this.searchForm.get("searchStudentName").value.ParentStudentId;
+    var _ParentId = 0
+    if (Id == 0) {
+      _ParentId = this.searchForm.get("searchStudentName").value.StudentId;
+    }
+    else
+      _ParentId = Id;
 
     var newdata = {
       StudentFamilyNFriendId: 0,
       StudentId: this.searchForm.get("searchSiblings").value.StudentId,
-      ParentStudentId: this.searchForm.get("searchStudentName").value.StudentId,
+      ParentStudentId: _ParentId,
       SiblingName: siblingorfriendName,
       Name: this.searchForm.get("searchOtherSiblingorFriend").value,
       ContactNo: this.searchForm.get("searchContactNo").value,
@@ -245,9 +252,9 @@ export class StudentfamilynfriendComponent implements OnInit {
 
     let checkFilterString = "";// "StudentFamilyNFriendId eq " + row.StudentFamilyNFriendId
     if (row.StudentId > 0)
-      checkFilterString += 'ParentStudentId eq ' + row.ParentStudentId + ' and StudentId eq ' + row.StudentId;
-    if (row.Name.length > 0)
-      checkFilterString += "ParentStudentId eq " + row.ParentStudentId + " and Name eq '" + row.Name + "'";
+      checkFilterString += ' ParentStudentId eq ' + row.ParentStudentId + ' and StudentId eq ' + row.StudentId;
+    else if (row.Name.length > 0)
+      checkFilterString += " ParentStudentId eq " + row.ParentStudentId + " and Name eq '" + row.Name + "'";
 
     if (row.StudentFamilyNFriendId > 0)
       checkFilterString += " and StudentFamilyNFriendId ne " + row.StudentFamilyNFriendId;
@@ -275,7 +282,7 @@ export class StudentfamilynfriendComponent implements OnInit {
           this.StudentFamilyNFriendData.ContactNo = row.ContactNo;
           this.StudentFamilyNFriendData.StudentId = row.StudentId;
           this.StudentFamilyNFriendData.RelationshipId = row.RelationshipId;
-          this.StudentFamilyNFriendData.ParentStudentId = this.StudentId;
+          this.StudentFamilyNFriendData.ParentStudentId = row.ParentStudentId;
           this.StudentFamilyNFriendData.Name = row.Name;
           this.StudentFamilyNFriendData.Remarks = row.Remarks;
           this.StudentFamilyNFriendData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -413,6 +420,7 @@ export class StudentfamilynfriendComponent implements OnInit {
       'MotherName',
       'ContactNo',
       'FatherContactNo',
+      //'ParentStudentId',
       'MotherContactNo'
     ];
 
@@ -503,18 +511,19 @@ export class StudentfamilynfriendComponent implements OnInit {
       });
   }
   getDropDownData(dropdowntype) {
-    let Id = 0;
-    let Ids = this.allMasterData.filter((item, indx) => {
-      return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    })
-    if (Ids.length > 0) {
-      Id = Ids[0].MasterDataId;
-      return this.allMasterData.filter((item, index) => {
-        return item.ParentId == Id
-      })
-    }
-    else
-      return [];
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
+    // let Id = 0;
+    // let Ids = this.allMasterData.filter((item, indx) => {
+    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    // })
+    // if (Ids.length > 0) {
+    //   Id = Ids[0].MasterDataId;
+    //   return this.allMasterData.filter((item, index) => {
+    //     return item.ParentId == Id
+    //   })
+    // }
+    // else
+    //   return [];
 
   }
 }

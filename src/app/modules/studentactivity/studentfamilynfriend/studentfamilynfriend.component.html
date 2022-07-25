@@ -25,14 +25,6 @@
         <span style="width:100%;border-bottom:1px solid lightgray;margin-bottom: 10px;"></span>
     </div>
     <div style="display:flex;">
-        <mat-form-field appearance="outline" [style.width.px]="200">
-            <mat-label>Relationship</mat-label>
-            <mat-select formControlName="searchRelationshipId">
-                <mat-option [value]="0">All</mat-option>
-                <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
-                    {{item.MasterDataName}}</mat-option>
-            </mat-select>
-        </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="250">
             <mat-label>Same school sibling or friend</mat-label>
             <input type="text" formControlName="searchSiblings" matInput [matAutocomplete]="auto1">
@@ -53,6 +45,14 @@
                 <input matInput autocomplete="Off" [maxlength]="20" formControlName="searchContactNo">
             </mat-form-field>
         </div>
+        <mat-form-field appearance="outline" [style.width.px]="200">
+            <mat-label>Relationship</mat-label>
+            <mat-select formControlName="searchRelationshipId">
+                <mat-option *ngFor="let item of FamilyRelationship" [value]="item.MasterDataId">
+                    {{item.MasterDataName}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+      
         <button [disabled]="loading || Permission=='read'" style="margin-top: 10px;" matTooltip="add new" mat-mini-fab (click)="AddNew()">
             <mat-icon>add</mat-icon>
         </button>

@@ -14,6 +14,7 @@ import { FeereceiptComponent } from '../studentfeepayment/feereceipt/feereceipt.
 import { SharedataService } from '../../../shared/sharedata.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-studentprimaryinfo',

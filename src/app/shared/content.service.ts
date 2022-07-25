@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import alasql from 'alasql';
 import { evaluate } from 'mathjs';
 import { AuthService } from '../_services/auth.service';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -21,6 +22,7 @@ export class ContentService implements OnInit {
   UserDetail = [];
   url: any;
   SelectedApplicationId = 0;
+  HostUrl=globalconstants.apiUrl;
   constructor(
     private authservice: AuthService,
     private tokenService: TokenStorageService,
@@ -56,31 +58,31 @@ export class ContentService implements OnInit {
 
     return this.authservice.CallAPI(payload, 'EmailDuplicateCheck');
   }
-  GetExams(pOrgId, pSelectedBatchId, pExamNames) {
+  GetExams(pOrgId, pSelectedBatchId) {
 
     var orgIdSearchstr = 'and OrgId eq ' + pOrgId + ' and BatchId eq ' + pSelectedBatchId;
 
     let list: List = new List();
     var result = [];
-    list.fields = ["ExamId", "ExamNameId"];
+    list.fields = ["ExamId", "ExamNameId", "ClassGroupId", "StartDate", "EndDate"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        data.value.forEach(e => {
-          var obj = pExamNames.filter(n => n.MasterDataId == e.ExamNameId);
-          var _examName = ''
-          if (obj.length > 0) {
-            _examName = obj[0].MasterDataName;
-            result.push({
-              ExamId: e.ExamId,
-              ExamName: _examName
-            })
-          }
-        })
+    return this.dataservice.get(list)
+    // .subscribe((data: any) => {
+    //   data.value.forEach(e => {
+    //     var obj = pExamNames.filter(n => n.MasterDataId == e.ExamNameId);
+    //     var _examName = ''
+    //     if (obj.length > 0) {
+    //       _examName = obj[0].MasterDataName;
+    //       result.push({
+    //         ExamId: e.ExamId,
+    //         ExamName: _examName
+    //       })
+    //     }
+    //   })
 
-        return result;
-      })
+    //   return result;
+    // })
   }
   GetClasses(orgId) {
     let list = new List();
@@ -89,6 +91,16 @@ export class ContentService implements OnInit {
     list.PageName = "ClassMasters";
     list.orderBy = "Sequence";
     return this.dataservice.get(list);
+  }
+  GetStudentClassCount(pOrgId, pClassId,pBatchId) {
+    debugger;
+    let list: List = new List();
+    list.fields = ["StudentClassId"];
+    list.PageName = "StudentClasses";
+    list.filter = ["Active eq 1 and ClassId eq " + pClassId + " and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId];
+
+    return this.dataservice.get(list);
+
   }
   GetClassGroups(pOrgId) {
 
@@ -103,7 +115,7 @@ export class ContentService implements OnInit {
 
     list.PageName = "ClassGroups";
     list.filter = [filterStr];
-    return this.dataservice.get(list);    
+    return this.dataservice.get(list);
   }
   GetStudentGrade(pOrgId) {
     var orgIdSearchstr = ' and OrgId eq ' + pOrgId
@@ -111,7 +123,7 @@ export class ContentService implements OnInit {
     //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
-    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula"];
+    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula,Sequence"];
     list.PageName = "StudentGrades";
     list.filter = ["Active eq 1" + orgIdSearchstr];
     return this.dataservice.get(list)
@@ -211,7 +223,7 @@ export class ContentService implements OnInit {
     ];
 
     list.PageName = "ClassGroupMappings";
-    list.lookupFields = ["Class($select=ClassName,ClassId)"];
+    list.lookupFields = ["Class($select=ClassName,ClassId),ClassGroup($select=GroupName)"];
     list.filter = [filterStr];
     return this.dataservice.get(list);
   }
@@ -478,7 +490,7 @@ export class ContentService implements OnInit {
   }
   Getcontent(title: string, query: string) {
     //debugger
-    this.url = globalconstants.apiUrl + '/odata/' + title + '?' + query;
+    this.url = this.HostUrl + '/odata/' + title + '?' + query;
     //this.url = '/odata/' +title + '?' + query;  
     ////console.log(this.url);
     return this.http.get(this.url);//.map(res=>res.json());
@@ -490,7 +502,7 @@ export class ContentService implements OnInit {
 
   GetPageTypes() {
     ////debugger  
-    this.url = globalconstants.apiUrl + '/odata/PageTypes?$filter=Active eq true';
+    this.url = this.HostUrl + '/odata/PageTypes?$filter=Active eq true';
     //this.url = '/odata/PageTypes?$filter=Active eq true';  
     //var filter = ''
     return this.http.get(this.url);
@@ -498,13 +510,13 @@ export class ContentService implements OnInit {
   GetcontentLatest(pageGroupId: number, pageName: string) {
     //debugger
     let filter = "PageName eq '" + pageName + "' and PageNameId eq " + pageGroupId;
-    this.url = globalconstants.apiUrl + '/odata/Pages?$select=PageId,Version&$orderby=Version desc&$top=1&$filter=' + filter;
+    this.url = this.HostUrl + '/odata/Pages?$select=PageId,Version&$orderby=Version desc&$top=1&$filter=' + filter;
     //this.url = '/odata/Pages?$select=PageId,Version&$orderby=Version desc&$top=1&$filter=' + filter;  
     return this.http.get(this.url);
   }
   GetcontentById(Id: number) {
     //debugger
-    this.url = globalconstants.apiUrl + '/odata/Pages?$filter=PageId eq ' + Id;
+    this.url = this.HostUrl + '/odata/Pages?$filter=PageId eq ' + Id;
     //this.url = '/odata/Pages?$filter=PageId eq ' + Id;  
     return this.http.get(this.url);
   }
@@ -516,7 +528,7 @@ export class ContentService implements OnInit {
       })
     };
     //headers=headers.append('Access-Control-Allow-Origin', '*')  
-    this.url = globalconstants.apiUrl + '/odata/Pages/(' + key + ')';
+    this.url = this.HostUrl + '/odata/Pages/(' + key + ')';
     //this.url = '/odata/Pages/(' + key +')';  
     return this.http.patch(this.url, body, httpOptions)
   }
@@ -710,7 +722,7 @@ export class ContentService implements OnInit {
               })
             }
           });
-//          console.log("this.UserDetail", this.UserDetail);
+          //          console.log("this.UserDetail", this.UserDetail);
           this.tokenService.saveUserdetail(this.UserDetail);
         }
       })

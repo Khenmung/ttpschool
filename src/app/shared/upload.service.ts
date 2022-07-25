@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { globalconstants } from './globalconstant';
+import { environment } from 'src/environments/environment';
 //import { FileToUpload } from '../../../interface';
 
 
