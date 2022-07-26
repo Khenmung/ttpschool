@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiURL:'ettest.ttpsolutions.in'
+  apiURL:'https://ettest.ttpsolutions.in'
 };
 
 /*

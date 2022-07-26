@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiURL:'api.ttpsolutions.in'
-    //apiURL:'localhost:8020'
+    //apiURL:'http://api.ttpsolutions.in'
+    apiURL:'http://localhost:8020'
   };
   

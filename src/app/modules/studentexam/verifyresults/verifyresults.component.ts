@@ -124,21 +124,23 @@ export class VerifyResultsComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
-
+        this.GetTotalAttendance();
         this.GetSubjectComponents();
         this.GetStudentAttendance();
       }
     }
   }
+  ClassGroupIdOfExam = 0;
   FilteredClasses = [];
   FilterClass() {
     var _examId = this.searchForm.get("searchExamId").value
-    var _classGroupId = 0;
+    //var _classGroupId = 0;
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0)
-      _classGroupId = obj[0].ClassGroupId;
-    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
-    this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == _classGroupId);
+      this.ClassGroupIdOfExam = obj[0].ClassGroupId;
+    this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == this.ClassGroupIdOfExam);
+    this.SelectedClassStudentGrades = this.StudentGrades.filter(f => f.ClassGroupId == this.ClassGroupIdOfExam);
+
   }
   clear() {
     this.searchForm.patchValue({ searchExamId: 0 });
@@ -235,8 +237,18 @@ export class VerifyResultsComponent implements OnInit {
       this.VerifiedResult.ExamStudentResult = [];
 
       this.ExamStudentSubjectResult.forEach(d => {
-        var _TotalDays = this.AttendanceStatusSum.reduce((result, curr) => result + curr.Total, 0) / this.ClassStrength;
-        var _TotalPresent =0;
+        var _TotalDays = 0
+        if (this.ClassStrength > 0) {
+          var objAttendanceForClassGroup = this.TotalAttendance.filter(f => f.ClassGroupId == this.ClassGroupIdOfExam);
+          if (objAttendanceForClassGroup.length > 0)
+            _TotalDays = objAttendanceForClassGroup.reduce((acc,current)=>acc + current.TotalNoOfAttendance,0);
+          else {
+            this.loading = false;
+            this.contentservice.openSnackBar("No total attendance defined for the class group.", globalconstants.ActionText, globalconstants.RedBackground);
+            return;
+          }
+        }
+        var _TotalPresent = 0;
         var _TotalPresentObj = this.AttendanceStatusSum.filter(f => f.AttendanceStatus == 1 && f.StudentClassId == d["StudentClassId"])
         if (_TotalPresentObj.length > 0)
           _TotalPresent = _TotalPresentObj[0].Total;
@@ -450,7 +462,8 @@ export class VerifyResultsComponent implements OnInit {
             })
 
             //for each student
-            if (_subjectCategoryName == 'marking') {
+            if(this.ExamStudentSubjectResult.length>0){
+            //if (_subjectCategoryName == 'marking') {
               var _markingId = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')[0].MasterDataId;
               this.displayedColumns.push("Total", "Percentage", "Rank", "Division");
               var _SelectedClassStudentGrades = this.SelectedClassStudentGrades.filter(f => f.SubjectCategoryId == _markingId);
@@ -475,8 +488,8 @@ export class VerifyResultsComponent implements OnInit {
                       //}
                     }
                   }
-
-                  if (result.Division.length > 0) {
+                  var _notToCalculateRankAndPercentage =['fail','promoted'];  
+                  if (!_notToCalculateRankAndPercentage.includes(result.Division.toLowerCase())) {
                     result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
                     if (previousTotal != result.Total)
                       rankCount++;
@@ -608,10 +621,10 @@ export class VerifyResultsComponent implements OnInit {
                 SubjectCategoryId: m.SubjectCategoryId,
                 Formula: m.Formula,
                 ClassGroupId: m.ClassGroupId,
-                Sequence:m.Sequence
+                Sequence: m.Sequence
               })
           })
-          f.grades = _grades.sort((a,b)=>a.Sequence - b.Sequence);
+          f.grades = _grades.sort((a, b) => a.Sequence - b.Sequence);
           this.StudentGrades.push(f);
         })
       })
@@ -673,6 +686,27 @@ export class VerifyResultsComponent implements OnInit {
         })
       })
   }
+  TotalAttendance = [];
+  GetTotalAttendance() {
+    debugger;
+
+    let list: List = new List();
+    list.fields = [
+      "TotalAttendanceId",
+      "ClassGroupId",
+      "MonthYear",
+      "TotalNoOfAttendance"
+    ];
+    list.PageName = "TotalAttendances";
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and BatchId eq " + this.SelectedBatchId];
+
+    this.dataservice.get(list)
+      .subscribe((totalAttendance: any) => {
+        this.TotalAttendance = [...totalAttendance.value];
+      });
+  }
+
   GetStudentAttendance() {
     debugger;
 
@@ -705,6 +739,7 @@ export class VerifyResultsComponent implements OnInit {
 
         this.loading = false;
         this.PageLoading = false;
+        //console.log("this.AttendanceStatusSum", this.AttendanceStatusSum);
       });
   }
   GetSubjectComponents() {

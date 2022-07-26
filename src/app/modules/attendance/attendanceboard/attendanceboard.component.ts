@@ -1,9 +1,9 @@
-import { debugOutputAstAsTypeScript } from '@angular/compiler';
 import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
+import { StudenttotalattendanceComponent } from '../studenttotalattendance/studenttotalattendance.component';
 import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendance.component';
 
 @Component({
@@ -13,13 +13,15 @@ import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendan
 })
 export class AttendanceboardComponent implements AfterViewInit {
 
-  components:any = [
+  components: any = [
     StudentAttendanceComponent,
-    TeacherAttendanceComponent
+    TeacherAttendanceComponent,
+    StudenttotalattendanceComponent
   ];
   SelectedAppName = '';
   tabNames = [
     { label: 'Student Attendance', faIcon: '' },
+    { label: 'Employee Attendance', faIcon: '' },
     { label: 'Employee Attendance', faIcon: '' },
   ];
 
@@ -38,7 +40,7 @@ export class AttendanceboardComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private contentservice: ContentService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+  ) {
   }
 
   public ngAfterViewInit(): void {
@@ -55,33 +57,11 @@ export class AttendanceboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
     var comindx = this.components.indexOf(StudentAttendanceComponent);
-    if (this.SelectedAppName.toLowerCase() == 'employee management') {
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-    else if (perObj.length > 0 && perObj[0].permission != 'deny') {
-      this.tabNames[comindx].faIcon = perObj[0].faIcon;
-      this.tabNames[comindx].label = perObj[0].label;
-    }
-    else {
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
+    this.AddRemoveComponent(perObj, comindx);
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
-    var comindx = this.components.indexOf(TeacherAttendanceComponent);
-    if (this.SelectedAppName.toLowerCase() == 'education management') {
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-    else if (perObj.length > 0 && perObj[0].permission != 'deny') {
-      this.tabNames[comindx].faIcon = perObj[0].faIcon;
-      this.tabNames[comindx].label = perObj[0].label;
-    }
-    else {
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTTOTALATTENDANCE)
+    var comindx = this.components.indexOf(StudenttotalattendanceComponent);
+    this.AddRemoveComponent(perObj, comindx);
 
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
@@ -99,10 +79,35 @@ export class AttendanceboardComponent implements AfterViewInit {
 
   }
 
+  AddRemoveComponent(perObj, pcomindx) {
 
+    if (this.SelectedAppName.toLowerCase() == 'education management') {
+      var comindx = this.components.indexOf(TeacherAttendanceComponent);
+      if (comindx > -1) {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+    }
+
+    if (perObj.length > 0) {
+      if (perObj[0].permission == 'deny') {
+        this.components.splice(pcomindx, 1);
+        this.tabNames.splice(pcomindx, 1);
+      }
+      else {
+        this.tabNames[pcomindx].faIcon = perObj[0].faIcon;
+        this.tabNames[pcomindx].label = perObj[0].label;
+      }
+    }
+    else {
+      this.components.splice(pcomindx, 1);
+      this.tabNames.splice(pcomindx, 1);
+    }
+
+  }
 
   private renderComponent(index: number): any {
-    
+
     this.viewContainer.createComponent(this.components[index]);
   }
 }

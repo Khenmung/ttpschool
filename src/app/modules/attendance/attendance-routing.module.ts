@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { AttendanceboardComponent } from './attendanceboard/attendanceboard.component';
+import { EmployeetotalattendanceComponent } from './employeetotalattendance/employeetotalattendance.component';
 import { StudentAttendanceComponent } from './studentattendance/studentattendance.component';
+import { StudenttotalattendanceComponent } from './studenttotalattendance/studenttotalattendance.component';
 import { TeacherAttendanceComponent } from './teacherattendance/teacherattendance.component';
 
 const routes: Routes = [
@@ -22,6 +24,9 @@ export class AttendanceRoutingModule { }
 export const AttendanceComponents=[
   AttendanceboardComponent,
   StudentAttendanceComponent,
-  TeacherAttendanceComponent
+  TeacherAttendanceComponent,
+  AttendanceboardComponent, 
+  StudenttotalattendanceComponent, 
+  EmployeetotalattendanceComponent
 ]
 

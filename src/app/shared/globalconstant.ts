@@ -200,7 +200,9 @@ export class globalconstants {
                     'STUDENTATTENDANCE': 'student attendance',
                     'TEACHERATTENDANCE': 'employee attendance',
                     'TEACHERATTENDANCERECORD': 'teacher attendance record',
-                    'STUDENTATTENDANCERECORD': 'student attendance record'
+                    'STUDENTATTENDANCERECORD': 'student attendance record',
+                    'STUDENTTOTALATTENDANCE': 'student total attendance',
+                    'EMPLOYEETOTALATTENDANCE': 'employee total attendance'
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',
