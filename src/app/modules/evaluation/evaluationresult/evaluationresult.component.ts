@@ -577,6 +577,7 @@ export class EvaluationresultComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
+    var _filter = ''
     let list: List = new List();
     list.fields = [
       'StudentId',
@@ -584,9 +585,12 @@ export class EvaluationresultComponent implements OnInit {
       'LastName',
       'ContactNo',
     ];
-
+    if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
+      this.StudentId = this.tokenstorage.getStudentId();
+      _filter = ' and StudentId eq ' + this.StudentId;
+    }
     list.PageName = "Students";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

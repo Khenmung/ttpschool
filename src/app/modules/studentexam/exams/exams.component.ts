@@ -18,7 +18,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 })
 export class ExamsComponent implements OnInit {
   PageLoading = true;
-
+  AttendanceModes =[];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   Students = [];
@@ -43,10 +43,11 @@ export class ExamsComponent implements OnInit {
     ExamNameId: 0,
     StartDate: Date,
     EndDate: Date,
+    Sequence:0,
     ClassGroupId: 0,
     ReleaseResult: 0,
     ReleaseDate: null,
-    ExamModeId: 0,
+    AttendanceModeId: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 1
@@ -57,9 +58,10 @@ export class ExamsComponent implements OnInit {
     'StartDate',
     'EndDate',
     'ClassGroupId',
+    'Sequence',
+    'AttendanceModeId',
     'ReleaseDate',
     'ReleaseResult',
-    'ExamModeId',
     'Active',
     'Action'
   ];
@@ -112,10 +114,11 @@ export class ExamsComponent implements OnInit {
       ExamName: '',
       StartDate: new Date(),
       EndDate: new Date(),
+      Sequence:0,
       ClassGroupId: 0,
       ReleaseResult: 0,
       ReleaseDate: null,
-      ExamModeId: 0,
+      AttendanceModeId: 0,
       BatchId: 0,
       OrgId: 0,
       Active: 0,
@@ -161,9 +164,14 @@ export class ExamsComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (row.ExamModeId == 0) {
+    if (row.AttendanceModeId == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select exam mode.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select attendance mode.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (row.Sequence == 0 ) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter sequence.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.ExamId > 0)
@@ -187,8 +195,9 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.ExamNameId = row.ExamNameId;
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
+          this.ExamsData.Sequence = row.Sequence;
           this.ExamsData.ClassGroupId = row.ClassGroupId;
-          this.ExamsData.ExamModeId = row.ExamModeId;
+          this.ExamsData.AttendanceModeId = row.AttendanceModeId;
           this.ExamsData.ReleaseResult = row.ReleaseResult;
           this.ExamsData.BatchId = this.SelectedBatchId;
           if (row.ReleaseResult == 1) {
@@ -248,8 +257,8 @@ export class ExamsComponent implements OnInit {
     let list: List = new List();
 
     list.fields = [
-      "ExamId", "ExamNameId", "StartDate",
-      "EndDate", "ClassGroupId", "ExamModeId",
+      "ExamId", "ExamNameId", "StartDate","Sequence",
+      "EndDate", "ClassGroupId", "AttendanceModeId",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -273,9 +282,10 @@ export class ExamsComponent implements OnInit {
               ExamId: 0,
               ExamNameId: e.MasterDataId,
               ExamName: e.MasterDataName,
-              ExamModeId: 0,
+              AttendanceModeId: 0,
               StartDate: new Date(),
               EndDate: new Date(),
+              Sequence:0,
               ReleaseResult: 0,
               ReleaseDate: null,
               OrgId: 0,
@@ -305,8 +315,7 @@ export class ExamsComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.StudentGradeFormula = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
-        //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
-        this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
+        this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESMODE);
         this.GetClassGroup();
         this.GetExams();
 
@@ -538,7 +547,8 @@ export interface IExams {
   ExamName: string;
   StartDate: Date;
   EndDate: Date;
-  ExamModeId: number;
+  Sequence:number;
+  AttendanceModeId: number;
   ClassGroupId: number;
   ReleaseResult: number;
   ReleaseDate: Date;

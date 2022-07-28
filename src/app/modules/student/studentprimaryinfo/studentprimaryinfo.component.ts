@@ -270,6 +270,7 @@ export class studentprimaryinfoComponent implements OnInit {
       this.StudentLeaving = false;
       this.studentForm.patchValue({ ReasonForLeavingId: this.ReasonForLeaving.filter(r => r.MasterDataName.toLowerCase() == 'active')[0].MasterDataId });
     }
+    this.OnBlur();
   }
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)

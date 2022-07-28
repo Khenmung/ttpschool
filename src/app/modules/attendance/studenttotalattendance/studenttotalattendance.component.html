@@ -7,10 +7,10 @@
         <div style="flex-direction: row;">
             <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Class group</mat-label>
-                    <mat-select formControlName="searchClassGroupId">
-                        <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
-                            {{item.GroupName}}
+                    <mat-label>Exam</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                            {{item.ExamName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -34,7 +34,7 @@
                 <ng-container matColumnDef="TotalNoOfAttendance">
                     <mat-header-cell *matHeaderCellDef>Total Attendance
                     </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
+                    <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
                             <input autocomplete="Off" matInput (blur)="onBlur(element)"
                                 [value]="element.TotalNoOfAttendance" [(ngModel)]="element.TotalNoOfAttendance"
@@ -42,34 +42,25 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ClassGroupId">
-                    <mat-header-cell *matHeaderCellDef>Class Group
+                <ng-container matColumnDef="ClassName">
+                    <mat-header-cell *matHeaderCellDef>Class
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-select (selectionChange)="onBlur(element)" [value]="element.ClassGroupId"
-                                [(ngModel)]="element.ClassGroupId">
-                                <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
+                        {{element.ClassName}}
+                        <!-- <mat-form-field appearance="outline">
+                            <mat-select (selectionChange)="onBlur(element)" [value]="element.ClassId"
+                                [(ngModel)]="element.ClassId">
+                                <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassId">
                                     {{item.GroupName}}</mat-option>
                             </mat-select>
-                        </mat-form-field>
+                        </mat-form-field> -->
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="MonthYear">
-                    <mat-header-cell *matHeaderCellDef>Month Year
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-select (selectionChange)="onBlur(element)" [value]="element.MonthYear"
-                                [(ngModel)]="element.MonthYear">
-                                <mat-option *ngFor="let item of MonthYears" [value]="item.val">
-                                    {{item.MonthName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
+              
                 <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>Active
+                    <mat-header-cell *matHeaderCellDef>Active &nbsp;
+                        <mat-checkbox  (click)="$event.stopPropagation()" (change)="SelectAll($event)">
+                </mat-checkbox>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
@@ -79,10 +70,13 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
-                            (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
+                        <button [disabled]="loading || TotalAttendanceList.length==0" matTooltip="add new" mat-mini-fab
+                        (click)="SaveAll()">
+                        <mat-icon>all_out</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                         <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"

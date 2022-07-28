@@ -71,6 +71,10 @@ export class HomeComponent implements OnInit {
   ngOnDestroy() {
     this.mediaSub.unsubscribe();
   }
+  busy(event){
+    
+    event.stopPropagation()
+  }
   toggleSidebar() {
     this.collapse = !this.collapse;
   }

@@ -77,8 +77,8 @@
             </ng-container>
             <mat-header-row *matHeaderRowDef="GradingDisplayedColumns"></mat-header-row>
             <mat-row *matRowDef="let row; columns: GradingDisplayedColumns;" class="element-row"></mat-row>
-
         </mat-table>
+        <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
     </div>
 </div>
 

@@ -20,7 +20,8 @@ mat-cell:first-of-type {
 {
     flex:1 0 135px;
 }
-.mat-column-ExamModeId{
+.mat-column-Sequence,
+.mat-column-AttendanceModeId{
     flex:1 0 100px;
 }
 .mat-column-Action,.mat-column-Active,.mat-column-ReleaseResult {

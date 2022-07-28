@@ -33,7 +33,7 @@ export class StudentEvaluationComponent implements OnInit {
   EvaluationExamMaps = [];
   ClassSubjects = [];
   Ratings = [];
-  ExamModes = [];
+  //ExamModes = [];
   SelectedApplicationId = 0;
   StudentId = 0;
   StudentClassId = 0;
@@ -229,6 +229,7 @@ export class StudentEvaluationComponent implements OnInit {
     this.RowsToUpdate = this.StudentEvaluationList.length;
     this.boolSaveAsDraft = true;
     this.EvaluationSubmitted = false;
+    this.StudentEvaluationForUpdate = [];
     this.StudentEvaluationList.forEach(question => {
       this.RowsToUpdate--;
       this.UpdateOrSave(question);
@@ -320,24 +321,26 @@ export class StudentEvaluationComponent implements OnInit {
               Submitted: this.EvaluationSubmitted,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
-          if (this.StudentEvaluationForUpdate.length == this.StudentEvaluationList.length) {
 
-            if (this.StudentEvaluationForUpdate[0].StudentEvaluationResultId == 0) {
-              this.StudentEvaluationForUpdate[0]["CreatedDate"] = new Date();
-              this.StudentEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-              delete this.StudentEvaluationForUpdate[0]["UpdatedDate"];
-              delete this.StudentEvaluationForUpdate[0]["UpdatedBy"];
-              //console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
-              this.insert(row);
-            }
-            else {
-              //console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
-              this.StudentEvaluationForUpdate[0]["UpdatedDate"] = new Date();
-              this.StudentEvaluationForUpdate[0]["UpdatedBy"];
-              delete this.StudentEvaluationForUpdate[0]["CreatedDate"];
-              delete this.StudentEvaluationForUpdate[0]["CreatedBy"];
-              this.insert(row);
-            }
+          var _lastIndex = this.StudentEvaluationForUpdate.length - 1;
+          if (this.StudentEvaluationForUpdate[_lastIndex].StudentEvaluationResultId == 0) {
+            this.StudentEvaluationForUpdate[_lastIndex]["CreatedDate"] = new Date();
+            this.StudentEvaluationForUpdate[_lastIndex]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.StudentEvaluationForUpdate[_lastIndex]["UpdatedDate"];
+            delete this.StudentEvaluationForUpdate[_lastIndex]["UpdatedBy"];
+            //console.log("this.StudentEvaluationForUpdate[0] insert", this.StudentEvaluationForUpdate[0])
+            //this.insert(row);
+          }
+          else {
+            //console.log("this.StudentEvaluationForUpdate[0] update", this.StudentEvaluationForUpdate[0])
+            this.StudentEvaluationForUpdate[_lastIndex]["UpdatedDate"] = new Date();
+            this.StudentEvaluationForUpdate[_lastIndex]["UpdatedBy"];
+            delete this.StudentEvaluationForUpdate[_lastIndex]["CreatedDate"];
+            delete this.StudentEvaluationForUpdate[_lastIndex]["CreatedBy"];
+            //this.insert(row);
+          }
+          if (this.StudentEvaluationForUpdate.length == this.StudentEvaluationList.length) {
+            this.insert(row);
           }
         }
       });
@@ -479,6 +482,14 @@ export class StudentEvaluationComponent implements OnInit {
                 cls.StudentEvaluationAnswerId = 0;
               }
             })
+            // var _history = ''
+            // if (existing[0].History == null || existing[0].History.length == 0 || existing[0].History=='<pre></pre>')
+            //   _history = '';
+            // else
+            // {
+            //   _history = "<pre>" + globalconstants.decodeSpecialChars(existing[0].History) + "</pre>"
+            //   //_history = "<pre>" + globalconstants.decodeSpecialChars(existing[0].History) + "</pre>"
+            // } 
             item = {
               AutoId: SlNo,
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
@@ -489,9 +500,9 @@ export class StudentEvaluationComponent implements OnInit {
               QuestionnaireType: clseval.QuestionnaireType,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationExamMapId: existing[0].EvaluationExamMapId,
-              Updatable:row.Updatable,
+              Updatable: row.Updatable,
               Description: globalconstants.decodeSpecialChars(clseval.Description),
-              History: existing[0].History == null ? '' : "<pre>" + globalconstants.decodeSpecialChars(existing[0].History) + "</pre>",
+              History: existing[0].History,
               AnswerText: globalconstants.decodeSpecialChars(existing[0].AnswerText),
               StudentEvaluationResultId: existing[0].StudentEvaluationResultId,
               ClassEvaluationId: clseval.ClassEvaluationId,
@@ -513,7 +524,7 @@ export class StudentEvaluationComponent implements OnInit {
               Description: globalconstants.decodeSpecialChars(clseval.Description),
               AnswerText: '',
               History: '',
-              Updatable:row.Updatable,
+              Updatable: row.Updatable,
               StudentEvaluationResultId: 0,
               ClassEvaluationAnswerOptionParentId: clseval.ClassEvaluationAnswerOptionParentId,
               EvaluationExamMapId: row.EvaluationExamMapId,
@@ -624,7 +635,7 @@ export class StudentEvaluationComponent implements OnInit {
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
+        //this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCEMODE);
         this.GetExams();
         this.GetEvaluationOption();
 
@@ -829,10 +840,14 @@ export class StudentEvaluationComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.ClassEvaluations = data.value.map(clseval => {
-            clseval.QuestionnaireType = this.QuestionnaireTypes.filter(f => f.MasterDataId == clseval.QuestionnaireTypeId)[0].MasterDataName;
-            clseval.ClassEvaluationOptions = this.ClassEvaluationOptionList.filter(f => f.ParentId == clseval.ClassEvaluationAnswerOptionParentId)
-            return clseval;
+          this.ClassEvaluations = [];
+          data.value.forEach(clseval => {
+            var obj = this.QuestionnaireTypes.filter(f => f.MasterDataId == clseval.QuestionnaireTypeId);
+            if (obj.length > 0) {
+              clseval.QuestionnaireType = obj[0].MasterDataName;
+              clseval.ClassEvaluationOptions = this.ClassEvaluationOptionList.filter(f => f.ParentId == clseval.ClassEvaluationAnswerOptionParentId)
+              this.ClassEvaluations.push(clseval);
+            }
           })
           this.ClassEvaluations = this.ClassEvaluations.sort((a, b) => a.DisplayOrder - b.DisplayOrder)
         }
@@ -841,12 +856,17 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
+    var _filter = '';
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
+    if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
+      this.StudentId = this.tokenstorage.getStudentId();
+      _filter = ' and StudentId eq ' + this.StudentId;
+    }
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
     list.PageName = "StudentClasses";
-    list.filter = [filterOrgIdNBatchId];
+    list.filter = [filterOrgIdNBatchId + _filter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -856,6 +876,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
+    var _filter = '';
     let list: List = new List();
     list.fields = [
       'StudentId',
@@ -863,9 +884,12 @@ export class StudentEvaluationComponent implements OnInit {
       'LastName',
       'ContactNo',
     ];
-
+    this.StudentId = this.tokenstorage.getStudentId();
+    if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
+      _filter = ' and StudentId eq ' + this.StudentId
+    }
     list.PageName = "Students";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"] + _filter];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {

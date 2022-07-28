@@ -22,14 +22,6 @@
                 </mat-select>
             </mat-form-field>
             <span *ngIf="!EvaluationUpdatable && EvaluationUpdatable!=null">
-                <!-- <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Class/Class group</mat-label>
-                    <mat-select formControlName="searchClassGroupId" (selectionChange)="getSelectedClassSubjects()">
-                        <mat-option value="0">select</mat-option>
-                        <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">{{item.MasterDataName}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field> -->
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Exam/Test/Session</mat-label>
                     <mat-select formControlName="searchExamId">
@@ -38,15 +30,6 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <!-- <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Subject</mat-label>
-                    <mat-select formControlName="searchSubjectId">
-                        <mat-option [value]="0">select</mat-option>
-                        <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.SubjectId">
-                            {{item.ClassSubject}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field> -->
             </span>
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetEvaluationExamMap()">
                 <mat-icon>search</mat-icon>
@@ -71,36 +54,6 @@
                     {{element.EvaluationName}}
                 </mat-cell>
             </ng-container>
-            <!-- <ng-container matColumnDef="ClassGroupId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Class/Class Group
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline">
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassGroupId"
-                            [value]="element.ClassGroupId">
-                            <mat-option value="0">select</mat-option>
-                            <mat-option *ngFor="let item of ClassGroups" [value]="item.MasterDataId">
-                                {{item.MasterDataName}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container> -->
-            <!-- <ng-container matColumnDef="ClassSubjectId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>Subject
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline">
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ClassSubjectId"
-                            [value]="element.ClassSubjectId">
-                            <mat-option value="0">select</mat-option>
-                            <mat-option *ngFor="let item of ClassSubjects" [value]="item.SubjectId">
-                                {{item.ClassSubject}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container> -->
             <ng-container matColumnDef="ExamId">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>Exam/Test/Session
                 </mat-header-cell>

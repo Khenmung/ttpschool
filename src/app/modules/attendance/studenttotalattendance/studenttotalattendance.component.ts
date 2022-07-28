@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -37,20 +36,18 @@ export class StudenttotalattendanceComponent implements OnInit {
   ExamStatus = [];
   TotalAttendanceData = {
     TotalAttendanceId: 0,
-    ClassGroupId: 0,
+    ClassId: 0,
     TotalNoOfAttendance: 0,
-    MonthYear: 0,
+    ExamId: 0,
     OrgId: 0,
     BatchId: 0,
-    Active: 0
+    Active: false
   };
-  MonthYears=[];
+  MonthYears = [];
   displayedColumns = [
     "TotalAttendanceId",
-    "ClassGroupId",
-    "MonthYear",
+    "ClassName",
     "TotalNoOfAttendance",
-    "Active",
     "Action"
   ];
   SelectedApplicationId = 0;
@@ -66,11 +63,12 @@ export class StudenttotalattendanceComponent implements OnInit {
   ngOnInit(): void {
     //debugger;
     this.searchForm = this.fb.group({
-      searchClassGroupId: [0]
+      searchExamId: [0]
     });
     this.PageLoad();
   }
-
+  Exams = [];
+  ExamNames = [];
   PageLoad() {
 
     debugger;
@@ -99,22 +97,22 @@ export class StudenttotalattendanceComponent implements OnInit {
     }
   }
 
-  AddNew() {
-
-    var newdata = {
-      TotalAttendanceId: 0,
-      ClassGroupId: 0,
-      TotalNoOfAttendance: 0,
-      MonthYear: 0,  
-      BatchId:0,
-      Active: 0,
-      Action: false
-    };
-    this.TotalAttendanceList = [];
-    this.TotalAttendanceList.push(newdata);
-    this.dataSource = new MatTableDataSource<ITotalAttendance>(this.TotalAttendanceList);
-    this.dataSource.paginator = this.paging;
-  }
+  // AddNew() {
+  //   var _examId = this.searchForm.get("searchExamId").value;
+  //   var newdata = {
+  //     TotalAttendanceId: 0,
+  //     ClassId: 0,
+  //     TotalNoOfAttendance: 0,
+  //     ExamId: _examId,
+  //     BatchId: 0,
+  //     Active: 0,
+  //     Action: false
+  //   };
+  //   this.TotalAttendanceList = [];
+  //   this.TotalAttendanceList.push(newdata);
+  //   this.dataSource = new MatTableDataSource<ITotalAttendance>(this.TotalAttendanceList);
+  //   this.dataSource.paginator = this.paging;
+  // }
   onBlur(element) {
     element.Action = true;
   }
@@ -138,22 +136,22 @@ export class StudenttotalattendanceComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    if (row.ClassGroupId == 0) {
+    // if (row.ClassId == 0) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+
+    if (row.ExamId == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
-    if (row.MonthYear == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select month year.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-
-    let checkFilterString = "MonthYear eq " + row.MonthYear + 
-     " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-     " and ClassGroupId eq " + row.ClassGroupId +
-     " and BatchId eq " + this.SelectedBatchId;
+    let checkFilterString = "ExamId eq " + row.ExamId +
+      " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      " and ClassId eq " + row.ClassId +
+      " and BatchId eq " + this.SelectedBatchId;
 
     if (row.TotalAttendanceId > 0)
       checkFilterString += " and TotalAttendanceId ne " + row.TotalAttendanceId;
@@ -171,9 +169,9 @@ export class StudenttotalattendanceComponent implements OnInit {
         else {
 
           this.TotalAttendanceData.TotalAttendanceId = row.TotalAttendanceId;
-          this.TotalAttendanceData.Active = row.Active;
-          this.TotalAttendanceData.MonthYear = row.MonthYear;
-          this.TotalAttendanceData.ClassGroupId = row.ClassGroupId;
+          this.TotalAttendanceData.Active = true;
+          this.TotalAttendanceData.ExamId = this.searchForm.get("searchExamId").value;
+          this.TotalAttendanceData.ClassId = row.ClassId;
           this.TotalAttendanceData.TotalNoOfAttendance = +row.TotalNoOfAttendance;
           this.TotalAttendanceData.BatchId = this.SelectedBatchId;
           this.TotalAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
@@ -207,8 +205,10 @@ export class StudenttotalattendanceComponent implements OnInit {
         (data: any) => {
           row.TotalAttendanceId = data.TotalAttendanceId;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse()
+          if (this.RowsToUpdate == 0) {
+            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.loadingFalse()
+          }
         });
   }
   update(row) {
@@ -217,8 +217,10 @@ export class StudenttotalattendanceComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          this.loadingFalse();
+          if (this.RowsToUpdate == 0) {
+            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+            this.loadingFalse();
+          }
         });
   }
   Getclassgroups() {
@@ -233,16 +235,23 @@ export class StudenttotalattendanceComponent implements OnInit {
       });
   }
   GetTotalAttendance() {
-
+    debugger;
     this.loading = true;
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-    " and BatchId eq " + this.SelectedBatchId;
+      " and BatchId eq " + this.SelectedBatchId;
 
-    var _ClassGroupId = this.searchForm.get("searchClassGroupId").value;
+    var _examId = this.searchForm.get("searchExamId").value;
 
-    if (_ClassGroupId > 0) {
-      filterStr += " and ClassGroupId eq " + _ClassGroupId;
+    if (_examId > 0) {
+      filterStr += " and ExamId eq " + _examId;
     }
+    else
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select exam.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
+
     let list: List = new List();
     list.fields = ["*"];
 
@@ -252,27 +261,83 @@ export class StudenttotalattendanceComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        if (data.value.length > 0) {
-          this.TotalAttendanceList = [...data.value];          
-          this.TotalAttendanceList = this.TotalAttendanceList.sort((a, b) => a.MonthYear - b.MonthYear);
-        }
+        this.TotalAttendanceList = [];
+        this.Classes.forEach(f => {
+
+          var objExisting = data.value.filter(c => c.ClassId == f.ClassId);
+          if (objExisting.length > 0) {
+            this.TotalAttendanceList.push({
+              TotalAttendanceId: objExisting[0].TotalAttendanceId,
+              ClassId: objExisting[0].ClassId,
+              ClassName: f.ClassName,
+              TotalNoOfAttendance: objExisting[0].TotalNoOfAttendance,
+              ExamId: objExisting[0].ExamId,
+              BatchId: objExisting[0].BatchId,
+              Action: false,
+              Active: objExisting[0].Active
+            })
+
+          } // f.ClassName = objExisting[0].ClassName;
+          else {
+            this.TotalAttendanceList.push({
+              TotalAttendanceId: 0,
+              ClassId: f.ClassId,
+              ClassName: f.ClassName,
+              TotalNoOfAttendance: 22,
+              ExamId: this.searchForm.get("searchExamId").value,
+              BatchId: this.SelectedBatchId,
+              Action: false,
+              Active: false
+            })
+          }
+        });
+        this.TotalAttendanceList = this.TotalAttendanceList.sort((a, b) => a.ExamId - b.ExamId);
+
         this.dataSource = new MatTableDataSource<ITotalAttendance>(this.TotalAttendanceList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
   }
-
+  RowsToUpdate = 0;
+  SaveAll() {
+    var toupdate = this.TotalAttendanceList.filter(f => f.Action);
+    this.RowsToUpdate = toupdate.length;
+    toupdate.forEach(f => {
+      this.RowsToUpdate--;
+      this.UpdateOrSave(f);
+    })
+  }
+  SelectAll(event) {
+    debugger;
+    this.TotalAttendanceList.forEach(f => {
+      f.Active = event.checked;
+      f.Action=true;
+    })
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
+        this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME)
+
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.loading = false; this.PageLoading = false;
         });
+        this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
+          .subscribe((data: any) => {
+            this.Exams = [];
+            data.value.forEach(f => {
+              var obj = this.ExamNames.filter(e => e.MasterDataId == f.ExamNameId);
+              if (obj.length > 0) {
+                f.ExamName = obj[0].MasterDataName;
+                this.Exams.push(f);
+              }
 
+            })
+          })
       });
   }
   getDropDownData(dropdowntype) {
@@ -281,10 +346,11 @@ export class StudenttotalattendanceComponent implements OnInit {
 }
 export interface ITotalAttendance {
   TotalAttendanceId: number;
-  ClassGroupId: number;
+  ClassId: number;
+  ClassName: string;
   TotalNoOfAttendance: number;
-  MonthYear: number;
-  Active: number;
+  ExamId: number;
+  Active: boolean;
   BatchId: number;
   Action: boolean;
 }

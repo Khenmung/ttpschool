@@ -133,11 +133,13 @@
                                 *ngIf="!EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0
                                 && element.QuestionnaireType=='Questionnaire'">
                             </span>
+                            <pre>
                             <span [innerHTML]="element.History|encodeHTML"
                                 class="history"
                                 *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 
                                 && element.History.length>0">
                             </span>
+                            </pre>
                         </span>
                         <span style="width:100%;">
                             <span style="padding: 15px 15px 15px 40px;"

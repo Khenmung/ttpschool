@@ -46,12 +46,11 @@
             <mat-header-cell *matHeaderCellDef>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button style="margin-right: 15px;"
-                    [disabled]="loading 
+                <button style="margin-right: 15px;" [disabled]="loading 
                     || !element.Action1 
                     || Permission=='read' 
-                    || element.EvaluationStarted"
-                    matTooltip="start" mat-mini-fab color="accent" (click)="StartEvaluation(element)">
+                    || element.EvaluationStarted" matTooltip="start" mat-mini-fab color="accent"
+                    (click)="StartEvaluation(element)">
                     <mat-icon>start</mat-icon>
                 </button>
                 <button [disabled]="
@@ -69,8 +68,7 @@
                     loading 
                     || Permission=='read'     
                     || !element.Action1                     
-                    || !element.EvaluationStarted" 
-                    matTooltip="submit" mat-mini-fab color="accent"
+                    || !element.EvaluationStarted" matTooltip="submit" mat-mini-fab color="accent"
                     (click)="SubmitEvaluation()">
                     <mat-icon>done_all</mat-icon>
                     <mat-icon *ngIf="loading">
@@ -100,10 +98,12 @@
                             style="font-style: italic; width: 100%;padding: 15px 15px 10px 0px;">
                             {{element.Description}}</div>
                     </div>
-                    <div style="display: flex;flex-direction: column; margin:15px 15px 15px 15px;width: 100%;"
+                    <div style="display: flex;flex-direction: column;padding: 15px; margin:15px 15px 15px 15px;width: 100%;"
                         *ngIf="element.Updatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
+                        <pre>
                         <span [innerHTML]="element.History| encodeHTML">
                         </span>
+                    </pre>
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="600"
                                 (blur)="onBlur(element)" [rows]="5" [value]="element.AnswerText"

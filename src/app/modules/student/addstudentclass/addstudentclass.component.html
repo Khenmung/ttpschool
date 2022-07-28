@@ -88,9 +88,9 @@
         <mat-icon>arrow_back</mat-icon>
     </button>
     <button [disabled]="loading || Permission=='read'" mat-raised-button color="accent" (click)="UpdateOrSave()">
-         <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+        <mat-icon>save</mat-icon>
+        <mat-icon *ngIf="loading">
+            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+        </mat-icon>
     </button>
 </mat-card-actions>

@@ -32,7 +32,7 @@ export class EvaluationExamMapComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   EvaluationExamMapList: IEvaluationExamMap[] = [];
-  ExamModes = [];
+  //ExamModes = [];
   ExamNames = [];
   Sessions = [];
   SelectedBatchId = 0;
@@ -464,7 +464,7 @@ export class EvaluationExamMapComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
-        this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
+        //this.ExamModes = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMMODE);
         this.GetExams();
         this.loading = false; this.PageLoading = false;
       });

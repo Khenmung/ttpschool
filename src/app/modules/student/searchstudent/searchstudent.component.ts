@@ -128,7 +128,7 @@ export class searchstudentComponent implements OnInit {
           map(Name => Name ? this._filter(Name) : this.Students.slice())
         );
 
-      // this.StudentSearch = this.token.getStudentSearch();
+      this.StudentSearch = this.token.getStudentSearch();
       // if (this.StudentSearch.length > 0) {
       //   if (this.StudentSearch[0].SectionId > 0)
       //     this.studentSearchForm.patchValue(
@@ -139,7 +139,7 @@ export class searchstudentComponent implements OnInit {
       //   if (this.StudentSearch[0].ClassId > 0)
       //     this.studentSearchForm.patchValue(
       //       { searchClassId: +this.StudentSearch[0].ClassId })
-        
+
       // }
 
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -238,8 +238,18 @@ export class searchstudentComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
         this.getSelectedBatchStudentIDRollNo();
         this.GetStudentClasses();
-        // if (this.StudentSearch.length > 0 && this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() != 'student')
-        //   this.GetStudent();
+        var searchObj = this.StudentSearch.filter(f => f.Text == 'ClassId');
+        if (searchObj.length > 0 && searchObj[0].Value > 0
+          && this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() != 'student') {
+          this.studentSearchForm.patchValue({ searchClassId: searchObj[0].Value })
+          var searchSectionIdObj = this.StudentSearch.filter(f => f.Text == 'SectionId');
+          if (searchSectionIdObj.length > 0 && searchSectionIdObj[0].Value > 0)
+            this.studentSearchForm.patchValue({ searchSectionId: searchSectionIdObj[0].Value })
+          var searchRemarkIdObj = this.StudentSearch.filter(f => f.Text == 'RemarkId');
+          if (searchRemarkIdObj.length > 0 && searchRemarkIdObj[0].Value > 0)
+            this.studentSearchForm.patchValue({ searchRemarkId: searchRemarkIdObj[0].Value })
+          this.GetStudent();
+        }
       });
 
   }
@@ -389,14 +399,14 @@ export class searchstudentComponent implements OnInit {
       this.token.saveStudentSearch([]);
       return;
     }
-    this.StudentSearch =[];
+    this.StudentSearch = [];
     if (_remarkId > 0) {
+      this.StudentSearch.push({ Text: "RemarkId", Value: _remarkId });
       checkFilterString += " and RemarkId eq " + _remarkId;
-      this.StudentSearch.push({Text:"RemarkId", Value: _remarkId});
     }
     var classfilter = '';
     if (_ClassId > 0) {
-      this.StudentSearch.push({Text: "ClassId",Value: _ClassId});
+      this.StudentSearch.push({ Text: "ClassId", Value: _ClassId });
       classfilter = 'ClassId eq ' + _ClassId + ' and ';
     }
     if (_searchAdmissionNo > 0) {
@@ -404,7 +414,7 @@ export class searchstudentComponent implements OnInit {
     }
 
     if (_sectionId > 0) {
-      this.StudentSearch.push({Text: "SectionId",Value: _sectionId});
+      this.StudentSearch.push({ Text: "SectionId", Value: _sectionId });
       classfilter += 'SectionId eq ' + _sectionId + ' and '
     }
 
@@ -416,7 +426,7 @@ export class searchstudentComponent implements OnInit {
       //this.StudentSearch[0].Name = this.studentSearchForm.get("searchStudentName").value.Name;
       checkFilterString += " and  StudentId eq " + _studentId;
     }
-    if (checkFilterString.length > 0)
+    if (this.StudentSearch.length > 0)
       this.token.saveStudentSearch(this.StudentSearch);
     else
       this.token.saveStudentSearch([]);

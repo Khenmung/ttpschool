@@ -48,10 +48,21 @@ marks can no longer be entered/edited for that examination.
                 </mat-form-field>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="Sequence">
+            <mat-header-cell *matHeaderCellDef> Sequence </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field appearance="outline">
+                    <mat-label>Sequence</mat-label>
+                    <input type="number" [(ngModel)]="element.Sequence" [value]="element.Sequence" (blur)="onBlur(element)"
+                        matInput autocomplete="off">                   
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="ClassGroupId">
             <mat-header-cell *matHeaderCellDef>Class Group</mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
+                    <mat-label>Class group</mat-label>
                     <mat-select [(ngModel)]="element.ClassGroupId" (selectionChange)="onBlur(element)"
                         [value]="element.ClassGroupId">
                         <mat-option value="0">select</mat-option>
@@ -76,14 +87,14 @@ marks can no longer be entered/edited for that examination.
                 {{element.ReleaseDate}}
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="ExamModeId">
-            <mat-header-cell *matHeaderCellDef>Exam Mode
+        <ng-container matColumnDef="AttendanceModeId">
+            <mat-header-cell *matHeaderCellDef>Attendance Mode
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.ExamModeId" (selectionChange)="onBlur(element)"
-                        [value]="element.ExamModeId">
-                        <mat-option *ngFor="let item of ExamModes" [value]="item.MasterDataId">{{item.MasterDataName}}
+                    <mat-select [(ngModel)]="element.AttendanceModeId" (selectionChange)="onBlur(element)"
+                        [value]="element.AttendanceModeId">
+                        <mat-option *ngFor="let item of AttendanceModes" [value]="item.MasterDataId">{{item.MasterDataName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
