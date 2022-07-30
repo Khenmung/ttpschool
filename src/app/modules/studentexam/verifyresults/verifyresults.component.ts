@@ -253,53 +253,73 @@ export class VerifyResultsComponent implements OnInit {
       var _examId = this.searchForm.get("searchExamId").value;
       var _classId = this.searchForm.get("searchClassId").value;
       var _TotalDays = 0;
-      var _attendanceMode = '';
+      var _AttendanceMode = "";
       var objExams = this.Exams.filter(ex => ex.ExamId == _examId);
       var _previousExamIndex = this.Exams.findIndex(f => f.ExamId == _examId);
-      var _previousExamEndDatePlusOne = null;
+      var _previousExamEndDatePlusOne = moment();
       //if exam is first exam.
       if (_previousExamIndex == 0) {
         var _sessionStartEnd = JSON.parse(this.tokenstorage.getSelectedBatchStartEnd());
-        _previousExamEndDatePlusOne = new Date(_sessionStartEnd["StartDate"])
-      }
-      else
-        _previousExamEndDatePlusOne = moment(this.Exams[_previousExamIndex - 1].EndDate).add(1, 'days');
-
-      if (objExams.length > 0) {
-        var obj = this.AttendanceModes.filter(f => f.MasterDataId == objExams[0].AttendanceModeId);
-        if (obj.length > 0)
-          _attendanceMode = obj[0].MasterDataName;
-      }
-
-
-      var objAttendanceForClassGroup = this.TotalAttendance.filter(f => f.ClassId == _classId && f.ExamId == _examId);
-      if (objAttendanceForClassGroup.length > 0) {
-        _TotalDays = objAttendanceForClassGroup[0].TotalNoOfAttendance;
+        _previousExamEndDatePlusOne = moment(_sessionStartEnd["StartDate"])
       }
       else {
-        this.loading = false;
-        this.contentservice.openSnackBar("No total attendance defined for the class group.", globalconstants.ActionText, globalconstants.RedBackground);
-        return;
+        _previousExamEndDatePlusOne = moment(this.Exams[_previousExamIndex - 1].EndDate).add(1, 'days');
       }
+      var objAttendanceMode = [];
+      var _WholeClassTotalPresentObj = [];
+      var objAttendanceForClassGroup = [];
+      if (objExams.length > 0) {
+        objAttendanceMode = this.AttendanceModes.filter(f => f.MasterDataId == objExams[0].AttendanceModeId);
+        if (objAttendanceMode.length > 0) {
+          if (objAttendanceMode[0].MasterDataName == "Separate")
+            this.AttendanceStatusSum.forEach(f => {
+              if (f.AttendanceStatus == 1 && moment(f.AttendanceDate).format('yyyy-MM-DD') >= moment(_previousExamEndDatePlusOne).format('yyyy-MM-DD')
+                && moment(f.AttendanceDate).format('yyyy-MM-DD') <= moment(objExams[0].EndDate).format('yyyy-MM-DD'))
+                _WholeClassTotalPresentObj.push(f);
+            });
+          else if (objAttendanceMode[0].MasterDataName == "Over All")
+            this.AttendanceStatusSum.forEach(f => {
+              if (f.AttendanceStatus == 1 && moment(f.AttendanceDate).format('yyyy-MM-DD') <= moment(objExams[0].EndDate).format('yyyy-MM-DD'))
+                _WholeClassTotalPresentObj.push(f);
+            })
+          else {
+            this.contentservice.openSnackBar("Invalid attendance mode.", globalconstants.ActionText, globalconstants.RedBackground);
+            return;
+          }
+          objAttendanceForClassGroup = this.TotalAttendance.filter(f => f.ClassId == _classId && f.ExamId == _examId);
+          if (objAttendanceMode[0].MasterDataName == "Separate") {
+            _TotalDays = objAttendanceForClassGroup[0].TotalNoOfAttendance;
+          }
+          else if (objAttendanceMode[0].MasterDataName == "Over All") {
+            objAttendanceForClassGroup = this.TotalAttendance.filter(f => f.ClassId == _classId
+              && f.Sequence <= objAttendanceForClassGroup[0].Sequence);
+
+            if (objAttendanceForClassGroup.length > 0) {
+              _TotalDays = objAttendanceForClassGroup.reduce((acc, current) => acc + current.TotalNoOfAttendance, 0);
+            }
+            else
+              this.contentservice.openSnackBar("Total attendance for class " + _classId + " not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+
+          }
+          else {
+            this.loading = false;
+            this.contentservice.openSnackBar("No total attendance defined for the class group.", globalconstants.ActionText, globalconstants.RedBackground);
+            return;
+          }
+
+
+        }
+      }
+
+
+
+
 
       this.ExamStudentSubjectResult.forEach(d => {
         var _TotalPresent = 0;
         var _TotalPresentObj = [];
-        if (_attendanceMode == 'separate') {
-          _TotalPresentObj = this.AttendanceStatusSum.filter(f => f.AttendanceStatus == 1
-            && f.StudentClassId == d["StudentClassId"]
-            && moment(f.AttendanceDate).format('yyyy-MM-DD') >= moment(_previousExamEndDatePlusOne).format('yyyy-MM-DD')
-            && moment(f.AttendanceDate).format('yyyy-MM-DD') <= moment(objExams[0].EndDate).format('yyyy-MM-DD'))
-        }
-        else if (_attendanceMode == 'over all') {
-          _TotalPresentObj = this.AttendanceStatusSum.filter(f => f.AttendanceStatus == 1
-            && f.StudentClassId == d["StudentClassId"]
-            && moment(f.AttendanceDate).format('yyyy-MM-DD') <= moment(objExams[0].EndDate).format('yyyy-MM-DD'))
-        }
-        else {
-          this.contentservice.openSnackBar("Invalid attendance mode.", globalconstants.ActionText, globalconstants.RedBackground);
-          return;
-        }
+
+        _TotalPresentObj = _WholeClassTotalPresentObj.filter(f => f.StudentClassId == d["StudentClassId"])
 
         if (_TotalPresentObj.length > 0)
           _TotalPresent = _TotalPresentObj[0].Total;
@@ -338,6 +358,7 @@ export class VerifyResultsComponent implements OnInit {
           })
     }
   }
+  EnableVerify = true;
   GetExamStudentSubjectResults() {
     this.ClickedVerified = false;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
@@ -354,6 +375,11 @@ export class VerifyResultsComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    var _sectionId = this.searchForm.get("searchSectionId").value;
+    if (_sectionId > 0)
+      this.EnableVerify = false;
+    else
+      this.EnableVerify = true;
 
     this.loading = true;
     filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
@@ -393,10 +419,11 @@ export class VerifyResultsComponent implements OnInit {
         //     this.Students.push(f);
         // });
         var StudentOwnSubjects = [];
-        if (this.searchForm.get("searchSectionId").value != "") {
+
+        if (_sectionId > 0) {
           StudentOwnSubjects = this.StudentSubjects.filter(studentsubject => {
             return studentsubject.ClassId == _classId
-              && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
+              && studentsubject.SectionId == _sectionId;
           });
         }
         else {
@@ -768,6 +795,7 @@ export class VerifyResultsComponent implements OnInit {
     ];
 
     list.PageName = "TotalAttendances";
+    list.lookupFields = ["Exam($select=Sequence)"]
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and BatchId eq " + this.SelectedBatchId];
     // " and ClassId eq " + this.searchForm.get("searchClassId").value +
@@ -775,7 +803,11 @@ export class VerifyResultsComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((totalAttendance: any) => {
-        this.TotalAttendance = [...totalAttendance.value];
+        this.TotalAttendance = totalAttendance.value.map(f => {
+          f.Sequence = f.Exam.Sequence;
+          return f;
+        });
+        this.TotalAttendance = this.TotalAttendance.sort((a, b) => a.Sequence - a.Sequence);
       });
   }
 

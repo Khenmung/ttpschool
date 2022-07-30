@@ -136,7 +136,7 @@ export class settingboardComponent implements AfterViewInit {
     if (this.Permissions.ParentPermission != 'deny' && this.Permissions.ParentPermission != '') {
       setTimeout(() => {
         this.renderComponent(0);
-      }, 550)
+      }, 1000)
       this.cdr.detectChanges();
     }
   }
@@ -144,7 +144,7 @@ export class settingboardComponent implements AfterViewInit {
   public tabChange(index: number) {
     setTimeout(() => {
       this.renderComponent(index);
-    }, 550);
+    }, 1000);
 
   }
   selectedIndex = 0;

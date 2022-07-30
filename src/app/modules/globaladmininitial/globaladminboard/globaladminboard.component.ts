@@ -116,7 +116,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
       this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
       setTimeout(() => {
         this.renderComponent(0);
-      }, 550);
+      }, 1000);
       this.cdr.detectChanges();
     }
   }
@@ -140,7 +140,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
     //    //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
-    }, 550);
+    }, 1000);
 
   }
   selectedIndex = 0;

@@ -64,7 +64,7 @@ export class ContentService implements OnInit {
 
     let list: List = new List();
     var result = [];
-    list.fields = ["ExamId", "ExamNameId", "ClassGroupId", "StartDate", "EndDate"];
+    list.fields = ["ExamId", "ExamNameId", "ClassGroupId", "StartDate", "EndDate","AttendanceModeId","ReleaseResult","Sequence"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     return this.dataservice.get(list)

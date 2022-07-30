@@ -234,6 +234,7 @@ export class StudenttotalattendanceComponent implements OnInit {
         }
       });
   }
+  ExamReleaseResult=true;
   GetTotalAttendance() {
     debugger;
     this.loading = true;
@@ -251,7 +252,12 @@ export class StudenttotalattendanceComponent implements OnInit {
       this.contentservice.openSnackBar("Please select exam.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
-
+    //var ExamReleaseResult =true; 
+    var examObj =this.Exams.filter(f=>f.ExamId == _examId);
+    if(examObj.length>0)
+    {
+      this.ExamReleaseResult = examObj[0].ReleaseResult==1?true:false;
+    }
     let list: List = new List();
     list.fields = ["*"];
 

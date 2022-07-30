@@ -113,7 +113,9 @@
                         </mat-hint>
                     </div>
                     <div
-                        *ngIf="!element.Updatable && element.ClassEvaluationAnswerOptionParentId==0 && element.QuestionnaireType=='Questionnaire'">
+                        *ngIf="!element.Updatable 
+                        && element.ClassEvaluationAnswerOptionParentId==0 
+                        && element.QuestionnaireType=='Questionnaire'">
                         <mat-form-field appearance="outline" style="width:100%">
                             <textarea #input matInput [disabled]="element.AnswerOptionsId>0" [maxlength]="1000"
                                 (blur)="onBlur(element)" [value]="element.AnswerText" [rows]="5"

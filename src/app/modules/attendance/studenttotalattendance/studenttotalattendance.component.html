@@ -79,7 +79,7 @@
                     </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                        <button [disabled]="loading || !element.Action || Permission=='read' || ExamReleaseResult" matTooltip="save"
                             mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">

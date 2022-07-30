@@ -66,7 +66,7 @@ export class AttendanceboardComponent implements AfterViewInit {
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
         this.renderComponent(0);
-      }, 550);
+      }, 1000);
       this.cdr.detectChanges();
     }
 
@@ -75,7 +75,7 @@ export class AttendanceboardComponent implements AfterViewInit {
   public tabChange(index: number) {
     setTimeout(() => {
       this.renderComponent(index);
-    }, 550);
+    }, 1000);
 
   }
 

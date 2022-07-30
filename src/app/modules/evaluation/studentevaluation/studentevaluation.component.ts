@@ -177,7 +177,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   UpdateAnswers(row, item, event, i) {
     debugger;
-    var exItem = row.StudentEvaluationAnswers.filter(f => f.StudentEvaluationAnswerId == item.StudentEvaluationAnswerId);
+    var exItem = row.StudentEvaluationAnswers.filter(f => f.ClassEvaluationAnswerOptionsId == item.ClassEvaluationAnswerOptionsId);
     if (exItem.length > 0) {
       if (event.checked)
         exItem[0].Active = 1;

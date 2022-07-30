@@ -67,7 +67,7 @@ public ngAfterViewInit(): void {
 public tabChange(index: number) {
   setTimeout(() => {
     this.renderComponent(index);
-  }, 550);
+  }, 1000);
 
 }
 selectedIndex = 0;

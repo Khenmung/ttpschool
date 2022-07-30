@@ -92,7 +92,7 @@ ngOnInit(){}
     //    //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
-    }, 550);
+    }, 1000);
 
   }
   selectedIndex = 0;

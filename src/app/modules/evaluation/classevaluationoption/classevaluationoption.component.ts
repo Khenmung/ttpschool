@@ -174,7 +174,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
     let checkFilterString = this.StandardFilter;
     if (row.ParentId != null)
       checkFilterString = "ParentId eq " + row.ParentId
-    checkFilterString += " and Title eq '" + row.Title + "'";
+    checkFilterString += " and Title eq '" + globalconstants.encodeSpecialChars(row.Title) + "'";
 
     if (row.ClassEvaluationAnswerOptionsId > 0)
       checkFilterString += " and ClassEvaluationAnswerOptionsId ne " + row.ClassEvaluationAnswerOptionsId;
@@ -197,8 +197,8 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
           this.ClassEvaluationOptionForUpdate.push(
             {
               ClassEvaluationAnswerOptionsId: row.ClassEvaluationAnswerOptionsId,
-              Title: row.Title.replaceAll("'","''"),
-              Description: row.Description.replaceAll("'","''"),
+              Title: globalconstants.encodeSpecialChars(row.Title),
+              Description: globalconstants.encodeSpecialChars(row.Description),
               Point: row.Point,
               Correct: row.Correct,
               ClassEvaluationId: this.ClassEvaluationId,
@@ -206,7 +206,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
               Active: row.Active,
               OrgId: this.LoginUserDetail[0]["orgId"]
             });
-          console.log('dta', this.ClassEvaluationOptionForUpdate);
+          //console.log('dta', this.ClassEvaluationOptionForUpdate);
 
           if (this.ClassEvaluationOptionForUpdate[0].ClassEvaluationAnswerOptionsId == 0) {
             this.ClassEvaluationOptionForUpdate[0]["CreatedDate"] = new Date();

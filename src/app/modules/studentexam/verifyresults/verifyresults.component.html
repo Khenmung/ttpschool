@@ -24,6 +24,7 @@
     <mat-form-field appearance="outline" style="width:150px">
         <mat-label>Section</mat-label>
         <mat-select formControlName="searchSectionId">
+            <mat-option value="0">select</mat-option>
             <mat-option *ngFor="let item of Sections" [value]="item.MasterDataId">
                 {{item.MasterDataName}}
             </mat-option>
@@ -40,7 +41,7 @@
         (click)="clear()">
         <mat-icon>clear_all</mat-icon>
     </button>
-    <button [disabled]="loading || ClickedVerified" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0"
+    <button [disabled]="loading || ClickedVerified || !EnableVerify" matTooltip="verified" *ngIf="ExamStudentSubjectResult.length>0 || ExamStudentSubjectGrading.length>0"
         mat-raised-button color="accent" (click)="Verified()">
         <mat-icon>checked</mat-icon>
     </button>

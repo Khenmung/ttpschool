@@ -99,11 +99,7 @@
                 <span *ngFor="let item of PrintHeading">
                     <span style="font-size:larger;display: flex;justify-content: center;">{{item.Logic}}</span>
                 </span>
-            </div>
-            <div *ngIf="StudentName.length>0">
-                <span>My name is:</span>
-                <span style="padding-left:30px;font-weight: bold;">{{StudentName}}</span>
-            </div>
+            </div>            
             <mat-table #table [dataSource]="dataSource" *ngIf="StudentEvaluationList.length>0">
                 <ng-container matColumnDef="StudentEvaluationResultId">
                     <mat-header-cell *matHeaderCellDef>Id
@@ -133,7 +129,7 @@
                                 *ngIf="!EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0
                                 && element.QuestionnaireType=='Questionnaire'">
                             </span>
-                            <pre>
+                            <pre *ngIf="element.History.length>0">
                             <span [innerHTML]="element.History|encodeHTML"
                                 class="history"
                                 *ngIf="EvaluationUpdatable && element.ClassEvaluationAnswerOptionParentId==0 
@@ -165,32 +161,6 @@
                         </span>
                     </mat-cell>
                 </ng-container>
-                <!-- <ng-container matColumnDef="AnswerOptionsId">
-                    <mat-header-cell *matHeaderCellDef style="display:none">
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element">
-                        <span style="padding: 15px 15px 15px 0px;"
-                            *ngIf="element.MultipleAnswer==1 && element.ClassEvaluationAnswerOptionParentId>0">
-                            <mat-checkbox style="margin-right: 15px;"
-                                *ngFor="let item of element.ClassEvaluationOptions;let i=index"
-                                (click)="$event.stopPropagation()" name="options_{{i}}"
-                                [value]="item.ClassEvaluationAnswerOptionsId" [checked]="item.checked">
-                                {{item.Title}}
-                            </mat-checkbox>
-                        </span>
-                        <span style="padding: 15px 15px 15px 0px;"
-                            *ngIf="element.ClassEvaluationAnswerOptionParentId>0 && (element.MultipleAnswer==0 || element.MultipleAnswer==null)">
-                            <mat-radio-group [name]="'options_'+element.ClassEvaluationId">
-                                <mat-radio-button style="margin: 10px 10px 0px 0px;"
-                                    [name]="'options_'+element.ClassEvaluationId"
-                                    *ngFor="let item of element.ClassEvaluationOptions;let i=index"
-                                    [value]="item.ClassEvaluationAnswerOptionsId" [checked]="item.checked">
-                                    {{item.Title}}
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </span>
-                    </mat-cell>
-                </ng-container> -->
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
                     style="align-items: center;"></mat-row>

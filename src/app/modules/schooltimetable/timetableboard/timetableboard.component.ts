@@ -73,7 +73,7 @@ export class TimetableboardComponent implements AfterViewInit {
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
         this.renderComponent(0);
-      }, 550);
+      }, 1000);
       this.cdr.detectChanges();
     }
   }
@@ -82,7 +82,7 @@ export class TimetableboardComponent implements AfterViewInit {
     //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
-    }, 550);
+    }, 1000);
 
   }
   addRemovecomponent(perObj,comindx){

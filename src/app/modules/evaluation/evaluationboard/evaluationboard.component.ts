@@ -85,7 +85,7 @@ export class EvaluationboardComponent implements AfterViewInit {
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
         this.renderComponent(0);
-      }, 550);
+      }, 1000);
       this.cdr.detectChanges();
     }
   }
@@ -94,7 +94,7 @@ export class EvaluationboardComponent implements AfterViewInit {
     //    //console.log("index", index)
     setTimeout(() => {
       this.renderComponent(index);
-    }, 550);
+    }, 1000);
 
   }
   selectedIndex = 0;
