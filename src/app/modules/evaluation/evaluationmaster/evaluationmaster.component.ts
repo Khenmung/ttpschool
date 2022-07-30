@@ -332,7 +332,26 @@ export class EvaluationMasterComponent implements OnInit {
       });
 
   }
+  AlreadyUsedEvaluation = [];
+  GetUsedEvaluationType(pEvaluationMasterId) {
+    var filterStr = "EvaluationMasterId eq " + pEvaluationMasterId +
+      " and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]['orgId'];
 
+    let list: List = new List();
+    list.fields = [
+      'EvaluationMasterId'
+    ];
+    list.PageName = "EvaluationExamMaps";
+    list.lookupFields = ["StudentEvaluationResult($filter=EvaluationMasterId eq " + pEvaluationMasterId + ";$select=EvaluationExamMapId,ClassEvaluationId)"]
+    list.filter = [filterStr];
+    this.AlreadyUsedEvaluation = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        if (data.value.length > 0) {
+          this.AlreadyUsedEvaluation = data.value.filter(f => f.StudentEvaluationResult.length > 0)
+        }
+      })
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
