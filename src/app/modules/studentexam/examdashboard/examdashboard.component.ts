@@ -10,6 +10,7 @@ import { VerifyResultsComponent } from '../verifyresults/verifyresults.component
 import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubject.component';
 import { StudentgradeComponent } from '../studentgrade/studentgrade.component';
 import { VerifyresultstatusComponent } from '../verifyresultstatus/verifyresultstatus.component';
+import { ExamncalculateComponent } from '../examncalculate/examncalculate.component';
 
 @Component({
   selector: 'app-examdashboard',
@@ -22,6 +23,7 @@ export class ExamdashboardComponent implements AfterViewInit {
   components:any = [
     ExamsComponent,
     StudentgradeComponent,
+    ExamncalculateComponent,
     ExamslotComponent,
     SlotnclasssubjectComponent,
     ExamstudentsubjectresultComponent,
@@ -30,6 +32,7 @@ export class ExamdashboardComponent implements AfterViewInit {
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -73,6 +76,7 @@ export class ExamdashboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULT)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.STUDENTGRADE)
     this.GenerateComponent(globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS)
+    this.GenerateComponent(globalconstants.Pages.edu.EXAM.EXAMNCALCULATE)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -101,26 +105,29 @@ export class ExamdashboardComponent implements AfterViewInit {
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
     var comindx = 0;
     switch (featureName) {
-      case "exam":
+      case globalconstants.Pages.edu.EXAM.EXAM:
         comindx = this.components.indexOf(ExamsComponent);
         break;
-      case "exam slot":
+      case globalconstants.Pages.edu.EXAM.EXAMSLOT:
         comindx = this.components.indexOf(ExamslotComponent);
         break;
-      case "Exam Result Entry":
+      case globalconstants.Pages.edu.EXAM.EXAMSTUDENTSUBJECTRESULT:
         comindx = this.components.indexOf(ExamstudentsubjectresultComponent);
         break;
-      case "slot n class subject":
+      case globalconstants.Pages.edu.EXAM.SLOTNCLASSSUBJECT:
         comindx = this.components.indexOf(SlotnclasssubjectComponent);
         break;
-      case "verify result":
+      case globalconstants.Pages.edu.EXAM.VERIFYRESULT:
         comindx = this.components.indexOf(VerifyResultsComponent);
         break;
-      case "student grade":
+      case globalconstants.Pages.edu.EXAM.STUDENTGRADE:
         comindx = this.components.indexOf(StudentgradeComponent);
         break;
-      case "verify result status":
+      case globalconstants.Pages.edu.EXAM.VERIFYRESULTSTATUS:
         comindx = this.components.indexOf(VerifyresultstatusComponent);
+        break;
+      case globalconstants.Pages.edu.EXAM.EXAMNCALCULATE:
+        comindx = this.components.indexOf(ExamncalculateComponent);
         break;
       default:
         comindx = this.components.indexOf(ExamsComponent);

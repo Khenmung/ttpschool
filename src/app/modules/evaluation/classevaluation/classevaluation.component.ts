@@ -56,6 +56,7 @@ export class ClassEvaluationComponent implements OnInit {
     ClassEvalCategoryId: 0,
     ClassEvalSubCategoryId: 0,
     MultipleAnswer: 0,
+    ExamId:0,
     EvaluationMasterId: 0,
     Description: '',
     DisplayOrder: 0,
@@ -71,6 +72,7 @@ export class ClassEvaluationComponent implements OnInit {
     'QuestionnaireTypeId',
     'DisplayOrder',
     'ClassEvaluationAnswerOptionParentId',
+    'ExamId',
     'MultipleAnswer',
     'Active',
     'Action'
@@ -212,6 +214,7 @@ export class ClassEvaluationComponent implements OnInit {
       QuestionnaireTypeId: 0,
       Description: '',
       MultipleAnswer: 0,
+      ExamId:0,
       EvaluationMasterId: _EvaluationMasterId,
       ClassEvaluationAnswerOptionParentId: 0,
       DisplayOrder: 0,
@@ -264,6 +267,7 @@ export class ClassEvaluationComponent implements OnInit {
       this.contentservice.openSnackBar("Please select type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+
     checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
 
     if (row.ClassEvaluationId > 0)
@@ -293,6 +297,7 @@ export class ClassEvaluationComponent implements OnInit {
               Active: row.Active,
               QuestionnaireTypeId: row.QuestionnaireTypeId,
               MultipleAnswer: row.MultipleAnswer,
+              ExamId:row.ExamId,
               ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
               EvaluationMasterId: row.EvaluationMasterId,
               Description: globalconstants.encodeSpecialChars(row.Description),
@@ -385,6 +390,7 @@ export class ClassEvaluationComponent implements OnInit {
       'Description',
       'EvaluationMasterId',
       'MultipleAnswer',
+      'ExamId',
       'ClassEvaluationAnswerOptionParentId',
       'DisplayOrder',
       'Active'
@@ -581,6 +587,7 @@ export interface IClassEvaluation {
   ClassEvaluationId: number;
   QuestionnaireTypeId: number;
   MultipleAnswer: number;
+  ExamId:number;
   Description: string;
   ClassEvaluationAnswerOptionParentId: number;
   DisplayOrder: number;

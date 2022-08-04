@@ -1,21 +1,20 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Class Grouping</strong></div>
+        <div><strong>Exam N Calculate</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
     <div style="padding: 15px;">
         <div style="flex-direction: row;">
             <form [formGroup]="searchForm">
                 <mat-form-field appearance="outline" [style.width.px]="200">
-                    <mat-label>Class Group</mat-label>
-                    <mat-select formControlName="searchClassGroupId">
-                        <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
-                            {{item.GroupName}}
+                    <mat-label>Exam</mat-label>
+                    <mat-select formControlName="searchExamId">
+                        <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                            {{item.ExamName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassGroupMapping()">
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetExamNCalculate()">
                     <mat-icon>search</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -25,57 +24,43 @@
         </div>
         <div style="width: 100%;">
             <mat-table style="overflow: auto;min-width: 60vw;min-height: 60vh;" #table [dataSource]="dataSource">
-                <ng-container matColumnDef="ClassGroupMappingId">
+                <ng-container matColumnDef="ExamNCalculateId">
                     <mat-header-cell *matHeaderCellDef>Id
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        {{element.ClassGroupMappingId}}
+                        {{element.ExamNCalculateId}}
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="ClassGroupId">
-                    <mat-header-cell *matHeaderCellDef>Class Group
+                <ng-container matColumnDef="PropertyName">
+                    <mat-header-cell *matHeaderCellDef>Property
                     </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-select [value]="element.ClassGroupId" (selectionChange)="onBlur(element)"
-                                [(ngModel)]="element.ClassGroupId">
-                                <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">
-                                    {{item.GroupName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
+                    <mat-cell *matCellDef="let element">
+                        {{element.PropertyName}}
                     </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="ClassId">
-                    <mat-header-cell *matHeaderCellDef>Class
-                    </mat-header-cell>
-                    <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline">
-                            <mat-select [value]="element.ClassId" (selectionChange)="onBlur(element)"
-                                [(ngModel)]="element.ClassId">
-                                <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
-                                    {{item.ClassName}}</mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </mat-cell>
-                </ng-container>
+                </ng-container>              
                 <ng-container matColumnDef="Active">
-                    <mat-header-cell *matHeaderCellDef>Active
+                    <mat-header-cell *matHeaderCellDef>Active &nbsp;
+                        <mat-checkbox  (click)="$event.stopPropagation()" (change)="SelectAll($event)">
+                </mat-checkbox>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
-                            [checked]="element.Active==1?true:false">
+                            [checked]="element.Active">
                         </mat-checkbox>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
-                            (click)="AddNew()">
-                            <mat-icon>add</mat-icon>
-                        </button>
+                        <button [disabled]="loading || ExamNCalculateList.length==0" matTooltip="add new" mat-mini-fab
+                        (click)="SaveAll()">
+                        <mat-icon>all_out</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                        <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                        <button [disabled]="loading || !element.Action || Permission=='read' || ExamReleaseResult" matTooltip="save"
                             mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                             <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">

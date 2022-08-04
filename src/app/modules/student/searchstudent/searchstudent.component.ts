@@ -294,6 +294,11 @@ export class searchstudentComponent implements OnInit {
     this.generateDetail(element);
     this.route.navigate(['/edu/feepayment']);
   }
+  ClearData()
+  {
+    this.ELEMENT_DATA=[];
+    this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
+  }
   generateDetail(element) {
     let StudentName = element.PID + ' ' + element.Name + ' ' + element.FatherName + ' ' + element.MotherName + ',';
 

@@ -162,7 +162,8 @@ export class EvaluationresultComponent implements OnInit {
       filterStr += ' and StudentClassId eq ' + this.StudentClassId
       filterStr += ' and EvaluationExamMapId eq ' + row.EvaluationExamMapId
     }
-    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
+    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId
+      && (f.ExamId == null || f.ExamId ==0 || f.ExamId == row.ExamId));
     let list: List = new List();
     list.fields = [
       'StudentEvaluationResultId',
@@ -519,6 +520,7 @@ export class EvaluationresultComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassEvaluationOptionList = data.value.map(item => {
+            item.Title = globalconstants.decodeSpecialChars(item.Title);
             item.Active = 0;
             return item;
           })

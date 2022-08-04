@@ -1,4 +1,3 @@
-
 <mat-spinner *ngIf="PageLoading" diameter="25" style="margin:15px;position:relative;margin-left: 50%;"></mat-spinner>
 
 <mat-tab-group [selectedIndex]="selectedIndex" (selectedIndexChange)="tabchanged($event)">
@@ -11,7 +10,7 @@
                 <div style="padding: 15px;">
                     <mat-form-field appearance="outline" [style.width.px]="200">
                         <mat-label>class group</mat-label>
-                            <mat-select formControlName="searchClassGroupId" (selectionChange)="SelectEvaluation()">
+                        <mat-select formControlName="searchClassGroupId" (selectionChange)="SelectEvaluation()">
                             <mat-option *ngFor="let item of ClassGroups" [value]="item.ClassGroupId">{{item.GroupName}}
                             </mat-option>
                         </mat-select>
@@ -19,16 +18,17 @@
                     <mat-form-field appearance="outline" [style.width.px]="250">
                         <mat-label>Evaluation type</mat-label>
                         <mat-select formControlName="searchEvaluationMasterId">
-                            <mat-option *ngFor="let item of EvaluationMasterForClassGroup" [value]="item.EvaluationMasterId">
+                            <mat-option *ngFor="let item of EvaluationMasterForClassGroup"
+                                [value]="item.EvaluationMasterId">
                                 {{item.EvaluationName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
                     <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassEvaluation()">
-                         <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                        <mat-icon>search</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
                 </div>
             </form>
@@ -42,7 +42,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Description">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header>Questionaire
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Questionnaire
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
@@ -69,13 +69,28 @@
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-select [disabled]="element.Updatable" [(ngModel)]="element.ClassEvaluationAnswerOptionParentId"
+                            <mat-select [disabled]="element.Updatable"
+                                [(ngModel)]="element.ClassEvaluationAnswerOptionParentId"
                                 (selectionChange)="onBlur(element)"
                                 [value]="element.ClassEvaluationAnswerOptionParentId">
                                 <mat-option [value]="0">--Answer option--</mat-option>
                                 <mat-option *ngFor="let item of ClassEvaluationOptionList"
                                     [value]="item.ClassEvaluationAnswerOptionsId">
                                     {{item.Title}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="ExamId">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Exam/Session
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <mat-select [disabled]="element.Updatable" [(ngModel)]="element.ExamId"
+                                (selectionChange)="onBlur(element)" [value]="element.ExamId">
+                                <mat-option [value]="0">--Exam--</mat-option>
+                                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                                    {{item.ExamName}}</mat-option>
                             </mat-select>
                         </mat-form-field>
                     </mat-cell>
@@ -110,14 +125,16 @@
                 </ng-container>
                 <ng-container matColumnDef="Action">
                     <mat-header-cell *matHeaderCellDef>
-                        <button [disabled]="loading || Permission=='read'" matTooltip="add new child" mat-mini-fab (click)="AddNew()">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="add new child" mat-mini-fab
+                            (click)="AddNew()">
                             <mat-icon>add</mat-icon>
                         </button>
-                        <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                        <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
+                            (click)="SaveAll()">
                             <mat-icon>all_out</mat-icon>
-                <mat-icon *ngIf="loading">
-                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                </mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
                         </button>
 
                     </mat-header-cell>
@@ -127,7 +144,7 @@
                         </button>
                         <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
                             mat-mini-fab (click)="SaveRow(element)">
-                             <mat-icon>save</mat-icon>
+                            <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">
                                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
                             </mat-icon>
@@ -140,7 +157,8 @@
                     (click)="highlight(indx)">
                 </mat-row>
             </mat-table>
-            <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
+            <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]">
+            </mat-paginator>
 
         </div>
         <!-- </div> -->
@@ -151,5 +169,5 @@
         </ng-template>
         <app-ClassEvaluationOption></app-ClassEvaluationOption>
     </mat-tab>
-    
+
 </mat-tab-group>

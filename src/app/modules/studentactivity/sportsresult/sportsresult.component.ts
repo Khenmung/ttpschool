@@ -210,7 +210,7 @@ export class SportsResultComponent implements OnInit {
             {
               SportResultId: row.SportResultId,
               Secured: row.Secured,
-              Achievement: row.Achievement.replaceAll("'","''"),
+              Achievement: globalconstants.encodeSpecialChars(row.Achievement),
               SportsNameId: this.searchForm.get("searchActivityId").value,
               CategoryId: row.CategoryId,
               SubCategoryId: row.SubCategoryId,
@@ -294,22 +294,23 @@ export class SportsResultComponent implements OnInit {
     if (_SportsNameId > 0) {
       filterStr += " and SportsNameId eq " + _SportsNameId;
     }
-    else {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // else {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     if (_categoryId > 0) {
       filterStr += " and CategoryId eq " + _categoryId;
     }
-    else {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (_SessionId > 0) {
-      filterStr += " and SessionId eq " + _SessionId;
-    }
+    // else {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (_SessionId > 0) {
+    //   filterStr += " and SessionId eq " + _SessionId;
+    // }
+    
     this.loading = true;
     this.SportsResultList = [];
 
@@ -340,12 +341,13 @@ export class SportsResultComponent implements OnInit {
           else
             m.SportsName = '';
           m.SubCategories = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
+          m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
           m.Action = false;
           return m;
         })
+
         if (this.SportsResultList.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
-
         }
         this.dataSource = new MatTableDataSource<ISportsResult>(this.SportsResultList);
         this.dataSource.paginator = this.paginator;

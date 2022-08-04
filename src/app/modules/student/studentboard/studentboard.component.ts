@@ -8,7 +8,7 @@ import { StudentattendancereportComponent } from '../studentattendancereport/stu
 import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimaryinfo.component';
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
 import { Router } from '@angular/router';
-import { SportsResultComponent } from '../../studentactivity/sportsresult/sportsresult.component';
+import { StudentviewComponent } from '../studentview/studentview.component';
 
 @Component({
   selector: 'app-studentboard',
@@ -20,10 +20,12 @@ export class StudentboardComponent implements AfterViewInit {
     studentprimaryinfoComponent,
     AddstudentclassComponent,
     StudentattendancereportComponent,
-    StudentprogressreportComponent
+    StudentprogressreportComponent,
+    StudentviewComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -47,8 +49,7 @@ export class StudentboardComponent implements AfterViewInit {
     private nav: Router,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
-    private shareddata: SharedataService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    private shareddata: SharedataService) {
     this.StudentId = tokenStorage.getStudentId();
   }
 
@@ -66,6 +67,7 @@ export class StudentboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTCLASS)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ATTENDANCEREPORT)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.PROGRESSREPORT)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTVIEW)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -105,6 +107,9 @@ export class StudentboardComponent implements AfterViewInit {
         break;
       case globalconstants.Pages.edu.STUDENT.PROGRESSREPORT:
         comindx = this.components.indexOf(StudentprogressreportComponent);
+        break;
+      case globalconstants.Pages.edu.STUDENT.STUDENTVIEW:
+        comindx = this.components.indexOf(StudentviewComponent);
         break;
     }
 

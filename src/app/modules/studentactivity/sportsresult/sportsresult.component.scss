@@ -19,11 +19,13 @@ mat-form-field {
 .mat-column-Action{
     flex:1 0 100px;
 }
-.mat-column-Achievement,
+.mat-column-Achievement{
+  flex:1 0 200px;
+}
 .mat-column-SportsNameId,
 .mat-column-CategoryId,
 .mat-column-SubCategoryId,
 .mat-column-AchievementDate,
 .mat-column-SessionId{
-    flex:1 0 150px;
+    flex:1 0 110px;
 }

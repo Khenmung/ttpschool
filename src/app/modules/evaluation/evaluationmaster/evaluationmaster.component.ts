@@ -166,13 +166,16 @@ export class EvaluationMasterComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    let checkFilterString = "EvaluationName eq '" + row.EvaluationName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    
     if (row.ClassGroupId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+    let checkFilterString = "EvaluationName eq '" + row.EvaluationName + 
+    " and ClassGroupId eq " + row.ClassGroupId +
+    "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    
     if (row.EvaluationMasterId > 0)
       checkFilterString += " and EvaluationMasterId ne " + row.EvaluationMasterId;
     let list: List = new List();

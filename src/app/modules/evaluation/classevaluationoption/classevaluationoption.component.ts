@@ -193,7 +193,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
         }
         else {
           this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.ClassEvaluationOptionForUpdate = [];;
+          this.ClassEvaluationOptionForUpdate = [];
           this.ClassEvaluationOptionForUpdate.push(
             {
               ClassEvaluationAnswerOptionsId: row.ClassEvaluationAnswerOptionsId,
@@ -298,6 +298,7 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.ClassEvaluationOptionList = data.value.map(item => {
+            item.Title = globalconstants.decodeSpecialChars(item.Title);
             item.Action = false;
             return item;
           })

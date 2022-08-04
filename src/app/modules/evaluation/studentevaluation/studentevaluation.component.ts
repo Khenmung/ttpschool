@@ -60,6 +60,7 @@ export class StudentEvaluationComponent implements OnInit {
   Students = [];
   EvaluationPlanColumns = [
     'EvaluationName',
+    'ClassGroup',
     'ExamName',
     'Action1'
   ];
@@ -417,7 +418,8 @@ export class StudentEvaluationComponent implements OnInit {
       if (mapping.EvaluationExamMapId != row.EvaluationExamMapId)
         mapping.Action = false;
     })
-    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
+    var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId
+      && (f.ExamId == null || f.ExamId ==0 || f.ExamId == row.ExamId));
     //delete row all except selected one
     for (var i = 0; i < this.RelevantEvaluationListForSelectedStudent.length; i++) {
       if (this.RelevantEvaluationListForSelectedStudent[i].EvaluationExamMapId != row.EvaluationExamMapId) {
@@ -474,6 +476,7 @@ export class StudentEvaluationComponent implements OnInit {
                 selectedorNot.forEach(answer => {
                   if (answer.Active == 1)
                     cls.checked = true;
+                    cls.Title =globalconstants.decodeSpecialChars(cls.Title);
                   cls.StudentEvaluationAnswerId = answer.StudentEvaluationAnswerId
                 })
               }
@@ -756,8 +759,7 @@ export class StudentEvaluationComponent implements OnInit {
         this.RelevantEvaluationListForSelectedStudent = [];
         if (_EvaluationExamMapSelectedStudentObj.length > 0) {
           _EvaluationExamMapSelectedStudentObj.forEach(m => {
-            // this.EvaluationUpdatable = m.Updatable;
-            // this.ExamDurationMinutes = m.Duration;
+            m.ClassGroup = this.ClassGroups.filter(f=>f.ClassGroupId == m.ClassGroupId)[0].GroupName;
             m.EvaluationStarted = false;
             var existing = this.StudentSubmittedEvaluations.filter(f => f.EvaluationExamMapId == m.EvaluationExamMapId)
             if (existing.length > 0) {
@@ -812,6 +814,7 @@ export class StudentEvaluationComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassEvaluationOptionList = data.value.map(item => {
+            item.Title =globalconstants.decodeSpecialChars(item.Title);
             item.Active = 0;
             item.StudentEvaluationAnswerId = 0;
             return item;
@@ -832,6 +835,7 @@ export class StudentEvaluationComponent implements OnInit {
       'Description',
       'ClassEvaluationAnswerOptionParentId',
       'MultipleAnswer',
+      'ExamId'
     ];
 
     list.PageName = "ClassEvaluations";

@@ -27,7 +27,7 @@ export class VerifyResultsComponent implements OnInit {
   StudentAttendanceList = [];
   AttendanceStatusSum = [];
   AttendanceDisplay = '';
-  ClassStrength = 0;
+  ClassStrength = '';
 
   ClickedVerified = false;
   LoginUserDetail: any[] = [];
@@ -127,8 +127,9 @@ export class VerifyResultsComponent implements OnInit {
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
         this.GetTotalAttendance();
-        this.GetSubjectComponents();
+        this.GetSubjectTypes();
         this.GetStudentAttendance();
+
       }
     }
   }
@@ -165,7 +166,7 @@ export class VerifyResultsComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)",
+    list.lookupFields = ["ClassSubject($select=Active,SubjectId,SubjectTypeId,ClassId,SubjectCategoryId)",
       "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
@@ -202,6 +203,7 @@ export class VerifyResultsComponent implements OnInit {
               ClassId: s.ClassSubject.ClassId,
               StudentId: s.StudentClass.StudentId,
               SectionId: s.StudentClass.SectionId,
+              SubjectTypeId: s.ClassSubject.SubjectTypeId,
               SubjectCategoryId: s.ClassSubject.SubjectCategoryId
             });
           }
@@ -287,19 +289,26 @@ export class VerifyResultsComponent implements OnInit {
             return;
           }
           objAttendanceForClassGroup = this.TotalAttendance.filter(f => f.ClassId == _classId && f.ExamId == _examId);
-          if (objAttendanceMode[0].MasterDataName == "Separate") {
-            _TotalDays = objAttendanceForClassGroup[0].TotalNoOfAttendance;
-          }
-          else if (objAttendanceMode[0].MasterDataName == "Over All") {
-            objAttendanceForClassGroup = this.TotalAttendance.filter(f => f.ClassId == _classId
-              && f.Sequence <= objAttendanceForClassGroup[0].Sequence);
-
-            if (objAttendanceForClassGroup.length > 0) {
-              _TotalDays = objAttendanceForClassGroup.reduce((acc, current) => acc + current.TotalNoOfAttendance, 0);
+          if (objAttendanceForClassGroup.length > 0) {
+            if (objAttendanceMode[0].MasterDataName == "Separate") {
+              _TotalDays = objAttendanceForClassGroup[0].TotalNoOfAttendance;
             }
-            else
-              this.contentservice.openSnackBar("Total attendance for class " + _classId + " not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+            else if (objAttendanceMode[0].MasterDataName == "Over All") {
+              objAttendanceForClassGroup = this.TotalAttendance.filter(f => f.ClassId == _classId
+                && f.Sequence <= objAttendanceForClassGroup[0].Sequence);
 
+              if (objAttendanceForClassGroup.length > 0) {
+                _TotalDays = objAttendanceForClassGroup.reduce((acc, current) => acc + current.TotalNoOfAttendance, 0);
+              }
+              else
+                this.contentservice.openSnackBar("Total attendance for class " + _classId + " not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+
+            }
+            else {
+              this.loading = false;
+              this.contentservice.openSnackBar("No total attendance defined for the class group.", globalconstants.ActionText, globalconstants.RedBackground);
+              return;
+            }
           }
           else {
             this.loading = false;
@@ -307,23 +316,43 @@ export class VerifyResultsComponent implements OnInit {
             return;
           }
 
-
         }
       }
-
-
-
-
-
+      debugger;
       this.ExamStudentSubjectResult.forEach(d => {
         var _TotalPresent = 0;
-        var _TotalPresentObj = [];
+        //var _TotalPresentObj = [];
 
-        _TotalPresentObj = _WholeClassTotalPresentObj.filter(f => f.StudentClassId == d["StudentClassId"])
+        _TotalPresent = _WholeClassTotalPresentObj.filter(f => f.StudentClassId == d["StudentClassId"])
+          .reduce((acc, current) => acc + current.Total, 0);
 
-        if (_TotalPresentObj.length > 0)
-          _TotalPresent = _TotalPresentObj[0].Total;
+        //if (_TotalPresentObj.length > 0)
+        //  _TotalPresent = _TotalPresentObj[0].Total;
+
         this.AttendanceDisplay = _TotalPresent + "/" + _TotalDays + ""
+        if (this.ExamNCalculate.length > 0) {
+          var _ExamResultProperties = this.ExamNCalculate.filter(e => e.ExamId == _examId)
+          if (_ExamResultProperties.filter(f => f.PropertyName.toLowerCase().includes('rank')).length == 0)
+            d["Rank"] = 0;
+          if (_ExamResultProperties.filter(f => f.PropertyName.toLowerCase().includes('division')).length == 0)
+            d["Division"] = ''
+          if (_ExamResultProperties.filter(f => f.PropertyName.toLowerCase().includes('percentage')).length == 0)
+            d["Percentage"] = '';
+          if (_ExamResultProperties.filter(f => f.PropertyName.toLowerCase().includes('total')).length == 0)
+            d["Total"] = '';
+          if (_ExamResultProperties.filter(f => f.PropertyName.toLowerCase().includes('attendance')).length == 0)
+            this.AttendanceDisplay = '';
+          if (_ExamResultProperties.filter(f => f.PropertyName.toLowerCase().includes('class strength')).length == 0)
+            this.ClassStrength = '';
+        }
+        else {
+          d["Rank"] = 0;
+          d["Division"] = ''
+          d["Percentage"] = '';
+          d["Total"] = '';
+          this.AttendanceDisplay = '';
+          this.ClassStrength = '';
+        }
 
         this.VerifiedResult.ExamStudentResult.push({
           "ExamStudentResultId": 0,
@@ -358,6 +387,33 @@ export class VerifyResultsComponent implements OnInit {
           })
     }
   }
+  ExamNCalculate = [];
+  GetExamNCalculate() {
+    this.loading = true;
+    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
+    let list: List = new List();
+    list.fields = ["*"];
+
+    list.PageName = "ExamNCalculates";
+    list.filter = [filterStr];
+    this.ExamNCalculate = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(f => {
+          var objProperty = this.ExamResultProperties.filter(p => p.MasterDataId == f.CalculateResultPropertyId)
+          if (objProperty.length > 0)
+            f.PropertyName = objProperty[0].MasterDataName;
+          else
+            f.PropertyName = '';
+
+          var objExam = this.Exams.filter(e => e.ExamId == f.ExamId);
+          if (objExam.length > 0) {
+            f.ExamName = objExam[0].ExamName;
+            this.ExamNCalculate.push(f);
+          }
+        })
+      })
+  }
   EnableVerify = true;
   GetExamStudentSubjectResults() {
     this.ClickedVerified = false;
@@ -366,9 +422,13 @@ export class VerifyResultsComponent implements OnInit {
     this.ExamStudentSubjectGrading = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchExamId").value == 0) {
+    var _examId = this.searchForm.get("searchExamId").value;
+    if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
+    }
+    else {
+      this.ClickedVerified = this.Exams.filter(f => f.ExamId == _examId)[0].ReleaseResult;
     }
     var _classId = this.searchForm.get("searchClassId").value;
     if (_classId == 0) {
@@ -382,7 +442,8 @@ export class VerifyResultsComponent implements OnInit {
       this.EnableVerify = true;
 
     this.loading = true;
-    filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
+
+    filterstr = 'ExamId eq ' + _examId;
 
     let list: List = new List();
     list.fields = [
@@ -407,17 +468,6 @@ export class VerifyResultsComponent implements OnInit {
       .subscribe((examComponentResult: any) => {
         debugger;
 
-        var _classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
-        if (_classMarks.length > 0) {
-          this.ClassFullMark = alasql("select ClassId,sum(FullMark) as FullMark from ? group by ClassId", [_classMarks]);
-        }
-        // this.GetStudents(_classId)
-        //   .subscribe((data: any) => {
-        //this.Students = [];
-        // this.Students.forEach(f => {
-        //   if (f.Student.Active == 1)
-        //     this.Students.push(f);
-        // });
         var StudentOwnSubjects = [];
 
         if (_sectionId > 0) {
@@ -431,16 +481,50 @@ export class VerifyResultsComponent implements OnInit {
             return studentsubject.ClassId == _classId
           });
         }
+
+        var _classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
+        this.ClassFullMark = 0;
+        // if (_classMarks.length > 0) {
+
+        //   this.ClassFullMark = 0;
+        //   var objDistinctSubjectType = alasql("select distinct SubjectTypeId,SelectHowMany FullMark from ? ",
+        //     [_classMarks]);
+
+        //   //sum of all compulsory subject marks
+        //   var _compulsorysubjects = _classMarks.filter(f => f.SelectHowMany == 100);
+        //   this.ClassFullMark = _compulsorysubjects.reduce((acc, current) => acc + current.FullMark, 0);
+
+        //   //sum of others
+        //   objDistinctSubjectType.forEach(d => {
+        //     var subjecttypeobj = _classMarks.filter(f => f.SubjectTypeId == d.SubjectTypeId);
+        //     if (subjecttypeobj.length > 0) {
+
+        //     }
+
+        //   })
+        // }
+        // this.GetStudents(_classId)
+        //   .subscribe((data: any) => {
+        //this.Students = [];
+        // this.Students.forEach(f => {
+        //   if (f.Student.Active == 1)
+        //     this.Students.push(f);
+        // });
+
         var ForGrading, ForNonGrading;
         StudentOwnSubjects.forEach(f => {
           var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
-          if (stud.length > 0)
+          if (stud.length > 0) {
             f.Student = stud[0].Student.FirstName + "-" + stud[0].Student.LastName;
+
+          }
+
         })
 
-        var filteredIndividualStud = alasql("select distinct Student,StudentClassId from ? ", [StudentOwnSubjects]);
+        var filteredIndividualStud = alasql("select distinct Student,StudentClassId,FullMark from ? ", [StudentOwnSubjects]);
         var _subjectCategoryName = '';
         this.VerifiedResult.ExamResultSubjectMark = [];
+
         //for each student
         filteredIndividualStud.forEach(ss => {
 
@@ -458,12 +542,30 @@ export class VerifyResultsComponent implements OnInit {
             "Grade": 0,
             "Division": '',
             "FailCount": 0,
-            "PassCount": 0
+            "PassCount": 0,
+            "FullMark": 0
           }
 
 
           var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.Student == ss.Student)
           //var _subjectDetailToInsert ={}
+          this.ClassFullMark = 0;
+          var _subjectCategoryMarkingId = 0;
+          var _objSubjectCat = this.SubjectCategory.filter(f => f.MasterDataName.toLowerCase() == 'marking')
+          if (_objSubjectCat.length > 0) {
+            _subjectCategoryMarkingId = _objSubjectCat[0].MasterDataId;
+
+            //preparing fullmark for all subjects
+            forEachSubjectOfStud.forEach(eachsubj => {
+
+              //this.ClassFullMark is included only if subject category is marking.
+              if (_subjectCategoryMarkingId == eachsubj.SubjectCategoryId) {
+                var objFullMark = _classMarks.filter(c => c.ClassSubjectId == eachsubj.ClassSubjectId);
+                if (objFullMark.length > 0)
+                  this.ClassFullMark += objFullMark.reduce((acc, current) => acc + current.FullMark, 0);
+              }
+            })
+          }
 
           forEachSubjectOfStud.forEach(eachsubj => {
 
@@ -520,6 +622,7 @@ export class VerifyResultsComponent implements OnInit {
               }
               else if (_subjectCategoryName == 'marking') {
                 _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
+                ForNonGrading["FullMark"] = this.ClassFullMark;
                 if (_statusFail)
                   ForNonGrading["FailCount"]++;
                 else
@@ -557,7 +660,8 @@ export class VerifyResultsComponent implements OnInit {
               for (var i = 0; i < _SelectedClassStudentGrades.length; i++) {
                 var formula = _SelectedClassStudentGrades[i].Formula
                   .replaceAll("[TotalMark]", result.Total)
-                  .replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
+                  //.replaceAll("[FullMark]", this.ClassFullMark[0].FullMark)
+                  .replaceAll("[FullMark]", result.FullMark)
                   .replaceAll("[PassCount]", result.PassCount)
                   .replaceAll("[FailCount]", result.FailCount);
 
@@ -571,7 +675,9 @@ export class VerifyResultsComponent implements OnInit {
               }
               var _notToCalculateRankAndPercentage = ['fail', 'promoted'];
               if (!_notToCalculateRankAndPercentage.includes(result.Division.toLowerCase())) {
-                result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
+                //result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
+                result["Percentage"] = ((result.Total / result.FullMark) * 100).toFixed(2);
+
                 if (previousTotal != result.Total)
                   rankCount++;
                 result.Rank = rankCount;
@@ -583,7 +689,7 @@ export class VerifyResultsComponent implements OnInit {
             })
           }
           else {
-            this.contentservice.openSnackBar("Student grade not defined.", globalconstants.ActionText, globalconstants.RedBackground);
+            this.contentservice.openSnackBar("Student grade for marking not defined.", globalconstants.ActionText, globalconstants.RedBackground);
 
           }
           this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.filter(f => f["Total"] > 0);
@@ -600,6 +706,13 @@ export class VerifyResultsComponent implements OnInit {
         }
 
         //console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
+        var sortedresult = this.ExamStudentSubjectResult.filter(f => f.Rank != 0);
+        var rankzero = this.ExamStudentSubjectResult.filter(f => f.Rank == 0);
+        rankzero.forEach(zerorank => {
+          sortedresult.push(zerorank);
+        })
+
+        this.ExamStudentSubjectResult = sortedresult;
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
         this.GradingDataSource = new MatTableDataSource<any[]>(this.ExamStudentSubjectGrading);
 
@@ -634,6 +747,7 @@ export class VerifyResultsComponent implements OnInit {
 
     // }
   }
+  ExamResultProperties = [];
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -646,6 +760,7 @@ export class VerifyResultsComponent implements OnInit {
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESMODE);
         this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
+        this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY);
         this.GetClassGroup();
         this.GetClassGroupMapping();
         this.GetExams();
@@ -750,9 +865,10 @@ export class VerifyResultsComponent implements OnInit {
 
     let list: List = new List();
 
-    list.fields = ["ExamId", "ExamNameId", "ClassGroupId", "StartDate", "EndDate", "AttendanceModeId", "Sequence"];
+    list.fields = ["ExamId", "ExamNameId", "ClassGroupId", "StartDate", "EndDate",
+      "ReleaseResult", "AttendanceModeId", "Sequence"];
     list.PageName = "Exams";
-    list.filter = ["Active eq 1 and (ReleaseResult eq 0 or ReleaseResult eq null) " + orgIdSearchstr];
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -770,11 +886,13 @@ export class VerifyResultsComponent implements OnInit {
               StartDate: e.StartDate,
               EndDate: e.EndDate,
               AttendanceModeId: e.AttendanceModeId,
-              Sequence: e.Sequence
+              Sequence: e.Sequence,
+              ReleaseResult: e.ReleaseResult
             })
           }
         })
         this.Exams = this.Exams.sort((a, b) => a.Sequence - b.Sequence);
+        this.GetExamNCalculate();
       })
   }
   TotalAttendance = [];
@@ -795,7 +913,7 @@ export class VerifyResultsComponent implements OnInit {
     ];
 
     list.PageName = "TotalAttendances";
-    list.lookupFields = ["Exam($select=Sequence)"]
+    list.lookupFields = ["Exam($select=Sequence,Active)"]
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and BatchId eq " + this.SelectedBatchId];
     // " and ClassId eq " + this.searchForm.get("searchClassId").value +
@@ -803,9 +921,12 @@ export class VerifyResultsComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((totalAttendance: any) => {
-        this.TotalAttendance = totalAttendance.value.map(f => {
-          f.Sequence = f.Exam.Sequence;
-          return f;
+        this.TotalAttendance =[];
+        totalAttendance.value.forEach(f => {
+          if (f.Exam.Active == 1) {
+            f.Sequence = f.Exam.Sequence;
+            this.TotalAttendance.push(f);
+          }
         });
         this.TotalAttendance = this.TotalAttendance.sort((a, b) => a.Sequence - a.Sequence);
       });
@@ -846,6 +967,24 @@ export class VerifyResultsComponent implements OnInit {
         //console.log("this.AttendanceStatusSum", this.AttendanceStatusSum);
       });
   }
+  SubjectTypes = [];
+  GetSubjectTypes() {
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    this.loading = true;
+    let list: List = new List();
+
+    list.fields = ["SubjectTypeId", "SubjectTypeName", "SelectHowMany"];
+    list.PageName = "SubjectTypes";
+    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    //list.orderBy = "ParentId";
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        debugger;
+        this.SubjectTypes = [...data.value];
+        this.GetSubjectComponents();
+      })
+  }
   GetSubjectComponents() {
 
     var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
@@ -854,7 +993,7 @@ export class VerifyResultsComponent implements OnInit {
 
     list.fields = ["ClassSubjectMarkComponentId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark"];
     list.PageName = "ClassSubjectMarkComponents";
-    list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=ClassId,Active)"];
+    list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectTypeId,ClassId,Active)"];
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
@@ -864,6 +1003,8 @@ export class VerifyResultsComponent implements OnInit {
         this.ClassSubjectComponents = [];
         data.value.map(e => {
           e.ClassId = e.ClassSubject.ClassId;
+          e.SubjectTypeId = e.ClassSubject.SubjectTypeId;
+          e.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == e.ClassSubject.SubjectTypeId)[0].SelectHowMany;
           if (e.ClassSubject.Active == 1)
             this.ClassSubjectComponents.push(e);
         })

@@ -35,11 +35,11 @@
                 {{element.EvaluationName}}
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="ClassGroupName">
+        <ng-container matColumnDef="ClassGroup">
             <mat-header-cell *matHeaderCellDef>Class Group
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                {{element.ClassGroupName}}
+                {{element.ClassGroup}}
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Action1">
@@ -112,8 +112,7 @@
                         <mat-hint style="display:flex;justify-content: flex-end;">{{input.value?.length || 0}}/600
                         </mat-hint>
                     </div>
-                    <div
-                        *ngIf="!element.Updatable 
+                    <div *ngIf="!element.Updatable 
                         && element.ClassEvaluationAnswerOptionParentId==0 
                         && element.QuestionnaireType=='Questionnaire'">
                         <mat-form-field appearance="outline" style="width:100%">

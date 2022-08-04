@@ -20,6 +20,7 @@ export class globalconstants {
     public static DeletedMessage = 'Data deleted sucessfully.';
     public static RecordAlreadyExistMessage = 'Record already exists!';
     public static NoRecordFoundMessage = 'No record found!';
+    public static NoEvaluationRecordFoundMessage = 'No evaluation record found!';
     public static UserLoginCreated = 'User login created! Please check your email for email verification.';
     public static TechnicalIssueMessage = 'There is a technical issue! Please contact your administrator.';
     public static PermissionDeniedMessage = 'Permission Denied!';
@@ -157,7 +158,8 @@ export class globalconstants {
                     'FEERECEIPT': 'fee receipt',
                     'STUDENTAPROFILE': 'student profile',
                     'SIBLINGSNFRIENDS': 'siblings n friends',
-                    'ACTIVITY': 'student activity'
+                    'ACTIVITY': 'student activity',
+                    'STUDENTVIEW': 'student view'
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
@@ -177,7 +179,8 @@ export class globalconstants {
                     'SLOTNCLASSSUBJECT': 'slot n class subject',
                     'VERIFYRESULT': 'verify result',
                     'STUDENTGRADE': 'student grade',
-                    'VERIFYRESULTSTATUS': 'verify result status'
+                    'VERIFYRESULTSTATUS': 'verify result status',
+                    'EXAMNCALCULATE':'exam n calculate'
                 },
                 'SUBJECT': {
                     'SUBJECT': 'class subject',
@@ -327,7 +330,8 @@ export class globalconstants {
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
                 "SUBJECTCATEGORY": "subject category",
                 "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
-                "STUDENTREMARKS": "student remark"
+                "STUDENTREMARKS": "student remark",
+                "EXAMRESULTPROPERTY": "exam result property"
             },
             "leave": {
                 "REPORTNAMES": "leave report name",

@@ -8,7 +8,7 @@ Until result released, result will not be available for public view. After resul
 generated and
 marks can no longer be entered/edited for that examination.
 <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
-<div style="width: 100%;overflow: auto;">
+<div style="width: 100%;overflow: auto;justify-content: center;">
     <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="ExamId">
             <mat-header-cell *matHeaderCellDef>Id
@@ -127,6 +127,7 @@ marks can no longer be entered/edited for that examination.
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
     </mat-table>
+    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
 </div>
 
 <!-- </div> -->

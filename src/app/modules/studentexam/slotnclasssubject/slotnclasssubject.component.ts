@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { boolean } from 'mathjs';
 import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -228,6 +229,7 @@ export class SlotnclasssubjectComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.SlotClassSubjectId = data.SlotClassSubjectId;
+          row.Action =false;
           this.loadingFalse();
           if (this.DataToUpdateCount == 0) {
             this.DataToUpdateCount = -1;
@@ -235,6 +237,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             this.GetSelectedSubjectsForSelectedExam();
           }
         }, err => {
+          row.Action =false;
           this.loadingFalse();
           console.log("slot and subject insert", err);
           this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -253,6 +256,7 @@ export class SlotnclasssubjectComponent implements OnInit {
             this.GetSelectedSubjectsForSelectedExam();
           }
         }, err => {
+          row.Action =false;
           this.loadingFalse();
           console.log("slot and subject update", err);
           this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
@@ -314,11 +318,16 @@ export class SlotnclasssubjectComponent implements OnInit {
       })
   }
   FilterClass() {
+    debugger;
     var _examId = this.searchForm.get("searchExamId").value
     var _classGroupId = 0;
     var obj = this.Exams.filter(f => f.ExamId == _examId);
     if (obj.length > 0)
+    {
       _classGroupId = obj[0].ClassGroupId;
+      this.ExamReleased = obj[0].ReleaseResult==1?true:false;
+    }
+      
     this.FilteredClasses = this.ClassGroupMapping.filter(f => f.ClassGroupId == _classGroupId);
   }
   GetExams() {
@@ -446,7 +455,9 @@ export class SlotnclasssubjectComponent implements OnInit {
     this.ClassWiseSubjectDisplay = [];
     this.dataSource = new MatTableDataSource<any>(this.ClassWiseSubjectDisplay);
   }
+  ExamReleased =false;
   GetSlotNClassSubjects() {
+
 
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1';

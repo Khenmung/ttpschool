@@ -12,6 +12,7 @@ import { StudentprogressreportComponent } from './studentprogressreport/studentp
 import { StudentEvaluationComponent } from '../evaluation/studentevaluation/studentevaluation.component';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { StudentviewComponent } from './studentview/studentview.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
       { path: '', component: searchstudentComponent },
       { path: 'addstudent/:id', component: StudentboardComponent },
       { path: 'addstudent', component: StudentboardComponent },
+      { path: 'view/:id', component: StudentviewComponent },
       { path: 'feepayment', component: AddstudentfeepaymentComponent }      
     ]
   }
@@ -41,5 +43,6 @@ export const StudentComponents = [
   StudentboardComponent,
   StudentprogressreportComponent,
   StudentEvaluationComponent,
-  StudentprogressreportComponent
+  StudentprogressreportComponent,
+  StudentviewComponent
 ]

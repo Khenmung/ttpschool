@@ -200,7 +200,7 @@ export class StudentprogressreportComponent implements OnInit {
           { "ColumnName": "ClassStrength", "Display": "Class Strength" }
         ]
 
-        data.value.map(eachexam => {
+        data.value.forEach(eachexam => {
           var _ExamName = '';
           var obj = this.Exams.filter(exam => exam.ExamId == eachexam.ExamId);
           if (obj.length > 0) {
@@ -260,7 +260,7 @@ export class StudentprogressreportComponent implements OnInit {
                 if (this.GradedDisplayColumns.indexOf(examName) == -1)
                   this.GradedDisplayColumns.push(examName);
 
-                currentSubjectrow = this.GradedMarksResults.filter(f => f.Subject.toLowerCase() == eachexam["Subject"]);
+                currentSubjectrow = this.GradedMarksResults.filter(f => f.Subject.toLowerCase() == eachexam["Subject"].toLowerCase());
                 if (currentSubjectrow.length == 0)
                   this.GradedMarksResults.push({ "Subject": eachexam["Subject"], [examName]: eachexam["Grade"] });
                 else
@@ -474,6 +474,7 @@ export class StudentprogressreportComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassEvaluationOptionList = data.value.map(item => {
+            item.Title = globalconstants.decodeSpecialChars(item.Title);
             item.Active = 0;
             return item;
           })
@@ -497,7 +498,7 @@ export class StudentprogressreportComponent implements OnInit {
       'Active',
     ];
     list.PageName = "EvaluationExamMaps";
-    list.lookupFields = ["EvaluationMaster($select=Active,EvaluationMasterId,ClassGroupId,EvaluationName)"];
+    list.lookupFields = ["EvaluationMaster($select=Active,EvaluationMasterId,ClassGroupId,EvaluationName,AppendAnswer)"];
     list.filter = ['Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
     this.dataservice.get(list)
@@ -505,12 +506,18 @@ export class StudentprogressreportComponent implements OnInit {
         this.EvaluationExamMap = [];
         debugger;
         data.value.forEach(f => {
+          var _ExamName = '';
           var obj = this.CurrentStudentClassGroups.filter(g => g.ClassGroupId == f.EvaluationMaster.ClassGroupId);
-          if (obj.length > 0 && f.EvaluationMaster.Active==1) {
-            f.ClassGroupId = f.EvaluationMaster.ClassGroupId;
-            f.ExamName = this.Exams.filter(e => e.ExamId == f.ExamId)[0].ExamName;
-            f.EvaluationName = f.EvaluationMaster.EvaluationName;
-            this.EvaluationExamMap.push(f);
+
+          if (obj.length > 0 && f.EvaluationMaster.Active == 1 && f.EvaluationMaster.AppendAnswer == 0) {
+            var objexam = this.Exams.filter(e => e.ExamId == f.ExamId)
+            if (objexam.length > 0) {
+              _ExamName = objexam[0].ExamName;
+              f.ClassGroupId = f.EvaluationMaster.ClassGroupId;
+              f.ExamName = _ExamName;
+              f.EvaluationName = f.EvaluationMaster.EvaluationName;
+              this.EvaluationExamMap.push(f);
+            }
           }
         });
         //console.log("this.EvaluationExamMap",this.EvaluationExamMap)
@@ -536,11 +543,12 @@ export class StudentprogressreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassEvaluations = [];
-        var _data = data.value.filter(f => f.EvaluationMaster.AppendAnswer == 0);
+        var _data = data.value.filter(f => f.EvaluationMaster.AppendAnswer == false);
         if (_data.length > 0) {
           _data.forEach(clseval => {
             var obj = this.QuestionnaireTypes.filter(f => f.MasterDataId == clseval.QuestionnaireTypeId);
             if (obj.length > 0) {
+              clseval.Description = globalconstants.decodeSpecialChars(clseval.Description);
               clseval.QuestionnaireType = obj[0].MasterDataName
               clseval.ClassEvaluationOptions = this.ClassEvaluationOptionList.filter(f => f.ParentId == clseval.ClassEvaluationAnswerOptionParentId)
               this.ClassEvaluations.push(clseval);
@@ -560,27 +568,8 @@ export class StudentprogressreportComponent implements OnInit {
     this.dataSource = new MatTableDataSource<any>(this.StudentEvaluationList);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
 
-    //var _searchEvaluationMasterId = this.searchForm.get("searchEvaluationMasterId").value;
-    //var _studentObj = this.searchForm.get("searchStudentName").value;
-
-    //var _evaluationobj = this.EvaluationMaster.filter(f => f.EvaluationMasterId == _searchEvaluationMasterId)
-    // if (_evaluationobj.length > 0)
-    //   _studentObj["AssessmentName"] = _evaluationobj[0].EvaluationName;
-
-    // this.StudentName = _studentObj.Name;
-    // this.StudentClassId = _studentObj.StudentClassId;
-    // this.StudentId = _studentObj.StudentId;
-
-    //this.ApplyVariables(_studentObj);
-
     let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    // if (this.EvaluationUpdatable)
-    //   filterStr += ' and StudentId eq ' + this.StudentId
-    // else {
     filterStr += ' and StudentClassId eq ' + this.StudentClassId
-    //filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-    //}
-    //var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId);
     let list: List = new List();
     list.fields = [
       'StudentEvaluationResultId',
@@ -602,29 +591,28 @@ export class StudentprogressreportComponent implements OnInit {
       .subscribe((data: any) => {
         debugger
         this.Result = [...data.value]
-        //console.log("_classEvaluations", _classEvaluations);
         var _distinctEvaluationType = alasql('select distinct EvaluationMasterId,EvaluationName from ?', [this.EvaluationExamMap])
-        console.log("_distinctEvaluationType", _distinctEvaluationType);
 
         _distinctEvaluationType.forEach(distinctevaluation => {
-          
+
           this.StudentEvaluationList.push({
             Description: distinctevaluation.EvaluationName,
             EvaluationName: distinctevaluation.EvaluationName,
             EvaluationMasterId: distinctevaluation.EvaluationMasterId,
             QuestionnaireType: 'Evaluation Master'
           });
-          
+
           var _oneEvaluationMultipExam = this.EvaluationExamMap.filter(f => f.EvaluationMasterId == distinctevaluation.EvaluationMasterId);
-          console.log("_oneEvaluationMultipExam",_oneEvaluationMultipExam);
           _oneEvaluationMultipExam.forEach(evalExam => {
 
             if (this.EvaluationDisplayedColumns.indexOf(evalExam.ExamName) == -1) {
               this.EvaluationDisplayedColumns.push(evalExam.ExamName);
             }
-            var _classEvaluationExamMap = this.ClassEvaluations.filter(f => f.EvaluationMasterId == evalExam.EvaluationMasterId);
+            var _classEvaluationExamMap = this.ClassEvaluations.filter(f => f.EvaluationMasterId == evalExam.EvaluationMasterId
+              && f.ExamId ==null || f.ExamId == 0 || f.ExamId == evalExam.ExamId);
+           
             _classEvaluationExamMap.forEach(clseval => {
-              var existing = this.Result.filter(f => f.ClassEvaluationId == clseval.ClassEvaluationId 
+              var existing = this.Result.filter(f => f.ClassEvaluationId == clseval.ClassEvaluationId
                 && f.EvaluationExamMapId == evalExam.EvaluationExamMapId);
               var ans = [];
               if (existing.length > 0) {
@@ -634,20 +622,26 @@ export class StudentprogressreportComponent implements OnInit {
                   if (selected.length > 0)
                     ans.push(cls.Title);
                 });
+                if (existing[0].AnswerText.length > 0 && ans.length==0)
+                  ans = existing[0].AnswerText
               }
+
               var _description = globalconstants.decodeSpecialChars(clseval.Description);
               var row = this.StudentEvaluationList.filter(f => f["Description"] == _description
                 && f.EvaluationMasterId == clseval.EvaluationMasterId);
               if (row.length > 0) {
-                row[0][evalExam.ExamName] = ans.join(',')
+                row[0][evalExam.ExamName] = ans;
               }
               else {
+                // if (existing.length > 0)
+                //   _textAnswer = existing[0].AnswerText
                 this.StudentEvaluationList.push({
                   Description: _description,
                   [evalExam.ExamName]: ans,
                   EvaluationName: evalExam.EvaluationName,
                   EvaluationMasterId: evalExam.EvaluationMasterId,
-                  QuestionnaireType: clseval.QuestionnaireType
+                  QuestionnaireType: clseval.QuestionnaireType,
+                  DisplayOrder: clseval.DisplayOrder
                 });
               }
             })
@@ -656,11 +650,11 @@ export class StudentprogressreportComponent implements OnInit {
 
         if (this.StudentEvaluationList.length == 0) {
           this.StudentEvaluationList = [];
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.NoEvaluationRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
         else
           this.StudentEvaluationList = this.StudentEvaluationList.sort((a, b) => a.DisplayOrder - b.DisplayOrder)
-        console.log("this.StudentEvaluationList", this.StudentEvaluationList)
+        //  console.log("this.StudentEvaluationList",this.StudentEvaluationList)
         this.dataSourceEvaluation = new MatTableDataSource<IStudentEvaluation>(this.StudentEvaluationList);
         this.dataSource.paginator = this.paginator;
         this.loading = false;

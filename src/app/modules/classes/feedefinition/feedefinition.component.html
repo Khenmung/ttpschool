@@ -115,7 +115,7 @@ mat-raised-button color="accent"
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row style="width: 100%;display: flex;align-items: baseline;" *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
-            <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
+            <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
         </div>
 
     </div>

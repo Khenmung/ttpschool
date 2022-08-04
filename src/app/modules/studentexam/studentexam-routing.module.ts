@@ -10,6 +10,7 @@ import { VerifyResultsComponent } from './verifyresults/verifyresults.component'
 import { SlotnclasssubjectComponent } from './slotnclasssubject/slotnclasssubject.component';
 import { StudentgradeComponent } from './studentgrade/studentgrade.component';
 import { VerifyresultstatusComponent } from './verifyresultstatus/verifyresultstatus.component';
+import { ExamncalculateComponent } from './examncalculate/examncalculate.component';
 const routes: Routes = [
   {
     path: '', component: HomeComponent,
@@ -37,5 +38,6 @@ export const studentexamComponents = [
   ExamhomeComponent,
   VerifyResultsComponent,
   StudentgradeComponent,
-  VerifyresultstatusComponent
+  VerifyresultstatusComponent,
+  ExamncalculateComponent
 ]

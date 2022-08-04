@@ -93,7 +93,7 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;">
             </mat-row>
         </mat-table>
-        <mat-paginator [pageSizeOptions]="[10,25,50]"></mat-paginator>
+        <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,50]"></mat-paginator>
     </mat-card-content>
     <!-- <mat-card-actions fxLayoutAlign="center center">
         <button [disabled]="loading" (click)="exportArray()" matTooltip="export to excel" class="mat-raised-button">

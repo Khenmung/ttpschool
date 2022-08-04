@@ -161,7 +161,7 @@
         <mat-row *matRowDef="let row; columns: DisplayColumns;" style="display: flex;place-items:baseline;">
         </mat-row>
     </mat-table>
-    <mat-paginator [pageSizeOptions]="[10,25,100]"></mat-paginator>
+    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator>
 </div>
 <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center" class="boxes">
     <strong>Below variable name can be added in certificate definition.</strong>

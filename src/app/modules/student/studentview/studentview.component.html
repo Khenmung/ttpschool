@@ -1,0 +1,131 @@
+<div style="padding: 15px 0px 0px 15px;font-weight: bold;">
+    <span style="margin-right:15px;">Student View</span>    
+</div>
+<mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+
+<div style="display:flex;width:100%;vertical-align: top;">
+    <mat-table [dataSource]="datasourcePrimaryInfo" style="margin: 15px;width:50%">
+        <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+            <mat-header-cell *matHeaderCellDef>
+                {{disCol=='Text'?'Primary Info':''}}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <span *ngIf="disCol=='Text'">
+                    <mat-icon>chevron_right</mat-icon>
+                </span>
+                <span *ngIf="disCol!='Text'">:</span>
+                <span style="margin-left: 15px;">{{element[disCol]}}</span>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
+    <div style="margin-bottom: 15px;width:50%" *ngIf="StudentId>0">
+        <span style="color:red;" *ngIf="message">{{message}}</span>
+        <div style="padding:5px;margin: 15px;">
+            <img [src]="imgURL" height="150px" *ngIf="imgURL">
+        </div>
+        <mat-table [dataSource]="datasourceContact" style="margin: 15px;">
+            <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                <mat-header-cell *matHeaderCellDef>
+                    {{disCol=='Text'?'Contact Info':''}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <span *ngIf="disCol=='Text'">
+                        <mat-icon>chevron_right</mat-icon>
+                    </span>
+                    <span *ngIf="disCol!='Text'">:</span>
+                    <span style="margin-left: 15px;">{{element[disCol]}}</span>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+    </div>
+</div>
+<div style="display:flex;width:100%">
+    <mat-table [dataSource]="datasourceAdditionalInfo" style="margin: 15px;width:50%;">
+        <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+            <mat-header-cell *matHeaderCellDef>
+                {{disCol=='Text'?'Additional Info':''}}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <span *ngIf="disCol=='Text'">
+                    <mat-icon>chevron_right</mat-icon>
+                </span>
+                <span *ngIf="disCol!='Text'">:</span>
+                <span style="margin-left: 15px;">{{element[disCol]}}</span>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
+    <div style="display:flex;flex-direction: column;width:100%">
+        <mat-table [dataSource]="datasourceBankAccountInfo" style="margin: 15px;">
+            <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                <mat-header-cell *matHeaderCellDef>
+                    {{disCol=='Text'?'Bank Account Info':''}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <span *ngIf="disCol=='Text'">
+                        <mat-icon>chevron_right</mat-icon>
+                    </span>
+                    <span *ngIf="disCol!='Text'">:</span>
+                    <span style="margin-left: 15px;">{{element[disCol]}}</span>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+        <mat-table [dataSource]="datasourceStudentClassInfo" style="margin: 15px;">
+            <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                <mat-header-cell *matHeaderCellDef>
+                    {{disCol=='Text'?'Class Course':''}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <span *ngIf="disCol=='Text'">
+                        <mat-icon>chevron_right</mat-icon>
+                    </span>
+                    <span *ngIf="disCol!='Text'">:</span>
+                    <span style="margin-left: 15px;">{{element[disCol]}}</span>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+        </mat-table>
+    </div>
+</div>
+<div>
+    <mat-table [dataSource]="datasourceAttendanceInfo" style="margin: 15px;">
+        <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+            <mat-header-cell *matHeaderCellDef>
+                {{disCol=='Text'?'Attendance':''}}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <span *ngIf="disCol=='Text'">
+                    <mat-icon>chevron_right</mat-icon>
+                </span>
+                <span *ngIf="disCol!='Text'">:</span>
+                <span style="margin-left: 15px;">{{element[disCol]}}</span>
+                <span *ngIf="disCol=='Value'">&nbsp;day(s)</span>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+    </mat-table>
+</div>
+<mat-list>
+    <div mat-subheader style="background-color:#e6e6e6;padding:20px">Activity/Achievement</div>
+    <mat-list-item *ngFor="let item of SportsResultList">
+        <mat-icon mat-list-icon>military_tech</mat-icon>
+        <div mat-line>{{item.Secured}}: {{item.Achievement}}</div>
+        <div mat-line> {{item.SportsName}}-{{item.AchievementDate | date}} </div>
+    </mat-list-item>
+    <!-- <mat-divider></mat-divider>
+    <div mat-subheader>Notes</div>
+    <mat-list-item *ngFor="let note of notes">
+      <mat-icon mat-list-icon>note</mat-icon>
+      <div mat-line>{{note.name}}</div>
+      <div mat-line> {{note.updated | date}} </div>
+    </mat-list-item> -->
+</mat-list>

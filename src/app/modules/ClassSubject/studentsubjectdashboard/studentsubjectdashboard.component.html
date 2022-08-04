@@ -82,5 +82,5 @@ mat-raised-button color="accent" (click)="SaveRow(element)">
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
         </mat-table>
     </div>
-    <mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
+    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
 <!-- </div> -->

@@ -102,7 +102,7 @@
                 <mat-header-row *matHeaderRowDef="DisplayColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: DisplayColumns;" class="element-row"></mat-row>
             </mat-table>
-            <mat-paginator [pageSizeOptions]="[10,25,50,100]"></mat-paginator>
+            <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,50,100]"></mat-paginator>
         </div>
     </div>
 </div>

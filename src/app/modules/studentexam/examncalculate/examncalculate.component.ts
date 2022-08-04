@@ -11,43 +11,41 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-studenttotalattendance',
-  templateUrl: './studenttotalattendance.component.html',
-  styleUrls: ['./studenttotalattendance.component.scss']
+  selector: 'app-examncalculate',
+  templateUrl: './examncalculate.component.html',
+  styleUrls: ['./examncalculate.component.scss']
 })
-export class StudenttotalattendanceComponent implements OnInit {
+export class ExamncalculateComponent implements OnInit {
   PageLoading = true;
   @ViewChild(MatPaginator) paging: MatPaginator;
   ClassGroups = [];
   //SubjectCategory = [];
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
-  TotalAttendanceListName = 'TotalAttendances';
+  ExamNCalculateListName = 'ExamNCalculates';
   Applications = [];
   loading = false;
   SelectedBatchId = 0;
-  TotalAttendanceList: ITotalAttendance[] = [];
-  filteredOptions: Observable<ITotalAttendance[]>;
-  dataSource: MatTableDataSource<ITotalAttendance>;
+  ExamNCalculateList: IExamNCalculate[] = [];
+  filteredOptions: Observable<IExamNCalculate[]>;
+  dataSource: MatTableDataSource<IExamNCalculate>;
   allMasterData = [];
-  TotalAttendance = [];
+  ExamNCalculate = [];
   Permission = 'deny';
   Classes = [];
   ExamStatus = [];
-  TotalAttendanceData = {
-    TotalAttendanceId: 0,
-    ClassId: 0,
-    TotalNoOfAttendance: 0,
+  ExamNCalculateData = {
+    ExamNCalculateId: 0,
     ExamId: 0,
+    CalculateResultPropertyId: 0,
     OrgId: 0,
-    BatchId: 0,
     Active: false
   };
   MonthYears = [];
   displayedColumns = [
-    "TotalAttendanceId",
-    "ClassName",
-    "TotalNoOfAttendance",
+    "ExamNCalculateId",
+    "PropertyName",
+    "Active",
     "Action"
   ];
   SelectedApplicationId = 0;
@@ -81,7 +79,7 @@ export class StudenttotalattendanceComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTTOTALATTENDANCE);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.EXAM.EXAMNCALCULATE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -97,26 +95,11 @@ export class StudenttotalattendanceComponent implements OnInit {
     }
   }
 
-  // AddNew() {
-  //   var _examId = this.searchForm.get("searchExamId").value;
-  //   var newdata = {
-  //     TotalAttendanceId: 0,
-  //     ClassId: 0,
-  //     TotalNoOfAttendance: 0,
-  //     ExamId: _examId,
-  //     BatchId: 0,
-  //     Active: 0,
-  //     Action: false
-  //   };
-  //   this.TotalAttendanceList = [];
-  //   this.TotalAttendanceList.push(newdata);
-  //   this.dataSource = new MatTableDataSource<ITotalAttendance>(this.TotalAttendanceList);
-  //   this.dataSource.paginator = this.paging;
-  // }
   onBlur(element) {
     element.Action = true;
   }
   updateActive(row, value) {
+    debugger;
     row.Action = true;
     row.Active = value.checked;
   }
@@ -136,11 +119,6 @@ export class StudenttotalattendanceComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    // if (row.ClassId == 0) {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
 
     if (row.ExamId == 0) {
       this.loading = false;
@@ -150,14 +128,13 @@ export class StudenttotalattendanceComponent implements OnInit {
 
     let checkFilterString = "ExamId eq " + row.ExamId +
       " and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-      " and ClassId eq " + row.ClassId +
-      " and BatchId eq " + this.SelectedBatchId;
+      " and CalculateResultPropertyId eq " + row.CalculateResultPropertyId
 
-    if (row.TotalAttendanceId > 0)
-      checkFilterString += " and TotalAttendanceId ne " + row.TotalAttendanceId;
+    if (row.ExamNCalculateId > 0)
+      checkFilterString += " and ExamNCalculateId ne " + row.ExamNCalculateId;
     let list: List = new List();
-    list.fields = ["TotalAttendanceId"];
-    list.PageName = this.TotalAttendanceListName;
+    list.fields = ["ExamNCalculateId"];
+    list.PageName = this.ExamNCalculateListName;
     list.filter = [checkFilterString];
 
     this.dataservice.get(list)
@@ -168,27 +145,25 @@ export class StudenttotalattendanceComponent implements OnInit {
         }
         else {
 
-          this.TotalAttendanceData.TotalAttendanceId = row.TotalAttendanceId;
-          this.TotalAttendanceData.Active = true;
-          this.TotalAttendanceData.ExamId = this.searchForm.get("searchExamId").value;
-          this.TotalAttendanceData.ClassId = row.ClassId;
-          this.TotalAttendanceData.TotalNoOfAttendance = +row.TotalNoOfAttendance;
-          this.TotalAttendanceData.BatchId = this.SelectedBatchId;
-          this.TotalAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.ExamNCalculateData.ExamNCalculateId = row.ExamNCalculateId;
+          this.ExamNCalculateData.Active = row.Active;
+          this.ExamNCalculateData.ExamId = this.searchForm.get("searchExamId").value;
+          this.ExamNCalculateData.CalculateResultPropertyId = row.CalculateResultPropertyId;
+          this.ExamNCalculateData.OrgId = this.LoginUserDetail[0]["orgId"];
 
-          //console.log("this.TotalAttendanceData", this.TotalAttendanceData);
-          if (this.TotalAttendanceData.TotalAttendanceId == 0) {
-            this.TotalAttendanceData["CreatedDate"] = new Date();
-            this.TotalAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.TotalAttendanceData["UpdatedDate"] = new Date();
-            delete this.TotalAttendanceData["UpdatedBy"];
+          console.log("this.ExamNCalculateData", this.ExamNCalculateData);
+          if (this.ExamNCalculateData.ExamNCalculateId == 0) {
+            this.ExamNCalculateData["CreatedDate"] = new Date();
+            this.ExamNCalculateData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.ExamNCalculateData["UpdatedDate"] = new Date();
+            delete this.ExamNCalculateData["UpdatedBy"];
             this.insert(row);
           }
           else {
-            delete this.TotalAttendanceData["CreatedDate"];
-            delete this.TotalAttendanceData["CreatedBy"];
-            this.TotalAttendanceData["UpdatedDate"] = new Date();
-            this.TotalAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.ExamNCalculateData["CreatedDate"];
+            delete this.ExamNCalculateData["CreatedBy"];
+            this.ExamNCalculateData["UpdatedDate"] = new Date();
+            this.ExamNCalculateData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
             this.update(row);
           }
         }
@@ -200,10 +175,10 @@ export class StudenttotalattendanceComponent implements OnInit {
   insert(row) {
 
     //debugger;
-    this.dataservice.postPatch(this.TotalAttendanceListName, this.TotalAttendanceData, 0, 'post')
+    this.dataservice.postPatch(this.ExamNCalculateListName, this.ExamNCalculateData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.TotalAttendanceId = data.TotalAttendanceId;
+          row.ExamNCalculateId = data.ExamNCalculateId;
           row.Action = false;
           if (this.RowsToUpdate == 0) {
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -213,7 +188,7 @@ export class StudenttotalattendanceComponent implements OnInit {
   }
   update(row) {
 
-    this.dataservice.postPatch(this.TotalAttendanceListName, this.TotalAttendanceData, this.TotalAttendanceData.TotalAttendanceId, 'patch')
+    this.dataservice.postPatch(this.ExamNCalculateListName, this.ExamNCalculateData, this.ExamNCalculateData.ExamNCalculateId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -234,79 +209,71 @@ export class StudenttotalattendanceComponent implements OnInit {
         }
       });
   }
-  ExamReleaseResult=true;
-  GetTotalAttendance() {
+  ExamReleaseResult = true;
+  GetExamNCalculate() {
     debugger;
     this.loading = true;
-    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-      " and BatchId eq " + this.SelectedBatchId;
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"]
 
     var _examId = this.searchForm.get("searchExamId").value;
 
     if (_examId > 0) {
       filterStr += " and ExamId eq " + _examId;
     }
-    else
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select exam.",globalconstants.ActionText,globalconstants.RedBackground);
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     //var ExamReleaseResult =true; 
-    var examObj =this.Exams.filter(f=>f.ExamId == _examId);
-    if(examObj.length>0)
-    {
-      this.ExamReleaseResult = examObj[0].ReleaseResult==1?true:false;
+    var examObj = this.Exams.filter(f => f.ExamId == _examId);
+    if (examObj.length > 0) {
+      this.ExamReleaseResult = examObj[0].ReleaseResult == 1 ? true : false;
     }
     let list: List = new List();
     list.fields = ["*"];
 
-    list.PageName = this.TotalAttendanceListName;
+    list.PageName = this.ExamNCalculateListName;
     list.filter = [filterStr];
-    this.TotalAttendanceList = [];
+    this.ExamNCalculateList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        this.TotalAttendanceList = [];
-        this.Classes.forEach(f => {
+        this.ExamNCalculateList = [];
+        this.ExamResultProperties.forEach(f => {
 
-          var objExisting = data.value.filter(c => c.ClassId == f.ClassId);
+          var objExisting = data.value.filter(c => c.CalculateResultPropertyId == f.MasterDataId);
           if (objExisting.length > 0) {
-            this.TotalAttendanceList.push({
-              TotalAttendanceId: objExisting[0].TotalAttendanceId,
-              ClassId: objExisting[0].ClassId,
-              ClassName: f.ClassName,
-              TotalNoOfAttendance: objExisting[0].TotalNoOfAttendance,
+            this.ExamNCalculateList.push({
+              ExamNCalculateId: objExisting[0].ExamNCalculateId,
               ExamId: objExisting[0].ExamId,
-              BatchId: objExisting[0].BatchId,
+              CalculateResultPropertyId: objExisting[0].CalculateResultPropertyId,
+              PropertyName:f.MasterDataName,
               Action: false,
               Active: objExisting[0].Active
             })
 
           } // f.ClassName = objExisting[0].ClassName;
           else {
-            this.TotalAttendanceList.push({
-              TotalAttendanceId: 0,
-              ClassId: f.ClassId,
-              ClassName: f.ClassName,
-              TotalNoOfAttendance: 22,
-              ExamId: this.searchForm.get("searchExamId").value,
-              BatchId: this.SelectedBatchId,
+            this.ExamNCalculateList.push({
+              ExamNCalculateId: 0,
+              ExamId: _examId,
+              PropertyName:f.MasterDataName,
+              CalculateResultPropertyId: f.MasterDataId,
               Action: false,
               Active: false
             })
           }
         });
-        this.TotalAttendanceList = this.TotalAttendanceList.sort((a, b) => a.ExamId - b.ExamId);
 
-        this.dataSource = new MatTableDataSource<ITotalAttendance>(this.TotalAttendanceList);
+        this.dataSource = new MatTableDataSource<IExamNCalculate>(this.ExamNCalculateList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
   }
   RowsToUpdate = 0;
   SaveAll() {
-    var toupdate = this.TotalAttendanceList.filter(f => f.Action);
+    var toupdate = this.ExamNCalculateList.filter(f => f.Action);
     this.RowsToUpdate = toupdate.length;
     toupdate.forEach(f => {
       this.RowsToUpdate--;
@@ -315,11 +282,12 @@ export class StudenttotalattendanceComponent implements OnInit {
   }
   SelectAll(event) {
     debugger;
-    this.TotalAttendanceList.forEach(f => {
+    this.ExamNCalculateList.forEach(f => {
       f.Active = event.checked;
-      f.Action=true;
+      f.Action = true;
     })
   }
+  ExamResultProperties =[];
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -327,6 +295,7 @@ export class StudenttotalattendanceComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.ExamStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS)
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME)
+        this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY)
 
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -350,14 +319,11 @@ export class StudenttotalattendanceComponent implements OnInit {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
   }
 }
-export interface ITotalAttendance {
-  TotalAttendanceId: number;
-  ClassId: number;
-  ClassName: string;
-  TotalNoOfAttendance: number;
+export interface IExamNCalculate {
+  ExamNCalculateId: number;
   ExamId: number;
+  CalculateResultPropertyId: number;
+  PropertyName:string;
   Active: boolean;
-  BatchId: number;
   Action: boolean;
 }
-

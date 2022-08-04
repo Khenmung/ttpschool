@@ -79,7 +79,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     'SubjectTypeId',
     'SubjectCategoryId',
     'Credits',
-    'TeacherId',
+    //'TeacherId',
     'Active',
     'Action'
   ];

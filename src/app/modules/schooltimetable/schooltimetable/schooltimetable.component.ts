@@ -16,7 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './schooltimetable.component.html',
   styleUrls: ['./schooltimetable.component.scss']
 })
-export class SchooltimetableComponent implements OnInit { PageLoading=true;
+export class SchooltimetableComponent implements OnInit {
+  PageLoading = true;
   //weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   SelectedApplicationId = 0;
   LoginUserDetail: any[] = [];
@@ -127,8 +128,8 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
       //console.log("duplicateCheck",duplicateCheck);
       var _teacherobj = this.ClassSubjects.filter(f => f.TeacherId == row.TeacherId)
       this.contentservice.openSnackBar("Teacher " + _teacherobj[0].TeacherShortName + " already exists in the same period", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; 
-      
+      this.loading = false;
+
     }
     else {
 
@@ -174,7 +175,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
           this.loading = false;
           if (this.rowCount == 0) {
             this.rowCount = -1;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -190,8 +191,8 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
           row.Action = false;
           if (this.rowCount == 0) {
             this.rowCount = -1;
-            this.loading = false; 
-            this.PageLoading=false;
+            this.loading = false;
+            this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
@@ -232,11 +233,11 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
       "ClassId",
       "SectionId",
       "SchoolClassPeriodId",
-      "ClassSubjectId",
+      "TeacherSubjectId",
       "Active"
     ];
     list.PageName = this.SchoolTimeTableListName;
-    list.lookupFields = ["ClassSubject($select=TeacherId),SchoolClassPeriod($select=PeriodId)"]
+    list.lookupFields = ["TeacherSubject($select=EmployeeId),SchoolClassPeriod($select=PeriodId)"]
     list.filter = [filterstr + orgIdSearchstr];
     this.displayedColumns = [
       'Day'
@@ -251,7 +252,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
         var forDisplay: any[] = [];
         var _classId = this.searchForm.get("searchClassId").value;
         //this is used in html for subject dropdown.
-        this.ClassWiseSubjects = this.ClassSubjects.filter(f => f.ClassId == _classId);
+        this.ClassWiseSubjects = this.TeacherSubjectList.filter(f => f.ClassId == _classId);
 
         //iterrate through class
         //iterrate through weekdays
@@ -280,15 +281,16 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
               if (!this.displayedColumns.includes(_period))
                 this.displayedColumns.push(_period);
 
-              var existing = dbTimeTable.filter(d => d.SchoolClassPeriod.PeriodId == clsperiod.PeriodId && d.DayId == p.MasterDataId)
+              var existing = dbTimeTable.filter(d => d.SchoolClassPeriod.PeriodId == clsperiod.PeriodId 
+                && d.DayId == p.MasterDataId)
               if (existing.length > 0) {
                 existing[0].PeriodId = clsperiod.PeriodId;
                 existing[0].Period = _period;
                 existing[0].Action = false;
-                existing[0].TeacherId = existing[0].ClassSubject.TeacherId;
+                existing[0].TeacherId = existing[0].TeacherSubject==null?0:existing[0].TeacherSubject.EmployeeId;
                 existing[0].Sequence = clsperiod.Sequence;
                 this.StoredForUpdate.push(existing[0]);
-                forDisplay[clsperiod.Period] = existing[0].ClassSubjectId;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
+                forDisplay[clsperiod.Period] = existing[0].TeacherSubjectId;//this.ClassSubjects.filter(s => s.ClassSubjectId == )[0].SubjectName
                 //this.ClassWiseSubjects = this.ClassWiseSubjects.filter(f=>f.TeacherId != existing[0].TeacherId) 
                 forDisplay["Active"] = existing[0].Active;
               }
@@ -301,7 +303,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
                   "ClassId": clsperiod.ClassId,
                   "SectionId": this.searchForm.get("searchSectionId").value,
                   "SchoolClassPeriodId": clsperiod.SchoolClassPeriodId,
-                  "ClassSubjectId": 0,
+                  "TeacherSubjectId": 0,
                   "TeacherId": 0,
                   "Sequence": clsperiod.Sequence,
                   "Period": _period,
@@ -321,7 +323,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
         this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetAllSchoolTimeTable() {
@@ -370,7 +372,43 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
         //})
       })
   }
+  TeacherSubjectList = [];
+  GetTeacherSubject() {
+    let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //debugger;
+    this.loading = true;
 
+    filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let list: List = new List();
+    list.fields = [
+      'TeacherSubjectId',
+      'ClassSubjectId',
+      'EmployeeId',
+      'Active',
+    ];
+
+    list.PageName = "TeacherSubjects";
+    list.lookupFields = ["Employee($select=ShortName)"];
+    list.filter = [filterStr];
+    this.TeacherSubjectList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+
+        data.value.forEach(teachersubject => {
+          var objClsSubject = this.ClassSubjects.filter(clssubject => clssubject.ClassSubjectId == teachersubject.ClassSubjectId)
+          if (objClsSubject.length > 0) {
+            teachersubject["ClassName"] = objClsSubject[0]["ClassName"];
+            teachersubject["SubjectName"] =objClsSubject[0].SubjectName + " (" + teachersubject.Employee.ShortName +")";
+            teachersubject.ClassId = objClsSubject[0].ClassId;
+            teachersubject.TeacherId = teachersubject.EmployeeId;
+            teachersubject.TeacherName = teachersubject.Employee.FirstName + " " + teachersubject.Employee.LastName;
+            this.TeacherSubjectList.push(teachersubject);
+          }
+        })
+        this.loading = false;
+        this.PageLoading = false;
+      });
+  }
   GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
@@ -406,7 +444,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         //console.log("this.AllClassPeriods", this.AllClassPeriods);
         this.GetAllSchoolTimeTable();
       })
@@ -420,38 +458,36 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
     list.fields = [
       "ClassSubjectId",
       "ClassId",
-      "SubjectId",
-      "TeacherId"
+      "SubjectId"
     ];
     list.PageName = "ClassSubjects";
-    list.lookupFields = ["Teacher($select=ShortName)"];
+    //list.lookupFields = ["Teacher($select=ShortName)"];
     list.filter = [filterStr];
     this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.ClassSubjects = data.value.map(cs => {
+        this.ClassSubjects =[];
+        data.value.forEach(cs => {
           var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId);
           var _class = '';
-          if (objclass.length > 0)
+          if (objclass.length > 0) {
             _class = objclass[0].ClassName;
-          var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId);
-          var _subject = '';
-          if (objsubject.length > 0)
-            _subject = objsubject[0].MasterDataName;
-
-          var _shortName = cs.Teacher.ShortName;
-          _shortName = _shortName == null ? '' : _shortName;
-
-          return {
-            ClassSubjectId: cs.ClassSubjectId,
-            ClassId: cs.ClassId,
-            ClassName: _class,
-            TeacherId: cs.TeacherId,
-            TeacherShortName: _shortName,
-            SubjectAndTeacherName: _subject + " (" + _shortName + ")"
+            var objsubject = this.Subjects.filter(c => c.MasterDataId == cs.SubjectId);
+            var _subject = '';
+            if (objsubject.length > 0) {
+              _subject = objsubject[0].MasterDataName;
+              this.ClassSubjects.push({
+                ClassSubjectId: cs.ClassSubjectId,
+                ClassId: cs.ClassId,
+                ClassName: _class,
+                SubjectName: _subject
+              });
+            }
           }
         })
-        this.loading = false; this.PageLoading=false;
+        this.GetTeacherSubject();
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
   ReplicateToClasses() {
@@ -505,7 +541,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
 
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
     if (validated.length > 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -522,7 +558,7 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
 
     var validated = _toUpdate.filter(t => t.ClassSubjectId == 0 && !t.Period.includes('f_'));
     if (validated.length > 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -570,8 +606,6 @@ export class SchooltimetableComponent implements OnInit { PageLoading=true;
         this.Subjects = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECT);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Batches = this.tokenstorage.getBatches()
-        //this.shareddata.ChangeBatch(this.Batches);
-        //this.loading = false; this.PageLoading=false;
         this.GetClassSubject();
         this.GetAllClassPeriods();
       });

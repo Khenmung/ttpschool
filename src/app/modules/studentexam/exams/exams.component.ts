@@ -1,5 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
@@ -17,6 +19,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./exams.component.scss']
 })
 export class ExamsComponent implements OnInit {
+@ViewChild(MatPaginator) paginator: MatPaginator;
+@ViewChild(MatSort) sort: MatSort;
   PageLoading = true;
   AttendanceModes =[];
   LoginUserDetail: any[] = [];
@@ -156,8 +160,10 @@ export class ExamsComponent implements OnInit {
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
       " and BatchId eq " + this.SelectedBatchId +
-      " and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
-      " and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
+      " and Active eq 1"
+      
+      //" and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
+      //" and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')
 
     if (row.ClassGroupId == 0 || row.ClassGroupId == null) {
       this.loading = false;
@@ -297,9 +303,11 @@ export class ExamsComponent implements OnInit {
         })
         ////console.log('this', this.Exams)
         this.Exams = this.Exams.sort((a, b) => {
-          return b.Active - a.Active || this.getTime(a.StartDate) - this.getTime(b.StartDate)
+          return b.Active - a.Active || a.Sequence - b.Sequence;
         })
         this.dataSource = new MatTableDataSource<IExams>(this.Exams);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
       })
   }

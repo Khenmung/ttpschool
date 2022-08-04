@@ -94,4 +94,4 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;" style="align-items: baseline;"></mat-row>
 </mat-table>
-<mat-paginator [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
+<mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,20,50]"></mat-paginator>
