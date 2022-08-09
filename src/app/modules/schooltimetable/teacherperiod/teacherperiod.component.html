@@ -1,137 +1,113 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div style="padding: 15px;"><strong>Teacher Period</strong></div>
-        <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-        <!-- <alert></alert> -->
-        <form [formGroup]="searchForm">
-            <mat-form-field appearance="outline">
-                <mat-label>Teacher</mat-label>
-                <mat-select formControlName="searchEmployeeId" (selectionChange)="GetSelectedClassSubjects()">
-                    <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
-                        {{option.TeacherName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Class</mat-label>
-                <mat-select formControlName="searchClassId" (selectionChange)="GetSelectedClassSubjects()">
-                    <mat-option value="0">select</mat-option>
-                    <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
-                        {{item.ClassName}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-            <button [disabled]="loading" mat-raised-button color="accent" (click)="GetTeacherPeriod()">
-                <mat-icon>search</mat-icon>
-                <mat-icon *ngIf="loading">
-                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                </mat-icon>
-            </button>
+        <div><strong>Teacher Period</strong></div>
+    </div>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <!-- <alert></alert> -->
+    <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
+    <div style="width: 100%;">
+        <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Teacher</mat-label>
+                    <mat-select formControlName="searchEmployeeId">
+                        <mat-option value="0">select</mat-option>
+                        <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
+                            {{option.TeacherName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                
+                <button [disabled]="loading" matTooltip="search" mat-raised-button color="accent"
+                    (click)="GetSchoolTimeTable()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+            </div>
         </form>
-        <mat-table #table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="TeacherPeriodId">
+        <!-- <mat-table [dataSource]="dataSourceDayStatistic" matSort *ngIf="DayStatisticDisplay.length>1">
+            <ng-container *ngFor="let disCol of DayStatisticDisplay; let colIndex = index" matColumnDef="{{disCol}}">
                 <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Id
+                    <div *ngIf="disCol!='FirstCol' && disCol!='TeacherName'">{{disCol}}
+                    </div>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element.TeacherPeriodId}}
+                    <div *ngIf="disCol!='TeacherName'" style="text-align:center;width:100%">{{element[disCol]}}</div>
+                    <div *ngIf="disCol=='TeacherName'">{{element[disCol]}}</div>
                 </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="EmployeeId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Teacher
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline">
-                        <mat-label>Teacher</mat-label>
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.EmployeeId"
-                            [value]="element.EmployeeId">                      
-                            <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
-                                {{option.TeacherName}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="SchoolClassPeriodId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Class Period
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline">
-                        <mat-label>Class Period</mat-label>
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.SchoolClassPeriodId"
-                            [value]="element.SchoolClassPeriodId">
-                            <mat-option value="0">select</mat-option>
-                            <mat-option *ngFor="let option of TempClassSubject" [value]="option.ClassSubjectId">
-                                {{option.ClassSubject}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="TeacherSubjectId">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    Teacher Subject
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field appearance="outline">
-                        <mat-label>Class Subject</mat-label>
-                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.TeacherSubjectId"
-                            [value]="element.TeacherSubjectId">
-                            <mat-option value="0">select</mat-option>
-                            <mat-option *ngFor="let option of TempClassSubject" [value]="option.ClassSubjectId">
-                                {{option.ClassSubject}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>            
-            <ng-container matColumnDef="OffPeriod">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Off Period </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox *ngIf="TeacherPeriodList.length>0" (click)="$event.stopPropagation()"
-                        (change)="updateActive(element,$event)" [checked]="element.OffPeriod">
-                    </mat-checkbox>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Active </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox *ngIf="TeacherPeriodList.length>0" (click)="$event.stopPropagation()"
-                        (change)="updateActive(element,$event)" [checked]="element.Active==1?true:false">
-                    </mat-checkbox>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
-                        (click)="addnew()">
-                        <mat-icon>add</mat-icon>
-                    </button>&nbsp;
-                    <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
-                        (click)="SaveAll()">
-                        <mat-icon>all_out</mat-icon>
-                        <mat-icon *ngIf="loading">
-                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                        </mat-icon>
-                    </button>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
-                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
-                        mat-raised-button color="accent" (click)="UpdateOrSave(element)">
-                        <mat-icon>save</mat-icon>
-                        <mat-icon *ngIf="loading">
-                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                        </mat-icon>
-                    </button>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" style="display:flex;align-items: baseline;">
-            </mat-row>
-        </mat-table>
-        <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[5,10,25,100]"></mat-paginator>
+            <mat-header-row *matHeaderRowDef="DayStatisticDisplay"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: DayStatisticDisplay;" class="element-row"></mat-row>
+        </mat-table> -->
+        <div>
+            <mat-table [dataSource]="dataSourcePeriodStatistic" style="margin-bottom: 15px;">
+                <ng-container *ngFor="let disCol of PeriodStatisticDisplay;" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>
+                        <div *ngIf="disCol!='TeacherName'">
+                            <div style="display:flex;justify-content:center">{{disCol}}</div>
+                        </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <div *ngIf="disCol=='TeacherName'"> {{element[disCol]}}
+                        </div>
+                        <div *ngIf="disCol!='TeacherName' && element[disCol]>1"
+                            style="font-weight:bold;color:red;text-align:center;width:100%"> {{element[disCol]}}
+                        </div>
+                        <div *ngIf="disCol!='TeacherName' && (disCol =='Day' || element[disCol]<=1)"
+                            style="text-align:center;width:100%"> {{element[disCol]}}
+                        </div>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="PeriodStatisticDisplay"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: PeriodStatisticDisplay;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+        <!-- <div style="overflow: auto;height: 430px; width: auto;">
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>
+                        <span
+                            style="padding-left: 10px;">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>
+                        <div *ngIf="SchoolTimeTableList.length>0">
+                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
+                                matTooltip="save all" mat-mini-fab (click)="SaveAll()">
+                                <mat-icon>all_out</mat-icon>
+                                <mat-icon *ngIf="loading">
+                                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                                </mat-icon>
+                            </button>
+                        </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element"
+                        [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
+                        <span *ngIf="disCol !='Day' && !disCol.includes('f_') && disCol !='Action'">
+                            <mat-form-field style="width:135px;">
+                                <mat-select (selectionChange)="onBlur(element,$event,disCol)"
+                                    [(ngModel)]="element[disCol]" [value]="element[disCol]">
+                                    <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.TeacherSubjectId">
+                                        {{item.SubjectName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </span>
+                        <button *ngIf="disCol=='Action'"
+                            [disabled]="loading || !element['Action'] || Permission=='read'" matTooltip="save"
+                            mat-mini-fab (click)="SaveRow(element)">
+                            <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
+                        </button>
+                        <span style="margin-right: 15px;">{{ disCol.includes('f_')?(disCol|slice:2):disCol
+                            =='Day'?element[disCol]:''}}</span>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 40px;"></mat-row>
+            </mat-table>
+        </div> -->
     </div>
 </div>
+<!-- </div> -->

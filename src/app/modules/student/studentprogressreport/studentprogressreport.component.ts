@@ -217,13 +217,13 @@ export class StudentprogressreportComponent implements OnInit {
             })
           }
         })
-        this.loading = false;
-        this.PageLoading = false;
-        //console.log("result",result)
-        this.dataSource = new MatTableDataSource<any>(this.ExamStudentResults);
+        //this.loading = false;
+        //this.PageLoading = false;
+        this.GetGradedNonGradedSubjectMark();      
       });
   }
   GetGradedNonGradedSubjectMark() {
+
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
 
     filterStr += ' and StudentClassId eq ' + this.StudentClassId;
@@ -283,12 +283,14 @@ export class StudentprogressreportComponent implements OnInit {
         this.PageLoading = false;
         this.GradedSubjectsDataSource = new MatTableDataSource<any>(this.GradedMarksResults);
         this.NonGradedSubjectsDataSource = new MatTableDataSource<any>(this.NonGradedMarkResults);
+        this.dataSource = new MatTableDataSource<any>(this.ExamStudentResults);
       });
   }
 
   GetStudentSubjectResults() {
+    this.PageLoading =true;
     this.GetExamGrandTotal();
-    this.GetGradedNonGradedSubjectMark();
+    
   }
   GetStudentSubjectResults_old() {
     debugger;
@@ -425,7 +427,7 @@ export class StudentprogressreportComponent implements OnInit {
             this.ClassGroups = [...data.value];
           });
         this.GetExams();
-        this.GetEvaluationOption();
+        
       });
   }
   GetExams() {
@@ -450,7 +452,7 @@ export class StudentprogressreportComponent implements OnInit {
             })
         })
         this.GetStudentSubject();
-
+        this.GetEvaluationOption();
       })
   }
   GetEvaluationOption() {
@@ -538,8 +540,8 @@ export class StudentprogressreportComponent implements OnInit {
 
     list.PageName = "ClassEvaluations";
     list.lookupFields = ["EvaluationMaster($select=AppendAnswer)"]
-    list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-
+    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+    
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.ClassEvaluations = [];
@@ -583,7 +585,7 @@ export class StudentprogressreportComponent implements OnInit {
     ];
 
     list.PageName = "StudentEvaluationResults";
-    list.lookupFields = ["StudentEvaluationAnswers($select=StudentEvaluationAnswerId,StudentEvaluationResultId,ClassEvaluationAnswerOptionsId,Active)"];
+    list.lookupFields = ["StudentEvaluationAnswers($filter=Active eq 1;$select=StudentEvaluationAnswerId,StudentEvaluationResultId,ClassEvaluationAnswerOptionsId,Active)"];
 
     list.filter = [filterStr];
     this.StudentEvaluationList = [];

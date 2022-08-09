@@ -22,7 +22,7 @@ export class ContentService implements OnInit {
   UserDetail = [];
   url: any;
   SelectedApplicationId = 0;
-  HostUrl=globalconstants.apiUrl;
+  HostUrl = globalconstants.apiUrl;
   constructor(
     private authservice: AuthService,
     private tokenService: TokenStorageService,
@@ -64,7 +64,7 @@ export class ContentService implements OnInit {
 
     let list: List = new List();
     var result = [];
-    list.fields = ["ExamId", "ExamNameId", "ClassGroupId", "StartDate", "EndDate","AttendanceModeId","ReleaseResult","Sequence"];
+    list.fields = ["ExamId", "ExamNameId", "ClassGroupId", "StartDate", "EndDate", "AttendanceModeId", "ReleaseResult", "Sequence"];
     list.PageName = "Exams";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
     return this.dataservice.get(list)
@@ -92,7 +92,7 @@ export class ContentService implements OnInit {
     list.orderBy = "Sequence";
     return this.dataservice.get(list);
   }
-  GetStudentClassCount(pOrgId, pClassId,pBatchId) {
+  GetStudentClassCount(pOrgId, pClassId, pBatchId) {
     debugger;
     let list: List = new List();
     list.fields = ["StudentClassId"];
@@ -136,6 +136,24 @@ export class ContentService implements OnInit {
     list.limitTo = 1;
     list.orderBy = "PID Desc";
 
+    return this.dataservice.get(list);
+  }
+  GetClassFeeWithFeeDefinition(pOrgId, pMonthArray) {
+    var filter = "Active eq 1 and OrgId eq " + pOrgId;
+    var Months = pMonthArray.map(m=> m.val)
+    var maxMonth = Math.max(...Months);
+    var minMonth = Math.min(...Months);
+
+    if (pMonthArray.length ==1 && pMonthArray[0]>0)
+      filter += ' and Month eq ' + pMonthArray[0];
+    else
+      filter += ' and Month ge ' + minMonth + ' and Month le ' + maxMonth ;
+
+    let list = new List();
+    list.fields = ["ClassId", "Active", "Amount", "Month", "FeeDefinitionId"];
+    list.PageName = "ClassFees";
+    list.lookupFields = ["FeeDefinition($select=FeeName,Active)"];
+    list.filter = [filter];
     return this.dataservice.get(list);
   }
   GetFeeDefinitions(orgId, active) {
@@ -437,6 +455,36 @@ export class ContentService implements OnInit {
 
     return this.authservice.CallAPI(OrgIdAndbatchId, _function);
   }
+
+  getStudentClassWithFeeType(pOrgId, pBatchId) {
+
+    //var filterstr = "Active eq 1 and OrgId eq " + pOrgId; //+" and BatchId eq "+ pBatchId +" and Month eq " + pMonth;
+    var filterstr = '';
+    // if (pMonth > 0)
+    //   filterstr = "OrgId eq " + pOrgId + " and BatchId eq " + pBatchId + " and Month eq " + pMonth;
+    // else
+    filterstr = "OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
+    // SectionId = x.b.a.studcls.SectionId,
+    // Month = x.b.cls.Month,
+    // RollNo = x.b.a.studcls.RollNo,
+    // StudentClassId = x.b.a.studcls.StudentClassId,
+    // Formula = x.b.a.fee.Formula,
+    // FeeName = x.defn.FeeName,
+    // Amount = x.b.cls.Amount
+
+    let list: List = new List();
+    list.fields = [
+      "StudentClassId",
+      "ClassId",
+      "FeeTypeId",
+      "SectionId",
+      "RollNo"];
+    list.PageName = "StudentClasses";
+    list.lookupFields = ["FeeType($select=Formula,Active)"]
+    list.filter = [filterstr];
+    return this.dataservice.get(list);
+
+  }
   createInvoice(data, pSelectedBatchId, pOrgId) {
     var AmountAfterFormulaApplied = 0;
     var _VariableObjList = [];
@@ -469,7 +517,7 @@ export class ContentService implements OnInit {
       "StudentClassId,LedgerId, Active, GeneralLedgerId, BatchId, Month, OrgId " +
       "FROM ? GROUP BY StudentClassId, LedgerId,Active, GeneralLedgerId,BatchId, Month,OrgId";
     var sumFeeData = alasql(query, [_LedgerData]);
-    console.log("_LedgerData", _LedgerData);
+    //console.log("_LedgerData", _LedgerData);
     //console.log("sumFeeData",sumFeeData);
     return this.authservice.CallAPI(sumFeeData, 'createinvoice')
   }

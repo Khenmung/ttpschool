@@ -68,7 +68,6 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     ClassId: 0,
     Credits: 0,
     OrgId: 0,
-    TeacherId: 0,
     SubjectId: 0,
     SubjectTypeId: 0,
     SubjectCategoryId:0,
@@ -79,7 +78,6 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     'SubjectTypeId',
     'SubjectCategoryId',
     'Credits',
-    //'TeacherId',
     'Active',
     'Action'
   ];
@@ -414,12 +412,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
       this.loading = false; this.PageLoading=false;
       return;
     }
-    ////console.log("row.TeacherId", row.TeacherId);
-    if (row.TeacherId == 0) {
-      this.contentservice.openSnackBar("Please select teacher for the subject.", globalconstants.ActionText, globalconstants.RedBackground);
-      this.loading = false; this.PageLoading=false;
-      return;
-    }
+    
     let checkFilterString = "ClassId eq " + row.ClassId +
       " and SubjectId eq " + row.SubjectId + ' and Active eq 1 ';
     // " and Active eq " + row.Active +
@@ -453,7 +446,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
           this.ClassSubjectData.SubjectCategoryId = row.SubjectCategoryId;          
-          this.ClassSubjectData.TeacherId = row.TeacherId;
+    //      this.ClassSubjectData.TeacherId = row.TeacherId;
           this.ClassSubjectData.OrgId = this.LoginUserDetail[0]["orgId"];
           //this.ClassSubjectData.BatchId = this.SelectedBatchId;
           if (this.ClassSubjectData.ClassSubjectId == 0) {

@@ -15,7 +15,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './dailytimetablereport.component.html',
   styleUrls: ['./dailytimetablereport.component.scss']
 })
-export class DailytimetablereportComponent implements OnInit { PageLoading=true;
+export class DailytimetablereportComponent implements OnInit {
+    PageLoading = true;
   SelectedApplicationId = 0;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -124,11 +125,11 @@ export class DailytimetablereportComponent implements OnInit { PageLoading=true;
       "ClassId",
       "SectionId",
       "SchoolClassPeriodId",
-      "ClassSubjectId",
+      "TeacherSubjectId",
       "Active"
     ];
     list.PageName = this.SchoolTimeTableListName;
-    list.lookupFields = ["ClassSubject($select=TeacherId),SchoolClassPeriod($select=PeriodId)"]
+    list.lookupFields = ["TeacherSubject($select=EmployeeId),SchoolClassPeriod($select=PeriodId)"]
     list.filter = [filterstr + orgIdSearchstr];
     this.displayedColumns = [
       'Day'
@@ -143,7 +144,7 @@ export class DailytimetablereportComponent implements OnInit { PageLoading=true;
         var forDisplay: any[] = [];
         var _classId = this.searchForm.get("searchClassId").value;
         //this is used in html for subject dropdown.
-        this.ClassWiseSubjects = this.ClassSubjects.filter(f => f.ClassId == _classId);
+        this.ClassWiseSubjects = this.TeacherSubjectList.filter(f => f.ClassId == _classId);
 
         //iterrate through class
         //iterrate through weekdays
@@ -173,43 +174,27 @@ export class DailytimetablereportComponent implements OnInit { PageLoading=true;
               if (!this.displayedColumns.includes(_period))
                 this.displayedColumns.push(_period);
 
-              var existing = dbTimeTable.filter(d => d.SchoolClassPeriod.PeriodId == clsperiod.PeriodId && d.DayId == p.MasterDataId)
+              var existing = dbTimeTable.filter(d => d.SchoolClassPeriod.PeriodId == clsperiod.PeriodId
+                && d.DayId == p.MasterDataId)
               if (existing.length > 0) {
-                existing[0].PeriodId = clsperiod.PeriodId;
-                existing[0].Period = _period;
-                existing[0].Action = false;
-                existing[0].TeacherId = existing[0].ClassSubject.TeacherId;
-                existing[0].Sequence = clsperiod.Sequence;
+                existing.forEach(exist => {
+                  exist.PeriodId = clsperiod.PeriodId;
+                  exist.Period = _period;
+                  exist.Action = false;
+                  exist.TeacherId = exist.TeacherSubject.EmployeeId;
+                  exist.Sequence = clsperiod.Sequence;
 
-                this.StoredForUpdate.push(existing[0]);
-                var objcls = this.ClassWiseSubjects.filter(s => s.ClassSubjectId == existing[0].ClassSubjectId);
-                if (objcls.length > 0) {
+                  this.StoredForUpdate.push(exist);
+                  var objcls = this.ClassWiseSubjects.filter(s => s.TeacherSubjectId == exist.TeacherSubjectId);
+                  if (objcls.length > 0) {
 
-                  forDisplay[clsperiod.Period] = objcls[0].SubjectName
+                    forDisplay[clsperiod.Period] = objcls[0].SubjectName
 
-                }
-                // else
-                //   forDisplay[clsperiod.Period] = '';
-                //this.ClassWiseSubjects = this.ClassWiseSubjects.filter(f=>f.TeacherId != existing[0].TeacherId) 
-                //forDisplay["Active"] = existing[0].Active;
+                  }
+                })
               }
               else {
                 forDisplay[clsperiod.Period] = 0;
-                //   this.StoredForUpdate.push({
-                //     "TimeTableId": 0,
-                //     "DayId": p.MasterDataId,
-                //     "Day": p.MasterDataName,
-                //     "ClassId": clsperiod.ClassId,
-                //     "SectionId": this.searchForm.get("searchSectionId").value,
-                //     "SchoolClassPeriodId": clsperiod.SchoolClassPeriodId,
-                //     "ClassSubjectId": 0,
-                //     "TeacherId": 0,
-                //     "Sequence": clsperiod.Sequence,
-                //     "Period": _period,
-                //     "PeriodId": clsperiod.PeriodId,
-                //     "Active": 0,
-                //     "Action": false
-                //   })
               }
 
             })
@@ -222,8 +207,49 @@ export class DailytimetablereportComponent implements OnInit { PageLoading=true;
         this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
         //this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
+  }
+  TeacherSubjectList = [];
+  GetTeacherSubject() {
+    let filterStr = '';//' OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    //debugger;
+    this.loading = true;
+
+    filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    let list: List = new List();
+    list.fields = [
+      'TeacherSubjectId',
+      'EmployeeId',
+      'ClassSubjectId',
+      'Active',
+    ];
+
+    list.PageName = "TeacherSubjects";
+    list.lookupFields = ["Employee($select=ShortName,FirstName,LastName)"];
+    list.filter = [filterStr];
+    this.TeacherSubjectList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+
+        data.value.forEach(teachersubject => {
+          var _teacherName = teachersubject.Employee.FirstName;
+          if (teachersubject.Employee.LastName != '')
+            _teacherName += " " + teachersubject.Employee.LastName;
+
+          var objClsSubject = this.ClassSubjects.filter(clssubject => clssubject.ClassSubjectId == teachersubject.ClassSubjectId)
+          objClsSubject.forEach(clssubject => {
+            teachersubject["ClassName"] = clssubject["ClassName"];
+            teachersubject["SubjectName"] = clssubject.SubjectName + " (" + teachersubject.Employee.ShortName + ")";
+            teachersubject.ClassId = clssubject.ClassId;
+            teachersubject.TeacherName = _teacherName;
+            this.TeacherSubjectList.push(teachersubject);
+          });
+        })
+        console.log("this.TeacherSubjectList", this.TeacherSubjectList);
+        this.loading = false;
+        this.PageLoading = false;
+      });
   }
   // GetSchoolTimeTable() {
   //   debugger;
@@ -372,7 +398,7 @@ export class DailytimetablereportComponent implements OnInit { PageLoading=true;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         //console.log("this.AllClassPeriods", this.AllClassPeriods);
       })
   }
@@ -404,17 +430,18 @@ export class DailytimetablereportComponent implements OnInit { PageLoading=true;
           if (objsubject.length > 0)
             _subject = objsubject[0].MasterDataName;
 
-          var _shortName = cs.Teacher.ShortName;
-          _shortName = _shortName == null ? '' : ", " + _shortName;
+          // var _shortName = cs.Teacher.ShortName;
+          // _shortName = _shortName == null ? '' : ", " + _shortName;
 
           return {
             ClassSubjectId: cs.ClassSubjectId,
             ClassId: cs.ClassId,
             ClassName: _class,
-            SubjectName: _subject + _shortName
+            SubjectName: _subject
           }
         })
-        this.loading = false; this.PageLoading=false;
+        this.GetTeacherSubject();
+        this.loading = false; this.PageLoading = false;
       })
   }
 

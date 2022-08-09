@@ -89,7 +89,7 @@
                             <mat-select [disabled]="element.Updatable" [(ngModel)]="element.ExamId"
                                 (selectionChange)="onBlur(element)" [value]="element.ExamId">
                                 <mat-option [value]="0">--Exam--</mat-option>
-                                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                                <mat-option *ngFor="let item of FilteredExam" [value]="item.ExamId">
                                     {{item.ExamName}}</mat-option>
                             </mat-select>
                         </mat-form-field>

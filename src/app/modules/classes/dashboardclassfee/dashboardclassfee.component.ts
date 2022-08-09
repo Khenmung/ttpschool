@@ -6,11 +6,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
-import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
-import { SharedataService } from '../../../shared/sharedata.service';
 
 @Component({
   selector: 'app-dashboardclassfee',
@@ -19,7 +17,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
 })
 
 export class DashboardclassfeeComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
@@ -62,14 +60,12 @@ export class DashboardclassfeeComponent implements OnInit {
   };
   //matcher = new TouchedErrorStateMatcher();
   constructor(
-    private authservice: AuthService,
     private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
-
     private route: Router,
-    private fb: FormBuilder,
-    private shareddata: SharedataService) { }
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
 
@@ -118,14 +114,6 @@ export class DashboardclassfeeComponent implements OnInit {
           this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
             this.FeeDefinitions = [...d.value];
           })
-          // this.shareddata.CurrentFeeDefinitions.subscribe((f: any) => {
-          //   this.FeeDefinitions = [...f];
-          //   if (this.FeeDefinitions.length == 0) {
-          //     this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
-          //       this.FeeDefinitions = [...d.value];
-          //     })
-          //   }
-          // })
 
           if (this.Classes.length == 0) {
             this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
@@ -176,27 +164,66 @@ export class DashboardclassfeeComponent implements OnInit {
   }
 
   CreateInvoice() {
+    debugger;
     this.loading = true;
-    this.contentservice.getInvoice(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
-      .subscribe((data: any) => {
-        console.log("getinvoice", data)
-        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"],this.Months)
+      .subscribe((datacls: any) => {
+
+        var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
+
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
           .subscribe((data: any) => {
-            this.loading = false; this.PageLoading = false;
-            this.InvoiceCreated = true;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          },
-            error => {
-              this.loading = false; this.PageLoading = false;
-              this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
-              console.log("error in createInvoice", error);
+            var studentfeedetail = [];
+            data.value.forEach(studcls => {
+              var _feeName = '';
+              var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
+              objClassFee.forEach(clsfee => {
+                _feeName = clsfee.FeeName;
+                studentfeedetail.push({
+                  Month: clsfee.Month,
+                  Amount: clsfee.Amount,
+                  Formula: studcls.FeeType.Formula,
+                  FeeName: _feeName,
+                  StudentClassId: studcls.StudentClassId,
+                  FeeTypeId: studcls.FeeTypeId,
+                  SectionId: studcls.SectionId,
+                  RollNo: studcls.RollNo
+                });
+              })
             })
-      },
-        error => {
-          this.loading = false; this.PageLoading = false;
-          this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
-          console.log("error in getinvoice", error);
-        })
+
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+              .subscribe((data: any) => {
+                this.loading = false;
+                this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+              },
+                error => {
+                  this.loading = false;
+                  console.log("create invoice error", error);
+                  this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+                })
+          })
+      });
+
+    // .subscribe((data: any) => {
+    //   //console.log("getinvoice", data)
+    //   this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+    //     .subscribe((data: any) => {
+    //       this.loading = false; this.PageLoading = false;
+    //       this.InvoiceCreated = true;
+    //       this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+    //     },
+    //       error => {
+    //         this.loading = false; this.PageLoading = false;
+    //         this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    //         console.log("error in createInvoice", error);
+    //       })
+    // },
+    //   error => {
+    //     this.loading = false; this.PageLoading = false;
+    //     this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    //     console.log("error in getinvoice", error);
+    //   })
 
   }
   ApplyVariables(formula) {
@@ -283,12 +310,6 @@ export class DashboardclassfeeComponent implements OnInit {
       this.contentservice.openSnackBar("Amount should be smaller than 100,000.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    // else if (row.Month == 0) {
-    //   row.Action = false;
-    //   this.loading = false; this.PageLoading=false;
-    //   this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
     this.loading = true;
     let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and FeeDefinitionId eq " + row.FeeDefinitionId +
@@ -413,7 +434,7 @@ export class DashboardclassfeeComponent implements OnInit {
     }
 
     this.loading = true;
-    let filterstr = " and Active eq 1 and ClassId eq " + this.searchForm.get("ClassId").value;
+    let filterstr = " and ClassId eq " + this.searchForm.get("ClassId").value;
     this.SelectedMonth = this.searchForm.get("searchMonth").value;
     if (this.SelectedMonth > 0)
       filterstr += " and Month eq " + this.SelectedMonth;

@@ -6,8 +6,7 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 @include mat-core();
-$bv-brand: (
-    50: #ffffff,
+$bv-brand: (50: #ffffff,
     100: #dde6f3,
     200: #b4c9e4,
     300: #7fa3d1,
@@ -21,8 +20,7 @@ $bv-brand: (
     A200: #dde6f3,
     A400: #6992c9,
     A700: #38649d,
-    contrast: (
-        50: $black-87-opacity,
+    contrast: (50: $black-87-opacity,
         100: $black-87-opacity,
         200: $black-87-opacity,
         300: $black-87-opacity,
@@ -36,12 +34,11 @@ $bv-brand: (
         A200: $black-87-opacity,
         A400: $black-87-opacity,
         A700: white,
-    )
-);
+    ));
 
 $my-app-primary: mat-palette($mat-indigo);
 // Accent colour
-$my-app-accent: mat-palette($mat-lime, 500, 100, 100);
+$my-app-accent : mat-palette($mat-lime, 500, 100, 100);
 
 $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent);
 @include angular-material-theme($my-app-theme);
@@ -51,14 +48,14 @@ $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent);
 
 
 :root {
-    --maincolor1: #1E4A75;
-    --maincolor2: #00203F;
-    --mainTitleColor:#28629C;
-    --onHoverColor:blueviolet;
+    --maincolor1    : #1E4A75;
+    --maincolor2    : #00203F;
+    --mainTitleColor: #28629C;
+    --onHoverColor  : blueviolet;
 }
 
 mat-card {
-    margin-left: 5px;
+    margin-left  : 5px;
     //min-height : 100vh;
 
 }
@@ -70,9 +67,11 @@ mat-card {
     }
 
 }
-.CertificateFont{
+
+.CertificateFont {
     font-family: 'Ewert', cursive;
 }
+
 .mat-icon {
     vertical-align: middle;
 }
@@ -85,13 +84,17 @@ body {
     font-family       : Roboto, "Helvetica Neue", sans-serif;
     //background-color: #0F5298;
 }
-.full-height{
-    height: 100%;
+
+.full-height {
+    height  : 100%;
     overflow: hidden;
 }
+
 .blue-snackbar {
-    background: #2196F3;
-    color: white;
+    white-space: pre-wrap;
+    background : #2196F3;
+    color      : white;
+
     .mat-simple-snackbar-action {
         color: white !important;
     }
@@ -99,18 +102,19 @@ body {
 
 .red-snackbar {
     background: #F44336;
-    color: white;
+    color     : white;
+    white-space: pre-wrap;
     .mat-simple-snackbar-action {
         color: white !important;
     }
 }
 
 a .ng-star-inserted:hover {
-    cursor          : pointer;
-    background-color: var(--onHoverColor);
-    border-top-right-radius: 5px;
+    cursor                    : pointer;
+    background-color          : var(--onHoverColor);
+    border-top-right-radius   : 5px;
     border-bottom-right-radius: 5px;
-    color: white;
+    color                     : white;
     //clip-path       : polygon(0 0, 90% 0, 100% 50%, 90% 100%,0% 100%);
 }
 
@@ -174,10 +178,20 @@ input[type="radio"] {
 .mat-form-field-infix {
     padding-bottom: 1em !important;
 }
-.disableDiv{
-    pointer-events:none;
+
+.disableDiv {
+    pointer-events: none;
 }
+
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin     : 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}

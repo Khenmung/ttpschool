@@ -126,7 +126,7 @@ export class VerifyResultsComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
-        this.GetTotalAttendance();
+        
         this.GetSubjectTypes();
         this.GetStudentAttendance();
 
@@ -761,6 +761,7 @@ export class VerifyResultsComponent implements OnInit {
         this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESMODE);
         this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
         this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY);
+        
         this.GetClassGroup();
         this.GetClassGroupMapping();
         this.GetExams();
@@ -876,7 +877,7 @@ export class VerifyResultsComponent implements OnInit {
         this.Exams = [];
         data.value.forEach(e => {
           //var _examName = '';
-          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId)
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active ==1)
           if (obj.length > 0) {
             //_examName = obj[0].MasterDataName
             this.Exams.push({
@@ -892,6 +893,7 @@ export class VerifyResultsComponent implements OnInit {
           }
         })
         this.Exams = this.Exams.sort((a, b) => a.Sequence - b.Sequence);
+        this.GetTotalAttendance();
         this.GetExamNCalculate();
       })
   }
@@ -913,7 +915,7 @@ export class VerifyResultsComponent implements OnInit {
     ];
 
     list.PageName = "TotalAttendances";
-    list.lookupFields = ["Exam($select=Sequence,Active)"]
+    //list.lookupFields = ["Exam($select=Sequence,Active)"]
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and BatchId eq " + this.SelectedBatchId];
     // " and ClassId eq " + this.searchForm.get("searchClassId").value +
@@ -923,8 +925,9 @@ export class VerifyResultsComponent implements OnInit {
       .subscribe((totalAttendance: any) => {
         this.TotalAttendance =[];
         totalAttendance.value.forEach(f => {
-          if (f.Exam.Active == 1) {
-            f.Sequence = f.Exam.Sequence;
+          var _exm = this.Exams.filter(e=>e.ExamId == f.ExamId);
+          if (_exm.length > 0) {
+            f.Sequence = _exm[0].Sequence;
             this.TotalAttendance.push(f);
           }
         });

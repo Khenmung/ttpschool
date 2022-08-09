@@ -172,7 +172,7 @@ export class EvaluationMasterComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    let checkFilterString = "EvaluationName eq '" + row.EvaluationName + 
+    let checkFilterString = "EvaluationName eq '" + globalconstants.encodeSpecialChars(row.EvaluationName) + 
     " and ClassGroupId eq " + row.ClassGroupId +
     "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     
@@ -194,8 +194,8 @@ export class EvaluationMasterComponent implements OnInit {
 
           this.EvaluationMasterData.EvaluationMasterId = row.EvaluationMasterId;
           this.EvaluationMasterData.Active = row.Active;
-          this.EvaluationMasterData.EvaluationName = row.EvaluationName;
-          this.EvaluationMasterData.Description = row.Description;
+          this.EvaluationMasterData.EvaluationName = globalconstants.encodeSpecialChars(row.EvaluationName);
+          this.EvaluationMasterData.Description = globalconstants.encodeSpecialChars(row.Description);
           this.EvaluationMasterData.DisplayResult = row.DisplayResult;
           this.EvaluationMasterData.ProvideCertificate = row.ProvideCertificate;
           this.EvaluationMasterData.AppendAnswer = row.AppendAnswer;
@@ -324,6 +324,9 @@ export class EvaluationMasterComponent implements OnInit {
         //debugger;
         if (data.value.length > 0) {
           this.EvaluationMasterList = data.value.map(d => {
+            
+            d.EvaluationName = globalconstants.encodeSpecialChars(d.EvaluationName);
+            d.Description = globalconstants.encodeSpecialChars(d.Description);
             d.Action = false;
             return d;
           })

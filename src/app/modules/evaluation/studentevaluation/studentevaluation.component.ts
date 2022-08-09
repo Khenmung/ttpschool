@@ -419,7 +419,7 @@ export class StudentEvaluationComponent implements OnInit {
         mapping.Action = false;
     })
     var _classEvaluations = this.ClassEvaluations.filter(f => f.EvaluationMasterId == row.EvaluationMasterId
-      && (f.ExamId == null || f.ExamId ==0 || f.ExamId == row.ExamId));
+      && (f.ExamId == null || f.ExamId == 0 || f.ExamId == row.ExamId));
     //delete row all except selected one
     for (var i = 0; i < this.RelevantEvaluationListForSelectedStudent.length; i++) {
       if (this.RelevantEvaluationListForSelectedStudent[i].EvaluationExamMapId != row.EvaluationExamMapId) {
@@ -476,7 +476,7 @@ export class StudentEvaluationComponent implements OnInit {
                 selectedorNot.forEach(answer => {
                   if (answer.Active == 1)
                     cls.checked = true;
-                    cls.Title =globalconstants.decodeSpecialChars(cls.Title);
+                  cls.Title = globalconstants.decodeSpecialChars(cls.Title);
                   cls.StudentEvaluationAnswerId = answer.StudentEvaluationAnswerId
                 })
               }
@@ -759,7 +759,7 @@ export class StudentEvaluationComponent implements OnInit {
         this.RelevantEvaluationListForSelectedStudent = [];
         if (_EvaluationExamMapSelectedStudentObj.length > 0) {
           _EvaluationExamMapSelectedStudentObj.forEach(m => {
-            m.ClassGroup = this.ClassGroups.filter(f=>f.ClassGroupId == m.ClassGroupId)[0].GroupName;
+            m.ClassGroup = this.ClassGroups.filter(f => f.ClassGroupId == m.ClassGroupId)[0].GroupName;
             m.EvaluationStarted = false;
             var existing = this.StudentSubmittedEvaluations.filter(f => f.EvaluationExamMapId == m.EvaluationExamMapId)
             if (existing.length > 0) {
@@ -814,7 +814,7 @@ export class StudentEvaluationComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.ClassEvaluationOptionList = data.value.map(item => {
-            item.Title =globalconstants.decodeSpecialChars(item.Title);
+            item.Title = globalconstants.decodeSpecialChars(item.Title);
             item.Active = 0;
             item.StudentEvaluationAnswerId = 0;
             return item;
@@ -860,7 +860,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetStudentClasses() {
     //debugger;
-    var _filter = '';
+    var _filter = ' and Active eq 1';
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
@@ -880,7 +880,7 @@ export class StudentEvaluationComponent implements OnInit {
   }
   GetStudents() {
     this.loading = true;
-    var _filter = '';
+    var _filter = ' and Active eq 1';
     let list: List = new List();
     list.fields = [
       'StudentId',
@@ -919,16 +919,16 @@ export class StudentEvaluationComponent implements OnInit {
 
               if (_SectionObj.length > 0)
                 _section = _SectionObj[0].MasterDataName;
-            }
-            _name = student.FirstName + " " + student.LastName;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-            this.Students.push({
-              StudentClassId: _studentClassId,
-              StudentId: student.StudentId,
-              ClassId: _classId,
-              Name: _fullDescription,
-            });
 
+              _name = student.FirstName + " " + student.LastName;
+              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+              this.Students.push({
+                StudentClassId: _studentClassId,
+                StudentId: student.StudentId,
+                ClassId: _classId,
+                Name: _fullDescription,
+              });
+            }
           })
         }
         this.loading = false; this.PageLoading = false;

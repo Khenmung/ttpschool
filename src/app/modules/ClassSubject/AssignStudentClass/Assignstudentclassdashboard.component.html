@@ -44,14 +44,14 @@
                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
             </mat-icon>
         </button>
-        <!-- <button [disabled]="loading" style="margin-right: 10px;" matTooltip="Data from previous batch & previous class"
+        <button [disabled]="loading" style="margin-right: 10px;" matTooltip="Data from previous batch & previous class"
             class="mat-raised-button" (click)="CopyFromPreviousClassAndBatch()">
             <mat-icon>copy_all</mat-icon>
         </button>
         <button [disabled]="loading" matTooltip="Data from previous batch & same class" class="mat-raised-button"
             (click)="CopyFromSameClassPreviousBatch()">
             <mat-icon>content_copy</mat-icon>
-        </button> -->
+        </button>
     </div>
     <div style="padding:15px;border:1px solid lightgray">
         <span style="padding: 15px;">{{RollNoGenerationSortBy}}</span>
@@ -139,16 +139,17 @@
             </mat-form-field>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="RemarkId">
+    <ng-container matColumnDef="Remark">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Remark </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <mat-form-field>
+            {{element.Remark}}
+            <!-- <mat-form-field>
                 <mat-select (selectionChange)="onBlur(element)" [value]="element.RemarkId"
                     [(ngModel)]="element.RemarkId">
                     <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">{{item.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Remarks">

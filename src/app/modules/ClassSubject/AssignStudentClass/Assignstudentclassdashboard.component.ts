@@ -22,7 +22,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./Assignstudentclassdashboard.component.scss']
 })
 export class AssignStudentclassdashboardComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
@@ -86,11 +86,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     'StudentClassId',
     'StudentName',
     'GenderName',
+    'Remark',
     'ClassName',
     'SectionId',
     'RollNo',
     'FeeTypeId',
-    'RemarkId',
     'Remarks',
     'Active',
     'Action'
@@ -299,6 +299,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       'ClassId',
       'RollNo',
       'SectionId',
+      'Remarks',
       'Active'
     ];
 
@@ -694,6 +695,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         if (defaultFeeTypeObj.length > 0)
           _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
         result.forEach(s => {
+          var obj = this.Remarks.filter(f => f.MasterDataId == s.Student.RemarkId);
+          var _remark = '';
+
+          if (obj.length > 0)
+            _remark = obj[0].MasterDataName
+
           var _genderName = '';
           var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
           if (genderObj.length > 0)
@@ -717,7 +724,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
             Active: previousbatch == '' ? s.Active : 0,
             Promote: 0,
-            Remarks: '',
+            Remark:_remark,
+            Remarks: s.Remarks,
             GenderName: _genderName,
             Action: false
           });
@@ -820,6 +828,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           this.StudentClassData.RollNo = row.RollNo;
           this.StudentClassData.SectionId = row.SectionId;
           this.StudentClassData.Remarks = row.Remarks;
+
           this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentClassData.BatchId = this.SelectedBatchId;
           if (this.StudentClassData.StudentClassId == 0) {
@@ -984,6 +993,7 @@ export interface IStudentClass {
   FeeType: string;
   Promote: number;
   GenderName: string;
+  Remark: string;
   Remarks: string;
   Active: number;
   Action: boolean
