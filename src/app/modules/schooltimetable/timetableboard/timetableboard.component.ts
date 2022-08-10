@@ -4,6 +4,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassperiodComponent } from '../classperiod/classperiod.component';
 import { SchooltimetableComponent } from '../schooltimetable/schooltimetable.component';
+import { TeacheroffperiodComponent } from '../teacheroffperiod/teacheroffperiod.component';
 import { TeacherperiodComponent } from '../teacherperiod/teacherperiod.component';
 import { TeachersubjectComponent } from '../teachersubject/teachersubject.component';
 
@@ -16,13 +17,15 @@ export class TimetableboardComponent implements AfterViewInit {
 
   components:any = [
     TeachersubjectComponent,
-    ClassperiodComponent,
+    ClassperiodComponent,   
+    SchooltimetableComponent,
     TeacherperiodComponent,
-    SchooltimetableComponent
+    TeacheroffperiodComponent
   ];
 
   tabNames = [
     { label: 'Class Period', faIcon: '' },
+    { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' }
@@ -68,6 +71,10 @@ export class TimetableboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.TEACHERPERIOD)
     var comindx = this.components.indexOf(TeacherperiodComponent);
+    this.addRemovecomponent(perObj,comindx);
+
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.TEACHEROFFPERIOD)
+    var comindx = this.components.indexOf(TeacheroffperiodComponent);
     this.addRemovecomponent(perObj,comindx);
 
     if (this.Permissions.ParentPermission != 'deny') {

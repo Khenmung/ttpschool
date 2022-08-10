@@ -1,0 +1,45 @@
+<div>
+    <div style="padding:15px 15px 10px 15px;">
+        <div><strong>Teachers Off Period</strong></div>
+    </div>
+    <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
+    <div style="width: 100%;">
+        <!-- <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Teacher</mat-label>
+                    <mat-select formControlName="searchEmployeeId">
+                        <mat-option value="0">select</mat-option>
+                        <mat-option *ngFor="let option of Teachers" [value]="option.TeacherId">
+                            {{option.TeacherName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button [disabled]="loading" matTooltip="search" mat-raised-button color="accent"
+                    (click)="GetSchoolTimeTable()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+            </div>
+        </form> -->
+
+        <div>
+            <mat-table [dataSource]="dataSourcePeriodStatistic" style="margin-bottom: 15px;">
+                <ng-container *ngFor="let disCol of PeriodStatisticDisplay;" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>
+                        <div *ngIf="disCol!='TeacherName'">
+                            <div style="display:flex;justify-content:center">{{disCol}}</div>
+                        </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" innerHTML="{{element[disCol]}}">
+                        
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="PeriodStatisticDisplay"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: PeriodStatisticDisplay;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
+    </div>
+</div>

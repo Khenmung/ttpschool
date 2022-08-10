@@ -1,0 +1,8 @@
+mat-header-cell{
+    justify-content: center;
+}
+mat-cell,mat-header-cell{
+    align-self: stretch;
+    padding: 15px;
+    border-right: 1px solid lightgray;
+}

@@ -450,8 +450,8 @@ export class SchooltimetableComponent implements OnInit {
       }
     })
 
-    console.log("PeriodStatisticDisplay", this.PeriodStatisticDisplay);
-    console.log("this.PeriodStatistics", this.PeriodStatistics);
+    //console.log("PeriodStatisticDisplay", this.PeriodStatisticDisplay);
+    //console.log("this.PeriodStatistics", this.PeriodStatistics);
 
     this.dataSourcePeriodStatistic = new MatTableDataSource<any>(this.PeriodStatistics);
   }

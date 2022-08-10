@@ -196,7 +196,8 @@ export class globalconstants {
                     'CLASSPERIOD': 'class period',
                     'CLASSTIMETABLE': 'class time table',
                     'TEACHERSUBJECT': 'teacher subject',
-                    'TEACHERPERIOD': 'teacher period'
+                    'TEACHERPERIOD': 'teacher period',
+                    'TEACHEROFFPERIOD': 'teacher off period'
                 },
                 'ATTENDANCE': {
                     'ATTENDANCE': 'attendance',

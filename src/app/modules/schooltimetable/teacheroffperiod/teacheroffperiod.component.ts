@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -13,11 +13,11 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-teacherperiod',
-  templateUrl: './teacherperiod.component.html',
-  styleUrls: ['./teacherperiod.component.scss']
+  selector: 'app-teacheroffperiod',
+  templateUrl: './teacheroffperiod.component.html',
+  styleUrls: ['./teacheroffperiod.component.scss']
 })
-export class TeacherperiodComponent implements OnInit {
+export class TeacheroffperiodComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   PageLoading = true;
@@ -126,9 +126,12 @@ export class TeacherperiodComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.filter(f => {
+          var name = f.Employee.FirstName;
+          if (f.Employee.LastName.length > 0)
+            name += " " + f.Employee.LastName
           this.Teachers.push({
             TeacherId: f.Employee.EmpEmployeeId,
-            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+            TeacherName: name
           })
         })
 
@@ -247,45 +250,13 @@ export class TeacherperiodComponent implements OnInit {
           //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
         });
   }
-  // AllSchoolTable = [];
-  // GetAllSchoolTable() {
-  //   var orgIdSearchstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
-  //     ' and BatchId eq ' + this.SelectedBatchId;
-  //   let list: List = new List();
-  //   list.fields = [
-  //     "TimeTableId",
-  //     "DayId",
-  //     "ClassId",
-  //     "SectionId",
-  //     "SchoolClassPeriodId",
-  //     "TeacherSubjectId",
-  //     "Active"
-  //   ];
-  //   list.PageName = this.SchoolTimeTableListName;
-  //   list.lookupFields = ["TeacherSubject($select=EmployeeId),SchoolClassPeriod($select=PeriodId)"]
-  //   list.filter = [orgIdSearchstr];
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       this.AllSchoolTable = data.value.map((d => {
-  //         d.Day = this.WeekDays.filter(w => w.MasterDataId == d.DayId)[0].MasterDataName;
-  //         d.TeacherId = d.TeacherSubject!=null?d.TeacherSubject.EmployeeId:0;
-  //         d.PeriodId = d.SchoolClassPeriod.PeriodId;
-  //         d.Period = this.AllClassPeriods.filter(f=>f.PeriodId == d.SchoolClassPeriod.PeriodId)[0].Period;
-  //         return d;
-  //       }))
-  //     });
-  // }
+
   DayStatisticDisplay = ["TeacherName"];
   PeriodStatisticDisplay = ["Day"];
   DayStatistics = [];
   PeriodStatistics = [];
   GetSchoolTimeTable() {
     debugger;
-    // this.DayStatistics = [];
-    // this.PeriodStatistics = [];
-    // this.dataSourceDayStatistic = new MatTableDataSource<any>(this.DayStatistics);
-    // this.dataSourcePeriodStatistic = new MatTableDataSource<any>(this.PeriodStatistics);
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
 
@@ -296,16 +267,9 @@ export class TeacherperiodComponent implements OnInit {
       'Day'
     ];
 
-    //this.FormatData(_classId, _sectionId);
-
     this.GetPeriodStatistic();
-    //this.GetStatistic();
-    // this.SchoolTimeTableList.sort((a, b) => a.Sequence - b.Sequence)
-    // //this.displayedColumns.push("Action");
-    // this.dataSource = new MatTableDataSource<any>(this.SchoolTimeTableList);
     this.loading = false;
     this.PageLoading = false;
-    //})
   }
   FormatData(pClassId, pSectionId) {
 
@@ -414,78 +378,34 @@ export class TeacherperiodComponent implements OnInit {
     })//foreach distinct class
 
   }
-  // GetStatistic() {
-  //   this.DayStatistics = [];
-  //   this.PeriodStatistics = [];
-
-  //   var _DistinctTeacher = alasql("select distinct EmployeeId,TeacherName from ?", [this.ClassWiseSubjects]);
-
-  //   _DistinctTeacher.forEach(teacherobj => {
-  //     var _forCurrentTeacher = this.DataForAllClasses.filter(assigned => assigned.TeacherId == teacherobj.EmployeeId);
-  //     var _eachDay = alasql("select Day,Count(1) NoOfClasses from ? group by Day", [_forCurrentTeacher]);
-
-  //     this.DayStatisticDisplay.forEach(col => {
-  //       var daymatch = _eachDay.filter(d => d.Day == col);
-  //       daymatch.forEach(d => {
-  //         var row = this.DayStatistics.filter(s => s.TeacherName.trim() == teacherobj.TeacherName.trim());
-  //         if (row.length > 0)
-  //           row[0][col] = d.NoOfClasses;
-  //         else {
-  //           var _data = { TeacherName: teacherobj.TeacherName.trim(), TeacherId: teacherobj.EmployeeId, Day: d.Day, [d.Day]: d.NoOfClasses }
-  //           this.DayStatistics.push(_data);
-  //         }
-  //       })
-  //     })
-  //   })
-  //   var _colNotToCount = ['TeacherName', 'TeacherId', 'Day'];
-  //   if (!this.DayStatisticDisplay.includes('Total'))
-  //     this.DayStatisticDisplay.push("Total");
-  //   this.DayStatistics.forEach(d => {
-  //     var _totalPeriods = 0;
-  //     Object.keys(d).forEach(period => {
-  //       if (!_colNotToCount.includes(period)) {
-  //         _totalPeriods += d[period]
-  //       }
-  //     })
-  //     d.Total = _totalPeriods;
-  //   })
-  //   console.log("DayStatisticDisplay", this.DayStatisticDisplay);
-  //   console.log("this.DayStatistics", this.DayStatistics);
-  //   this.dataSourceDayStatistic = new MatTableDataSource<any>(this.DayStatistics);
-  //   this.dataSourceDayStatistic.sort = this.sort;
-  // }
   GetPeriodStatistic() {
-    debugger;
-    var _teacherId = this.searchForm.get("searchEmployeeId").value;
-    var _teacherName = '';
-    var obj = this.Teachers.filter(f => f.TeacherId == _teacherId);
-    if (obj.length > 0)
-      _teacherName = obj[0].TeacherName.trim();
-      this.PeriodStatistics =[];
-    //var _DistinctTeacher = alasql("select distinct EmployeeId,TeacherName from ?", [this.TeacherSubjectList]);
-    //_DistinctTeacher.forEach(teacher => {
-    var _forCurrentTeacher = this.DataForAllClasses.filter(assigned => assigned.TeacherId == _teacherId);
-    //var _eachPeriod = alasql("select Period,SubjectName from ?", [_forCurrentTeacher]);
+
+    this.PeriodStatistics = [];
     this.WeekDays.forEach(weekday => {
-      this.PeriodStatisticDisplay.forEach(col => {
-        var periodmatch = _forCurrentTeacher.filter(f => f.Period == col && f.Day == weekday.MasterDataName);
-        periodmatch.forEach(eachperiod => {
-          var row = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName && s.TeacherName.trim() == _teacherName);
-          if (row.length > 0)
-            row[0][col] = eachperiod.SubjectNClass;
-          else {
-            var _data = { TeacherName: _teacherName, TeacherId: _teacherId, Day: weekday.MasterDataName, [col]: eachperiod.SubjectNClass }
-            this.PeriodStatistics.push(_data);
-          }
-        });
+      this.PeriodStatisticDisplay.forEach(period => {
+        if (period != 'Day') {
+          this.Teachers.forEach(teacher => {
+            var row = this.DataForAllClasses.filter(f => f.TeacherId == teacher.TeacherId &&
+              f.Period == period && f.Day == weekday.MasterDataName);
+            if (row.length == 0) {
+              var datarow = this.PeriodStatistics.filter(s => s.Day == weekday.MasterDataName);
+              if (datarow.length > 0)
+                datarow[0][period] = datarow[0][period]!=null?datarow[0][period] + ",<br>" +teacher.TeacherName:teacher.TeacherName;
+              else {
+                var _data = { Day: weekday.MasterDataName, [period]: teacher.TeacherName }
+                this.PeriodStatistics.push(_data);
+              }
+            }
+          });
+        }
       })
     });
-    //});
-    //console.log("PeriodStatisticDisplay", this.PeriodStatisticDisplay);
-    //console.log("this.PeriodStatistics", this.PeriodStatistics);
-    if(this.PeriodStatistics.length==0)
-    {
-      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+
+    console.log("this.PeriodStatistics", this.PeriodStatistics);
+    //console.log("this.PeriodStatistics",this.PeriodStatistics);
+
+    if (this.PeriodStatistics.length == 0) {
+      this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
     }
     this.dataSourcePeriodStatistic = new MatTableDataSource<any>(this.PeriodStatistics);
   }
@@ -520,12 +440,12 @@ export class TeacherperiodComponent implements OnInit {
           var _teacherId = 0;
           if (f.TeacherSubject != null)
             _teacherId = f.TeacherSubject.EmployeeId;
-        
-            var _section = ''
+
+          var _section = ''
           var objsection = this.Sections.filter(s => s.MasterDataId == f.SectionId);
-          var objTeachersubj =this.TeacherSubjectList.filter(t => t.TeacherSubjectId == f.TeacherSubjectId);
-          
-          if (objsection.length > 0 && objTeachersubj.length>0) {
+          var objTeachersubj = this.TeacherSubjectList.filter(t => t.TeacherSubjectId == f.TeacherSubjectId);
+
+          if (objsection.length > 0 && objTeachersubj.length > 0) {
             _section = objsection[0].MasterDataName;
             f.Section = _section;
             f.PeriodId = f.SchoolClassPeriod.PeriodId;
@@ -537,6 +457,7 @@ export class TeacherperiodComponent implements OnInit {
         })
         this.FormatData(0, 0);
         this.DataForAllClasses = JSON.parse(JSON.stringify(this.StoredForUpdate));
+        this.GetSchoolTimeTable();
         this.StoredForUpdate = [];
       })
   }
@@ -577,8 +498,8 @@ export class TeacherperiodComponent implements OnInit {
           });
         })
         this.GetAllClassPeriods();
-          //GetAllSchoolTimeTable(); --teacherlist,alltimeperiods
-          //format();
+        //GetAllSchoolTimeTable(); --teacherlist,alltimeperiods
+        //format();
         this.loading = false;
         this.PageLoading = false;
       });
@@ -772,10 +693,11 @@ export class TeacherperiodComponent implements OnInit {
         this.WorkAccounts = this.getDropDownData(globalconstants.MasterDefinitions.employee.WORKACCOUNT);
         this.Batches = this.tokenstorage.getBatches();
         this.GetTeachers();
+
+        this.GetClassSubject();
         
-        this.GetClassSubject(); 
-          //this.GetTeacherSubject(); -- this.ClassSubjects
-                //--teacherlist
+        //this.GetTeacherSubject(); -- this.ClassSubjects
+        //--teacherlist
 
       });
   }
@@ -796,6 +718,7 @@ export interface ISchoolTimeTable {
   Active: number;
   Action: boolean;
 }
+
 
 
 

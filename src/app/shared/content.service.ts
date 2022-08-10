@@ -138,8 +138,8 @@ export class ContentService implements OnInit {
 
     return this.dataservice.get(list);
   }
-  GetClassFeeWithFeeDefinition(pOrgId, pMonthArray) {
-    var filter = "Active eq 1 and OrgId eq " + pOrgId;
+  GetClassFeeWithFeeDefinition(pOrgId, pMonthArray,pBatchId) {
+    var filter = "Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
     var Months = pMonthArray.map(m=> m.val)
     var maxMonth = Math.max(...Months);
     var minMonth = Math.min(...Months);
@@ -458,20 +458,9 @@ export class ContentService implements OnInit {
 
   getStudentClassWithFeeType(pOrgId, pBatchId) {
 
-    //var filterstr = "Active eq 1 and OrgId eq " + pOrgId; //+" and BatchId eq "+ pBatchId +" and Month eq " + pMonth;
     var filterstr = '';
-    // if (pMonth > 0)
-    //   filterstr = "OrgId eq " + pOrgId + " and BatchId eq " + pBatchId + " and Month eq " + pMonth;
-    // else
-    filterstr = "OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
-    // SectionId = x.b.a.studcls.SectionId,
-    // Month = x.b.cls.Month,
-    // RollNo = x.b.a.studcls.RollNo,
-    // StudentClassId = x.b.a.studcls.StudentClassId,
-    // Formula = x.b.a.fee.Formula,
-    // FeeName = x.defn.FeeName,
-    // Amount = x.b.cls.Amount
-
+    filterstr = "Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
+  
     let list: List = new List();
     list.fields = [
       "StudentClassId",

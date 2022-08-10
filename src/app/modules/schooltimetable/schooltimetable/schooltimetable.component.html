@@ -6,7 +6,7 @@
     <!-- <alert></alert> -->
     <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
     <div style="width: 100%;">
-        <form [formGroup]="searchForm" fxLayout="row" fxLayoutAlign="space-between center">
+        <form [formGroup]="searchForm" style="margin-bottom:15px">
             <div>
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Class</mat-label>
@@ -33,21 +33,26 @@
                 </button>
             </div>
         </form>
-        <mat-table [dataSource]="dataSourceDayStatistic" matSort *ngIf="DayStatisticDisplay.length>1">
-            <ng-container *ngFor="let disCol of DayStatisticDisplay; let colIndex = index" matColumnDef="{{disCol}}">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    <div *ngIf="disCol!='FirstCol' && disCol!='TeacherName'">{{disCol}}
-                    </div>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <div *ngIf="disCol!='TeacherName'" style="text-align:center;width:100%">{{element[disCol]}}</div>
-                    <div *ngIf="disCol=='TeacherName'">{{element[disCol]}}</div>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="DayStatisticDisplay"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: DayStatisticDisplay;" class="element-row"></mat-row>
-        </mat-table>
+        <div><span style="font-weight: bold;">Week Period Count</span>
+            <mat-table [dataSource]="dataSourceDayStatistic" matSort style="margin-bottom: 15px;">
+                <ng-container *ngFor="let disCol of DayStatisticDisplay; let colIndex = index"
+                    matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>
+                        <div *ngIf="disCol!='FirstCol' && disCol!='TeacherName'">{{disCol}}
+                        </div>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <div *ngIf="disCol!='TeacherName'" style="text-align:center;width:100%">{{element[disCol]}}
+                        </div>
+                        <div *ngIf="disCol=='TeacherName'">{{element[disCol]}}</div>
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="DayStatisticDisplay"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: DayStatisticDisplay;" class="element-row"></mat-row>
+            </mat-table>
+        </div>
         <div>
+            <span style="font-weight: bold;">Day Period Count</span>
             <mat-table [dataSource]="dataSourcePeriodStatistic" style="margin-bottom: 15px;">
                 <ng-container *ngFor="let disCol of PeriodStatisticDisplay;" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
@@ -71,7 +76,8 @@
             </mat-table>
         </div>
         <div style="overflow: auto;height: 430px; width: auto;">
-            <mat-table #table [dataSource]="dataSource">
+            <span style="font-weight: bold;">Time Table</span>
+            <mat-table #table [dataSource]="dataSource" *ngIf="SchoolTimeTableList.length>0">
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
                         <span

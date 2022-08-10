@@ -56,7 +56,7 @@ export class ClassEvaluationComponent implements OnInit {
     ClassEvalCategoryId: 0,
     ClassEvalSubCategoryId: 0,
     MultipleAnswer: 0,
-    ExamId:0,
+    ExamId: 0,
     EvaluationMasterId: 0,
     Description: '',
     DisplayOrder: 0,
@@ -148,12 +148,12 @@ export class ClassEvaluationComponent implements OnInit {
     return str.replace(format, function (m) { return map[m]; });
     //return str.replace(/[&<>"']/g, function(m) { return map[m]; });
   }
-  FilteredExam=[];
+  FilteredExam = [];
   SelectEvaluation() {
     debugger;
     var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId);
-    this.FilteredExam = this.Exams.filter(e=>e.ClassGroupId == _searchClassGroupId);
+    this.FilteredExam = this.Exams.filter(e => e.ClassGroupId == _searchClassGroupId);
   }
   GetExams() {
 
@@ -216,7 +216,7 @@ export class ClassEvaluationComponent implements OnInit {
       QuestionnaireTypeId: 0,
       Description: '',
       MultipleAnswer: 0,
-      ExamId:0,
+      ExamId: 0,
       EvaluationMasterId: _EvaluationMasterId,
       ClassEvaluationAnswerOptionParentId: 0,
       DisplayOrder: 0,
@@ -270,67 +270,67 @@ export class ClassEvaluationComponent implements OnInit {
       return;
     }
 
-    checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
+    // checkFilterString += " and EvaluationMasterId eq " + row.EvaluationMasterId
 
-    if (row.ClassEvaluationId > 0)
-      checkFilterString += " and ClassEvaluationId ne " + row.ClassEvaluationId;
-    checkFilterString += " and " + this.StandardFilter;
-    let list: List = new List();
-    list.fields = ["ClassEvaluationId"];
-    list.PageName = "ClassEvaluations";
-    list.filter = [checkFilterString];
+    // if (row.ClassEvaluationId > 0)
+    //   checkFilterString += " and ClassEvaluationId ne " + row.ClassEvaluationId;
+    // checkFilterString += " and " + this.StandardFilter;
+    // let list: List = new List();
+    // list.fields = ["ClassEvaluationId"];
+    // list.PageName = "ClassEvaluations";
+    // list.filter = [checkFilterString];
 
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.loading = false; this.PageLoading = false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-          //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-        }
-        else {
-          //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
-          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-          this.ClassEvaluationForUpdate = [];;
-          ////console.log("inserting-1",this.ClassEvaluationForUpdate);
-          this.ClassEvaluationForUpdate.push(
-            {
-              ClassEvaluationId: row.ClassEvaluationId,
-              Active: row.Active,
-              QuestionnaireTypeId: row.QuestionnaireTypeId,
-              MultipleAnswer: row.MultipleAnswer,
-              ExamId:row.ExamId,
-              ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
-              EvaluationMasterId: row.EvaluationMasterId,
-              Description: globalconstants.encodeSpecialChars(row.Description),
-              DisplayOrder: row.DisplayOrder,
-              OrgId: this.LoginUserDetail[0]["orgId"]
-            });
-          //console.log('dta', this.ClassEvaluationForUpdate);
-          if (this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId == 0)
-            this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId == null;
-
-          if (this.ClassEvaluationForUpdate[0].ClassEvaluationId == 0) {
-            this.ClassEvaluationForUpdate[0]["CreatedDate"] = new Date();
-            this.ClassEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.ClassEvaluationForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.ClassEvaluationForUpdate[0]["UpdatedBy"];
-            delete this.ClassEvaluationForUpdate[0]["SubCategories"];
-            ////console.log("inserting1",this.ClassEvaluationForUpdate);
-            this.insert(row);
-          }
-          else {
-            //this.ClassEvaluationForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
-            //this.ClassEvaluationForUpdate[0]["CreatedBy"] = row.CreatedBy;
-            this.ClassEvaluationForUpdate[0]["UpdatedDate"] = new Date();
-            delete this.ClassEvaluationForUpdate[0]["SubCategories"];
-            delete this.ClassEvaluationForUpdate[0]["UpdatedBy"];
-            //this.ClassEvaluationForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            //this.insert(row);
-            this.update(row);
-          }
-        }
+    // this.dataservice.get(list)
+    //   .subscribe((data: any) => {
+    //     //debugger;
+    //     if (data.value.length > 0) {
+    //       this.loading = false; this.PageLoading = false;
+    //       this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    //       //this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
+    //     }
+    //     else {
+    //this.shareddata.CurrentSelectedBatchId.subscribe(c => this.SelectedBatchId = c);
+    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+    this.ClassEvaluationForUpdate = [];;
+    ////console.log("inserting-1",this.ClassEvaluationForUpdate);
+    this.ClassEvaluationForUpdate.push(
+      {
+        ClassEvaluationId: row.ClassEvaluationId,
+        Active: row.Active,
+        QuestionnaireTypeId: row.QuestionnaireTypeId,
+        MultipleAnswer: row.MultipleAnswer,
+        ExamId: row.ExamId,
+        ClassEvaluationAnswerOptionParentId: row.ClassEvaluationAnswerOptionParentId,
+        EvaluationMasterId: row.EvaluationMasterId,
+        Description: globalconstants.encodeSpecialChars(row.Description),
+        DisplayOrder: row.DisplayOrder,
+        OrgId: this.LoginUserDetail[0]["orgId"]
       });
+    //console.log('dta', this.ClassEvaluationForUpdate);
+    if (this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId == 0)
+      this.ClassEvaluationForUpdate[0].ClassEvaluationAnswerOptionParentId == null;
+
+    if (this.ClassEvaluationForUpdate[0].ClassEvaluationId == 0) {
+      this.ClassEvaluationForUpdate[0]["CreatedDate"] = new Date();
+      this.ClassEvaluationForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+      this.ClassEvaluationForUpdate[0]["UpdatedDate"] = new Date();
+      delete this.ClassEvaluationForUpdate[0]["UpdatedBy"];
+      delete this.ClassEvaluationForUpdate[0]["SubCategories"];
+      ////console.log("inserting1",this.ClassEvaluationForUpdate);
+      this.insert(row);
+    }
+    else {
+      //this.ClassEvaluationForUpdate[0]["CreatedDate"] = new Date(row.CreatedDate);
+      //this.ClassEvaluationForUpdate[0]["CreatedBy"] = row.CreatedBy;
+      this.ClassEvaluationForUpdate[0]["UpdatedDate"] = new Date();
+      delete this.ClassEvaluationForUpdate[0]["SubCategories"];
+      delete this.ClassEvaluationForUpdate[0]["UpdatedBy"];
+      //this.ClassEvaluationForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+      //this.insert(row);
+      this.update(row);
+    }
+    //}
+    //});
   }
   loadingFalse() {
     this.loading = false; this.PageLoading = false;
@@ -589,7 +589,7 @@ export interface IClassEvaluation {
   ClassEvaluationId: number;
   QuestionnaireTypeId: number;
   MultipleAnswer: number;
-  ExamId:number;
+  ExamId: number;
   Description: string;
   ClassEvaluationAnswerOptionParentId: number;
   DisplayOrder: number;

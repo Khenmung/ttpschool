@@ -50,14 +50,15 @@
                         </div>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <div *ngIf="disCol=='TeacherName'"> {{element[disCol]}}
+                        <!-- <div *ngIf="disCol=='TeacherName'"> {{element[disCol]}}
                         </div>
                         <div *ngIf="disCol!='TeacherName' && element[disCol]>1"
                             style="font-weight:bold;color:red;text-align:center;width:100%"> {{element[disCol]}}
                         </div>
                         <div *ngIf="disCol!='TeacherName' && (disCol =='Day' || element[disCol]<=1)"
                             style="text-align:center;width:100%"> {{element[disCol]}}
-                        </div>
+                        </div> -->
+                        {{element[disCol]}}
                     </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="PeriodStatisticDisplay"></mat-header-row>

@@ -166,7 +166,7 @@ export class DashboardclassfeeComponent implements OnInit {
   CreateInvoice() {
     debugger;
     this.loading = true;
-    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"],this.Months)
+    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], this.Months, this.SelectedBatchId)
       .subscribe((datacls: any) => {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
@@ -178,20 +178,23 @@ export class DashboardclassfeeComponent implements OnInit {
               var _feeName = '';
               var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
               objClassFee.forEach(clsfee => {
-                _feeName = clsfee.FeeName;
-                studentfeedetail.push({
-                  Month: clsfee.Month,
-                  Amount: clsfee.Amount,
-                  Formula: studcls.FeeType.Formula,
-                  FeeName: _feeName,
-                  StudentClassId: studcls.StudentClassId,
-                  FeeTypeId: studcls.FeeTypeId,
-                  SectionId: studcls.SectionId,
-                  RollNo: studcls.RollNo
-                });
+                var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
+                if (_formula.length > 0) {
+                  _feeName = clsfee.FeeDefinition.FeeName;
+                  studentfeedetail.push({
+                    Month: clsfee.Month,
+                    Amount: clsfee.Amount,
+                    Formula: _formula,
+                    FeeName: _feeName,
+                    StudentClassId: studcls.StudentClassId,
+                    FeeTypeId: studcls.FeeTypeId,
+                    SectionId: studcls.SectionId,
+                    RollNo: studcls.RollNo
+                  });
+                }
               })
             })
-
+            console.log("studentfeedetailxxxx",studentfeedetail)
             this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
               .subscribe((data: any) => {
                 this.loading = false;
