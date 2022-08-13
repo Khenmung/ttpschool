@@ -49,9 +49,9 @@ export class ClassEvaluationOptionComponent implements OnInit { PageLoading=true
     'ClassEvaluationAnswerOptionsId',
     'Title',
     'Description',
-    'ParentId',
     'Point',
     'Correct',
+    'ParentId',
     'Active',
     'Action'
   ];

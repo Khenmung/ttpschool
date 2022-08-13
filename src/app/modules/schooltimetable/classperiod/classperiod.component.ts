@@ -16,7 +16,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./classperiod.component.scss']
 })
 
-export class ClassperiodComponent implements OnInit { PageLoading=true;
+export class ClassperiodComponent implements OnInit {
+  PageLoading = true;
 
 
   LoginUserDetail: any[] = [];
@@ -115,21 +116,22 @@ export class ClassperiodComponent implements OnInit { PageLoading=true;
   UpdateOrSave(row) {
 
     //debugger;
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
 
-    if (row.PeriodTypeId == 0) {
-      this.contentservice.openSnackBar("Please select period type.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+    if (row.Active == 1) {
+      if (row.FromToTime == 0) {
+        this.contentservice.openSnackBar("Please enter period time.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+      else if (row.PeriodTypeId == 0) {
+        this.contentservice.openSnackBar("Please select period type.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+      if (row.Sequence == 0) {
+        this.contentservice.openSnackBar("Please enter sequence of period.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
     }
-    if (row.FromToTime == 0) {
-      this.contentservice.openSnackBar("Please enter period time.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (row.Sequence == 0) {
-      this.contentservice.openSnackBar("Please enter sequence of period.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-
     this.loading = true;
 
 
@@ -150,7 +152,7 @@ export class ClassperiodComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -193,11 +195,11 @@ export class ClassperiodComponent implements OnInit { PageLoading=true;
         (data: any) => {
           row.SchoolClassPeriodId = data.SchoolClassPeriodId;
           row.Action = false;
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
 
@@ -213,7 +215,7 @@ export class ClassperiodComponent implements OnInit { PageLoading=true;
           this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
@@ -295,7 +297,7 @@ export class ClassperiodComponent implements OnInit { PageLoading=true;
         })
 
         this.dataSource = new MatTableDataSource<ISchoolClassPeriod>(this.SchoolClassPeriodList);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   CheckAll(value) {
@@ -410,7 +412,7 @@ export class ClassperiodComponent implements OnInit { PageLoading=true;
         this.PeriodTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.PERIODTYPE);
         //this.shareddata.ChangeBatch(this.Batches);
         this.Batches = this.tokenstorage.getBatches()
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
 

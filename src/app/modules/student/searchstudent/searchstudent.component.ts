@@ -294,9 +294,8 @@ export class searchstudentComponent implements OnInit {
     this.generateDetail(element);
     this.route.navigate(['/edu/feepayment']);
   }
-  ClearData()
-  {
-    this.ELEMENT_DATA=[];
+  ClearData() {
+    this.ELEMENT_DATA = [];
     this.dataSource = new MatTableDataSource<any>(this.ELEMENT_DATA);
   }
   generateDetail(element) {
@@ -474,8 +473,12 @@ export class searchstudentComponent implements OnInit {
           });
           this.ELEMENT_DATA = formattedData.map(item => {
             item.Name = item.FirstName + " " + item.LastName;
-            if (item.RemarkId > 0)
-              item.Remarks = this.Remarks.filter(f => f.MasterDataId == item.RemarkId)[0].MasterDataName;
+            var _remark = '';
+            var objremark = this.Remarks.filter(f => f.MasterDataId == item.RemarkId);
+            if (objremark.length > 0) {
+              _remark = objremark[0].MasterDataName
+              item.Remarks = _remark;
+            }
             else
               item.Remarks = '';
             if (item.StudentClasses.length == 0) {

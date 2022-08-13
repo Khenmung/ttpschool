@@ -123,7 +123,7 @@ export class ContentService implements OnInit {
     //+ ' and BatchId eq ' + this.SelectedBatchId;
     let list: List = new List();
 
-    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula,Sequence"];
+    list.fields = ["StudentGradeId,GradeName,ClassGroupId,SubjectCategoryId,Formula,Sequence,Points"];
     list.PageName = "StudentGrades";
     list.filter = ["Active eq 1" + orgIdSearchstr];
     return this.dataservice.get(list)
@@ -138,21 +138,23 @@ export class ContentService implements OnInit {
 
     return this.dataservice.get(list);
   }
-  GetClassFeeWithFeeDefinition(pOrgId, pMonthArray,pBatchId) {
+  GetClassFeeWithFeeDefinition(pOrgId, pMonth, pBatchId) {
     var filter = "Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
-    var Months = pMonthArray.map(m=> m.val)
-    var maxMonth = Math.max(...Months);
-    var minMonth = Math.min(...Months);
+    //var Months = pMonthArray.map(m=> m.val)
+    // var maxMonth = Math.max(...Months);
+    // var minMonth = Math.min(...Months);
 
-    if (pMonthArray.length ==1 && pMonthArray[0]>0)
-      filter += ' and Month eq ' + pMonthArray[0];
+    if (pMonth > 0)
+      filter += ' and Month eq ' + pMonth;
     else
-      filter += ' and Month ge ' + minMonth + ' and Month le ' + maxMonth ;
+      filter += ' and Month gt ' + pMonth;
+    // else
+    //   filter += ' and Month ge ' + minMonth + ' and Month le ' + maxMonth ;
 
     let list = new List();
     list.fields = ["ClassId", "Active", "Amount", "Month", "FeeDefinitionId"];
     list.PageName = "ClassFees";
-    list.lookupFields = ["FeeDefinition($select=FeeName,Active)"];
+    list.lookupFields = ["FeeDefinition($select=FeeCategoryId,FeeSubCategoryId,FeeName,Active)"];
     list.filter = [filter];
     return this.dataservice.get(list);
   }
@@ -167,6 +169,7 @@ export class ContentService implements OnInit {
       "FeeName",
       "Description",
       "FeeCategoryId",
+      "FeeSubCategoryId",
       "OrgId",
       "BatchId",
       "Active"
@@ -456,14 +459,18 @@ export class ContentService implements OnInit {
     return this.authservice.CallAPI(OrgIdAndbatchId, _function);
   }
 
-  getStudentClassWithFeeType(pOrgId, pBatchId) {
+  getStudentClassWithFeeType(pOrgId, pBatchId, pStudentClassId) {
 
     var filterstr = '';
     filterstr = "Active eq 1 and OrgId eq " + pOrgId + " and BatchId eq " + pBatchId;
-  
+
+    if (pStudentClassId > 0)
+      filterstr += " and StudentClassId eq " + pStudentClassId;
+
     let list: List = new List();
     list.fields = [
       "StudentClassId",
+      "StudentId",
       "ClassId",
       "FeeTypeId",
       "SectionId",
@@ -478,12 +485,16 @@ export class ContentService implements OnInit {
     var AmountAfterFormulaApplied = 0;
     var _VariableObjList = [];
     var _LedgerData = [];
-    //console.log("data",data)
+    //console.log("data", data.filter(f => f.StudentClassId == 3852))
     data.forEach(inv => {
       _VariableObjList.push(inv)
       if (inv.Formula.length > 0) {
-        console.log("inv.Formula", inv.Formula);
+  //      if (inv.Month == 202200)
+          console.log("inv.Formula", inv.Formula);
+
         var formula = this.ApplyVariables(inv.Formula, _VariableObjList);
+      //  if (inv.Month == 202200)
+          console.log("after applying Formula", formula);
         //after applying, remove again since it is for each student
         _VariableObjList.splice(_VariableObjList.indexOf(inv), 1);
         AmountAfterFormulaApplied = evaluate(formula);
@@ -516,10 +527,11 @@ export class ContentService implements OnInit {
       Object.keys(stud).forEach(studproperty => {
         //var prop =studproperty.toLowerCase()
         if (filledVar.includes(studproperty)) {
-          if (isNaN(stud[studproperty]))
+          if (typeof stud[studproperty] != 'number')
             filledVar = filledVar.replaceAll("[" + studproperty + "]", "'" + stud[studproperty] + "'");
-          else
+          else {
             filledVar = filledVar.replaceAll("[" + studproperty + "]", stud[studproperty]);
+          }
         }
       });
     })

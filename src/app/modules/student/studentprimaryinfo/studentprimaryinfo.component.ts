@@ -373,7 +373,7 @@ export class studentprimaryinfoComponent implements OnInit {
     }
     this.loading = true;
     var _email = this.studentForm.get("EmailAddress").value;
-    if (_email.length > 0) {
+    if (_email !=null && _email.length > 0) {
       var checkduppayload = { 'Id': this.StudentId, 'Email': _email }
       this.contentservice.CheckEmailDuplicate(checkduppayload)
         .subscribe((data: any) => {

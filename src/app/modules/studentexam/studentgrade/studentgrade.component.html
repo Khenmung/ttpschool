@@ -70,6 +70,16 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="Points">
+                    <mat-header-cell *matHeaderCellDef>Points
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="outline">
+                            <input autocomplete="Off" matInput type="number" (blur)="onBlur(element)"
+                                [value]="element.Points" [(ngModel)]="element.Points" [max]="100">
+                        </mat-form-field>
+                    </mat-cell>
+                </ng-container>
                 <ng-container matColumnDef="ClassGroupId">
                     <mat-header-cell *matHeaderCellDef>Class Group
                     </mat-header-cell>

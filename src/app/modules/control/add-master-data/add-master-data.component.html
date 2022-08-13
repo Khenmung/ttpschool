@@ -142,7 +142,25 @@
             <mat-cell *matCellDef="let element">
                 <button [disabled]="loading 
                 || !element.Action 
-                || Permission=='read'" style="margin-right:15px;" matTooltip="save" mat-raised-button color="accent"
+                || Permission=='read'
+                || (element.MasterDataId>0 && (Parent=='Information Restriction' 
+                                       || Parent=='Period Type'
+                                       || Parent=='Roll No Generation' 
+                                       || Parent=='User Type'
+                                       || Parent=='Exam Status'
+                                       || Parent=='Fee Payment Type'    
+                                       || Parent=='Subject Category'    
+                                       || Parent=='Questionnaire Type'    
+                                       || Parent=='Attendance Mode'    
+                                       || element.MasterDataName=='Admin'
+                                       || element.MasterDataName=='Teacher'
+                                       || element.MasterDataName=='Student'
+                                       || element.MasterDataName=='Employee'
+                                       || element.MasterDataName=='Employee Upload'
+                                       || element.MasterDataName=='Cash'
+                                       || element.MasterDataName=='Teaching'  
+                                       || element.MasterDataName=='Non Teaching'))
+                " style="margin-right:15px;" matTooltip="save" mat-raised-button color="accent"
                     (click)="SaveRow(element)">
                     <mat-icon>save</mat-icon>
                     <mat-icon *ngIf="loading">
@@ -169,25 +187,3 @@
         {{item}}
     </div>
 </div>
-<!-- <div fxLayout="column" fxLayoutAlign="center center" class="boxes">
-    <strong>Essential data for Application setting Statuses</strong>
-    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid lightgrey;">
-        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
-            <div style="width:200px" *ngFor="let item of ApplicationDataStatus">{{item.MasterDataName}}
-                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
-            </div>
-        </div>
-    </div>
-</div>
-<div fxLayout="column" fxLayoutAlign="center center" class="boxes">
-    <strong>Essential data for <b>School Application</b> setting Statuses</strong>
-    <div style="border-collapse:collapse;border-top-color: 1px solid grey;border-bottom-color: 1px solid grey;">
-        <div fxLayoutGap="30px" fxLayout="row wrap" fxLayoutAlign="space-around center">
-            <div style="width:200px" *ngFor="let item of SchoolDataStatus">{{item.MasterDataName}}
-                <mat-icon matTooltip="done" *ngIf="item.Done">done</mat-icon>
-                <mat-icon matTooltip="pending" *ngIf="!item.Done">pending</mat-icon>
-            </div>
-        </div>
-    </div>
-</div> -->

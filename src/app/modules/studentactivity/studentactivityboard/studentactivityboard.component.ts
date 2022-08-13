@@ -45,8 +45,7 @@ export class StudentactivityboardComponent implements AfterViewInit {
     private nav: Router,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
-    private shareddata: SharedataService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    private shareddata: SharedataService) {
   }
 
   public ngAfterViewInit(): void {

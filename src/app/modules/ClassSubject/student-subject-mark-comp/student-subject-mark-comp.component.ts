@@ -152,8 +152,8 @@ export class StudentSubjectMarkCompComponent implements OnInit { PageLoading=tru
           this.classSubjectComponentData.ClassSubjectMarkComponentId = row.ClassSubjectMarkComponentId;
           this.classSubjectComponentData.ClassSubjectId = row.ClassSubjectId;
           this.classSubjectComponentData.SubjectComponentId = row.SubjectComponentId;
-          this.classSubjectComponentData.FullMark = row.FullMark;
-          this.classSubjectComponentData.PassMark = row.PassMark;
+          this.classSubjectComponentData.FullMark = row.FullMark==''?0:row.FullMark;
+          this.classSubjectComponentData.PassMark = row.PassMark==''?0:row.PassMark;
           this.classSubjectComponentData.BatchId = this.SelectedBatchId;
           this.classSubjectComponentData.OrgId = this.LoginUserDetail[0]["orgId"];
 

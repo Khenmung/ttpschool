@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -194,7 +194,8 @@ export class SchooltimetableComponent implements OnInit {
       .subscribe(
         (data: any) => {
           row.TimeTableId = data.TimeTableId;
-          this.GetAllSchoolTimeTable();
+          //this.GetAllSchoolTimeTable();
+          //this.GetSchoolTimeTable();
           element.Action = false;
           this.loading = false;
           if (this.rowCount == 0) {
@@ -211,7 +212,8 @@ export class SchooltimetableComponent implements OnInit {
       .subscribe(
         (data: any) => {
           debugger;
-          this.GetAllSchoolTimeTable();
+          //this.GetAllSchoolTimeTable();
+          //this.GetSchoolTimeTable();
           row.Action = false;
           if (this.rowCount == 0) {
             this.rowCount = -1;
@@ -320,6 +322,7 @@ export class SchooltimetableComponent implements OnInit {
         filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == distinctcls.ClassId);
 
         if (filterPeriods.length == 0) {
+          this.contentservice.openSnackBar("Period not yet defined for this class.",globalconstants.ActionText,globalconstants.RedBackground);
           console.log("Period not yet defined for this class : " + distinctcls.ClassId);
         }
         else {
@@ -695,7 +698,7 @@ export class SchooltimetableComponent implements OnInit {
       this.contentservice.openSnackBar("Subject must be selected for periods", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+debugger;
     this.rowCount = _toUpdate.length;
     for (var i = 0; i < _toUpdate.length; i++) {
       this.rowCount--;

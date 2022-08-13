@@ -39,13 +39,14 @@ export class DashboardclassfeeComponent implements OnInit {
   FeeDefinitions = [];
   Classes = [];
   Batches = [];
-  Locations = [];
+  //Locations = [];
   Permission = 'deny';
   DataToSaveInLoop = [];
   ClassStatuses = [];
   ELEMENT_DATA: Element[] = [];
   dataSource: MatTableDataSource<Element>;
   allMasterData = [];
+  FeeCategories =[];
   searchForm: any;
   classFeeData = {
     ClassFeeId: 0,
@@ -114,7 +115,7 @@ export class DashboardclassfeeComponent implements OnInit {
           this.contentservice.GetFeeDefinitions(this.LoginUserDetail[0]["orgId"], 1).subscribe((d: any) => {
             this.FeeDefinitions = [...d.value];
           })
-
+          this.GetMasterData();
           if (this.Classes.length == 0) {
             this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
               this.Classes = [...data.value];
@@ -166,19 +167,31 @@ export class DashboardclassfeeComponent implements OnInit {
   CreateInvoice() {
     debugger;
     this.loading = true;
-    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], this.Months, this.SelectedBatchId)
+    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
       .subscribe((datacls: any) => {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
               var _feeName = '';
               var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
               objClassFee.forEach(clsfee => {
+                var _category = '';
+                var _subCategory = '';
+
+                var objcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeCategoryId);
+                if (objcat.length > 0)
+                  _category = objcat[0].MasterDataName;
+
+                var objsubcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeSubCategoryId);
+                if (objsubcat.length > 0)
+                  _subCategory = objsubcat[0].MasterDataName;
+
                 var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
+
                 if (_formula.length > 0) {
                   _feeName = clsfee.FeeDefinition.FeeName;
                   studentfeedetail.push({
@@ -187,14 +200,17 @@ export class DashboardclassfeeComponent implements OnInit {
                     Formula: _formula,
                     FeeName: _feeName,
                     StudentClassId: studcls.StudentClassId,
+                    FeeCategory: _category,
+                    FeeSubCategory: _subCategory,
                     FeeTypeId: studcls.FeeTypeId,
                     SectionId: studcls.SectionId,
                     RollNo: studcls.RollNo
                   });
                 }
+
               })
             })
-            console.log("studentfeedetailxxxx",studentfeedetail)
+             console.log("studentfeedetailxxxx",studentfeedetail)
             this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
               .subscribe((data: any) => {
                 this.loading = false;
@@ -208,26 +224,6 @@ export class DashboardclassfeeComponent implements OnInit {
           })
       });
 
-    // .subscribe((data: any) => {
-    //   //console.log("getinvoice", data)
-    //   this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
-    //     .subscribe((data: any) => {
-    //       this.loading = false; this.PageLoading = false;
-    //       this.InvoiceCreated = true;
-    //       this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-    //     },
-    //       error => {
-    //         this.loading = false; this.PageLoading = false;
-    //         this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
-    //         console.log("error in createInvoice", error);
-    //       })
-    // },
-    //   error => {
-    //     this.loading = false; this.PageLoading = false;
-    //     this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
-    //     console.log("error in getinvoice", error);
-    //   })
-
   }
   ApplyVariables(formula) {
     var filledVar = formula;
@@ -235,7 +231,7 @@ export class DashboardclassfeeComponent implements OnInit {
       Object.keys(stud).forEach(studproperty => {
         //var prop =studproperty.toLowerCase()
         if (filledVar.includes(studproperty)) {
-          if (isNaN(stud[studproperty]))
+          if (typeof stud[studproperty]!='number')
             filledVar = filledVar.replaceAll("[" + studproperty + "]", "'" + stud[studproperty] + "'");
           else
             filledVar = filledVar.replaceAll("[" + studproperty + "]", stud[studproperty]);
@@ -301,6 +297,12 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   UpdateOrSave(row) {
     debugger;
+    var objDiscount = this.ELEMENT_DATA.filter(f=>f.FeeName =='Discount' && f.Active==1);
+    if(objDiscount.length==0)
+    {
+      this.contentservice.openSnackBar("Discount should be activated and saved.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     if (row.Amount < 0) {
       row.Action = false;
       this.loading = false; this.PageLoading = false;
@@ -576,8 +578,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
-        this.Locations = this.getDropDownData(globalconstants.MasterDefinitions.ttpapps.LOCATION);
-
+        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
 
       });
   }

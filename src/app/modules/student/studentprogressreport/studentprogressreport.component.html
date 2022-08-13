@@ -24,7 +24,8 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header><span *ngIf="disCol!='Subject'">{{disCol}}</span>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element[disCol]}}
+                    <span style="font-weight:bold" *ngIf="element[disCol]==OverAllGrade">{{element[disCol]}}</span>
+                    <span *ngIf="element[disCol]!=OverAllGrade">{{element[disCol]}}</span>
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="GradedDisplayColumns"></mat-header-row>
@@ -74,7 +75,7 @@
                             <mat-icon class="icon">star_outline</mat-icon> {{element[disCol]}}
                         </span>
                         <span [innerHTML]="element[disCol]|encodeHTML"
-                            style="width: 100%;min-height: 50px;padding: 15px;"
+                            style="align-self:stretch; width: 100%;min-height: 50px;padding: 15px;"
                             *ngIf="element['QuestionnaireType']!='Evaluation Master' 
                                    && disCol!='Description' 
                                    && disCol!='QuestionnaireType' 

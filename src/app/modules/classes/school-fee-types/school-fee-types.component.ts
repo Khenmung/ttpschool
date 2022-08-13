@@ -14,7 +14,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './school-fee-types.component.html',
   styleUrls: ['./school-fee-types.component.scss']
 })
-export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
+export class SchoolFeeTypesComponent implements OnInit {
+  PageLoading = true;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   FeeTypeListName = 'SchoolFeeTypes';
@@ -25,6 +26,8 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
   dataSource: MatTableDataSource<IFeeType>;
   Permission = 'deny';
   SelectedBatchId = 0;
+  allMasterData = [];
+  FeeCategories = [];
   FeeTypeData = {
     FeeTypeId: 0,
     FeeTypeName: '',
@@ -44,6 +47,8 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
     'Active',
     'Action'
   ];
+  Students = [];
+  SelectedApplicationId = 0;
   searchForm: FormGroup;
   constructor(
     private dataservice: NaomitsuService,
@@ -75,8 +80,11 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
         //this.nav.navigate(['/edu']);
       }
       else {
+        this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-        this.loading = false; this.PageLoading=false;
+        this.GetMasterData();
+        this.GetStudents();
+        this.loading = false; this.PageLoading = false;
       }
     }
   }
@@ -86,6 +94,8 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
       FeeTypeName: '',
       Description: '',
       Formula: '',
+      FeeCategory:'',
+      FeeSubCategory:'',
       DefaultType: 0,
       Active: 0,
       Action: true
@@ -93,6 +103,36 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
     this.FeeTypeList = [];
     this.FeeTypeList.push(newdata);
     this.dataSource = new MatTableDataSource<IFeeType>(this.FeeTypeList);
+  }
+  GetStudents() {
+
+    let list: List = new List();
+    list.fields = [
+      'PID',
+      'StudentId',
+      'FirstName',
+      'LastName'
+    ];
+
+    list.PageName = "Students";
+    //list.lookupFields = ["Student"]
+    list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        //  //console.log('data.value', data.value);
+        if (data.value.length > 0) {
+          this.Students = data.value.map(student => {
+            var _lastName = student.LastName == '' ? '' : '-' + student.LastName;
+            return {
+              StudentId: student.StudentId,
+              Name: student.PID + '-' + student.FirstName + _lastName
+            }
+          })
+        }
+        this.loading = false; this.PageLoading = false;
+      })
   }
   onBlur(element) {
     element.Action = true;
@@ -122,7 +162,7 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
@@ -151,10 +191,11 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
             this.update(row);
           }
         }
-      });
+      }
+      );
   }
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
   insert(row) {
 
@@ -170,9 +211,12 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
 
         },
         err => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; 
+          this.PageLoading = false;
           if (err.error) {
             var modelState = err.error.Errors;
+            if (modelState == undefined)
+              modelState = err.error.errors;
             var errorMessage = '';
             //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
             for (var key in modelState) {
@@ -190,31 +234,14 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
       .subscribe(
         (data: any) => {
           row.Action = false;
-          this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
-            .subscribe((data: any) => {
-
-              this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
-                .subscribe((data: any) => {
-                  // this.loading = false; this.PageLoading=false;
-                  // this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-                  this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-                  this.GetFeeTypes();
-                  this.loadingFalse();
-
-                },
-                  error => {
-                    this.loading = false; this.PageLoading=false;
-                    console.log("error in createInvoice", error);
-                  })
-            },
-              error => {
-                this.loading = false; this.PageLoading=false;
-                console.log("error in getinvoice", error);
-              })
+          this.CreateInvoice();
         },
         err => {
+          this.loading=false;
           if (err.error) {
-            var modelState = err.error.errors;
+            var modelState = err.error.Errors;
+            if (modelState == undefined)
+              modelState = err.error.errors;
             var errorMessage = '';
             //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
             for (var key in modelState) {
@@ -225,6 +252,79 @@ export class SchoolFeeTypesComponent implements OnInit { PageLoading=true;
             this.contentservice.openSnackBar(errorMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
         });
+  }
+  CreateInvoice() {
+    debugger;
+    this.loading = true;
+    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+      .subscribe((datacls: any) => {
+
+        var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
+
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,0)
+          .subscribe((data: any) => {
+            var studentfeedetail = [];
+            data.value.forEach(studcls => {
+              var _feeName = '';
+              var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
+              objClassFee.forEach(clsfee => {
+                var _category = '';
+                var _subCategory = '';
+
+                var objcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeCategoryId);
+                if (objcat.length > 0)
+                  _category = objcat[0].MasterDataName;
+
+                var objsubcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeSubCategoryId);
+                if (objsubcat.length > 0)
+                  _subCategory = objsubcat[0].MasterDataName;
+
+                var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
+
+                if (_formula.length > 0) {
+                  _feeName = clsfee.FeeDefinition.FeeName;
+                  studentfeedetail.push({
+                    Month: clsfee.Month,
+                    Amount: clsfee.Amount,
+                    Formula: _formula,
+                    FeeName: _feeName,
+                    StudentClassId: studcls.StudentClassId,
+                    FeeCategory: _category,
+                    FeeSubCategory: _subCategory,
+                    FeeTypeId: studcls.FeeTypeId,
+                    SectionId: studcls.SectionId,
+                    RollNo: studcls.RollNo
+                  });
+                }
+
+              })
+            })
+            // console.log("studentfeedetailxxxx",studentfeedetail)
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+              .subscribe((data: any) => {
+                this.loading = false;
+                this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+              },
+                error => {
+                  this.loading = false;
+                  console.log("create invoice error", error);
+                  this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+                })
+          })
+      });
+
+  }
+  GetMasterData() {
+
+    this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
+      .subscribe((data: any) => {
+        this.allMasterData = [...data.value];
+        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY)
+        this.loading = false; this.PageLoading = false;
+      });
+  }
+  getDropDownData(dropdowntype) {
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
   }
   GetFeeTypes() {
     //debugger;
@@ -290,6 +390,8 @@ export interface IFeeType {
   FeeTypeName: string;
   Description: string;
   Formula: string;
+  FeeCategory:string;
+  FeeSubCategory:string;
   Active: number;
   Action: boolean;
 }

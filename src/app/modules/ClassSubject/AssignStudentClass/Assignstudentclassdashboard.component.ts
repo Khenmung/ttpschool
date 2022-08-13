@@ -67,7 +67,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   dataSource: MatTableDataSource<IStudentClass>;
   allMasterData = [];
   searchForm: FormGroup;
-
+  FeeCategories =[];
   SelectedApplicationId = 0;
   checkBatchIdNSelectedIdEqual = 0;
   StudentClassData = {
@@ -724,7 +724,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             Section: s.SectionId > 0 ? this.Sections.filter(sc => sc.MasterDataId == s.SectionId)[0].MasterDataName : '',
             Active: previousbatch == '' ? s.Active : 0,
             Promote: 0,
-            Remark:_remark,
+            Remark: _remark,
             Remarks: s.Remarks,
             GenderName: _genderName,
             Action: false
@@ -863,14 +863,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           row.Action = false;
 
           this.RowsToUpdate--;
-          // if (row.Promote == 1)
-          //   this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
-
           if (this.RowsToUpdate == 0) {
-            // if (row.Promote == 1) {
-            //   this.contentservice.openSnackBar("Student/s is promoted to next class without section and roll no.",globalconstants.ActionText,globalconstants.RedBackground);
-            // }
-            // else
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.RowsToUpdate = -1;
           }
@@ -884,31 +877,75 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         (data: any) => {
           row.Action = false;
           this.RowsToUpdate--;
-          this.CreateInvoice();
+
           if (this.RowsToUpdate == 0) {
+
             this.loading = false; this.PageLoading = false;
+            this.CreateInvoice(row);
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });
   }
-  CreateInvoice() {
-    this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, this.StudentClassData.StudentClassId)
-      .subscribe((data: any) => {
+  CreateInvoice(row) {
+    debugger;
+    this.loading = true;
+    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+      .subscribe((datacls: any) => {
 
-        this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+        var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
+
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,row.StudentClassId)
           .subscribe((data: any) => {
-            //this.loading = false; this.PageLoading=false;
-            //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          },
-            error => {
-              this.loading = false; this.PageLoading = false;
-              console.log("error in createInvoice", error);
+            var studentfeedetail = [];
+            data.value.forEach(studcls => {
+              var _feeName = '';
+              var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
+              objClassFee.forEach(clsfee => {
+                var _category = '';
+                var _subCategory = '';
+
+                var objcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeCategoryId);
+                if (objcat.length > 0)
+                  _category = objcat[0].MasterDataName;
+
+                var objsubcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeSubCategoryId);
+                if (objsubcat.length > 0)
+                  _subCategory = objsubcat[0].MasterDataName;
+
+                var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
+
+                if (_formula.length > 0) {
+                  _feeName = clsfee.FeeDefinition.FeeName;
+                  studentfeedetail.push({
+                    Month: clsfee.Month,
+                    Amount: clsfee.Amount,
+                    Formula: _formula,
+                    FeeName: _feeName,
+                    StudentClassId: studcls.StudentClassId,
+                    FeeCategory: _category,
+                    FeeSubCategory: _subCategory,
+                    FeeTypeId: studcls.FeeTypeId,
+                    SectionId: studcls.SectionId,
+                    RollNo: studcls.RollNo
+                  });
+                }
+
+              })
             })
-      },
-        error => {
-          this.loading = false; this.PageLoading = false;
-          console.log("error in getinvoice", error);
-        })
+            // console.log("studentfeedetailxxxx",studentfeedetail)
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+              .subscribe((data: any) => {
+                this.loading = false;
+                this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+              },
+                error => {
+                  this.loading = false;
+                  console.log("create invoice error", error);
+                  this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+                })
+          })
+      });
+
   }
 
   isNumeric(str: number) {
@@ -957,6 +994,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.Remarks = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTREMARKS);
+        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
         this.loading = false; this.PageLoading = false;
       });

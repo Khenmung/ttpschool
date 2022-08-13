@@ -567,7 +567,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     this.VariableObjList.forEach(m => {
       Object.keys(m).forEach(f => {
         if (filledVar.includes(f)) {
-          if (isNaN(m[f]))
+          if (typeof m[f] != 'number')
             filledVar = filledVar.replaceAll("[" + f + "]", "'" + m[f] + "'");
           else
             filledVar = filledVar.replaceAll("[" + f + "]", m[f]);

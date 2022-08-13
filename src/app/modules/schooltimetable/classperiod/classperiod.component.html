@@ -16,7 +16,7 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                    <button [disabled]="loading" matTooltip="search" mat-raised-button color="accent"
                         (click)="GetSchoolClassPeriods()">
                          <mat-icon>search</mat-icon>
                             <mat-icon *ngIf="loading">

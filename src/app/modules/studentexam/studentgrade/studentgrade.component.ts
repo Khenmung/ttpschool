@@ -43,6 +43,7 @@ export class StudentgradeComponent implements OnInit {
     SubjectCategoryId: 0,
     GradeStatusId: 0,
     Sequence: 0,
+    Points: 0,
     OrgId: 0,
     BatchId: 0,
     Active: 0
@@ -51,6 +52,7 @@ export class StudentgradeComponent implements OnInit {
     "StudentGradeId",
     "GradeName",
     "Formula",
+    "Points",
     "ClassGroupId",
     "SubjectCategoryId",
     "GradeStatusId",
@@ -65,7 +67,6 @@ export class StudentgradeComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private nav: Router,
-    private datepipe: DatePipe,
     private fb: FormBuilder
   ) { }
 
@@ -116,6 +117,7 @@ export class StudentgradeComponent implements OnInit {
       SubjectCategoryId: 0,
       GradeStatusId: 0,
       Sequence: 0,
+      Points: 0,
       Active: 0,
       Action: false
     };
@@ -154,8 +156,16 @@ export class StudentgradeComponent implements OnInit {
     }
 
     row.GradeName = globalconstants.encodeSpecialChars(row.GradeName);
-
-
+    if (row.Sequence > 250) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Sequence should not be greater than 250.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (row.Points > 250) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Points should not be greater than 250.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     let checkFilterString = "GradeName eq '" + row.GradeName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"] +
       " and ClassGroupId eq " + row.ClassGroupId
     if (row.SubjectCategoryId == null || row.SubjectCategoryId == 0) {
@@ -191,9 +201,10 @@ export class StudentgradeComponent implements OnInit {
           this.StudentGradeData.GradeStatusId = row.GradeStatusId;
           this.StudentGradeData.Formula = row.Formula;
           this.StudentGradeData.Sequence = row.Sequence;
+          this.StudentGradeData.Points = row.Points;
           this.StudentGradeData.BatchId = this.SelectedBatchId;
           this.StudentGradeData.OrgId = this.LoginUserDetail[0]["orgId"];
-          console.log("this.StudentGradeData", this.StudentGradeData);
+          //console.log("this.StudentGradeData", this.StudentGradeData);
           if (this.StudentGradeData.StudentGradeId == 0) {
             this.StudentGradeData["CreatedDate"] = new Date();
             this.StudentGradeData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
@@ -297,8 +308,6 @@ export class StudentgradeComponent implements OnInit {
           this.Classes = [...data.value];
           this.loading = false; this.PageLoading = false;
         });
-
-
       });
   }
   getDropDownData(dropdowntype) {
@@ -326,6 +335,7 @@ export interface IStudentGrade {
   GradeStatusId: number;
   ClassGroupId: number;
   Sequence: number;
+  Points: number;
   Active: number;
   Action: boolean;
 }

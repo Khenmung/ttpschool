@@ -33,6 +33,7 @@ export class AddstudentclassComponent implements OnInit {
   StudentName = '';
   SelectedApplicationId = 0;
   LoginUserDetail = [];
+  FeeCategories =[];
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
@@ -115,6 +116,7 @@ export class AddstudentclassComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+        this.FeeCategories = this.getDropDownData(globalconstants.MasterDefinitions.school.FEECATEGORY);
         this.aRoute.paramMap.subscribe(param => {
           this.GetStudent();
         })
@@ -297,6 +299,7 @@ export class AddstudentclassComponent implements OnInit {
           this.loading = false; this.PageLoading = false;
           this.StudentClassId = data.StudentClassId;
           this.tokenstorage.saveStudentClassId(this.StudentClassId + "")
+          this.CreateInvoice();
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
 
@@ -306,33 +309,73 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, this.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
-
-          this.contentservice.getInvoice(+this.LoginUserDetail[0]["orgId"], this.studentclassData.BatchId, this.StudentClassId)
-            .subscribe((data: any) => {
-//debugger;
-              this.contentservice.createInvoice(data, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
-                .subscribe((data: any) => {
-                  this.loading = false; this.PageLoading = false;
-                  this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-                },
-                  error => {
-                    this.loading = false; this.PageLoading = false;
-                    console.log("error in createInvoice", error);
-                  })
-            },
-              error => {
-                this.loading = false; this.PageLoading = false;
-                console.log("error in getinvoice", error);
-              })
-        },
-        error => {
-          this.loading = false; this.PageLoading = false;
-          console.log("error in StudentClasses", error);
+            this.CreateInvoice();          
         });
+  }
+  CreateInvoice() {
+    debugger;
+    this.loading = true;
+    this.contentservice.GetClassFeeWithFeeDefinition(this.LoginUserDetail[0]["orgId"], 0, this.SelectedBatchId)
+      .subscribe((datacls: any) => {
+
+        var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
+
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,this.StudentClassId)
+          .subscribe((data: any) => {
+            var studentfeedetail = [];
+            data.value.forEach(studcls => {
+              var _feeName = '';
+              var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
+              objClassFee.forEach(clsfee => {
+                var _category = '';
+                var _subCategory = '';
+
+                var objcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeCategoryId);
+                if (objcat.length > 0)
+                  _category = objcat[0].MasterDataName;
+
+                var objsubcat = this.FeeCategories.filter(f => f.MasterDataId == clsfee.FeeDefinition.FeeSubCategoryId);
+                if (objsubcat.length > 0)
+                  _subCategory = objsubcat[0].MasterDataName;
+
+                var _formula = studcls.FeeType.Active == 1 ? studcls.FeeType.Formula : '';
+
+                if (_formula.length > 0) {
+                  _feeName = clsfee.FeeDefinition.FeeName;
+                  studentfeedetail.push({
+                    Month: clsfee.Month,
+                    Amount: clsfee.Amount,
+                    Formula: _formula,
+                    FeeName: _feeName,
+                    StudentClassId: studcls.StudentClassId,
+                    FeeCategory: _category,
+                    FeeSubCategory: _subCategory,
+                    FeeTypeId: studcls.FeeTypeId,
+                    SectionId: studcls.SectionId,
+                    RollNo: studcls.RollNo
+                  });
+                }
+
+              })
+            })
+            // console.log("studentfeedetailxxxx",studentfeedetail)
+            this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
+              .subscribe((data: any) => {
+                this.loading = false;
+                this.contentservice.openSnackBar("Invoice created successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+              },
+                error => {
+                  this.loading = false;
+                  console.log("create invoice error", error);
+                  this.contentservice.openSnackBar(globalconstants.TechnicalIssueMessage, globalconstants.ActionText, globalconstants.RedBackground);
+                })
+          })
+      });
+
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    
+
     // let Id = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
     // })[0].MasterDataId;

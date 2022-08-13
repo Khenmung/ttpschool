@@ -185,7 +185,6 @@ export class FeereceiptComponent implements OnInit {
             this.CancelReceiptMode = false;
             this.BillDetail = [];
             this.dataSource = new MatTableDataSource<any>(this.BillDetail);
-
           });
     }, 500)
   }

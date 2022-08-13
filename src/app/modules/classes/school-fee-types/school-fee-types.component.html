@@ -11,10 +11,10 @@
                 <input matInput formControlName="searchFeeTypeName" autocomplete="Off">
             </mat-form-field>
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetFeeTypes()">
-                 <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                <mat-icon>search</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
             </button>
         </form>
         <mat-table #table [dataSource]="dataSource">
@@ -30,7 +30,7 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <mat-form-field appearance="outline">
-                        <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="250"
+                        <input matInput (blur)="onBlur(element)" autocomplete="Off" [maxlength]="30"
                             [value]="element.FeeTypeName" [(ngModel)]="element.FeeTypeName">
                     </mat-form-field>
                 </mat-cell>
@@ -63,7 +63,7 @@
                         [checked]="element.DefaultType==1?true:false">
                     </mat-checkbox>
                 </mat-cell>
-            </ng-container>            
+            </ng-container>
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef style="justify-content: center;">Active
                 </mat-header-cell>
@@ -81,23 +81,24 @@
                     </button>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" style="justify-content: center;">
-                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save" 
-mat-raised-button color="accent"
-                        (click)="UpdateOrSave(element)">
-                         <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <button [disabled]="loading || !element.Action || Permission=='read'" matTooltip="save"
+                        mat-raised-button color="accent" (click)="UpdateOrSave(element)">
+                        <mat-icon>save</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;align-items: baseline;" class="element-row"></mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" style="display: flex;align-items: baseline;"
+                class="element-row"></mat-row>
         </mat-table>
-        <div style="width:100%;background-color: lightgray;font-size: medium;padding: 10px;margin:15px 15px 15px 0px"> Below variables can be
+        <div style="width:100%;background-color: lightgray;font-size: medium;padding: 10px;margin:15px 15px 15px 0px">
+            Below variables can be
             applied in the formula.
         </div>
-        <div>StudentName, FeeName,Fee Category, Fee Sub-category, Month*, MonthName, ClassName, SectionName, Amount</div>
+        <div>FeeName,FeeCategory, FeeSubCategory, Month*, Amount</div>
         <div>* Month format: Year + month. Eg. 'Month' for the month of Jan 2021 is 202100, for Feb 2021 is 202101 and
             so on..</div>
     </div>
