@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -41,7 +41,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
   DocumentTypes = [];
   Batches = [];
   LoginUserDetail = [];
-  uploadForm: FormGroup;
+  uploadForm: UntypedFormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
     //"FileId",
@@ -56,7 +56,7 @@ export class EmployeedocumentsComponent implements OnInit { PageLoading=true;
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private tokenService: TokenStorageService,
 
   ) { }

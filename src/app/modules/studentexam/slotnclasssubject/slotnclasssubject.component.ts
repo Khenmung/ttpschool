@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { boolean } from 'mathjs';
@@ -62,7 +62,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     "SlotClassSubjectId",
     "Action"
   ];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -70,7 +70,7 @@ export class SlotnclasssubjectComponent implements OnInit {
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

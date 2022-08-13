@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
@@ -60,14 +60,14 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   displayedColumns = [
     'StudentClassSubject',
   ];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 
     private contentservice: ContentService,
     private nav: Router,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

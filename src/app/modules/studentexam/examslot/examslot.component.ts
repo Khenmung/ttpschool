@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
@@ -59,7 +59,7 @@ export class ExamslotComponent implements OnInit {
     'Active',
     'Action'
   ];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -68,7 +68,7 @@ export class ExamslotComponent implements OnInit {
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

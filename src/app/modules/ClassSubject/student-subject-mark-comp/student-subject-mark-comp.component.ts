@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -43,7 +43,7 @@ export class StudentSubjectMarkCompComponent implements OnInit { PageLoading=tru
   ELEMENT_DATA: ISubjectMarkComponent[] = [];
   dataSource: MatTableDataSource<ISubjectMarkComponent>;
   allMasterData = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   classSubjectComponentData = {
     ClassSubjectMarkComponentId: 0,
     ClassSubjectId: 0,
@@ -60,7 +60,7 @@ export class StudentSubjectMarkCompComponent implements OnInit { PageLoading=tru
     private dataservice: NaomitsuService,
 
     private route: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {

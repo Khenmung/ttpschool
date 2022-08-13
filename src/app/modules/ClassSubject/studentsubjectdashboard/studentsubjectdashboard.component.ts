@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -65,7 +65,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
     OrgId: 0,
     Active: 1
   };
-  nameFilter = new FormControl('');
+  nameFilter = new UntypedFormControl('');
   filterValues = {
     Student: ''
   };
@@ -74,7 +74,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
   displayedColumns = [];
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage: TokenStorageService,

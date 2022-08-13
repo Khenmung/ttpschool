@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ContentService } from 'src/app/shared/content.service';
@@ -16,7 +16,7 @@ import { AuthService } from '../../../_services/auth.service';
 export class ChangePasswordComponent implements OnInit { PageLoading=true;
   loading = false;
   loginUserDetail = [];
-  changepwdForm: FormGroup;
+  changepwdForm: UntypedFormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
@@ -35,7 +35,7 @@ export class ChangePasswordComponent implements OnInit { PageLoading=true;
     private authService: AuthService,
     private route: Router,
     private mediaObserver: MediaObserver,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private tokenService: TokenStorageService,
     private contentservice: ContentService
   ) { }

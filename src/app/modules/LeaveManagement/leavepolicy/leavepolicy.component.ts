@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -63,7 +63,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     "Action"
   ];
   SelectedApplicationId=0;
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private shareddata: SharedataService,
     private contentservice: ContentService,
@@ -71,7 +71,7 @@ export class LeavepolicyComponent implements OnInit { PageLoading=true;
     private tokenstorage: TokenStorageService,
     
     private nav: Router,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

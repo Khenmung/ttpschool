@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatSelectionList } from '@angular/material/list';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -88,7 +88,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
     Active: 0
   };
   ApplicationName = '';
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
 
   constructor(
     private contentservice: ContentService,
@@ -97,7 +97,7 @@ export class GetreportComponent implements OnInit { PageLoading=true;
     private tokenstorage: TokenStorageService,
 
     private nav: Router,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
 
   }

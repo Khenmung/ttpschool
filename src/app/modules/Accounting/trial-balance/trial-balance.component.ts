@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -46,7 +46,7 @@ export class TrialBalanceComponent implements OnInit {
   AccountingVoucherList: IAccountingVoucher[] = [];
   dataSource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   TotalDebit = 0;
   TotalCredit = 0;
   AccountingVoucherData = {
@@ -73,7 +73,7 @@ export class TrialBalanceComponent implements OnInit {
 
   constructor(
     private datepipe: DatePipe,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -60,7 +60,7 @@ export class PromoteclassComponent implements OnInit { PageLoading=true;
   StudentClassList: IStudentClass[] = [];
   dataSource: MatTableDataSource<IStudentClass>;
   allMasterData = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
 
   //ClassSubjectId = 0;
   checkBatchIdNSelectedIdEqual = 0;
@@ -85,7 +85,7 @@ export class PromoteclassComponent implements OnInit { PageLoading=true;
   filteredOptions: Observable<IStudent[]>;
   constructor(
     private contentservice: ContentService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/_services/auth.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -12,7 +12,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class ResetpasswordComponent implements OnInit { PageLoading=true;
   loading = false;
   loginUserDetail = [];
-  resetpwdForm: FormGroup;
+  resetpwdForm: UntypedFormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
@@ -31,7 +31,7 @@ export class ResetpasswordComponent implements OnInit { PageLoading=true;
   constructor(private authService: AuthService,
     private route: Router,
     private aroute:ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private tokenService: TokenStorageService,
   ) { }
 

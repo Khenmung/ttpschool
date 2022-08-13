@@ -1,5 +1,5 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import alasql from 'alasql';
@@ -66,7 +66,7 @@ export class StudentviewComponent implements OnInit {
   displayContactPerson = false;
   Houses = [];
   Remarks = [];
-  studentForm: FormGroup;
+  studentForm: UntypedFormGroup;
   Edited = false;
   public files: NgxFileDropEntry[] = [];
   @ViewChild(ImageCropperComponent, { static: true }) imageCropper: ImageCropperComponent;
@@ -139,7 +139,7 @@ export class StudentviewComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private tokenService: TokenStorageService,

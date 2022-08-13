@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
@@ -53,7 +53,7 @@ export class DailytimetablereportComponent implements OnInit {
     Active: 0
   };
   displayedColumns: any[] = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private datepipe: DatePipe,
     private contentservice: ContentService,
@@ -62,7 +62,7 @@ export class DailytimetablereportComponent implements OnInit {
 
     private nav: Router,
     private shareddata: SharedataService,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
 
   }

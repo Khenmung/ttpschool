@@ -4,7 +4,7 @@ import * as FileSaver from 'file-saver';
 import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
@@ -27,7 +27,7 @@ export class ExcelDataManagementComponent implements OnInit {
     private datepipe: DatePipe,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private shareddata: SharedataService,
     private tokenservice: TokenStorageService,
     private employee: employee,
@@ -126,7 +126,7 @@ export class ExcelDataManagementComponent implements OnInit {
   displayedColumns: any[];
   ELEMENT_DATA = [];
   //dataSource: MatTableDataSource<any>;
-  uploadForm: FormGroup;
+  uploadForm: UntypedFormGroup;
   AllMasterData: any[];
   UploadTypes: any[];
   storeData: any;

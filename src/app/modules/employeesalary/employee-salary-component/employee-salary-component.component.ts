@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -87,7 +87,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
     "Action"
   ];
   Permission='';
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   SelectedApplicationId=0;
   constructor(
     private contentService: ContentService,
@@ -98,7 +98,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
     private nav: Router,
     private contentservice: ContentService,
     private datepipe: DatePipe,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

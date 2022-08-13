@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import { ContentService } from 'src/app/shared/content.service';
@@ -29,10 +29,10 @@ export class FiledragAndDropComponent implements OnInit { PageLoading=true;
   Albums: any[];
   errorMessage = '';
   formdata: FormData;
-  dragdropForm = new FormGroup({
-    folderName: new FormControl(''),
-    FileId: new FormControl(0),
-    parentId: new FormControl(0)
+  dragdropForm = new UntypedFormGroup({
+    folderName: new UntypedFormControl(''),
+    FileId: new UntypedFormControl(0),
+    parentId: new UntypedFormControl(0)
 
   });
   constructor(private uploadService: FileUploadService,

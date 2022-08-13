@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -66,7 +66,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   StudentClassList: IStudentClass[] = [];
   dataSource: MatTableDataSource<IStudentClass>;
   allMasterData = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   FeeCategories =[];
   SelectedApplicationId = 0;
   checkBatchIdNSelectedIdEqual = 0;
@@ -95,8 +95,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     'Active',
     'Action'
   ];
-  nameFilter = new FormControl('');
-  IdFilter = new FormControl('');
+  nameFilter = new UntypedFormControl('');
+  IdFilter = new UntypedFormControl('');
   filterValues = {
     PID: 0,
     StudentId: 0,
@@ -108,7 +108,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private contentservice: ContentService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 

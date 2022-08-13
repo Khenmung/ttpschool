@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -65,13 +65,13 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
   SelectedBatchId = 0;
   dataSource: MatTableDataSource<ITodayReceipt>;
   UnpaidDataSource: MatTableDataSource<INotPaidStudent>;
-  SearchForm: FormGroup;
+  SearchForm: UntypedFormGroup;
   ErrorMessage: string = '';
   //alert: any;
   constructor(
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     
     private shareddata: SharedataService,
     private tokenservice: TokenStorageService,

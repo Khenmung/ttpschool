@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
+import { FormGroup, UntypedFormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List, IPage } from 'src/app/shared/interface';
@@ -81,7 +81,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
   res: any;
   loading = false;
   constructor(
-    private fb:FormBuilder,
+    private fb:UntypedFormBuilder,
     private naomitsuService: NaomitsuService,
     private router: Router,
     private ar: ActivatedRoute,

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
@@ -51,7 +51,7 @@ export class ClassperiodComponent implements OnInit {
     Active: 0
   };
   displayedColumns = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private datepipe: DatePipe,
     private dataservice: NaomitsuService,
@@ -60,7 +60,7 @@ export class ClassperiodComponent implements OnInit {
     private nav: Router,
     private shareddata: SharedataService,
     private contentservice: ContentService,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

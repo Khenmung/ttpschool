@@ -14,34 +14,29 @@ import { ConfirmDialogComponent } from './components/mat-confirm-dialog/mat-conf
 import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-  declarations: [
-    AreaComponent,
-    AutofocusDirective,
-    EncodeHTMLPipe,
-    GrdFilterPipe,
-    ConfirmDialogComponent
+    declarations: [
+        AreaComponent,
+        AutofocusDirective,
+        EncodeHTMLPipe,
+        GrdFilterPipe,
+        ConfirmDialogComponent
     ],
-  imports: [
-    CommonModule,
-    //BrowserAnimationsModule,
-    MatDialogModule,
-    FlexLayoutModule,
-    MaterialModule,
-    MultiLevelMenuModule,    
-    FormsModule,  
-    ReactiveFormsModule,
-    MatProgressBarModule,
-    MatSidenavModule
-  ],
-  entryComponents: [
-    ConfirmDialogComponent
-  ],
-  exports: [
-    AreaComponent,
-    EncodeHTMLPipe,
-    ConfirmDialogComponent
-  ],
-  
-
+    imports: [
+        CommonModule,
+        //BrowserAnimationsModule,
+        MatDialogModule,
+        FlexLayoutModule,
+        MaterialModule,
+        MultiLevelMenuModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatProgressBarModule,
+        MatSidenavModule
+    ],
+    exports: [
+        AreaComponent,
+        EncodeHTMLPipe,
+        ConfirmDialogComponent
+    ]
 })
 export class SharedModule { }

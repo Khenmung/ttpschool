@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -67,12 +67,12 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
   loading: boolean = false;
   error: string = '';
   
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
 
   constructor(
     private snackbar: MatSnackBar,
     private dialog: MatDialog,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private route: Router,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,

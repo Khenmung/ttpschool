@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -17,7 +17,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
 export class HomeDashboardComponent implements OnInit {
   PageLoading = true;
   loading = false;
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   NewsNEventPageId = 0;
   MenuData = [];
   toggle: boolean = false;
@@ -34,7 +34,7 @@ export class HomeDashboardComponent implements OnInit {
   constructor(
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private route: Router,
     private dataservice: NaomitsuService,
     private http: HttpClient,

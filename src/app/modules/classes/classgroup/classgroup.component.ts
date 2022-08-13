@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -49,7 +49,7 @@ export class ClassgroupComponent implements OnInit {
     "Active",
     "Action"
   ];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -59,7 +59,7 @@ export class ClassgroupComponent implements OnInit {
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Subscription } from 'rxjs';
@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   Locations = [];
   Roles = [];
   ApplicationFeatures = [];
-  loginForm: FormGroup;
+  loginForm: UntypedFormGroup;
   isLoggedIn = false;
   isLoginFailed = false;
   errorMessage = '';
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private route: Router,
     private mediaObserver: MediaObserver,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private contentservice: ContentService
   ) { }
 

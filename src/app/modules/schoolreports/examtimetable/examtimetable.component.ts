@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -64,7 +64,7 @@ export class ExamtimetableComponent implements OnInit {
   };
   displayedColumns = [
   ];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -73,7 +73,7 @@ export class ExamtimetableComponent implements OnInit {
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -63,7 +63,7 @@ export class EvaluationMasterComponent implements OnInit {
     "Action"
   ];
   SelectedApplicationId = 0;
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -71,7 +71,7 @@ export class EvaluationMasterComponent implements OnInit {
     private nav: Router,
     private datepipe: DatePipe,
     private dialog: MatDialog,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

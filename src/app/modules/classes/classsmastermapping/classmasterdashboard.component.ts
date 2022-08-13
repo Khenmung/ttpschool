@@ -1,6 +1,6 @@
 //import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -53,7 +53,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
   ClassSubjectTeacherList: IClassTeacher[] = [];
   dataSource: MatTableDataSource<IClassTeacher>;
   allMasterData = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   //ClassSubjectId = 0;
   ClassSubjectTeacherData = {
     TeacherClassMappingId: 0,
@@ -75,7 +75,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
 
   constructor(
     private contentservice: ContentService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     

@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { IPage, List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { TokenStorageService } from '../../../_services/token-storage.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
 
@@ -69,7 +69,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
   ];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   //selection = new SelectionModel<IPage>(true, []);
   Applications = [];
   allMasterData = [];
@@ -94,7 +94,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
   constructor(
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private navigate: Router,
     private route: ActivatedRoute,
     private tokenStorage: TokenStorageService,

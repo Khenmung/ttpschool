@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, VERSION } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
@@ -26,10 +26,10 @@ export class PhotobrowserComponent implements OnInit { PageLoading=true;
     "#D22D16",
     "#77BFE2",
     "#36A1D4"];
-  searchForm = new FormGroup({
-    Album: new FormControl('', [Validators.required, Validators.maxLength(50)]),
-    year: new FormControl(''),
-    radioAlbum: new FormControl('')
+  searchForm = new UntypedFormGroup({
+    Album: new UntypedFormControl('', [Validators.required, Validators.maxLength(50)]),
+    year: new UntypedFormControl(''),
+    radioAlbum: new UntypedFormControl('')
   });
   images: any[];
   Albums: any[];

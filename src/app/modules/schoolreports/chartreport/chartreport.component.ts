@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import alasql from 'alasql';
 import { ChartType, ChartOptions } from 'chart.js';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip } from 'ng2-charts';
@@ -29,7 +29,7 @@ export class ChartReportComponent {
     keepAfterRouteChange: true
   };
   loading = false;
-  SearchForm: FormGroup;
+  SearchForm: UntypedFormGroup;
   Months = [];
   MonthlyPayments = [];
   StudentClasses = [];
@@ -51,7 +51,7 @@ export class ChartReportComponent {
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
     monkeyPatchChartJsTooltip();
     monkeyPatchChartJsLegend();

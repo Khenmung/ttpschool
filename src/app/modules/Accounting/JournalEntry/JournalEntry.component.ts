@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -41,7 +41,7 @@ export class JournalEntryComponent implements OnInit {
   AccountingVoucherList: IAccountingVoucher[] = [];
   dataSource: MatTableDataSource<IAccountingVoucher>;
   allMasterData = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   AccountingVoucherData = {
     AccountingVoucherId: 0,
     DocDate: new Date(),
@@ -74,7 +74,7 @@ export class JournalEntryComponent implements OnInit {
 
   constructor(
     private datepipe: DatePipe,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 

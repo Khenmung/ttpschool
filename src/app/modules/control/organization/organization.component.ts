@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -73,7 +73,7 @@ export class OrganizationComponent implements OnInit {
   ];
   TopMasters = [];
   SelectedApplicationId = 0;
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   LogoPath = '';
   constructor(
     private contentservice: ContentService,
@@ -81,7 +81,7 @@ export class OrganizationComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private fileUploadService: FileUploadService,
     private nav: Router,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
 
   }

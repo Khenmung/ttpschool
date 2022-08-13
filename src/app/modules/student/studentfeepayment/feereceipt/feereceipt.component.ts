@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs/internal/Observable';
@@ -55,8 +55,8 @@ export class FeereceiptComponent implements OnInit {
   dataReceiptSource: MatTableDataSource<IReceipt>;
   allMasterData = [];
   SelectedBatchId = 0;
-  searchForm = new FormGroup({
-    StudentId: new FormControl(0),
+  searchForm = new UntypedFormGroup({
+    StudentId: new UntypedFormControl(0),
   });
   StudentFeePaymentData = {
     StudentId: 0,

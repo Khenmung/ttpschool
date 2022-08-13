@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -66,7 +66,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
   SelectedBatchId = 0;
   SelectedBatchEmpEmployeeIdRollNo = [];
   EmployeeClassId = 0;
-  EmployeeSearchForm: FormGroup;
+  EmployeeSearchForm: UntypedFormGroup;
   filteredEmployees: Observable<IEmployee[]>;
   filteredEmployeeCode: Observable<IEmployee[]>;
   LoginUserDetail = [];
@@ -76,7 +76,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     private dataservice: NaomitsuService,
     private route: Router,
 
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private shareddata: SharedataService,
     private token: TokenStorageService) { }
 

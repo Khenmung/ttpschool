@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -72,7 +72,7 @@ export class roleuserdashboardComponent implements OnInit { PageLoading=true;
     private nav: Router,
     private shareddata: SharedataService,
     private contentservice: ContentService,
-    private fb: FormBuilder) {
+    private fb: UntypedFormBuilder) {
   }
 
   ngOnInit(): void {

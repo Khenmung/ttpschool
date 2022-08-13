@@ -1,7 +1,7 @@
 //import { DatePipe } from '@angular/common';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -85,11 +85,11 @@ export class AppuserdashboardComponent implements OnInit {
   AppUsers = [];
   UserTypes = [];
   SelectedApplicationName = '';
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private contentservice: ContentService,
     private shareddata: SharedataService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private route: Router,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,

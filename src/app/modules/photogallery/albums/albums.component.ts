@@ -4,7 +4,7 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
 import { DialogService } from '../../../shared/dialog.service';
 import { TokenStorageService } from '../../../_services/token-storage.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { globalconstants } from '../../../shared/globalconstant';
 import { MatTableDataSource } from '@angular/material/table';
 import { ContentService } from 'src/app/shared/content.service';
@@ -33,10 +33,10 @@ export class AlbumsComponent implements OnInit { PageLoading=true;
     autoClose: true,
     keepAfterRouteChange: true
   };
-  searchForm = new FormGroup(
+  searchForm = new UntypedFormGroup(
     {
-      UpdatedFileFolderName: new FormControl('', [Validators.required]),
-      parentId: new FormControl(0),
+      UpdatedFileFolderName: new UntypedFormControl('', [Validators.required]),
+      parentId: new UntypedFormControl(0),
       //FilesNPhoto: new FormControl(0, [Validators.required])
     }
   );

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
@@ -17,14 +17,14 @@ export class ContactComponent implements OnInit { PageLoading=true;
   SuccessMessage='';
   title: string;
   Id: number = 0;
-  ContactForm = new FormGroup({
-    Name: new FormControl("", [Validators.required, Validators.maxLength(25)]),
-    Email: new FormControl("", [Validators.required,Validators.email, Validators.maxLength(25)]),
-    Subject: new FormControl("", [Validators.required, Validators.maxLength(25)]),
-    MessageBody: new FormControl("", [Validators.required, Validators.maxLength(250)]),
-    CreatedDate: new FormControl(new Date()),
-    Active: new FormControl(1),
-    MessageId: new FormControl(0)
+  ContactForm = new UntypedFormGroup({
+    Name: new UntypedFormControl("", [Validators.required, Validators.maxLength(25)]),
+    Email: new UntypedFormControl("", [Validators.required,Validators.email, Validators.maxLength(25)]),
+    Subject: new UntypedFormControl("", [Validators.required, Validators.maxLength(25)]),
+    MessageBody: new UntypedFormControl("", [Validators.required, Validators.maxLength(250)]),
+    CreatedDate: new UntypedFormControl(new Date()),
+    Active: new UntypedFormControl(1),
+    MessageId: new UntypedFormControl(0)
   });
 
   constructor(private naomitsuService: NaomitsuService,

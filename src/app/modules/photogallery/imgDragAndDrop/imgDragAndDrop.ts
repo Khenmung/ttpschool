@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FileUploadService } from '../../../shared/upload.service'
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { Router } from '@angular/router';
@@ -35,9 +35,9 @@ export class ImgDragAndDropComponent implements OnInit { PageLoading=true;
     //private ng2ImgMax: Ng2ImgMaxService,
     private tokenStorage: TokenStorageService
   ) { }
-  dragdropForm = new FormGroup({
-    UpdatedFileFolderName: new FormControl(''),
-    parentId: new FormControl(0),
+  dragdropForm = new UntypedFormGroup({
+    UpdatedFileFolderName: new UntypedFormControl(''),
+    parentId: new UntypedFormControl(0),
 
   });
   ngOnInit() {

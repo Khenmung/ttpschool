@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -83,13 +83,13 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
   ];
   filteredOptions: any;
   Students: any;
-  nameFilter = new FormControl('');
+  nameFilter = new UntypedFormControl('');
   filterValues = {
     SubjectName: ''
   };
   constructor(
     private contentservice: ContentService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 

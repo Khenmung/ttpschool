@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -74,7 +74,7 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
     "Action"
   ];
   Permission=''
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   SelectedApplicationId=0;
   constructor(
     private contentservice:ContentService,
@@ -85,7 +85,7 @@ export class EmployeeLeaveComponent implements OnInit { PageLoading=true;
     private nav: Router,
     //private shareddata: SharedataService,
     //private datepipe: DatePipe,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

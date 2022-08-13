@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -61,14 +61,14 @@ export class TeacherperiodComponent implements OnInit {
   };
   displayedColumns: any[] = [];
   DataForAllClasses = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     private datepipe: DatePipe,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private nav: Router,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) {
 
   }

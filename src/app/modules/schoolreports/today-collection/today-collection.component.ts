@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -65,7 +65,7 @@ export class TodayCollectionComponent implements OnInit {
   HeadsWiseCollection = [];
   LoginUserDetail = [];
   dataSource: MatTableDataSource<ITodayReceipt>;
-  SearchForm: FormGroup;
+  SearchForm: UntypedFormGroup;
   ErrorMessage: string = '';
   SelectedBatchId = 0;
   filteredOptions: Observable<IStudent[]>;
@@ -75,7 +75,7 @@ export class TodayCollectionComponent implements OnInit {
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
     private formatdate: DatePipe,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private nav: Router
   ) { }
 

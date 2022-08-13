@@ -1,6 +1,6 @@
 import { DatePipe, DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import alasql from 'alasql';
@@ -87,7 +87,7 @@ export class GenerateCertificateComponent implements OnInit {
   displayedColumns = [
     'Description',
   ];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private contentservice: ContentService,
@@ -98,7 +98,7 @@ export class GenerateCertificateComponent implements OnInit {
     private nav: Router,
     private shareddata: SharedataService,
     private datepipe: DatePipe,
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -37,7 +37,7 @@ export class RegisterComponent implements OnInit { PageLoading=true;
   errorMessage = '';
   mediaSub: Subscription;
   deviceXs: boolean;
-  RegistrationForm: FormGroup;
+  RegistrationForm: UntypedFormGroup;
   ApplicationRoleUserData = {
     ApplicationRoleUserId: 0,
     Active: 1,
@@ -53,7 +53,7 @@ export class RegisterComponent implements OnInit { PageLoading=true;
   constructor(
     private shareddata: SharedataService,
     private authService: AuthService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private route: Router,
     private dataservice: NaomitsuService,

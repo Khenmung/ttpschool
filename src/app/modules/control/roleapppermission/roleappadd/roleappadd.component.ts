@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -53,7 +53,7 @@ export class roleappAddComponent implements OnInit { PageLoading=true;
     private dataservice: NaomitsuService,
     private route: Router,
     
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private tokenstorage: TokenStorageService
   ) {
 

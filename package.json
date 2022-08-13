@@ -12,18 +12,18 @@
   "private": true,
   "dependencies": {
     "@angular-material-components/datetime-picker": "^7.0.1",
-    "@angular/animations": "~13.0.2",
+    "@angular/animations": "~14.1.2",
     "@angular/cdk": "^13.0.2",
-    "@angular/common": "^13.0.2",
-    "@angular/compiler": "~13.0.2",
-    "@angular/core": "^13.0.2",
+    "@angular/common": "^14.1.2",
+    "@angular/compiler": "~14.1.2",
+    "@angular/core": "^14.1.2",
     "@angular/flex-layout": "^11.0.0-beta.33",
-    "@angular/forms": "^13.0.2",
-    "@angular/localize": "^13.0.2",
+    "@angular/forms": "^14.1.2",
+    "@angular/localize": "^14.1.2",
     "@angular/material": "^13.0.2",
-    "@angular/platform-browser": "~13.0.2",
-    "@angular/platform-browser-dynamic": "~13.0.2",
-    "@angular/router": "~13.0.2",
+    "@angular/platform-browser": "~14.1.2",
+    "@angular/platform-browser-dynamic": "~14.1.2",
+    "@angular/router": "~14.1.2",
     "@angular/service-worker": "^14.1.2",
     "@auth0/angular-jwt": "^5.0.2",
     "@fullcalendar/angular": "^5.10.1",
@@ -62,14 +62,13 @@
     "primeicons": "^4.1.0",
     "rxjs": "~6.6.0",
     "sweetalert2": "^10.13.0",
-    "tslib": "^2.0.0",
     "xlsx": "^0.17.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^13.0.3",
     "@angular/cli": "^14.1.2",
-    "@angular/compiler-cli": "^13.0.2",
+    "@angular/compiler-cli": "^14.1.2",
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.11.1",
     "codelyzer": "^0.0.28",
@@ -82,7 +81,8 @@
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "^7.0.0",
     "ts-node": "~8.3.0",
+    "tslib": "^2.3.1",
     "tslint": "~6.1.0",
-    "typescript": "~4.4.4"
+    "typescript": "~4.7.4"
   }
 }

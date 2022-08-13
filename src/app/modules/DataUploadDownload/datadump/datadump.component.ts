@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -61,7 +61,7 @@ export class DatadumpComponent implements OnInit {
   StudentClassId = 0;
   StudentId = 0;
   StudentFamilyNFriendList = [];
-  studentSearchForm: FormGroup;
+  studentSearchForm: UntypedFormGroup;
   filteredStudents: Observable<IStudent[]>;
   filteredFathers: Observable<IStudent[]>;
   filteredMothers: Observable<IStudent[]>;
@@ -72,7 +72,7 @@ export class DatadumpComponent implements OnInit {
     private dataservice: NaomitsuService,
     private route: Router,
 
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private shareddata: SharedataService,
     private token: TokenStorageService) { }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MediaObserver, MediaChange } from '@angular/flex-layout';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ContentService } from 'src/app/shared/content.service';
@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 export class ForgotpasswordComponent implements OnInit { PageLoading=true;
   loading = false;
   loginUserDetail = [];
-  forgotpwdForm: FormGroup;
+  forgotpwdForm: UntypedFormGroup;
   isSuccessful = false;
   isSignUpFailed = false;
   errorMessage = '';
@@ -33,7 +33,7 @@ export class ForgotpasswordComponent implements OnInit { PageLoading=true;
   constructor(private authService: AuthService,
     private route: Router,
     private mediaObserver: MediaObserver,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private tokenService: TokenStorageService,
     private contentservice: ContentService
   ) { }

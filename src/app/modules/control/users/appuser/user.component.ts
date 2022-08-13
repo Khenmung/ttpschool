@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -24,7 +24,7 @@ title ='';
   AppUsers = [];
   Departments=[];
   Locations=[];
-  AppUsersForm: FormGroup;
+  AppUsersForm: UntypedFormGroup;
   AppUsersData = {
     ApplicationUserId: 0,
     UserName: '',
@@ -49,7 +49,7 @@ title ='';
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage:TokenStorageService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private sharedData: SharedataService) { }
 
   ngOnInit(): void {

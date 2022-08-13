@@ -1,5 +1,5 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { ImageCropperComponent } from 'ngx-image-cropper';
@@ -64,7 +64,7 @@ export class studentprimaryinfoComponent implements OnInit {
   displayContactPerson = false;
   Houses=[];
   Remarks=[];
-  studentForm: FormGroup;
+  studentForm: UntypedFormGroup;
   Edited = false;
   public files: NgxFileDropEntry[] = [];
   @ViewChild(ImageCropperComponent, { static: true }) imageCropper: ImageCropperComponent;
@@ -138,7 +138,7 @@ export class studentprimaryinfoComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private tokenService: TokenStorageService,

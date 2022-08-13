@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -44,7 +44,7 @@ export class StudentDocumentComponent implements OnInit {
   Classes = [];
   Sections = [];
   EnableUploadButton = false;
-  uploadForm: FormGroup;
+  uploadForm: UntypedFormGroup;
   public files: NgxFileDropEntry[] = [];
   UploadDisplayedColumns = [
     //"FileId",
@@ -59,7 +59,7 @@ export class StudentDocumentComponent implements OnInit {
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
     private dataservice: NaomitsuService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private nav: Router,
     private tokenService: TokenStorageService,
 

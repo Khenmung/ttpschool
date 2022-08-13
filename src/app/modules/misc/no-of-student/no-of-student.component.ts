@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, FormControl, UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -60,7 +60,7 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
   StudentClassList: IStudentClass[] = [];
   dataSource: MatTableDataSource<IStudentClass>;
   allMasterData = [];
-  searchForm: FormGroup;
+  searchForm: UntypedFormGroup;
   SelectedApplicationId = 0;
   checkBatchIdNSelectedIdEqual = 0;
   StudentClassData = {
@@ -83,7 +83,7 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private contentservice: ContentService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
@@ -29,7 +29,7 @@ export class AddstudentclassComponent implements OnInit {
   Houses = [];
   Sections = [];
   FeeType = [];
-  studentclassForm: FormGroup;
+  studentclassForm: UntypedFormGroup;
   StudentName = '';
   SelectedApplicationId = 0;
   LoginUserDetail = [];
@@ -55,7 +55,7 @@ export class AddstudentclassComponent implements OnInit {
     private tokenstorage: TokenStorageService,
     private aRoute: ActivatedRoute,
     private nav: Router,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {

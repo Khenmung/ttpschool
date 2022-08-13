@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
@@ -171,12 +171,12 @@ export class AddstudentfeepaymentComponent implements OnInit {
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private nav: Router,
     private datepipe: DatePipe,
     private shareddata: SharedataService) { }
   filteredLedgerAccounts: Observable<IGeneralLedger[]>;
-  paymentform: FormGroup;
+  paymentform: UntypedFormGroup;
   ngOnInit(): void {
     this.paymentform = this.fb.group({
       GeneralLedgerAccountId: [0]
