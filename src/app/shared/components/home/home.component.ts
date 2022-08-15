@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
         /////////////////////
       })
       debugger;
-      if (this.MenuData.length == 0)
+      if (this.MenuData.length == 0 && this.loginUserDetail!=null)
         this.GetMenuData();
     })
     //this.GetMenuData();

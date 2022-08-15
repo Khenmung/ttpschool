@@ -319,7 +319,7 @@ export class SchooltimetableComponent implements OnInit {
         //iterrate through weekdays
         // iterate through class periods
         var filterPeriods = [];
-        filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == distinctcls.ClassId);
+        filterPeriods = this.AllClassPeriods.filter(a => a.ClassId == distinctcls.ClassId).sort((a,b)=>a.Sequence - b.Sequence);
 
         if (filterPeriods.length == 0) {
           this.contentservice.openSnackBar("Period not yet defined for this class.",globalconstants.ActionText,globalconstants.RedBackground);
@@ -544,7 +544,7 @@ export class SchooltimetableComponent implements OnInit {
   GetAllClassPeriods() {
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.SchoolTimeTableList = [];
-    var orgIdSearchstr = ' OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     this.loading = true;
 

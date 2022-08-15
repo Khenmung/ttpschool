@@ -309,7 +309,9 @@ export class ExamsComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loading = false; this.PageLoading = false;
-      })
+      },
+      error=>console.log("error in exams fetching",error))
+      
   }
   private getTime(date?: Date) {
     var std = new Date(date);

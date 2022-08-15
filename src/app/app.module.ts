@@ -14,7 +14,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { authInterceptorProviders } from './_helpers/auth.interceptor';
 import { ChartsModule } from 'ng2-charts';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-//import { MyFilterPipe } from './shared/FilterPipe';
+import { environment } from '../environments/environment';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     NotfoundComponent
   ],
   imports: [
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: true }),
     RouterModule,
     BrowserModule,
     BrowserAnimationsModule,
@@ -30,6 +32,12 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     NgbModule,
     MaterialModule,
     ChartsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: true,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
     
   ],
   exports: [

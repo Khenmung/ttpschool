@@ -33,12 +33,17 @@
             "aot": false,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
+              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.scss",
-              "node_modules/sweetalert2/src/sweetalert2.scss"              
+              "node_modules/sweetalert2/src/sweetalert2.scss",
+              "node_modules/@fullcalendar/common/main.css",
+              "node_modules/@fullcalendar/daygrid/main.css",
+              "node_modules/@fullcalendar/timegrid/main.css"
+              
             ],
             "scripts": [],
             "vendorChunk": true,
@@ -46,7 +51,9 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "dev": {
@@ -73,7 +80,7 @@
                 }
               ],
               "optimization": true,
-              "aot":true,
+              "aot": true,
               "outputHashing": "all",
               "extractLicenses": true,
               "vendorChunk": false,
@@ -99,7 +106,6 @@
           "options": {
             "browserTarget": "schoolapp:build",
             "proxyConfig": "src/proxy.Conf.json"
-            
           },
           "configurations": {
             "dev": {
@@ -113,7 +119,7 @@
             "production": {
               "browserTarget": "schoolapp:build:production",
               "proxyConfig": "src/proxy.prod.Conf.json"
-            }          
+            }
           }
         },
         "extract-i18n": {
@@ -131,11 +137,16 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/manifest.webmanifest"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/@fullcalendar/common/main.css",
+              "node_modules/@fullcalendar/daygrid/main.css",
+              "node_modules/@fullcalendar/timegrid/main.css"
+             
             ],
             "scripts": []
           }

@@ -143,8 +143,7 @@
                 <button [disabled]="loading 
                 || !element.Action 
                 || Permission=='read'
-                || (element.MasterDataId>0 && (Parent=='Information Restriction' 
-                                       || Parent=='Period Type'
+                || (element.MasterDataId>0 && (Parent=='Period Type'
                                        || Parent=='Roll No Generation' 
                                        || Parent=='User Type'
                                        || Parent=='Exam Status'
@@ -169,7 +168,25 @@
                 </button>
                 <button [disabled]="loading 
                 || !element.Action 
-                || Permission !='rwd'" matTooltip="delete" mat-mini-fab (click)="Delete(element)">
+                || Permission=='read'
+                || (element.MasterDataId>0 && (Parent=='Period Type'
+                                       || Parent=='Roll No Generation' 
+                                       || Parent=='User Type'
+                                       || Parent=='Exam Status'
+                                       || Parent=='Fee Payment Type'    
+                                       || Parent=='Subject Category'    
+                                       || Parent=='Questionnaire Type'    
+                                       || Parent=='Attendance Mode'    
+                                       || element.MasterDataName=='Admin'
+                                       || element.MasterDataName=='Teacher'
+                                       || element.MasterDataName=='Student'
+                                       || element.MasterDataName=='Employee'
+                                       || element.MasterDataName=='Employee Upload'
+                                       || element.MasterDataName=='Cash'
+                                       || element.MasterDataName=='Teaching'  
+                                       || element.MasterDataName=='Non Teaching'
+                                       || Permission !='rwd'))" 
+                matTooltip="delete" mat-mini-fab (click)="Delete(element)">
                     <mat-icon>delete</mat-icon>
                 </button>
             </mat-cell>

@@ -341,6 +341,7 @@ export class TeacherperiodComponent implements OnInit {
 
           var forSelectedClsPeriods;
           forSelectedClsPeriods = filterPeriods.sort((a, b) => a.Sequence - b.Sequence);
+          console.log("forSelectedClsPeriods",forSelectedClsPeriods);
           debugger;
           this.WeekDays.sort((a, b) => a.Sequence - b.Sequence).forEach(p => {
             if (!this.DayStatisticDisplay.includes(p.MasterDataName))
@@ -613,10 +614,11 @@ export class TeacherperiodComponent implements OnInit {
           m.Period = '';
           if (obj.length > 0)
             m.Period = obj[0].MasterDataName// + " - " + m.FromToTime;
-
+          m.Sequence = m.Sequence ==0?500:m.Sequence;
           m.PeriodType = _PeriodType;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
+        
         if (this.AllClassPeriods.length == 0) {
           this.contentservice.openSnackBar("Class periods not defined.", globalconstants.ActionText, globalconstants.RedBackground);
         }

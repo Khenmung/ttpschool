@@ -379,7 +379,7 @@ export class TeacheroffperiodComponent implements OnInit {
 
   }
   GetPeriodStatistic() {
-
+    this.loading=true;
     this.PeriodStatistics = [];
     this.WeekDays.forEach(weekday => {
       this.PeriodStatisticDisplay.forEach(period => {
@@ -400,8 +400,8 @@ export class TeacheroffperiodComponent implements OnInit {
         }
       })
     });
-
-    console.log("this.PeriodStatistics", this.PeriodStatistics);
+    this.loading=false;
+    //console.log("this.PeriodStatistics", this.PeriodStatistics);
     //console.log("this.PeriodStatistics",this.PeriodStatistics);
 
     if (this.PeriodStatistics.length == 0) {
@@ -534,7 +534,7 @@ export class TeacheroffperiodComponent implements OnInit {
           m.Period = '';
           if (obj.length > 0)
             m.Period = obj[0].MasterDataName// + " - " + m.FromToTime;
-
+          m.Sequence =m.Sequence ==0?500:m.Sequence;
           m.PeriodType = _PeriodType;
           return m;
         }).sort((a, b) => a.Sequence - b.Sequence);
