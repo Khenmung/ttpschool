@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, 
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { AttendancereportComponent } from '../attendancereport/attendancereport.component';
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
 import { StudenttotalattendanceComponent } from '../studenttotalattendance/studenttotalattendance.component';
 import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendance.component';
@@ -16,11 +17,13 @@ export class AttendanceboardComponent implements AfterViewInit {
   components: any = [
     StudentAttendanceComponent,
     TeacherAttendanceComponent,
-    StudenttotalattendanceComponent
+    StudenttotalattendanceComponent,
+    AttendancereportComponent
   ];
   SelectedAppName = '';
   tabNames = [
     { label: 'Student Attendance', faIcon: '' },
+    { label: 'Employee Attendance', faIcon: '' },
     { label: 'Employee Attendance', faIcon: '' },
     { label: 'Employee Attendance', faIcon: '' },
   ];
@@ -61,6 +64,9 @@ export class AttendanceboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTTOTALATTENDANCE)
     var comindx = this.components.indexOf(StudenttotalattendanceComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCEREPORT)
+    var comindx = this.components.indexOf(AttendancereportComponent);
     this.AddRemoveComponent(perObj, comindx);
 
     if (this.Permissions.ParentPermission != 'deny') {

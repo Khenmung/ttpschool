@@ -72,7 +72,8 @@
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline" style="width: 200px;">
                     <mat-label>Month Year</mat-label>
-                    <mat-select [(ngModel)]="element.Month" (selectionChange)="UpdateActive(element,$event)">
+                    <mat-select [(ngModel)]="element.Month" 
+                    (selectionChange)="UpdateActive(element,$event)">                
                         <mat-option [value]="0">select</mat-option>
                         <mat-option *ngFor="let item of Months" [value]="item.val">{{item.MonthName}}</mat-option>
                     </mat-select>
@@ -104,7 +105,7 @@
                 </div>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" style="justify-content: center;">
-                <button [disabled]="loading || !element.Action || Permission =='read'" mat-mini-fab
+                <button [disabled]="loading || !element.Action || Permission =='read' || +CurrentMonthYear>=element.Month" mat-mini-fab
                     (click)="Save(element)">
                      <mat-icon>save</mat-icon>
                             <mat-icon *ngIf="loading">

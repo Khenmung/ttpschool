@@ -116,8 +116,7 @@ export class ClassperiodComponent implements OnInit {
   UpdateOrSave(row) {
 
     //debugger;
-    this.loading = false; this.PageLoading = false;
-
+    
     if (row.Active == 1) {
       if (row.FromToTime == 0) {
         this.contentservice.openSnackBar("Please enter period time.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -195,11 +194,13 @@ export class ClassperiodComponent implements OnInit {
         (data: any) => {
           row.SchoolClassPeriodId = data.SchoolClassPeriodId;
           row.Action = false;
-          this.loading = false; this.PageLoading = false;
+          this.loading = false; 
+          this.PageLoading = false;
           this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false; this.PageLoading = false;
+            this.loading = false; 
+            this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
 
@@ -215,7 +216,8 @@ export class ClassperiodComponent implements OnInit {
           this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
-            this.loading = false; this.PageLoading = false;
+            this.loading = false; 
+            this.PageLoading = false;
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
         });

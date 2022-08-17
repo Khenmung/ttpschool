@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiURL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; // "https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = environment.apiURL; // "https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -206,7 +206,8 @@ export class globalconstants {
                     'TEACHERATTENDANCERECORD': 'teacher attendance record',
                     'STUDENTATTENDANCERECORD': 'student attendance record',
                     'STUDENTTOTALATTENDANCE': 'student total attendance',
-                    'EMPLOYEETOTALATTENDANCE': 'employee total attendance'
+                    'EMPLOYEETOTALATTENDANCE': 'employee total attendance',
+                    'ATTENANCEREPORT': 'attendance report'
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',

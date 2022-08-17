@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import alasql from 'alasql';
 import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -14,12 +15,12 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
-  selector: 'app-studentattendance',
-  templateUrl: './studentattendance.component.html',
-  styleUrls: ['./studentattendance.component.scss']
+  selector: 'app-attendancereport',
+  templateUrl: './attendancereport.component.html',
+  styleUrls: ['./attendancereport.component.scss']
 })
-export class StudentAttendanceComponent implements OnInit { 
-  PageLoading=true;
+export class AttendancereportComponent implements OnInit {
+  PageLoading = true;
 
   //@Input() StudentClassId:number;
   @ViewChild("table") mattable;
@@ -48,33 +49,23 @@ export class StudentAttendanceComponent implements OnInit {
   FilteredClassSubjects = [];
   StudentAttendanceList: IStudentAttendance[] = [];
   StudentClassList = [];
-  dataSource: MatTableDataSource<IStudentAttendance>;
+  dataSource: MatTableDataSource<any>;
   allMasterData = [];
   searchForm = this.fb.group({
     searchClassId: [0],
-    searchSectionId: [0],
-    searchClassSubjectId: [0],
+//    searchSectionId: [0],
+//    searchClassSubjectId: [0],
     searchAttendanceDate: [new Date()]
   });
   StudentClassSubjectId = 0;
-  StudentAttendanceData = {
-    AttendanceId: 0,
-    StudentClassId: 0,
-    AttendanceStatus: 0,
-    AttendanceDate: new Date(),
-    ClassSubjectId: 0,
-    Remarks: '',
-    BatchId: 0,
-    OrgId: 0
-  };
   displayedColumns = [
-    'StudentRollNo',
-    'AttendanceStatus',
-    'Remarks',
-    'Action'
+    'ClassName',
+    'Present',
+    'Absent'
   ];
   SelectedApplicationId = 0;
-
+  TotalPresent =0;
+  TotalAbsent =0;
   constructor(
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
@@ -106,7 +97,7 @@ export class StudentAttendanceComponent implements OnInit {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
         })
-        
+
       }
     }
 
@@ -120,17 +111,17 @@ export class StudentAttendanceComponent implements OnInit {
     this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
 
   }
-  checkall(value) {
-    this.StudentAttendanceList.forEach(record => {
-      if (value.checked) {
-        record.AttendanceStatus = 1;
-      }
-      else
-        record.AttendanceStatus = 0;
-      record.Action = true;
-    })
-    //this.AnyEnableSave=true;
-  }
+  // checkall(value) {
+  //   this.StudentAttendanceList.forEach(record => {
+  //     if (value.checked) {
+  //       record.AttendanceStatus = 1;
+  //     }
+  //     else
+  //       record.AttendanceStatus = 0;
+  //     record.Action = true;
+  //   })
+  //   //this.AnyEnableSave=true;
+  // }
 
   GetStudentAttendance() {
     debugger;
@@ -139,20 +130,20 @@ export class StudentAttendanceComponent implements OnInit {
 
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
     //' and StudentClassId eq ' + this.StudentClassId;
-    if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    else {
-      filterStr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
-    }
+    // if (this.searchForm.get("searchClassId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // else {
+    //   filterStr += ' and ClassId eq ' + this.searchForm.get("searchClassId").value;
+    // }
     var filterStrClsSub = '';
-    var _sectionId = this.searchForm.get("searchSectionId").value;
-    var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
-    if (_sectionId == 0 && _classSubjectId == 0) {
-      this.contentservice.openSnackBar("Please select either section or subject.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // var _sectionId = this.searchForm.get("searchSectionId").value;
+    // var _classSubjectId = this.searchForm.get("searchClassSubjectId").value;
+    // if (_sectionId == 0 && _classSubjectId == 0) {
+    //   this.contentservice.openSnackBar("Please select either section or subject.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
 
     this.loading = true;
     var today = new Date();
@@ -161,7 +152,7 @@ export class StudentAttendanceComponent implements OnInit {
     var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
     _AttendanceDate.setHours(0, 0, 0, 0);
     if (_AttendanceDate.getTime() > today.getTime()) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -171,12 +162,12 @@ export class StudentAttendanceComponent implements OnInit {
     else
       this.EnableSave = true;
 
-    if (_sectionId > 0) {
-      filterStr += " and SectionId eq " + _sectionId;
-    }
-    if (_classSubjectId > 0) {
-      filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
-    }
+    // if (_sectionId > 0) {
+    //   filterStr += " and SectionId eq " + _sectionId;
+    // }
+    // if (_classSubjectId > 0) {
+    //   filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
+    // }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
@@ -186,7 +177,7 @@ export class StudentAttendanceComponent implements OnInit {
       return;
     }
     this.StudentAttendanceList = [];
-    this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+    //this.dataSource = new MatTableDataSource<any>([]);
     let list: List = new List();
     list.fields = [
       'StudentClassId',
@@ -204,7 +195,7 @@ export class StudentAttendanceComponent implements OnInit {
       .subscribe((studentclass: any) => {
 
         if (studentclass.value.length == 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
           return;
         }
@@ -244,35 +235,43 @@ export class StudentAttendanceComponent implements OnInit {
           .subscribe((attendance: any) => {
 
             this.StudentClassList.forEach(sc => {
+              var _className = this.Classes.filter(c => c.ClassId == sc.ClassId)[0].ClassName;
               let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
               if (existing.length > 0) {
                 this.StudentAttendanceList.push({
                   AttendanceId: existing[0].AttendanceId,
-                  StudentClassId: existing[0].StudentClassId,
                   AttendanceStatus: existing[0].AttendanceStatus,
                   AttendanceDate: existing[0].AttendanceDate,
-                  ClassSubjectId: existing[0].ClassSubjectId,
-                  Remarks: existing[0].Remarks,
-                  StudentRollNo: sc.StudentRollNo,
-                  Action: false
+                  ClassName: _className
                 });
               }
-              else
-                this.StudentAttendanceList.push({
-                  AttendanceId: 0,
-                  StudentClassId: sc.StudentClassId,
-                  AttendanceStatus: 0,
-                  AttendanceDate: new Date(),
-                  ClassSubjectId: 0,
-                  Remarks: '',
-                  StudentRollNo: sc.StudentRollNo,
-                  Action: false
-                });
             })
-            this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);
+            var _data = [];
+            var sumOfAttendance = alasql("select sum(1) PresentAbsent,ClassName,AttendanceStatus from ? group by ClassName,AttendanceStatus", [this.StudentAttendanceList]);
+            sumOfAttendance.forEach(att => {
+              var existing = _data.filter(f => f.ClassName == att.ClassName);
+              if (existing.length > 0) {
+                if (att.AttendanceStatus == 1)
+                  existing[0]["Present"] = att.PresentAbsent
+                else if (att.AttendanceStatus == 0)
+                  existing[0]["Absent"] = att.PresentAbsent
+              }
+              else {
+                if (att.AttendanceStatus == 1)
+                  _data.push({ ClassName: att.ClassName, Present: att.PresentAbsent })
+                else
+                  _data.push({ ClassName: att.ClassName, Absent: att.PresentAbsent })
+
+              }
+
+            })
+            //console.log("_data",_data)
+            this.TotalPresent = _data.reduce((acc,current)=>acc + current.Present,0);
+            this.TotalAbsent = _data.reduce((acc,current)=>acc + current.Absent,0);
+            this.dataSource = new MatTableDataSource<any>(_data);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
           });
         //this.changeDetectorRefs.detectChanges();
       });
@@ -305,109 +304,21 @@ export class StudentAttendanceComponent implements OnInit {
 
         });
   }
-  saveall() {
-    var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
-    this.NoOfRecordToUpdate = toUpdateAttendance.length;
-    this.loading=true;
-    toUpdateAttendance.forEach((record) => {
-      this.NoOfRecordToUpdate--;
-      this.UpdateOrSave(record);
-    })
-    if(toUpdateAttendance.length==0)
-    {
-      this.loading=false;
-    }
-  }
-  SaveRow(row){
-    this.NoOfRecordToUpdate = 0;
-    this.UpdateOrSave(row);  
-  }
-  UpdateOrSave(row) {
-
-    //this.NoOfRecordToUpdate = 0;
-    var today = new Date();
-    var clssubjectid = this.searchForm.get("searchClassSubjectId").value
-    if (clssubjectid == undefined)
-      clssubjectid = 0;
-
-    let checkFilterString = "AttendanceId eq " + row.AttendanceId +
-      " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate ge " + moment(today).format('YYYY-MM-DD') +
-      " and AttendanceDate lt " + moment(today).add(1,'day').format('YYYY-MM-DD')
-    if (clssubjectid > 0)
-      checkFilterString += " and ClassSubjectId eq " + clssubjectid
-
-    if (row.AttendanceId > 0)
-      checkFilterString += " and AttendanceId ne " + row.AttendanceId;
-
-    let list: List = new List();
-    list.fields = ["AttendanceId"];
-    list.PageName = "Attendances";
-    list.filter = [checkFilterString + " and " + this.StandardFilter];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-        }
-        else {
-
-          this.StudentAttendanceData.StudentClassId = row.StudentClassId;
-          this.StudentAttendanceData.AttendanceDate = today;
-          this.StudentAttendanceData.AttendanceId = row.AttendanceId;
-          this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentAttendanceData.BatchId = this.SelectedBatchId;
-          this.StudentAttendanceData.AttendanceStatus = row.AttendanceStatus;
-          this.StudentAttendanceData.ClassSubjectId = clssubjectid;
-          this.StudentAttendanceData.Remarks = row.Remarks;
-          if (this.StudentAttendanceData.AttendanceId == 0) {
-            this.StudentAttendanceData["CreatedDate"] = new Date();
-            this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.StudentAttendanceData["UpdatedDate"];
-            delete this.StudentAttendanceData["UpdatedBy"];
-            this.insert(row);
-          }
-          else {
-            delete this.StudentAttendanceData["CreatedDate"];
-            delete this.StudentAttendanceData["CreatedBy"];
-            this.StudentAttendanceData["UpdatedDate"] = new Date();
-            this.StudentAttendanceData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row);
-          }
-          row.Action = false;
-        }
-      });
-  }
-
-  insert(row) {
-
-    this.dataservice.postPatch('Attendances', this.StudentAttendanceData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-          this.edited = false;
-          row.AttendanceId = data.AttendanceId;
-          row.Action = false;
-          if (this.NoOfRecordToUpdate == 0) {
-            this.NoOfRecordToUpdate = -1;
-            this.loading=false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          }
-        });
-  }
-  update(row) {
-    this.dataservice.postPatch('Attendances', this.StudentAttendanceData, this.StudentAttendanceData.AttendanceId, 'patch')
-      .subscribe(
-        (data: any) => {
-          this.edited = false;
-          row.Action = false;
-          if (this.NoOfRecordToUpdate == 0) {
-            this.NoOfRecordToUpdate = -1;
-            this.loading=false;
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          }
-        });
-  }
+  // saveall() {
+  //   var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
+  //   this.NoOfRecordToUpdate = toUpdateAttendance.length;
+  //   this.loading=true;
+  //   toUpdateAttendance.forEach((record) => {
+  //     this.NoOfRecordToUpdate--;
+  //     this.UpdateOrSave(record);
+  //   })
+  //   if(toUpdateAttendance.length==0)
+  //   {
+  //     this.loading=false;
+  //   }
+  // }
+  
+ 
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -459,8 +370,8 @@ export class StudentAttendanceComponent implements OnInit {
         this.AttendanceStatus = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESTATUS);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.GetClassSubject();
-        this.loading = false; this.PageLoading=false;
-  
+        this.loading = false; this.PageLoading = false;
+
       });
   }
   getDropDownData(dropdowntype) {
@@ -483,13 +394,9 @@ export class StudentAttendanceComponent implements OnInit {
 }
 export interface IStudentAttendance {
   AttendanceId: number;
-  StudentClassId: number;
   AttendanceStatus: number;
-  ClassSubjectId: number;
   AttendanceDate: Date;
-  StudentRollNo: string;
-  Remarks: string;
-  Action: boolean
+  ClassName: string;
 }
 
 

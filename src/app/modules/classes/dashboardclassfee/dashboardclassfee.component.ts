@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
@@ -46,8 +47,9 @@ export class DashboardclassfeeComponent implements OnInit {
   ELEMENT_DATA: Element[] = [];
   dataSource: MatTableDataSource<Element>;
   allMasterData = [];
-  FeeCategories =[];
+  FeeCategories = [];
   searchForm: any;
+  CurrentMonthYear = '';
   classFeeData = {
     ClassFeeId: 0,
     FeeDefinitionId: 0,
@@ -82,6 +84,15 @@ export class DashboardclassfeeComponent implements OnInit {
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();
+    var check = moment();
+
+    var month = check.format('M');
+    //var day = check.format('D');
+    var year = check.format('YYYY');
+    if (month.length == 1) {
+      month = "0" + month;
+    }
+    this.CurrentMonthYear = year + "" + month;
 
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);
@@ -172,7 +183,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,0)
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -210,7 +221,7 @@ export class DashboardclassfeeComponent implements OnInit {
 
               })
             })
-             console.log("studentfeedetailxxxx",studentfeedetail)
+            console.log("studentfeedetailxxxx", studentfeedetail)
             this.contentservice.createInvoice(studentfeedetail, this.SelectedBatchId, this.LoginUserDetail[0]["orgId"])
               .subscribe((data: any) => {
                 this.loading = false;
@@ -231,7 +242,7 @@ export class DashboardclassfeeComponent implements OnInit {
       Object.keys(stud).forEach(studproperty => {
         //var prop =studproperty.toLowerCase()
         if (filledVar.includes(studproperty)) {
-          if (typeof stud[studproperty]!='number')
+          if (typeof stud[studproperty] != 'number')
             filledVar = filledVar.replaceAll("[" + studproperty + "]", "'" + stud[studproperty] + "'");
           else
             filledVar = filledVar.replaceAll("[" + studproperty + "]", stud[studproperty]);
@@ -297,10 +308,9 @@ export class DashboardclassfeeComponent implements OnInit {
   }
   UpdateOrSave(row) {
     debugger;
-    var objDiscount = this.ELEMENT_DATA.filter(f=>f.FeeName =='Discount' && f.Active==1);
-    if(objDiscount.length==0)
-    {
-      this.contentservice.openSnackBar("Discount should be activated and saved.",globalconstants.ActionText,globalconstants.RedBackground);
+    var objDiscount = this.ELEMENT_DATA.filter(f => f.FeeName == 'Discount' && f.Active == 1);
+    if (objDiscount.length == 0) {
+      this.contentservice.openSnackBar("Discount should be activated and saved.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.Amount < 0) {
@@ -531,7 +541,8 @@ export class DashboardclassfeeComponent implements OnInit {
       });
 
     }
-    //this.ELEMENT_DATA = 
+    //this.ELEMENT_DATA =
+    console.log("this.CurrentMonthYear",this.CurrentMonthYear); 
     this.ELEMENT_DATA.sort((a, b) => b.Active - a.Active);
     console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
     this.dataSource = new MatTableDataSource<Element>(this.ELEMENT_DATA);
@@ -539,6 +550,7 @@ export class DashboardclassfeeComponent implements OnInit {
     this.dataSource.sort = this.sort;
     this.loading = false; this.PageLoading = false;
   }
+  
   updateEnable(row, value) {
     row.Action = true;
     row.Status = value.checked;
