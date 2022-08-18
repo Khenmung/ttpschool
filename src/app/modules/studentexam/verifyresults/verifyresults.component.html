@@ -54,7 +54,8 @@
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element[disCol]}}
+                    <span style="color:red" *ngIf="(element[disCol]+'').includes('(')">{{element[disCol]}}</span> 
+                    <span *ngIf="!(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -73,7 +74,7 @@
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element">
-                    {{element[disCol]}}
+                   {{element[disCol]}}
                 </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="GradingDisplayedColumns"></mat-header-row>

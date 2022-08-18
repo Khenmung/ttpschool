@@ -52,9 +52,9 @@ export class AttendancereportComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   searchForm = this.fb.group({
-    searchClassId: [0],
-//    searchSectionId: [0],
-//    searchClassSubjectId: [0],
+    //searchClassId: [0],
+    //    searchSectionId: [0],
+    //    searchClassSubjectId: [0],
     searchAttendanceDate: [new Date()]
   });
   StudentClassSubjectId = 0;
@@ -64,8 +64,8 @@ export class AttendancereportComponent implements OnInit {
     'Absent'
   ];
   SelectedApplicationId = 0;
-  TotalPresent =0;
-  TotalAbsent =0;
+  TotalPresent = 0;
+  TotalAbsent = 0;
   constructor(
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
@@ -105,12 +105,12 @@ export class AttendancereportComponent implements OnInit {
   PageLoad() {
 
   }
-  bindClassSubject() {
-    debugger;
-    var classId = this.searchForm.get("searchClassId").value;
-    this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
+  // bindClassSubject() {
+  //   debugger;
+  //   var classId = this.searchForm.get("searchClassId").value;
+  //   this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
 
-  }
+  // }
   // checkall(value) {
   //   this.StudentAttendanceList.forEach(record => {
   //     if (value.checked) {
@@ -161,13 +161,6 @@ export class AttendancereportComponent implements OnInit {
     }
     else
       this.EnableSave = true;
-
-    // if (_sectionId > 0) {
-    //   filterStr += " and SectionId eq " + _sectionId;
-    // }
-    // if (_classSubjectId > 0) {
-    //   filterStrClsSub = " and ClassSubjectId eq " + _classSubjectId;
-    // }
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
@@ -235,19 +228,26 @@ export class AttendancereportComponent implements OnInit {
           .subscribe((attendance: any) => {
 
             this.StudentClassList.forEach(sc => {
-              var _className = this.Classes.filter(c => c.ClassId == sc.ClassId)[0].ClassName;
-              let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
-              if (existing.length > 0) {
-                this.StudentAttendanceList.push({
-                  AttendanceId: existing[0].AttendanceId,
-                  AttendanceStatus: existing[0].AttendanceStatus,
-                  AttendanceDate: existing[0].AttendanceDate,
-                  ClassName: _className
+              var _className = '';
+              var clsObj = this.Classes.filter(c => c.ClassId == sc.ClassId);
+              if (clsObj.length > 0) {
+                _className = clsObj[0].ClassName;
+                let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
+                if (existing.length > 0) {
+                  this.StudentAttendanceList.push({
+                    AttendanceId: existing[0].AttendanceId,
+                    AttendanceStatus: existing[0].AttendanceStatus,
+                    AttendanceDate: existing[0].AttendanceDate,
+                    ClassName: _className,
+                    Sequence:clsObj[0].Sequence
                 });
+                }
               }
             })
             var _data = [];
-            var sumOfAttendance = alasql("select sum(1) PresentAbsent,ClassName,AttendanceStatus from ? group by ClassName,AttendanceStatus", [this.StudentAttendanceList]);
+            var sumOfAttendance = alasql("select sum(1) PresentAbsent,ClassName,AttendanceStatus,Sequence from ? group by ClassName,AttendanceStatus,Sequence", 
+            [this.StudentAttendanceList]);
+            console.log("sumOfAttendance",sumOfAttendance)
             sumOfAttendance.forEach(att => {
               var existing = _data.filter(f => f.ClassName == att.ClassName);
               if (existing.length > 0) {
@@ -258,16 +258,17 @@ export class AttendancereportComponent implements OnInit {
               }
               else {
                 if (att.AttendanceStatus == 1)
-                  _data.push({ ClassName: att.ClassName, Present: att.PresentAbsent })
+                  _data.push({ ClassName: att.ClassName, Present: att.PresentAbsent,Sequence:att.Sequence })
                 else
-                  _data.push({ ClassName: att.ClassName, Absent: att.PresentAbsent })
+                  _data.push({ ClassName: att.ClassName, Absent: att.PresentAbsent,Sequence:att.Sequence })
 
               }
 
             })
-            //console.log("_data",_data)
-            this.TotalPresent = _data.reduce((acc,current)=>acc + current.Present,0);
-            this.TotalAbsent = _data.reduce((acc,current)=>acc + current.Absent,0);
+            //console.log("_data",_data);
+            _data = _data.sort((a,b)=>a.Sequence - b.Sequence);
+            this.TotalPresent = _data.reduce((acc, current) => acc + current.Present, 0);
+            this.TotalAbsent = _data.reduce((acc, current) => acc + current.Absent, 0);
             this.dataSource = new MatTableDataSource<any>(_data);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -278,7 +279,7 @@ export class AttendancereportComponent implements OnInit {
   }
   clear() {
     this.searchForm.patchValue({
-      searchClassId: 0,
+      //searchClassId: 0,
       searchSection: ''
     });
   }
@@ -317,8 +318,8 @@ export class AttendancereportComponent implements OnInit {
   //     this.loading=false;
   //   }
   // }
-  
- 
+
+
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -397,6 +398,7 @@ export interface IStudentAttendance {
   AttendanceStatus: number;
   AttendanceDate: Date;
   ClassName: string;
+  Sequence:number;
 }
 
 

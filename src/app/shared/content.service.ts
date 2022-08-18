@@ -414,16 +414,19 @@ export class ContentService implements OnInit {
             Permission = perObj[0].permission;
             if (Permission == 'deny') {
               dropvalues.splice(i, 1);
+              i--;
             }
           }
-          else
+          else {
             dropvalues.splice(i, 1);
+            i--;
+          }
         }
       }
-      dropvalues.forEach(d=>{
-        d.Sequence = d.Sequence==0?100:d.Sequence;
+      dropvalues.forEach(d => {
+        d.Sequence = d.Sequence == 0 ? 100 : d.Sequence;
       });
-      var result = dropvalues.sort((a,b)=>a.Sequence - b.Sequence);
+      var result = dropvalues.sort((a, b) => a.Sequence - b.Sequence);
       return result;
     }
     else
@@ -493,12 +496,12 @@ export class ContentService implements OnInit {
     data.forEach(inv => {
       _VariableObjList.push(inv)
       if (inv.Formula.length > 0) {
-  //      if (inv.Month == 202200)
-          console.log("inv.Formula", inv.Formula);
+        //      if (inv.Month == 202200)
+        console.log("inv.Formula", inv.Formula);
 
         var formula = this.ApplyVariables(inv.Formula, _VariableObjList);
-      //  if (inv.Month == 202200)
-          console.log("after applying Formula", formula);
+        //  if (inv.Month == 202200)
+        console.log("after applying Formula", formula);
         //after applying, remove again since it is for each student
         _VariableObjList.splice(_VariableObjList.indexOf(inv), 1);
         AmountAfterFormulaApplied = evaluate(formula);
@@ -812,7 +815,7 @@ export class ContentService implements OnInit {
       "Active"];
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 " + orgIdSearchstr];
-    list.orderBy="Sequence";
+    list.orderBy = "Sequence";
 
     return this.dataservice.get(list);
 

@@ -15,8 +15,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./chartreport.component.scss']
 })
 export class ChartReportComponent {
-  PageLoading=true;
-  ClickedReport =false;
+  PageLoading = true;
+  ClickedReport = false;
   VariableObjList = [];
   ExpectedAmount = 0.0;
   ReceiptAmount = 0.0;
@@ -76,10 +76,9 @@ export class ChartReportComponent {
       this.GetClassFees();
       this.GetStudentClasses();
     }
-    else
-    {
-      this.loading=false;this.PageLoading=false;
-      this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+    else {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
     }
   }
   GetMonthlyPayments(pMonth) {
@@ -141,7 +140,7 @@ export class ChartReportComponent {
     debugger;
     var selectedmonthId = this.SearchForm.get("searchMonth").value;
     if (selectedmonthId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar('Please select payment month', globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -156,38 +155,20 @@ export class ChartReportComponent {
         var paymentObj = [...data.value];
         var paymentcount = 0;
         var paymentCountobj = alasql("select sum(1) as PaidCount from ? where Balance=0 group by Month", [paymentObj]);
-        if (paymentCountobj.length > 0)
-          paymentcount = paymentCountobj[0].PaidCount;
-        // this.VariableObjList = [];
-        // this.ReceiptAmount = 0;
-        // this.ExpectedAmount = 0;
-        // var StudentInfoVariable;
-        // this.StudentClasses.forEach(studcls => {
-        //   var classfeeobj = this.ClassFees.filter(f => f.Month == selectedmonthId && f.ClassId == studcls.ClassId);
-        //   if (classfeeobj.length > 0 && studcls.Formula.length > 0) {
-        //     StudentInfoVariable = {
-        //       "RollNo": studcls.RollNo,
-        //       "Section": studcls.SectionId,
-        //       "ClassId": studcls.ClassId,
-        //       "Amount": classfeeobj[0].Amount,
-        //       "BatchId": studcls.BatchId,
-        //       "Month": classfeeobj[0].Month,
-        //       "FeeName": classfeeobj[0].FeeDefinition.FeeName,
-        //       "StudentId": studcls.StudentId,
-        //       "StudentClassId": studcls.StudentClassId
-        //     };
-        //     this.VariableObjList.push(StudentInfoVariable);
-        //     var result = evaluate(this.ApplyVariables(studcls.Formula))
 
-        //     this.ExpectedAmount += result;
+        var FreeCountobj = alasql("select sum(1) as FreeCount from ? where TotalDebit=0 and Balance=0 group by Month", [paymentObj]);
+        var _freeCount = 0;
+        if (FreeCountobj.length > 0)
+          _freeCount = FreeCountobj[0].FreeCount;
 
-        //     this.VariableObjList = [];
-        //   }
-        // })
-
-        //this.ExpectedAmount =  classfeeobj.reduce((acc,current)=> acc + current.Amount,0);
+        if (paymentCountobj.length > 0) {
+          paymentcount = _freeCount >= paymentCountobj[0].PaidCount ? 0 : paymentCountobj[0].PaidCount;
+          this.ReceiptAmount = paymentObj.reduce((acc, current) => acc + current.TotalCredit, 0);
+        }
+        else {
+          this.ReceiptAmount = 0;
+        }
         this.ExpectedAmount = paymentObj.reduce((acc, current) => acc + current.TotalDebit, 0);
-        this.ReceiptAmount = paymentObj.reduce((acc, current) => acc + current.TotalCredit, 0);
 
         var noofUnpaid = studentCount - paymentcount;
         this.pieChartLabels = ['Non-payment %', 'Payment %']
@@ -195,12 +176,13 @@ export class ChartReportComponent {
         var NonPaymentPercent = ((noofUnpaid * 100) / studentCount).toFixed(2);
         console.log("paymentcount", paymentcount);
         this.pieChartData = [+NonPaymentPercent, +PaymentPercent];
-        this.loading = false; this.PageLoading=false;
-        this.ClickedReport=true;
+        this.loading = false;
+        this.PageLoading = false;
+        this.ClickedReport = true;
       })
   }
-  EnableButton(){
-    this.ClickedReport=false;
+  EnableButton() {
+    this.ClickedReport = false;
   }
   ApplyVariables(formula) {
     var filledVar = formula;

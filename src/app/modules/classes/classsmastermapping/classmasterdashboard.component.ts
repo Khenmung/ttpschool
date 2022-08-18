@@ -18,7 +18,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './classmasterdashboard.component.html',
   styleUrls: ['./classmasterdashboard.component.scss']
 })
-export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
+export class ClassmasterdashboardComponent implements OnInit {
+  PageLoading = true;
 
   @ViewChild("table") mattable;
   //@ViewChild(ClasssubjectComponent) classSubjectAdd: ClasssubjectComponent;
@@ -26,14 +27,6 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
   LoginUserDetail: any[] = [];
   exceptionColumns: boolean;
   CurrentRow: any = {};
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
-  optionAutoClose = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
   PreviousBatchId = 0;
   SelectedApplicationId = 0;
   StandardFilterWithBatchId = '';
@@ -58,6 +51,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
   ClassSubjectTeacherData = {
     TeacherClassMappingId: 0,
     TeacherId: 0,
+    HelperId: 0,
     ClassId: 0,
     SectionId: 0,
     BatchId: 0,
@@ -67,9 +61,11 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
   displayedColumns = [
     "Section",
     "TeacherId",
+    "HelperId",
     "Active",
     "Action",
   ];
+  Helpers = [];
   filteredOptions: Observable<ITeachers[]>;
   //Students: any;
 
@@ -78,7 +74,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
-    
+
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
@@ -160,7 +156,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
     //console.log("here ", this.PreviousBatchId)
     this.PreviousBatchId = +this.tokenstorage.getPreviousBatchId();
     if (this.PreviousBatchId == -1)
-      this.contentservice.openSnackBar("Previous batch not defined.",globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Previous batch not defined.", globalconstants.ActionText, globalconstants.RedBackground);
     else
       this.GetClassTeacher(1)
   }
@@ -171,8 +167,8 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
     var _teacherId = this.searchForm.get("searchTeacherId").value.TeacherId;
     var _classId = this.searchForm.get("searchClassId").value;
     if (_teacherId == undefined && _classId == 0) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please select atleast one of the options", globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select atleast one of the options", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -197,6 +193,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
     list.fields = [
       "TeacherClassMappingId",
       "TeacherId",
+      "HelperId",
       "ClassId",
       "SectionId",
       "BatchId",
@@ -214,12 +211,13 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
           if (data.value.length > 0)
             data.value.forEach(element => {
               this.ClassSubjectTeacherList.push({
-                "TeacherClassMappingId": previousbatch==1?0:element.TeacherClassMappingId,
+                "TeacherClassMappingId": previousbatch == 1 ? 0 : element.TeacherClassMappingId,
                 "TeacherId": element.TeacherId,
+                "HelperId": element.HelperId,
                 "ClassId": element.ClassId,
                 "SectionId": element.SectionId,
                 "Section": this.Sections.filter(f => f.MasterDataId == element.SectionId)[0].MasterDataName,
-                "Active": previousbatch==1?0:element.Active,
+                "Active": previousbatch == 1 ? 0 : element.Active,
                 "Action": false
               })
             });
@@ -229,6 +227,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
                 "TeacherClassMappingId": 0,
                 "TeacherId": 0,
                 "ClassId": this.searchForm.get("searchClassId").value,
+                "HelperId": 0,
                 "SectionId": s.MasterDataId,
                 "Section": s.MasterDataName,
                 "Active": 0,
@@ -243,12 +242,13 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
             var existing = data.value.filter(f => f.SectionId == s.MasterDataId);
             if (existing.length > 0) {
               this.ClassSubjectTeacherList.push({
-                "TeacherClassMappingId": previousbatch==1?0:existing[0].TeacherClassMappingId,
+                "TeacherClassMappingId": previousbatch == 1 ? 0 : existing[0].TeacherClassMappingId,
                 "TeacherId": existing[0].TeacherId,
+                "HelperId": existing[0].HelperId,
                 "ClassId": existing[0].ClassId,
                 "SectionId": existing[0].SectionId,
                 "Section": this.Sections.filter(s => s.MasterDataId == existing[0].SectionId)[0].MasterDataName,
-                "Active": previousbatch==1?0:existing[0].Active,
+                "Active": previousbatch == 1 ? 0 : existing[0].Active,
                 "Action": false
               })
             }
@@ -256,6 +256,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
               this.ClassSubjectTeacherList.push({
                 "TeacherClassMappingId": 0,
                 "TeacherId": 0,
+                "HelperId": 0,
                 "ClassId": this.searchForm.get("searchClassId").value,
                 "SectionId": s.MasterDataId,
                 "Section": s.MasterDataName,
@@ -267,7 +268,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
           })
         }
         this.dataSource = new MatTableDataSource<IClassTeacher>(this.ClassSubjectTeacherList);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
         //this.changeDetectorRefs.detectChanges();
       });
   }
@@ -279,30 +280,11 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
     row.Active = value.checked ? 1 : 0;
     row.Action = true;
   }
-  // delete(element) {
-  //   let toupdate = {
-  //     Active: element.Active == 1 ? 0 : 1
-  //   }
-  //   this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-  //     .subscribe(
-  //       (data: any) => {
-  //         // this.GetApplicationRoles();
-  //         this.contentservice.openSnackBar(globalconstants.DeletedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
-
-  //       });
-  // }
 
   UpdateOrSave(row) {
 
     //debugger;
     this.loading = true;
-
-    // var selectedSubjectType = this.ClassSubjectList.filter(c => c.SubjectTypeId == row.SubjectTypeId);
-    // if (selectedSubjectType.length > row.SelectHowMany && row.SelectHowMany > 0) {
-    //   this.contentservice.openSnackBar("Allowed no. subjects selected is exceeded for this subject type.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   this.loading = false; this.PageLoading=false;
-    //   return;
-    // }
 
     let checkFilterString = "TeacherId eq " + row.TeacherId +
       " and ClassId eq " + row.ClassId +
@@ -323,7 +305,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
           row.Ative = 0;
           return;
@@ -334,6 +316,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
           this.ClassSubjectTeacherData.TeacherClassMappingId = row.TeacherClassMappingId;
           this.ClassSubjectTeacherData.ClassId = row.ClassId;
           this.ClassSubjectTeacherData.TeacherId = row.TeacherId;
+          this.ClassSubjectTeacherData.HelperId = row.HelperId;
           this.ClassSubjectTeacherData.SectionId = row.SectionId;
           this.ClassSubjectTeacherData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.ClassSubjectTeacherData.BatchId = this.SelectedBatchId;
@@ -365,7 +348,7 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.TeacherClassSubjectListName, this.ClassSubjectTeacherData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.TeacherClassMappingId = data.TeacherClassMappingId;
           row.Action = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
@@ -376,9 +359,9 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
     this.dataservice.postPatch(this.TeacherClassSubjectListName, this.ClassSubjectTeacherData, this.ClassSubjectTeacherData.TeacherClassMappingId, 'patch')
       .subscribe(
         (data: any) => {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           row.Action = false;
-          this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+          this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         });
   }
   isNumeric(str: number) {
@@ -389,29 +372,47 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
 
   GetTeachers() {
 
-    var orgIdSearchstr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching");
-    var _workAccountId = 0;
-    if (_WorkAccount.length > 0)
-      _workAccountId = _WorkAccount[0].MasterDataId;
+    var orgIdSearchstr = 'IsCurrent eq 1 and Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var _WorkAccount = this.WorkAccounts.filter(f => f.MasterDataName.toLowerCase() == "teaching" || f.MasterDataName.toLowerCase() == "helper");
+    var _workAccountIdFilter = '';
+    if (_WorkAccount.length == 2) {
+      _workAccountIdFilter += " and (WorkAccountId eq " + _WorkAccount[0].MasterDataId + " or WorkAccountId eq " + _WorkAccount[1].MasterDataId + ")"
+    }
+    else if (_WorkAccount.length == 1)
+      _workAccountIdFilter = " and WorkAccountId eq " + _WorkAccount[0].MasterDataId
+    else if (_WorkAccount.length == 0) {
+      this.contentservice.openSnackBar("Invalid employee work category.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
 
     let list: List = new List();
 
     list.fields = ["WorkAccountId"];
     list.PageName = "EmpEmployeeGradeSalHistories";
     list.lookupFields = ["Employee($select=EmpEmployeeId", "FirstName", "LastName)"]
-    list.filter = [orgIdSearchstr + " and Active eq 1 and WorkAccountId eq " + _workAccountId];
+    list.filter = [orgIdSearchstr + _workAccountIdFilter];
     //list.orderBy = "ParentId";
     this.Teachers = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.filter(f => {
-          this.Teachers.push({
-            TeacherId: f.Employee.EmpEmployeeId,
-            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
-          })
+          var _type = '';
+          var obj = this.WorkAccounts.filter(g => g.MasterDataId == f.WorkAccountId);
+          if (obj.length > 0) {
+            _type = obj[0].MasterDataName;
+            if (_type.toLowerCase() == 'helper') {
+              this.Helpers.push({
+                TeacherId: f.Employee.EmpEmployeeId,
+                TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+              })
+            }
+            else
+              this.Teachers.push({
+                TeacherId: f.Employee.EmpEmployeeId,
+                TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+              })
+          }
         })
-
       })
   }
   GetClassSubject() {
@@ -458,24 +459,11 @@ export class ClassmasterdashboardComponent implements OnInit { PageLoading=true;
         //this.shareddata.ChangeBatch(this.Batches);
         this.GetTeachers();
         //this.GetClassSubject();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    // let Id = 0;
-    // let Ids = this.allMasterData.filter((item, indx) => {
-    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    // })
-    // if (Ids.length > 0) {
-    //   Id = Ids[0].MasterDataId;
-    //   return this.allMasterData.filter((item, index) => {
-    //     return item.ParentId == Id
-    //   })
-    // }
-    // else
-    //   return [];
-
   }
 
 }
@@ -483,6 +471,7 @@ export interface IClassTeacher {
   TeacherClassMappingId: number;
   TeacherId: number;
   ClassId: number;
+  HelperId: number;
   SectionId: number;
   Section: string;
   Active: number;

@@ -54,8 +54,22 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container>
+            <ng-container matColumnDef="HelperId">
+                <mat-header-cell style="display: flex;justify-content: center;" *matHeaderCellDef>Helper
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-form-field>
+                        <mat-label>Helper</mat-label>
+                        <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.HelperId">
+                            <mat-option *ngFor="let option of Helpers" [value]="option.TeacherId">
+                                {{option.TeacherName}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef style="justify-content: center;"> Active </mat-header-cell>
                 <mat-cell style="display: flex;justify-content: center;" *matCellDef="let element">
                     <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element,$event)"
                         [checked]="element.Active==1?true:false">

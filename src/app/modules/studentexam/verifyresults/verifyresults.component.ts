@@ -126,7 +126,7 @@ export class VerifyResultsComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
-        
+
         this.GetSubjectTypes();
         this.GetStudentAttendance();
 
@@ -484,32 +484,7 @@ export class VerifyResultsComponent implements OnInit {
 
         var _classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
         this.ClassFullMark = 0;
-        // if (_classMarks.length > 0) {
 
-        //   this.ClassFullMark = 0;
-        //   var objDistinctSubjectType = alasql("select distinct SubjectTypeId,SelectHowMany FullMark from ? ",
-        //     [_classMarks]);
-
-        //   //sum of all compulsory subject marks
-        //   var _compulsorysubjects = _classMarks.filter(f => f.SelectHowMany == 100);
-        //   this.ClassFullMark = _compulsorysubjects.reduce((acc, current) => acc + current.FullMark, 0);
-
-        //   //sum of others
-        //   objDistinctSubjectType.forEach(d => {
-        //     var subjecttypeobj = _classMarks.filter(f => f.SubjectTypeId == d.SubjectTypeId);
-        //     if (subjecttypeobj.length > 0) {
-
-        //     }
-
-        //   })
-        // }
-        // this.GetStudents(_classId)
-        //   .subscribe((data: any) => {
-        //this.Students = [];
-        // this.Students.forEach(f => {
-        //   if (f.Student.Active == 1)
-        //     this.Students.push(f);
-        // });
 
         var ForGrading, ForNonGrading;
         StudentOwnSubjects.forEach(f => {
@@ -578,7 +553,19 @@ export class VerifyResultsComponent implements OnInit {
             var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
               [_classMarks, eachsubj.ClassSubjectId]);
 
-
+            var failedInComponent = false;
+            var subjectComponent = _classMarks.filter(comp => comp.PassMark>0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
+            subjectComponent.forEach(compmarkobtained => {
+              var componentobtainedmark = examComponentResult.value.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
+                && eres.ClassSubjectMarkComponentId == compmarkobtained.ClassSubjectMarkComponentId)
+              if (componentobtainedmark.length > 0) {
+                if (!failedInComponent && componentobtainedmark[0].Marks < compmarkobtained.PassMark) {
+                  failedInComponent = true;
+                }
+              }
+              else
+                failedInComponent = true;
+            })
             var _statusFail = true;
 
             if (markObtained.length > 0) {
@@ -621,17 +608,22 @@ export class VerifyResultsComponent implements OnInit {
                   this.GradingDisplayedColumns.push(eachsubj.Subject)
               }
               else if (_subjectCategoryName == 'marking') {
-                _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
+
+                if (!failedInComponent)
+                  _statusFail = ((markObtained[0].Marks * 100) / _subjectPassMarkFullMark[0].FullMark) < _subjectPassMarkFullMark[0].PassMark
+
                 ForNonGrading["FullMark"] = this.ClassFullMark;
-                if (_statusFail)
+
+                if (failedInComponent || _statusFail) {
                   ForNonGrading["FailCount"]++;
+                }
                 else
                   ForNonGrading["PassCount"]++;
 
                 if (this.displayedColumns.indexOf(eachsubj.Subject) == -1 && eachsubj.Subject.length > 0)
                   this.displayedColumns.push(eachsubj.Subject)
                 if (markObtained.length > 0) {
-                  ForNonGrading[eachsubj.Subject] = markObtained[0].Marks;
+                  ForNonGrading[eachsubj.Subject] = (failedInComponent || _statusFail) ? "(" + markObtained[0].Marks + ")" : markObtained[0].Marks;
                   ForNonGrading["Total"] += +markObtained[0].Marks;
                 }
               }
@@ -705,7 +697,7 @@ export class VerifyResultsComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
 
-        //console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
+        console.log("this.ExamStudentSubjectResult", this.ExamStudentSubjectResult)
         var sortedresult = this.ExamStudentSubjectResult.filter(f => f.Rank != 0);
         var rankzero = this.ExamStudentSubjectResult.filter(f => f.Rank == 0);
         rankzero.forEach(zerorank => {
@@ -761,7 +753,7 @@ export class VerifyResultsComponent implements OnInit {
         this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCESMODE);
         this.SubjectCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTCATEGORY);
         this.ExamResultProperties = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMRESULTPROPERTY);
-        
+
         this.GetClassGroup();
         this.GetClassGroupMapping();
         this.GetExams();
@@ -877,7 +869,7 @@ export class VerifyResultsComponent implements OnInit {
         this.Exams = [];
         data.value.forEach(e => {
           //var _examName = '';
-          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active ==1)
+          var obj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId && n.Active == 1)
           if (obj.length > 0) {
             //_examName = obj[0].MasterDataName
             this.Exams.push({
@@ -923,9 +915,9 @@ export class VerifyResultsComponent implements OnInit {
 
     this.dataservice.get(list)
       .subscribe((totalAttendance: any) => {
-        this.TotalAttendance =[];
+        this.TotalAttendance = [];
         totalAttendance.value.forEach(f => {
-          var _exm = this.Exams.filter(e=>e.ExamId == f.ExamId);
+          var _exm = this.Exams.filter(e => e.ExamId == f.ExamId);
           if (_exm.length > 0) {
             f.Sequence = _exm[0].Sequence;
             this.TotalAttendance.push(f);
@@ -1004,14 +996,15 @@ export class VerifyResultsComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         this.ClassSubjectComponents = [];
-        data.value.map(e => {
+        data.value.forEach(e => {
           e.ClassId = e.ClassSubject.ClassId;
           e.SubjectTypeId = e.ClassSubject.SubjectTypeId;
           e.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == e.ClassSubject.SubjectTypeId)[0].SelectHowMany;
           if (e.ClassSubject.Active == 1)
             this.ClassSubjectComponents.push(e);
         })
-        this.loading = false; this.PageLoading = false;
+        this.loading = false;
+        this.PageLoading = false;
       })
   }
 

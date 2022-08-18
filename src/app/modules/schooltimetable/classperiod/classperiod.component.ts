@@ -196,7 +196,7 @@ export class ClassperiodComponent implements OnInit {
           row.Action = false;
           this.loading = false; 
           this.PageLoading = false;
-          this.DataToSave--;
+          //this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
             this.loading = false; 
@@ -213,7 +213,7 @@ export class ClassperiodComponent implements OnInit {
         (data: any) => {
           this.rowCount++;
           row.Action = false;
-          this.DataToSave--;
+          //this.DataToSave--;
           if (this.DataToSave == 0) {
             this.DataToSave = -1;
             this.loading = false; 
