@@ -12,6 +12,7 @@ import { SlotnclasssubjectComponent } from '../slotnclasssubject/slotnclasssubje
 import { StudentgradeComponent } from '../studentgrade/studentgrade.component';
 import { VerifyresultstatusComponent } from '../verifyresultstatus/verifyresultstatus.component';
 import { ExamncalculateComponent } from '../examncalculate/examncalculate.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-examdashboard',
@@ -53,7 +54,7 @@ export class ExamdashboardComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
@@ -171,7 +172,7 @@ export class ExamdashboardComponent implements AfterViewInit {
 //   @ViewChild('container', { read: ViewContainerRef, static: false })
 //   public viewContainer: ViewContainerRef;
 
-//   constructor(
+//   constructor(private servicework: SwUpdate,
 //     private cdr: ChangeDetectorRef,
 //     private tokenStorage: TokenStorageService,
 //     private shareddata: SharedataService,

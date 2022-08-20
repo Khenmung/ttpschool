@@ -16,6 +16,7 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-today-collection',
@@ -69,7 +70,7 @@ export class TodayCollectionComponent implements OnInit {
   ErrorMessage: string = '';
   SelectedBatchId = 0;
   filteredOptions: Observable<IStudent[]>;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
@@ -80,6 +81,13 @@ export class TodayCollectionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.SearchForm = this.fb.group({
       searchStudentName: [0],
       FromDate: [new Date(), Validators.required],

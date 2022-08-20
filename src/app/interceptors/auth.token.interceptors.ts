@@ -13,7 +13,7 @@ import { SharedataService } from '../shared/sharedata.service';
 @Injectable()
 export class AuthTokenInterceptors implements HttpInterceptor {
   jwtHelper = new JwtHelperService();
-  constructor(private authService: AuthService,
+  constructor(private servicework: SwUpdate,private authService: AuthService,
     private shareddata:SharedataService
     ) {}
   intercept(

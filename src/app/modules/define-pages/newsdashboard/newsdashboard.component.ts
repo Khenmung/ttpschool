@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
@@ -63,7 +64,7 @@ export class NewsdashboardComponent implements OnInit { PageLoading=true;
           this.dataSource.paginator = this.paginator;
     
   }
-  constructor(private naomitsuService: NaomitsuService,
+  constructor(private servicework: SwUpdate,private naomitsuService: NaomitsuService,
     private navigate: Router,
     private route: ActivatedRoute,
     private shareddata: SharedataService,

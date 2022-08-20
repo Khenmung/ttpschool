@@ -8,7 +8,8 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-// import { NgChartsConfiguration} from 'ng2-charts'
+import {SwUpdate} from '@angular/service-worker';
+
 @Component({
   selector: 'app-chartreport',
   templateUrl: './chartreport.component.html',
@@ -47,7 +48,7 @@ export class ChartReportComponent {
   SelectedApplicationId = 0;
   SelectedBatchId = 0;
   Permission = '';
-  constructor(
+  constructor(private servicework: SwUpdate,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,

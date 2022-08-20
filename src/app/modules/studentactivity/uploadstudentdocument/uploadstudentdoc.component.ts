@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -54,7 +55,7 @@ export class StudentDocumentComponent implements OnInit {
     "Action"
   ]
   documentUploadSource: MatTableDataSource<IUploadDoc>;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private fileUploadService: FileUploadService,
     private shareddata: SharedataService,
@@ -66,6 +67,13 @@ export class StudentDocumentComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.uploadForm = this.fb.group({
       searchStudentName: [''],
       BatchId: [0],

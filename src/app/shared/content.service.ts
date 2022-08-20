@@ -31,6 +31,7 @@ export class ContentService implements OnInit {
     private snackbar: MatSnackBar
   ) { }
   ngOnInit(): void {
+   
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
 
   }

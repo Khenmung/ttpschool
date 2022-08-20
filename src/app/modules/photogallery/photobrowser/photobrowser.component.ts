@@ -7,7 +7,7 @@ import { globalconstants } from '../../../shared/globalconstant';
 import { Subscription } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout';
 import { ContentService } from 'src/app/shared/content.service';
-import { environment } from 'src/environments/environment';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-photobrowser',
@@ -42,7 +42,7 @@ export class PhotobrowserComponent implements OnInit { PageLoading=true;
   mediaSub: Subscription;
   deviceXs: boolean;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private route: Router,
     private contentservice: ContentService,

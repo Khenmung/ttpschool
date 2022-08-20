@@ -9,7 +9,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
-import { SharedataService } from 'src/app/shared/sharedata.service';
+import {SwUpdate} from '@angular/service-worker';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 
 @Component({
@@ -57,7 +57,7 @@ export class EventComponent implements OnInit { PageLoading=true;
   ];
   SelectedApplicationId=0;
   searchForm: UntypedFormGroup;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -67,6 +67,13 @@ export class EventComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //debugger;
     this.searchForm = this.fb.group({
       searchClassName: [0]

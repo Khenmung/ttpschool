@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -49,7 +50,7 @@ export class AddstudentclassComponent implements OnInit {
     OrgId: 0
   }
   Permission = '';
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -59,6 +60,13 @@ export class AddstudentclassComponent implements OnInit {
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     var today = new Date();
     this.studentclassForm = this.fb.group({

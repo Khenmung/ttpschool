@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { List } from '../../../shared/interface';
@@ -22,7 +23,7 @@ import * as moment from 'moment';
 export class ExcelDataManagementComponent implements OnInit {
   PageLoading = true;
   ReadyForUpload = false;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private snackbar: MatSnackBar,
     private datepipe: DatePipe,
     private contentservice: ContentService,

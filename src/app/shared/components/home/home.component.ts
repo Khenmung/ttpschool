@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { Subscription } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout'
 import { NaomitsuService } from '../../databaseService';
@@ -30,13 +31,21 @@ export class HomeComponent implements OnInit {
   MenuData = [];
   /////////////////////////
 
-  constructor(private mediaObserver: MediaObserver,
+  constructor(private servicework: SwUpdate,
+    private mediaObserver: MediaObserver,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private shareddata: SharedataService
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.mediaSub = this.mediaObserver.asObservable().subscribe((result) => {
       ////console.log('result',result);
       this.deviceXs = result[0].mqAlias === "xs" ? true : false;

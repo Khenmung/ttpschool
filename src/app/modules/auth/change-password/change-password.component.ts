@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -31,7 +32,7 @@ export class ChangePasswordComponent implements OnInit { PageLoading=true;
     autoClose: true,
     keepAfterRouteChange: true
   };
-  constructor(
+  constructor(private servicework: SwUpdate,
     private authService: AuthService,
     private route: Router,
     private mediaObserver: MediaObserver,
@@ -41,6 +42,13 @@ export class ChangePasswordComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;
     });

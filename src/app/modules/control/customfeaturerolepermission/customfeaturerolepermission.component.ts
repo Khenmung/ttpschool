@@ -9,7 +9,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-customfeaturerolepermission',
   templateUrl: './customfeaturerolepermission.component.html',
@@ -55,7 +55,7 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   ];
   UserDetails = [];
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private fb: UntypedFormBuilder,
     private route: Router,
     private tokenStorage: TokenStorageService,
@@ -66,6 +66,13 @@ export class CustomfeaturerolepermissionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
 
     this.PageLoad();
   }

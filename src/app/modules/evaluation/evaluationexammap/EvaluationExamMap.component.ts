@@ -11,6 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { EventEmitter } from '@angular/core';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-EvaluationExamMap',
@@ -68,7 +69,7 @@ export class EvaluationExamMapComponent implements OnInit {
   ];
   ClassGroups = [];
   searchForm: UntypedFormGroup;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -77,6 +78,13 @@ export class EvaluationExamMapComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({
       searchEvaluationMasterId: [0],

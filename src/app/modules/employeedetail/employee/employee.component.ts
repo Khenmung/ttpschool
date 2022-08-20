@@ -10,7 +10,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { environment } from 'src/environments/environment';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-employee',
@@ -128,7 +128,7 @@ export class EmployeeComponent implements OnInit {
     });
   }
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
@@ -203,6 +203,13 @@ export class EmployeeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     debugger;
     this.loginUserDetail = this.tokenService.getUserDetail();
     this.EmployeeId = this.tokenService.getEmployeeId();

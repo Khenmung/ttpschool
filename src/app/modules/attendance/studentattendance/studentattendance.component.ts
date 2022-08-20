@@ -1,10 +1,10 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import * as moment from 'moment';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -75,7 +75,8 @@ export class StudentAttendanceComponent implements OnInit {
   ];
   SelectedApplicationId = 0;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
+    
     private fb: UntypedFormBuilder,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -84,10 +85,17 @@ export class StudentAttendanceComponent implements OnInit {
     private route: ActivatedRoute,
     private nav: Router,
     private shareddata: SharedataService,
-    private datepipe: DatePipe
+    
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     debugger;
     this.loading = true;
     this.LoginUserDetail = this.tokenstorage.getUserDetail();

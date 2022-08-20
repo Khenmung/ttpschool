@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
@@ -8,6 +8,7 @@ import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
 import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
 import { RulesorpolicyComponent } from '../rulesorpolicy/rulesorpolicy.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-miscboard',
@@ -41,7 +42,7 @@ export class MiscboardComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private contentservice: ContentService,
     private tokenStorage: TokenStorageService,

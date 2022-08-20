@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AddstudentclassComponent } from '../addstudentclass/addstudentclass.component';
 import { AddstudentfeepaymentComponent } from '../studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from '../studentfeepayment/feereceipt/feereceipt.component';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-studentview',
   templateUrl: './studentview.component.html',
@@ -135,7 +135,7 @@ export class StudentviewComponent implements OnInit {
     });
   }
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
@@ -151,6 +151,13 @@ export class StudentviewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.imgURL = '';
     this.loginUserDetail = this.tokenService.getUserDetail();
     if (this.loginUserDetail.length == 0)

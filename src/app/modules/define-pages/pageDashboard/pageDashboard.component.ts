@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
@@ -107,7 +108,7 @@ export class pageDashboardComponent implements OnInit { PageLoading=true;
       });
     this.loading = false; this.PageLoading=false;
   }
-  constructor(private naomitsuService: NaomitsuService,
+  constructor(private servicework: SwUpdate,private naomitsuService: NaomitsuService,
     private navigate: Router,
     private route: ActivatedRoute,
     //private shareddata: SharedataService,

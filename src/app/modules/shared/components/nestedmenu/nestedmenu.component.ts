@@ -8,7 +8,7 @@ import { MatMenu } from '@angular/material/menu';
 })
 export class NestedmenuComponent implements OnInit { PageLoading=true;
 loading=false;
-  constructor() { }
+  constructor(private servicework: SwUpdate,) { }
 
   ngOnInit() { }
 

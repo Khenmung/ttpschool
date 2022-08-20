@@ -12,6 +12,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 //import { ClasssubjectComponent } from '../classsubject/classsubject.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-classmasterdashboard',
@@ -69,7 +70,7 @@ export class ClassmasterdashboardComponent implements OnInit {
   filteredOptions: Observable<ITeachers[]>;
   //Students: any;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
@@ -81,6 +82,13 @@ export class ClassmasterdashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.searchForm = this.fb.group({
       searchTeacherId: [0],
       searchClassId: [0]

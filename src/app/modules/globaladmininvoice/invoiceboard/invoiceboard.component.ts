@@ -7,6 +7,7 @@ import { AddMasterDataComponent } from '../../control/add-master-data/add-master
 import { CustomerinvoiceComponent } from '../customerinvoice/customerinvoice.component';
 import { CustomerinvoicecomponentsComponent } from '../customerinvoicecomponents/customerinvoicecomponents.component';
 import { ReportConfigItemComponent } from '../reportconfigitem/reportconfigitem.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-invoiceboard',
@@ -40,7 +41,7 @@ export class InvoiceboardComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,

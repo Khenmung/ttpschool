@@ -14,7 +14,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-no-of-student',
   templateUrl: './no-of-student.component.html',
@@ -79,7 +79,7 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
     'ClassName',
     'MaxStudent'
   ];
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private contentservice: ContentService,
@@ -93,6 +93,13 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.searchForm = this.fb.group({
       searchClassId: [0],
     });

@@ -3,6 +3,7 @@ import { ContentService } from "src/app/shared/content.service";
 import { NaomitsuService } from "src/app/shared/databaseService";
 import { globalconstants } from "src/app/shared/globalconstant";
 import { TokenStorageService } from "src/app/_services/token-storage.service";
+//import {SwUpdate} from '@angular/service-worker';
 @Injectable({
     providedIn: 'root'
 })
@@ -12,7 +13,7 @@ export class StudentActivity {
     loading = false;
     loginUserDetail = [];
     SelectedBatchId = 0;
-    constructor(
+    constructor(//private servicework: SwUpdate,
         private token: TokenStorageService,
         private dataservice: NaomitsuService,
         private contentservice: ContentService,

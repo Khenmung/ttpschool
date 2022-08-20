@@ -9,7 +9,7 @@ import { globalconstants } from '../../../shared/globalconstant';
 import { MatTableDataSource } from '@angular/material/table';
 import { ContentService } from 'src/app/shared/content.service';
 import { environment } from 'src/environments/environment';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-albums',
   templateUrl: './albums.component.html',
@@ -47,7 +47,7 @@ export class AlbumsComponent implements OnInit { PageLoading=true;
   selectedAlbum: string;
   oldvalue: string;
   absoluteurl = '';
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private route: Router,
     private contentservice: ContentService,

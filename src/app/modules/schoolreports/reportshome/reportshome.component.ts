@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-reportshome',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class reportshomeComponent implements OnInit { PageLoading=true;
   openSideBar =true;
-  constructor() { }
+  constructor(private servicework: SwUpdate,) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
   }
   sideBarToggler(){
     this.openSideBar =!this.openSideBar;

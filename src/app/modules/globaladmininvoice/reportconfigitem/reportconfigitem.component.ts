@@ -9,7 +9,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-ReportConfigItem',
   templateUrl: './reportconfigitem.component.html',
@@ -66,7 +66,7 @@ export class ReportConfigItemComponent implements OnInit { PageLoading=true;
   };
   ApplicationName = '';
   searchForm: UntypedFormGroup;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,    
     private tokenstorage: TokenStorageService,
@@ -78,6 +78,13 @@ export class ReportConfigItemComponent implements OnInit { PageLoading=true;
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //debugger;
     this.searchForm = this.fb.group({
       searchApplicationId: [0],

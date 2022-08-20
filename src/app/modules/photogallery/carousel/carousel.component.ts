@@ -4,7 +4,8 @@ import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { ActivatedRoute, Router } from '@angular/router';
 import {globalconstants } from '../../../shared/globalconstant';
-import { environment } from 'src/environments/environment';
+import {SwUpdate} from '@angular/service-worker';
+
 @Component({
   selector: 'carousel, [carousel]',
   templateUrl: './carousel.component.html',
@@ -31,7 +32,7 @@ export class CarouselComponent implements OnInit { PageLoading=true;
     }
   ];// [100, 500, 700, 800, 807].map(n => `https://picsum.photos/id/${n}/900/500`);
 
-  constructor(private config: NgbCarouselConfig,
+  constructor(private servicework: SwUpdate,private config: NgbCarouselConfig,
     private dataservice: NaomitsuService,
     private route: ActivatedRoute,
     private nav: Router) {

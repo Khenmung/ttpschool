@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
@@ -37,7 +38,7 @@ export class ContactdashboardComponent implements OnInit { PageLoading=true;
   @ViewChild(MatSort) sort: MatSort;
 
   selection = new SelectionModel<IMessage>(true, []);
-  constructor(private dataservice: NaomitsuService,
+  constructor(private servicework: SwUpdate,private dataservice: NaomitsuService,
     private navigate: Router,
     private contentservice: ContentService,
     private tokenStorage:TokenStorageService) {

@@ -85,6 +85,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
   ) { }
 
   ngOnInit(): void {
+    
     this.nameFilter.valueChanges
       .subscribe(
         name => {

@@ -15,7 +15,7 @@ import { evaluate } from 'mathjs';
 import { FeereceiptComponent } from '../feereceipt/feereceipt.component';
 import { ContentService } from 'src/app/shared/content.service';
 import { map, startWith } from 'rxjs/operators';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-addstudentfeepayment',
   templateUrl: './addstudentfeepayment.component.html',
@@ -167,7 +167,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
     'Amount',
     'Balance'
   ]
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -178,6 +178,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
   filteredLedgerAccounts: Observable<IGeneralLedger[]>;
   paymentform: UntypedFormGroup;
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.paymentform = this.fb.group({
       GeneralLedgerAccountId: [0]
     })

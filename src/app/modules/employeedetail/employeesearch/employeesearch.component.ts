@@ -15,6 +15,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TableUtil } from 'src/app/shared/TableUtil';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as XLSX from 'xlsx';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-employeesearch',
@@ -71,7 +72,7 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
   filteredEmployeeCode: Observable<IEmployee[]>;
   LoginUserDetail = [];
   Permission = '';
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
@@ -81,6 +82,13 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //debugger;
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();

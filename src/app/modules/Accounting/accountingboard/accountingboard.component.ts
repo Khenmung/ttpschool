@@ -44,7 +44,7 @@ export class AccountingboardComponent implements AfterViewInit {
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private contentservice: ContentService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    ) {
   }
 
   public ngAfterViewInit(): void {

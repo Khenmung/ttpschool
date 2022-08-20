@@ -17,6 +17,7 @@ export class EmpmanagementboardComponent implements OnInit { PageLoading=true;
   constructor() { }
 
   ngOnInit(): void {
+    
     setTimeout(() => {
       this.Component.PageLoad();
     }, 50);

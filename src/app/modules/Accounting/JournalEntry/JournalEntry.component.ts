@@ -11,6 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { IGeneralLedger } from '../ledger-account/ledger-account.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-JournalEntry',
@@ -72,7 +73,7 @@ export class JournalEntryComponent implements OnInit {
   filteredOptions: Observable<IGeneralLedger[]>;
   //Students: any;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
@@ -83,6 +84,13 @@ export class JournalEntryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.searchForm = this.fb.group({
       searchGeneralLedgerId: [0],
       searchReferenceId: [''],

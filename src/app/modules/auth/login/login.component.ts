@@ -40,8 +40,8 @@ export class LoginComponent implements OnInit {
   password;
   show = false;
   IsSubmitted = false;
-  constructor(private authService: AuthService,
-
+  constructor(
+    private authService: AuthService,
     private dataservice: NaomitsuService,
     private tokenStorage: TokenStorageService,
     private route: Router,
@@ -51,6 +51,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
     this.password = 'password';
     this.mediaSub = this.mediaObserver.media$.subscribe((result: MediaChange) => {
       this.deviceXs = result.mqAlias === "xs" ? true : false;

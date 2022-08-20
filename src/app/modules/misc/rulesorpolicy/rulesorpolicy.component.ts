@@ -10,6 +10,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-rulesorpolicy',
@@ -52,7 +53,7 @@ export class RulesorpolicyComponent implements OnInit {
   ];
   SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -62,6 +63,13 @@ export class RulesorpolicyComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //debugger;
     this.searchForm = this.fb.group({
       searchCategoryId: [0],

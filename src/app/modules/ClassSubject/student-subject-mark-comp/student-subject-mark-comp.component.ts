@@ -9,6 +9,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-student-subject-mark-comp',
@@ -58,7 +59,7 @@ export class StudentSubjectMarkCompComponent implements OnInit {
   };
   Exams = [];
   ExamNames = [];
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
@@ -68,6 +69,13 @@ export class StudentSubjectMarkCompComponent implements OnInit {
     private shareddata: SharedataService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.LoginUserDetail = this.token.getUserDetail();
     if (this.LoginUserDetail == null || this.LoginUserDetail.length == 0)
       this.route.navigate(['auth/login']);

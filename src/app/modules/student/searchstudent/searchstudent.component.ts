@@ -14,6 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-searchstudent',
@@ -84,7 +85,7 @@ export class searchstudentComponent implements OnInit {
     PID: 0,
     AdmissionNo: 0
   }]
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
@@ -94,6 +95,13 @@ export class searchstudentComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
 
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();

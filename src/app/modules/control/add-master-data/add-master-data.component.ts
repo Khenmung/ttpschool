@@ -14,6 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-add-master-data',
@@ -69,7 +70,7 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
   
   searchForm: UntypedFormGroup;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private snackbar: MatSnackBar,
     private dialog: MatDialog,
     private fb: UntypedFormBuilder,
@@ -79,6 +80,13 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
     this.PermittedApplications = this.tokenStorage.getPermittedApplications();

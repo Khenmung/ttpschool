@@ -7,8 +7,9 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
-import { environment } from 'src/environments/environment';
-//import { FormsModule} from '@angular/forms';
+
+import {SwUpdate} from '@angular/service-worker';
+
 @Component({
 
   selector: 'app-text-editor',
@@ -80,7 +81,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
   log: string = ''
   res: any;
   loading = false;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private fb:UntypedFormBuilder,
     private naomitsuService: NaomitsuService,
     private router: Router,

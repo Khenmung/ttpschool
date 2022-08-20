@@ -9,6 +9,7 @@ import { NaomitsuService } from '../../../../shared/databaseService';
 import { globalconstants } from '../../../../shared/globalconstant';
 import { List } from '../../../../shared/interface';
 import { SharedataService } from '../../../../shared/sharedata.service';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-feereceipt',
@@ -76,13 +77,20 @@ export class FeereceiptComponent implements OnInit {
   TotalAmount = 0;
   Balance = 0;
 
-  constructor(private dataservice: NaomitsuService,
+  constructor(private servicework: SwUpdate,private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService,
 
     private shareddata: SharedataService,
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
 
   }
 

@@ -14,6 +14,7 @@ import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-feecollectionreport',
@@ -69,7 +70,7 @@ export class FeecollectionreportComponent implements OnInit {
   SearchForm: UntypedFormGroup;
   ErrorMessage: string = '';
   //alert: any;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
@@ -80,6 +81,13 @@ export class FeecollectionreportComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.LoginUserDetail = this.tokenservice.getUserDetail();
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);

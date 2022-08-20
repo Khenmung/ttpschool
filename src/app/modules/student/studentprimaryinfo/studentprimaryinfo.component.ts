@@ -15,7 +15,7 @@ import { SharedataService } from '../../../shared/sharedata.service';
 import { ContentService } from 'src/app/shared/content.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { environment } from 'src/environments/environment';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-studentprimaryinfo',
   templateUrl: './studentprimaryinfo.component.html',
@@ -134,7 +134,7 @@ export class studentprimaryinfoComponent implements OnInit {
     });
   }
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
@@ -199,6 +199,13 @@ export class studentprimaryinfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.imgURL ='';
     this.loginUserDetail = this.tokenService.getUserDetail();
     if (this.loginUserDetail.length == 0)

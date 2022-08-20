@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -49,7 +50,7 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
   ];
   Permission = '';
   IsCurrentBatchSelected=1;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private dialog: MatDialog,
@@ -59,6 +60,13 @@ export class SubjectTypesComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
 
     this.PageLoad();
 

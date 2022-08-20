@@ -28,6 +28,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as moment from 'moment';
 import { globalconstants } from 'src/app/shared/globalconstant';
+import {SwUpdate} from '@angular/service-worker';
 
 const colors: any = {
   red: {
@@ -144,7 +145,7 @@ export class DemoComponent implements OnInit { PageLoading=true;
 
   activeDayIsOpen: boolean = true;
   Permission = '';
-  constructor(private modal: NgbModal,
+  constructor(private servicework: SwUpdate,private modal: NgbModal,
     private dataservice: NaomitsuService,
     private tokenservice: TokenStorageService
   ) {
@@ -153,6 +154,13 @@ export class DemoComponent implements OnInit { PageLoading=true;
     this.GetEvents();
   }
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //console.log("events", this.events);
     var perObj = globalconstants.getPermission(this.tokenservice, globalconstants.Pages.edu.DATA.DOWNLOAD);
     if (perObj.length > 0) {
@@ -293,6 +301,7 @@ export class DemoComponent implements OnInit { PageLoading=true;
   }
 }
   // import { Component, OnInit } from '@angular/core';
+//import { SwUpdate } from '@angular/service-worker';
   // import timeGridPlugin from '@fullcalendar/timegrid';
   // import { CalendarOptions } from '@fullcalendar/angular';
   // import { NaomitsuService } from 'src/app/shared/databaseService';
@@ -315,12 +324,19 @@ export class DemoComponent implements OnInit { PageLoading=true;
   //   CalendarList = [];
   //   SelectedBatchId=0;
   //   calendarOptions: CalendarOptions;
-  //   constructor(
+  //   constructor(private servicework: SwUpdate,
   //     private contentservice: ContentService,
   //     private dataservice: NaomitsuService,
   //     private tokenService: TokenStorageService) { }
 
   //   ngOnInit(): void {
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
   //     this.LoginUserDetail = this.tokenService.getUserDetail();
   //     this.SelectedBatchId =  +this.tokenService.getSelectedBatchId();
   //     this.GetHoliday();

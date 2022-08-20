@@ -8,7 +8,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ContentService } from 'src/app/shared/content.service';
-import { TeachersubjectComponent } from '../../schooltimetable/teachersubject/teachersubject.component';
+
 
 @Component({
   selector: 'app-subjectboard',
@@ -141,9 +141,10 @@ export class SubjectBoardComponent implements AfterViewInit {
 //   @ViewChild(AssignStudentclassdashboardComponent) studentclass: AssignStudentclassdashboardComponent;
 //   @ViewChild(ClassperiodComponent) Classperiod: ClassperiodComponent;
 //   selectedIndex = 0;
-//   constructor() { }
+//   constructor(private servicework: SwUpdate,) { }
 
 //   ngOnInit(): void {
+    
 //     setTimeout(() => {
 //       this.navigateTab(0)  
 //     }, 100);

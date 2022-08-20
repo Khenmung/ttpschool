@@ -11,6 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassEvaluationOptionComponent } from '../classevaluationoption/classevaluationoption.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-ClassEvaluation',
@@ -79,7 +80,7 @@ export class ClassEvaluationComponent implements OnInit {
   ];
   searchForm: UntypedFormGroup;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -88,6 +89,13 @@ export class ClassEvaluationComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     debugger;
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({

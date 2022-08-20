@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
@@ -35,13 +36,20 @@ export class FiledragAndDropComponent implements OnInit { PageLoading=true;
     parentId: new UntypedFormControl(0)
 
   });
-  constructor(private uploadService: FileUploadService,
+  constructor(private servicework: SwUpdate,private uploadService: FileUploadService,
     private naomitsuService: NaomitsuService,
     private route: Router,
     private tokenStorage: TokenStorageService,
     private contentservice: ContentService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.formdata = new FormData();
     this.checklogin();
     this.getAlbums();

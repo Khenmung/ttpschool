@@ -3,15 +3,12 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { DisplaypageComponent } from '../../define-pages/displaypage/displaypage.component';
-import { NewsdashboardComponent } from '../../define-pages/newsdashboard/newsdashboard.component';
-import { TextEditorComponent } from '../../define-pages/texteditor/texteditor.component';
 import { AlbumsComponent } from '../albums/albums.component';
 import { CarouselComponent } from '../carousel/carousel.component';
 import { FiledragAndDropComponent } from '../filedrag-and-drop/filedrag-and-drop.component';
-import { ImgDragAndDropComponent } from '../imgDragAndDrop/imgDragAndDrop';
 import { PhotobrowserComponent } from '../photobrowser/photobrowser.component';
 import { PhotosComponent } from '../photos/photos.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-photofileboard',
@@ -48,7 +45,7 @@ export class PhotofileboardComponent implements OnInit {
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,

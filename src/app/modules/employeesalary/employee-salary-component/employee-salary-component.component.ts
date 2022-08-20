@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -89,7 +90,7 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
   Permission='';
   searchForm: UntypedFormGroup;
   SelectedApplicationId=0;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentService: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -102,6 +103,13 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //debugger;
     var thisyear = new Date().getFullYear();
     this.searchForm = this.fb.group({

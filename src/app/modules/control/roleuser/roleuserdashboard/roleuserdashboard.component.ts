@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/_services/auth.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ContentService } from 'src/app/shared/content.service';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-roleuserdashboard',
@@ -65,7 +66,7 @@ export class roleuserdashboardComponent implements OnInit { PageLoading=true;
     'Action'
   ];
   currentRoute = '';
-  constructor(private dataservice: NaomitsuService,
+  constructor(private servicework: SwUpdate,private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
 
     private authservice: AuthService,
@@ -76,6 +77,13 @@ export class roleuserdashboardComponent implements OnInit { PageLoading=true;
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.filteredOptions = this.searchForm.get("searchUserName").valueChanges
       .pipe(
         startWith(''),

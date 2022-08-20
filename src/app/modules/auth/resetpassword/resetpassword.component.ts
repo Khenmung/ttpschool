@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/_services/auth.service';
@@ -28,7 +29,7 @@ export class ResetpasswordComponent implements OnInit { PageLoading=true;
   };
   Code='';
   UserId='';
-  constructor(private authService: AuthService,
+  constructor(private servicework: SwUpdate,private authService: AuthService,
     private route: Router,
     private aroute:ActivatedRoute,
     private fb: UntypedFormBuilder,
@@ -36,6 +37,13 @@ export class ResetpasswordComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.aroute.queryParamMap.subscribe(param=>{
       this.Code = param.get("code");
       this.UserId = param.get("userid");

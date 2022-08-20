@@ -12,6 +12,7 @@ import { PlanandmasteritemComponent } from '../planandmasteritem/planandmasterit
 import { OrganizationpaymentComponent } from '../organizationpayment/organizationpayment.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CustomerPlanFeatureComponent } from '../customerplanfeature/customerplanfeature.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-globaladminboard',
@@ -56,7 +57,7 @@ export class GlobaladminboardComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private route: Router,
     private tokenStorage: TokenStorageService,

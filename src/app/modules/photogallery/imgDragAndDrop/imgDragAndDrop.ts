@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { FileUploadService } from '../../../shared/upload.service'
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { List } from '../../../shared/interface';
@@ -26,7 +27,7 @@ export class ImgDragAndDropComponent implements OnInit { PageLoading=true;
   uploadedImage: File;
   errorMessage = '';
   Requestsize = 0;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private naomitsuService: NaomitsuService,
     
     private uploadService: FileUploadService,

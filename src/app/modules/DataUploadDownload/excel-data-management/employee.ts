@@ -22,7 +22,7 @@ export class employee {
     constructor(
         private token: TokenStorageService,
         private dataservice: NaomitsuService,
-        private contentservice: ContentService,
+        
 
     ) {
         this.loginUserDetail = this.token.getUserDetail();

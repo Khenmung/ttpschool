@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { ViewChild } from '@angular/core';
@@ -91,7 +92,7 @@ export class MenuConfigComponent implements OnInit { PageLoading=true;
     this.SelectedApplicationId = +this.tokenStorage.getSelectedAPPId();
 
   }
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private fb: UntypedFormBuilder,

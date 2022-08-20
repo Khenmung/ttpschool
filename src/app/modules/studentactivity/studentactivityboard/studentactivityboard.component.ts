@@ -8,7 +8,7 @@ import { GenerateCertificateComponent } from '../generatecertificate/generatecer
 import { SportsResultComponent } from '../sportsresult/sportsresult.component';
 import { StudentfamilynfriendComponent } from '../studentfamilynfriend/studentfamilynfriend.component';
 import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudentdoc.component';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-studentactivityboard',
   templateUrl: './studentactivityboard.component.html',
@@ -40,7 +40,7 @@ export class StudentactivityboardComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private nav: Router,
     private contentservice: ContentService,

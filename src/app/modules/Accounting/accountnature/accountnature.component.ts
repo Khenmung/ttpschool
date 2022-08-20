@@ -12,6 +12,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-accountnature',
@@ -64,7 +65,7 @@ export class AccountNatureComponent implements OnInit {
   ];
   filteredAccounts: Observable<IAccountNature[]>;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private datepipe: DatePipe,
     private fb: UntypedFormBuilder,
     private dataservice: NaomitsuService,
@@ -75,6 +76,13 @@ export class AccountNatureComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.searchForm = this.fb.group({
       searchParentId: [0],
       searchAccountName: ['']

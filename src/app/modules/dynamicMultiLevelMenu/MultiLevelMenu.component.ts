@@ -73,6 +73,7 @@ export class MultiLevelMenuComponent implements OnInit { PageLoading=true;
     //console.log('selectedLabel', event);
   }
   ngOnInit(): void {
+    
     ////console.log('get',``)
     this.loading == true;
     this.config = {

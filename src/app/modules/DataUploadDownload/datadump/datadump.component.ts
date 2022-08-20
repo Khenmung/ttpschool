@@ -13,6 +13,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TableUtil } from 'src/app/shared/TableUtil';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as XLSX from 'xlsx';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-datadump',
@@ -67,7 +68,7 @@ export class DatadumpComponent implements OnInit {
   filteredMothers: Observable<IStudent[]>;
   LoginUserDetail;
   FeePaymentPermission = '';
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private route: Router,
@@ -77,6 +78,13 @@ export class DatadumpComponent implements OnInit {
     private token: TokenStorageService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
 
     this.loading = true;
     this.LoginUserDetail = this.token.getUserDetail();

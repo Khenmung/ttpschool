@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NaomitsuService } from '../../../shared/databaseService';
@@ -27,7 +28,7 @@ export class ContactComponent implements OnInit { PageLoading=true;
     MessageId: new UntypedFormControl(0)
   });
 
-  constructor(private naomitsuService: NaomitsuService,
+  constructor(private servicework: SwUpdate,private naomitsuService: NaomitsuService,
     
     private route: Router,
     private activeUrl: ActivatedRoute) {
@@ -38,6 +39,13 @@ export class ContactComponent implements OnInit { PageLoading=true;
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     if (this.Id > 0) {
       this.title = "Message";
       this.GetContactEntry();

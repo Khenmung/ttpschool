@@ -1,5 +1,6 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -79,7 +80,7 @@ export class StudentprofilereportComponent implements OnInit {
   }
   searchForm: UntypedFormGroup;
   filteredOptions: Observable<IStudent[]>;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
@@ -88,6 +89,13 @@ export class StudentprofilereportComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     debugger;
     this.searchForm = this.fb.group({
       searchStudentName: [0],
@@ -488,7 +496,7 @@ export interface IStudent {
 //     'CategoryName'
 //   ];
 //   searchForm: FormGroup;
-//   constructor(
+//   constructor(private servicework: SwUpdate,
 //     private contentservice: ContentService,
 //     private dataservice: NaomitsuService,
 //     private tokenstorage: TokenStorageService,
@@ -497,6 +505,13 @@ export interface IStudent {
 //   ) { }
 
 //   ngOnInit(): void {
+    // this.servicework.activateUpdate().then(() => {
+    //   this.servicework.checkForUpdate().then((value) => {
+    //     if (value) {
+    //       location.reload();
+    //     }
+    //   })
+    // })
 //     debugger;
 //     this.searchForm = this.fb.group({
 //       searchStudentName: [0]

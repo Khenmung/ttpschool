@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -76,7 +77,7 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   ];
   searchForm: UntypedFormGroup;
   SelectedApplicationId=0;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     
@@ -88,6 +89,13 @@ export class EmployeeGradehistoryComponent implements OnInit { PageLoading=true;
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //debugger;
     this.searchForm = this.fb.group({
       searchEmployeeName: [''],

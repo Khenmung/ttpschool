@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
@@ -13,7 +14,7 @@ export class ConfirmemailComponent implements OnInit { PageLoading=true;
   userId = '';
   code = '';
   loading = false;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private route: Router,
     private aroute: ActivatedRoute,
     private authservice: AuthService,
@@ -23,6 +24,13 @@ export class ConfirmemailComponent implements OnInit { PageLoading=true;
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //this.aroute.queryParamMap.subscribe(qparam => {
     this.loading = true;
 

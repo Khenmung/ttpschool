@@ -6,6 +6,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { DisplaypageComponent } from '../displaypage/displaypage.component';
 import { NewsdashboardComponent } from '../newsdashboard/newsdashboard.component';
 import { TextEditorComponent } from '../texteditor/texteditor.component';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-pagesboard',
@@ -38,7 +39,7 @@ export class PagesboardComponent implements OnInit { PageLoading=true;
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
@@ -31,7 +32,7 @@ export class HomeDashboardComponent implements OnInit {
   PermittedApplications = [];
   SelectedAppName = '';
   CustomFeatures = [];
-  constructor(
+  constructor(private servicework: SwUpdate,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private fb: UntypedFormBuilder,
@@ -43,6 +44,13 @@ export class HomeDashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.searchForm = this.fb.group({
       searchApplicationId: [0],
       searchBatchId: [0]

@@ -16,7 +16,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-generatecertificate',
@@ -88,7 +88,7 @@ export class GenerateCertificateComponent implements OnInit {
     'Description',
   ];
   searchForm: UntypedFormGroup;
-  constructor(
+  constructor(private servicework: SwUpdate,
     @Inject(DOCUMENT) private document: Document,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -102,6 +102,13 @@ export class GenerateCertificateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     //this.loadTheme();
     //debugger;
     this.searchForm = this.fb.group({

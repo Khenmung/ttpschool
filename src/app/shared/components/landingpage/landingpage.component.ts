@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { TokenStorageService } from '../../../_services/token-storage.service';
@@ -13,11 +14,18 @@ import { List } from '../../interface';
 })
 export class LandingpageComponent implements OnInit { PageLoading=true;
   images=[];
-  constructor(private route:Router,
+  constructor(private servicework: SwUpdate,private route:Router,
     private naomitsuService:NaomitsuService,
     private dataStorage:TokenStorageService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
   }
   getRandomDisplayPhotoes() {
     let list: List = new List();

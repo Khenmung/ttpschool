@@ -38,7 +38,7 @@ export class GeneralReportboardComponent implements AfterViewInit {
     private tokenStorage: TokenStorageService,
     private contentservice: ContentService,
     private shareddata: SharedataService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    ) {
   }
 
   public ngAfterViewInit(): void {

@@ -10,6 +10,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { List } from '../../../shared/interface';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-dashboardclassfee',
@@ -62,7 +63,7 @@ export class DashboardclassfeeComponent implements OnInit {
     LocationId: 0
   };
   //matcher = new TouchedErrorStateMatcher();
-  constructor(
+  constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private token: TokenStorageService,
     private dataservice: NaomitsuService,
@@ -71,6 +72,13 @@ export class DashboardclassfeeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
 
     this.searchForm = this.fb.group({
       ClassId: [0],

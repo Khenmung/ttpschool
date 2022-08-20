@@ -10,7 +10,7 @@ import { ResultComponent } from '../result/result.component';
 import { TodayCollectionComponent } from '../today-collection/today-collection.component';
 import { StudentprofilereportComponent } from '../studentprofilereport/studentprofilereport.component';
 import { DailytimetablereportComponent } from '../dailytimetablereport/dailytimetablereport.component';
-
+import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-reportboard',
   templateUrl: './reportboard.component.html',
@@ -53,7 +53,7 @@ export class ReportboardComponent implements AfterViewInit {
   @ViewChild('container', { read: ViewContainerRef, static: false })
   public viewContainer: ViewContainerRef;
 
-  constructor(
+  constructor(private servicework: SwUpdate,
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,

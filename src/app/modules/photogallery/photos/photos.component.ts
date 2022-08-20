@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NaomitsuService } from '../../../shared/databaseService';
 import { DialogService } from '../../../shared/dialog.service';
@@ -32,7 +33,7 @@ export class PhotosComponent implements OnInit { PageLoading=true;
       ImagePath:""
     }
   ];
-  constructor(private dataservice: NaomitsuService,
+  constructor(private servicework: SwUpdate,private dataservice: NaomitsuService,
     private route: ActivatedRoute,
     private nav: Router,
     private contentservice: ContentService,
@@ -45,6 +46,13 @@ export class PhotosComponent implements OnInit { PageLoading=true;
   }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     this.checklogin();
     this.getPhotos();
   }

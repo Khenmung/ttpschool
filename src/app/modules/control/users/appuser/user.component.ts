@@ -6,6 +6,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import {SwUpdate} from '@angular/service-worker';
 
 @Component({
   selector: 'app-user',
@@ -45,7 +46,7 @@ title ='';
     Active: 1,
   }
   selectedIndex = 0;
-  constructor(
+  constructor(private servicework: SwUpdate,
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private tokenstorage:TokenStorageService,
@@ -53,6 +54,13 @@ title ='';
     private sharedData: SharedataService) { }
 
   ngOnInit(): void {
+    this.servicework.activateUpdate().then(() => {
+      this.servicework.checkForUpdate().then((value) => {
+        if (value) {
+          location.reload();
+        }
+      })
+    })
     
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     ////console.log('breakpoint',this.breakpoint);
