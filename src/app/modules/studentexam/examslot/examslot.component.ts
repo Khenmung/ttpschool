@@ -9,7 +9,6 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import * as moment from 'moment';
 
 @Component({
   selector: 'app-examslot',
@@ -149,6 +148,22 @@ export class ExamslotComponent implements OnInit {
       this.contentservice.openSnackBar("Start time and end time are mandatory!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    var dateObj = this.Exams.filter(e => e.ExamId == this.searchForm.get("searchExamId").value);
+    var _startDate = new Date(dateObj[0].StartDate);
+    var _endDate = new Date(dateObj[0].EndDate);
+    _startDate.setHours(0, 0, 0, 0);
+    _endDate.setHours(0, 0, 0, 0);
+
+    var _ExamDate = new Date(row.ExamDate);
+    _ExamDate.setHours(0, 0, 0, 0);
+    if (!_ExamDate != null) {
+
+      if (row.Active ==1 && (_ExamDate.getTime() < _startDate.getTime() || _ExamDate.getTime() > _endDate.getTime()) ) {
+        this.contentservice.openSnackBar("Date should be between exam start date and end date.", globalconstants.ActionText, globalconstants.RedBackground);
+        this.loading=false;
+        return;
+      }
+    }
     var dateplusone = new Date(row.ExamDate).setDate(new Date(row.ExamDate).getDate() + 1)
     let checkFilterString = "ExamId eq " + this.searchForm.get("searchExamId").value +
       " and SlotNameId eq " + row.SlotNameId +
@@ -284,16 +299,16 @@ export class ExamslotComponent implements OnInit {
     higherdate.setDate(_filterExamDate.getDate() + 1);
     higherdate.setHours(0, 0, 0, 0);
 
-    if (!_filterExamDate != null) {
+    // if (!_filterExamDate != null) {
 
-      filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
-      filterstr += " and ExamDate lt " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
-      //var startDate = new Date(_startDate)
-      if (_filterExamDate.getTime() < _startDate.getTime() || _filterExamDate.getTime() > _endDate.getTime()) {
-        this.contentservice.openSnackBar("Date should be between exam start date and end date.", globalconstants.ActionText, globalconstants.RedBackground);
-        return;
-      }
-    }
+    //   filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
+    //   filterstr += " and ExamDate lt " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
+    //   //var startDate = new Date(_startDate)
+    //   if (_filterExamDate.getTime() < _startDate.getTime() || _filterExamDate.getTime() > _endDate.getTime()) {
+    //     this.contentservice.openSnackBar("Date should be between exam start date and end date.", globalconstants.ActionText, globalconstants.RedBackground);
+    //     return;
+    //   }
+    // }
 
     this.loading = true;
     let list: List = new List();

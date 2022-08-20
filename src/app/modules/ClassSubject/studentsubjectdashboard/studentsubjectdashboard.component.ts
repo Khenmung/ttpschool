@@ -179,13 +179,13 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
         //if (studentclassdb.value.length > 0) {
 
         studentclassdb.value.forEach(item => {
-          //item.StudentClassSubjects.forEach(clssubject => {
+          var _lastname = item.Student.LastName == null || item.Student.LastName == '' ? '' : " " + item.Student.LastName;
           _studentClassExisting.push({
             StudentClassId: item.StudentClassId,
             Active: item.Active,
             ClassId: item.ClassId,
             RollNo: item.RollNo,
-            Student: item.RollNo + " - " + item.Student.FirstName + " " + item.Student.LastName,
+            Student: item.RollNo + " - " + item.Student.FirstName + _lastname,
             SectionId: item.SectionId
           })
         })

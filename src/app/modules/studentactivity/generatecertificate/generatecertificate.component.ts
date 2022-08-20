@@ -325,14 +325,14 @@ export class GenerateCertificateComponent implements OnInit {
           var objhouse = this.Houses.filter(c => c.MasterDataId == d.HouseId);
           if (objhouse.length > 0)
             _house = objhouse[0].MasterDataName;
-
+            var _lastname = d.Student.LastName == null || d.Student.LastName == '' ? '' : " " + d.Student.LastName;
           this.StudentForVariables.push(
             { name: "ToDay", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
             { name: "StudentClass", val: _studentClass },
             { name: "Section", val: _section },
             { name: "RollNo", val: d.RollNo },
             { name: "AdmissionDate", val: d.AdmissionDate },
-            { name: "StudentName", val: d.Student.FirstName + " " + (d.Student.LastName == null ? '' : d.Student.LastName) },
+            { name: "StudentName", val: d.Student.FirstName + _lastname },
             { name: "FatherName", val: d.Student.FatherName },
             { name: "MotherName", val: d.Student.MotherName },
             { name: "Gender", val: _gender },
@@ -579,7 +579,8 @@ export class GenerateCertificateComponent implements OnInit {
               _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
 
               student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-              _name = student.FirstName + " " + student.LastName;
+              var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+              _name = student.FirstName + _lastname;
               var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
               this.Students.push({
                 StudentClassId: _studentClassId,
@@ -751,7 +752,7 @@ export class GenerateCertificateComponent implements OnInit {
             this.Exams.push({
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
-              ClassGroupId: obj[0].ClassGroupId
+              ClassGroupId: e.ClassGroupId
             })
         })
       })

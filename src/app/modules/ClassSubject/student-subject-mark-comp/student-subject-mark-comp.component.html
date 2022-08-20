@@ -4,6 +4,14 @@
     </div>
     <!-- <alert></alert> -->
     <form [formGroup]="searchForm">
+        <mat-form-field appearance="outline" [style.width.px]="200">
+            <mat-label>Exam</mat-label>
+            <mat-select formControlName="searchExamId" (selectionChange)="DisableSave()">
+                <mat-option *ngFor="let item of Exams" [value]="item.ExamId">
+                    {{item.ExamName}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Class/Course</mat-label>
             <mat-select formControlName="searchClassId" (selectionChange)="SelectClassSubject()">
@@ -14,7 +22,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Subject</mat-label>
-            <mat-select formControlName="searchSubjectId" #SubjectId>
+            <mat-select formControlName="searchSubjectId" #SubjectId (selectionChange)="cleardata()">
                 <mat-option value="0">All</mat-option>
                 <mat-option *ngFor="let p of SelectedClassSubjects" [value]="p.SubjectId">
                     {{p.SubjectName}}
@@ -22,10 +30,10 @@
             </mat-select>
         </mat-form-field>
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetClassSubjectComponent(0)">
-             <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+            <mat-icon>search</mat-icon>
+            <mat-icon *ngIf="loading">
+                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+            </mat-icon>
         </button>
         <button [disabled]="loading" matTooltip="copy from previous batch" class="mat-raised-button"
             (click)="CopyFromPreviousBatch()">
@@ -33,79 +41,78 @@
         </button>
     </form>
     <!-- <div class="example-container mat-elevation-z8"> -->
-        <mat-table #table [dataSource]="dataSource" matSort>
+    <mat-table #table [dataSource]="dataSource" matSort>
 
-            <ng-container matColumnDef="ClassSubject">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Class Subject </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.ClassSubject}}
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="SubjectComponent">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Component </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    {{element.SubjectComponent}}
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="FullMark">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field>
-                        <input #fullMark="ngModel" matInput (blur)="onBlur(element)" type="number" max="1000"
-                            [value]="element.FullMark" [(ngModel)]="element.FullMark" />
-                        <mat-error *ngIf="fullMark?.invalid">
-                            <div *ngIf="fullMark.errors.max">Max is 1000</div>
-                        </mat-error>
-                    </mat-form-field>
+        <ng-container matColumnDef="ClassSubject">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Class Subject </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.ClassSubject}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="SubjectComponent">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Subject Component </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.SubjectComponent}}
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="FullMark">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Full Mark </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field>
+                    <input #fullMark="ngModel" matInput (blur)="onBlur(element)" type="number" max="1000"
+                        [value]="element.FullMark" [(ngModel)]="element.FullMark" />
+                    <mat-error *ngIf="fullMark?.invalid">
+                        <div *ngIf="fullMark.errors.max">Max is 1000</div>
+                    </mat-error>
+                </mat-form-field>
 
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="PassMark">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-form-field>
-                        <input (blur)="onBlur(element)" #PassMark="ngModel" matInput type="number" [max]="1000"
-                            [value]="element.PassMark" [(ngModel)]="element.PassMark" />
-                        <mat-error *ngIf="PassMark?.invalid">
-                            <div *ngIf="PassMark.errors.max">Max is 1000</div>
-                        </mat-error>
-                    </mat-form-field>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Active">
-                <mat-header-cell *matHeaderCellDef> 
-                    <mat-checkbox matTooltip="select all"
-                                (click)="$event.stopPropagation()" (change)="SelectAll($event)">
-                            </mat-checkbox>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element)"
-                        [checked]="element.Active">
-                    </mat-checkbox>
-                </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Action">
-                <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading || Permission=='read'" *ngIf="ELEMENT_DATA.length>0" matTooltip="save all" mat-mini-fab
-                        (click)="SaveAll()">
-                        <mat-icon>all_out</mat-icon>
-                <mat-icon *ngIf="loading">
-                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                </mat-icon>
-                    </button>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <button [disabled]="loading || !element.Action || Permission == 'read'" matTooltip="save"
-                        mat-mini-fab (click)="Save(element)">
-                         <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-                    </button>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-        </mat-table>
-    </div>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="PassMark">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Pass Mark </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-form-field>
+                    <input (blur)="onBlur(element)" #PassMark="ngModel" matInput type="number" [max]="1000"
+                        [value]="element.PassMark" [(ngModel)]="element.PassMark" />
+                    <mat-error *ngIf="PassMark?.invalid">
+                        <div *ngIf="PassMark.errors.max">Max is 1000</div>
+                    </mat-error>
+                </mat-form-field>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Active">
+            <mat-header-cell *matHeaderCellDef>
+                <mat-checkbox matTooltip="select all" (click)="$event.stopPropagation()" (change)="SelectAll($event)">
+                </mat-checkbox>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="updateActive(element)"
+                    [checked]="element.Active">
+                </mat-checkbox>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Action">
+            <mat-header-cell *matHeaderCellDef>
+                <button [disabled]="loading || Permission=='read' || DisableSaveButton" *ngIf="ELEMENT_DATA.length>0" matTooltip="save all"
+                    mat-mini-fab (click)="SaveAll()">
+                    <mat-icon>all_out</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <button [disabled]="loading || !element.Action || Permission == 'read' || DisableSaveButton" matTooltip="save" mat-mini-fab
+                    (click)="Save(element)">
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+</div>
 <!-- </div> -->

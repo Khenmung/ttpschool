@@ -398,7 +398,8 @@ export class DatadumpComponent implements OnInit {
             return sc;
           });
           this.ELEMENT_DATA = formattedData.map(element => {
-            element.Name = element.FirstName + " " + element.LastName;
+            var _lastname = element.LastName == null? '' : " " + element.LastName;
+            element.Name = element.FirstName + _lastname;
             if (element.RemarkId > 0)
               element.Remarks = this.Remarks.filter(f => f.MasterDataId == element.RemarkId)[0].MasterDataName;
             else
@@ -790,7 +791,8 @@ export class DatadumpComponent implements OnInit {
               _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
             }
             student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-            _name = student.FirstName + " " + student.LastName;
+            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            _name = student.FirstName + _lastname;
             var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
             return {
               StudentClassId: _studentClassId,

@@ -507,9 +507,10 @@ export class EmployeeSalaryComponentComponent implements OnInit { PageLoading=tr
       .subscribe((data: any) => {
 
         this.Employees = data.value.map(m => {
+          var _lastname = m.LastName == null? '' : " " + m.LastName;
           return {
             EmployeeId: m.EmpEmployeeId,
-            Name: m.EmployeeCode + "-" + m.FirstName + " " + m.LastName
+            Name: m.EmployeeCode + "-" + m.FirstName + _lastname
           }
         })
         this.GetEmpComponents();

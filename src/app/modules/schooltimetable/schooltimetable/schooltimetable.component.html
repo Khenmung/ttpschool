@@ -96,6 +96,7 @@
                         [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
                         <span *ngIf="disCol !='Day' && !disCol.includes('f_') && disCol !='Action'">
                             <mat-form-field style="width:135px;">
+                                <mat-label>{{disCol}}</mat-label>
                                 <mat-select (selectionChange)="onBlur(element,$event,disCol)"
                                     [(ngModel)]="element[disCol]" [value]="element[disCol]">
                                     <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.TeacherSubjectId">

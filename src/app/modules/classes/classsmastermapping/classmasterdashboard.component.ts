@@ -396,6 +396,7 @@ export class ClassmasterdashboardComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.filter(f => {
+          var _lastname = f.Employee.LastName==null?'':" " + f.Employee.LastName;
           var _type = '';
           var obj = this.WorkAccounts.filter(g => g.MasterDataId == f.WorkAccountId);
           if (obj.length > 0) {
@@ -403,13 +404,13 @@ export class ClassmasterdashboardComponent implements OnInit {
             if (_type.toLowerCase() == 'helper') {
               this.Helpers.push({
                 TeacherId: f.Employee.EmpEmployeeId,
-                TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+                TeacherName: f.Employee.FirstName + _lastname
               })
             }
             else
               this.Teachers.push({
                 TeacherId: f.Employee.EmpEmployeeId,
-                TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+                TeacherName: f.Employee.FirstName + _lastname
               })
           }
         })

@@ -67,7 +67,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   dataSource: MatTableDataSource<IStudentClass>;
   allMasterData = [];
   searchForm: UntypedFormGroup;
-  FeeCategories =[];
+  FeeCategories = [];
   SelectedApplicationId = 0;
   checkBatchIdNSelectedIdEqual = 0;
   StudentClassData = {
@@ -499,12 +499,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             var _feetype = ''
             if (feetype.length > 0)
               _feetype = feetype[0].FeeTypeName;
-
+            var _lastname = s.Student.LastName == null? '' : " " + s.Student.LastName;
             SameClassPreviousBatchData.push({
               StudentClassId: 0,
               ClassId: _classId,
               StudentId: s.StudentId,
-              StudentName: s.Student.FirstName + " " + s.Student.LastName,
+              StudentName: s.Student.FirstName + _lastname,
               ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
               FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
               FeeType: _feetype,
@@ -574,12 +574,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             var _feetype = ''
             if (feetype.length > 0)
               _feetype = feetype[0].FeeTypeName;
-
+            var _lastname = s.Student.LastName == null? '' : " " + s.Student.LastName;
             PreviousClassAndPreviousBatchData.push({
               StudentClassId: 0,
               ClassId: _classId,
               StudentId: s.StudentId,
-              StudentName: s.Student.FirstName + " " + s.Student.LastName,
+              StudentName: s.Student.FirstName + _lastname,
               ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
               FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
               FeeType: _feetype,
@@ -686,7 +686,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         var result;
         var _RemarkId = this.searchForm.get("searchRemarkId").value;
         if (_RemarkId > 0)
-          result = StudentClassesdb.value.filter(f => f.RemarkId == _RemarkId);
+          result = StudentClassesdb.value.filter(f => f.Student.RemarkId == _RemarkId);
         else
           result = [...StudentClassesdb.value];
 
@@ -709,13 +709,13 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           var _feetype = ''
           if (feetype.length > 0)
             _feetype = feetype[0].FeeTypeName;
-
+          var _lastname = s.Student.LastName == null? '' : " " + s.Student.LastName;
           this.StudentClassList.push({
             PID: s.Student.PID,
             StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
-            StudentName: s.Student.FirstName + " " + s.Student.LastName,
+            StudentName: s.Student.FirstName + _lastname,
             ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
             FeeTypeId: (s.FeeTypeId == 0 || s.FeeTypeId == null) ? _defaultTypeId : s.FeeTypeId,
             FeeType: _feetype,
@@ -894,7 +894,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,row.StudentClassId)
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, row.StudentClassId)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
@@ -974,9 +974,10 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
+            var _lastname = student.LastName == null? '' : " " + student.LastName;
             return {
               StudentId: student.StudentId,
-              Name: student.PID + '-' + student.FirstName + '-' + student.LastName
+              Name: student.PID + '-' + student.FirstName + _lastname
             }
           })
         }

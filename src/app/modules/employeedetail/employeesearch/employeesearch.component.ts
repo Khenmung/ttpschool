@@ -314,9 +314,9 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
               if (managerObj.length > 0)
                 _managerName = managerObj[0].Name;
             }
-
+            var _lastname = item.LastName == null? '' : " " + item.LastName;
             item.EmployeeCode = item.EmployeeCode;
-            item.Name = item.FirstName + " " + (item.LastName == null ? '' : item.LastName);
+            item.Name = item.FirstName + _lastname;
             item.Grade = _gradeName;
             item.Designation = _designationName;
             item.Department = _departmentName;
@@ -360,8 +360,8 @@ export class EmployeesearchComponent implements OnInit { PageLoading=true;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(history => {
-            var _lastname = history.Employee.LastName == null ? '' : history.Employee.LastName
-            var _name = history.Employee.FirstName + " " + _lastname;
+            var _lastname = history.Employee.LastName == null ? '' : " " + history.Employee.LastName
+            var _name = history.Employee.FirstName + _lastname;
             var _fullDescription = _name + "-" + history.Employee.ContactNo;
             return {
               EmployeeId: history.Employee.EmpEmployeeId,

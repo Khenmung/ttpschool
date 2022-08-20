@@ -327,12 +327,13 @@ export class StudentviewComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
         attendance.value.forEach(att => {
+          var _lastname = att.StudentClass.Student.LastName == null || att.StudentClass.Student.LastName == '' ? '' : " " + att.StudentClass.Student.LastName;
           this.StudentAttendanceList.push({
             AttendanceId: att.AttendanceId,
             StudentClassId: att.StudentClassId,
             AttendanceStatus: att.AttendanceStatus,
             Remarks: att.Remarks,
-            StudentRollNo: att.StudentClass.Student.FirstName + " " + att.StudentClass.Student.LastName
+            StudentRollNo: att.StudentClass.Student.FirstName + _lastname
           });
         });
         this.AttendanceStatusSum = alasql("select AttendanceStatus, count(AttendanceStatus) Total from ? group by AttendanceStatus",
@@ -448,8 +449,9 @@ export class StudentviewComponent implements OnInit {
               //debugger;
               if (data.value.length > 0) {
                 this.StudentFamilyNFriendList = data.value.map(m => {
+                  var _lastname = m.Student.LastName == null || m.Student.LastName == '' ? '' : " " + m.Student.LastName;
                   if (m.StudentId > 0) {
-                    m.SiblingName = m.Student.FirstName + " " + m.Student.LastName;
+                    m.SiblingName = m.Student.FirstName + _lastname;
                     // m.FeeType = obj[0].FeeType;
                     // m.FeeTypeRemarks = obj[0].Remarks;
                   }
@@ -792,7 +794,8 @@ export class StudentviewComponent implements OnInit {
               this.StudentClassId = stud.StudentClasses[0].StudentClassId;
               this.tokenService.saveStudentClassId(this.StudentClassId + "");
             }
-            let StudentName = stud.PID + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName +
+            var _lastname = stud.LastName == null || stud.LastName == '' ? '' : " " + stud.LastName;
+            let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + stud.FatherName +
               ' ' + stud.MotherName + ',';
             this.shareddata.ChangeStudentName(StudentName);
 

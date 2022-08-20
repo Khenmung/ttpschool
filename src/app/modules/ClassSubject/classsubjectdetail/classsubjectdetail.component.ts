@@ -540,9 +540,10 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         data.value.filter(f => {
+          var _lastname = f.Employee.LastName == null? '' : " " + f.Employee.LastName;
           this.Teachers.push({
             TeacherId: f.Employee.EmpEmployeeId,
-            TeacherName: f.Employee.FirstName + " " + f.Employee.LastName
+            TeacherName: f.Employee.FirstName + _lastname
           })
         })
 

@@ -62,7 +62,7 @@
                         <mat-select (selectionChange)="onBlur(element)" [(ngModel)]="element.ExamId"
                             [value]="element.ExamId">
                             <mat-option value="0">select</mat-option>
-                            <mat-option *ngFor="let item of Exams" [value]="item.ExamId">{{item.ExamName}}
+                            <mat-option *ngFor="let item of SelectedClassGroupExam" [value]="item.ExamId">{{item.ExamName}}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>

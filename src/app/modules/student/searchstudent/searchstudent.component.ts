@@ -472,7 +472,8 @@ export class searchstudentComponent implements OnInit {
             return sc;
           });
           this.ELEMENT_DATA = formattedData.map(item => {
-            item.Name = item.FirstName + " " + item.LastName;
+            var _lastname = item.LastName == null? '' : " " + item.LastName;
+            item.Name = item.FirstName + _lastname;
             var _remark = '';
             var objremark = this.Remarks.filter(f => f.MasterDataId == item.RemarkId);
             if (objremark.length > 0) {
@@ -634,7 +635,8 @@ export class searchstudentComponent implements OnInit {
               _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
             }
             student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-            _name = student.FirstName + " " + student.LastName;
+            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            _name = student.FirstName + _lastname;
             var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
             return {
               StudentClassId: _studentClassId,

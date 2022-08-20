@@ -574,13 +574,14 @@ export class studentprimaryinfoComponent implements OnInit {
               this.StudentClassId = stud.StudentClasses[0].StudentClassId;
               this.tokenService.saveStudentClassId(this.StudentClassId + "");
             }
-            let StudentName = stud.PID + ' ' + stud.FirstName + ' ' + stud.LastName + ' ' + stud.FatherName +
+            var _lastname = stud.LastName == null || stud.LastName == '' ? '' : " " + stud.LastName;
+            let StudentName = stud.PID + ' ' + stud.FirstName + _lastname + ' ' + stud.FatherName +
               ' ' + stud.MotherName + ',';
             this.shareddata.ChangeStudentName(StudentName);
             this.studentForm.patchValue({
               StudentId: stud.StudentId,
               FirstName: stud.FirstName,
-              LastName: stud.LastName,
+              LastName: _lastname,
               FatherName: stud.FatherName,
               MotherName: stud.MotherName,
               FatherOccupation: stud.FatherOccupation,

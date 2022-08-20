@@ -375,8 +375,8 @@ export class GradehistoryComponent implements OnInit { PageLoading=true;
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Employees = data.value.map(Employee => {
-
-            var _name = Employee.FirstName + " " + Employee.LastName;
+            var _lastname = Employee.LastName == null? '' : " " + Employee.LastName;
+            var _name = Employee.FirstName + _lastname;
             var _fullDescription = _name + "-" + Employee.ContactNo;
             return {
               EmployeeId: Employee.EmpEmployeeId,

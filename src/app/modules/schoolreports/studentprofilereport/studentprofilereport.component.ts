@@ -23,7 +23,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
     ]),
   ],
 })
-export class StudentprofilereportComponent implements OnInit { PageLoading=true;
+export class StudentprofilereportComponent implements OnInit {
+    PageLoading = true;
 
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
@@ -107,7 +108,7 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
     // }
     // else {
     //   this.ClassId = this.tokenstorage.getClassId();
-      this.PageLoad();
+    this.PageLoad();
     //}
   }
 
@@ -138,11 +139,11 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
     }
   }
 
-  
+
   loadingFalse() {
-    this.loading = false; this.PageLoading=false;
+    this.loading = false; this.PageLoading = false;
   }
-  
+
   GetStudentEvaluation() {
     debugger;
     this.loading = true;
@@ -154,7 +155,7 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
     var _searchExamId = this.searchForm.get("searchExamId").value;
     //var _searchSubjectId = this.searchForm.get("searchSubjectId").value;
     if (_searchEvaluationTypeId == 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select evaluation type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -185,17 +186,17 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
 
         var item;
-        _classEvaluations.forEach((clseval,indx) => {
+        _classEvaluations.forEach((clseval, indx) => {
           var existing = data.value.filter(f => f.ClassEvaluationId == clseval.ClassEvaluationId);
-          var slNo=indx+1 +""
-          slNo = slNo.length==1?"0"+slNo:slNo;
+          var slNo = indx + 1 + ""
+          slNo = slNo.length == 1 ? "0" + slNo : slNo;
           if (existing.length > 0) {
             clseval.ClassEvaluationOptions.forEach(cls => {
               cls.checked = existing[0].StudentEvaluationAnswers.findIndex(stud => stud.AnswerOptionsId == cls.AnswerOptionsId) >= 0
             })
-            
+
             item = {
-              Id:slNo ,
+              Id: slNo,
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentClassId: this.StudentClassId,
               CatSequence: clseval.DisplayOrder,
@@ -215,7 +216,7 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
           else {
             clseval.ClassEvaluationOptions.forEach(f => f.checked = false);
             item = {
-              Id:slNo,
+              Id: slNo,
               ClassEvaluationOptions: clseval.ClassEvaluationOptions,
               StudentClassId: this.StudentClassId,
               CatSequence: clseval.DisplayOrder,
@@ -269,9 +270,10 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
             var _sectionobj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
-
+              
+            var _lastname = student.Student.LastName == null ? '' : " " + student.Student.LastName;
             var _RollNo = student.RollNo;
-            var _name = student.Student.FirstName + " " + student.Student.LastName;
+            var _name = student.Student.FirstName + _lastname;
             var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
               StudentClassId: student.StudentClassId,
@@ -280,7 +282,7 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
   GetExams() {
@@ -294,7 +296,7 @@ export class StudentprofilereportComponent implements OnInit { PageLoading=true;
             this.Exams.push({
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
-              ClassGroupId: obj[0].ClassGroupId
+              ClassGroupId: e.ClassGroupId
             })
         })
       })

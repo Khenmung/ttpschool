@@ -285,9 +285,9 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         debugger;
         data.value.forEach(employee => {
-          //if (employee.EmailAddress!=null) {
-          employee.LastName = employee.LastName == null ? '' : employee.LastName;
-          employee.FullName = employee.FirstName + " " + employee.LastName;
+          var _lastname = employee.LastName == null? '' : " " + employee.LastName;
+          employee.LastName = _lastname;
+          employee.FullName = employee.FirstName + _lastname;
           this.UserDetail.push(employee);
           //}
         })
@@ -315,10 +315,11 @@ export class AppuserdashboardComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         data.value.forEach(student => {
+          var _lastname = student.Student.LastName == null? '' : " " + student.Student.LastName;
           if (student.Student.EmailAddress !=null && student.Student.EmailAddress.length > 0) {
             student.ClassName = this.Classes.filter(c => c.ClassId == student.ClassId)[0].ClassName;
             student.EmailAddress = student.Student.EmailAddress;
-            student.FullName = student.Student.FirstName + " " + student.Student.LastName;
+            student.FullName = student.Student.FirstName + _lastname;
             student.ContactNo = student.Student.ContactNo;
             this.UserDetail.push(student);
           }

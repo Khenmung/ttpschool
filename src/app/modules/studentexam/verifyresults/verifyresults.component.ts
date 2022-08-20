@@ -443,7 +443,7 @@ export class VerifyResultsComponent implements OnInit {
 
     this.loading = true;
 
-    filterstr = 'ExamId eq ' + _examId;
+    filterstr += ' and ExamId eq ' + _examId;
 
     let list: List = new List();
     list.fields = [
@@ -482,16 +482,21 @@ export class VerifyResultsComponent implements OnInit {
           });
         }
 
-        var _classMarks = this.ClassSubjectComponents.filter(c => c.ClassId == _classId);
+        var _examSubjectMarkComponentDefn = this.ClassSubjectComponents.filter(c => c.ClassId == _classId && c.ExamId == _examId);
+        var filteredExistingData =[]; 
+        examComponentResult.value.forEach(d=>{
+          var present =_examSubjectMarkComponentDefn.filter(f=>f.ClassSubjectMarkComponentId == d.ClassSubjectMarkComponentId)
+          if(present.length>0)
+          filteredExistingData.push(d);
+        })
         this.ClassFullMark = 0;
-
 
         var ForGrading, ForNonGrading;
         StudentOwnSubjects.forEach(f => {
           var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
+          var _lastname = stud[0].Student.LastName == null?'' : " " + stud[0].Student.LastName;
           if (stud.length > 0) {
-            f.Student = stud[0].Student.FirstName + "-" + stud[0].Student.LastName;
-
+            f.Student = stud[0].Student.FirstName + _lastname;
           }
 
         })
@@ -521,7 +526,6 @@ export class VerifyResultsComponent implements OnInit {
             "FullMark": 0
           }
 
-
           var forEachSubjectOfStud = this.StudentSubjects.filter(s => s.Student == ss.Student)
           //var _subjectDetailToInsert ={}
           this.ClassFullMark = 0;
@@ -535,7 +539,7 @@ export class VerifyResultsComponent implements OnInit {
 
               //this.ClassFullMark is included only if subject category is marking.
               if (_subjectCategoryMarkingId == eachsubj.SubjectCategoryId) {
-                var objFullMark = _classMarks.filter(c => c.ClassSubjectId == eachsubj.ClassSubjectId);
+                var objFullMark = _examSubjectMarkComponentDefn.filter(c => c.ClassSubjectId == eachsubj.ClassSubjectId);
                 if (objFullMark.length > 0)
                   this.ClassFullMark += objFullMark.reduce((acc, current) => acc + current.FullMark, 0);
               }
@@ -549,14 +553,18 @@ export class VerifyResultsComponent implements OnInit {
               _subjectCategoryName = _objSubjectCategory[0].MasterDataName.toLowerCase();
 
             var markObtained = alasql("select ExamId,StudentClassSubjectId,SUM(Marks) as Marks FROM ? where StudentClassSubjectId = ? GROUP BY StudentClassSubjectId,ExamId",
-              [examComponentResult.value, eachsubj.StudentClassSubjectId]);
+              [filteredExistingData, eachsubj.StudentClassSubjectId]);
             var _subjectPassMarkFullMark = alasql("select ClassSubjectId,SUM(PassMark) as PassMark,SUM(FullMark) as FullMark FROM ? where ClassSubjectId = ? GROUP BY ClassSubjectId",
-              [_classMarks, eachsubj.ClassSubjectId]);
-
+              [_examSubjectMarkComponentDefn, eachsubj.ClassSubjectId]);
+            if(_subjectPassMarkFullMark.length==0)
+            {
+              this.contentservice.openSnackBar("Component not defined the subject: " + eachsubj.Subject,globalconstants.ActionText,globalconstants.RedBackground);
+              return;
+            }
             var failedInComponent = false;
-            var subjectComponent = _classMarks.filter(comp => comp.PassMark>0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
+            var subjectComponent = _examSubjectMarkComponentDefn.filter(comp => comp.PassMark>0 && comp.ClassSubjectId == eachsubj.ClassSubjectId)
             subjectComponent.forEach(compmarkobtained => {
-              var componentobtainedmark = examComponentResult.value.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
+              var componentobtainedmark = filteredExistingData.filter(eres => eres.StudentClassSubjectId == eachsubj.StudentClassSubjectId
                 && eres.ClassSubjectMarkComponentId == compmarkobtained.ClassSubjectMarkComponentId)
               if (componentobtainedmark.length > 0) {
                 if (!failedInComponent && componentobtainedmark[0].Marks < compmarkobtained.PassMark) {
@@ -891,12 +899,6 @@ export class VerifyResultsComponent implements OnInit {
   }
   TotalAttendance = [];
   GetTotalAttendance() {
-    // debugger;
-    // var _examId = this.searchForm.get("searchExamId").value;
-    // var _classId = this.searchForm.get("searchClassId").value;
-
-    // if (_examId == 0 || _classId == 0)
-    //   return;
 
     let list: List = new List();
     list.fields = [
@@ -986,10 +988,10 @@ export class VerifyResultsComponent implements OnInit {
     this.loading = true;
     let list: List = new List();
 
-    list.fields = ["ClassSubjectMarkComponentId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark"];
+    list.fields = ["ClassSubjectMarkComponentId","ExamId", "SubjectComponentId", "ClassSubjectId", "FullMark", "PassMark"];
     list.PageName = "ClassSubjectMarkComponents";
     list.lookupFields = ["ClassSubject($filter=Active eq 1;$select=SubjectTypeId,ClassId,Active)"];
-    list.filter = ["Active eq 1 " + orgIdSearchstr];
+    list.filter = ["ExamId ne null and Active eq 1 " + orgIdSearchstr];
     //list.orderBy = "ParentId";
 
     this.dataservice.get(list)
@@ -1010,19 +1012,6 @@ export class VerifyResultsComponent implements OnInit {
 
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    // let Id = 0;
-    // let Ids = this.allMasterData.filter((item, indx) => {
-    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    // })
-    // if (Ids.length > 0) {
-    //   Id = Ids[0].MasterDataId;
-    //   return this.allMasterData.filter((item, index) => {
-    //     return item.ParentId == Id
-    //   })
-    // }
-    // else
-    //   return [];
-
   }
 
 }

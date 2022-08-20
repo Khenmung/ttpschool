@@ -644,7 +644,8 @@ export class EmployeeComponent implements OnInit {
 
             this.EmployeeId = stud.EmpEmployeeId;
             stud.EmployeeCode = stud.EmployeeCode == null ? '' : stud.EmployeeCode;
-            let EmployeeName = stud.EmployeeCode + ' ' + stud.FirstName + ' ' + (stud.LastName == null ? '' : stud.LastName);
+            var _lastname = stud.LastName == null? '' : " " + stud.LastName;
+            let EmployeeName = stud.EmployeeCode + ' ' + stud.FirstName + _lastname;
             this.shareddata.ChangeEmployeeName(EmployeeName);
             this.tokenService.saveEmployeeId(stud.EmpEmployeeId);
 

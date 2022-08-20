@@ -154,15 +154,15 @@ export class ChartReportComponent {
         debugger;
         var paymentObj = [...data.value];
         var paymentcount = 0;
-        var paymentCountobj = alasql("select sum(1) as PaidCount from ? where Balance=0 group by Month", [paymentObj]);
+        var paymentCountobj = alasql("select sum(1) as PaidCount from ? where TotalDebit>0 and Balance=0 group by Month", [paymentObj]);
 
         var FreeCountobj = alasql("select sum(1) as FreeCount from ? where TotalDebit=0 and Balance=0 group by Month", [paymentObj]);
         var _freeCount = 0;
         if (FreeCountobj.length > 0)
           _freeCount = FreeCountobj[0].FreeCount;
-
+        studentCount -= _freeCount;
         if (paymentCountobj.length > 0) {
-          paymentcount = _freeCount >= paymentCountobj[0].PaidCount ? 0 : paymentCountobj[0].PaidCount;
+          paymentcount = paymentCountobj[0].PaidCount;//_freeCount >= paymentCountobj[0].PaidCount ? 0 : paymentCountobj[0].PaidCount;
           this.ReceiptAmount = paymentObj.reduce((acc, current) => acc + current.TotalCredit, 0);
         }
         else {

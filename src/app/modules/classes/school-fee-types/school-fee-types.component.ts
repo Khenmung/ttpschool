@@ -47,6 +47,7 @@ export class SchoolFeeTypesComponent implements OnInit {
     'Active',
     'Action'
   ];
+  Classes = [];
   Students = [];
   SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
@@ -82,6 +83,10 @@ export class SchoolFeeTypesComponent implements OnInit {
       else {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"])
+          .subscribe((data: any) => {
+            this.Classes = [...data.value];
+          })
         this.GetMasterData();
         this.GetStudents();
         this.loading = false; this.PageLoading = false;
@@ -94,8 +99,8 @@ export class SchoolFeeTypesComponent implements OnInit {
       FeeTypeName: '',
       Description: '',
       Formula: '',
-      FeeCategory:'',
-      FeeSubCategory:'',
+      FeeCategory: '',
+      FeeSubCategory: '',
       DefaultType: 0,
       Active: 0,
       Action: true
@@ -211,7 +216,7 @@ export class SchoolFeeTypesComponent implements OnInit {
 
         },
         err => {
-          this.loading = false; 
+          this.loading = false;
           this.PageLoading = false;
           if (err.error) {
             var modelState = err.error.Errors;
@@ -237,7 +242,7 @@ export class SchoolFeeTypesComponent implements OnInit {
           this.CreateInvoice();
         },
         err => {
-          this.loading=false;
+          this.loading = false;
           if (err.error) {
             var modelState = err.error.Errors;
             if (modelState == undefined)
@@ -261,10 +266,15 @@ export class SchoolFeeTypesComponent implements OnInit {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,0)
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, 0)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {
+              var _className = ''
+              var clsObj = this.Classes.filter(f => f.ClassId == studcls.ClassId);
+              if (clsObj.length > 0)
+                _className = clsObj[0].ClassName;
+
               var _feeName = '';
               var objClassFee = _clsfeeWithDefinitions.filter(def => def.ClassId == studcls.ClassId);
               objClassFee.forEach(clsfee => {
@@ -293,7 +303,8 @@ export class SchoolFeeTypesComponent implements OnInit {
                     FeeSubCategory: _subCategory,
                     FeeTypeId: studcls.FeeTypeId,
                     SectionId: studcls.SectionId,
-                    RollNo: studcls.RollNo
+                    RollNo: studcls.RollNo,
+                    ClassName:_className
                   });
                 }
 
@@ -390,8 +401,8 @@ export interface IFeeType {
   FeeTypeName: string;
   Description: string;
   Formula: string;
-  FeeCategory:string;
-  FeeSubCategory:string;
+  FeeCategory: string;
+  FeeSubCategory: string;
   Active: number;
   Action: boolean;
 }

@@ -393,12 +393,13 @@ export class AddstudentfeepaymentComponent implements OnInit {
             }
             else {
               //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
+              var _lastname = data.value[0].Student.LastName == null || data.value[0].Student.LastName == '' ? '' : " " + data.value[0].Student.LastName;
               this.studentInfoTodisplay.ClassId = data.value[0].ClassId
               this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
               this.studentInfoTodisplay.FeeType = data.value[0].FeeType.FeeTypeName;
               this.studentInfoTodisplay.Formula = data.value[0].FeeType.Formula;
               this.studentInfoTodisplay.RollNo = data.value[0].RollNo;
-              this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + " " + data.value[0].Student.LastName;
+              this.studentInfoTodisplay.StudentName = data.value[0].Student.FirstName + _lastname;
 
               var _sectionName = '';
 

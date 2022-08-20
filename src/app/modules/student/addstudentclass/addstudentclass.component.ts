@@ -166,7 +166,8 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            var name = student.FirstName + " " + student.LastName;
+            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            var name = student.FirstName + _lastname;
             student.studentName = student.StudentId + "-" + name + "-" + student.FatherName + "-" + student.MotherName;
             return student;
           })

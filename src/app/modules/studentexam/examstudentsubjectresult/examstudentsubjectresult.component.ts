@@ -264,8 +264,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     ];
 
     list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)", 
-    "StudentClass($select=StudentId,RollNo,SectionId)"]
+    list.lookupFields = ["ClassSubject($select=Active,SubjectId,ClassId,SubjectCategoryId)",
+      "StudentClass($select=StudentId,RollNo,SectionId)"]
     list.filter = [filterStr];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -283,7 +283,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           _studname = '';
           let _studentObj = this.Students.filter(c => c.StudentId == s.StudentClass.StudentId);
           if (_studentObj.length > 0) {
-            _studname = _studentObj[0].FirstName + " " + _studentObj[0].LastName;
+            var _lastname = _studentObj[0].LastName == null || _studentObj[0].LastName == '' ? '' : " " + _studentObj[0].LastName;
+            _studname = _studentObj[0].FirstName + _lastname;
 
             let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
             if (_stdClass.length > 0)
@@ -309,7 +310,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             })
           }
         })
-        console.log("this.StudentSubjects",this.StudentSubjects)
+        //console.log("this.StudentSubjects",this.StudentSubjects)
         this.loading = false; this.PageLoading = false;
         this.GetSubjectMarkComponents();
       });
@@ -389,6 +390,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     list.fields = [
       "ClassSubjectMarkComponentId",
       "ClassSubjectId",
+      "ExamId",
       "SubjectComponentId",
       "FullMark",
       "PassMark",
@@ -409,6 +411,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             "SubjectId": c.ClassSubject.SubjectId,
             "ClassSubjectId": c.ClassSubjectId,
             "SubjectComponentId": c.SubjectComponentId,
+            "ExamId": c.ExamId,
             "FullMark": c.FullMark,
             "PassMark": c.PassMark,
           }
@@ -420,7 +423,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       })
   }
   GetExamStudentSubjectResults() {
-debugger;
+    debugger;
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentSubjectResult = [];
@@ -444,7 +447,8 @@ debugger;
       return;
     }
     this.loading = true;
-    filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
+    var _examId = this.searchForm.get("searchExamId").value;
+    filterstr = 'ExamId eq ' + _examId;
 
     let list: List = new List();
     list.fields = [
@@ -459,7 +463,7 @@ debugger;
       "Active"
     ];
     list.PageName = "ExamStudentSubjectResults";
-    list.lookupFields = ["ClassSubjectMarkComponent($select=ClassSubjectId,SubjectComponentId,FullMark)"];
+    list.lookupFields = ["ClassSubjectMarkComponent($select=ExamId,ClassSubjectId,SubjectComponentId,FullMark)"];
     list.filter = [filterstr + orgIdSearchstr];
     //list.orderBy = "ParentId";
     this.displayedColumns = [
@@ -467,15 +471,17 @@ debugger;
     ];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        //debugger;\
-        console.log("this.searchForm.get(searchClassId).value",this.searchForm.get("searchClassId").value);
-        console.log("this.searchForm.get(searchSubjectId).value",this.searchForm.get("searchSubjectId").value);
-        console.log("this.searchForm.get(searchSectionId).value",this.searchForm.get("searchSectionId").value);
+        //debugger;
         var filteredStudentSubjects = this.StudentSubjects.filter(studentsubject => {
           return studentsubject.ClassId == this.searchForm.get("searchClassId").value
             && studentsubject.SubjectId == this.searchForm.get("searchSubjectId").value
             && studentsubject.SectionId == this.searchForm.get("searchSectionId").value
         });
+
+        filteredStudentSubjects.forEach(studentsubject => {
+          studentsubject.Components = studentsubject.Components.filter(c => c.ExamId == _examId)
+        });
+
         var forDisplay;
         if (filteredStudentSubjects.length == 0 || filteredStudentSubjects[0].Components.length == 0) {
           this.loading = false; this.PageLoading = false;
@@ -491,7 +497,8 @@ debugger;
 
           ss.Components.forEach(component => {
 
-            let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
+            let existing = data.value.filter(db => db.StudentClassSubjectId == ss.StudentClassSubjectId
+              && db.ClassSubjectMarkComponentId == component.ClassSubjectMarkComponentId);
             if (existing.length > 0) {
               var _ComponentName = this.MarkComponents.filter(c => c.MasterDataId == existing[0].ClassSubjectMarkComponent.SubjectComponentId)[0].MasterDataName;
               var _toPush;
@@ -499,7 +506,7 @@ debugger;
                 this.displayedColumns.push(_ComponentName)
               _toPush = {
                 ExamStudentSubjectResultId: existing[0].ExamStudentSubjectResultId,
-                ExamId: existing[0].ExamStudentResultId,
+                ExamId: existing[0].ExamId,
                 ClassSubjectId: ss.ClassSubjectId,
                 StudentClassId: existing[0].StudentClassId,
                 StudentClassSubjectId: existing[0].StudentClassSubjectId,
@@ -585,7 +592,7 @@ debugger;
     debugger;
     var _examId = this.searchForm.get("searchExamId").value;
     var _classGroupId = 0;
-    
+
     if (_examId > 0) {
       var obj = this.Exams.filter(f => f.ExamId == _examId)
       if (obj.length > 0) {
@@ -705,7 +712,8 @@ debugger;
   }
   GetExams() {
 
-    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
+    var orgIdSearchstr = 'and OrgId eq ' + this.LoginUserDetail[0]["orgId"] +
+      ' and BatchId eq ' + this.SelectedBatchId;
 
     let list: List = new List();
 

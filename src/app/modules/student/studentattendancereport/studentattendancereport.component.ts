@@ -167,7 +167,9 @@ export class StudentattendancereportComponent implements OnInit { PageLoading=tr
 
     this.dataservice.get(list)
       .subscribe((attendance: any) => {
+
         attendance.value.forEach(att => {
+          var _lastname = att.StudentClass.Student.LastName == null || att.StudentClass.Student.LastName == '' ? '' : " " + att.StudentClass.Student.LastName;
           this.StudentAttendanceList.push({
             AttendanceId: att.AttendanceId,
             StudentClassId: att.StudentClassId,
@@ -175,7 +177,7 @@ export class StudentattendancereportComponent implements OnInit { PageLoading=tr
             AttendanceDate: att.AttendanceDate,
             ClassSubjectId: att.ClassSubjectId,
             Remarks: att.Remarks,
-            StudentRollNo: att.StudentClass.Student.FirstName + " " + att.StudentClass.Student.LastName
+            StudentRollNo: att.StudentClass.Student.FirstName + _lastname
           });
         });
         this.AttendanceStatusSum = alasql("select AttendanceStatus, count(AttendanceStatus) Total from ? group by AttendanceStatus", 

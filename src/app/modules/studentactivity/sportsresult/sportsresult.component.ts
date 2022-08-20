@@ -185,6 +185,7 @@ export class SportsResultComponent implements OnInit {
       " and SessionId eq " + row.SessionId +
       " and SportsNameId eq " + row.SportsNameId +
       " and CategoryId eq " + row.CategoryId +
+      " and SubCategoryId eq " + row.SubCategoryId +
       " and BatchId eq " + this.SelectedBatchId;
     this.RowsToUpdate = 0;
 
@@ -283,6 +284,7 @@ export class SportsResultComponent implements OnInit {
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
+    var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
     var _SessionId = this.searchForm.get("searchSessionId").value;
     if (_studentclassId != undefined) {
       filterStr += " and StudentClassId eq " + _studentclassId;
@@ -294,13 +296,21 @@ export class SportsResultComponent implements OnInit {
     if (_SportsNameId > 0) {
       filterStr += " and SportsNameId eq " + _SportsNameId;
     }
-    // else {
-    //   this.loading = false;
-    //   this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
+    if(_SessionId==0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else
+    {
+      filterStr += " and SessionId eq " + _SessionId;
+    }
+    
     if (_categoryId > 0) {
       filterStr += " and CategoryId eq " + _categoryId;
+    }
+    if (_subCategoryId > 0) {
+      filterStr += " and SubCategoryId eq " + _subCategoryId;
     }
     // else {
     //   this.loading = false;
@@ -499,7 +509,8 @@ export class SportsResultComponent implements OnInit {
               if (_SectionObj.length > 0)
                 _section = _SectionObj[0].MasterDataName;
               _RollNo = studentclassobj[0].RollNo;
-              _name = student.FirstName + " " + student.LastName;
+              var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+              _name = student.FirstName + _lastname;
               var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
               this.Students.push({
                 StudentClassId: _studentClassId,

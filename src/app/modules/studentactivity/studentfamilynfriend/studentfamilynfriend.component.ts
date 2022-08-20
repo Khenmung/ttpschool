@@ -460,7 +460,8 @@ export class StudentfamilynfriendComponent implements OnInit {
                 _section = _SectionObj[0].MasterDataName;
 
               _RollNo = studentclassobj[0].RollNo;
-              _name = student.FirstName + " " + student.LastName;
+              var _lastname = student.LastName == null || student.LastName == '' ? '' : " " + student.LastName;
+              _name = student.FirstName + _lastname;
               var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
               var _ParentId = student.StudentFamilyNFriends.length > 0 ? student.StudentFamilyNFriends[0].ParentStudentId : 0;
               this.Students.push({

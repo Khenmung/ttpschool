@@ -30,7 +30,7 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
   ],
 })
 export class TodayCollectionComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   allRowsExpanded: boolean = false;
@@ -168,7 +168,8 @@ export class TodayCollectionComponent implements OnInit {
         this.CancelledAmount = data.value.filter(f => f.Active == 0)
           .reduce((acc, current) => acc + current.TotalAmount, 0);
         this.DateWiseCollection = data.value.map(d => {
-          d.Student = d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName;
+          var _lastname = d.StudentClass.Student.LastName == null? '' : " " + d.StudentClass.Student.LastName;
+          d.Student = d.StudentClass.Student.FirstName + _lastname;
           d.ClassName = d.StudentClass.Class.ClassName
           d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
           d.Status = d.Active == 0 ? 'Cancelled' : 'Active';
@@ -187,11 +188,12 @@ export class TodayCollectionComponent implements OnInit {
               var objCategory = this.FeeCategories.filter(f => f.MasterDataId == _feeCategoryId)
               if (objCategory.length > 0)
                 _feeCategoryName = objCategory[0].MasterDataName;
+                var _lastname = d.StudentClass.Student.LastName == null? '' : " " + d.StudentClass.Student.LastName;
               this.HeadsWiseCollection.push({
                 ClassFeeId: v.ClassFeeId,
                 Amount: v.Amount,
                 PaymentType: this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName,
-                Student: d.StudentClass.Student.FirstName + " " + d.StudentClass.Student.LastName,
+                Student: d.StudentClass.Student.FirstName + _lastname,
                 ClassName: d.StudentClass.Class.ClassName,
                 FeeCategoryId: _feeCategoryId,
                 FeeCategory: _feeCategoryName,
@@ -271,9 +273,9 @@ export class TodayCollectionComponent implements OnInit {
             var _sectionobj = this.Sections.filter(f => f.MasterDataId == student.SectionId);
             if (_sectionobj.length > 0)
               _Section = _sectionobj[0].MasterDataName;
-
+            var _lastname = student.Student.LastName == null ? '' : " " + student.Student.LastName;
             var _RollNo = student.RollNo;
-            var _name = student.Student.FirstName + " " + student.Student.LastName;
+            var _name = student.Student.FirstName + _lastname;
             var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
               StudentClassId: student.StudentClassId,

@@ -316,9 +316,12 @@ export class EvaluationExamMapComponent implements OnInit {
       });
 
   }
+  SelectedClassGroupExam=[];
   SelectEvaluation(){
+    debugger;
     var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
+    this.SelectedClassGroupExam = this.Exams.filter(f=>f.ClassGroupId ==_searchClassGroupId);
   }
   EvaluationMasterForClassGroup=[];
   GetEvaluationExamMap() {
@@ -425,7 +428,7 @@ export class EvaluationExamMapComponent implements OnInit {
             this.Exams.push({
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
-              ClassGroupId: obj[0].ClassGroupId
+              ClassGroupId: e.ClassGroupId
             })
           }
         })

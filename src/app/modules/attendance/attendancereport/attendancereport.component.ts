@@ -194,13 +194,14 @@ export class AttendancereportComponent implements OnInit {
         }
 
         this.StudentClassList = studentclass.value.map(item => {
+          var _name = item.Student.LastName==null?'':" " + item.Student.LastName;
           return {
             StudentClassId: item.StudentClassId,
             Active: item.Active,
             ClassId: item.ClassId,
             RollNo: item.RollNo,
-            Student: item.Student.FirstName + " " + item.Student.LastName,
-            StudentRollNo: item.Student.FirstName + " " + item.Student.LastName + "-" + item.RollNo
+            Student: item.Student.FirstName + _name,
+            StudentRollNo: item.Student.FirstName + _name + "-" + item.RollNo
           }
         })
         //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');

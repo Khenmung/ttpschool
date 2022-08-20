@@ -296,7 +296,7 @@ export class EvaluationresultComponent implements OnInit {
             this.Exams.push({
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
-              ClassGroupId: obj[0].ClassGroupId
+              ClassGroupId: e.ClassGroupId
             })
         })
         this.contentservice.GetEvaluationExamMaps(this.LoginUserDetail[0]["orgId"], 1)
@@ -625,7 +625,8 @@ export class EvaluationresultComponent implements OnInit {
                 _section = _SectionObj[0].MasterDataName;
               _RollNo = studentclassobj[0].RollNo;
             }
-            _name = student.FirstName + " " + student.LastName;
+            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            _name = student.FirstName + _lastname;
             var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
             this.Students.push({
               StudentClassId: _studentClassId,

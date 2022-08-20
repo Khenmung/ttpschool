@@ -20,7 +20,8 @@ import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentcla
   templateUrl: './feecollectionreport.component.html',
   styleUrls: ['./feecollectionreport.component.scss']
 })
-export class FeecollectionreportComponent implements OnInit { PageLoading=true;
+export class FeecollectionreportComponent implements OnInit {
+    PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
@@ -72,7 +73,7 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
     private dataservice: NaomitsuService,
     private contentservice: ContentService,
     private fb: UntypedFormBuilder,
-    
+
     private shareddata: SharedataService,
     private tokenservice: TokenStorageService,
     private nav: Router
@@ -151,13 +152,13 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
     var nestedFilter = '';
 
     if (selectedMonth == 0) {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select month.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (paidNotPaid == '') {
-      this.loading = false; this.PageLoading=false;
-      this.contentservice.openSnackBar("Please select paid or not paid option.", globalconstants.ActionText,globalconstants.RedBackground);
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select paid or not paid option.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     nestedFilter = "$filter=Balance eq 0 and Month eq " + selectedMonth + ";";
@@ -193,9 +194,9 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
             var sectionObj = this.Sections.filter(s => s.MasterDataId == item.SectionId)
             if (sectionObj.length > 0)
               _sectionName = sectionObj[0].MasterDataName
-
+            var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
             return {
-              Name: item.Student.FirstName + " " + item.Student.LastName,
+              Name: item.Student.FirstName + _lastname,
               ClassRollNoSection: _className + ' - ' + _sectionName,
               RollNo: item.RollNo,
               Month: item.AccountingLedgerTrialBalances.length > 0 ? item.AccountingLedgerTrialBalances[0].Month : 0
@@ -207,23 +208,22 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
             this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month == 0); //.sort((a, b) => a.month - b.month)
           else
             this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month > 0); //.sort((a, b) => a.month - b.month)
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
           this.TotalPaidStudentCount = this.ELEMENT_DATA.length;
-          if(this.ELEMENT_DATA.length==0)
-          {            
-            this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText,globalconstants.RedBackground);
+          if (this.ELEMENT_DATA.length == 0) {
+            this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
         }
         else {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText,globalconstants.RedBackground);
-          this.loading = false; this.PageLoading=false;
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+          this.loading = false; this.PageLoading = false;
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }
-        this.loading=false;this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
 
       })
   }
@@ -248,9 +248,10 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
               paidlist.StudentClassId != item.StudentClassId
             })
             if (paid.length == 0) {
+              var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
               this.StudentDetail.push({
                 SlNo: indx + 1,
-                Name: item.Student.FirstName + " " + item.Student.LastName,
+                Name: item.Student.FirstName + _lastname,
                 RollNo: item.RollNo,
                 ClassRollNoSection: this.Classes.filter(c => c.ClassId == item.ClassId)[0].ClassName + ' - ' + this.Sections.filter(c => c.MasterDataId == item.SectionId)[0].MasterDataName,
               });
@@ -314,7 +315,9 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
               _Section = _sectionobj[0].MasterDataName;
 
             var _RollNo = student.RollNo;
-            var _name = student.Student.FirstName + " " + student.Student.LastName;
+
+            var _lastname = student.Student.LastName == null ? '' : " " + student.Student.LastName;
+            var _name = student.Student.FirstName + _lastname;
             var _fullDescription = _name + " - " + _className + " - " + _Section + " - " + _RollNo;
             return {
               StudentClassId: student.StudentClassId,
@@ -323,7 +326,7 @@ export class FeecollectionreportComponent implements OnInit { PageLoading=true;
             }
           })
         }
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
 }

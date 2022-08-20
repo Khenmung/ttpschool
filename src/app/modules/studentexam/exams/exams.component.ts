@@ -159,8 +159,8 @@ export class ExamsComponent implements OnInit {
     this.loading = true;
 
     let checkFilterString = "ExamNameId eq " + row.ExamNameId +
-      " and BatchId eq " + this.SelectedBatchId +
-      " and Active eq 1"
+      " and BatchId eq " + this.SelectedBatchId 
+      //" and Active eq 1"
       
       //" and StartDate gt " + this.datepipe.transform(row.StartDate, 'yyyy-MM-dd') +
       //" and EndDate lt " + this.datepipe.transform(row.EndDate, 'yyyy-MM-dd')

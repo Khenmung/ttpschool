@@ -308,12 +308,12 @@ export class PromoteclassComponent implements OnInit { PageLoading=true;
           var _feetype = ''
           if (feetype.length > 0)
             _feetype = feetype[0].FeeTypeName;
-
+            var _lastname = s.Student.LastName == null? '' : " " + s.Student.LastName;
           this.StudentClassList.push({
             StudentClassId: s.StudentClassId,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
-            StudentName: s.Student.FirstName + " " + s.Student.LastName,
+            StudentName: s.Student.FirstName + _lastname,
             ClassName: this.Classes.filter(c => c.ClassId == s.ClassId)[0].ClassName,
             FeeTypeId: s.FeeTypeId,
             FeeType: _feetype,

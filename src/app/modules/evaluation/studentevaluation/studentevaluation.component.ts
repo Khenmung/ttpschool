@@ -139,6 +139,7 @@ export class StudentEvaluationComponent implements OnInit {
         this.Permission = perObj[0].permission;
       }
       if (this.Permission != 'deny') {
+        this.StudentId = +localStorage.getItem('studentId');
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
@@ -148,13 +149,7 @@ export class StudentEvaluationComponent implements OnInit {
         this.GetEvaluationNames();
         this.GetMasterData();
 
-        if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.Classes = [...data.value];
-          });
-        }
 
-        this.GetStudentClasses();
       }
     }
   }
@@ -638,7 +633,12 @@ export class StudentEvaluationComponent implements OnInit {
         this.RatingOptions = this.getDropDownData(globalconstants.MasterDefinitions.school.RATINGOPTION);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
-        //this.AttendanceModes = this.getDropDownData(globalconstants.MasterDefinitions.school.ATTENDANCEMODE);
+
+        this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+          this.Classes = [...data.value];
+          this.GetStudentClasses();
+        });
+
         this.GetExams();
         this.GetEvaluationOption();
 
@@ -864,7 +864,6 @@ export class StudentEvaluationComponent implements OnInit {
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
 
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
-      this.StudentId = this.tokenstorage.getStudentId();
       _filter = ' and StudentId eq ' + this.StudentId;
     }
     let list: List = new List();
@@ -888,7 +887,7 @@ export class StudentEvaluationComponent implements OnInit {
       'LastName',
       'ContactNo',
     ];
-    this.StudentId = this.tokenstorage.getStudentId();
+    
     if (this.LoginUserDetail[0]["RoleUsers"][0].role.toLowerCase() == 'student') {
       _filter = ' and StudentId eq ' + this.StudentId
     }
@@ -912,22 +911,23 @@ export class StudentEvaluationComponent implements OnInit {
               _studentClassId = studentclassobj[0].StudentClassId;
               var _classNameobj = this.Classes.filter(c => c.ClassId == studentclassobj[0].ClassId);
               _classId = studentclassobj[0].ClassId;
-              if (_classNameobj.length > 0)
+              if (_classNameobj.length > 0) {
                 _className = _classNameobj[0].ClassName;
-              var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
-              _RollNo = studentclassobj[0].RollNo;
+                var _SectionObj = this.Sections.filter(f => f.MasterDataId == studentclassobj[0].SectionId)
+                _RollNo = studentclassobj[0].RollNo;
 
-              if (_SectionObj.length > 0)
-                _section = _SectionObj[0].MasterDataName;
-
-              _name = student.FirstName + " " + student.LastName;
-              var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
-              this.Students.push({
-                StudentClassId: _studentClassId,
-                StudentId: student.StudentId,
-                ClassId: _classId,
-                Name: _fullDescription,
-              });
+                if (_SectionObj.length > 0)
+                  _section = _SectionObj[0].MasterDataName;
+                var _lastname = student.LastName == null ? '' : " " + student.LastName;
+                _name = student.FirstName + _lastname;
+                var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
+                this.Students.push({
+                  StudentClassId: _studentClassId,
+                  StudentId: student.StudentId,
+                  ClassId: _classId,
+                  Name: _fullDescription,
+                });
+              }
             }
           })
         }

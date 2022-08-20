@@ -257,8 +257,9 @@ export class ResultComponent implements OnInit {
           if (_classObj.length > 0)
             _className = _classObj[0].ClassName;
           d["ClassName"] = _className;
-          d["RollNo"] = d.StudentClass["RollNo"]
-          d["Student"] = _className + "-" + d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + " " + d.StudentClass["Student"].LastName
+          d["RollNo"] = d.StudentClass["RollNo"];
+          var _lastname = d.StudentClass["Student"].LastName == null? '' : " " + d.StudentClass["Student"].LastName;
+          d["Student"] = _className + "-" + d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + _lastname;
           //d.D = d.Division;
           //d.GradeType = _gradeObj[0].GradeType;
           //d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
