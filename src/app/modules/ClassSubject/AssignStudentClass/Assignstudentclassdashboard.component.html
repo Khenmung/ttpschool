@@ -63,18 +63,18 @@
 </form>
 <div style="font-size: medium;padding: 15px 0px 15px 0px;font-weight: bold;">{{ HeaderTitle }}</div>
 <mat-table #table [dataSource]="dataSource" matSort>
-    <ng-container matColumnDef="StudentClassId">
+    <ng-container matColumnDef="AdmissionNo">
         <mat-header-cell *matHeaderCellDef mat-sort-header style="display:flex ;">
             <span style="display: flex;flex-direction: column;justify-content: flex-start;">
-                <span style="justify-content: flex-start;display: flex;">Admission Id</span>
+                <span style="justify-content: flex-start;display: flex;">Admission No.</span>
                 <mat-form-field style="width: 80px;">
-                    <mat-label>Admission Id</mat-label>
+                    <mat-label>Admission No.</mat-label>
                     <input matInput [formControl]="IdFilter" autocomplete="Off">
                 </mat-form-field>
             </span>
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            {{element.StudentClassId}}
+            {{element.AdmissionNo}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="StudentName">

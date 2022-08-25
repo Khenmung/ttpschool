@@ -304,7 +304,8 @@ export class EvaluationresultComponent implements OnInit {
             this.Exams.push({
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
-              ClassGroupId: e.ClassGroupId
+              ClassGroupId: e.ClassGroupId,
+              AttendanceStartDate:e.AttendanceStartDate
             })
         })
         this.contentservice.GetEvaluationExamMaps(this.LoginUserDetail[0]["orgId"], 1)

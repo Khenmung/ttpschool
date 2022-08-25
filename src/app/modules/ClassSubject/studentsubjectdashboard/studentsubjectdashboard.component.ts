@@ -209,7 +209,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
       "Active"
     ];
     list.PageName = "ClassSubjects";
-    list.lookupFields = ["StudentClassSubjects($select=ClassSubjectId,SubjectId,StudentClassId,StudentClassSubjectId,Active)"];
+    list.lookupFields = ["StudentClassSubjects($filter=Active eq 1;$select=ClassSubjectId,SubjectId,StudentClassId,StudentClassSubjectId,Active)"];
 
     list.filter = ["Active eq 1 and " + orgIdSearchstr];
     //list.orderBy = "ParentId";
@@ -304,7 +304,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
         }
         //console.log('this.StudentSubjectList', this.StudentSubjectList)
         if (this.StudentSubjectList.length > 0) {
-
+          this.StudentSubjectList = this.StudentSubjectList.sort((a,b)=>a.RollNo.localeCompare(b.RollNo));
           this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;

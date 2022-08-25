@@ -124,10 +124,6 @@ export class SchooltimetableComponent implements OnInit {
     var updateActive = this.StoredForUpdate.filter(s => s.DayId == row.DayId);
     updateActive.forEach(u => u.Active = 1)
   }
-  // Save(row) {
-  //   this.rowCount = 0;
-  //   this.UpdateOrSave(row);
-  // }
   UpdateOrSave(element, row) {
 
     debugger;

@@ -98,6 +98,14 @@
                     </mat-form-field>
                 </mat-cell>
             </ng-container> -->
+            <ng-container matColumnDef="Confidential">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Confidential </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="updateConfidential(element,$event)" [checked]="element.Confidential">
+                    </mat-checkbox>
+                </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="Active">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> Active </mat-header-cell>
                 <mat-cell *matCellDef="let element">

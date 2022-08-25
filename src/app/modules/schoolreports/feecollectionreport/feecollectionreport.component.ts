@@ -14,7 +14,7 @@ import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { SharedataService } from '../../../shared/sharedata.service';
 import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-feecollectionreport',
@@ -22,7 +22,7 @@ import {SwUpdate} from '@angular/service-worker';
   styleUrls: ['./feecollectionreport.component.scss']
 })
 export class FeecollectionreportComponent implements OnInit {
-    PageLoading = true;
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   loading = false;
@@ -113,7 +113,7 @@ export class FeecollectionreportComponent implements OnInit {
 
         this.SearchForm = this.fb.group({
           searchStudentName: [0],
-          // searchClassId: [0],
+          searchClassId: [0],
           // searchSectionId: [0],
           searchMonth: [0],
           PaidNotPaid: ['']
@@ -152,9 +152,10 @@ export class FeecollectionreportComponent implements OnInit {
   GetStudentFeePaymentReport() {
     debugger;
     this.ErrorMessage = '';
-    let filterstring = '1 eq 1 ';
+    let filterstring = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
 
     var selectedMonth = this.SearchForm.get("searchMonth").value;
+    var _selectedClassId = this.SearchForm.get("searchClassId").value;
     var paidNotPaid = this.SearchForm.get("PaidNotPaid").value;
     //var studentclassId = this.SearchForm.get("searchStudentName").value.StudentClassId;
     var nestedFilter = '';
@@ -169,9 +170,13 @@ export class FeecollectionreportComponent implements OnInit {
       this.contentservice.openSnackBar("Please select paid or not paid option.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    this.loading=true;
     nestedFilter = "$filter=Balance eq 0 and Month eq " + selectedMonth + ";";
-    filterstring += " and Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-
+    
+    if(_selectedClassId>0)
+    {
+      filterstring += ' and ClassId eq ' + _selectedClassId;
+    }
 
     let list: List = new List();
     list.fields = [
@@ -193,25 +198,29 @@ export class FeecollectionreportComponent implements OnInit {
           var _className = '';
           var _sectionName = '';
 
-          result = data.value.map((item, indx) => {
+          data.value.forEach((item, indx) => {
             _className = '';
             _sectionName = '';
             var clsobj = this.Classes.filter(c => c.ClassId == item.ClassId)
-            if (clsobj.length > 0)
+            if (clsobj.length > 0) {
               _className = clsobj[0].ClassName
-            var sectionObj = this.Sections.filter(s => s.MasterDataId == item.SectionId)
-            if (sectionObj.length > 0)
-              _sectionName = sectionObj[0].MasterDataName
-            var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
-            return {
-              Name: item.Student.FirstName + _lastname,
-              ClassRollNoSection: _className + ' - ' + _sectionName,
-              RollNo: item.RollNo,
-              Month: item.AccountingLedgerTrialBalances.length > 0 ? item.AccountingLedgerTrialBalances[0].Month : 0
+              var sectionObj = this.Sections.filter(s => s.MasterDataId == item.SectionId)
+              if (sectionObj.length > 0)
+                _sectionName = sectionObj[0].MasterDataName
+              var _lastname = item.Student.LastName == null ? '' : " " + item.Student.LastName;
+              result.push({
+                Name: item.Student.FirstName + _lastname,
+                ClassRollNoSection: _className + ' - ' + _sectionName,
+                RollNo: item.RollNo,
+                Section:_sectionName,
+                Month: item.AccountingLedgerTrialBalances.length > 0 ? item.AccountingLedgerTrialBalances[0].Month : 0,
+                Sequence: clsobj[0].Sequence
+              })
             }
           });
           debugger;
-          this.ELEMENT_DATA = alasql("select Name,ClassRollNoSection,RollNo,MAX(Month) month from ? group by Name,ClassRollNoSection,RollNo", [result]);
+          //result =result.sort((a,b)=>a.Sequence - b.Sequence);
+          this.ELEMENT_DATA = alasql("select Name,ClassRollNoSection,RollNo,Sequence,Section,MAX(Month) month from ? group by Name,Sequence,ClassRollNoSection,Section,RollNo", [result]);
           if (paidNotPaid == 'NotPaid')
             this.ELEMENT_DATA = this.ELEMENT_DATA.filter(f => f.month == 0); //.sort((a, b) => a.month - b.month)
           else
@@ -221,6 +230,9 @@ export class FeecollectionreportComponent implements OnInit {
           if (this.ELEMENT_DATA.length == 0) {
             this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
           }
+          
+          this.ELEMENT_DATA =this.ELEMENT_DATA.sort((a,b)=>a.Sequence - b.Sequence || a.Section.localeCompare(b.Section));
+
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -231,7 +243,8 @@ export class FeecollectionreportComponent implements OnInit {
           this.dataSource = new MatTableDataSource<ITodayReceipt>(this.ELEMENT_DATA);
           this.dataSource.paginator = this.paginator;
         }
-        this.loading = false; this.PageLoading = false;
+        this.loading = false; 
+        this.PageLoading = false;
 
       })
   }

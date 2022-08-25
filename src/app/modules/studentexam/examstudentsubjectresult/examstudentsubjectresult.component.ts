@@ -357,13 +357,15 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       "Active",
       "SubjectId",
       "ClassId",
-      "SubjectCategoryId"
+      "SubjectCategoryId",
+      "Confidential"
     ];
     list.PageName = "ClassSubjects";
     list.filter = [filterStr];
 
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        debugger;
         this.ClassSubjects = data.value.map(cs => {
           var _class = '';
           var objclass = this.Classes.filter(c => c.ClassId == cs.ClassId)
@@ -379,12 +381,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             Active: cs.Active,
             SubjectId: cs.SubjectId,
             ClassId: cs.ClassId,
-            ClassSubject: _class + ' - ' + _subject,
+            Confidential:cs.Confidential,
+            ClassSubject: _class + '-' + _subject,
             SubjectName: _subject,
             SubjectCategoryId: cs.SubjectCategoryId
           }
         })
-
+        this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage,this.ClassSubjects);
       })
   }
   GetSubjectMarkComponents() {
@@ -413,12 +416,19 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe((data: any) => {
         this.SubjectMarkComponents = data.value.filter(x => x.ClassSubject.Active == 1)
         this.SubjectMarkComponents = this.SubjectMarkComponents.map(c => {
+          var _sequence =0;
+          var _sequenceObj =this.MarkComponents.filter(s=>s.MasterDataId ==c.SubjectComponentId);
+          if(_sequenceObj.length>0)
+          {
+            _sequence=_sequenceObj[0].Sequence
+          }
           return {
             "ClassSubjectMarkComponentId": c.ClassSubjectMarkComponentId,
             "ClassId": c.ClassSubject.ClassId,
             "SubjectId": c.ClassSubject.SubjectId,
             "ClassSubjectId": c.ClassSubjectId,
             "SubjectComponentId": c.SubjectComponentId,
+            "Sequence":_sequence,
             "ExamId": c.ExamId,
             "FullMark": c.FullMark,
             "PassMark": c.PassMark,
@@ -426,7 +436,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         });
 
         this.StudentSubjects.forEach(ss => {
-          ss.Components = this.SubjectMarkComponents.filter(sc => sc.ClassSubjectId == ss.ClassSubjectId);
+          ss.Components = this.SubjectMarkComponents.filter(sc => sc.ClassSubjectId == ss.ClassSubjectId).sort((a,b)=>a.Sequence -b.Sequence);
         })
       })
   }
@@ -567,7 +577,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           this.ExamStudentSubjectResult.push(forDisplay);
 
         })
-
+        this.ExamStudentSubjectResult = this.ExamStudentSubjectResult.sort((a,b)=> a.StudentClassSubject.localeCompare(b.StudentClassSubject));
+        console.log("this.ExamStudentSubjectResult",this.ExamStudentSubjectResult)
         this.displayedColumns.push("Action");
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
         this.loading = false; this.PageLoading = false;

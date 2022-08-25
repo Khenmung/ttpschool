@@ -77,6 +77,16 @@ export class StudenttotalattendanceComponent implements OnInit {
   }
   Exams = [];
   ExamNames = [];
+  ClassGroupMapping = [];
+  GetClassGroupMapping() {
+    this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+      .subscribe((data: any) => {
+        this.ClassGroupMapping = data.value.map(f => {
+          f.ClassName = f.Class.ClassName;
+          return f;
+        });
+      })
+  }
   PageLoad() {
 
     debugger;
@@ -98,7 +108,7 @@ export class StudenttotalattendanceComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-
+        this.GetClassGroupMapping();
         this.GetMasterData();
         this.Getclassgroups();
       }
@@ -276,7 +286,8 @@ export class StudenttotalattendanceComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         this.TotalAttendanceList = [];
-        this.Classes.forEach(f => {
+        var _classes = this.ClassGroupMapping.filter(g=>g.ClassGroupId == examObj[0].ClassGroupId);
+        _classes.forEach(f => {
 
           var objExisting = data.value.filter(c => c.ClassId == f.ClassId);
           if (objExisting.length > 0) {

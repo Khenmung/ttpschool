@@ -15,7 +15,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-AssignStudentclassdashboard',
@@ -80,11 +80,12 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     RollNo: 0,
     SectionId: 0,
     FeeTypeId: 0,
+    AdmissionNo:'',
     Remarks: '',
     Active: 1
   };
   displayedColumns = [
-    'StudentClassId',
+    'AdmissionNo',
     'StudentName',
     'GenderName',
     'Remark',
@@ -99,7 +100,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
   nameFilter = new UntypedFormControl('');
   IdFilter = new UntypedFormControl('');
   filterValues = {
-    PID: 0,
+    AdmissionNo: 0,
     StudentId: 0,
     StudentName: ''
   };
@@ -141,8 +142,8 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       )
     this.IdFilter.valueChanges
       .subscribe(
-        PID => {
-          this.filterValues.PID = PID;
+        AdmissionNo => {
+          this.filterValues.AdmissionNo = AdmissionNo;
           this.dataSource.filter = JSON.stringify(this.filterValues);
         }
       )
@@ -303,6 +304,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
     list.fields = [
       'StudentClassId',
       'StudentId',
+      'AdmissionNo',
       'FeeTypeId',
       'ClassId',
       'RollNo',
@@ -329,6 +331,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 
           StudentClassRollNoGenList.push({
             StudentClassId: stud.StudentClassId,
+            //AdmissionNo:stud.AdmissionNo,
             ClassId: stud.ClassId,
             StudentId: stud.StudentId,
             StudentName: stud.Student.FirstName + " " + stud.Student.LastName,
@@ -507,7 +510,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             var _feetype = ''
             if (feetype.length > 0)
               _feetype = feetype[0].FeeTypeName;
-            var _lastname = s.Student.LastName == null? '' : " " + s.Student.LastName;
+            var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
             SameClassPreviousBatchData.push({
               StudentClassId: 0,
               ClassId: _classId,
@@ -582,7 +585,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             var _feetype = ''
             if (feetype.length > 0)
               _feetype = feetype[0].FeeTypeName;
-            var _lastname = s.Student.LastName == null? '' : " " + s.Student.LastName;
+            var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
             PreviousClassAndPreviousBatchData.push({
               StudentClassId: 0,
               ClassId: _classId,
@@ -672,6 +675,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       let list: List = new List();
       list.fields = [
         'StudentClassId',
+        'AdmissionNo',
         'StudentId',
         'FeeTypeId',
         'ClassId',
@@ -717,10 +721,11 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           var _feetype = ''
           if (feetype.length > 0)
             _feetype = feetype[0].FeeTypeName;
-          var _lastname = s.Student.LastName == null? '' : " " + s.Student.LastName;
+          var _lastname = s.Student.LastName == null ? '' : " " + s.Student.LastName;
           this.StudentClassList.push({
             PID: s.Student.PID,
             StudentClassId: previousbatch == '' ? s.StudentClassId : 0,
+            AdmissionNo:s.AdmissionNo,
             ClassId: s.ClassId,
             StudentId: s.StudentId,
             StudentName: s.Student.FirstName + _lastname,
@@ -827,33 +832,42 @@ export class AssignStudentclassdashboardComponent implements OnInit {
           return;
         }
         else {
-          //var _section= this.Sections.filter(s=>s.MasterDataId == row.Section)
-          this.StudentClassData.Active = row.Active;
-          this.StudentClassData.StudentClassId = row.StudentClassId;
-          this.StudentClassData.StudentId = row.StudentId;
-          this.StudentClassData.ClassId = row.ClassId;
-          this.StudentClassData.FeeTypeId = row.FeeTypeId;
-          this.StudentClassData.RollNo = row.RollNo;
-          this.StudentClassData.SectionId = row.SectionId;
-          this.StudentClassData.Remarks = row.Remarks;
+          this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, this.SelectedBatchId)
+            .subscribe((data: any) => {
 
-          this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentClassData.BatchId = this.SelectedBatchId;
-          if (this.StudentClassData.StudentClassId == 0) {
-            this.StudentClassData["CreatedDate"] = new Date();
-            this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.StudentClassData["UpdatedDate"];
-            delete this.StudentClassData["UpdatedBy"];
-            //console.log('to insert', this.StudentClassData)
-            this.insert(row);
-          }
-          else {
-            delete this.StudentClassData["CreatedDate"];
-            delete this.StudentClassData["CreatedBy"];
-            this.StudentClassData["UpdatedDate"] = new Date();
-            this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row);
-          }
+              var ClassStrength = data.value.length;
+              ClassStrength++;
+              var _year = new Date().getFullYear();
+
+              //var _section= this.Sections.filter(s=>s.MasterDataId == row.Section)
+              this.StudentClassData.Active = row.Active;
+              this.StudentClassData.StudentClassId = row.StudentClassId;
+              this.StudentClassData.StudentId = row.StudentId;
+              this.StudentClassData.ClassId = row.ClassId;
+              this.StudentClassData.FeeTypeId = row.FeeTypeId;
+              this.StudentClassData.RollNo = row.RollNo;
+              this.StudentClassData.SectionId = row.SectionId;
+              this.StudentClassData.Remarks = row.Remarks;
+              this.StudentClassData.AdmissionNo = row.AdmissionNo == null ? _year + "/" + ClassStrength : row.AdmissionNo;
+
+              this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
+              this.StudentClassData.BatchId = this.SelectedBatchId;
+              if (this.StudentClassData.StudentClassId == 0) {
+                this.StudentClassData["CreatedDate"] = new Date();
+                this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+                delete this.StudentClassData["UpdatedDate"];
+                delete this.StudentClassData["UpdatedBy"];
+                //console.log('to insert', this.StudentClassData)
+                this.insert(row);
+              }
+              else {
+                delete this.StudentClassData["CreatedDate"];
+                delete this.StudentClassData["CreatedBy"];
+                this.StudentClassData["UpdatedDate"] = new Date();
+                this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+                this.update(row);
+              }
+            });
         }
       });
   }
@@ -982,7 +996,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
         //  //console.log('data.value', data.value);
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            var _lastname = student.LastName == null ? '' : " " + student.LastName;
             return {
               StudentId: student.StudentId,
               Name: student.PID + '-' + student.FirstName + _lastname
@@ -1029,6 +1043,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
 export interface IStudentClass {
   PID: number;
   StudentClassId: number;
+  AdmissionNo:string;
   ClassId: number;
   ClassName: string;
   StudentId: number;

@@ -44,7 +44,15 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="FeatureName">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Feature </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>  
+                <span style="display: flex;flex-direction: column;justify-content: start;">
+                    <span style="justify-content: start;display: flex;">Feature</span>
+                    <mat-form-field style="width: 150px;">
+                        <mat-label>search</mat-label>
+                        <input matInput [formControl]="nameFilter" autocomplete="Off">
+                    </mat-form-field>
+                </span>
+            </mat-header-cell>
             <mat-cell *matCellDef="let element">
               {{element.FeatureName}}  
             </mat-cell>

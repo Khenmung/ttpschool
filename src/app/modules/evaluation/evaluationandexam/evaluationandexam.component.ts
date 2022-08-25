@@ -125,7 +125,8 @@ export class EvaluationandExamComponent implements OnInit {
             this.Exams.push({
               ExamId: e.ExamId,
               ExamName: obj[0].MasterDataName,
-              ClassGroupId: e.ClassGroupId
+              ClassGroupId: e.ClassGroupId,
+              AttendanceStartDate:e.AttendanceStartDate
             })
         });
         this.loading = false; this.PageLoading = false;

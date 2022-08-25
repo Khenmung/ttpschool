@@ -9,6 +9,7 @@ import { studentprimaryinfoComponent } from '../studentprimaryinfo/studentprimar
 import { StudentprogressreportComponent } from '../studentprogressreport/studentprogressreport.component';
 import { Router } from '@angular/router';
 import { StudentviewComponent } from '../studentview/studentview.component';
+import { SidenavService } from 'src/app/shared/sidenav.service';
 
 @Component({
   selector: 'app-studentboard',
@@ -16,6 +17,8 @@ import { StudentviewComponent } from '../studentview/studentview.component';
   styleUrls: ['./studentboard.component.scss']
 })
 export class StudentboardComponent implements AfterViewInit {
+  
+
   components:any = [
     studentprimaryinfoComponent,
     AddstudentclassComponent,
@@ -45,6 +48,7 @@ export class StudentboardComponent implements AfterViewInit {
   public viewContainer: ViewContainerRef;
 
   constructor(
+    private sidenav: SidenavService,
     private cdr: ChangeDetectorRef,
     private nav: Router,
     private contentservice: ContentService,
@@ -52,7 +56,11 @@ export class StudentboardComponent implements AfterViewInit {
     private shareddata: SharedataService) {
     this.StudentId = tokenStorage.getStudentId();
   }
-
+  toggleRightSidenav() {
+    //console.log("this.sidenav",this.sidenav.)
+    this.sidenav.toggle();
+ }
+ 
   public ngAfterViewInit(): void {
     debugger
     this.shareddata.CurrentStudentName.subscribe(s => (this.StudentName = s));

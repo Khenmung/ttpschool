@@ -40,7 +40,7 @@
             <mat-icon>copy_all</mat-icon>
         </button>
     </form>
-    <!-- <div class="example-container mat-elevation-z8"> -->
+    <div>If examination has been released, subject component cannot be updated.</div>
     <mat-table #table [dataSource]="dataSource" matSort>
 
         <ng-container matColumnDef="ClassSubject">
@@ -93,8 +93,8 @@
         </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
-                <button [disabled]="loading || Permission=='read' || DisableSaveButton" *ngIf="ELEMENT_DATA.length>0" matTooltip="save all"
-                    mat-mini-fab (click)="SaveAll()">
+                <button [disabled]="loading || Permission=='read' || DisableSaveButton" *ngIf="ELEMENT_DATA.length>0"
+                    matTooltip="save all" mat-mini-fab (click)="SaveAll()">
                     <mat-icon>all_out</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -102,8 +102,8 @@
                 </button>
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button [disabled]="loading || !element.Action || Permission == 'read' || DisableSaveButton" matTooltip="save" mat-mini-fab
-                    (click)="Save(element)">
+                <button [disabled]="loading || !element.Action || Permission == 'read' || DisableSaveButton"
+                    matTooltip="save" mat-mini-fab (click)="Save(element)">
                     <mat-icon>save</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>

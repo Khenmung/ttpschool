@@ -16,7 +16,7 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { IStudent } from '../../ClassSubject/AssignStudentClass/Assignstudentclassdashboard.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-today-collection',
@@ -89,6 +89,7 @@ export class TodayCollectionComponent implements OnInit {
       })
     })
     this.SearchForm = this.fb.group({
+      searchClassId: [0],
       searchStudentName: [0],
       FromDate: [new Date(), Validators.required],
       ToDate: [new Date(), Validators.required],
@@ -139,6 +140,7 @@ export class TodayCollectionComponent implements OnInit {
     this.ErrorMessage = '';
     let fromDate = this.SearchForm.get("FromDate").value;
     let toDate = this.SearchForm.get("ToDate").value;
+    let _classId = this.SearchForm.get("searchClassId").value;
     let filterstring = '';
     this.loading = true;
     //filterstring = " eq 1" 
@@ -162,7 +164,7 @@ export class TodayCollectionComponent implements OnInit {
     ];
     list.PageName = "StudentFeeReceipts";
     list.lookupFields = [
-      "AccountingVouchers($filter=ClassFeeId gt 0 and FeeReceiptId gt 0;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
+      "AccountingVouchers($filter=ClassFeeId gt 0 and FeeReceiptId gt 0;$select=FeeReceiptId,LedgerId,ClassFeeId,Amount;$expand=ClassFee($select=FeeDefinitionId;$expand=FeeDefinition($select=FeeName,FeeCategoryId))),StudentClass($select=StudentId,ClassId;$expand=Student($select=FirstName,LastName),Class($select=ClassName))"
 
     ]
     list.filter = [filterstring];
@@ -171,12 +173,25 @@ export class TodayCollectionComponent implements OnInit {
       .subscribe((data: any) => {
         //debugger;
         //console.log('paymentd ata', data.value);
-        this.GrandTotalAmount = data.value.filter(f => f.Active == 1)
-          .reduce((acc, current) => acc + current.TotalAmount, 0);
-        this.CancelledAmount = data.value.filter(f => f.Active == 0)
-          .reduce((acc, current) => acc + current.TotalAmount, 0);
-        this.DateWiseCollection = data.value.map(d => {
-          var _lastname = d.StudentClass.Student.LastName == null? '' : " " + d.StudentClass.Student.LastName;
+        var result = [];
+        if (_classId > 0)
+          data.value.forEach(f => {
+            if (f.StudentClass.ClassId == _classId)
+              result.push(f);
+
+          })
+        else
+          result = [...data.value];
+
+
+        var activebill = result.filter(f => f.Active == 1);
+        this.GrandTotalAmount = activebill.reduce((acc, current) => acc + current.TotalAmount, 0);
+
+        var cancelledBill = result.filter(f => f.Active == 0)
+        this.CancelledAmount = cancelledBill.reduce((acc, current) => acc + current.TotalAmount, 0);
+
+        this.DateWiseCollection = result.map(d => {
+          var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
           d.Student = d.StudentClass.Student.FirstName + _lastname;
           d.ClassName = d.StudentClass.Class.ClassName
           d.PaymentType = this.PaymentTypes.filter(p => p.MasterDataId == d.PaymentTypeId)[0].MasterDataName;
@@ -188,7 +203,7 @@ export class TodayCollectionComponent implements OnInit {
 
         var groupbyPaymentType = alasql("Select PaymentType, Sum(TotalAmount) TotalAmount from ? group by PaymentType", [this.DateWiseCollection]);
 
-        data.value.forEach(d => {
+        result.forEach(d => {
           d.AccountingVouchers.forEach(v => {
             var _feeCategoryName = '';
             if (v.ClassFee != null) {
@@ -196,7 +211,7 @@ export class TodayCollectionComponent implements OnInit {
               var objCategory = this.FeeCategories.filter(f => f.MasterDataId == _feeCategoryId)
               if (objCategory.length > 0)
                 _feeCategoryName = objCategory[0].MasterDataName;
-                var _lastname = d.StudentClass.Student.LastName == null? '' : " " + d.StudentClass.Student.LastName;
+              var _lastname = d.StudentClass.Student.LastName == null ? '' : " " + d.StudentClass.Student.LastName;
               this.HeadsWiseCollection.push({
                 ClassFeeId: v.ClassFeeId,
                 Amount: v.Amount,

@@ -2,7 +2,7 @@
 <!-- <alert></alert> -->
 <form [formGroup]="SearchForm">
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="30px">
-       
+
         <div style="padding: 15px 10px 2px 15px;height: 55px;">
             <mat-radio-group formControlName="PaidNotPaid">
                 <mat-radio-button class="example-margin" checked="false" value="Paid">Paid</mat-radio-button>&nbsp;
@@ -25,16 +25,16 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field> -->
-        <!-- <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline">
             <mat-label>Class</mat-label>
             <mat-select formControlName="searchClassId">
-                <mat-option>--class--</mat-option>
+                <mat-option>select</mat-option>
                 <mat-option *ngFor="let item of Classes" [value]="item.ClassId">
                     {{item.ClassName}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="outline">
+        <!--<mat-form-field appearance="outline">
             <mat-label>Section</mat-label>
             <mat-select formControlName="searchSectionId">
                 <mat-option value="0">--section--</mat-option>
@@ -43,11 +43,11 @@
                 </mat-option>
             </mat-select>
         </mat-form-field> -->
-        <button [disabled]="loading" mat-raised-button (click)="GetStudentFeePaymentReport()">
-             <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetStudentFeePaymentReport()">
+            <mat-icon>search</mat-icon>
+            <mat-icon *ngIf="loading">
+                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+            </mat-icon>
         </button>
     </div>
 </form>

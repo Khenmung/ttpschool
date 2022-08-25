@@ -48,13 +48,15 @@ marks can no longer be entered/edited for that examination.
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Sequence">
-            <mat-header-cell *matHeaderCellDef> Sequence </mat-header-cell>
+        <ng-container matColumnDef="AttendanceStartDate">
+            <mat-header-cell *matHeaderCellDef> Attendance Start Date </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <mat-label>Sequence</mat-label>
-                    <input type="number" [(ngModel)]="element.Sequence" [value]="element.Sequence" (blur)="onBlur(element)"
-                        matInput autocomplete="off">                   
+                    <mat-label>Attendance Start Date</mat-label><input [value]="element.AttendanceStartDate" 
+                    [(ngModel)]="element.AttendanceStartDate" matInput [matDatepicker]="AttendanceStartDate"
+                    (dateChange)="onBlur(element)" autocomplete="off">
+                <mat-datepicker-toggle matSuffix [for]="AttendanceStartDate"></mat-datepicker-toggle>
+                <mat-datepicker #AttendanceStartDate></mat-datepicker>      
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -87,7 +89,7 @@ marks can no longer be entered/edited for that examination.
                 {{element.ReleaseDate}}
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="AttendanceModeId">
+        <!-- <ng-container matColumnDef="AttendanceModeId">
             <mat-header-cell *matHeaderCellDef>Attendance Mode
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -99,7 +101,7 @@ marks can no longer be entered/edited for that examination.
                     </mat-select>
                 </mat-form-field>
             </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="Active">
             <mat-header-cell *matHeaderCellDef> Active </mat-header-cell>
             <mat-cell *matCellDef="let element">

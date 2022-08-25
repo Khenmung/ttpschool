@@ -17,7 +17,7 @@
             <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Account Group</mat-label>
                 <mat-select formControlName="searchAccountGroupId">
-                    <mat-option *ngFor="let option of AccountGroups" [value]="option.AccountnatureId">
+                    <mat-option *ngFor="let option of AccountGroups" [value]="option.AccountNatureId">
                         {{option.AccountName}}
                     </mat-option>
                 </mat-select>
@@ -41,7 +41,7 @@
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="GeneralLedgerId">
                 <mat-header-cell *matHeaderCellDef>
-                    <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab
+                    <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
                         (click)="AddNew()">
                         <mat-icon>add</mat-icon>
                     </button>

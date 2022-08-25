@@ -13,7 +13,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-attendancereport',
@@ -53,10 +53,8 @@ export class AttendancereportComponent implements OnInit {
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   searchForm = this.fb.group({
-    //searchClassId: [0],
-    //    searchSectionId: [0],
-    //    searchClassSubjectId: [0],
-    searchAttendanceDate: [new Date()]
+    searchFromDate: [new Date()],
+    searchToDate: [new Date()]
   });
   StudentClassSubjectId = 0;
   displayedColumns = [
@@ -157,134 +155,83 @@ export class AttendancereportComponent implements OnInit {
     var today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    var _AttendanceDate = new Date(this.searchForm.get("searchAttendanceDate").value)
-    _AttendanceDate.setHours(0, 0, 0, 0);
-    if (_AttendanceDate.getTime() > today.getTime()) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (_AttendanceDate.getTime() != today.getTime()) {
-      this.EnableSave = false;
-    }
-    else
-      this.EnableSave = true;
+    var _fromDate = new Date(this.searchForm.get("searchFromDate").value)
+    var _toDate = new Date(this.searchForm.get("searchToDate").value)
+    _fromDate.setHours(0, 0, 0, 0);
+    _toDate.setHours(0, 0, 0, 0);
 
     filterStr += ' and BatchId eq ' + this.SelectedBatchId;
 
-
-    if (filterStr.length == 0) {
-      this.contentservice.openSnackBar("Please enter search criteria.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
     this.StudentAttendanceList = [];
-    //this.dataSource = new MatTableDataSource<any>([]);
+
+    var datefilterStr = ' and AttendanceDate ge ' + moment(_fromDate).format('yyyy-MM-DD')
+    datefilterStr += ' and AttendanceDate le ' + moment(_toDate).format('yyyy-MM-DD')
+    datefilterStr += ' and StudentClassId gt 0'
+
     let list: List = new List();
     list.fields = [
-      'StudentClassId',
-      'RollNo',
-      'ClassId',
-      'SectionId',
-      'Active'
+      "AttendanceId",
+      "StudentClassId",
+      "AttendanceDate",
+      "AttendanceStatus",
+      "ClassSubjectId",
+      "Remarks",
+      "OrgId",
+      "BatchId"
     ];
+    list.PageName = "Attendances";
+    list.lookupFields = ["StudentClass($select=ClassId,StudentClassId)"];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
+      datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
 
-    list.PageName = "StudentClasses";
-    list.lookupFields = ["Student($select=FirstName,LastName)"];
-    list.filter = [filterStr];
-    this.StudentClassList = [];
     this.dataservice.get(list)
-      .subscribe((studentclass: any) => {
+      .subscribe((attendance: any) => {
 
-        if (studentclass.value.length == 0) {
-          this.loading = false; this.PageLoading = false;
-          this.contentservice.openSnackBar("No student exist in this class/section!", globalconstants.ActionText, globalconstants.RedBackground);
-          return;
-        }
-
-        this.StudentClassList = studentclass.value.map(item => {
-          var _name = item.Student.LastName==null?'':" " + item.Student.LastName;
-          return {
-            StudentClassId: item.StudentClassId,
-            Active: item.Active,
-            ClassId: item.ClassId,
-            RollNo: item.RollNo,
-            Student: item.Student.FirstName + _name,
-            StudentRollNo: item.Student.FirstName + _name + "-" + item.RollNo
+        attendance.value.forEach(sc => {
+          var _className = '';
+          var clsObj = this.Classes.filter(c => c.ClassId == sc.StudentClass.ClassId);
+          if (clsObj.length > 0) {
+            _className = clsObj[0].ClassName;
+            this.StudentAttendanceList.push({
+              AttendanceId: sc.AttendanceId,
+              AttendanceStatus: sc.AttendanceStatus,
+              AttendanceDate: sc.AttendanceDate,
+              ClassName: _className,
+              Sequence: clsObj[0].Sequence
+            });
           }
         })
-        //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-        var datefilterStr = ' and AttendanceDate ge ' + moment(_AttendanceDate).format('yyyy-MM-DD')
-        datefilterStr += ' and AttendanceDate lt ' + moment(_AttendanceDate).add(1, 'day').format('yyyy-MM-DD')
-        datefilterStr += ' and StudentClassId gt 0'
+        var _data = [];
+        var sumOfAttendance = alasql("select sum(1) PresentAbsent,ClassName,AttendanceStatus,Sequence from ? group by ClassName,AttendanceStatus,Sequence",
+          [this.StudentAttendanceList]);
+        console.log("sumOfAttendance", sumOfAttendance)
+        sumOfAttendance.forEach(att => {
+          var existing = _data.filter(f => f.ClassName == att.ClassName);
+          if (existing.length > 0) {
+            if (att.AttendanceStatus == 1)
+              existing[0]["Present"] = att.PresentAbsent
+            else if (att.AttendanceStatus == 0)
+              existing[0]["Absent"] = att.PresentAbsent
+          }
+          else {
+            if (att.AttendanceStatus == 1)
+              _data.push({ ClassName: att.ClassName, Present: att.PresentAbsent, Sequence: att.Sequence })
+            else
+              _data.push({ ClassName: att.ClassName, Absent: att.PresentAbsent, Sequence: att.Sequence })
 
-        let list: List = new List();
-        list.fields = [
-          "AttendanceId",
-          "StudentClassId",
-          "AttendanceDate",
-          "AttendanceStatus",
-          "ClassSubjectId",
-          "Remarks",
-          "OrgId",
-          "BatchId"
-        ];
-        list.PageName = "Attendances";
-        //list.lookupFields = ["StudentClass"];
-        list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
-          datefilterStr + filterStrClsSub]; //+ //"'" + //"T00:00:00.000Z'" +
+          }
 
-        this.dataservice.get(list)
-          .subscribe((attendance: any) => {
-
-            this.StudentClassList.forEach(sc => {
-              var _className = '';
-              var clsObj = this.Classes.filter(c => c.ClassId == sc.ClassId);
-              if (clsObj.length > 0) {
-                _className = clsObj[0].ClassName;
-                let existing = attendance.value.filter(db => db.StudentClassId == sc.StudentClassId);
-                if (existing.length > 0) {
-                  this.StudentAttendanceList.push({
-                    AttendanceId: existing[0].AttendanceId,
-                    AttendanceStatus: existing[0].AttendanceStatus,
-                    AttendanceDate: existing[0].AttendanceDate,
-                    ClassName: _className,
-                    Sequence:clsObj[0].Sequence
-                });
-                }
-              }
-            })
-            var _data = [];
-            var sumOfAttendance = alasql("select sum(1) PresentAbsent,ClassName,AttendanceStatus,Sequence from ? group by ClassName,AttendanceStatus,Sequence", 
-            [this.StudentAttendanceList]);
-            console.log("sumOfAttendance",sumOfAttendance)
-            sumOfAttendance.forEach(att => {
-              var existing = _data.filter(f => f.ClassName == att.ClassName);
-              if (existing.length > 0) {
-                if (att.AttendanceStatus == 1)
-                  existing[0]["Present"] = att.PresentAbsent
-                else if (att.AttendanceStatus == 0)
-                  existing[0]["Absent"] = att.PresentAbsent
-              }
-              else {
-                if (att.AttendanceStatus == 1)
-                  _data.push({ ClassName: att.ClassName, Present: att.PresentAbsent,Sequence:att.Sequence })
-                else
-                  _data.push({ ClassName: att.ClassName, Absent: att.PresentAbsent,Sequence:att.Sequence })
-
-              }
-
-            })
-            //console.log("_data",_data);
-            _data = _data.sort((a,b)=>a.Sequence - b.Sequence);
-            this.TotalPresent = _data.reduce((acc, current) => acc + current.Present, 0);
-            this.TotalAbsent = _data.reduce((acc, current) => acc + current.Absent, 0);
-            this.dataSource = new MatTableDataSource<any>(_data);
-            this.dataSource.paginator = this.paginator;
-            this.dataSource.sort = this.sort;
-            this.loading = false; this.PageLoading = false;
-          });
-        //this.changeDetectorRefs.detectChanges();
+        })
+        //console.log("_data",_data);
+        _data = _data.sort((a, b) => a.Sequence - b.Sequence);
+        this.TotalPresent = _data.reduce((acc, current) => acc + current.Present, 0);
+        this.TotalAbsent = _data.reduce((acc, current) => acc + (current.Absent==null?0:current.Absent), 0);
+        this.dataSource = new MatTableDataSource<any>(_data);
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.loading = false; this.PageLoading = false;
       });
+    //this.changeDetectorRefs.detectChanges();
   }
   clear() {
     this.searchForm.patchValue({
@@ -407,7 +354,7 @@ export interface IStudentAttendance {
   AttendanceStatus: number;
   AttendanceDate: Date;
   ClassName: string;
-  Sequence:number;
+  Sequence: number;
 }
 
 

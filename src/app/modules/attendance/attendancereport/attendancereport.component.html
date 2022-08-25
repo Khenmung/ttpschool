@@ -19,10 +19,16 @@
     </mat-form-field>
     -->
     <mat-form-field appearance="outline">
-        <mat-label>Attendance Date</mat-label>
-        <input formControlName="searchAttendanceDate" matInput [matDatepicker]="AttendanceDate" autocomplete="off">
-        <mat-datepicker-toggle matSuffix [for]="AttendanceDate"></mat-datepicker-toggle>
-        <mat-datepicker #AttendanceDate></mat-datepicker>
+        <mat-label>from</mat-label>
+        <input formControlName="searchFromDate" matInput [matDatepicker]="FromDate" autocomplete="off">
+        <mat-datepicker-toggle matSuffix [for]="FromDate"></mat-datepicker-toggle>
+        <mat-datepicker #FromDate></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+        <mat-label>to</mat-label>
+        <input formControlName="searchToDate" matInput [matDatepicker]="ToDate" autocomplete="off">
+        <mat-datepicker-toggle matSuffix [for]="ToDate"></mat-datepicker-toggle>
+        <mat-datepicker #ToDate></mat-datepicker>
     </mat-form-field>
     <button [disabled]="loading" (click)="GetStudentAttendance()" mat-raised-button color="accent">
         <mat-icon>search</mat-icon>

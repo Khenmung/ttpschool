@@ -16,6 +16,7 @@ import { ChartsModule } from 'ng2-charts';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { SidenavService } from './shared/sidenav.service';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     NotfoundComponent
   ],
   providers: [
+    SidenavService,
     DatePipe,
     authInterceptorProviders,
     //SharedataService,

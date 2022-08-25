@@ -48,11 +48,11 @@ export class ExamsComponent implements OnInit {
     ExamNameId: 0,
     StartDate: Date,
     EndDate: Date,
-    Sequence:0,
+    //Sequence:0,
     ClassGroupId: 0,
     ReleaseResult: 0,
     ReleaseDate: null,
-    AttendanceModeId: 0,
+    AttendanceStartDate: null,
     OrgId: 0,
     BatchId: 0,
     Active: 1
@@ -63,8 +63,8 @@ export class ExamsComponent implements OnInit {
     'StartDate',
     'EndDate',
     'ClassGroupId',
-    'Sequence',
-    'AttendanceModeId',
+    //'Sequence',
+    'AttendanceStartDate',
     'ReleaseDate',
     'ReleaseResult',
     'Active',
@@ -130,7 +130,8 @@ export class ExamsComponent implements OnInit {
       ClassGroupId: 0,
       ReleaseResult: 0,
       ReleaseDate: null,
-      AttendanceModeId: 0,
+      AttendanceStartDate:new Date(),
+      //AttendanceModeId: 0,
       BatchId: 0,
       OrgId: 0,
       Active: 0,
@@ -178,16 +179,16 @@ export class ExamsComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (row.AttendanceModeId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select attendance mode.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (row.Sequence == 0 ) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please enter sequence.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // if (row.AttendanceModeId == 0) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select attendance mode.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (row.Sequence == 0 ) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please enter sequence.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     if (row.ExamId > 0)
       checkFilterString += " and ExamId ne " + row.ExamId;
     checkFilterString += " and " + this.StandardFilter;
@@ -209,9 +210,8 @@ export class ExamsComponent implements OnInit {
           this.ExamsData.ExamNameId = row.ExamNameId;
           this.ExamsData.StartDate = row.StartDate;
           this.ExamsData.EndDate = row.EndDate;
-          this.ExamsData.Sequence = row.Sequence;
           this.ExamsData.ClassGroupId = row.ClassGroupId;
-          this.ExamsData.AttendanceModeId = row.AttendanceModeId;
+          this.ExamsData.AttendanceStartDate = row.AttendanceStartDate;
           this.ExamsData.ReleaseResult = row.ReleaseResult;
           this.ExamsData.BatchId = this.SelectedBatchId;
           if (row.ReleaseResult == 1) {
@@ -271,8 +271,8 @@ export class ExamsComponent implements OnInit {
     let list: List = new List();
 
     list.fields = [
-      "ExamId", "ExamNameId", "StartDate","Sequence",
-      "EndDate", "ClassGroupId", "AttendanceModeId",
+      "ExamId", "ExamNameId", "StartDate",
+      "EndDate", "ClassGroupId", "AttendanceStartDate",
       "ReleaseResult", "ReleaseDate", "OrgId", "BatchId", "Active"];
     list.PageName = "Exams";
     list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] +
@@ -288,6 +288,7 @@ export class ExamsComponent implements OnInit {
             if (existing[0].ReleaseDate != null)
               existing[0].ReleaseDate = moment(existing[0].ReleaseDate).format("DD/MM/yyyy");
             existing[0].ExamName = this.ExamNames.filter(f => f.MasterDataId == existing[0].ExamNameId)[0].MasterDataName;
+            existing[0].Sequence = e.Sequence;
             existing[0].Action = false;
             return existing[0];
           }
@@ -296,10 +297,10 @@ export class ExamsComponent implements OnInit {
               ExamId: 0,
               ExamNameId: e.MasterDataId,
               ExamName: e.MasterDataName,
-              AttendanceModeId: 0,
+              AttendanceStartDate: new Date(),
+              Sequence:e.Sequence,
               StartDate: new Date(),
               EndDate: new Date(),
-              Sequence:0,
               ReleaseResult: 0,
               ReleaseDate: null,
               OrgId: 0,
@@ -566,7 +567,7 @@ export interface IExams {
   StartDate: Date;
   EndDate: Date;
   Sequence:number;
-  AttendanceModeId: number;
+  AttendanceStartDate: Date;
   ClassGroupId: number;
   ReleaseResult: number;
   ReleaseDate: Date;

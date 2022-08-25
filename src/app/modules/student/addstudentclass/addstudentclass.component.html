@@ -7,6 +7,12 @@
     <mat-grid-list style="max-width: 600px;" [cols]="2" rowHeight="80px" (window:resize)="onResize($event)">
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <mat-form-field appearance="outline">
+                <mat-label>Admission No.</mat-label>
+                <input formControlName="AdmissionNo" matInput>
+            </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
+            <mat-form-field appearance="outline">
                 <mat-label>Class</mat-label>
                 <mat-select formControlName="ClassId" #ClassId>
                     <mat-option *ngFor="let p of Classes" [value]="p.ClassId">

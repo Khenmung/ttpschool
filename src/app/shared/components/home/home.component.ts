@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { Subscription } from 'rxjs';
 import { MediaObserver } from '@angular/flex-layout'
@@ -6,6 +6,8 @@ import { NaomitsuService } from '../../databaseService';
 import { SharedataService } from '../../sharedata.service';
 import { List } from '../../interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { MatSidenav } from '@angular/material/sidenav';
+import { SidenavService } from '../../sidenav.service';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +15,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-    PageLoading = true;
+  @ViewChild('sidenav') public sidenav: MatSidenav;
+  PageLoading = true;
   mediaSub: Subscription;
   deviceXs: boolean;
   mode = 'side';
@@ -26,18 +29,23 @@ export class HomeComponent implements OnInit {
   SelectedBatchId = 0;
   loginUserDetail = [];
   sideMenu = [];
-  collapse = false;
+  opened = true;
   SelectedApplicationId = 0;
   MenuData = [];
   /////////////////////////
 
-  constructor(private servicework: SwUpdate,
+  constructor(
+    private sidenavService: SidenavService,
+    private servicework: SwUpdate,
     private mediaObserver: MediaObserver,
     private tokenStorage: TokenStorageService,
     private dataservice: NaomitsuService,
     private shareddata: SharedataService
   ) { }
-
+  ngAfterViewInit(): void {
+    this.sidenavService.setSidenav(this.sidenav);
+  }
+  
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
       this.servicework.checkForUpdate().then((value) => {
@@ -85,7 +93,7 @@ export class HomeComponent implements OnInit {
     event.stopPropagation()
   }
   toggleSidebar() {
-    this.collapse = !this.collapse;
+    this.opened = !this.opened;
   }
   DownFromMenu(value) {
     ////console.log('from menu',value);

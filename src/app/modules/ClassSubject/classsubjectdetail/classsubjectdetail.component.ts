@@ -72,6 +72,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     SubjectId: 0,
     SubjectTypeId: 0,
     SubjectCategoryId:0,
+    Confidential:0,
     Active: 1
   };
   displayedColumns = [
@@ -79,6 +80,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     'SubjectTypeId',
     'SubjectCategoryId',
     'Credits',
+    'Confidential',
     'Active',
     'Action'
   ];
@@ -261,6 +263,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
       'SubjectId',
       'ClassId',
       'Credits',
+      'Confidential',
       'SubjectTypeId',
       'SubjectCategoryId',
       'TeacherId',
@@ -281,6 +284,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
             ClassSubjectId: item.ClassSubjectId,
             SubjectId: item.SubjectId,
             SubjectTypeId: item.SubjectTypeId,
+            Confidential:item.Confidential,
             SubjectCategoryId: item.SubjectCategoryId,
             ClassId: item.ClassId,
             Credits: item.Credits,
@@ -306,6 +310,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
               SubjectTypeId: existing[0].SubjectTypeId,
               SubjectCategoryId: existing[0].SubjectCategoryId,              
               SelectHowMany: existing[0].SelectHowMany,
+              Confidential:existing[0].Confidential,
               TeacherId: existing[0].TeacherId,
               Credits: existing[0].Credits,
               ClassId: existing[0].ClassId,
@@ -321,6 +326,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
               SubjectTypeId: 0,
               SubjectCategoryId:0,
               SelectHowMany: 0,
+              Confidential:0,
               Credits: 0,
               ClassId: this.searchForm.get("searchClassId").value,
               SubjectName: s.MasterDataName,
@@ -451,6 +457,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
           this.ClassSubjectData.ClassSubjectId = row.ClassSubjectId;
           this.ClassSubjectData.ClassId = row.ClassId;
           this.ClassSubjectData.Credits = row.Credits;
+          this.ClassSubjectData.Confidential = row.Confidential ==null?false:row.Confidential;
           this.ClassSubjectData.SubjectId = row.SubjectId;
           this.ClassSubjectData.SubjectTypeId = row.SubjectTypeId;
           this.ClassSubjectData.SubjectCategoryId = row.SubjectCategoryId;          
@@ -593,7 +600,12 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
     //   return [];
 
   }
-
+  updateConfidential(row,value)
+  {
+    row.Confidential = value.checked;
+    row.Action = true;
+    
+  }
 }
 export interface IClassSubject {
   ClassSubjectId: number;
@@ -604,6 +616,7 @@ export interface IClassSubject {
   SubjectTypeId: number;
   SubjectCategoryId:number;
   SelectHowMany: number;
+  Confidential:number;
   TeacherId: number,
   Active;
   Action: false;

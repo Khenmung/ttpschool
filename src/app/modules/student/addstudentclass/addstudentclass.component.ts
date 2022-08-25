@@ -34,7 +34,7 @@ export class AddstudentclassComponent implements OnInit {
   StudentName = '';
   SelectedApplicationId = 0;
   LoginUserDetail = [];
-  FeeCategories =[];
+  FeeCategories = [];
   studentclassData = {
     StudentClassId: 0,
     StudentId: 0,
@@ -43,6 +43,7 @@ export class AddstudentclassComponent implements OnInit {
     RollNo: '',
     BatchId: 0,
     FeeTypeId: 0,
+    AdmissionNo: '',
     AdmissionDate: new Date(),
     Remarks: '',
     Promoted: 0,
@@ -70,6 +71,7 @@ export class AddstudentclassComponent implements OnInit {
     this.breakpoint = (window.innerWidth <= 400) ? 1 : 3;
     var today = new Date();
     this.studentclassForm = this.fb.group({
+      AdmissionNo: [{ value: '', disabled: true }],
       StudentName: [{ value: this.StudentName, disabled: true }],
       ClassId: [0, [Validators.required]],
       SectionId: [0],
@@ -174,7 +176,7 @@ export class AddstudentclassComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.Students = data.value.map(student => {
-            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            var _lastname = student.LastName == null ? '' : " " + student.LastName;
             var name = student.FirstName + _lastname;
             student.studentName = student.StudentId + "-" + name + "-" + student.FatherName + "-" + student.MotherName;
             return student;
@@ -203,7 +205,7 @@ export class AddstudentclassComponent implements OnInit {
       let list: List = new List();
       list.fields = [
         "StudentClassId", "ClassId",
-        "StudentId", "RollNo", "SectionId",
+        "StudentId", "RollNo", "SectionId", "AdmissionNo",
         "BatchId", "FeeTypeId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
@@ -215,6 +217,7 @@ export class AddstudentclassComponent implements OnInit {
             var admissiondate = moment(data.value[0].AdmissionDate).isBefore("1970-01-01")
             this.studentclassForm.patchValue({
               StudentId: data.value[0].StudentId,
+              AdmissionNo: data.value[0].AdmissionNo,
               ClassId: data.value[0].ClassId,
               SectionId: data.value[0].SectionId,
               RollNo: data.value[0].RollNo,
@@ -230,6 +233,7 @@ export class AddstudentclassComponent implements OnInit {
               StudentClassId: 0,
               StudentName: this.StudentName,
               ClassId: 0,
+              AdmissionNo: '',
               SectionId: 0,
               RollNo: '',
               BatchId: this.SelectedBatchId,
@@ -279,22 +283,34 @@ export class AddstudentclassComponent implements OnInit {
       return;
     }
     else {
-      this.loading = true;
-      this.studentclassData.Active = 1;
-      this.studentclassData.BatchId = this.SelectedBatchId;
-      this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
-      this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
-      this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
-      this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
-      this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
-      this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
-      this.studentclassData.OrgId = this.LoginUserDetail[0]["orgId"];
-      this.studentclassData.StudentId = this.StudentId;
-      if (this.StudentClassId == 0)
-        this.insert();
-      else {
-        this.studentclassData.StudentClassId = this.StudentClassId;
-        this.update();
+      var _classId = this.studentclassForm.get("ClassId").value;
+      var ClassStrength = 0;
+      if (_classId > 0) {
+        this.contentservice.GetStudentClassCount(this.LoginUserDetail[0]['orgId'], 0, this.SelectedBatchId)
+          .subscribe((data: any) => {
+            ClassStrength = data.value.length;
+            ClassStrength++;
+
+            var _year = new Date().getFullYear();
+            this.loading = true;
+            this.studentclassData.Active = 1;
+            this.studentclassData.BatchId = this.SelectedBatchId;
+            this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
+            this.studentclassData.RollNo = this.studentclassForm.value.RollNo;
+            this.studentclassData.SectionId = this.studentclassForm.value.SectionId;
+            this.studentclassData.FeeTypeId = this.studentclassForm.value.FeeTypeId;
+            this.studentclassData.AdmissionNo = this.studentclassForm.get("AdmissionNo").value == null ? _year + "/" + ClassStrength : this.studentclassForm.get("AdmissionNo").value;
+            this.studentclassData.Remarks = this.studentclassForm.value.Remarks;
+            this.studentclassData.AdmissionDate = this.studentclassForm.value.AdmissionDate;
+            this.studentclassData.OrgId = this.LoginUserDetail[0]["orgId"];
+            this.studentclassData.StudentId = this.StudentId;
+            if (this.StudentClassId == 0)
+              this.insert();
+            else {
+              this.studentclassData.StudentClassId = this.StudentClassId;
+              this.update();
+            }
+          })
       }
     }
   }
@@ -318,7 +334,7 @@ export class AddstudentclassComponent implements OnInit {
     this.dataservice.postPatch('StudentClasses', this.studentclassData, this.StudentClassId, 'patch')
       .subscribe(
         (data: any) => {
-            this.CreateInvoice();          
+          this.CreateInvoice();
         });
   }
   CreateInvoice() {
@@ -329,7 +345,7 @@ export class AddstudentclassComponent implements OnInit {
 
         var _clsfeeWithDefinitions = datacls.value.filter(m => m.FeeDefinition.Active == 1);
 
-        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId,this.StudentClassId)
+        this.contentservice.getStudentClassWithFeeType(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId, this.StudentClassId)
           .subscribe((data: any) => {
             var studentfeedetail = [];
             data.value.forEach(studcls => {

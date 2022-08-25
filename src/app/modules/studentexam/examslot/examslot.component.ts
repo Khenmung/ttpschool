@@ -166,9 +166,9 @@ export class ExamslotComponent implements OnInit {
     _ExamDate.setHours(0, 0, 0, 0);
     if (!_ExamDate != null) {
 
-      if (row.Active ==1 && (_ExamDate.getTime() < _startDate.getTime() || _ExamDate.getTime() > _endDate.getTime()) ) {
+      if (row.Active == 1 && (_ExamDate.getTime() < _startDate.getTime() || _ExamDate.getTime() > _endDate.getTime())) {
         this.contentservice.openSnackBar("Date should be between exam start date and end date.", globalconstants.ActionText, globalconstants.RedBackground);
-        this.loading=false;
+        this.loading = false;
         return;
       }
     }
@@ -262,7 +262,7 @@ export class ExamslotComponent implements OnInit {
     this.contentservice.GetExams(this.LoginUserDetail[0]['orgId'], this.SelectedBatchId)
       .subscribe((data: any) => {
         var _examName = '';
-        this.Exams =[];
+        this.Exams = [];
         data.value.forEach(e => {
           _examName = '';
           var examobj = this.ExamNames.filter(n => n.MasterDataId == e.ExamNameId);
@@ -307,16 +307,16 @@ export class ExamslotComponent implements OnInit {
     higherdate.setDate(_filterExamDate.getDate() + 1);
     higherdate.setHours(0, 0, 0, 0);
 
-    // if (!_filterExamDate != null) {
+    if (!_filterExamDate != null) {
 
-    //   filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
-    //   filterstr += " and ExamDate lt " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
-    //   //var startDate = new Date(_startDate)
-    //   if (_filterExamDate.getTime() < _startDate.getTime() || _filterExamDate.getTime() > _endDate.getTime()) {
-    //     this.contentservice.openSnackBar("Date should be between exam start date and end date.", globalconstants.ActionText, globalconstants.RedBackground);
-    //     return;
-    //   }
-    // }
+      filterstr += " and ExamDate ge " + this.datepipe.transform(_filterExamDate, 'yyyy-MM-dd');
+      filterstr += " and ExamDate lt " + this.datepipe.transform(higherdate, 'yyyy-MM-dd');
+      //var startDate = new Date(_startDate)
+      // if (_filterExamDate.getTime() < _startDate.getTime() || _filterExamDate.getTime() > _endDate.getTime()) {
+      //   this.contentservice.openSnackBar("Date should be between exam start date and end date.", globalconstants.ActionText, globalconstants.RedBackground);
+      //   return;
+      // }
+    }
 
     this.loading = true;
     let list: List = new List();
@@ -349,12 +349,13 @@ export class ExamslotComponent implements OnInit {
             return db.SlotNameId == e.MasterDataId
           });
           if (existing.length > 0) {
-            existing[0].SlotName = e.MasterDataName;
-            existing[0].WeekDay = day;
-            existing[0].Action = false;
-            //existing[0].ExamDate = moment(existing[0].ExamDate).utc(false).format('DD/MM/YYYY hh:mm:ss')
-            existing[0].ExamDate = existing[0].ExamDate
-            this.ExamSlots.push(existing[0]);
+            existing.forEach(e => {
+              e.SlotName = e.MasterDataName;
+              e.WeekDay = day;
+              e.Action = false;
+              e.ExamDate = existing[0].ExamDate
+              this.ExamSlots.push(e);
+            })
           }
           else {
             this.ExamSlots.push({

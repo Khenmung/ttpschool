@@ -243,7 +243,7 @@ export class StudentviewComponent implements OnInit {
       let list: List = new List();
       list.fields = [
         "StudentClassId", "ClassId",
-        "StudentId", "RollNo", "SectionId",
+        "StudentId", "RollNo", "SectionId","AdmissionNo",
         "BatchId", "FeeTypeId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
@@ -258,7 +258,7 @@ export class StudentviewComponent implements OnInit {
               _class = _classObj[0].ClassName;
 
             var _section = ''
-            var _sectionObj = this.Sections.filter(f => f.SectionId == data.value[0].SectionId);
+            var _sectionObj = this.Sections.filter(f => f.MasterDataId == data.value[0].SectionId);
             if (_sectionObj.length > 0)
               _section = _sectionObj[0].MasterDataName;
 
@@ -273,9 +273,10 @@ export class StudentviewComponent implements OnInit {
             if (_batchObj.length > 0)
               _batch = _batchObj[0].BatchName;
 
+            
             var admissiondate = moment(data.value[0].AdmissionDate).isBefore("1970-01-01")
             this.StudentClasses = [
-              { Text: 'Admission No.', Value: data.value[0].StudentClassId },
+              { Text: 'Admission No.', Value: data.value[0].AdmissionNo },
               { Text: 'Class', Value: _class },
               { Text: 'Section', Value: _section },
               { Text: 'Roll No.', Value: data.value[0].RollNo },
@@ -287,6 +288,7 @@ export class StudentviewComponent implements OnInit {
             ];
           }
           else {
+            //var _year = new Date().getFullYear();
             this.StudentClasses = [
               { Text: 'Admission No.', Value: '' },
               { Text: 'Class', Value: '' },

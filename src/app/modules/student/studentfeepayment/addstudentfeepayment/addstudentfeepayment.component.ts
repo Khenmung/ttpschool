@@ -61,6 +61,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
   studentInfoTodisplay = {
     StudentFeeReceiptId: 0,
     BatchId: 0,
+    AdmissionNo:0,
     RollNo: 0,
     StudentFeeType: '',
     StudentName: '',
@@ -375,6 +376,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
       let list: List = new List();
       list.fields = [
         "StudentClassId",
+        "AdmissionNo",
         "SectionId",
         "StudentId",
         "BatchId",
@@ -401,6 +403,7 @@ export class AddstudentfeepaymentComponent implements OnInit {
             else {
               //this.studentInfoTodisplay.studentClassId = data.value[0].StudentClassId
               var _lastname = data.value[0].Student.LastName == null || data.value[0].Student.LastName == '' ? '' : " " + data.value[0].Student.LastName;
+              this.studentInfoTodisplay.AdmissionNo = data.value[0].AdmissionNo
               this.studentInfoTodisplay.ClassId = data.value[0].ClassId
               this.studentInfoTodisplay.FeeTypeId = data.value[0].FeeTypeId;
               this.studentInfoTodisplay.FeeType = data.value[0].FeeType.FeeTypeName;

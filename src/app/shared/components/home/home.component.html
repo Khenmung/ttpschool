@@ -1,19 +1,20 @@
 <app-header [deviceXs]="deviceXs" (toggleSideBarForme)="sideBarToggler()"></app-header>
 
 <mat-sidenav-container style="margin-top:20px ;" class="flex-container" autosize="true">
-    <mat-sidenav style="padding: 17px;" mode="side" opened (click)="toggleSidebar()">
-        <div mat-menu-item *ngFor="let i of sideMenu" [routerLink]="[i.link]" 
-        routerLinkActive="active-list-item"
-        [routerLinkActiveOptions]="{exact: true}"
-        (click)="busy($event)">
+    <mat-sidenav style="padding: 17px;" [(opened)]="opened" mode="side" (click)="toggleSidebar()">
+        <div mat-menu-item *ngFor="let i of sideMenu" [routerLink]="[i.link]" routerLinkActive="active-list-item"
+            [routerLinkActiveOptions]="{exact: true}" (click)="busy($event)">
             <mat-icon [matTooltip]="i.label">{{ i.faIcon}}</mat-icon>&nbsp;
-            <span [hidden]="collapse">{{i.label}}</span>
+            <span [hidden]="!opened">{{i.label}}</span>
         </div>
     </mat-sidenav>
     <mat-sidenav-content class="maincontent">
-
-        <router-outlet></router-outlet>
-
+        <div style="display:flex;flex-direction: row;width:100%">
+            <button style="margin-left:5px; width:7px;border:1px solid white" (click)="toggleSidebar()">
+                <!-- <mat-icon>arrow_right</mat-icon> -->
+            </button>
+            <router-outlet></router-outlet>
+        </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
 

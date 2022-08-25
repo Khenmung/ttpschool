@@ -52,7 +52,11 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
-            <button *ngIf="SchoolTimeTableList.length>0" style="margin: 15px;" [disabled]="loading" matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
+            <button *ngIf="SchoolTimeTableList.length>0" 
+                
+                [disabled]="loading" 
+                matTooltip="print" 
+                printSectionId="printSection" [useExistingCss]="true"
                 ngxPrint class="mat-raised-button">
                 <mat-icon>print</mat-icon>
             </button>

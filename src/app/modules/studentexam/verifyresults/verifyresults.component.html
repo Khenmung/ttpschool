@@ -53,7 +53,7 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-cell *matCellDef="let element" style="padding:15px">
                     <span style="color:red" *ngIf="(element[disCol]+'').includes('(')">{{element[disCol]}}</span> 
                     <span *ngIf="!(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
                 </mat-cell>
@@ -73,7 +73,7 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header>
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element">
+                <mat-cell *matCellDef="let element" style="padding:15px">
                    {{element[disCol]}}
                 </mat-cell>
             </ng-container>
