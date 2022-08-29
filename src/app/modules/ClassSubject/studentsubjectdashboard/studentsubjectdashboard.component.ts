@@ -20,7 +20,8 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
   templateUrl: './studentsubjectdashboard.component.html',
   styleUrls: ['./studentsubjectdashboard.component.scss']
 })
-export class studentsubjectdashboardComponent implements OnInit { PageLoading=true;
+export class studentsubjectdashboardComponent implements OnInit {
+    PageLoading = true;
   //@Input() StudentClassId:number;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -85,7 +86,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
   ) { }
 
   ngOnInit(): void {
-    
+
     this.nameFilter.valueChanges
       .subscribe(
         name => {
@@ -119,13 +120,12 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
         if (this.Classes.length == 0 || this.Subjects.length == 0)
           this.GetMasterData();
         else {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         }
       }
-      else
-      {
-        this.loading=false;this.PageLoading=false;
-        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage,globalconstants.ActionText,globalconstants.RedBackground);
+      else {
+        this.loading = false; this.PageLoading = false;
+        this.contentservice.openSnackBar(globalconstants.PermissionDeniedMessage, globalconstants.ActionText, globalconstants.RedBackground);
       }
     }
   }
@@ -216,7 +216,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.StudentClassSubjects=[];
+        this.StudentClassSubjects = [];
         data.value.forEach(m => {
           if (m.StudentClassSubjects.length > 0) {
             m.StudentClassSubjects.forEach(n => {
@@ -252,42 +252,47 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
           //console.log("ClassSubjectList",this.ClassSubjectList)
           ParamstudentClassExisting.forEach(cs => {
             //var _filteredStudentClassSubjectlist = this.StudentClassSubjects.filter(c => c.StudentClassId == cs.StudentClassId);
-            this.StudentDetail = {
-              // StudentClassSubjectId: cs.StudentClassSubjectId,
-              StudentClassId: cs.StudentClassId,
-              Student: cs.Student,
-              RollNo: cs.RollNo,
-              Action: false
+            if (cs.RollNo == null || cs.RollNo == '') {
+              this.contentservice.openSnackBar("Please assign roll no. for " + cs.Student, globalconstants.ActionText, globalconstants.RedBackground);
             }
-
-            var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClassId);
-            var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
-            //console.log("specificclasssubjects",specificclasssubjects)
-            specificclasssubjects.forEach((subjectTypes,indx) => {
-              var clssubject = takensubjects.filter(c => c.ClassSubjectId == subjectTypes.ClassSubjectId)
-              if (clssubject.length > 0) {
-                clssubject[0].SubjectId = subjectTypes.SubjectId;
-                clssubject[0].SubjectTypeId = subjectTypes.SubjectTypeId;
-                clssubject[0].SubjectType = subjectTypes.SubjectTypeName;
-                clssubject[0].SelectHowMany = subjectTypes.SelectHowMany;
-                this.formatData(clssubject[0]);
-              }
-              else {
-                //debugger;
-                var newsubjects = JSON.parse(JSON.stringify(this.StudentClassSubjects[0]));
-                newsubjects["StudentClassSubjectId"] = 0;
-                newsubjects["ClassSubjectId"] = subjectTypes.ClassSubjectId;
-                newsubjects["StudentClassId"] = cs.StudentClassId;
-                newsubjects["SubjectId"] = subjectTypes.SubjectId;
-                newsubjects["SubjectTypeId"] = subjectTypes.SubjectTypeId;
-                newsubjects["SubjectType"] = subjectTypes.SubjectTypeName;
-                newsubjects["SelectHowMany"] = subjectTypes.SelectHowMany;
-                newsubjects.Active = 0;
-                this.formatData(newsubjects);
+            else {
+              this.StudentDetail = {
+                // StudentClassSubjectId: cs.StudentClassSubjectId,
+                StudentClassId: cs.StudentClassId,
+                Student: cs.Student,
+                RollNo: cs.RollNo,
+                Action: false
               }
 
-            })
-            this.StudentSubjectList.push(this.StudentDetail);
+              var takensubjects = this.StudentClassSubjects.filter(f => f.StudentClassId == cs.StudentClassId);
+              var specificclasssubjects = this.ClassSubjectList.filter(f => f.ClassId == this.searchForm.get("searchClassId").value)
+              //console.log("specificclasssubjects",specificclasssubjects)
+              specificclasssubjects.forEach((subjectTypes, indx) => {
+                var clssubject = takensubjects.filter(c => c.ClassSubjectId == subjectTypes.ClassSubjectId)
+                if (clssubject.length > 0) {
+                  clssubject[0].SubjectId = subjectTypes.SubjectId;
+                  clssubject[0].SubjectTypeId = subjectTypes.SubjectTypeId;
+                  clssubject[0].SubjectType = subjectTypes.SubjectTypeName;
+                  clssubject[0].SelectHowMany = subjectTypes.SelectHowMany;
+                  this.formatData(clssubject[0]);
+                }
+                else {
+                  //debugger;
+                  var newsubjects = JSON.parse(JSON.stringify(this.StudentClassSubjects[0]));
+                  newsubjects["StudentClassSubjectId"] = 0;
+                  newsubjects["ClassSubjectId"] = subjectTypes.ClassSubjectId;
+                  newsubjects["StudentClassId"] = cs.StudentClassId;
+                  newsubjects["SubjectId"] = subjectTypes.SubjectId;
+                  newsubjects["SubjectTypeId"] = subjectTypes.SubjectTypeId;
+                  newsubjects["SubjectType"] = subjectTypes.SubjectTypeName;
+                  newsubjects["SelectHowMany"] = subjectTypes.SelectHowMany;
+                  newsubjects.Active = 0;
+                  this.formatData(newsubjects);
+                }
+
+              })
+              this.StudentSubjectList.push(this.StudentDetail);
+            }
           })
 
           this.displayedColumns.push("Action");
@@ -300,11 +305,11 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
             _clsName = cls[0].ClassName;
 
           this.contentservice.openSnackBar("No student found for the selected class " + _clsName, globalconstants.ActionText, globalconstants.RedBackground);
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         }
         //console.log('this.StudentSubjectList', this.StudentSubjectList)
         if (this.StudentSubjectList.length > 0) {
-          this.StudentSubjectList = this.StudentSubjectList.sort((a,b)=>a.RollNo.localeCompare(b.RollNo));
+          this.StudentSubjectList = this.StudentSubjectList.sort((a, b) => a.RollNo.localeCompare(b.RollNo));
           this.dataSource = new MatTableDataSource<IStudentSubject>(this.StudentSubjectList);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -317,7 +322,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
         }
 
 
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
 
 
         /////////////
@@ -394,7 +399,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
             'SelectHowMany': fromdb.SubjectType.SelectHowMany
           })
         })
-         console.log("this.ClassSubjectList",this.ClassSubjectList)
+        console.log("this.ClassSubjectList", this.ClassSubjectList)
       });
 
   }
@@ -442,7 +447,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
       else {
         currentrow[colName] = 0;
         element[colName] = 0;
-        currentrow[0].SubjectCount =0;
+        currentrow[0].SubjectCount = 0;
       }
       element.Action = true;
     }
@@ -454,7 +459,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
     this.SelectedStudentSubjectCount = [];
     ////////
     //console.log("this.StudentSubjectList", this.StudentSubjectList);
-    let StudentSubjects =this.StoreForUpdate.filter(s => s.StudentClassId == element.StudentClassId); 
+    let StudentSubjects = this.StoreForUpdate.filter(s => s.StudentClassId == element.StudentClassId);
     var groupbySubjectType = alasql("select SubjectTypeId,SubjectType,SelectHowMany from ? group by SubjectTypeId,SubjectType,SelectHowMany"
       , [StudentSubjects])
     var matchrow;
@@ -468,7 +473,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
             matchrow[0].SubjectCount = resultarray[0].SelectHowMany;
           //resultarray[0].SubjectCount = resultarray[0].SelectHowMany;
           else
-            resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 1 : resultarray[0].SubjectCount+1;
+            resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 1 : resultarray[0].SubjectCount + 1;
         }
         else {
           resultarray[0].SubjectCount = resultarray[0].SubjectCount == undefined ? 0 : resultarray[0].SubjectCount;
@@ -481,7 +486,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
     groupbySubjectType.forEach(element => {
       //element.SelectHowMany =0 meeans optional
       //element.SelectHowMany >20 means compulsory 
-      if (element.SelectHowMany>0 && element.SelectHowMany < 30 && element.SubjectCount != element.SelectHowMany)
+      if (element.SelectHowMany > 0 && element.SelectHowMany < 30 && element.SubjectCount != element.SelectHowMany)
         subjectCounterr += " Subject type " + element.SubjectType + " must have " + element.SelectHowMany + " subject(s) selected.";
     });
     StudentSubjects.forEach(s => {
@@ -490,7 +495,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
     })
     /////////
     if (subjectCounterr.length > 0) {
-      this.loading = false; this.PageLoading=false;
+      this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar(subjectCounterr, globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -585,9 +590,9 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
           this.edited = false;
           this.rowCount++;
           row.StudentClassSubjectId = data.StudentClassSubjectId;
-          
+
           if (this.rowCount == Object.keys(row).length - 3) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             //this.GetStudentClassSubject();
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -599,10 +604,10 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
       .subscribe(
         (data: any) => {
           this.edited = false;
-          row.Action=false;
+          row.Action = false;
           this.rowCount++;
           if (this.rowCount == Object.keys(row).length - 3) {
-            this.loading = false; this.PageLoading=false;
+            this.loading = false; this.PageLoading = false;
             //this.GetStudentClassSubject();
             this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           }
@@ -625,7 +630,7 @@ export class studentsubjectdashboardComponent implements OnInit { PageLoading=tr
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeSubjects(this.Subjects);
         this.GetClassSubjects();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {

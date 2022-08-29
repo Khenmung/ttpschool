@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
-
+import { NgxPrintModule } from 'ngx-print';
 
 @NgModule({
   declarations: [SchoolTimeTableComponents],
@@ -17,6 +17,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
     SharedModule,
     SharedhomepageModule,
     MaterialModule,
+    NgxPrintModule,
     SchooltimetableRoutingModule
   ],
   exports:[SchoolTimeTableComponents]

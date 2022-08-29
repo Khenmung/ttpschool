@@ -35,7 +35,7 @@
                             <input #inputfile [hidden]="true" type="file" accept='image/*'
                                 (change)="preview(inputfile.files)" />
                             <div style="border:1px solid lightgray; padding:5px;margin-top: 5px;margin-bottom: 5px;">
-                                <img [src]="imgURL" height="150px" *ngIf="imgURL">
+                                <img [src]="imgURL" height="150px" *ngIf="imgURL.length>0">
                             </div>
                             <div fxLayout="column" fxLayoutAlign="space-between center" style="margin: 5px;">
                                 <button [disabled]="loading || Permission=='read'" class="mat-flat-button"

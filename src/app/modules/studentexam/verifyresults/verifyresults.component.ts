@@ -267,15 +267,17 @@ export class VerifyResultsComponent implements OnInit {
       this.loading = true;
       this.GetStudentAttendance()
         .subscribe((attendance: any) => {
-          this.StudentAttendanceList =[];
+          this.StudentAttendanceList = [];
           attendance.value.forEach(att => {
-            this.StudentAttendanceList.push({
-              AttendanceId: att.AttendanceId,
-              StudentClassId: att.StudentClassId,
-              AttendanceStatus: att.AttendanceStatus,
-              AttendanceDate: att.AttendanceDate,
-              ClassId: att.StudentClass.ClassId
-            });
+            if (att.StudentClass.ClassId == _classId) {
+              this.StudentAttendanceList.push({
+                AttendanceId: att.AttendanceId,
+                StudentClassId: att.StudentClassId,
+                AttendanceStatus: att.AttendanceStatus,
+                AttendanceDate: att.AttendanceDate,
+                ClassId: att.StudentClass.ClassId
+              });
+            }
           });
           this.ProcessVerify();
         });

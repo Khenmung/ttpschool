@@ -12,30 +12,30 @@ mat-cell:first-of-type,mat-header-cell:first-of-type{
 mat-cell,mat-header-cell{
     border-right: 1px solid lightgray;
     padding: 10px;
-    width: 150px;
+    //width: 150px;
     justify-content: center;
     align-self: stretch;
 }
-.mat-footer-row,
-.mat-header-row,
-.mat-row {
-    display: inline-flex;
-    min-width: 100%;
-}
-.mat-table {
-    display: table;
-    width: 100%;
+// .mat-footer-row,
+// .mat-header-row,
+// .mat-row {
+//     display: inline-flex;
+//     min-width: 100%;
+// }
+// .mat-table {
+//     display: table;
+//     width: 100%;
 
-    > .mat-header-row, > .mat-row {
-        display: table-row;
-        padding: 0;
-        border: none;
+//     > .mat-header-row, > .mat-row {
+//         display: table-row;
+//         padding: 0;
+//         border: none;
 
-        > .mat-header-cell, > .mat-cell {
-            display: table-cell;
-            height: 48px;
-            vertical-align: middle;        
-            border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-        }
-    }
-}
+//         > .mat-header-cell, > .mat-cell {
+//             display: table-cell;
+//             height: 48px;
+//             vertical-align: middle;        
+//             border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+//         }
+//     }
+// }

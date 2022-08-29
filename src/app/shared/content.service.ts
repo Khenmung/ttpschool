@@ -436,7 +436,7 @@ export class ContentService implements OnInit {
     //let  = pClassSubject.filter((item, indx) => item.ClassName.toLowerCase() + "-" + item.SubjectName.toLowerCase()== dropdowntype.toLowerCase());//globalconstants.GENDER
     let Permission = '';
     for (var i = 0; i < pClassSubject.length; i++) {
-      if (pClassSubject[i].Confidential) {
+      if (pClassSubject[i].Confidential !=null && pClassSubject[i].Confidential) {
 
         var perObj = globalconstants.getPermission(token, pClassSubject[i].ClassSubject);
         if (perObj.length > 0) {

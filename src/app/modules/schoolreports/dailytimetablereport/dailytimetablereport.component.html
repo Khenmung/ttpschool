@@ -38,7 +38,7 @@
 
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
-                        <span>{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>                        
+                        <span style="justify-content:center">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>                        
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element"
                         [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
@@ -53,7 +53,7 @@
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
             <button *ngIf="SchoolTimeTableList.length>0" 
-                
+                          
                 [disabled]="loading" 
                 matTooltip="print" 
                 printSectionId="printSection" [useExistingCss]="true"

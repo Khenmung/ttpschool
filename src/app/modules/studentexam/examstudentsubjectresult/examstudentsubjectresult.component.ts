@@ -244,6 +244,8 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           f.ClassName = f.Class.ClassName;
           return f;
         });
+        this.loading=false;
+        this.PageLoading=false;
       })
   }
   FilteredClasses = [];
@@ -258,11 +260,33 @@ export class ExamstudentsubjectresultComponent implements OnInit {
   }
   GetStudentSubjects() {
     debugger;
+    
+    var _classId =this.searchForm.get("searchClassId").value;
+    var _subjectId =this.searchForm.get("searchSubjectId").value;
+    var _examId =this.searchForm.get("searchExamId").value
+    if (_examId == 0) {
+      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_classId == 0) {
+      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (this.searchForm.get("searchSectionId").value == 0) {
+      this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if ( _subjectId== 0) {
+      this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
+    filterStr += " and BatchId eq " + this.SelectedBatchId;
+    var _classSubjectId = this.ClassSubjects.filter(c=>c.ClassId == _classId && c.SubjectId == _subjectId)[0].ClassSubjectId;
+    filterStr += " and ClassSubjectId eq " + _classSubjectId;
+    
     let list: List = new List();
     list.fields = [
       'StudentClassSubjectId',
@@ -319,8 +343,12 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           }
         })
         //console.log("this.StudentSubjects",this.StudentSubjects)
-        this.loading = false; this.PageLoading = false;
-        this.GetSubjectMarkComponents();
+        this.loading = false; 
+        this.PageLoading = false;
+        this.GetSubjectMarkComponents(_classSubjectId);
+      },error=>{
+        debugger;
+        console.log(error)
       });
   }
   SelectClassSubject() {
@@ -329,7 +357,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     //this.GetSpecificStudentGrades();
   }
   GetStudents() {
-
+    this.loading=true;
     let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]
 
     let list: List = new List();
@@ -388,12 +416,13 @@ export class ExamstudentsubjectresultComponent implements OnInit {
           }
         })
         this.ClassSubjects = this.contentservice.getConfidentialData(this.tokenstorage,this.ClassSubjects);
+        this.loading=false;
       })
   }
-  GetSubjectMarkComponents() {
+  GetSubjectMarkComponents(pClassSubjectId) {
     //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
-    var filterstr = 'Active eq 1 ';
+    var filterstr = 'Active eq 1 and ClassSubjectId eq ' + pClassSubjectId;
 
     //filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
 
@@ -438,6 +467,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
         this.StudentSubjects.forEach(ss => {
           ss.Components = this.SubjectMarkComponents.filter(sc => sc.ClassSubjectId == ss.ClassSubjectId).sort((a,b)=>a.Sequence -b.Sequence);
         })
+        this.GetExamStudentSubjectResults();
       })
   }
   GetExamStudentSubjectResults() {
@@ -448,23 +478,27 @@ export class ExamstudentsubjectresultComponent implements OnInit {
     this.StoredForUpdate = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchExamId").value == 0) {
-      this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (this.searchForm.get("searchClassId").value == 0) {
-      this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (this.searchForm.get("searchSectionId").value == 0) {
-      this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    if (this.searchForm.get("searchSubjectId").value == 0) {
-      this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    // if (this.searchForm.get("searchExamId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // var _classId =this.searchForm.get("searchClassId").value;
+    // var _sectionId =this.searchForm.get("searchSectionId").value;
+
+    // if (this.searchForm.get("searchClassId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select class", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (this.searchForm.get("searchSectionId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select student section", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // if (this.searchForm.get("searchSubjectId").value == 0) {
+    //   this.contentservice.openSnackBar("Please select subject", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     this.loading = true;
+    //this.GetStudentSubjects(_classId,_sectionId);
     var _examId = this.searchForm.get("searchExamId").value;
     filterstr = 'ExamId eq ' + _examId;
 
@@ -606,6 +640,7 @@ export class ExamstudentsubjectresultComponent implements OnInit {
       .subscribe((data: any) => {
         this.StudentGrades = [...data.value];
       })
+      this.PageLoading=false;
   }
   GetSpecificStudentGrades() {
     debugger;
@@ -758,8 +793,9 @@ export class ExamstudentsubjectresultComponent implements OnInit {
             });
           }
         })
+        this.PageLoading=false;
         //console.log("exams", this.Exams);
-        this.GetStudentSubjects();
+        //this.GetStudentSubjects();
       })
   }
 

@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiURL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -126,7 +126,8 @@ export class globalconstants {
                     "EVENT": "event",
                     "HOLIDAY": "holiday",
                     "NOOFSTUDENT": "no of students",
-                    "RULESORPOLICY": "rules or policies"
+                    "RULESORPOLICY": "rules or policies",
+                    "RULESORPOLICYREPORT": "rules or policies report"
                 }
             },
             "emp": {

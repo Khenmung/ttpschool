@@ -14,13 +14,14 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-no-of-student',
   templateUrl: './no-of-student.component.html',
   styleUrls: ['./no-of-student.component.scss']
 })
-export class NoOfStudentComponent implements OnInit { PageLoading=true;
+export class NoOfStudentComponent implements OnInit {
+  PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild("table") mattable;
@@ -129,26 +130,19 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
       if (this.Permission != 'deny') {
+
         this.checkBatchIdNSelectedIdEqual = +this.tokenstorage.getCheckEqualBatchId();
-        if (this.PromotePermission == 'read')
-          this.displayedColumns = [
-            'Student',
-            'ClassName',
-            'RollNo',
-            'GenderName',
-            'SectionId',
-            'FeeTypeId',
-            'Action'
-          ];
+
         this.shareddata.CurrentPreviousBatchIdOfSelecteBatchId.subscribe(p => this.PreviousBatchId = p);
         this.shareddata.CurrentSection.subscribe(b => this.Sections = b);
         this.Batches = this.tokenstorage.getBatches()
+
         if (this.Classes.length == 0 || this.FeeTypes.length == 0 || this.Sections.length == 0) {
           this.GetMasterData();
           this.GetFeeTypes();
         }
         else {
-          this.loading = false; this.PageLoading=false;
+          this.loading = false; this.PageLoading = false;
         }
       }
     }
@@ -203,10 +197,10 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         this.FeeTypes = [...data.value];
         this.shareddata.ChangeFeeType(this.FeeTypes);
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       })
   }
-
+  BoyGirlTotal = {};
   GetStudentClasses() {
     debugger;
     this.TotalStudent = 0;
@@ -222,6 +216,7 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
       'StudentClassId',
       'ClassId',
       'SectionId',
+      //'GenderId',
       'StudentId',
       'Active'
     ];
@@ -236,23 +231,36 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
         var errormsg = '';
         this.StudentClassList = StudentClassesdb.value.map(student => {
           var _sectionname = ''
-          var sectionobj = this.Sections.filter(s => s.MasterDataId == student.SectionId)
-          if (sectionobj.length > 0)
-            _sectionname = sectionobj[0].MasterDataName
-          else {
-            errormsg += student.StudentId + ",";
+          var _pid = 0
+          var _gender = '';
+          var objStudent = this.Students.filter(s => s.StudentId == student.StudentId)
+          if (objStudent.length > 0) {
+            _gender = objStudent[0].Gender;
+            _pid = objStudent[0].PID;
+
+            var sectionobj = this.Sections.filter(s => s.MasterDataId == student.SectionId)
+            if (sectionobj.length > 0)
+              _sectionname = sectionobj[0].MasterDataName
+            else {
+              errormsg += _pid + ",";
+            }
           }
-          student.ClassName = student.Class.ClassName;
+          //var objgender = this.Genders.filter(g => g.MasterDataId == student.GenderId);
+
+
+          student.PID = _pid;
+          student.Gender = _gender;
+          student.ClassName = student.Class.ClassName + " - " + _sectionname;
           student.Section = _sectionname;
           student.Sequence = student.Class.Sequence;
           student.MaxStudent = student.Class.MaxStudent;
           return student;
         })
         if (errormsg.length > 0) {
-          errormsg = "Section not defined for student Id: " + errormsg;
+          errormsg = "Section not defined for PID: " + errormsg;
           this.contentservice.openSnackBar(errormsg, globalconstants.ActionText, globalconstants.RedBackground);
         }
-        var _classStudentCount = alasql("select ClassId,ClassName,Section,MaxStudent,sum(1) NoOfStudent from ? group by ClassId,ClassName,Section,MaxStudent",
+        var _classStudentCount = alasql("select ClassId,ClassName,Section,Gender,MaxStudent,sum(1) NoOfStudent from ? group by ClassId,ClassName,Section,Gender,MaxStudent",
           [this.StudentClassList])
         var pivottedClass = [];
         var _filteredClasses = [];
@@ -261,39 +269,100 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
         else
           _filteredClasses = [...this.Classes]
 
-        _filteredClasses.forEach(c => {
-          var newClassRow = [];
-
+        var classNSection = [];
+        _filteredClasses.forEach((c, indx) => {
           this.Sections.forEach(s => {
-            var sectionRow = _classStudentCount.filter(cls => cls.Section == s.MasterDataName && cls.ClassId == c.ClassId)
+            classNSection.push({ MaxStudent: c.MaxStudent, Sequence: indx, ClassId: c.ClassId, ClassName: c.ClassName + " - " + s.MasterDataName, Section: s.MasterDataName });
+          })
+        })
+        var _tempClassId = 0;
+        var _classTotal = 0;
+        classNSection.forEach((c, cindx) => {
 
-            if (sectionRow.length > 0) {
-              if (this.displayedColumns.indexOf(s.MasterDataName) == -1)
-                this.displayedColumns.push(s.MasterDataName)
-              if (newClassRow.length == 0)
-                newClassRow.push(sectionRow[0]);
-              newClassRow[0][s.MasterDataName] = sectionRow[0].NoOfStudent;
-              newClassRow[0].Total = newClassRow[0].Total == undefined ? sectionRow[0].NoOfStudent : newClassRow[0].Total + sectionRow[0].NoOfStudent;
+          var newClassRow = [];
+          //this.Sections.forEach(s => {
 
+          this.Genders.forEach(g => {
+
+            var sectionGenderRow = _classStudentCount.filter(cls =>
+              cls.Section == c.Section
+              && cls.ClassId == c.ClassId
+              && cls.Gender == g.MasterDataName)
+
+            if (this.displayedColumns.indexOf(g.MasterDataName) == -1)
+              this.displayedColumns.push(g.MasterDataName)
+
+            if (sectionGenderRow.length > 0) {
+              sectionGenderRow[0].Sequence = c.Sequence;
             }
+            else {
+              var sectionRow = []; //_classStudentCount.filter(cls =>cls.ClassId == c.ClassId)
+              sectionRow.push({
+                ClassName: c.ClassName,
+                MaxStudent: c.MaxStudent,
+                Section: c.Section,
+                Total: 0,
+                NoOfStudent: 0,
+                [g.MasterDataName]: 0
+              })
+              sectionGenderRow.push(sectionRow[0]);
+              //}
+            }
+            var existing = newClassRow.filter(n => n.ClassId == sectionGenderRow[0].ClassId
+              && n.Gender == sectionGenderRow[0].Gender
+              && n.Section == sectionGenderRow[0].Section)
+
+            if (existing.length == 0)
+              newClassRow.push(sectionGenderRow[0]);
+            if (isNaN(this.BoyGirlTotal[g.MasterDataName]))
+              this.BoyGirlTotal[g.MasterDataName] = 0;
+            this.BoyGirlTotal[g.MasterDataName] += sectionGenderRow[0].NoOfStudent
+            newClassRow[0][g.MasterDataName] = sectionGenderRow[0].NoOfStudent;
+            newClassRow[0].Total = newClassRow[0].Total == undefined ? sectionGenderRow[0].NoOfStudent : newClassRow[0].Total + sectionGenderRow[0].NoOfStudent;
+
           })
           if (newClassRow.length > 0) {
+            if (cindx < classNSection.length - 1) {
+              if (_tempClassId == c.ClassId && _tempClassId != classNSection[cindx + 1].ClassId) {
+                _classTotal += newClassRow[0].Total;
+                newClassRow[0].ClassTotal = _classTotal;
+                _classTotal = 0;
+              }
+              else {
+                _classTotal += newClassRow[0].Total;
+              }
+            }
+            else {
+              //if last one
+              if (cindx == classNSection.length - 1) {
+                _classTotal += newClassRow[0].Total;
+                newClassRow[0].ClassTotal = _classTotal;
+                _classTotal = 0;
+              }
+            }
+
             this.TotalStudent += newClassRow[0].Total;
             pivottedClass.push(newClassRow[0]);
           }
+          _tempClassId = c.ClassId;
+          //})
+
         })
         if (this.displayedColumns.indexOf('Total') == -1)
           this.displayedColumns.push("Total");
+        if (this.displayedColumns.indexOf('ClassTotal') == -1)
+          this.displayedColumns.push("ClassTotal");
         if (this.StudentClassList.length == 0) {
           this.HeaderTitle = '';
           this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        //console.log("pivottedClass", pivottedClass);
-        this.dataSource = new MatTableDataSource<IStudentClass>(pivottedClass.sort((a, b) => +a.Sequence - +b.Sequence));
+        console.log("BoyGirlTotal", this.BoyGirlTotal);
+        var _sorted = pivottedClass.sort((a, b) => +a.Sequence - +b.Sequence);
+        this.dataSource = new MatTableDataSource<IStudentClass>(_sorted);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
         this.dataSource.filterPredicate = this.createFilter();
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
 
       })
 
@@ -307,154 +376,45 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
 
     });
   }
-  updateActive(row, value) {
 
-    row.Active = value.checked ? 1 : 0;
-    row.Action = true;
-  }
-  delete(element) {
-    let toupdate = {
-      Active: element.Active == 1 ? 0 : 1
-    }
-    this.dataservice.postPatch('ClassSubjects', toupdate, element.ClassSubjectId, 'delete')
-      .subscribe(
-        (data: any) => {
-          // this.GetApplicationRoles();
-          this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
-        });
-  }
-
-  SaveRow(row) {
-    this.RowsToUpdate = 1;
-    this.UpdateOrSave(row);
-  }
-  UpdateOrSave(row) {
-
-    //debugger;
-    this.loading = true;
-
-    let checkFilterString = "ClassId eq " + row.ClassId +
-      " and StudentId eq " + row.StudentId + ' and Active eq 1 and BatchId eq ' + this.SelectedBatchId
-
-    if (row.StudentClassId > 0)
-      checkFilterString += " and StudentClassId ne " + row.StudentClassId;
-
-    let list: List = new List();
-    list.fields = ["StudentClassId"];
-    list.PageName = "StudentClasses";
-    list.filter = [checkFilterString];
-
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        //debugger;
-        if (data.value.length > 0) {
-          this.loading = false; this.PageLoading=false;
-          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
-          row.Ative = 0;
-          return;
-        }
-        else {
-          //var _section= this.Sections.filter(s=>s.MasterDataId == row.Section)
-          this.StudentClassData.Active = row.Active;
-          this.StudentClassData.StudentClassId = row.StudentClassId;
-          this.StudentClassData.StudentId = row.StudentId;
-          this.StudentClassData.ClassId = row.ClassId;
-          this.StudentClassData.FeeTypeId = row.FeeTypeId;
-          this.StudentClassData.RollNo = row.RollNo;
-          this.StudentClassData.SectionId = row.SectionId;
-          this.StudentClassData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.StudentClassData.BatchId = this.SelectedBatchId;
-          if (this.StudentClassData.StudentClassId == 0) {
-            this.StudentClassData["CreatedDate"] = new Date();
-            this.StudentClassData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-            delete this.StudentClassData["UpdatedDate"];
-            delete this.StudentClassData["UpdatedBy"];
-            //console.log('to insert', this.StudentClassData)
-            this.insert(row);
-          }
-          else {
-            delete this.StudentClassData["CreatedDate"];
-            delete this.StudentClassData["CreatedBy"];
-            this.StudentClassData["UpdatedDate"] = new Date();
-            this.StudentClassData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row);
-          }
-        }
-      });
-  }
-
-  insert(row) {
-
-    //debugger;
-    this.dataservice.postPatch('StudentClasses', this.StudentClassData, 0, 'post')
-      .subscribe(
-        (data: any) => {
-          this.loading = false; this.PageLoading=false;
-          row.StudentClassId = data.StudentClassId;
-          row.Action = false;
-          this.RowsToUpdate--;
-          // if (row.Promote == 1)
-          //   this.StudentClassList.splice(this.StudentClassList.indexOf(row), 1);
-
-          if (this.RowsToUpdate == 0) {
-            // if (row.Promote == 1) {
-            //   this.contentservice.openSnackBar("Student/s is promoted to next class without section and roll no.",globalconstants.ActionText,globalconstants.RedBackground);
-            // }
-            // else
-            this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-            this.RowsToUpdate = -1;
-          }
-
-        });
-  }
-  update(row) {
-
-    this.dataservice.postPatch('StudentClasses', this.StudentClassData, this.StudentClassData.StudentClassId, 'patch')
-      .subscribe(
-        (data: any) => {
-          row.Action = false;
-          this.RowsToUpdate--;
-          if (this.RowsToUpdate == 0) {
-            this.loading = false; this.PageLoading=false;
-            this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          }
-        });
-  }
   isNumeric(str: number) {
     if (typeof str != "string") return false // we only process strings!  
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
+  Students = [];
+  GetStudents() {
 
-  // GetStudents() {
+    let list: List = new List();
+    list.fields = [
+      'StudentId',
+      'GenderId',
+      'PID'
+    ];
 
-  //   let list: List = new List();
-  //   list.fields = [
-  //     'StudentId',
-  //     'FirstName',
-  //     'LastName'
-  //   ];
+    list.PageName = "Students";
+    list.filter = ['Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
 
-  //   list.PageName = "Students";
-  //   //list.lookupFields = ["Student"]
-  //   list.filter = ['OrgId eq ' + this.LoginUserDetail[0]["orgId"]];
-
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       //debugger;
-  //       //  //console.log('data.value', data.value);
-  //       if (data.value.length > 0) {
-  //         this.Students = data.value.map(student => {
-  //           return {
-  //             StudentId: student.StudentId,
-  //             Name: student.StudentId + '-' + student.FirstName + '-' + student.LastName
-  //           }
-  //         })
-  //       }
-  //       this.loading = false; this.PageLoading=false;
-  //     })
-  // }
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        //  //console.log('data.value', data.value);
+        if (data.value.length > 0) {
+          data.value.forEach(student => {
+            var obj = this.Genders.filter(g => g.MasterDataId == student.GenderId);
+            if (obj.length > 0)
+              this.Students.push({
+                PID: student.PID,
+                StudentId: student.StudentId,
+                GenderId: student.GenderId,
+                Gender: obj[0].MasterDataName
+              })
+          })
+        }
+        this.loading = false; this.PageLoading = false;
+      })
+  }
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -466,10 +426,10 @@ export class NoOfStudentComponent implements OnInit { PageLoading=true;
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         //this.ClassPromotion = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSPROMOTION);
-
+        this.GetStudents();
         //this.shareddata.ChangeBatch(this.Batches);
         this.RollNoGenerationSortBy = "Sort by: " + this.RollNoGeneration.filter(f => f.MasterDataName.toLowerCase() == 'sort by')[0].Logic;
-        this.loading = false; this.PageLoading=false;
+        this.loading = false; this.PageLoading = false;
       });
   }
   getDropDownData(dropdowntype) {

@@ -7,6 +7,7 @@ import { HolidayComponent } from './holiday/holiday.component';
 import { NoOfStudentComponent } from './no-of-student/no-of-student.component';
 import { DemoComponent } from './calendar/calendar.component';
 import { RulesorpolicyComponent } from './rulesorpolicy/rulesorpolicy.component';
+import { RulesnpolicyreportComponent } from './rulesnpolicyreport/rulesnpolicyreport.component';
 
 const routes: Routes = [
   {
@@ -29,5 +30,6 @@ export const MiscComponents = [
   EventComponent,
   MiscboardComponent,
   HolidayComponent,
-  RulesorpolicyComponent
+  RulesorpolicyComponent,
+  RulesnpolicyreportComponent
 ]

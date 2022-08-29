@@ -129,3 +129,21 @@
       <div mat-line> {{note.updated | date}} </div>
     </mat-list-item> -->
 </mat-list>
+<!-- <div>Profile
+<mat-table [dataSource]="datasourceProfile" style="margin: 15px;">
+    <ng-container *ngFor="let disCol of displayedColumnsProfile; let colIndex = index" matColumnDef="{{disCol}}">
+        <mat-header-cell *matHeaderCellDef>
+            {{disCol=='Text'?'Contact Info':''}}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            <span *ngIf="disCol=='Text'">
+                <mat-icon>chevron_right</mat-icon>
+            </span>
+            <span *ngIf="disCol!='Text'">:</span>
+            <span style="margin-left: 15px;">{{element[disCol]}}</span>
+        </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumnsProfile"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumnsProfile;" class="element-row"></mat-row>
+</mat-table>
+</div> -->

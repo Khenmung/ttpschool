@@ -293,7 +293,7 @@ export class AddstudentclassComponent implements OnInit {
 
             var _year = new Date().getFullYear();
             this.loading = true;
-            this.studentclassData.Active = 1;
+            this.studentclassData.Active = this.studentclassForm.get("Active").value?1:0;
             this.studentclassData.BatchId = this.SelectedBatchId;
             this.studentclassData.ClassId = this.studentclassForm.value.ClassId;
             this.studentclassData.RollNo = this.studentclassForm.value.RollNo;

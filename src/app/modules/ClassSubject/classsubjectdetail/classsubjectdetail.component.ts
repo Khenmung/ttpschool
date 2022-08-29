@@ -326,7 +326,7 @@ export class ClassSubjectDetailComponent implements OnInit { PageLoading=true;
               SubjectTypeId: 0,
               SubjectCategoryId:0,
               SelectHowMany: 0,
-              Confidential:0,
+              Confidential:false,
               Credits: 0,
               ClassId: this.searchForm.get("searchClassId").value,
               SubjectName: s.MasterDataName,
@@ -616,7 +616,7 @@ export interface IClassSubject {
   SubjectTypeId: number;
   SubjectCategoryId:number;
   SelectHowMany: number;
-  Confidential:number;
+  Confidential:boolean;
   TeacherId: number,
   Active;
   Action: false;

@@ -1,6 +1,6 @@
 import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import alasql from 'alasql';
 import * as moment from 'moment';
@@ -16,7 +16,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { AddstudentclassComponent } from '../addstudentclass/addstudentclass.component';
 import { AddstudentfeepaymentComponent } from '../studentfeepayment/addstudentfeepayment/addstudentfeepayment.component';
 import { FeereceiptComponent } from '../studentfeepayment/feereceipt/feereceipt.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-studentview',
   templateUrl: './studentview.component.html',
@@ -172,6 +172,7 @@ export class StudentviewComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
         this.getFields('Student Module');
         this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+        //this.GetEvaluationNames();
         this.GetMasterData();
         this.GetFeeTypes();
         this.GetStudentAttendance();
@@ -243,7 +244,7 @@ export class StudentviewComponent implements OnInit {
       let list: List = new List();
       list.fields = [
         "StudentClassId", "ClassId",
-        "StudentId", "RollNo", "SectionId","AdmissionNo",
+        "StudentId", "RollNo", "SectionId", "AdmissionNo",
         "BatchId", "FeeTypeId",
         "AdmissionDate", "Remarks", "Active"];
       list.PageName = "StudentClasses";
@@ -273,7 +274,7 @@ export class StudentviewComponent implements OnInit {
             if (_batchObj.length > 0)
               _batch = _batchObj[0].BatchName;
 
-            
+
             var admissiondate = moment(data.value[0].AdmissionDate).isBefore("1970-01-01")
             this.StudentClasses = [
               { Text: 'Admission No.', Value: data.value[0].AdmissionNo },
@@ -474,6 +475,187 @@ export class StudentviewComponent implements OnInit {
       })
 
   }
+  // GetClassEvaluations() {
+
+  //   let list: List = new List();
+  //   list.fields = [
+  //     'ClassEvaluationId',
+  //     'QuestionnaireTypeId',
+  //     'EvaluationMasterId',
+  //     'DisplayOrder',
+  //     'Description',
+  //     'ClassEvaluationAnswerOptionParentId',
+  //     'MultipleAnswer',
+  //   ];
+
+  //   list.PageName = "ClassEvaluations";
+  //   list.lookupFields = ["EvaluationMaster($select=AppendAnswer)"]
+  //   list.filter = ['OrgId eq ' + this.loginUserDetail[0]["orgId"]];
+
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       this.ClassEvaluations = [];
+  //       var _data = data.value.filter(f => f.EvaluationMaster.AppendAnswer == false);
+  //       if (_data.length > 0) {
+  //         _data.forEach(clseval => {
+  //           var obj = this.QuestionnaireTypes.filter(f => f.MasterDataId == clseval.QuestionnaireTypeId);
+  //           if (obj.length > 0) {
+  //             clseval.Description = globalconstants.decodeSpecialChars(clseval.Description);
+  //             clseval.QuestionnaireType = obj[0].MasterDataName
+  //             clseval.ClassEvaluationOptions = this.ClassEvaluationOptionList.filter(f => f.ParentId == clseval.ClassEvaluationAnswerOptionParentId)
+  //             this.ClassEvaluations.push(clseval);
+  //           }
+  //         })
+  //         this.StartEvaluation();
+  //       }
+  //       this.loading = false; this.PageLoading = false;
+  //     })
+  // }
+  // GetEvaluationNames() {
+  //   //debugger;
+  //   this.loading = true;
+  //   this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+  //   let filterStr = 'AppendAnswer eq true and Active eq true and OrgId eq ' + this.loginUserDetail[0]["orgId"];
+
+  //   let list: List = new List();
+  //   list.fields = [
+  //     'EvaluationMasterId',
+  //     'EvaluationName',
+  //     'Description',
+  //     'Duration',
+  //     'ClassGroupId',
+  //     'DisplayResult',
+  //     'AppendAnswer',
+  //     'ProvideCertificate',
+  //     'FullMark',
+  //     'PassMark',
+  //     'Active'
+  //   ];
+
+  //   list.PageName = "EvaluationMasters";
+
+  //   list.filter = [filterStr];
+  //   this.EvaluationMaster = [];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       if (data.value.length > 0) {
+  //         this.EvaluationMaster = [...data.value];
+  //         // .map(item => {
+  //         //   return item;
+  //         // })
+  //       }
+  //     });
+
+  // }
+  // ClassEvaluations =[];
+  // StudentEvaluationList = [];
+  // dataSourceProfile: MatTableDataSource<any>;
+  // displayedColumnsProfile =[];
+  // Result = [];
+  // EvaluationMaster = [];
+  // StartEvaluation() {
+  //   debugger;
+  //   this.loading = true;
+  //   this.StudentEvaluationList = [];
+  //   this.dataSourceProfile = new MatTableDataSource<any>(this.StudentEvaluationList);
+  //   this.SelectedBatchId = +this.tokenService.getSelectedBatchId();
+
+  //   let filterStr = 'OrgId eq ' + this.loginUserDetail[0]["orgId"];
+  //   filterStr += ' and StudentClassId eq ' + this.StudentClassId
+  //   let list: List = new List();
+  //   list.fields = [
+  //     'StudentEvaluationResultId',
+  //     'StudentClassId',
+  //     'StudentId',
+  //     'ClassEvaluationId',
+  //     'EvaluationExamMapId',
+  //     'AnswerText',
+  //     'History',
+  //     'Active'
+  //   ];
+
+  //   list.PageName = "StudentEvaluationResults";
+  //   list.lookupFields = ["StudentEvaluationAnswers($filter=Active eq 1;$select=StudentEvaluationAnswerId,StudentEvaluationResultId,ClassEvaluationAnswerOptionsId,Active)"];
+
+  //   list.filter = [filterStr];
+  //   this.StudentEvaluationList = [];
+  //   this.dataservice.get(list)
+  //     .subscribe((data: any) => {
+  //       debugger
+  //       this.Result = [...data.value]
+  //       // var _distinctEvaluationType = alasql('select distinct EvaluationMasterId,EvaluationName from ?',
+  //       //   [this.EvaluationExamMap])
+        
+  //       this.EvaluationMaster.forEach(distinctevaluation => {
+  //         this.StudentEvaluationList.push({
+  //           Description: distinctevaluation.EvaluationName,
+  //           EvaluationName: distinctevaluation.EvaluationName,
+  //           EvaluationMasterId: distinctevaluation.EvaluationMasterId,
+  //           QuestionnaireType: 'Evaluation Master'
+  //         });
+
+  //         // var _oneEvaluationMultipExam = this.EvaluationExamMap.filter(f => f.EvaluationMasterId == distinctevaluation.EvaluationMasterId);
+  //         // _oneEvaluationMultipExam.forEach(evalExam => {
+
+  //           if (this.displayedColumnsProfile.indexOf(evalExam.ExamName) == -1) {
+  //             this.displayedColumnsProfile.push(evalExam.ExamName);
+  //           }
+  //           var _classEvaluationExamMap = this.ClassEvaluations.filter(f => f.EvaluationMasterId == this.EvaluationMaster[0].EvaluationMasterId
+  //             && f.ExamId == null || f.ExamId == 0 || f.ExamId == evalExam.ExamId);
+
+  //           _classEvaluationExamMap.forEach(clseval => {
+  //             var existing = this.Result.filter(f => f.ClassEvaluationId == clseval.ClassEvaluationId
+  //               && f.EvaluationExamMapId == evalExam.EvaluationExamMapId);
+  //             var ans = [];
+  //             if (existing.length > 0) {
+  //               clseval.ClassEvaluationOptions.forEach(cls => {
+  //                 var selected = existing[0].StudentEvaluationAnswers
+  //                   .filter(stud => stud.ClassEvaluationAnswerOptionsId == cls.ClassEvaluationAnswerOptionsId)
+  //                 if (selected.length > 0)
+  //                   ans.push(cls.Title);
+  //               });
+  //               if (existing[0].AnswerText.length > 0 && ans.length == 0)
+  //                 ans = existing[0].AnswerText
+  //             }
+
+  //             var _description = globalconstants.decodeSpecialChars(clseval.Description);
+  //             // var row = this.StudentEvaluationList.filter(f => f["Description"] == _description
+  //             //   && f.EvaluationMasterId == clseval.EvaluationMasterId);
+  //             var row = this.StudentEvaluationList.filter(f => f["ClassEvaluationId"] == clseval.ClassEvaluationId
+  //               && f.EvaluationMasterId == clseval.EvaluationMasterId);
+  //             if (row.length > 0) {
+  //               row[0][evalExam.ExamName] = ans;
+  //             }
+  //             else {
+  //               // if (existing.length > 0)
+  //               //   _textAnswer = existing[0].AnswerText
+  //               this.StudentEvaluationList.push({
+  //                 ClassEvaluationId: clseval.ClassEvaluationId,
+  //                 Description: _description,
+  //                 [evalExam.ExamName]: ans,
+  //                 EvaluationName: evalExam.EvaluationName,
+  //                 EvaluationMasterId: evalExam.EvaluationMasterId,
+  //                 QuestionnaireType: clseval.QuestionnaireType,
+  //                 DisplayOrder: clseval.DisplayOrder
+  //               });
+  //             }
+  //           })
+  //         })//class evaluation
+  //       })//each evaluation exam map
+
+  //       if (this.StudentEvaluationList.length == 0) {
+  //         this.StudentEvaluationList = [];
+  //         this.contentservice.openSnackBar(globalconstants.NoEvaluationRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+  //       }
+  //       else
+  //         this.StudentEvaluationList = this.StudentEvaluationList.sort((a, b) => a.DisplayOrder - b.DisplayOrder)
+  //       //  console.log("this.StudentEvaluationList",this.StudentEvaluationList)
+  //       this.dataSourceEvaluation = new MatTableDataSource<IStudentEvaluation>(this.StudentEvaluationList);
+  //       this.dataSource.paginator = this.paginator;
+  //       this.loading = false;
+  //       this.PageLoading = false;
+  //     })
+  // }
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.loginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {

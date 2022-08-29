@@ -8,7 +8,8 @@ import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
 import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
 import { RulesorpolicyComponent } from '../rulesorpolicy/rulesorpolicy.component';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
+import { RulesnpolicyreportComponent } from '../rulesnpolicyreport/rulesnpolicyreport.component';
 
 @Component({
   selector: 'app-miscboard',
@@ -17,15 +18,17 @@ import {SwUpdate} from '@angular/service-worker';
 })
 export class MiscboardComponent implements AfterViewInit {
 
-  components:any = [
+  components: any = [
     NoOfStudentComponent,
     DemoComponent,
     EventComponent,
     HolidayComponent,
-    RulesorpolicyComponent
+    RulesorpolicyComponent,
+    RulesnpolicyreportComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -64,6 +67,7 @@ export class MiscboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.common.misc.EVENT)
     this.GenerateComponent(globalconstants.Pages.common.misc.NOOFSTUDENT)
     this.GenerateComponent(globalconstants.Pages.common.misc.RULESORPOLICY)
+    this.GenerateComponent(globalconstants.Pages.common.misc.RULESORPOLICYREPORT)
     //this.GenerateComponent(globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
@@ -85,7 +89,7 @@ export class MiscboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    
+
     this.viewContainer.createComponent(this.components[index]);
   }
   GenerateComponent(featureName) {
@@ -93,20 +97,23 @@ export class MiscboardComponent implements AfterViewInit {
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
     var comindx = 0;
     switch (featureName) {
-      case "calendar":
+      case globalconstants.Pages.common.misc.CALENDAR:
         comindx = this.components.indexOf(DemoComponent);
         break;
-      case "event":
+      case globalconstants.Pages.common.misc.EVENT:
         comindx = this.components.indexOf(EventComponent);
         break;
-      case "holiday":
+      case globalconstants.Pages.common.misc.HOLIDAY:
         comindx = this.components.indexOf(HolidayComponent);
         break;
-      case "no of students":
+      case globalconstants.Pages.common.misc.NOOFSTUDENT:
         comindx = this.components.indexOf(NoOfStudentComponent);
         break;
-      case "rules or policies":
+      case globalconstants.Pages.common.misc.RULESORPOLICY:
         comindx = this.components.indexOf(RulesorpolicyComponent);
+        break;
+      case globalconstants.Pages.common.misc.RULESORPOLICYREPORT:
+        comindx = this.components.indexOf(RulesnpolicyreportComponent);
         break;
     }
 

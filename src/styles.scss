@@ -4,6 +4,8 @@
 
 @import '~@angular/material/theming';
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
+/* Importing Bootstrap SCSS file. */
+@import '~bootstrap/scss/bootstrap';
 
 @include mat-core();
 $bv-brand: (50: #ffffff,
@@ -67,6 +69,13 @@ mat-card {
     }
 
 }
+
+@media print { @page 
+    {
+        font-size: 133%;
+        size: auto !important
+    } 
+};
 
 .CertificateFont {
     font-family: 'Ewert', cursive;
@@ -183,8 +192,6 @@ input[type="radio"] {
     pointer-events: none;
 }
 
-/* Importing Bootstrap SCSS file. */
-@import '~bootstrap/scss/bootstrap';
 
 html,
 body {

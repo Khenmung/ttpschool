@@ -503,7 +503,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             _defaultTypeId = defaultFeeTypeObj[0].FeeTypeId;
           result.forEach(s => {
             var _genderName = '';
-            var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
+            var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.GenderId);
             if (genderObj.length > 0)
               _genderName = genderObj[0].MasterDataName;
             var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);
@@ -686,7 +686,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
       ];
 
       list.PageName = "StudentClasses";
-      list.lookupFields = ["Student($select=PID,FirstName,LastName,Gender,RemarkId)"];
+      list.lookupFields = ["Student($select=PID,FirstName,LastName,GenderId,RemarkId)"];
       list.filter = ['Active eq 1 and ' + filterStr];
       this.StudentClassList = [];
       return this.dataservice.get(list);
@@ -714,7 +714,7 @@ export class AssignStudentclassdashboardComponent implements OnInit {
             _remark = obj[0].MasterDataName
 
           var _genderName = '';
-          var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.Gender);
+          var genderObj = this.Genders.filter(f => f.MasterDataId == s.Student.GenderId);
           if (genderObj.length > 0)
             _genderName = genderObj[0].MasterDataName;
           var feetype = this.FeeTypes.filter(t => t.FeeTypeId == s.FeeTypeId);

@@ -80,21 +80,43 @@ export class ForgotpasswordComponent implements OnInit { PageLoading=true;
         this.contentservice.openSnackBar("Email sent to your register email address.",globalconstants.ActionText,globalconstants.BlueBackground);        
       },
       err => {
-        if (err.error) {
-          var modelState = err.error.errors;
-          this.errorMessage = '';
-          //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
-          for (var key in modelState) {
-            if (modelState.hasOwnProperty(key)) {
-              this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key];
-              //errors.push(modelState[key]);//list of error messages in an array
-            }
-          }
+        var modelState;
+        if (err.error.ModelState != null)
+          modelState = JSON.parse(JSON.stringify(err.error.ModelState));
+        else if (err.error != null)
+          modelState = JSON.parse(JSON.stringify(err.error));
+        else
+          modelState = JSON.parse(JSON.stringify(err));
 
-          this.isSignUpFailed = true;
-          //console.log(err.error)
+        //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        for (var key in modelState) {
+          if (modelState.hasOwnProperty(key) && key.toLowerCase() == 'errors') {
+            for(var key1 in modelState[key])
+            this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key][key1];
+            //errors.push(modelState[key]);//list of error messages in an array
+          }
         }
+        this.contentservice.openSnackBar(this.errorMessage,globalconstants.ActionText,globalconstants.RedBackground);
+        this.isSignUpFailed = true;
+        this.loading=false;this.PageLoading=false;
+        //console.log(err.error)
       }
+      //err => {      
+        // if (err.error) {
+        //   var modelState = err.error.errors;
+        //   this.errorMessage = '';
+        //   //THE CODE BLOCK below IS IMPORTANT WHEN EXTRACTING MODEL STATE IN JQUERY/JAVASCRIPT
+        //   for (var key in modelState) {
+        //     if (modelState.hasOwnProperty(key)) {
+        //       this.errorMessage += (this.errorMessage == "" ? "" : this.errorMessage + "<br/>") + modelState[key];
+        //       //errors.push(modelState[key]);//list of error messages in an array
+        //     }
+        //   }
+
+        //   this.isSignUpFailed = true;
+        //   //console.log(err.error)
+        // }
+      //}
     );
   }
 }

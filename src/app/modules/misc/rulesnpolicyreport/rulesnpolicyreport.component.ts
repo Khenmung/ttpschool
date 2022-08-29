@@ -4,20 +4,20 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { Observable } from 'rxjs';
 import { ContentService } from 'src/app/shared/content.service';
 import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
 
 @Component({
-  selector: 'app-rulesorpolicy',
-  templateUrl: './rulesorpolicy.component.html',
-  styleUrls: ['./rulesorpolicy.component.scss']
+  selector: 'app-rulesnpolicyreport',
+  templateUrl: './rulesnpolicyreport.component.html',
+  styleUrls: ['./rulesnpolicyreport.component.scss']
 })
-export class RulesorpolicyComponent implements OnInit {
+export class RulesnpolicyreportComponent implements OnInit {
   @ViewChild(MatPaginator) paging: MatPaginator;
   RulesOrPolicyTypes = [];
   PageLoading = false;
@@ -39,18 +39,13 @@ export class RulesorpolicyComponent implements OnInit {
     RulesOrPolicyId: 0,
     RulesOrPolicyCategoryId: 0,
     RulesOrPolicySubCategoryId: 0,
-    Deleted:false,
     Description: '',
     OrgId: 0,
     Active: 0
   };
   displayedColumns = [
-    "RulesOrPolicyId",
-    "Description",
-    "RulesOrPolicyCategoryId",
-    "RulesOrPolicySubCategoryId",
-    "Active",
-    "Action"
+    "SrNo",
+    "Description"    
   ];
   SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
@@ -59,7 +54,6 @@ export class RulesorpolicyComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private nav: Router,
-    private datepipe: DatePipe,
     private fb: UntypedFormBuilder
   ) { }
 
@@ -74,7 +68,7 @@ export class RulesorpolicyComponent implements OnInit {
     //debugger;
     this.searchForm = this.fb.group({
       searchCategoryId: [0],
-      searchSubCategoryId: [0]
+      //searchSubCategoryId: [0]
     });
     this.PageLoad();
   }
@@ -106,22 +100,7 @@ export class RulesorpolicyComponent implements OnInit {
     }
   }
 
-  AddNew() {
-
-    var newdata = {
-      RulesOrPolicyId: 0,
-      RulesOrPolicyCategoryId: 0,
-      RulesOrPolicySubCategoryId: 0,
-      Description: '',
-      OrgId: 0,
-      Active: 0,
-      Action: false
-    };
-    this.RulesOrPolicyList = [];
-    this.RulesOrPolicyList.push(newdata);
-    this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
-    this.dataSource.paginator = this.paging;
-  }
+  
   onBlur(element) {
     element.Action = true;
   }
@@ -143,7 +122,7 @@ export class RulesorpolicyComponent implements OnInit {
   }
   UpdateOrSave(row) {
 
-    debugger;
+    //debugger;
     this.loading = true;
     let checkFilterString = "Description eq '" + globalconstants.encodeSpecialChars(row.Description) + 
     "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
@@ -151,12 +130,6 @@ export class RulesorpolicyComponent implements OnInit {
     {
       this.loading=false;
       this.contentservice.openSnackBar("Please enter description.",globalconstants.ActionText,globalconstants.RedBackground);
-      return;
-    }
-    else if(row.Description.length>290)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Description exceed 290 characters.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
     if(row.RulesOrPolicyCategoryId==0)
@@ -187,7 +160,6 @@ export class RulesorpolicyComponent implements OnInit {
           this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(row.Description);
           this.RulesOrPolicyData.RulesOrPolicySubCategoryId = row.RulesOrPolicySubCategoryId;
           this.RulesOrPolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.RulesOrPolicyData.Deleted = false;
 
           if (this.RulesOrPolicyData.RulesOrPolicyId == 0) {
             this.RulesOrPolicyData["CreatedDate"] = new Date();
@@ -236,7 +208,7 @@ export class RulesorpolicyComponent implements OnInit {
     debugger;
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _searchCategoryId = this.searchForm.get("searchCategoryId").value;
-    var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
+    //var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
 
     if (_searchCategoryId == 0) {
       this.loading = false;
@@ -246,9 +218,9 @@ export class RulesorpolicyComponent implements OnInit {
     else
       filterStr += ' and RulesOrPolicyCategoryId eq ' + _searchCategoryId;
 
-    if (_searchSubCategoryId > 0) {
-      filterStr += ' and RulesOrPolicySubCategoryId eq ' + _searchSubCategoryId;
-    }
+    // if (_searchSubCategoryId > 0) {
+    //   filterStr += ' and RulesOrPolicySubCategoryId eq ' + _searchSubCategoryId;
+    // }
 
     this.loading = true;
     let list: List = new List();
@@ -260,7 +232,8 @@ export class RulesorpolicyComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.RulesOrPolicyList = data.value.map(map=>{
+          this.RulesOrPolicyList = data.value.map((map,indx)=>{
+            map.SrNo =indx+1;
             map.Description = globalconstants.decodeSpecialChars(map.Description);
             return map;
           })
@@ -284,27 +257,15 @@ export class RulesorpolicyComponent implements OnInit {
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    // let Id = 0;
-    // let Ids = this.allMasterData.filter((item, indx) => {
-    //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-    // })
-    // if (Ids.length > 0) {
-    //   Id = Ids[0].MasterDataId;
-    //   return this.allMasterData.filter((item, index) => {
-    //     return item.ParentId == Id
-    //   })
-    // }
-    // else
-    //   return [];
-
   }
 }
 export interface IRulesOrPolicy {
-  RulesOrPolicyId: number;
+  SrNo:number;
+  //RulesOrPolicyId: number;
   RulesOrPolicyCategoryId: number;
-  RulesOrPolicySubCategoryId: number;
+  // RulesOrPolicySubCategoryId: number;
   Description: string;
-  Action: boolean;
+  // Action: boolean;
 }
 
 
