@@ -18,12 +18,44 @@
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Certificates</mat-label>
-                    <mat-select formControlName="searchCertificateTypeId" #cerId>
+                    <mat-select formControlName="searchCertificateTypeId" #cerId (selectionChange)="CheckType()">
                         <mat-option *ngFor="let item of CertificateTypes" [value]="item.MasterDataId">
                             {{item.MasterDataName}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <div *ngIf="SportsCertificate">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Activity</mat-label>
+                        <mat-select formControlName="searchActivityId" (selectionChange)="SetCategory()">
+                            <mat-option value="0">select</mat-option>
+                            <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" (selectionChange)="SetSubCategory()">
+                        <mat-label>Category</mat-label>
+                        <mat-select formControlName="searchCategoryId">
+                            <mat-option *ngFor="let item of ActivityCategory" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Sub Category</mat-label>
+                        <mat-select formControlName="searchSubCategoryId">
+                            <mat-option *ngFor="let item of ActivitySubCategory" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Session</mat-label>
+                        <mat-select formControlName="searchSessionId">
+                            <mat-option value="0">select</mat-option>
+                            <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
+                                {{item.MasterDataName}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetCertificates()">
                      <mat-icon>search</mat-icon>
                             <mat-icon *ngIf="loading">
@@ -34,7 +66,7 @@
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
             </form>
-            <div class="divCls" fxLayoutGap="100px" id="printSection">
+            <div id="printSection">
                 <mat-table [dataSource]="dataSource">
                     <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
                         matColumnDef="{{disCol}}">
@@ -51,7 +83,8 @@
             <br>
             <div fxLayout="row" fxLayoutAlign="center center">
             <button (click)="UpdateStudentCertificates()" [disabled]="loading || Permission=='read' || CertificateElements.length==0" 
-            matTooltip="print" printSectionId="printSection" [useExistingCss]="true"
+                matTooltip="print" printSectionId="printSection" 
+                [useExistingCss]="true"
                 ngxPrint mat-raised-button color="accent">
                 <mat-icon>print</mat-icon>
             </button>

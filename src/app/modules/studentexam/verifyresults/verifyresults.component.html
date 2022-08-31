@@ -31,7 +31,7 @@
         </mat-select>
     </mat-form-field>
     <button style="margin-right: 15px;" [disabled]="loading" mat-raised-button color="accent"
-        (click)="GetExamStudentSubjectResults()">
+        (click)="GetStudentSubjects()">
         <mat-icon>search</mat-icon>
         <mat-icon *ngIf="loading">
             <mat-spinner diameter="20" color="Blue"></mat-spinner>
@@ -46,23 +46,23 @@
         <mat-icon>checked</mat-icon>
     </button>
 </form>
-<div style="width: 100%;">
+<div style="width: 100%;overflow: auto;height:500px">
     <div *ngIf="ExamStudentSubjectResult.length>0">
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
+                <mat-header-cell *matHeaderCellDef mat-sort-header style="width:100%;display:flex; justify-content: center;">
                     {{disCol!='Action'?disCol:''}}
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" style="padding:15px">
-                    <span style="color:red" *ngIf="(element[disCol]+'').includes('(')">{{element[disCol]}}</span> 
-                    <span *ngIf="!(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
+                <mat-cell *matCellDef="let element" style="width:100%;align-self: stretch;">
+                    <span style="padding:5px;align-self: stretch;color:red" *ngIf="(element[disCol]+'').includes('(')">{{element[disCol]}}</span> 
+                    <span style="padding:5px;display: flex;align-self: stretch;" *ngIf="!(element[disCol]+'').includes('(')">{{element[disCol]}}</span>
                 </mat-cell>
             </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-header-row *matHeaderRowDef="displayedColumns;sticky:true"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
 
         </mat-table>
-        <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator>
+        <mat-paginator #nonGradingPaginator="matPaginator" style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator>
     </div>
     <div *ngIf="ExamStudentSubjectGrading.length>0" style="flex-direction: column;">
         <div style="font-weight: bold;">Grading Subject</div>
@@ -77,10 +77,10 @@
                    {{element[disCol]}}
                 </mat-cell>
             </ng-container>
-            <mat-header-row *matHeaderRowDef="GradingDisplayedColumns"></mat-header-row>
+            <mat-header-row *matHeaderRowDef="GradingDisplayedColumns;sticky:true"></mat-header-row>
             <mat-row *matRowDef="let row; columns: GradingDisplayedColumns;" class="element-row"></mat-row>
         </mat-table>
-        <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator>
+        <!-- <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100]"></mat-paginator> -->
     </div>
 </div>
 

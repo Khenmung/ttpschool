@@ -7,9 +7,14 @@ import { globalconstants } from '../../globalconstant';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit { PageLoading=true;
+export class HeaderComponent implements OnInit {
+    PageLoading = true;
   @Input() deviceXs: boolean;
   @Output() toggleSideBarForme: EventEmitter<any> = new EventEmitter();
+  scrollTop = 0;
+  hideNav = false;
+
+
   loading: false;
   userName: string = '';
   logoPath = '';
@@ -53,7 +58,32 @@ export class HeaderComponent implements OnInit { PageLoading=true;
       }
     }
   }
+ 
+//   private scrollChangeCallback: () => void;
+// currentPosition: any;
+// startPosition: number;
 
+// ngAfterViewInit() {
+//   this.scrollChangeCallback = () => this.onContentScrolled(event);
+//   window.addEventListener('scroll', this.scrollChangeCallback, true);
+// }
+
+//  onContentScrolled(e) {
+//   this.startPosition = e.srcElement.scrollTop;
+//   let scroll = e.srcElement.scrollTop;
+//   if (scroll > this.currentPosition) {
+//     console.log("down")
+//   } else {
+//     console.log("up")
+//   }
+//   this.currentPosition = scroll;
+// }
+
+// ngOnDestroy() {
+//   window.removeEventListener('scroll', this.scrollChangeCallback, true);
+// }
+
+  
   changepassword() {
     this.route.navigate(["/auth/changepassword"]);
   }

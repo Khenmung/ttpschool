@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -38,13 +37,14 @@ export class RulesnpolicyreportComponent implements OnInit {
   RulesOrPolicyData = {
     RulesOrPolicyId: 0,
     RulesOrPolicyCategoryId: 0,
-    RulesOrPolicySubCategoryId: 0,
+    RuleOrPolicyTypeId: 0,
+    Sequence:0,
     Description: '',
     OrgId: 0,
     Active: 0
   };
+  Category ='';
   displayedColumns = [
-    "SrNo",
     "Description"    
   ];
   SelectedApplicationId = 0;
@@ -158,7 +158,8 @@ export class RulesnpolicyreportComponent implements OnInit {
           this.RulesOrPolicyData.Active = row.Active;
           this.RulesOrPolicyData.RulesOrPolicyCategoryId = row.RulesOrPolicyCategoryId;
           this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(row.Description);
-          this.RulesOrPolicyData.RulesOrPolicySubCategoryId = row.RulesOrPolicySubCategoryId;
+          this.RulesOrPolicyData.RuleOrPolicyTypeId = row.RuleOrPolicyTypeId;
+          this.RulesOrPolicyData.Sequence = row.Sequence;
           this.RulesOrPolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
 
           if (this.RulesOrPolicyData.RulesOrPolicyId == 0) {
@@ -218,8 +219,9 @@ export class RulesnpolicyreportComponent implements OnInit {
     else
       filterStr += ' and RulesOrPolicyCategoryId eq ' + _searchCategoryId;
 
+     this.Category = this.RulesOrPolicyCategory.filter(f=>f.MasterDataId ==_searchCategoryId)[0].MasterDataName; 
     // if (_searchSubCategoryId > 0) {
-    //   filterStr += ' and RulesOrPolicySubCategoryId eq ' + _searchSubCategoryId;
+    //   filterStr += ' and RuleOrPolicyTypeId eq ' + _searchSubCategoryId;
     // }
 
     this.loading = true;
@@ -233,24 +235,32 @@ export class RulesnpolicyreportComponent implements OnInit {
       .subscribe((data: any) => {
         if (data.value.length > 0) {
           this.RulesOrPolicyList = data.value.map((map,indx)=>{
+            var _obj =this.RulesOrPolicyDisplayTypes.filter(f=>f.MasterDataId == map.RuleOrPolicyTypeId);
+            var _displaytype ='';
+            if(_obj.length>0)
+            _displaytype = _obj[0].MasterDataName;
+
             map.SrNo =indx+1;
+            map.DisplayType = _displaytype;
             map.Description = globalconstants.decodeSpecialChars(map.Description);
             return map;
           })
         }
+        //console.log("display",this.RulesOrPolicyList)
         this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
 
   }
-
+  RulesOrPolicyDisplayTypes=[];
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.RulesOrPolicyCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORY)
+        this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
         //this.GetRulesOrPolicy();
         this.loading = false; this.PageLoading = false;
       });
@@ -263,7 +273,9 @@ export interface IRulesOrPolicy {
   SrNo:number;
   //RulesOrPolicyId: number;
   RulesOrPolicyCategoryId: number;
-  // RulesOrPolicySubCategoryId: number;
+  Sequence:number;
+  RuleOrPolicyTypeId:number;
+  // RuleOrPolicyTypeId: number;
   Description: string;
   // Action: boolean;
 }

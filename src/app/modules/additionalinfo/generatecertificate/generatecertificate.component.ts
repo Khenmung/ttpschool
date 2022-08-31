@@ -16,7 +16,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-generatecertificate',
@@ -112,7 +112,11 @@ export class GenerateCertificateComponent implements OnInit {
     //this.loadTheme();
     //debugger;
     this.searchForm = this.fb.group({
+      searchActivityId: [0],
+      searchCategoryId: [0],
+      searchSubCategoryId: [0],
       searchStudentName: [''],
+      searchSessionId: [0],
       searchCertificateTypeId: [0]
     });
     this.filteredStudents = this.searchForm.get("searchStudentName").valueChanges
@@ -154,12 +158,6 @@ export class GenerateCertificateComponent implements OnInit {
       if (perObj.length > 0)
         this.Permission = perObj[0].permission;
 
-      // if (this.StudentClassId == 0) {
-      //   this.loading = false; this.PageLoading=false;
-      //   this.contentservice.openSnackBar("Please define class for this student.", globalconstants.ActionText, globalconstants.RedBackground);
-      //   //this.nav.navigate(['/edu']);
-      // }
-      // else 
       if (this.Permission != 'deny') {
         this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
@@ -167,9 +165,6 @@ export class GenerateCertificateComponent implements OnInit {
 
         this.StandardFilterWithBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
         this.GetMasterData();
-
-        //this.GetStudentAttendance();
-        //this.getPaymentStatus();
 
       }
       else {
@@ -179,61 +174,7 @@ export class GenerateCertificateComponent implements OnInit {
     }
   }
 
-  GetStudentSubjects() {
 
-    //this.shareddata.CurrentSelectedBatchId.subscribe(b => this.SelectedBatchId = b);
-    let filterStr = 'Active eq 1 and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
-
-    let list: List = new List();
-    list.fields = [
-      'StudentClassSubjectId',
-      'ClassSubjectId',
-      'StudentClassId',
-      'Active'
-    ];
-
-    list.PageName = "StudentClassSubjects";
-    list.lookupFields = ["ClassSubject($select=SubjectId,ClassId)",
-      "StudentClass($select=StudentId,RollNo,SectionId)"]
-    list.filter = [filterStr];
-    this.dataservice.get(list)
-      .subscribe((data: any) => {
-        var _class = '';
-        var _subject = '';
-        var _section = '';
-        this.StudentSubjects = data.value.map(s => {
-          _class = '';
-          _subject = '';
-
-          let _stdClass = this.Classes.filter(c => c.ClassId == s.ClassSubject.ClassId);
-          if (_stdClass.length > 0)
-            _class = _stdClass[0].ClassName;
-
-          let _stdSubject = this.Subjects.filter(c => c.MasterDataId == s.ClassSubject.SubjectId);
-          if (_stdSubject.length > 0)
-            _subject = _stdSubject[0].MasterDataName;
-
-          let _stdSection = this.Sections.filter(c => c.MasterDataId == s.StudentClass.SectionId);
-          if (_stdSection.length > 0)
-            _section = _stdSection[0].MasterDataName;
-          return {
-            StudentClassSubjectId: s.StudentClassSubjectId,
-            ClassSubjectId: s.ClassSubjectId,
-            StudentClassId: s.StudentClassId,
-            Student: s.StudentClass.RollNo,
-            SubjectId: s.ClassSubject.SubjectId,
-            Subject: _subject,
-            ClassId: s.ClassSubject.ClassId,
-            StudentId: s.StudentClass.StudentId,
-            SectionId: s.StudentClass.SectionId
-          }
-
-        })
-        this.loading = false; this.PageLoading = false;
-      });
-  }
   GetStudentAndGenerateCerts() {
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1';
@@ -312,6 +253,15 @@ export class GenerateCertificateComponent implements OnInit {
         ////console.log('data.value',data.value)
         debugger;
         this.StudentForVariables = [];
+        var _activityName = '', _activityCategory = '', _activitySubCategory = '', _activitySession = '', _secured = '';
+        if (this.SportsResultList.length > 0) {
+          _activityName = this.SportsResultList[0].ActivityName;
+          _activityCategory = this.SportsResultList[0].Category;
+          _activitySubCategory = this.SportsResultList[0].SubCategory;
+          _activitySession = this.SportsResultList[0].Session;
+          _secured = this.SportsResultList[0].Secured;
+        }
+
         data.value.forEach(d => {
 
           var _studentClass = '';
@@ -332,7 +282,7 @@ export class GenerateCertificateComponent implements OnInit {
           var objhouse = this.Houses.filter(c => c.MasterDataId == d.HouseId);
           if (objhouse.length > 0)
             _house = objhouse[0].MasterDataName;
-            var _lastname = d.Student.LastName == null || d.Student.LastName == '' ? '' : " " + d.Student.LastName;
+          var _lastname = d.Student.LastName == null || d.Student.LastName == '' ? '' : " " + d.Student.LastName;
           this.StudentForVariables.push(
             { name: "ToDay", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
             { name: "StudentClass", val: _studentClass },
@@ -370,7 +320,12 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "ContactPersonContactNo", val: d.Student.ContactPersonContactNo },
             { name: "ReasonForLeaving", val: _reason },
             { name: "Batch", val: _batch },
-            { name: "House", val: _house }
+            { name: "House", val: _house },
+            { name: "ActivityName", val: _activityName },
+            { name: "ActivityCategory", val: _activityCategory },
+            { name: "ActivitySubCategory", val: _activitySubCategory },
+            { name: "ActivitySession", val: _activitySession },
+            { name: "Secured", val: _secured }
           )
         })
         this.StudentForVariables.push(
@@ -483,6 +438,29 @@ export class GenerateCertificateComponent implements OnInit {
       })
 
   }
+  CheckType() {
+    debugger;
+    var _certificateId = this.searchForm.get("searchCertificateTypeId").value;
+    var obj = this.CertificateTypes.filter(f => f.MasterDataId == _certificateId);
+    if (obj.length > 0 && obj[0].MasterDataName.toLowerCase() == 'sports certificate') {
+      this.SportsCertificate = true;
+    }
+    else
+      this.SportsCertificate = false;
+  }
+  SetCategory() {
+    var _activityId = this.searchForm.get("searchActivityId").value;
+    this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
+  }
+  SetSubCategory() {
+    var _categoryId = this.searchForm.get("searchCategoryId").value;
+    this.ActivitySubCategory = this.allMasterData.filter(f => f.ParentId == _categoryId);
+  }
+  SportsCertificate = false;
+  ActivitySubCategory = [];
+  ActivityCategory = [];
+  ActivityNames = [];
+  ActivitySessions = [];
   GetMasterData() {
     debugger;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -499,6 +477,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.ExamStatuses = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMSTATUS);
         this.MarkComponents = this.getDropDownData(globalconstants.MasterDefinitions.school.SUBJECTMARKCOMPONENT);
         this.ExamNames = this.getDropDownData(globalconstants.MasterDefinitions.school.EXAMNAME);
+
         //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
         this.CertificateTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.CERTIFICATETYPE);
@@ -508,11 +487,15 @@ export class GenerateCertificateComponent implements OnInit {
         this.CommonFooter = this.getDropDownData(globalconstants.MasterDefinitions.school.COMMONFOOTER);
         this.CommonHeader.sort((a, b) => a.Sequence - b.Sequence)
         this.CommonFooter.sort((a, b) => a.Sequence - b.Sequence)
+        this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
+        this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
+        this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
+
         //this.shareddata.ChangeBatch(this.Batches);
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
-        .subscribe((data:any)=>{
-          this.ClassGroups =[...data.value];
-        });
+          .subscribe((data: any) => {
+            this.ClassGroups = [...data.value];
+          });
         this.Batches = this.tokenstorage.getBatches()
         this.GetStudentClasses();
         this.GetOrganization();
@@ -603,6 +586,105 @@ export class GenerateCertificateComponent implements OnInit {
         this.PageLoading = false;
       })
   }
+  SportsResultList = [];
+  GetSportsResult() {
+    debugger;
+    var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+
+
+    var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    var _SportsNameId = this.searchForm.get("searchActivityId").value;
+    var _categoryId = this.searchForm.get("searchCategoryId").value;
+    var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
+    var _SessionId = this.searchForm.get("searchSessionId").value;
+    if (_studentclassId != undefined) {
+      filterStr += " and StudentClassId eq " + _studentclassId;
+    }
+    else {
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (_SportsNameId > 0) {
+      filterStr += " and SportsNameId eq " + _SportsNameId;
+    }
+    if (_SessionId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else {
+      filterStr += " and SessionId eq " + _SessionId;
+    }
+
+    if (_categoryId > 0) {
+      filterStr += " and CategoryId eq " + _categoryId;
+    }
+    if (_subCategoryId > 0) {
+      filterStr += " and SubCategoryId eq " + _subCategoryId;
+    }
+
+    this.loading = true;
+    this.SportsResultList = [];
+
+    let list: List = new List();
+    list.fields = [
+      "SportResultId",
+      "StudentClassId",
+      "Secured",
+      "Achievement",
+      "SportsNameId",
+      "CategoryId",
+      "SubCategoryId",
+      "AchievementDate",
+      "SessionId",
+      "Active"
+    ];
+
+    list.PageName = "SportResults";
+    list.filter = [filterStr];
+    this.SportsResultList = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.SportsResultList = data.value.map(m => {
+          var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
+          if (obj.length > 0)
+            m.SportsName = obj[0].MasterDataName;
+          else
+            m.SportsName = '';
+          var objCategory = this.allMasterData.filter(f => f.MasterDataId == m.CategoryId);
+          if (objCategory.length > 0)
+            m.Category = objCategory[0].MasterDataName;
+          else
+            m.Category = '';
+
+          var objSubCategory = this.allMasterData.filter(f => f.MasterDataId == m.SubCategoryId);
+          if (objSubCategory.length > 0) {
+            m.SubCategory = objSubCategory[0].MasterDataName;
+          }
+          else
+            m.SubCategory = '';
+
+          var objSession = this.allMasterData.filter(f => f.MasterDataId == m.SessionId);
+          if (objSession.length > 0) {
+            m.Session = objSession[0].MasterDataName;
+          }
+          else
+            m.Session = '';
+
+          m.Secured = globalconstants.decodeSpecialChars(m.Secured);
+          m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
+          m.Action = false;
+          return m;
+        });
+        if (this.SportsResultList.length == 0) {
+          this.loading = false;
+          this.contentservice.openSnackBar("No activity record found for this student.", globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        else
+          this.GetStudentAttendance();
+      });
+
+  }
   GetCertificates() {
     debugger;
     var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
@@ -613,12 +695,19 @@ export class GenerateCertificateComponent implements OnInit {
       this.contentservice.openSnackBar("Please select student!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+
     if (this.searchForm.get("searchCertificateTypeId").value == 0) {
       this.contentservice.openSnackBar("Please select certificate type!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     this.loading = true;
-    this.GetStudentAttendance();
+    if (this.SportsCertificate) {
+
+      this.GetSportsResult()
+
+    }
+    else
+      this.GetStudentAttendance();
   }
   GetOrganization() {
 
@@ -768,21 +857,21 @@ export class GenerateCertificateComponent implements OnInit {
     //console.log("hi")
   }
   getDropDownData(dropdowntype) {
-  return this.contentservice.getDropDownData(dropdowntype,this.tokenstorage,this.allMasterData);
+    return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
     //   let Id = 0;
-  //   let Ids = this.allMasterData.filter((item, indx) => {
-  //     return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
-  //   })
-  //   if (Ids.length > 0) {
-  //     Id = Ids[0].MasterDataId;
-  //     return this.allMasterData.filter((item, index) => {
-  //       return item.ParentId == Id
-  //     })
-  //   }
-  //   else
-  //     return [];
+    //   let Ids = this.allMasterData.filter((item, indx) => {
+    //     return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER
+    //   })
+    //   if (Ids.length > 0) {
+    //     Id = Ids[0].MasterDataId;
+    //     return this.allMasterData.filter((item, index) => {
+    //       return item.ParentId == Id
+    //     })
+    //   }
+    //   else
+    //     return [];
 
-   }
+  }
 
 }
 export interface IExamStudentSubjectResult {

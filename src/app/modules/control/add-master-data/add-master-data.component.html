@@ -41,7 +41,16 @@
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="MasterDataName">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>
+                
+                    <span style="display: flex;flex-direction: column;justify-content: flex-start;">
+                        <span style="justify-content: flex-start;display: flex;">Name</span>
+                        <mat-form-field style="width: 80px;">
+                            <mat-label>Name</mat-label>
+                            <input matInput [formControl]="nameFilter" autocomplete="Off">
+                        </mat-form-field>
+                    </span>
+            </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
                     <input [disabled]="element.MasterDataId>0 && (Parent=='Information Restriction' 
@@ -171,7 +180,8 @@
                 <button [disabled]="loading 
                 || !element.Action 
                 || Permission=='read'
-                || (element.MasterDataId>0 && (Parent=='Period Type'
+                || (element.MasterDataId>0 && (Parent=='Certificate Type'
+                                       || Parent=='Period Type'
                                        || Parent=='Roll No Generation' 
                                        || Parent=='User Type'
                                        || Parent=='Exam Status'
@@ -179,6 +189,7 @@
                                        || Parent=='Subject Category'    
                                        || Parent=='Questionnaire Type'    
                                        || Parent=='Attendance Mode'    
+                                       || element.MasterDataName=='Sports Certificate'
                                        || element.MasterDataName=='Admin'
                                        || element.MasterDataName=='Teacher'
                                        || element.MasterDataName=='Student'

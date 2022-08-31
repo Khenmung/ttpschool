@@ -24,6 +24,7 @@ export class RulesorpolicyComponent implements OnInit {
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   RulesOrPolicyListName = 'RulesOrPolicies';
+  RulesOrPolicyDisplayTypes =[];
   Applications = [];
   //Categories=[];
   loading = false;
@@ -38,8 +39,9 @@ export class RulesorpolicyComponent implements OnInit {
   RulesOrPolicyData = {
     RulesOrPolicyId: 0,
     RulesOrPolicyCategoryId: 0,
-    RulesOrPolicySubCategoryId: 0,
+    RuleOrPolicyTypeId: 0,
     Deleted:false,
+    Sequence:0,
     Description: '',
     OrgId: 0,
     Active: 0
@@ -48,7 +50,8 @@ export class RulesorpolicyComponent implements OnInit {
     "RulesOrPolicyId",
     "Description",
     "RulesOrPolicyCategoryId",
-    "RulesOrPolicySubCategoryId",
+    "RuleOrPolicyTypeId",
+    "Sequence",
     "Active",
     "Action"
   ];
@@ -73,8 +76,8 @@ export class RulesorpolicyComponent implements OnInit {
     })
     //debugger;
     this.searchForm = this.fb.group({
-      searchCategoryId: [0],
-      searchSubCategoryId: [0]
+      searchCategoryId: [0]
+      // searchSubCategoryId: [0]
     });
     this.PageLoad();
   }
@@ -111,8 +114,9 @@ export class RulesorpolicyComponent implements OnInit {
     var newdata = {
       RulesOrPolicyId: 0,
       RulesOrPolicyCategoryId: 0,
-      RulesOrPolicySubCategoryId: 0,
+      RuleOrPolicyTypeId: 0,
       Description: '',
+      Sequence:0,
       OrgId: 0,
       Active: 0,
       Action: false
@@ -165,6 +169,12 @@ export class RulesorpolicyComponent implements OnInit {
       this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
       return;
     }
+    if(row.RuleOrPolicyTypeId==0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select display type.",globalconstants.ActionText,globalconstants.RedBackground);
+      return;
+    }
     if (row.RulesOrPolicyId > 0)
       checkFilterString += " and RulesOrPolicyId ne " + row.RulesOrPolicyId;
     let list: List = new List();
@@ -185,8 +195,9 @@ export class RulesorpolicyComponent implements OnInit {
           this.RulesOrPolicyData.Active = row.Active;
           this.RulesOrPolicyData.RulesOrPolicyCategoryId = row.RulesOrPolicyCategoryId;
           this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(row.Description);
-          this.RulesOrPolicyData.RulesOrPolicySubCategoryId = row.RulesOrPolicySubCategoryId;
+          this.RulesOrPolicyData.RuleOrPolicyTypeId = row.RuleOrPolicyTypeId;
           this.RulesOrPolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
+          this.RulesOrPolicyData.Sequence = +row.Sequence;
           this.RulesOrPolicyData.Deleted = false;
 
           if (this.RulesOrPolicyData.RulesOrPolicyId == 0) {
@@ -236,7 +247,7 @@ export class RulesorpolicyComponent implements OnInit {
     debugger;
     let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _searchCategoryId = this.searchForm.get("searchCategoryId").value;
-    var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
+    //var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
 
     if (_searchCategoryId == 0) {
       this.loading = false;
@@ -246,9 +257,9 @@ export class RulesorpolicyComponent implements OnInit {
     else
       filterStr += ' and RulesOrPolicyCategoryId eq ' + _searchCategoryId;
 
-    if (_searchSubCategoryId > 0) {
-      filterStr += ' and RulesOrPolicySubCategoryId eq ' + _searchSubCategoryId;
-    }
+    // if (_searchSubCategoryId > 0) {
+    //   filterStr += ' and RuleOrPolicyTypeId eq ' + _searchSubCategoryId;
+    // }
 
     this.loading = true;
     let list: List = new List();
@@ -278,6 +289,8 @@ export class RulesorpolicyComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.RulesOrPolicyCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORY)
+        this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
+       
         //this.GetRulesOrPolicy();
         this.loading = false; this.PageLoading = false;
       });
@@ -302,7 +315,8 @@ export class RulesorpolicyComponent implements OnInit {
 export interface IRulesOrPolicy {
   RulesOrPolicyId: number;
   RulesOrPolicyCategoryId: number;
-  RulesOrPolicySubCategoryId: number;
+  RuleOrPolicyTypeId: number;
+  Sequence:number;
   Description: string;
   Action: boolean;
 }

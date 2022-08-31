@@ -14,14 +14,14 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline" [style.width.px]="200">
+            <!-- <mat-form-field appearance="outline" [style.width.px]="200">
                 <mat-label>Sub Category</mat-label>
                 <mat-select formControlName="searchSubCategoryId">
                     <mat-option *ngFor="let item of RulesOrPolicySubCategory" [value]="item.MasterDataId">
                         {{item.MasterDataName}}
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
             <button [disabled]="loading" mat-raised-button color="accent" (click)="GetRulesOrPolicy()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
@@ -38,16 +38,16 @@
                         {{element.RulesOrPolicyId}}
                     </mat-cell>
                 </ng-container>
-                <!-- <ng-container matColumnDef="Description">
-                    <mat-header-cell *matHeaderCellDef>Holiday
+                <ng-container matColumnDef="Sequence">
+                    <mat-header-cell *matHeaderCellDef>Sequence
                     </mat-header-cell>
                     <mat-cell style="display: flex;" *matCellDef="let element">
-                        <mat-form-field appearance="outline" [style.width.px]="150">
-                            <input autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.Title"
-                                [(ngModel)]="element.Title" [maxlength]="100">
+                        <mat-form-field appearance="outline" [style.width.px]="100">
+                            <input autocomplete="Off" matInput (blur)="onBlur(element)" [value]="element.Sequence"
+                                [(ngModel)]="element.Sequence" [max]="100">
                         </mat-form-field>
                     </mat-cell>
-                </ng-container> -->
+                </ng-container>
                 <ng-container matColumnDef="Description">
                     <mat-header-cell *matHeaderCellDef>Description
                     </mat-header-cell>
@@ -55,7 +55,7 @@
                         <mat-form-field appearance="outline">
                             <textarea matInput (blur)="onBlur(element)" 
                             [value]="element.Description"
-                                [(ngModel)]="element.Description" [maxlength]="300"></textarea>
+                                [(ngModel)]="element.Description" [maxlength]="290"></textarea>
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
@@ -73,14 +73,14 @@
                         </mat-form-field>
                     </mat-cell>
                 </ng-container>
-                <ng-container matColumnDef="RulesOrPolicySubCategoryId">
-                    <mat-header-cell *matHeaderCellDef>Sub Category
+                <ng-container matColumnDef="RuleOrPolicyTypeId">
+                    <mat-header-cell *matHeaderCellDef>Display Type
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
-                            <mat-select [value]="element.RulesOrPolicySubCategoryId"
-                                [(ngModel)]="element.RulesOrPolicySubCategoryId">
-                                <mat-option *ngFor="let item of RulesOrPolicySubCategory" [value]="item.MasterDataId">
+                            <mat-select [value]="element.RuleOrPolicyTypeId"
+                                [(ngModel)]="element.RuleOrPolicyTypeId">
+                                <mat-option *ngFor="let item of RulesOrPolicyDisplayTypes" [value]="item.MasterDataId">
                                     {{item.MasterDataName}}</mat-option>
                             </mat-select>
                         </mat-form-field>

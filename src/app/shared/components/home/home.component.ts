@@ -85,6 +85,14 @@ export class HomeComponent implements OnInit {
     //this.GetMenuData();
 
   }
+  // lastScrollTop = 0
+  // scrollHandler(event) {
+  //   let currentScrollTop = event.currentTarget.scrollTop
+  //   if (currentScrollTop > this.lastScrollTop) 
+  //   console.log("down")
+  //   else  console.log("up")
+  //   this.lastScrollTop = currentScrollTop
+  // }
   ngOnDestroy() {
     this.mediaSub.unsubscribe();
   }

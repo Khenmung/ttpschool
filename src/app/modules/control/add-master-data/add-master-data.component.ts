@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -69,7 +69,10 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
   error: string = '';
   
   searchForm: UntypedFormGroup;
-
+  nameFilter = new UntypedFormControl('');
+  filterValues = {
+    MasterDataName: ''
+  };
   constructor(private servicework: SwUpdate,
     private snackbar: MatSnackBar,
     private dialog: MatDialog,
@@ -106,7 +109,13 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
         map(value => typeof value === 'string' ? value : value.MasterDataName),
         map(Name => Name ? this._filter(Name) : this.MasterData.slice())
       );
-
+      this.nameFilter.valueChanges
+      .subscribe(
+        name => {
+          this.filterValues.MasterDataName = name;
+          this.datasource.filter = JSON.stringify(this.filterValues);
+        }
+      )
     this.PageLoad();
   }
 
@@ -342,11 +351,18 @@ export class AddMasterDataComponent implements OnInit { PageLoading=true;
         var idx = this.MasterList.findIndex(x => x.MasterDataId == row.MasterDataId)
         this.MasterList.splice(idx, 1);
         this.datasource = new MatTableDataSource<any>(this.MasterList);
+        this.datasource.filterPredicate =this.createFilter();
         this.contentservice.openSnackBar(globalconstants.DeletedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
       });
   }
-
+  createFilter(): (data: any, filter: string) => boolean {
+    let filterFunction = function (data, filter): boolean {
+      let searchTerms = JSON.parse(filter);
+      return data.MasterDataName.toLowerCase().indexOf(searchTerms.MasterDataName) !== -1
+    }
+    return filterFunction;
+  }
   GetSearchMaster() {
 
     this.loading = true;
