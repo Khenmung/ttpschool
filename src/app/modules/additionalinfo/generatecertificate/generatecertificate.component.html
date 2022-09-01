@@ -56,17 +56,43 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
+                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetGeneratedCertificate()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="GetCertificates()">
-                     <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <mat-icon>addnew</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
                 <!-- <button [disabled]="loading" matTooltip="clear all" class="mat-raised-button" (click)="clear()">
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
             </form>
-            <div id="printSection">
+            <mat-table #table style="overflow: auto;" [dataSource]="dataSource"
+                *ngIf="GeneratedCertificatelist.length>0">
+                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
+                    <mat-header-cell *matHeaderCellDef>
+                        {{disCol!='Action'?disCol:''}}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'" matTooltip="save"
+                            mat-mini-fab (click)="View(element)">
+                            <mat-icon>save</mat-icon>
+                            <mat-icon *ngIf="loading">
+                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                            </mat-icon>
+                        </button>
+                        {{element[disCol]}}
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+            </mat-table>
+            <div id="printSection" class="border radial-repeating">
                 <mat-table [dataSource]="dataSource">
                     <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
                         matColumnDef="{{disCol}}">
@@ -78,17 +104,29 @@
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
-                </mat-table>              
+                </mat-table>
             </div>
             <br>
             <div fxLayout="row" fxLayoutAlign="center center">
-            <button (click)="UpdateStudentCertificates()" [disabled]="loading || Permission=='read' || CertificateElements.length==0" 
-                matTooltip="print" printSectionId="printSection" 
-                [useExistingCss]="true"
-                ngxPrint mat-raised-button color="accent">
-                <mat-icon>print</mat-icon>
-            </button>
-        </div>
+                <button [disabled]="loading || Permission=='read' || CertificateElements.length==0" matTooltip="save"
+                    mat-raised-button color="accent" (click)="Save()">
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+                <!-- <button [disabled]="loading || Permission=='read' || CertificateElements.length==0" mat-raised-button
+                    (click)="print()"
+                    color="accent" matTooltip="print">
+                    <mat-icon>print</mat-icon>
+                </button> -->
+                <button (click)="UpdateStudentCertificates()"
+                    [disabled]="loading || Permission=='read' || CertificateElements.length==0" matTooltip="print"
+                    printSectionId="printSection" 
+                    styleSheetFile="assets/print.scss" ngxPrint mat-raised-button color="accent">
+                    <mat-icon>print</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
 </div>

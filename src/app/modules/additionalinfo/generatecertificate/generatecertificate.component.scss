@@ -1,18 +1,38 @@
-mat-form-field,button{
+mat-form-field,
+button {
     margin-right: 15px;
 }
-mat-header-row, mat-row{
+
+mat-header-row,
+mat-row {
     border-bottom-style: none;
-    min-height:0px;
+    min-height         : 0px;
+}
+
+mat-table {
+    padding: 30px;
+}
+
+.divCls {
+    font-size: larger !important;
+    border   : 1px solid lightgray;
+}
+
+.element-row {
+    padding-left : 30px;
+    padding-right: 30px;
+}
+@media print {
+    body * {
+      visibility: hidden;
+    }
+    #printSection, #printSection * {
+      visibility: visible;
+    }
+    #printSection {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
   }
-  mat-table{
-      padding: 30px;
-  }
-  .divCls{
-      font-size: larger !important;
-      border: 1px solid lightgray;
-  }
-  .element-row{
-      padding-left: 30px;
-      padding-right: 30px;
-  }
+  

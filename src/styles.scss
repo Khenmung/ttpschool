@@ -58,6 +58,7 @@ $my-app-theme: mat-light-theme($my-app-primary, $my-app-accent);
 
 mat-card {
     margin-left  : 5px;
+    width:80vw;
     //min-height : 100vh;
 
 }
@@ -74,12 +75,6 @@ mat-card {
 
 }
 
-@media print { @page 
-    {
-        font-size: 133%;
-        size: auto !important
-    } 
-};
 
 .CertificateFont {
     font-family: 'Ewert', cursive;

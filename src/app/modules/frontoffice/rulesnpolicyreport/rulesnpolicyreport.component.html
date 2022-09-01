@@ -32,12 +32,12 @@
         </ng-container>
                 
         <ng-container matColumnDef="Description">
-            <mat-header-cell *matHeaderCellDef style="justify-content:center">{{Category}}
+            <mat-header-cell *matHeaderCellDef style="justify-content:center;font-weight: bolder;font-size: 25pt;">{{Category}}
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <span *ngIf="element.DisplayType == 'Heading'" style="color:#A4de02;font-weight: bold;">{{element.Description}}</span>
-                <span *ngIf="element.DisplayType == 'SubHeading'" style="color:#1E5631;font-weight: bold">{{element.Description}}</span>
-                <span *ngIf="element.DisplayType == 'Text'">{{element.Description}}</span>
+                <span *ngIf="element.DisplayType == 'Heading'" style="color:#A4de02;font-weight: bold;"><pre>{{element.Description}}</pre></span>
+                <span *ngIf="element.DisplayType == 'Sub Heading'" style="padding-left:30px; color:#1E5631;font-weight: bold"><pre>{{element.Description}}</pre></span>
+                <span *ngIf="element.DisplayType == 'Text'"><pre>{{element.Description}}</pre></span>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -438,6 +438,167 @@ export class GenerateCertificateComponent implements OnInit {
       })
 
   }
+  DisplayColumn = [];
+  GeneratedCertificatelist = [];
+  GetGeneratedCertificate() {
+    var filterstr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
+    if (_studentId == undefined) {
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
+    filterstr += " and StudentId eq " + _studentId;
+
+    if (this.SportsCertificate)
+      this.DisplayColumn = ["CertificateType", "ActivityName", "Category", "SubCategory", "Session"];
+    else
+      this.DisplayColumn = ["CertificateType"];
+
+
+    let list: List = new List();
+    list.fields = [
+      'GeneratedCertificateId',
+      'StudentId',
+      'StudentClassId',
+      'ActivityId',
+      'CategoryId',
+      'SubCategoryId',
+      'SessionId',
+      'CertificateTypeId',
+      'IssuedDate'
+    ];
+    list.PageName = "GeneratedCertificates";
+    list.filter = [filterstr];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.GeneratedCertificatelist = [];
+
+        data.value.forEach(d => {
+          var _certificateTypeObj = this.CertificateTypes.filter(a => a.MasterDataId == d.CertificateTypeId);
+          if (_certificateTypeObj.length > 0)
+            d.CertificateType = _certificateTypeObj[0].MasterDataName;
+
+          var _activityNameObj = this.ActivityNames.filter(a => a.MasterDataId == d.ActivityId);
+          if (_activityNameObj.length > 0)
+            d.ActivityName = _activityNameObj[0].MasterDataName;
+
+          var _categoryObj = this.ActivityCategory.filter(a => a.MasterDataId == d.CategoryId);
+          if (_categoryObj.length > 0)
+            d.Category = _categoryObj[0].MasterDataName;
+
+          var _subCategoryObj = this.allMasterData.filter(a => a.MasterDataId == d.SubCategoryId);
+          if (_subCategoryObj.length > 0)
+            d.SubCategory = _subCategoryObj[0].MasterDataName;
+
+          var _sessionObj = this.ActivitySessions.filter(a => a.MasterDataId == d.SessionId);
+          if (_sessionObj.length > 0)
+            d.Session = _sessionObj[0].MasterDataName;
+          this.GeneratedCertificatelist.push(d);
+        })
+        if (this.GeneratedCertificatelist.length == 0) {
+          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        this.dataSource = new MatTableDataSource<any>(this.GeneratedCertificatelist);
+        this.loading = false;
+        this.PageLoading = false;
+      })
+
+  }
+  View(row){
+
+  }
+  Save() {
+
+    debugger;
+
+
+    var _studentObj = this.searchForm.get("searchStudentName").value
+    var _studentclassId = _studentObj.StudentClassId;
+    var _studentId = _studentObj.StudentId;
+
+    var _certificateTypeId = this.searchForm.get("searchCertificateTypeId").value;
+    var _SportsNameId = this.searchForm.get("searchActivityId").value;
+    var _categoryId = this.searchForm.get("searchCategoryId").value;
+    var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
+    var _SessionId = this.searchForm.get("searchSessionId").value;
+
+    if (this.searchForm.get("searchStudentName").value == '') {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+
+    this.loading = true;
+    if (this.SportsCertificate) {
+      if (_SportsNameId == 0) {
+        this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
+        return;
+      }
+    }
+
+    if (_certificateTypeId == 0) {
+      this.contentservice.openSnackBar("Please select certificate type.", globalconstants.ActionText, globalconstants.RedBackground);
+    }
+    let checkFilterString = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    checkFilterString += " and CertificateTypeId eq " + _certificateTypeId;
+    checkFilterString += " and StudentId eq " + _studentId + " and StudentClassId eq " + _studentclassId;
+
+    let list: List = new List();
+    list.fields = ["StudentClassId"];
+    list.PageName = "GeneratedCertificates";
+    list.filter = [checkFilterString];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        if (data.value.length > 0) {
+          this.loading = false;
+          this.PageLoading = false;
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        else {
+          var insertCertificate;
+          insertCertificate.Active = 1;
+          insertCertificate.StudentId = _studentId;
+          insertCertificate.StudentClassId = _studentclassId;
+          insertCertificate.CategoryId = _categoryId;
+          insertCertificate.SubCategoryId = _subCategoryId;
+          insertCertificate.CertificateTypeId = _certificateTypeId;
+          insertCertificate.ActivityId = _SportsNameId;
+          insertCertificate.SessionId = _SessionId;
+          insertCertificate.OrgId = this.LoginUserDetail[0]["orgId"];
+
+          insertCertificate["CreatedDate"] = new Date();
+          insertCertificate["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+          insertCertificate["UpdatedDate"] = new Date();
+          this.insert(insertCertificate);
+        }
+      });
+  }
+  insert(data) {
+
+    //debugger;
+    this.dataservice.postPatch("GenerateCertificates", data, 0, 'post')
+      .subscribe(
+        (data: any) => {
+          this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
+
+        });
+  }
+  print() {
+    var printContents = document.getElementById('printSection').innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     document.body.innerHTML = printContents;
+
+     window.print();
+
+     document.body.innerHTML = originalContents;
+
+  }
+
   CheckType() {
     debugger;
     var _certificateId = this.searchForm.get("searchCertificateTypeId").value;

@@ -77,7 +77,7 @@ const routes: Routes = [
   },
   {
     path: 'edu/misc',
-    loadChildren: () => import('./modules/misc/misc.module').then(m => m.MiscModule)
+    loadChildren: () => import('./modules/frontoffice/misc.module').then(m => m.MiscModule)
   },
   {
     path: 'emp/attendance',

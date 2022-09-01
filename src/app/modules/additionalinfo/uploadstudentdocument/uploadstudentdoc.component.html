@@ -19,11 +19,12 @@
                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
             </mat-icon>
         </button>&nbsp;&nbsp;
-        <span
-            style="border: 1px solid lightgray;width:400px;padding:15px 15px 0px 15px;display: flex;justify-content: center;align-items: center;">
-            <span style="display:flex;flex-direction:column">
+        <div
+            style="border: 1px solid lightgray;width:400px;padding:15px 15px 0px 15px;display: flex;justify-content: center;align-items: center;flex-direction: column;">
+            <div style="margin-bottom: 15px;">Upload New Document</div>
+            <div style="display:flex;flex-direction:column">
                 <input style="margin-bottom: 10px;" #uploadfile type="file" (change)="uploadchange(uploadfile.files)" />
-                <!-- <div style="padding: 15px 15px 0px 15px;"> -->
+                <div style="display:flex">
                     <mat-form-field appearance="outline">
                         <mat-label>Document type</mat-label>
                         <mat-select formControlName="DocTypeId" (selectionChange)="enableUpload($event)">
@@ -36,15 +37,16 @@
                             type
                             is required.</span>
                     </mat-form-field>
-                <!-- </div> -->
-            </span>
-            <span style="margin-top: 15px;">
-                <button [disabled]="loading || Permission=='read' || !EnableUploadButton" type="submit"
-                    (click)="uploadFile()" matTooltip="upload file" mat-raised-button color="accent">
-                    <mat-icon aria-label="file_upload">file_upload</mat-icon>
-                </button>&nbsp;&nbsp;
-            </span>
-        </span>
+
+                    <span style="margin-top: 15px;">
+                        <button [disabled]="loading || Permission=='read' || !EnableUploadButton" type="submit"
+                            (click)="uploadFile()" matTooltip="upload file" mat-raised-button color="accent">
+                            <mat-icon aria-label="file_upload">file_upload</mat-icon>
+                        </button>&nbsp;&nbsp;
+                    </span>
+                </div>
+            </div>
+        </div>
     </form>
 </div>
 <div fxLayout="row" fxLayoutAlign="space-between center" class="mat-elevation-z8">

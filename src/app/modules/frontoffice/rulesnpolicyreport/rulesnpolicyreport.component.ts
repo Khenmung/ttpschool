@@ -247,6 +247,8 @@ export class RulesnpolicyreportComponent implements OnInit {
           })
         }
         //console.log("display",this.RulesOrPolicyList)
+        this.RulesOrPolicyList = this.RulesOrPolicyList.sort((a,b)=>a.Sequence - b.Sequence);
+        
         this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
