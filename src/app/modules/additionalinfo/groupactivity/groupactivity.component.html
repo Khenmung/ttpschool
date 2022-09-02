@@ -1,20 +1,17 @@
 <div style="padding:15px 15px 10px 15px;">
-    <div><strong>Student Activity</strong></div>
+    <div><strong>Student Group Activity</strong></div>
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="width: 100%;">
     <form [formGroup]="searchForm">
         <div>
             <mat-form-field appearance="outline" [style.width.px]="300">
-                <mat-label>Student</mat-label>
-                <input type="text" matInput
-                formControlName="searchStudentName"
-                    [matAutocomplete]="auto">
-                <mat-autocomplete (optionSelected)="SetStudentClassId()" #auto="matAutocomplete" [displayWith]="displayFn">
-                    <mat-option *ngFor="let option of filteredStudents | async" [value]="option">
-                        {{option.Name}}
+                <mat-label>Student group</mat-label>                
+                <mat-select formControlName="searchGroupId">
+                    <mat-option *ngFor="let option of StudentGroups" [value]="option.MasterDataId">
+                        {{option.MasterDataName}}
                     </mat-option>
-                </mat-autocomplete>
+                </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>Activity</mat-label>
@@ -50,7 +47,7 @@
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
                 </mat-icon>
             </button>
-            <button [disabled]="loading || Permission=='read' || StudentClassId==0" matTooltip="add new" mat-mini-fab
+            <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
                 (click)="AddNew()">
                 <mat-icon>add</mat-icon>
             </button>
@@ -80,7 +77,7 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <textarea matInput [maxlength]="800" (blur)="onBlur(element)"
+                    <textarea matInput [maxlength]="900" (blur)="onBlur(element)"
                         [value]="element.Achievement" [(ngModel)]="element.Achievement">
                         </textarea>
                 </mat-form-field>

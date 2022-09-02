@@ -1,5 +1,5 @@
 import { DatePipe, DOCUMENT } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,6 +17,7 @@ import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-generatecertificate',
@@ -24,6 +25,7 @@ import { SwUpdate } from '@angular/service-worker';
   styleUrls: ['./generatecertificate.component.scss']
 })
 export class GenerateCertificateComponent implements OnInit {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   PageLoading = true;
   loading = false;
   LoginUserDetail = [];
@@ -443,17 +445,23 @@ export class GenerateCertificateComponent implements OnInit {
   GetGeneratedCertificate() {
     var filterstr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
-    if (_studentId == undefined) {
-      this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+    var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
+    var _certificationTypeId = this.searchForm.get("searchCertificateTypeId").value;
+
+    if (_certificationTypeId == undefined || _certificationTypeId == 0) {
+      this.contentservice.openSnackBar("Please select certificate type.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
-    filterstr += " and StudentId eq " + _studentId;
+    else {
+      filterstr += " and CertificateTypeId eq " + _certificationTypeId
+    }
+    if (_studentClassId != undefined)
+      filterstr += " and StudentId eq " + _studentId + " and StudentClassId eq " + _studentClassId;
 
     if (this.SportsCertificate)
-      this.DisplayColumn = ["CertificateType", "ActivityName", "Category", "SubCategory", "Session"];
+      this.DisplayColumn = ["StudentName", "CertificateType", "ActivityName", "Category", "SubCategory", "Session"];
     else
-      this.DisplayColumn = ["CertificateType"];
+      this.DisplayColumn = ["StudentName", "CertificateType"];
 
 
     let list: List = new List();
@@ -476,6 +484,13 @@ export class GenerateCertificateComponent implements OnInit {
         this.GeneratedCertificatelist = [];
 
         data.value.forEach(d => {
+          var _studentObj = this.Students.filter(s => s.StudentClassId == d.StudentClassId);
+          if (_studentObj.length > 0) {
+            d.StudentName = _studentObj[0].Name;
+          }
+          else
+            d.StudentName = '';
+
           var _certificateTypeObj = this.CertificateTypes.filter(a => a.MasterDataId == d.CertificateTypeId);
           if (_certificateTypeObj.length > 0)
             d.CertificateType = _certificateTypeObj[0].MasterDataName;
@@ -483,6 +498,7 @@ export class GenerateCertificateComponent implements OnInit {
           var _activityNameObj = this.ActivityNames.filter(a => a.MasterDataId == d.ActivityId);
           if (_activityNameObj.length > 0)
             d.ActivityName = _activityNameObj[0].MasterDataName;
+
 
           var _categoryObj = this.ActivityCategory.filter(a => a.MasterDataId == d.CategoryId);
           if (_categoryObj.length > 0)
@@ -495,18 +511,24 @@ export class GenerateCertificateComponent implements OnInit {
           var _sessionObj = this.ActivitySessions.filter(a => a.MasterDataId == d.SessionId);
           if (_sessionObj.length > 0)
             d.Session = _sessionObj[0].MasterDataName;
-          this.GeneratedCertificatelist.push(d);
+          d.IssuedDate = moment(d.IssuedDate).format('DD-MM-YYYY');
+            this.GeneratedCertificatelist.push(d);
         })
+
         if (this.GeneratedCertificatelist.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
+        if (this.DisplayColumn.indexOf('IssuedDate') == -1) {
+          this.DisplayColumn.push('IssuedDate');
+        }
         this.dataSource = new MatTableDataSource<any>(this.GeneratedCertificatelist);
+        this.dataSource.paginator = this.paginator;
         this.loading = false;
         this.PageLoading = false;
       })
 
   }
-  View(row){
+  View(row) {
 
   }
   Save() {
@@ -541,7 +563,7 @@ export class GenerateCertificateComponent implements OnInit {
     if (_certificateTypeId == 0) {
       this.contentservice.openSnackBar("Please select certificate type.", globalconstants.ActionText, globalconstants.RedBackground);
     }
-    let checkFilterString = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    let checkFilterString = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     checkFilterString += " and CertificateTypeId eq " + _certificateTypeId;
     checkFilterString += " and StudentId eq " + _studentId + " and StudentClassId eq " + _studentclassId;
 
@@ -559,20 +581,23 @@ export class GenerateCertificateComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          var insertCertificate;
-          insertCertificate.Active = 1;
-          insertCertificate.StudentId = _studentId;
-          insertCertificate.StudentClassId = _studentclassId;
-          insertCertificate.CategoryId = _categoryId;
-          insertCertificate.SubCategoryId = _subCategoryId;
-          insertCertificate.CertificateTypeId = _certificateTypeId;
-          insertCertificate.ActivityId = _SportsNameId;
-          insertCertificate.SessionId = _SessionId;
-          insertCertificate.OrgId = this.LoginUserDetail[0]["orgId"];
-
-          insertCertificate["CreatedDate"] = new Date();
-          insertCertificate["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-          insertCertificate["UpdatedDate"] = new Date();
+          var insertCertificate = {
+            GeneratedCertificateId: 0,
+            Active: true,
+            StudentId: _studentId,
+            StudentClassId: _studentclassId,
+            CategoryId: _categoryId,
+            SubCategoryId: _subCategoryId,
+            CertificateTypeId: _certificateTypeId,
+            ActivityId: _SportsNameId,
+            SessionId: _SessionId,
+            OrgId: this.LoginUserDetail[0]["orgId"],
+            IssuedDate: new Date(),
+            CreatedDate: new Date(),
+            CreatedBy: this.LoginUserDetail[0]["userId"],
+            UpdatedDate: new Date()
+          }
+          console.log("lskjd", insertCertificate);
           this.insert(insertCertificate);
         }
       });
@@ -580,22 +605,23 @@ export class GenerateCertificateComponent implements OnInit {
   insert(data) {
 
     //debugger;
-    this.dataservice.postPatch("GenerateCertificates", data, 0, 'post')
+    this.dataservice.postPatch("GeneratedCertificates", data, 0, 'post')
       .subscribe(
         (data: any) => {
+          this.loading = false;
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
 
         });
   }
   print() {
     var printContents = document.getElementById('printSection').innerHTML;
-     var originalContents = document.body.innerHTML;
+    var originalContents = document.body.innerHTML;
 
-     document.body.innerHTML = printContents;
+    document.body.innerHTML = printContents;
 
-     window.print();
+    window.print();
 
-     document.body.innerHTML = originalContents;
+    document.body.innerHTML = originalContents;
 
   }
 

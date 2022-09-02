@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
+import { GroupactivityComponent } from './groupactivity/groupactivity.component';
 import { SportsResultComponent } from './sportsresult/sportsresult.component';
 import { StudentactivityboardComponent } from './studentactivityboard/studentactivityboard.component';
 import { StudentactivityhomeComponent } from './studentactivityhome/studentactivityhome.component';
@@ -29,5 +30,6 @@ export const StudentActivityComponents=[
   StudentDocumentComponent,
   StudentactivityhomeComponent,
   StudentactivityboardComponent,
-  StudentfamilynfriendComponent
+  StudentfamilynfriendComponent,
+  GroupactivityComponent
 ]

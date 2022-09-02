@@ -38,14 +38,14 @@ export class RulesnpolicyreportComponent implements OnInit {
     RulesOrPolicyId: 0,
     RulesOrPolicyCategoryId: 0,
     RuleOrPolicyTypeId: 0,
-    Sequence:0,
+    Sequence: 0,
     Description: '',
     OrgId: 0,
     Active: 0
   };
-  Category ='';
+  Category = '';
   displayedColumns = [
-    "Description"    
+    "Description"
   ];
   SelectedApplicationId = 0;
   searchForm: UntypedFormGroup;
@@ -100,7 +100,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     }
   }
 
-  
+
   onBlur(element) {
     element.Action = true;
   }
@@ -124,18 +124,16 @@ export class RulesnpolicyreportComponent implements OnInit {
 
     //debugger;
     this.loading = true;
-    let checkFilterString = "Description eq '" + globalconstants.encodeSpecialChars(row.Description) + 
-    "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-    if(row.Description.length==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please enter description.",globalconstants.ActionText,globalconstants.RedBackground);
+    let checkFilterString = "Description eq '" + globalconstants.encodeSpecialChars(row.Description) +
+      "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    if (row.Description.length == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter description.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(row.RulesOrPolicyCategoryId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.RulesOrPolicyCategoryId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (row.RulesOrPolicyId > 0)
@@ -167,7 +165,7 @@ export class RulesnpolicyreportComponent implements OnInit {
             this.RulesOrPolicyData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.RulesOrPolicyData["UpdatedDate"] = new Date();
             delete this.RulesOrPolicyData["UpdatedBy"];
-            console.log("rules",this.RulesOrPolicyData)
+            console.log("rules", this.RulesOrPolicyData)
             this.insert(row);
           }
           else {
@@ -219,7 +217,7 @@ export class RulesnpolicyreportComponent implements OnInit {
     else
       filterStr += ' and RulesOrPolicyCategoryId eq ' + _searchCategoryId;
 
-     this.Category = this.RulesOrPolicyCategory.filter(f=>f.MasterDataId ==_searchCategoryId)[0].MasterDataName; 
+    this.Category = this.RulesOrPolicyCategory.filter(f => f.MasterDataId == _searchCategoryId)[0].MasterDataName;
     // if (_searchSubCategoryId > 0) {
     //   filterStr += ' and RuleOrPolicyTypeId eq ' + _searchSubCategoryId;
     // }
@@ -234,28 +232,39 @@ export class RulesnpolicyreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.RulesOrPolicyList = data.value.map((map,indx)=>{
-            var _obj =this.RulesOrPolicyDisplayTypes.filter(f=>f.MasterDataId == map.RuleOrPolicyTypeId);
-            var _displaytype ='';
-            if(_obj.length>0)
-            _displaytype = _obj[0].MasterDataName;
+          this.RulesOrPolicyList = data.value.map((map, indx) => {
+            var _obj = this.RulesOrPolicyDisplayTypes.filter(f => f.MasterDataId == map.RuleOrPolicyTypeId);
+            var _displaytype = '';
+            if (_obj.length > 0)
+              _displaytype = _obj[0].MasterDataName;
 
-            map.SrNo =indx+1;
+            map.SrNo = indx + 1;
             map.DisplayType = _displaytype;
             map.Description = globalconstants.decodeSpecialChars(map.Description);
             return map;
           })
         }
         //console.log("display",this.RulesOrPolicyList)
-        this.RulesOrPolicyList = this.RulesOrPolicyList.sort((a,b)=>a.Sequence - b.Sequence);
-        
+        this.RulesOrPolicyList = this.RulesOrPolicyList.sort((a, b) => a.Sequence - b.Sequence);
+        var _displayType = '';
+        this.RulesOrPolicyList.forEach(r => {
+
+          if (r["DisplayType"] != 'Text') {
+            _displayType = r["DisplayType"]
+          }
+          else if (_displayType == 'Sub Heading') {
+            r.Description = "\t" + r.Description
+          }
+
+        })
+
         this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
         this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
 
   }
-  RulesOrPolicyDisplayTypes=[];
+  RulesOrPolicyDisplayTypes = [];
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -272,11 +281,11 @@ export class RulesnpolicyreportComponent implements OnInit {
   }
 }
 export interface IRulesOrPolicy {
-  SrNo:number;
+  SrNo: number;
   //RulesOrPolicyId: number;
   RulesOrPolicyCategoryId: number;
-  Sequence:number;
-  RuleOrPolicyTypeId:number;
+  Sequence: number;
+  RuleOrPolicyTypeId: number;
   // RuleOrPolicyTypeId: number;
   Description: string;
   // Action: boolean;

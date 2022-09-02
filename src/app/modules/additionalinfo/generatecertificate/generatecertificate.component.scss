@@ -1,38 +1,33 @@
 mat-form-field,
 button {
-    margin-right: 15px;
+  margin-right: 15px;
 }
 
-mat-header-row,
-mat-row {
-    border-bottom-style: none;
-    min-height         : 0px;
+mat-cell,
+mat-header-cell {
+  padding:15px;
+  border-right: 1px solid lightgray;
 }
 
-mat-table {
-    padding: 30px;
-}
-
-.divCls {
-    font-size: larger !important;
-    border   : 1px solid lightgray;
-}
-
+// mat-header-row,
 .element-row {
-    padding-left : 30px;
-    padding-right: 30px;
+  border-bottom-style: none;
+  min-height         : 0px;
+  padding-left : 6cm;
+  padding-right: 6cm;
 }
-@media print {
-    body * {
-      visibility: hidden;
-    }
-    #printSection, #printSection * {
-      visibility: visible;
-    }
-    #printSection {
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-  }
-  
+
+// mat-table {
+//   padding: 30px;
+// }
+
+// .divCls {
+//   font-size: larger !important;
+//   border   : 1px solid lightgray;
+// }
+
+// .element-row {
+//   padding-left : 30px;
+//   padding-right: 30px;
+// }
+
