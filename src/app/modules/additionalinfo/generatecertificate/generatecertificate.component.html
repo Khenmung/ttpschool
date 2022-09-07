@@ -26,6 +26,17 @@
                 </mat-form-field>
                 <div *ngIf="SportsCertificate">
                     <mat-form-field appearance="outline">
+                        <mat-label>Student group</mat-label>
+                        <mat-select formControlName="searchStudentGroupId">
+                            <mat-option value="0">select</mat-option>
+                            <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled">
+                                <mat-option *ngFor="let list of item.group" [value]="list.MasterDataId">
+                                    {{list.MasterDataName}}
+                                </mat-option>
+                            </mat-optgroup>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
                         <mat-label>Activity</mat-label>
                         <mat-select formControlName="searchActivityId" (selectionChange)="SetCategory()">
                             <mat-option value="0">select</mat-option>
@@ -56,15 +67,17 @@
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="GetGeneratedCertificate()">
+
+                <button [disabled]="loading" matTooltip="view" mat-raised-button color="accent"
+                    (click)="GetCertificates()">
                     <mat-icon>search</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
-                <button [disabled]="loading" matTooltip="view" mat-raised-button color="accent"
-                    (click)="GetCertificates()">
-                    <mat-icon>pageview</mat-icon>
+                <button [disabled]="loading" matTooltip="issued certificates" mat-raised-button color="accent"
+                    (click)="GetGeneratedCertificate()">
+                    <mat-icon>format_list_bulleted</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
@@ -73,6 +86,30 @@
                     <mat-icon>clear_all</mat-icon>
                 </button> -->
             </form>
+            <div *ngIf="SportsResultList.length>0">
+                <mat-table [dataSource]="ActivityResultDataSource">
+                    <ng-container *ngFor="let disCol of ActivityDisplayColumn; let colIndex = index"
+                        matColumnDef="{{disCol}}">
+                        <mat-header-cell *matHeaderCellDef>
+                            {{disCol!='Action'?disCol:''}}
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
+                                matTooltip="view" mat-mini-fab (click)="View(element)">
+                                <mat-icon>pageview</mat-icon>
+                                <mat-icon *ngIf="loading">
+                                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                                </mat-icon>
+                            </button>
+                            <span *ngIf="disCol!='Action'">{{element[disCol]}}</span>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="ActivityDisplayColumn"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: ActivityDisplayColumn;"></mat-row>
+                </mat-table>
+                <mat-paginator [pageSizeOptions]="[10,20,50]" style="display:flex;justify-content:center">
+                </mat-paginator>
+            </div>
             <div *ngIf="GeneratedCertificatelist.length>0">
                 <mat-table #table style="overflow: auto;" [dataSource]="dataSource">
                     <ng-container *ngFor="let disCol of DisplayColumn; let colIndex = index" matColumnDef="{{disCol}}">
@@ -80,13 +117,6 @@
                             {{disCol!='Action'?disCol:''}}
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <!-- <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'" matTooltip="save"
-                            mat-mini-fab (click)="View(element)">
-                            <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-                        </button> -->
                             {{element[disCol]}}
                             <!-- <span *ngIf="disCol!='Action'">{{element[disCol]}}</span> -->
                         </mat-cell>
@@ -97,20 +127,20 @@
                 <mat-paginator [pageSizeOptions]="[10,20,50]" style="display:flex;justify-content:center">
                 </mat-paginator>
             </div>
-            <div id="printSection" class="border radial-repeating" *ngIf="GeneratedCertificatelist.length==0">
-                <mat-table [dataSource]="dataSource">
+            <div id="printSection" *ngIf="GeneratedCertificatelist.length==0">
+                <mat-table class="border radial-repeating" [dataSource]="dataSource">
                     <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
                         matColumnDef="{{disCol}}">
                         <mat-header-cell *matHeaderCellDef style="border-right:0px">
                         </mat-header-cell>
-                        <mat-cell style="border-right:0px" *matCellDef="let element" [innerHTML]="element[disCol] | encodeHTML">
+                        <mat-cell style="border-right:0px;justify-content: center;" *matCellDef="let element"
+                            [innerHTML]="element[disCol] | encodeHTML">
                             <!-- <span [ngStyle]="element['Logic']" ></span>                               -->
                         </mat-cell>
                     </ng-container>
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
                 </mat-table>
-
             </div>
             <br>
             <div fxLayout="row" fxLayoutAlign="center center">
@@ -126,7 +156,7 @@
                     color="accent" matTooltip="print">
                     <mat-icon>print</mat-icon>
                 </button> -->
-                <button (click)="UpdateStudentCertificates()"
+                <button (click)="Save()"
                     [disabled]="loading || Permission=='read' || CertificateElements.length==0" matTooltip="print"
                     printSectionId="printSection" styleSheetFile="assets/print.scss" ngxPrint mat-raised-button
                     color="accent">

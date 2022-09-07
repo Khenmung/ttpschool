@@ -10,7 +10,7 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 @Component({
   selector: 'app-sportsresult',
   templateUrl: './sportsresult.component.html',
@@ -168,22 +168,19 @@ export class SportsResultComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    if(row.Secured.length==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please enter title.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.Secured.length == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(row.Achievement.length==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please enter description.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.Achievement.length == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter description.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(row.CategoryId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (row.CategoryId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -291,7 +288,7 @@ export class SportsResultComponent implements OnInit {
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
-    var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
+    //var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
     var _SessionId = this.searchForm.get("searchSessionId").value;
     if (_studentclassId != undefined) {
       filterStr += " and StudentClassId eq " + _studentclassId;
@@ -303,22 +300,22 @@ export class SportsResultComponent implements OnInit {
     if (_SportsNameId > 0) {
       filterStr += " and SportsNameId eq " + _SportsNameId;
     }
-    if(_SessionId==0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    else
-    {
+    // if(_SessionId==0) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    // else
+    if (_SessionId > 0) {
       filterStr += " and SessionId eq " + _SessionId;
     }
-    
+
     if (_categoryId > 0) {
       filterStr += " and CategoryId eq " + _categoryId;
     }
-    if (_subCategoryId > 0) {
-      filterStr += " and SubCategoryId eq " + _subCategoryId;
-    }
+    // if (_subCategoryId > 0) {
+    //   filterStr += " and SubCategoryId eq " + _subCategoryId;
+    // }
     // else {
     //   this.loading = false;
     //   this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -327,7 +324,7 @@ export class SportsResultComponent implements OnInit {
     // if (_SessionId > 0) {
     //   filterStr += " and SessionId eq " + _SessionId;
     // }
-    
+
     this.loading = true;
     this.SportsResultList = [];
 
@@ -350,14 +347,18 @@ export class SportsResultComponent implements OnInit {
     this.SportsResultList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
+        var _subCategory = [];
         this.SportsResultList = data.value.map(m => {
-
+          if (m.CategoryId > 0)
+            _subCategory = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
+          else
+            _subCategory = [];
           var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
           if (obj.length > 0)
             m.SportsName = obj[0].MasterDataName;
           else
             m.SportsName = '';
-          m.SubCategories = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
+          m.SubCategories = _subCategory;
           m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
           m.Action = false;
           return m;
@@ -373,7 +374,10 @@ export class SportsResultComponent implements OnInit {
 
   }
   SelectSubCategory(row, event) {
-    row.SubCategories = this.allMasterData.filter(f => f.ParentId == row.CategoryId);
+    if (row.CategoryId > 0)
+      row.SubCategories = this.allMasterData.filter(f => f.ParentId == row.CategoryId);
+    else
+      row.SubCategories = [];
     this.onBlur(row);
   }
   GetMasterData() {
@@ -390,38 +394,39 @@ export class SportsResultComponent implements OnInit {
   }
   SetCategory() {
     var _activityId = this.searchForm.get("searchActivityId").value;
-    this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
+    if (_activityId > 0)
+      this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
   }
   AddNew() {
     var _activityId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     var _sessionId = this.searchForm.get("searchSessionId").value;
-    if(_activityId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select activity.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (_activityId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(_categoryId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (_categoryId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(_sessionId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select session.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (_sessionId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
+    var _subcategory = [];
+    if (_categoryId > 0)
+      _subcategory = this.allMasterData.filter(f => f.ParentId == _categoryId);
     var newdata = {
       SportResultId: 0,
       Secured: '',
       Achievement: '',
       SportsNameId: _activityId,
       CategoryId: _categoryId,
-      SubCategoryId:0,
-      SubCategories: this.allMasterData.filter(f=>f.ParentId == _categoryId),
+      SubCategoryId: 0,
+      SubCategories: _subcategory,
       StudentClassId: this.StudentClassId,
       AchievementDate: new Date(),
       SessionId: this.searchForm.get("searchSessionId").value,
@@ -439,7 +444,10 @@ export class SportsResultComponent implements OnInit {
     debugger;
     row.Action = true;
     var item = this.SportsResultList.filter(f => f.SportResultId == row.SportResultId);
-    item[0].SubCategories = this.allMasterData.filter(f => f.ParentId == row.CategoryId);
+    if (row.CategoryId > 0)
+      item[0].SubCategories = this.allMasterData.filter(f => f.ParentId == row.CategoryId);
+    else
+      item[0].SubCategories = [];
 
     this.dataSource = new MatTableDataSource(this.SportsResultList);
   }

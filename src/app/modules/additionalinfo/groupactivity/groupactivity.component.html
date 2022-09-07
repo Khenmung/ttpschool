@@ -6,11 +6,14 @@
     <form [formGroup]="searchForm">
         <div>
             <mat-form-field appearance="outline" [style.width.px]="300">
-                <mat-label>Student group</mat-label>                
+                <mat-label>Student group</mat-label>
                 <mat-select formControlName="searchGroupId">
-                    <mat-option *ngFor="let option of StudentGroups" [value]="option.MasterDataId">
-                        {{option.MasterDataName}}
-                    </mat-option>
+                    <mat-option value="0">select</mat-option>
+                    <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled">
+                        <mat-option *ngFor="let list of item.group" [value]="list.MasterDataId">
+                            {{list.MasterDataName}}
+                        </mat-option>
+                    </mat-optgroup>
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
@@ -38,17 +41,14 @@
             </mat-form-field>
         </div>
         <div style="width:100%;display: flex; justify-content: center;">
-            <button [disabled]="loading" style="margin-right:15px" 
-            matTooltip="search"
-            mat-raised-button color="accent"
+            <button [disabled]="loading" style="margin-right:15px" matTooltip="search" mat-raised-button color="accent"
                 (click)="GetSportsResult()">
                 <mat-icon>search</mat-icon>
                 <mat-icon *ngIf="loading">
                     <mat-spinner diameter="20" color="Blue"></mat-spinner>
                 </mat-icon>
             </button>
-            <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab
-                (click)="AddNew()">
+            <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
                 <mat-icon>add</mat-icon>
             </button>
         </div>
@@ -77,8 +77,8 @@
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <textarea matInput [maxlength]="900" (blur)="onBlur(element)"
-                        [value]="element.Achievement" [(ngModel)]="element.Achievement">
+                    <textarea matInput [maxlength]="900" rows="4" (blur)="onBlur(element)" [value]="element.Achievement"
+                        [(ngModel)]="element.Achievement">
                         </textarea>
                 </mat-form-field>
             </mat-cell>

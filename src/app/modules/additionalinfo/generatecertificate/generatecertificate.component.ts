@@ -67,6 +67,7 @@ export class GenerateCertificateComponent implements OnInit {
   StudentAttendanceList = [];
   StudentClasses = [];
   dataSource: MatTableDataSource<any>;
+  ActivityResultDataSource: MatTableDataSource<any>;
   allMasterData = [];
   //studentSearchForm: FormGroup;
   filteredStudents: Observable<IStudent[]>;
@@ -114,6 +115,7 @@ export class GenerateCertificateComponent implements OnInit {
     //this.loadTheme();
     //debugger;
     this.searchForm = this.fb.group({
+      searchStudentGroupId: [0],
       searchActivityId: [0],
       searchCategoryId: [0],
       searchSubCategoryId: [0],
@@ -255,13 +257,14 @@ export class GenerateCertificateComponent implements OnInit {
         ////console.log('data.value',data.value)
         debugger;
         this.StudentForVariables = [];
-        var _activityName = '', _activityCategory = '', _activitySubCategory = '', _activitySession = '', _secured = '';
-        if (this.SportsResultList.length > 0) {
-          _activityName = this.SportsResultList[0].ActivityName;
-          _activityCategory = this.SportsResultList[0].Category;
-          _activitySubCategory = this.SportsResultList[0].SubCategory;
-          _activitySession = this.SportsResultList[0].Session;
-          _secured = this.SportsResultList[0].Secured;
+        var _groupName = '', _activityName = '', _activityCategory = '', _activitySubCategory = '', _activitySession = '', _secured = '';
+        if (this.SelectedActivity.length > 0) {
+          _groupName = this.SelectedActivity[0].GroupName;
+          _activityName = this.SelectedActivity[0].ActivityName;
+          _activityCategory = this.SelectedActivity[0].Category;
+          _activitySubCategory = this.SelectedActivity[0].SubCategory;
+          _activitySession = this.SelectedActivity[0].Session;
+          _secured = this.SelectedActivity[0].Secured;
         }
 
         data.value.forEach(d => {
@@ -323,6 +326,7 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "ReasonForLeaving", val: _reason },
             { name: "Batch", val: _batch },
             { name: "House", val: _house },
+            { name: "GroupName", val: _groupName },
             { name: "ActivityName", val: _activityName },
             { name: "ActivityCategory", val: _activityCategory },
             { name: "ActivitySubCategory", val: _activitySubCategory },
@@ -342,9 +346,10 @@ export class GenerateCertificateComponent implements OnInit {
     });
 
   }
+  styleStrUse = {};
   GenerateCertificate() {
     debugger;
-    var _certificateBody = this.allMasterData.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)
+    var _certificateBody = JSON.parse(JSON.stringify(this.allMasterData.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)));
     if (_certificateBody.length == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText, globalconstants.RedBackground);
@@ -352,7 +357,7 @@ export class GenerateCertificateComponent implements OnInit {
     }
 
     var certificateavailable = true;
-    var _certificateFormula = this.allMasterData.filter(a => a.MasterDataId == this.searchForm.get("searchCertificateTypeId").value)
+    var _certificateFormula = JSON.parse(JSON.stringify(this.allMasterData.filter(a => a.MasterDataId == this.searchForm.get("searchCertificateTypeId").value)));
     if (_certificateFormula.length > 0) {
       for (var i = 0; i < _certificateFormula.length; i++) {
         if (_certificateFormula[i].Logic.length > 0) {
@@ -381,6 +386,7 @@ export class GenerateCertificateComponent implements OnInit {
       });
     })
     _certificateBody.sort((a, b) => a.Sequence - b.Sequence);
+
     this.CertificateElements = [
       ...this.CommonHeader,
       ..._certificateBody,
@@ -395,10 +401,14 @@ export class GenerateCertificateComponent implements OnInit {
     this.CommonStyles.forEach(s => {
       styleStr += s.Description;
     });
+    //this.styleStrUse ="{"+ styleStr.split('{').join(':{').split('}').join('},') + "}";
+    //console.log("this.styleStr.toString()", this.styleStrUse)
+
     this.loadTheme(styleStr);
-    console.log("CertificateElements", this.CertificateElements)
+
     this.dataSource = new MatTableDataSource<any>(this.CertificateElements);
-    this.loading = false; this.PageLoading = false;
+    this.loading = false; 
+    this.PageLoading = false;
   }
   GetExamStudentSubjectResults() {
 
@@ -512,7 +522,7 @@ export class GenerateCertificateComponent implements OnInit {
           if (_sessionObj.length > 0)
             d.Session = _sessionObj[0].MasterDataName;
           d.IssuedDate = moment(d.IssuedDate).format('DD-MM-YYYY');
-            this.GeneratedCertificatelist.push(d);
+          this.GeneratedCertificatelist.push(d);
         })
 
         if (this.GeneratedCertificatelist.length == 0) {
@@ -528,8 +538,12 @@ export class GenerateCertificateComponent implements OnInit {
       })
 
   }
+  SelectedActivity=[];
   View(row) {
-
+    row.Action=false;
+    this.SelectedActivity=[];
+    this.SelectedActivity.push(row);
+    this.GetStudentAttendance();
   }
   Save() {
 
@@ -540,6 +554,7 @@ export class GenerateCertificateComponent implements OnInit {
     var _studentclassId = _studentObj.StudentClassId;
     var _studentId = _studentObj.StudentId;
 
+    var _searchStudentGroupId = this.searchForm.get("searchStudentGroupId").value;
     var _certificateTypeId = this.searchForm.get("searchCertificateTypeId").value;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
@@ -629,7 +644,7 @@ export class GenerateCertificateComponent implements OnInit {
     debugger;
     var _certificateId = this.searchForm.get("searchCertificateTypeId").value;
     var obj = this.CertificateTypes.filter(f => f.MasterDataId == _certificateId);
-    if (obj.length > 0 && obj[0].MasterDataName.toLowerCase() == 'sports certificate') {
+    if (obj.length > 0 && (obj[0].MasterDataName.toLowerCase() == 'sports certificate' || obj[0].MasterDataName.toLowerCase() == 'moments certificate')) {
       this.SportsCertificate = true;
     }
     else
@@ -648,6 +663,9 @@ export class GenerateCertificateComponent implements OnInit {
   ActivityCategory = [];
   ActivityNames = [];
   ActivitySessions = [];
+  StudentClubs = [];
+  StudentGroups = [];
+  Groups = [];
   GetMasterData() {
     debugger;
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -655,6 +673,26 @@ export class GenerateCertificateComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+
+        this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
+        this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
+        //this.StudentGroups = [...this.StudentClubs, ...this.Houses, ...this.StudentGroups];
+        this.Groups.push({
+          name: "Club",
+          disable: true,
+          group: this.StudentClubs
+        },
+          {
+            name: "House",
+            disable: true,
+            group: this.Houses
+          },
+          {
+            name: "Student Group",
+            disable: true,
+            group: this.StudentGroups
+          }
+        )
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
@@ -774,33 +812,43 @@ export class GenerateCertificateComponent implements OnInit {
       })
   }
   SportsResultList = [];
+  ActivityDisplayColumn = ["GroupName", "SportsName", "Category", "SubCategory", "Session", "Action"];
   GetSportsResult() {
     debugger;
     var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-
-
+    var _searchStudentGroupId = this.searchForm.get("searchStudentGroupId").value;
     var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
     var _SessionId = this.searchForm.get("searchSessionId").value;
-    if (_studentclassId != undefined) {
+    if (_studentclassId != undefined && _searchStudentGroupId == 0) {
       filterStr += " and StudentClassId eq " + _studentclassId;
     }
-    else {
+    if (_studentclassId == undefined) {
+      this.loading=false;
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if(_searchStudentGroupId == 0)
+    {
+      this.loading=false;
+      this.contentservice.openSnackBar("Please select student group.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (_SportsNameId > 0) {
       filterStr += " and SportsNameId eq " + _SportsNameId;
     }
-    if (_SessionId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    else {
+    // if (_SessionId == 0) {
+    //   this.loading = false;
+    //   this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
+    if (_SessionId > 0) {
       filterStr += " and SessionId eq " + _SessionId;
+    }
+    if (_searchStudentGroupId > 0) {
+      filterStr += " and GroupId eq " + _searchStudentGroupId;
     }
 
     if (_categoryId > 0) {
@@ -817,6 +865,7 @@ export class GenerateCertificateComponent implements OnInit {
     list.fields = [
       "SportResultId",
       "StudentClassId",
+      "GroupId",
       "Secured",
       "Achievement",
       "SportsNameId",
@@ -833,6 +882,20 @@ export class GenerateCertificateComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.SportsResultList = data.value.map(m => {
+
+          var objGroup = [];
+          this.Groups.forEach(f => {
+            f.group.forEach(g => {
+              if (g.MasterDataId == m.GroupId)
+                objGroup.push(g);
+            })
+          });
+
+          if (objGroup.length > 0)
+            m.GroupName = objGroup[0].MasterDataName;
+          else
+            m.GroupName = '';
+
           var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
           if (obj.length > 0)
             m.SportsName = obj[0].MasterDataName;
@@ -867,8 +930,11 @@ export class GenerateCertificateComponent implements OnInit {
           this.loading = false;
           this.contentservice.openSnackBar("No activity record found for this student.", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        else
-          this.GetStudentAttendance();
+        else {
+          this.ActivityResultDataSource = new MatTableDataSource<any>(this.SportsResultList);
+        }
+        this.loading = false;
+
       });
 
   }
@@ -981,7 +1047,7 @@ export class GenerateCertificateComponent implements OnInit {
       });
   }
   GetStudentAttendance() {
-
+    this.loading =true;
     let list: List = new List();
     list.fields = [
       "AttendanceId",

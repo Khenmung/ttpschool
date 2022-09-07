@@ -33,14 +33,14 @@ export class HeaderComponent implements OnInit {
     this.LoginUserDetails = this.tokenStorage.getUserDetail();
     if (this.LoginUserDetails.length == 0) {
       this.loggedIn = false;
-      this.logoPath = "assets/images/newttplogo.png"
+      this.logoPath = "assets/images/ttplogo1.png"
     }
     else {
       this.loggedIn = true;
       this.userName = localStorage.getItem('username');
       this.logoPath = this.LoginUserDetails[0].logoPath;
       if (this.logoPath == undefined) {
-        this.logoPath = "assets/images/newttplogo.png"
+        this.logoPath = "assets/images/ttplogo1.png"
       }
       this.OrganizationName = this.LoginUserDetails[0].org
       var SelectedApplicationId = this.tokenStorage.getSelectedAPPId();

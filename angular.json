@@ -53,7 +53,8 @@
             "optimization": false,
             "namedChunks": true,
             "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "ngswConfigPath": "ngsw-config.json",
+            "baseHref":"/"
           },
           "configurations": {
             "dev": {

@@ -229,6 +229,7 @@ export class NoOfStudentComponent implements OnInit {
       .subscribe((StudentClassesdb: any) => {
         //console.log("Studenclass no.", StudentClassesdb.value)
         var errormsg = '';
+        this.BoyGirlTotal=[];
         this.StudentClassList = StudentClassesdb.value.map(student => {
           var _sectionname = ''
           var _pid = 0
@@ -356,7 +357,7 @@ export class NoOfStudentComponent implements OnInit {
           this.HeaderTitle = '';
           this.contentservice.openSnackBar("No record found!", globalconstants.ActionText, globalconstants.RedBackground);
         }
-        console.log("BoyGirlTotal", this.BoyGirlTotal);
+        //console.log("BoyGirlTotal", this.BoyGirlTotal);
         var _sorted = pivottedClass.sort((a, b) => +a.Sequence - +b.Sequence);
         this.dataSource = new MatTableDataSource<IStudentClass>(_sorted);
         this.dataSource.sort = this.sort;

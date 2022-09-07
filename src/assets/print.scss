@@ -1,54 +1,130 @@
+/* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Ewert&display=swap');
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import url("https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.3.0/paper.css");
+@import '~@angular/material/theming';
+
+/* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
+
+mat-table {
+	margin-bottom: 0px;
+	margin-left  : 0px;
+	width        : 100%;
+	//	box-sizing: border-box;
+}
+
+mat-cell,
+mat-header-cell {
+
+	border-right: 1px solid lightgray;
+}
+
 .header {
-    width    : 100%;
-    font-size: 30px;
-    color    : blue
+	width    : 100%;
+	font-size: 30px;
+	color    : blue
 }
 
 .container {
-    width          : 100%;
-    display        : flex;
-    justify-content: space-between;
-    text-align     : center
+	width          : 100%;
+	display        : flex;
+	justify-content: space-between;
+	text-align     : center;
+	margin         : 0px;
 }
 
 span {
-    width: 100%
+	width: 100%;
 }
 
 .blank {
-    display        : flex;
-    justify-content: center;
-    font-weight    : bold;
-    width          : 300px;
-    border-bottom  : 1px solid lightgray;
-    margin-bottom  : 15px
-}
-.headpad{padding:30px 30px 15px 0px;font-size:30pt}
-.txtalign{ text-align:center }
-.width100{width:100%;margin:0px;text-align:center}.red{color:red;font-weight:bold}
-.cerhead{font-size:30px;padding:50px 0px 50px 0px;}
-.CertificateFont {
-    font-family: "Ewert", cursive;
+	display        : flex;
+	justify-content: center;
+	font-weight    : bold;
+	flex           : 1 1 300px;
+	border-bottom  : 1px solid lightgray;
+	margin-bottom  : 15px
 }
 
-body {
-	font-family: Roboto,Helvetica Neue;
-	margin: 60px;
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	grid-gap: 60px;
+.headpad {
+	letter-spacing: 15px;
+	padding       : 30px 0px 15px 0px;
+	font-size     : 35pt;
+	font-weight   : bolder;
 }
+
+.txtalign {
+	text-align: center
+}
+
+.width100 {
+	width     : 100%;
+	margin    : 0px;
+	text-align: center
+}
+
+div {
+	margin-bottom: 8px;
+}
+
+.red {
+	color      : red;
+	font-weight: bold
+}
+
+.cerhead {
+
+	font-size: 30px;
+	padding  : 30px 0px 30px 0px;
+}
+
+.CertificateFont {
+	font-family: "Ewert", cursive;
+}
+
+.contentwrapper {
+	display        : flex;
+	justify-content: center;
+	flex-direction : column;
+	margin-top     : 20px;
+	margin-bottom  : 20px;
+	width          : 100%;
+
+}
+
+.element-row {
+	width              : 90%;
+	border-bottom-style: none;
+	min-height         : 0px;
+	//padding-left : 100px;
+	//padding-right: 100px;
+}
+
 
 .border {
-	font-size: 1.6rem;
-	display: grid;
-	place-items: center;
-	min-height: 200px;
-	border: 8px solid;
-	padding: 1rem;
+	margin-left  : 0rem;
+	//font-size  : 1.6rem;
+	display      : grid;
+	place-items  : center;
+	min-height   : 200px;
+	border       : 8px solid;
+	//padding    : 1rem;
+	width        : 100vw;
 }
+
+
+body {
+	//font-family: Roboto,Helvetica Neue,'Courier New', Courier, monospace,"Ewert";
+	font-size            : 14px;
+	margin               : 0px;
+	padding              : 0px;
+	size                 : A5 landscape;
+	display              : grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	grid-gap             : 60px;
+}
+
 
 .full {
 	border-image: linear-gradient(45deg, turquoise, greenyellow) 1;
@@ -57,6 +133,7 @@ body {
 .sides {
 	border-image: linear-gradient(to left, turquoise, greenyellow) 1 0;
 }
+
 .sides-2 {
 	border-image: linear-gradient(to bottom, turquoise, greenyellow) 0 1;
 }
@@ -68,14 +145,11 @@ body {
 
 .radial-repeating {
 	border-width: 20px;
-	border-image: repeating-radial-gradient(
-			circle at 10px,
+	border-image: repeating-radial-gradient(circle at 10px,
 			turquoise,
 			pink 2px,
 			greenyellow 4px,
-			pink 2px
-		)
-		1;
+			pink 2px) 1;
 }
 
 /* border radius example is drawn from this pen: https://codepen.io/shshaw/pen/MqMZGR
@@ -83,25 +157,27 @@ I've added a few comments on why we're using certain properties
 */
 
 .full-withradius {
-	position: relative;
+	position  : relative;
 	background: #fff;
 
 	/*The background extends to the outside edge of the padding. No background is drawn beneath the border.*/
 	background-clip: padding-box;
 
-	border: solid 8px transparent;
+	border       : solid 8px transparent;
 	border-radius: 0.8rem;
 
 	&:before {
-		content: "";
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		z-index: -1;
-		margin: -8px; /* same as border width */
-		border-radius: inherit; /* inherit container box's radius */
-		background: linear-gradient(to left, turquoise, greenyellow);
+		content      : "";
+		position     : absolute;
+		top          : 0;
+		right        : 0;
+		bottom       : 0;
+		left         : 0;
+		z-index      : -1;
+		margin       : -8px;
+		/* same as border width */
+		border-radius: inherit;
+		/* inherit container box's radius */
+		background   : linear-gradient(to left, turquoise, greenyellow);
 	}
 }

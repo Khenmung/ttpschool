@@ -13,7 +13,7 @@ import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TableUtil } from 'src/app/shared/TableUtil';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as XLSX from 'xlsx';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-datadump',
@@ -68,6 +68,8 @@ export class DatadumpComponent implements OnInit {
   filteredMothers: Observable<IStudent[]>;
   LoginUserDetail;
   FeePaymentPermission = '';
+  ClassGroups = [];
+  ClassGroupMapping = [];
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
     private dataservice: NaomitsuService,
@@ -104,9 +106,19 @@ export class DatadumpComponent implements OnInit {
       this.filterBatchIdNOrgId = globalconstants.getStandardFilterWithBatchId(this.token);
       this.studentSearchForm = this.fb.group({
         searchRemarkId: [0],
-        searchClassId: [0],
+        searchGroupId: [0],
       })
-
+      this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
+        .subscribe((data: any) => {
+          this.ClassGroups = [...data.value];
+        });
+      this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+        .subscribe((data: any) => {
+          this.ClassGroupMapping = data.value.map(f => {
+            f.ClassName = f.Class.ClassName;
+            return f;
+          });
+        })
       // this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
       //   .pipe(
       //     startWith(''),
@@ -355,10 +367,12 @@ export class DatadumpComponent implements OnInit {
     debugger;
     this.loading = true;
     let checkFilterString = '';//"OrgId eq " + this.LoginUserDetail[0]["orgId"] + ' and Batch eq ' + 
-    var _ClassId = this.studentSearchForm.get("searchClassId").value;
+    var _ClassGroupId = this.studentSearchForm.get("searchGroupId").value;
+    var _classes = this.ClassGroupMapping.filter(c => c.ClassGroupId == _ClassGroupId);
+
     var _remarkId = this.studentSearchForm.get("searchRemarkId").value;
 
-    if (_remarkId == 0 && _ClassId == 0) {
+    if (_remarkId == 0 && _ClassGroupId == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please enter atleast one parameter.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -367,12 +381,12 @@ export class DatadumpComponent implements OnInit {
       checkFilterString += " and RemarkId eq " + _remarkId;
     }
     var classfilter = '';
-    if (_ClassId > 0) {
-      classfilter = 'ClassId eq ' + _ClassId + ' and '
-    }
+    // if (_ClassId > 0) {
+    //   classfilter = 'ClassId eq ' + _ClassId + ' and '
+    // }
     let list: List = new List();
     list.fields = ["*"];
-    list.lookupFields = ["StudentClasses($filter=" + classfilter + "BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId)"];
+    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";
@@ -382,8 +396,15 @@ export class DatadumpComponent implements OnInit {
         ////console.log(data.value);
         if (data.value.length > 0) {
           var formattedData = [];
-          if (_ClassId > 0) {
-            formattedData = data.value.filter(f => f.StudentClasses.length > 0);
+          if (_ClassGroupId > 0) {
+            data.value.forEach(f => {
+              if (f.StudentClasses.length > 0) {
+                var cls = this.Classes.filter(c => c.ClassId == f.StudentClasses[0].ClassId);
+                if (cls.length > 0) {
+                  formattedData.push(f);
+                }
+              }
+            });
           }
           else {
             formattedData = [...data.value];
@@ -406,10 +427,15 @@ export class DatadumpComponent implements OnInit {
             return sc;
           });
           this.ELEMENT_DATA = formattedData.map(element => {
-            var _lastname = element.LastName == null? '' : " " + element.LastName;
+            var _lastname = element.LastName == null ? '' : " " + element.LastName;
             element.Name = element.FirstName + _lastname;
-            if (element.RemarkId > 0)
-              element.Remarks = this.Remarks.filter(f => f.MasterDataId == element.RemarkId)[0].MasterDataName;
+            if (element.RemarkId > 0) {
+              var obj = this.Remarks.filter(f => f.MasterDataId == element.RemarkId);
+              if (obj.length > 0)
+                element.Remarks = obj[0].MasterDataName;
+              else
+                element.Remarks = '';
+            }
             else
               element.Remarks = '';
             delete element.RemarkId;
@@ -425,21 +451,21 @@ export class DatadumpComponent implements OnInit {
                   if (SectionFilter.length == 0)
                     element.Section = '';
                   else
-                  element.Section = SectionFilter[0].MasterDataName;
+                    element.Section = SectionFilter[0].MasterDataName;
                 }
                 else
-                element.Section = '';
+                  element.Section = '';
                 delete studcls.SectionId;
 
                 var clsobj = this.Classes.filter(cls => {
                   return cls.ClassId == element.StudentClasses[0].ClassId
                 })
                 if (clsobj.length > 0)
-                element.ClassName = clsobj[0].ClassName;
+                  element.ClassName = clsobj[0].ClassName;
                 else
-                element.ClassName = '';
+                  element.ClassName = '';
                 element.RollNo = studcls.RollNo;
-                element.StudentClassId =studcls.StudentClassId;
+                element.StudentClassId = studcls.StudentClassId;
               })
               //delete element.ClassId;
             }
@@ -662,7 +688,7 @@ export class DatadumpComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         this.exportArray();
-        console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
+        //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
         // if (this.ELEMENT_DATA.length > 0) {
         //   Object.keys(this.ELEMENT_DATA[0]).forEach(prop => {
         //     if (this.displayedColumns.indexOf(prop) == -1)
@@ -799,7 +825,7 @@ export class DatadumpComponent implements OnInit {
               _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
             }
             student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            var _lastname = student.LastName == null ? '' : " " + student.LastName;
             _name = student.FirstName + _lastname;
             var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
             return {
