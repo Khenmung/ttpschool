@@ -8,13 +8,12 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { NgxPrintModule } from 'ngx-print';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { EvaluationstatusComponent } from './evaluationstatus/evaluationstatus.component';
-//import { EvaluationresultComponent } from './evaluationresult/evaluationresult.component';
-//import { EvaluationnameComponent } from './evaluationname/evaluationname.component';
 
 @NgModule({
   declarations: [
     EvaluationComponents,
-    EvaluationstatusComponent
+    EvaluationstatusComponent,
+    
   ],
   imports: [
     CommonModule,

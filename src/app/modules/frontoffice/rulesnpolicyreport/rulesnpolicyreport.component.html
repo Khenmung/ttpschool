@@ -6,7 +6,7 @@
     <!-- <alert></alert> -->
     <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
     <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline" [style.width.px]="300">
+        <mat-form-field appearance="outline" [style.width.px]="400">
             <mat-label>Category</mat-label>
             <mat-select formControlName="searchCategoryId">
                 <mat-option *ngFor="let item of RulesOrPolicyCategory" [value]="item.MasterDataId">
@@ -37,11 +37,11 @@
             <mat-cell *matCellDef="let element">
                 <span *ngIf="element.DisplayType == 'Heading'" style="color:#A4de02;font-weight: bold;"><pre><span class="pre">{{element.Description}}</span></pre></span>
                 <span *ngIf="element.DisplayType == 'Sub Heading'" style="padding-left:30px; color:#1E5631;font-weight: bold"><pre><span class="pre">{{element.Description}}</span></pre></span>
-                <span *ngIf="element.DisplayType == 'Text'"><pre><span class="pre">{{element.Description}}</span></pre></span>
+                <span *ngIf="element.DisplayType == 'Text'" [innerHTML]="element.Description | encodeHTML"></span>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;">
+        <mat-row *matRowDef="let row; columns: displayedColumns;" style="display:flex;align-items:center">
         </mat-row>
     </mat-table>
     <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,100]">

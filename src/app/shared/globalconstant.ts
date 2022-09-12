@@ -219,7 +219,8 @@ export class globalconstants {
                     'EVALUATIONTYPE': 'evaluation type',
                     'EVALUATIONRESULT': 'evaluation result',
                     'CLASSEVALUATIONOPTION': 'answer option',
-                    'EVALUATIONANDEXAM': 'evaluation and exam'
+                    'EVALUATIONANDEXAM': 'evaluation and exam',
+                    'QUESTIONBANK': 'question bank'
                 },
                 'REPORT': {
                     'REPORT': 'report',
@@ -335,9 +336,11 @@ export class globalconstants {
                 "EVALUATIONTYPE": "evaluation type",
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
                 "SUBJECTCATEGORY": "subject category",
+                "BOOKCATEGORY": "question bank category",
                 "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
                 "STUDENTREMARKS": "student remark",
-                "EXAMRESULTPROPERTY": "exam result property"
+                "EXAMRESULTPROPERTY": "exam result property",
+                "DIFFICULTYLEVEL": "question difficulty level"
             },
             "leave": {
                 "REPORTNAMES": "leave report name",

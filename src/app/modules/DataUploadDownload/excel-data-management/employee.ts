@@ -1,7 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ContentService } from "src/app/shared/content.service";
 import { NaomitsuService } from "src/app/shared/databaseService";
-import { globalconstants } from "src/app/shared/globalconstant";
 import { TokenStorageService } from "src/app/_services/token-storage.service";
 @Injectable({
     providedIn: 'root'

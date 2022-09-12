@@ -25,7 +25,7 @@ export class StudentAttendanceComponent implements OnInit {
   @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  edited = false;
+  //edited = false;
   //AnyEnableSave =false;
   EnableSave = true;
   Permission = 'deny';
@@ -63,6 +63,7 @@ export class StudentAttendanceComponent implements OnInit {
     AttendanceStatus: 0,
     AttendanceDate: new Date(),
     ClassSubjectId: 0,
+    TeacherId:0,
     Remarks: '',
     BatchId: 0,
     OrgId: 0
@@ -129,6 +130,7 @@ export class StudentAttendanceComponent implements OnInit {
 
   }
   checkall(value) {
+    debugger;
     this.StudentAttendanceList.forEach(record => {
       if (value.checked) {
         record.AttendanceStatus = 1;
@@ -173,11 +175,12 @@ export class StudentAttendanceComponent implements OnInit {
       this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if (_AttendanceDate.getTime() != today.getTime()) {
-      this.EnableSave = false;
-    }
-    else
-      this.EnableSave = true;
+    // if (_AttendanceDate.getTime() != today.getTime()) {
+    //   this.EnableSave = false;
+    // }
+    // else
+    //   this.EnableSave = true;
+    this.EnableSave = true;
 
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;
@@ -229,8 +232,8 @@ export class StudentAttendanceComponent implements OnInit {
           }
         })
         //var date = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-        var datefilterStr = ' and AttendanceDate ge ' + moment(_AttendanceDate).format('yyyy-MM-DD')
-        datefilterStr += ' and AttendanceDate lt ' + moment(_AttendanceDate).add(1, 'day').format('yyyy-MM-DD')
+        var datefilterStr = ' and AttendanceDate ge ' + moment(this.searchForm.get("searchAttendanceDate").value).format('yyyy-MM-DD')
+        datefilterStr += ' and AttendanceDate lt ' + moment(this.searchForm.get("searchAttendanceDate").value).add(1, 'day').format('yyyy-MM-DD')
         datefilterStr += ' and StudentClassId gt 0'
 
         let list: List = new List();
@@ -315,7 +318,9 @@ export class StudentAttendanceComponent implements OnInit {
         });
   }
   saveall() {
+    debugger;
     var toUpdateAttendance = this.StudentAttendanceList.filter(f => f.Action);
+    console.log("toUpdateAttendance",toUpdateAttendance);
     this.NoOfRecordToUpdate = toUpdateAttendance.length;
     this.loading=true;
     toUpdateAttendance.forEach((record) => {
@@ -334,15 +339,16 @@ export class StudentAttendanceComponent implements OnInit {
   UpdateOrSave(row) {
 
     //this.NoOfRecordToUpdate = 0;
-    var today = new Date();
+    var _AttendanceDate = this.searchForm.get("searchAttendanceDate").value;
+    
     var clssubjectid = this.searchForm.get("searchClassSubjectId").value
     if (clssubjectid == undefined)
       clssubjectid = 0;
 
     let checkFilterString = "AttendanceId eq " + row.AttendanceId +
       " and StudentClassId eq " + row.StudentClassId +
-      " and AttendanceDate ge " + moment(today).format('YYYY-MM-DD') +
-      " and AttendanceDate lt " + moment(today).add(1,'day').format('YYYY-MM-DD')
+      " and AttendanceDate ge " + moment(_AttendanceDate).format('YYYY-MM-DD') +
+      " and AttendanceDate lt " + moment(_AttendanceDate).add(1,'day').format('YYYY-MM-DD')
     if (clssubjectid > 0)
       checkFilterString += " and ClassSubjectId eq " + clssubjectid
 
@@ -363,7 +369,7 @@ export class StudentAttendanceComponent implements OnInit {
         else {
 
           this.StudentAttendanceData.StudentClassId = row.StudentClassId;
-          this.StudentAttendanceData.AttendanceDate = today;
+          this.StudentAttendanceData.AttendanceDate = new Date(_AttendanceDate);
           this.StudentAttendanceData.AttendanceId = row.AttendanceId;
           this.StudentAttendanceData.OrgId = this.LoginUserDetail[0]["orgId"];
           this.StudentAttendanceData.BatchId = this.SelectedBatchId;
@@ -375,6 +381,7 @@ export class StudentAttendanceComponent implements OnInit {
             this.StudentAttendanceData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             delete this.StudentAttendanceData["UpdatedDate"];
             delete this.StudentAttendanceData["UpdatedBy"];
+            console.log("StudentAttendanceData",this.StudentAttendanceData);
             this.insert(row);
           }
           else {
@@ -394,7 +401,7 @@ export class StudentAttendanceComponent implements OnInit {
     this.dataservice.postPatch('Attendances', this.StudentAttendanceData, 0, 'post')
       .subscribe(
         (data: any) => {
-          this.edited = false;
+          //this.edited = false;
           row.AttendanceId = data.AttendanceId;
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
@@ -408,7 +415,7 @@ export class StudentAttendanceComponent implements OnInit {
     this.dataservice.postPatch('Attendances', this.StudentAttendanceData, this.StudentAttendanceData.AttendanceId, 'patch')
       .subscribe(
         (data: any) => {
-          this.edited = false;
+          //this.edited = false;
           row.Action = false;
           if (this.NoOfRecordToUpdate == 0) {
             this.NoOfRecordToUpdate = -1;

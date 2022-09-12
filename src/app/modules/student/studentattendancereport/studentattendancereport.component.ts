@@ -190,7 +190,7 @@ export class StudentattendancereportComponent implements OnInit { PageLoading=tr
         });
         this.AttendanceStatusSum = alasql("select AttendanceStatus, count(AttendanceStatus) Total from ? group by AttendanceStatus", 
         [this.StudentAttendanceList])
-        //console.log("this.StudentAttendanceList",this.StudentAttendanceList)
+        console.log("this.StudentAttendanceList",this.StudentAttendanceList)
         //console.log("this.AttendanceStatusSum",this.AttendanceStatusSum)
 
         this.dataSource = new MatTableDataSource<IStudentAttendance>(this.StudentAttendanceList);

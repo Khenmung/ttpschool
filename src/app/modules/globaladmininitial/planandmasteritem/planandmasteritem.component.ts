@@ -291,14 +291,15 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
       })
   }
   GetTopFeature() {
-
+    debugger;
     this.ClearDisplay();
     var ApplicationId = this.searchForm.get("searchApplicationId").value;
     this.GetMasterItems(ApplicationId).subscribe((d: any) => {
+    
       this.MasterItems = [...d.value];
       this.TopMasterItems = this.MasterItems.filter(f => f.ParentId == 0);
       this.loading = false; this.PageLoading=false;
-    });
+    },error=>console.error);
   }
   GetMasterItems(appId) {
     this.loading = true;
@@ -311,6 +312,7 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
 
     list.PageName = "MasterItems";
     list.filter = ["Active eq 1 and ApplicationId eq " + appId];
+    list.limitTo =101;
     return this.dataservice.get(list)
     // .subscribe((data: any) => {
     //   this.MasterItems = [...data.value];

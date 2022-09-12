@@ -8,6 +8,8 @@ import { EvaluationboardComponent } from './evaluationboard/evaluationboard.comp
 import { EvaluationandExamComponent } from './evaluationandexam/evaluationandexam.component';
 import { EvaluationMasterComponent } from './evaluationmaster/evaluationmaster.component';
 import { EvaluationresultComponent } from './evaluationresult/evaluationresult.component';
+import { QuestionbankComponent } from './questionbank/questionbank.component';
+import { QuestionnexamComponent } from './questionnexam/questionnexam.component';
 
 const routes: Routes = [
   {
@@ -29,9 +31,11 @@ export const EvaluationComponents = [
   ClassEvaluationComponent,
   ClassEvaluationOptionComponent,
   EvaluationExamMapComponent,
-  EvaluationboardComponent,  
-  EvaluationandExamComponent,  
+  EvaluationboardComponent,
+  EvaluationandExamComponent,
   EvaluationMasterComponent,
-  EvaluationresultComponent
+  EvaluationresultComponent,
+  QuestionbankComponent,
+  QuestionnexamComponent
 ];
 
