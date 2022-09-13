@@ -181,6 +181,8 @@ export class HomeDashboardComponent implements OnInit {
       else
         this.tokenStorage.saveSelectedBatchName('');
 
+        
+       //console.log("this.loginUserDetail[0]['applicationRolePermission']",this.loginUserDetail[0]['applicationRolePermission'])
       this.tokenStorage.saveSelectedAppName(selectedApp[0].applicationName);
       this.contentservice.GetCustomFeature(SelectedAppId, this.loginUserDetail[0]["RoleUsers"][0].roleId)
         .subscribe((data: any) => {

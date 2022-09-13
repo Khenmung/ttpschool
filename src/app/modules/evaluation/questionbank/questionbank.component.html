@@ -13,7 +13,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>class subject</mat-label>
-            <mat-select formControlName="searchClassSubjectId">
+            <mat-select formControlName="searchClassSubjectId" (selectionChange)="cleardata()">
                 <mat-option *ngFor="let item of SelectedClassSubjects" [value]="item.ClassSubjectId">
                     {{item.SubjectName}}
                 </mat-option>
@@ -33,8 +33,7 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-
-        <mat-form-field appearance="outline" [style.width.px]="200">
+        <!-- <mat-form-field appearance="outline" [style.width.px]="200">
             <mat-label>lesson</mat-label>
             <mat-select formControlName="searchLessonId">
                 <mat-option *ngFor="let item of SelectedLessons" [value]="item.MasterDataId">{{item.MasterDataName}}
@@ -47,16 +46,20 @@
                 <mat-option *ngFor="let item of DifficultyLevels" [value]="item.MasterDataId">{{item.MasterDataName}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetQuestionBank()">
             <mat-icon>search</mat-icon>
             <mat-icon *ngIf="loading">
                 <mat-spinner diameter="20" color="Blue"></mat-spinner>
             </mat-icon>
         </button>
+        &nbsp;&nbsp;
+        <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
+            <mat-icon>add</mat-icon>
+        </button>
     </div>
 </form>
-<mat-table #table [dataSource]="dataSource" matSort style="max-width: 1200px;">
+<mat-table #table [dataSource]="dataSource" matSort>
     <ng-container matColumnDef="QuestionBankId">
         <mat-header-cell *matHeaderCellDef>Id
         </mat-header-cell>
@@ -67,14 +70,37 @@
     <ng-container matColumnDef="Questions">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Questions
         </mat-header-cell>
-        <mat-cell *matCellDef="let element">
+        <mat-cell *matCellDef="let element" style="display:flex;flex-direction:column;justify-content:flex-start;">
             <mat-form-field appearance="outline">
-                <input [maxlength]="300" autocomplete="Off" matInput (blur)="onBlur(element)"
-                    [value]="element.Questions" [(ngModel)]="element.Questions">
+                <textarea [maxlength]="600" #Questions autocomplete="Off" matInput (blur)="onBlur(element)"
+                    [value]="element.Questions" [(ngModel)]="element.Questions"></textarea>
+                <mat-hint align="end" style="margin:5px">{{Questions.value?.length || 0}}/600</mat-hint>
             </mat-form-field>
+            <div style="margin-bottom: 15px;" *ngIf="element.QuestionBankId>0" fxLayout="row"
+                fxLayoutAlign="space-between center">
+                <span style="color:red;" *ngIf="message">{{message}}</span>
+                <input #inputfile [hidden]="true" type="file" accept='image/*'
+                    (change)="preview(inputfile.files,element)" />
+                <div style="border:1px solid lightgray; padding:5px;margin-top: 5px;margin-bottom: 5px;">
+                    <img [src]="element.Diagram" height="150px" *ngIf="element.Diagram.length>0">
+                </div>
+                <div fxLayout="column" fxLayoutAlign="space-between center" style="margin: 5px;">
+                    <button [disabled]="loading || Permission=='read'" class="mat-flat-button"
+                        matTooltip="select file" (click)="inputfile.click()">
+                        <mat-icon aria-label="photo">photo</mat-icon>
+                    </button>&nbsp;&nbsp;
+                    <button [disabled]="loading || Permission=='read'" type="submit" (click)="uploadFile(element.QuestionBankId)"
+                        matTooltip="upload file" class="mat-flat-button">
+                        <mat-icon aria-label="file_upload">file_upload</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
+                    </button>&nbsp;&nbsp;
+                </div>
+            </div>
         </mat-cell>
     </ng-container>
-    <ng-container matColumnDef="CategoryId">
+    <!-- <ng-container matColumnDef="CategoryId">
         <mat-header-cell *matHeaderCellDef mat-sort-header> Category
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -99,7 +125,7 @@
                 </mat-select>
             </mat-form-field>
         </mat-cell>
-    </ng-container>
+    </ng-container> -->
     <ng-container matColumnDef="LessonId">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Lesson
         </mat-header-cell>
@@ -133,15 +159,12 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let element" style="justify-content: center;">
             <mat-checkbox (click)="$event.stopPropagation()" (change)="UpdateActive(element,$event)"
-                [checked]="element.Active==1?true:false">
+                [checked]="element.Active">
             </mat-checkbox>
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="Action">
-        <mat-header-cell *matHeaderCellDef>
-            <button [disabled]="loading || Permission=='read'" matTooltip="add new" mat-mini-fab (click)="AddNew()">
-                <mat-icon>add</mat-icon>
-            </button>&nbsp;&nbsp;
+        <mat-header-cell *matHeaderCellDef>            
             <button [disabled]="loading || Permission=='read'" matTooltip="save all" mat-mini-fab (click)="SaveAll()">
                 <mat-icon>all_out</mat-icon>
                 <mat-icon *ngIf="loading">

@@ -6,15 +6,14 @@ mat-form-field{
     flex:1 1 50px;
 }
 .mat-column-Questions{
-    flex:1 1 350px;
+    flex:1 0 500px;
 }
-.mat-column-ClassId,
-.mat-column-ClassSubjectId,
-.mat-column-CategoryId,
-.mat-column-SubCategoryId,
+// .mat-column-ClassId,
+// .mat-column-ClassSubjectId,
+// .mat-column-CategoryId,
+// .mat-column-SubCategoryId,
 .mat-column-LessonId,
 .mat-column-DifficultyLevelId,
-.mat-column-Diagram,
 .mat-column-Active,
 .mat-column-Action{
     flex:1 1 100px;

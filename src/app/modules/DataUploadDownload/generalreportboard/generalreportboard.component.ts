@@ -3,9 +3,8 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { DatadumpComponent } from '../datadump/datadump.component';
+import { StudentDatadumpComponent } from '../studentdatadump/studentdatadump.component';
 import { ExcelDataManagementComponent } from '../excel-data-management/excel-data-management.component';
-import { GetreportComponent } from '../getreport/getreport.component';
 
 @Component({
   selector: 'app-generalreportboard',
@@ -13,8 +12,8 @@ import { GetreportComponent } from '../getreport/getreport.component';
   styleUrls: ['./generalreportboard.component.scss']
 })
 export class GeneralReportboardComponent implements AfterViewInit {
-  components:any = [
-    DatadumpComponent,
+  components: any = [
+    StudentDatadumpComponent,
     ExcelDataManagementComponent
   ];
 
@@ -38,37 +37,46 @@ export class GeneralReportboardComponent implements AfterViewInit {
     private tokenStorage: TokenStorageService,
     private contentservice: ContentService,
     private shareddata: SharedataService,
-    ) {
+  ) {
   }
-
+  SelectedAppName = '';
   public ngAfterViewInit(): void {
     debugger
+    this.SelectedAppName = this.tokenStorage.getSelectedAppName();
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
 
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.DATA)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
-
     }
-
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.DOWNLOAD)
-    var comindx = this.components.indexOf(DatadumpComponent);
-    if (perObj.length > 0) {
-      if (perObj[0].permission == 'deny') {
+    if (this.SelectedAppName.toLowerCase() == 'education management') {
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.DOWNLOAD)
+      var comindx = this.components.indexOf(StudentDatadumpComponent);
+      if (perObj.length > 0) {
+        if (perObj[0].permission == 'deny') {
+          this.components.splice(comindx, 1);
+          this.tabNames.splice(comindx, 1);
+        }
+        else {
+          this.tabNames[comindx].faIcon = perObj[0].faIcon;
+          this.tabNames[comindx].label = perObj[0].label;
+        }
+      }
+      else {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }
-      else {
-        this.tabNames[comindx].faIcon = perObj[0].faIcon;
-        this.tabNames[comindx].label = perObj[0].label;
+    }
+    else
+    {
+      var comindx = this.components.indexOf(StudentDatadumpComponent);
+      if(comindx>-1)
+      {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
       }
     }
-    else {
-      this.components.splice(comindx, 1);
-      this.tabNames.splice(comindx, 1);
-    }
-
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.DATA.UPLOAD)
     var comindx = this.components.indexOf(ExcelDataManagementComponent);
     if (perObj.length > 0) {
@@ -105,7 +113,7 @@ export class GeneralReportboardComponent implements AfterViewInit {
 
 
   private renderComponent(index: number): any {
-    
+
     this.viewContainer.createComponent(this.components[index]);
   }
 }

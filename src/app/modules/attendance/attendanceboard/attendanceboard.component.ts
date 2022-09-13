@@ -50,18 +50,35 @@ export class AttendanceboardComponent implements AfterViewInit {
     this.SelectedAppName = this.tokenStorage.getSelectedAppName();
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
-
+    //console.log("this.SelectedAppName",this.SelectedAppName);
     var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENDANCE)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
 
     }
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
-    var comindx = this.components.indexOf(StudentAttendanceComponent);
-    this.AddRemoveComponent(perObj, comindx);
+    if (this.SelectedAppName.toLowerCase() == 'education management') {
+      var comindx = this.components.indexOf(TeacherAttendanceComponent);
+      if (comindx > -1) {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
+      var comindx = this.components.indexOf(StudentAttendanceComponent);
+      this.AddRemoveComponent(perObj, comindx);
 
-    
+    }
+    else if (this.SelectedAppName.toLowerCase() == 'employee management') {
+      var comindx = this.components.indexOf(StudentAttendanceComponent);
+      if (comindx > -1) {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
+      var comindx = this.components.indexOf(TeacherAttendanceComponent);
+      this.AddRemoveComponent(perObj, comindx);
+    }
+
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCEREPORT)
     var comindx = this.components.indexOf(AttendancereportComponent);
     this.AddRemoveComponent(perObj, comindx);
@@ -70,7 +87,7 @@ export class AttendanceboardComponent implements AfterViewInit {
       setTimeout(() => {
         this.renderComponent(0);
       }, 1000);
-      this.cdr.detectChanges();
+      //this.cdr.detectChanges();
     }
 
   }
@@ -84,13 +101,7 @@ export class AttendanceboardComponent implements AfterViewInit {
 
   AddRemoveComponent(perObj, pcomindx) {
 
-    if (this.SelectedAppName.toLowerCase() == 'education management') {
-      var comindx = this.components.indexOf(TeacherAttendanceComponent);
-      if (comindx > -1) {
-        this.components.splice(comindx, 1);
-        this.tabNames.splice(comindx, 1);
-      }
-    }
+
 
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {

@@ -115,6 +115,7 @@ export class studentprimaryinfoComponent implements OnInit {
     if (this.StudentId != null && this.StudentId != 0)
       this.formdata.append("studentId", this.StudentId + "");
     this.formdata.append("studentClassId", this.StudentClassId.toString());
+    this.formdata.append("questionId","0");
     this.formdata.append("docTypeId", "0");
 
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
@@ -442,7 +443,7 @@ export class studentprimaryinfoComponent implements OnInit {
       BatchId: this.tokenService.getSelectedBatchId()
     });
     //debugger;
-    console.log("studentData", this.studentData)
+    //console.log("studentData", this.studentData)
     if (this.studentForm.get("StudentId").value == 0) {
       //this.studentData[0].EmailAddress =this.studentForm.get("EmailAddress").value;
       this.save();

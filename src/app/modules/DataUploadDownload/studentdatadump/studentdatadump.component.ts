@@ -16,11 +16,11 @@ import * as XLSX from 'xlsx';
 import { SwUpdate } from '@angular/service-worker';
 
 @Component({
-  selector: 'app-datadump',
-  templateUrl: './datadump.component.html',
-  styleUrls: ['./datadump.component.scss']
+  selector: 'app-studentdatadump',
+  templateUrl: './studentdatadump.component.html',
+  styleUrls: ['./studentdatadump.component.scss']
 })
-export class DatadumpComponent implements OnInit {
+export class StudentDatadumpComponent implements OnInit {
   PageLoading = true;
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -311,8 +311,8 @@ export class PlanandmasteritemComponent implements OnInit { PageLoading=true;
     ];
 
     list.PageName = "MasterItems";
-    list.filter = ["Active eq 1 and ApplicationId eq " + appId];
-    list.limitTo =101;
+    list.filter = ["ParentId eq 0 and Active eq 1 and ApplicationId eq " + appId];
+    //list.limitTo =100;
     return this.dataservice.get(list)
     // .subscribe((data: any) => {
     //   this.MasterItems = [...data.value];

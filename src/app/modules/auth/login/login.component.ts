@@ -279,17 +279,28 @@ export class LoginComponent implements OnInit {
     ];
 
     list.PageName = "ApplicationFeatureRolesPerms";
-    list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
+    list.lookupFields = ["PlanFeature($filter=Active eq 1;$select=PageId;$expand=Page($select=Active,PageTitle,label,link,faIcon,ApplicationId,ParentId))"]
     list.filter = ["Active eq 1 " + this.RoleFilter];
     debugger;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         //debugger;
-        if (data.value.length > 0) {
+        console.log("all",data.value)
+        var _allPermission =[]; 
+        data.value.forEach(m=>{
+            if(m.PlanFeature.Page.Active==1)
+            {
+              _allPermission.push(m);
+            }
+        })
+        
+        //console.log("fitlered",_allPermission)
+        if (_allPermission.length > 0) {
+
           var _applicationName = '';
           var _appShortName = '';
           this.UserDetail[0]["applicationRolePermission"] = [];
-          data.value.forEach(item => {
+          _allPermission.forEach(item => {
             var appObj = this.Applications.filter(f => f.MasterDataId == item.PlanFeature.Page.ApplicationId);
             _applicationName = '';
             _appShortName = '';

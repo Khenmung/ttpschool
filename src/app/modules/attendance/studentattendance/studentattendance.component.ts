@@ -175,12 +175,11 @@ export class StudentAttendanceComponent implements OnInit {
       this.contentservice.openSnackBar("Attendance date cannot be greater than today's date.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    // if (_AttendanceDate.getTime() != today.getTime()) {
-    //   this.EnableSave = false;
-    // }
-    // else
-    //   this.EnableSave = true;
-    this.EnableSave = true;
+    if (this.LoginUserDetail[0]['RoleUsers'][0]['role'].toLowerCase() !='admin' && _AttendanceDate.getTime() != today.getTime()) {
+      this.EnableSave = false;
+    }
+    else
+      this.EnableSave = true;
 
     if (_sectionId > 0) {
       filterStr += " and SectionId eq " + _sectionId;

@@ -100,8 +100,7 @@
                                     {{p.MasterDataName}}
                                 </mat-option>
                             </mat-select>
-                            <span class="text-danger"
-                                *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
+                            <span class="text-danger" *ngIf="f.Gender.touched && f.Gender.hasError('required')">Gender
                                 is required.</span>
                         </mat-form-field>
                     </mat-grid-tile>
@@ -170,8 +169,8 @@
                     <mat-grid-tile [colspan]="1" [rowspan]="1">
                         <mat-form-field appearance="outline" fxFlex>
                             <mat-label>Admission Date</mat-label>
-                            <input formControlName="AdmissionDate" matInput (dateChange)="OnBlur()" [matDatepicker]="AdmissionDate"
-                                autocomplete="off">
+                            <input formControlName="AdmissionDate" matInput (dateChange)="OnBlur()"
+                                [matDatepicker]="AdmissionDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="AdmissionDate"></mat-datepicker-toggle>
                             <mat-datepicker #AdmissionDate></mat-datepicker>
                         </mat-form-field>
@@ -192,10 +191,10 @@
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" matTooltip="save"
                     mat-raised-button color="accent">
-                     <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-card-actions>
             <!-- </mat-card> -->
@@ -299,10 +298,10 @@
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
                     mat-raised-button color="accent">
-                     <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -337,16 +336,15 @@
                     class="mat-raised-button">
                     <mat-icon>navigate_next</mat-icon>
                 </button>
-                <button [disabled]="loading" (click)="back()" matTooltip="dashboard"
-                    class="mat-raised-button">
+                <button [disabled]="loading" (click)="back()" matTooltip="dashboard" class="mat-raised-button">
                     <mat-icon>arrow_back</mat-icon>
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
                     mat-raised-button color="accent">
-                     <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
@@ -387,8 +385,8 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    </div>
-                    <div style="padding: 15px 15px 0px 15px">
+                </div>
+                <div style="padding: 15px 15px 0px 15px">
                     <mat-form-field appearance="outline">
                         <mat-label>Remarks</mat-label>
                         <mat-select formControlName="Remarks" (selectionChange)="OnBlur()">
@@ -401,23 +399,18 @@
 
                     <mat-form-field appearance="outline">
                         <mat-label>Identification Mark</mat-label>
-                        <input formControlName="IdentificationMark" (blur)="OnBlur()" 
-                        autocomplete="Off" matInput
+                        <input formControlName="IdentificationMark" (blur)="OnBlur()" autocomplete="Off" matInput
                             [maxlength]="50">
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Height</mat-label>
-                        <input formControlName="Height" (blur)="OnBlur()" 
-                        autocomplete="Off" matInput
-                            [maxlength]="5">
+                        <input formControlName="Height" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="5">
                     </mat-form-field>
                     <mat-form-field appearance="outline">
                         <mat-label>Weight</mat-label>
-                        <input formControlName="Weight" (blur)="OnBlur()" 
-                        autocomplete="Off" matInput
-                            [maxlength]="5">
+                        <input formControlName="Weight" (blur)="OnBlur()" autocomplete="Off" matInput [maxlength]="5">
                     </mat-form-field>
-                    
+
                     <mat-checkbox (click)="deActivate($event)" formControlName="Active">
                     </mat-checkbox>&nbsp; Active
                     <mat-form-field *ngIf="StudentLeaving" appearance="outline">
@@ -441,10 +434,10 @@
                 </button>
                 <button [disabled]="loading || Permission=='read' || !Edited" (click)="SaveOrUpdate()" alt="save"
                     mat-raised-button color="accent">
-                     <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                    <mat-icon>save</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
                 </button>
             </mat-card-actions>
         </mat-tab>
