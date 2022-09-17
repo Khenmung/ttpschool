@@ -15,11 +15,16 @@
             </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline" style="width: 150px;">
-            <mat-label>Remarks</mat-label>
+            <mat-label>Search</mat-label>
             <mat-select formControlName="searchRemarkId">
-                <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">
+                <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled">
+                    <mat-option *ngFor="let list of item.group" [value]="list.MasterDataId">
+                        {{list.MasterDataName}}
+                    </mat-option>
+                </mat-optgroup>
+                <!-- <mat-option *ngFor="let item of Remarks" [value]="item.MasterDataId">
                     {{item.MasterDataName}}
-                </mat-option>
+                </mat-option> -->
             </mat-select>
         </mat-form-field>
         <button [disabled]="loading" matTooltip="search student" mat-raised-button color="accent"

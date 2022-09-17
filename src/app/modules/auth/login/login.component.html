@@ -17,11 +17,10 @@
                     <input [type]="password" matInput formControlName="password" required minlength="6"
                         autocomplete="Off" />
                 </mat-form-field>
-                <span (click)="showhidePassword()" style="height:25px;border: 1px solid lightgray;">
+                <span (click)="showhidePassword()">
                     <mat-icon>{{visibility}}</mat-icon>
                 </span>
             </span>
-
             <div style="margin: 15px 15px 15px 0px;display: flex;flex-direction: row;">
 
                 <button [disabled]="loading" mat-raised-button color="accent" (click)="onSubmit()" matTooltip="login">

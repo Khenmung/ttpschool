@@ -14,7 +14,7 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ContentService } from 'src/app/shared/content.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-searchstudent',
@@ -68,6 +68,7 @@ export class searchstudentComponent implements OnInit {
   SelectedApplicationId = 0;
   SelectedBatchId = 0;
   SelectedBatchStudentIDRollNo = [];
+  Clubs = [];
   StudentClassId = 0;
   StudentId = 0;
   StudentFamilyNFriendList = [];
@@ -190,6 +191,7 @@ export class searchstudentComponent implements OnInit {
   displayFnM(stud: IStudent): string {
     return stud && stud.MotherName ? stud.MotherName : '';
   }
+  Groups = [];
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
@@ -236,10 +238,35 @@ export class searchstudentComponent implements OnInit {
 
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
         this.shareddata.ChangeSection(this.Sections);
-
+        this.Clubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
         this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
         this.shareddata.ChangeHouse(this.Houses);
-
+        this.Clubs.forEach(c => {
+          c.type = 'ClubId'
+        })
+        this.Houses.forEach(h => {
+          h.type = 'HouseId'
+        })
+        this.Remarks.forEach(h => {
+          h.type = 'RemarkId'
+        })
+        this.Groups.push({
+          name: "Club",
+          disable: true,
+          group: this.Clubs
+        },
+          {
+            name: "House",
+            disable: true,
+            group: this.Houses
+          },
+          {
+            name: "Remarks",
+            disable: true,
+            group: this.Remarks
+          }
+        )
+        //console.log("Groups", this.Groups)
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
         this.shareddata.ChangeUploadType(this.UploadTypes);
 
@@ -263,17 +290,7 @@ export class searchstudentComponent implements OnInit {
   }
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.token, this.allMasterData);
-    // let Ids = this.allMasterData.filter((item, indx) => {
-    //   return item.MasterDataName.toLowerCase() == dropdowntype//globalconstants.GENDER
-    // });
-    // if (Ids.length > 0) {
-    //   var Id = Ids[0].MasterDataId;
-    //   return this.allMasterData.filter((item, index) => {
-    //     return item.ParentId == Id
-    //   });
-    // }
-    // else
-    //   return [];
+
   }
   fee(id) {
     this.route.navigate(['/edu/addstudentfeepayment/' + id]);
@@ -413,8 +430,14 @@ export class searchstudentComponent implements OnInit {
     }
     this.StudentSearch = [];
     if (_remarkId > 0) {
-      this.StudentSearch.push({ Text: "RemarkId", Value: _remarkId });
-      checkFilterString += " and RemarkId eq " + _remarkId;
+      var obj = [];
+      this.Groups.forEach(f => {
+        var check = f.group.filter(h => h.MasterDataId == _remarkId);
+        if (check.length > 0)
+          obj.push(check[0]);
+      });
+      this.StudentSearch.push({ Text: obj[0].type, Value: _remarkId });
+      checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
     }
     var classfilter = '';
     if (_ClassId > 0) {
@@ -480,7 +503,7 @@ export class searchstudentComponent implements OnInit {
             return sc;
           });
           this.ELEMENT_DATA = formattedData.map(item => {
-            var _lastname = item.LastName == null? '' : " " + item.LastName;
+            var _lastname = item.LastName == null ? '' : " " + item.LastName;
             item.Name = item.FirstName + _lastname;
             var _remark = '';
             var objremark = this.Remarks.filter(f => f.MasterDataId == item.RemarkId);
@@ -643,7 +666,7 @@ export class searchstudentComponent implements OnInit {
               _RollNo = studentclassobj[0].RollNo == null ? '' : studentclassobj[0].RollNo;
             }
             student.ContactNo = student.ContactNo == null ? '' : student.ContactNo;
-            var _lastname = student.LastName == null? '' : " " + student.LastName;
+            var _lastname = student.LastName == null ? '' : " " + student.LastName;
             _name = student.FirstName + _lastname;
             var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.ContactNo;
             return {

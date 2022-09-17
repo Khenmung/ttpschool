@@ -178,6 +178,7 @@ export class StudentDatadumpComponent implements OnInit {
   displayFnM(stud: IStudent): string {
     return stud && stud.MotherName ? stud.MotherName : '';
   }
+  Groups=[];
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
@@ -228,6 +229,32 @@ export class StudentDatadumpComponent implements OnInit {
         this.shareddata.ChangeSection(this.Sections);
 
         this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+        this.Clubs.forEach(c => {
+          c.type = 'ClubId'
+        })
+        this.Houses.forEach(h => {
+          h.type = 'HouseId'
+        })
+        this.Remarks.forEach(h => {
+          h.type = 'RemarkId'
+        })
+        this.Groups.push({
+          name: "Club",
+          disable: true,
+          group: this.Clubs
+        },
+          {
+            name: "House",
+            disable: true,
+            group: this.Houses
+          },
+          {
+            name: "Remarks",
+            disable: true,
+            group: this.Remarks
+          }
+        )
+        
         this.shareddata.ChangeHouse(this.Houses);
 
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
@@ -378,9 +405,16 @@ export class StudentDatadumpComponent implements OnInit {
       return;
     }
     if (_remarkId > 0) {
-      checkFilterString += " and RemarkId eq " + _remarkId;
+      var obj = [];
+      this.Groups.forEach(f => {
+        var check = f.group.filter(h => h.MasterDataId == _remarkId);
+        if (check.length > 0)
+          obj.push(check[0]);
+      });
+      checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
+      //checkFilterString += " and RemarkId eq " + _remarkId;
     }
-    var classfilter = '';
+    //var classfilter = '';
     // if (_ClassId > 0) {
     //   classfilter = 'ClassId eq ' + _ClassId + ' and '
     // }

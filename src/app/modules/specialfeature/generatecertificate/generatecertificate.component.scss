@@ -13,29 +13,6 @@ mat-table {
 	margin : 0px;
 }
 
-// mat-cell,
-// mat-header-cell {
-// 	word-wrap: break-word !important;
-// 	white-space: unset !important;
-// 	flex: 0 0 100% !important;
-// 	width: 100% !important;
-// 	overflow-wrap: break-word;
-// 	word-wrap: break-word;
-  
-// 	word-break: break-word;
-  
-// 	-ms-hyphens: auto;
-// 	-moz-hyphens: auto;
-// 	-webkit-hyphens: auto;
-// 	hyphens: auto;
-  
-// 	width: max-content;
-// 	padding        : 0px;
-// 	margin         : 0px;
-// 	justify-content: center;
-// 	border-right   : 1px solid lightgray;
-// }
-
 .header {
 	width    : 100%;
 	font-size: 30px;
@@ -98,7 +75,12 @@ span {
 	margin-bottom : 120px;
 	width         : 100%;
 }
-
+.footerwrapper{
+	justify-content: space-between;
+	width:100%;
+	margin-top:150px;
+	//margin-bottom: 150px;
+}
 .element-row {
 	width              : 100%;
 	border-bottom-style: none;

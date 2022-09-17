@@ -260,7 +260,7 @@ export class GenerateCertificateComponent implements OnInit {
         var _groupName = '', _activityName = '', _activityCategory = '', _activitySubCategory = '', _activitySession = '', _secured = '';
         if (this.SelectedActivity.length > 0) {
           _groupName = this.SelectedActivity[0].GroupName;
-          _activityName = this.SelectedActivity[0].ActivityName;
+          _activityName = this.SelectedActivity[0].SportsName;
           _activityCategory = this.SelectedActivity[0].Category;
           _activitySubCategory = this.SelectedActivity[0].SubCategory;
           _activitySession = this.SelectedActivity[0].Session;
@@ -346,6 +346,9 @@ export class GenerateCertificateComponent implements OnInit {
     });
 
   }
+  clearData() {
+
+  }
   styleStrUse = {};
   GenerateCertificate() {
     debugger;
@@ -407,7 +410,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.loadTheme(styleStr);
 
     this.dataSource = new MatTableDataSource<any>(this.CertificateElements);
-    this.loading = false; 
+    this.loading = false;
     this.PageLoading = false;
   }
   GetExamStudentSubjectResults() {
@@ -453,6 +456,7 @@ export class GenerateCertificateComponent implements OnInit {
   DisplayColumn = [];
   GeneratedCertificatelist = [];
   GetGeneratedCertificate() {
+    debugger;
     var filterstr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
     var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
     var _studentClassId = this.searchForm.get("searchStudentName").value.StudentClassId;
@@ -538,30 +542,29 @@ export class GenerateCertificateComponent implements OnInit {
       })
 
   }
-  SelectedActivity=[];
+  SelectedActivity = [];
   View(row) {
-    row.Action=false;
-    this.SelectedActivity=[];
+    row.Action = false;
+    this.SelectedActivity = [];
     this.SelectedActivity.push(row);
     this.GetStudentAttendance();
   }
   Save() {
-
     debugger;
+    //var _studentObj = this.searchForm.get("searchStudentName").value
+    //var _studentclassId = this.SelectedActivity[0].StudentClassId;
+    //var _studentId = this.SelectedActivity[0].StudentId;
+    var _studentId = this.searchForm.get("searchStudentName").value.StudentId;
+    var _studentclassId = this.searchForm.get("searchStudentName").value.StudentClassId;
 
-
-    var _studentObj = this.searchForm.get("searchStudentName").value
-    var _studentclassId = _studentObj.StudentClassId;
-    var _studentId = _studentObj.StudentId;
-
-    var _searchStudentGroupId = this.searchForm.get("searchStudentGroupId").value;
+    //var _searchStudentGroupId = this.searchForm.get("searchStudentGroupId").value;
     var _certificateTypeId = this.searchForm.get("searchCertificateTypeId").value;
-    var _SportsNameId = this.searchForm.get("searchActivityId").value;
-    var _categoryId = this.searchForm.get("searchCategoryId").value;
-    var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
-    var _SessionId = this.searchForm.get("searchSessionId").value;
+    var _SportsNameId = this.SelectedActivity[0].SportsNameId;
+    var _categoryId = this.SelectedActivity[0].CategoryId;
+    var _subCategoryId = this.SelectedActivity[0].SubCategoryId;
+    var _SessionId = this.SelectedActivity[0].SessionId;
 
-    if (this.searchForm.get("searchStudentName").value == '') {
+    if (_studentclassId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -569,7 +572,7 @@ export class GenerateCertificateComponent implements OnInit {
 
     this.loading = true;
     if (this.SportsCertificate) {
-      if (_SportsNameId == 0) {
+      if (this.SelectedActivity[0].SportsNameId == 0) {
         this.contentservice.openSnackBar("Please select activity.", globalconstants.ActionText, globalconstants.RedBackground);
         return;
       }
@@ -612,7 +615,7 @@ export class GenerateCertificateComponent implements OnInit {
             CreatedBy: this.LoginUserDetail[0]["userId"],
             UpdatedDate: new Date()
           }
-          console.log("lskjd", insertCertificate);
+          //          console.log("lskjd", insertCertificate);
           this.insert(insertCertificate);
         }
       });
@@ -628,17 +631,17 @@ export class GenerateCertificateComponent implements OnInit {
 
         });
   }
-  print() {
-    var printContents = document.getElementById('printSection').innerHTML;
-    var originalContents = document.body.innerHTML;
+  // print() {
+  //   var printContents = document.getElementById('printSection').innerHTML;
+  //   var originalContents = document.body.innerHTML;
 
-    document.body.innerHTML = printContents;
+  //   document.body.innerHTML = printContents;
 
-    window.print();
+  //   window.print();
 
-    document.body.innerHTML = originalContents;
+  //   document.body.innerHTML = originalContents;
 
-  }
+  // }
 
   CheckType() {
     debugger;
@@ -649,14 +652,17 @@ export class GenerateCertificateComponent implements OnInit {
     }
     else
       this.SportsCertificate = false;
+    this.clear();
   }
   SetCategory() {
     var _activityId = this.searchForm.get("searchActivityId").value;
     this.ActivityCategory = this.allMasterData.filter(f => f.ParentId == _activityId);
+    this.clear();
   }
   SetSubCategory() {
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     this.ActivitySubCategory = this.allMasterData.filter(f => f.ParentId == _categoryId);
+    this.clear();
   }
   SportsCertificate = false;
   ActivitySubCategory = [];
@@ -727,7 +733,10 @@ export class GenerateCertificateComponent implements OnInit {
       });
   }
   clear() {
-
+    this.SportsResultList = [];
+    this.ActivityResultDataSource = new MatTableDataSource<any>(this.SportsResultList);
+    this.CertificateElements = [];
+    this.dataSource = new MatTableDataSource<any>(this.CertificateElements);
   }
   GetStudentClasses() {
     //debugger;
@@ -822,20 +831,26 @@ export class GenerateCertificateComponent implements OnInit {
     var _categoryId = this.searchForm.get("searchCategoryId").value;
     var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
     var _SessionId = this.searchForm.get("searchSessionId").value;
-    if (_studentclassId != undefined && _searchStudentGroupId == 0) {
-      filterStr += " and StudentClassId eq " + _studentclassId;
-    }
+
     if (_studentclassId == undefined) {
-      this.loading=false;
+      this.loading = false;
       this.contentservice.openSnackBar("Please select student.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(_searchStudentGroupId == 0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select student group.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
+
+    if (_studentclassId != undefined && _searchStudentGroupId > 0) {
+      filterStr += " and (StudentClassId eq " + _studentclassId + " or GroupId eq " + _searchStudentGroupId + ")";
     }
+    else if (_searchStudentGroupId == 0) {
+      filterStr += " and StudentClassId eq " + _studentclassId;
+    }
+
+    // if(_searchStudentGroupId == 0)
+    // {
+    //   this.loading=false;
+    //   this.contentservice.openSnackBar("Please select student group.", globalconstants.ActionText, globalconstants.RedBackground);
+    //   return;
+    // }
     if (_SportsNameId > 0) {
       filterStr += " and SportsNameId eq " + _SportsNameId;
     }
@@ -881,7 +896,7 @@ export class GenerateCertificateComponent implements OnInit {
     this.SportsResultList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.SportsResultList = data.value.map(m => {
+        data.value.map(m => {
 
           var objGroup = [];
           this.Groups.forEach(f => {
@@ -896,35 +911,36 @@ export class GenerateCertificateComponent implements OnInit {
           else
             m.GroupName = '';
 
+          //activitynames contains only active one. if not active then dont display it.
           var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
-          if (obj.length > 0)
+          if (obj.length > 0) {
             m.SportsName = obj[0].MasterDataName;
-          else
-            m.SportsName = '';
-          var objCategory = this.allMasterData.filter(f => f.MasterDataId == m.CategoryId);
-          if (objCategory.length > 0)
-            m.Category = objCategory[0].MasterDataName;
-          else
-            m.Category = '';
 
-          var objSubCategory = this.allMasterData.filter(f => f.MasterDataId == m.SubCategoryId);
-          if (objSubCategory.length > 0) {
-            m.SubCategory = objSubCategory[0].MasterDataName;
+            var objCategory = this.allMasterData.filter(f => f.MasterDataId == m.CategoryId);
+            if (objCategory.length > 0)
+              m.Category = objCategory[0].MasterDataName;
+            else
+              m.Category = '';
+
+            var objSubCategory = this.allMasterData.filter(f => f.MasterDataId == m.SubCategoryId);
+            if (objSubCategory.length > 0) {
+              m.SubCategory = objSubCategory[0].MasterDataName;
+            }
+            else
+              m.SubCategory = '';
+
+            var objSession = this.allMasterData.filter(f => f.MasterDataId == m.SessionId);
+            if (objSession.length > 0) {
+              m.Session = objSession[0].MasterDataName;
+            }
+            else
+              m.Session = '';
+
+            m.Secured = globalconstants.decodeSpecialChars(m.Secured);
+            m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
+            m.Action = false;
+            this.SportsResultList.push(m);
           }
-          else
-            m.SubCategory = '';
-
-          var objSession = this.allMasterData.filter(f => f.MasterDataId == m.SessionId);
-          if (objSession.length > 0) {
-            m.Session = objSession[0].MasterDataName;
-          }
-          else
-            m.Session = '';
-
-          m.Secured = globalconstants.decodeSpecialChars(m.Secured);
-          m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
-          m.Action = false;
-          return m;
         });
         if (this.SportsResultList.length == 0) {
           this.loading = false;
@@ -1047,7 +1063,7 @@ export class GenerateCertificateComponent implements OnInit {
       });
   }
   GetStudentAttendance() {
-    this.loading =true;
+    this.loading = true;
     let list: List = new List();
     list.fields = [
       "AttendanceId",

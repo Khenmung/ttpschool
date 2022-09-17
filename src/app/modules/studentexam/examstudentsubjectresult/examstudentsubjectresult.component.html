@@ -65,7 +65,7 @@
                     <mat-cell *matCellDef="let element">
                         <mat-form-field style="text-align: center;"
                             *ngIf="disCol !='StudentClassSubject' && disCol !='Action'">
-                            <input matInput type="number" (blur)="onBlur(element,$event)" [attr.name]="disCol"
+                            <input matInput (blur)="onBlur(element,$event)" [attr.name]="disCol"
                                 [value]="element[disCol]" [(ngModel)]="element[disCol]">
                         </mat-form-field>
                         <button *ngIf="disCol=='Action'"

@@ -62,8 +62,6 @@ export class GroupactivityComponent implements OnInit {
     "SportResultId",
     "Secured",
     "Achievement",
-    //"SportsNameId",
-    //"SessionId",
     "CategoryId",
     "SubCategoryId",
     "AchievementDate",
@@ -252,7 +250,7 @@ export class GroupactivityComponent implements OnInit {
     this.loading = false; this.PageLoading = false;
   }
   insert(row) {
-    console.log("this.SportsResultForUpdate", this.SportsResultForUpdate)
+    //console.log("this.SportsResultForUpdate", this.SportsResultForUpdate)
     this.dataservice.postPatch('SportResults', this.SportsResultForUpdate, 0, 'post')
       .subscribe(
         (data: any) => {

@@ -4,6 +4,8 @@ import { AuthGuard } from 'src/app/guards/auth.guard';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
 import { GroupactivityComponent } from './groupactivity/groupactivity.component';
+import { GroupactivityparticipantComponent } from './groupactivityparticipant/groupactivityparticipant.component';
+import { GrouppointComponent } from './grouppoint/grouppoint.component';
 import { SportsResultComponent } from './sportsresult/sportsresult.component';
 import { StudentactivityboardComponent } from './studentactivityboard/studentactivityboard.component';
 import { StudentactivityhomeComponent } from './studentactivityhome/studentactivityhome.component';
@@ -31,5 +33,7 @@ export const StudentActivityComponents=[
   StudentactivityhomeComponent,
   StudentactivityboardComponent,
   StudentfamilynfriendComponent,
-  GroupactivityComponent
+  GroupactivityComponent,
+  GroupactivityparticipantComponent, 
+  GrouppointComponent
 ]
