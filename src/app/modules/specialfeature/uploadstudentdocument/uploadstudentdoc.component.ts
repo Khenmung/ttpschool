@@ -14,7 +14,7 @@ import { NaomitsuService } from '../../../shared/databaseService';
 import { globalconstants } from '../../../shared/globalconstant';
 import { List } from '../../../shared/interface';
 import { FileUploadService } from '../../../shared/upload.service';
-import { IStudent } from '../sportsresult/sportsresult.component';
+import { IStudent } from '../StudentActivity/studentactivity.component';
 
 @Component({
   selector: 'upload-student-document',

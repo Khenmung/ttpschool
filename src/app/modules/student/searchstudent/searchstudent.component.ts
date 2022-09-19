@@ -514,29 +514,31 @@ export class searchstudentComponent implements OnInit {
             else
               item.Remarks = '';
             if (item.StudentClasses.length == 0) {
-              //item.Remarks = '';
               item.ClassName = '';
             }
             else {
-              //item.Remarks = item.StudentClasses[0].Remarks;
               var clsobj = this.Classes.filter(cls => {
                 return cls.ClassId == item.StudentClasses[0].ClassId
-              })
-              if (clsobj.length > 0)
-                item.ClassName = clsobj[0].ClassName;
+              });
+              if (clsobj.length > 0) {
+                var objsection = this.Sections.filter(s => s.MasterDataId == item.StudentClasses[0].SectionId);
+                if (objsection.length > 0)
+                  item.ClassName = clsobj[0].ClassName + "-" + objsection[0].MasterDataName;
+                else
+                  item.ClassName = clsobj[0].ClassName;
+              }
               else
                 item.ClassName = '';
+              item.Action = "";
+              return item;
             }
-            item.Action = "";
-
-            return item;
           })
         }
         else {
           this.ELEMENT_DATA = [];
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
-        //console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
+      console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -686,6 +688,7 @@ export class searchstudentComponent implements OnInit {
 }
 export interface IStudent {
   StudentId: number;
+  PID:number;
   Name: string;
   FatherName: string;
   MotherName: string;

@@ -34,11 +34,16 @@ export class GenerateCertificateComponent implements OnInit {
   ExamStudentSubjectResult: IExamStudentSubjectResult[] = [];
   StandardFilterWithBatchId = '';
   SelectedBatchId = 0;
+  DisplayColumn = [];
+  GeneratedCertificatelist = [];
+
   SubjectMarkComponents = [];
   MarkComponents = [];
   StudentGrades = [];
   StudentForVariables = [];
   FeePaidLastMonth = 0;
+  AchievementAndPoints = [];
+  PointCategory = [];
   Students = [];
   Genders = [];
   Classes = [];
@@ -257,14 +262,14 @@ export class GenerateCertificateComponent implements OnInit {
         ////console.log('data.value',data.value)
         debugger;
         this.StudentForVariables = [];
-        var _groupName = '', _activityName = '', _activityCategory = '', _activitySubCategory = '', _activitySession = '', _secured = '';
+        var _groupName = '', _activityName = '', _activityCategory = '', _activitySubCategory = '', _activitySession = '', _Rank = '';
         if (this.SelectedActivity.length > 0) {
           _groupName = this.SelectedActivity[0].GroupName;
           _activityName = this.SelectedActivity[0].SportsName;
           _activityCategory = this.SelectedActivity[0].Category;
           _activitySubCategory = this.SelectedActivity[0].SubCategory;
           _activitySession = this.SelectedActivity[0].Session;
-          _secured = this.SelectedActivity[0].Secured;
+          _Rank = this.SelectedActivity[0].Rank;
         }
 
         data.value.forEach(d => {
@@ -273,7 +278,7 @@ export class GenerateCertificateComponent implements OnInit {
           var classObj = this.Classes.filter(c => c.ClassId == d.ClassId);
           if (classObj.length > 0)
             _studentClass = classObj[0].ClassName
-          var _section = d.SectionId == null ? '' : this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName;
+          var _section = d.SectionId == null ? '' : "-" + this.Sections.filter(c => c.MasterDataId == d.SectionId)[0].MasterDataName;
           var _gender = d.Student.Gender == null ? '' : this.Genders.filter(c => c.MasterDataId == d.Student.Gender)[0].MasterDataName;
           var _bloodgroup = d.Student.Bloodgroup == null ? '' : this.BloodGroup.filter(c => c.MasterDataId == d.Student.Bloodgroup)[0].MasterDataName;
           var _category = d.Student.Category == null ? '' : this.Category.filter(c => c.MasterDataId == d.Student.Category)[0].MasterDataName;
@@ -290,7 +295,7 @@ export class GenerateCertificateComponent implements OnInit {
           var _lastname = d.Student.LastName == null || d.Student.LastName == '' ? '' : " " + d.Student.LastName;
           this.StudentForVariables.push(
             { name: "ToDay", val: this.datepipe.transform(new Date(), 'dd/MM/yyyy') },
-            { name: "StudentClass", val: _studentClass },
+            { name: "StudentClass", val: _studentClass + _section },
             { name: "Section", val: _section },
             { name: "RollNo", val: d.RollNo },
             { name: "AdmissionDate", val: d.AdmissionDate },
@@ -331,7 +336,7 @@ export class GenerateCertificateComponent implements OnInit {
             { name: "ActivityCategory", val: _activityCategory },
             { name: "ActivitySubCategory", val: _activitySubCategory },
             { name: "ActivitySession", val: _activitySession },
-            { name: "Secured", val: _secured }
+            { name: "Secured", val: _Rank }
           )
         })
         this.StudentForVariables.push(
@@ -453,8 +458,6 @@ export class GenerateCertificateComponent implements OnInit {
       })
 
   }
-  DisplayColumn = [];
-  GeneratedCertificatelist = [];
   GetGeneratedCertificate() {
     debugger;
     var filterstr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
@@ -477,6 +480,8 @@ export class GenerateCertificateComponent implements OnInit {
     else
       this.DisplayColumn = ["StudentName", "CertificateType"];
 
+    this.SportsResultList = [];
+    this.ActivityResultDataSource = new MatTableDataSource<any>(this.SportsResultList);
 
     let list: List = new List();
     list.fields = [
@@ -496,7 +501,6 @@ export class GenerateCertificateComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         this.GeneratedCertificatelist = [];
-
         data.value.forEach(d => {
           var _studentObj = this.Students.filter(s => s.StudentClassId == d.StudentClassId);
           if (_studentObj.length > 0) {
@@ -679,26 +683,28 @@ export class GenerateCertificateComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.Religion = this.getDropDownData(globalconstants.MasterDefinitions.common.RELIGION);
         this.Houses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
+        this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
 
         this.StudentClubs = this.getDropDownData(globalconstants.MasterDefinitions.school.CLUBS);
         this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
         //this.StudentGroups = [...this.StudentClubs, ...this.Houses, ...this.StudentGroups];
-        this.Groups.push({
-          name: "Club",
-          disable: true,
-          group: this.StudentClubs
-        },
-          {
-            name: "House",
-            disable: true,
-            group: this.Houses
-          },
-          {
-            name: "Student Group",
-            disable: true,
-            group: this.StudentGroups
-          }
-        )
+
+        // this.Groups.push({
+        //   name: "Club",
+        //   disable: true,
+        //   group: this.StudentClubs
+        // },
+        //   {
+        //     name: "House",
+        //     disable: true,
+        //     group: this.Houses
+        //   },
+        //   {
+        //     name: "Student Group",
+        //     disable: true,
+        //     group: this.StudentGroups
+        //   }
+        // )
         this.Category = this.getDropDownData(globalconstants.MasterDefinitions.common.CATEGORY);
         this.BloodGroup = this.getDropDownData(globalconstants.MasterDefinitions.common.BLOODGROUP);
         this.ReasonForLeaving = this.getDropDownData(globalconstants.MasterDefinitions.school.REASONFORLEAVING);
@@ -721,7 +727,7 @@ export class GenerateCertificateComponent implements OnInit {
         this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
         this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
         this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
-
+        this.GetPoints();
         //this.shareddata.ChangeBatch(this.Batches);
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
@@ -881,7 +887,7 @@ export class GenerateCertificateComponent implements OnInit {
       "SportResultId",
       "StudentClassId",
       "GroupId",
-      "Secured",
+      "RankId",
       "Achievement",
       "SportsNameId",
       "CategoryId",
@@ -898,13 +904,13 @@ export class GenerateCertificateComponent implements OnInit {
       .subscribe((data: any) => {
         data.value.map(m => {
 
-          var objGroup = [];
-          this.Groups.forEach(f => {
-            f.group.forEach(g => {
-              if (g.MasterDataId == m.GroupId)
-                objGroup.push(g);
-            })
-          });
+          var objGroup = this.Houses.filter(h=>h.MasterDataId==m.GroupId);
+          // this.Groups.forEach(f => {
+          //   f.group.forEach(g => {
+          //     if (g.MasterDataId == m.GroupId)
+          //       objGroup.push(g);
+          //   })
+          // });
 
           if (objGroup.length > 0)
             m.GroupName = objGroup[0].MasterDataName;
@@ -935,8 +941,8 @@ export class GenerateCertificateComponent implements OnInit {
             }
             else
               m.Session = '';
-
-            m.Secured = globalconstants.decodeSpecialChars(m.Secured);
+            if (m.RankId > 0)
+              m.Rank = this.AchievementAndPoints.filter(a => a.AchievementAndPointId == m.RankId)[0].Rank;
             m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
             m.Action = false;
             this.SportsResultList.push(m);
@@ -1085,6 +1091,26 @@ export class GenerateCertificateComponent implements OnInit {
 
         this.getPaymentStatus();
       });
+  }
+  GetPoints() {
+    //debugger;
+    var filterOrgId = "Active eq true and OrgId eq " + this.LoginUserDetail[0]['orgId'];
+
+    let list: List = new List();
+    list.fields = ["AchievementAndPointId,Rank,CategoryId,Points,Active"];
+    list.PageName = "AchievementAndPoints";
+    list.filter = [filterOrgId];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(f => {
+          var obj = this.PointCategory.filter(a => a.MasterDataId == f.CategoryId);
+          if (obj.length > 0) {
+            f.Category = obj[0].MasterDataName
+            this.AchievementAndPoints.push(f);
+          }
+        })
+      })
   }
   getPaymentStatus() {
 

@@ -12,7 +12,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'app-result',
@@ -31,6 +31,8 @@ export class ResultComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
+  ExamName ='';
+  ClassName='';
   ExamStudentResult: IExamStudentResult[] = [];
   ClassFullMark = 0;
   ClassSubjectComponents = [];
@@ -50,7 +52,10 @@ export class ResultComponent implements OnInit {
   Batches = [];
   SubjectCategory = [];
   StudentSubjects = [];
-  dataSource: MatTableDataSource<IExamStudentResult>;
+  passdataSource: MatTableDataSource<IExamStudentResult>;
+  promoteddataSource: MatTableDataSource<IExamStudentResult>;
+  faildataSource: MatTableDataSource<IExamStudentResult>;
+  AtAGlanceDatasource: MatTableDataSource<any>;
   allMasterData = [];
   Permission = 'deny';
   ExamId = 0;
@@ -67,13 +72,22 @@ export class ResultComponent implements OnInit {
     Action: false
   };
   displayedColumns = [
+    "Rank",
     "Student",
+    "RollNo",
     "TotalMarks",
     "Percent",
-    "Rank",
     "Division",
 
   ];
+  failpromoteddisplayedColumns = [
+    "Student",
+    "RollNo",
+    "TotalMarks",
+    "Percent",
+    "Division"
+  ];
+  AtAGlancedisplayedColumns=["Text","Val"];
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
@@ -205,13 +219,16 @@ export class ResultComponent implements OnInit {
     return this.dataservice.get(list);
 
   }
+  ResultAtAGlance = [];
   GetExamStudentResults() {
-
+  
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentResult = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    if (this.searchForm.get("searchExamId").value == 0) {
+    var _examId =this.searchForm.get("searchExamId").value
+
+    if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
@@ -221,9 +238,15 @@ export class ResultComponent implements OnInit {
       this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-
+    var _section = '';
+    if(_sectionId>0)
+    {
+      _section = " " +this.Sections.filter(s=>s.MasterDataId == _sectionId)[0].MasterDataName;
+    }
+    this.ClassName = this.Classes.filter(c=>c.ClassId == _classId)[0].ClassName + _section;
+    this.ExamName = "Exam: " + this.Exams.filter(c=>c.ExamId == _examId)[0].ExamName;
     this.loading = true;
-    filterstr = 'ExamId eq ' + this.searchForm.get("searchExamId").value;
+    filterstr = 'ExamId eq ' + _examId;
 
     let list: List = new List();
     list.fields = [
@@ -266,21 +289,38 @@ export class ResultComponent implements OnInit {
             _className = _classObj[0].ClassName;
           d["ClassName"] = _className;
           d["RollNo"] = d.StudentClass["RollNo"];
-          var _lastname = d.StudentClass["Student"].LastName == null? '' : " " + d.StudentClass["Student"].LastName;
-          d["Student"] = _className + "-" + d.StudentClass["RollNo"] + "-" + d.StudentClass["Student"].FirstName + _lastname;
-          //d.D = d.Division;
-          //d.GradeType = _gradeObj[0].GradeType;
-          //d["Rank"] = d.GradeType=='Promoted'?500:d["Rank"];
-          d["Rank"] = d["Rank"] == 0 ? 500 : d["Rank"];
-          //d["Percent"] = d.GradeType == 'Fail' ? '' : (d.TotalMarks / this.ClassFullMark[0].FullMark) * 100;
+          var _lastname = d.StudentClass["Student"].LastName == null ? '' : " " + d.StudentClass["Student"].LastName;
+          d["Student"] = d.StudentClass["Student"].FirstName + _lastname;
           return d;
 
         })
 
-        this.ExamStudentResult = this.ExamStudentResult.filter(f => f.Division != 'Fail').sort((a, b) => a.Rank - b.Rank)
-        this.dataSource = new MatTableDataSource(this.ExamStudentResult);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
+        //this.ResultAtAGlance.push(atAGlance)
+        var PassStudent = this.ExamStudentResult.filter(p => p.Division.toLowerCase() != 'promoted' && p.Division.toLowerCase() != 'fail');
+        var PromotedStudent = this.ExamStudentResult.filter(p => p.Division.toLowerCase() == 'promoted');
+        var FailStudent = this.ExamStudentResult.filter(p => p.Division.toLowerCase() == 'fail');
+        var NOOFSTUDENT = this.ExamStudentResult.length;
+        var passPercentWSP = ((PassStudent.length + PromotedStudent.length) / NOOFSTUDENT) * 100;
+        var passPercentWithoutSP = (PassStudent.length / NOOFSTUDENT) * 100;
+        this.ResultAtAGlance=[];
+        this.ResultAtAGlance.push(
+          { "Text": "No. Of Student", "Val": NOOFSTUDENT },
+          { "Text": "No. Of Student Pass", "Val": PassStudent.length },
+          { "Text": "No. Of Student Fail", "Val": FailStudent.length },
+          { "Text": "No. Of Student Simple Pass", "Val": PromotedStudent.length },
+          { "Text": "Pass Percentage with s.p", "Val": passPercentWSP },
+          { "Text": "Pass Percentage without s.p", "Val": passPercentWithoutSP }
+        );
+
+        this.AtAGlanceDatasource = new MatTableDataSource(this.ResultAtAGlance);
+        
+        this.ExamStudentResult = PassStudent.sort((a, b) => a.Rank - b.Rank)
+        this.passdataSource = new MatTableDataSource(this.ExamStudentResult);
+        this.passdataSource.paginator = this.paginator;
+        this.passdataSource.sort = this.sort;
+
+        this.promoteddataSource = new MatTableDataSource(PromotedStudent);
+        this.faildataSource = new MatTableDataSource(FailStudent);
         this.loading = false; this.PageLoading = false;
       })
   }
@@ -343,7 +383,7 @@ export class ResultComponent implements OnInit {
       })
   }
   FilterClass() {
-   debugger;
+    debugger;
     var _examId = this.searchForm.get("searchExamId").value
     var _classGroupId = 0;
     var objExam = this.Exams.filter(f => f.ExamId == _examId);
@@ -414,7 +454,7 @@ export class ResultComponent implements OnInit {
 
   getDropDownData(dropdowntype) {
     return this.contentservice.getDropDownData(dropdowntype, this.tokenstorage, this.allMasterData);
-    
+
     // let Id = 0;
     // let Ids = this.allMasterData.filter((item, indx) => {
     //   return item.MasterDataName.toLowerCase() == dropdowntype.toLowerCase();//globalconstants.GENDER

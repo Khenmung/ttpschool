@@ -158,8 +158,7 @@
                 </ng-container>
 
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;"
-                    [ngClass]="{ 'highlight': row.Remarks.toLowerCase() == 'orphan' }">
+                <mat-row *matRowDef="let row; columns: displayedColumns;">
                 </mat-row>
             </mat-table>
             <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,50]">

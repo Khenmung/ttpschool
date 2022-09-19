@@ -8,6 +8,7 @@ import { SharedhomepageModule } from '../sharedhomepage.module';
 import { NgxPrintModule } from 'ngx-print';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SharedModule } from 'src/app/shared/shared.module';
+//import { AchievementandpointComponent } from './achievementandpoint/achievementandpoint.component';
 
 @NgModule({
   declarations: [StudentActivityComponents],

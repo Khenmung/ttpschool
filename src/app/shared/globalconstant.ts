@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiURL
-    public static apiUrl: string = "http://localhost:5000"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -162,7 +162,9 @@ export class globalconstants {
                     'ACTIVITY': 'student activity',
                     'STUDENTVIEW': 'student view',
                     'STUDENTGROUP': 'group activity',
-                    'GROUPPARTICIPANT': 'group participant'
+                    'GROUPPARTICIPANT': 'group participant',
+                    'ACHIEVEMENTNPOINT': 'achievement and point',
+                    'GROUPPOINT': 'group point'
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
@@ -210,7 +212,8 @@ export class globalconstants {
                     'STUDENTATTENDANCERECORD': 'student attendance record',
                     'STUDENTTOTALATTENDANCE': 'student total attendance',
                     'EMPLOYEETOTALATTENDANCE': 'employee total attendance',
-                    'ATTENANCEREPORT': 'attendance report'
+                    'ATTENANCEREPORT': 'attendance count',
+                    'ATTENANCELIST': 'Absent list'
                 },
                 'EVALUATION': {
                     'EVALUATION': 'evaluation',
@@ -341,7 +344,8 @@ export class globalconstants {
                 "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
                 "STUDENTREMARKS": "student remark",
                 "EXAMRESULTPROPERTY": "exam result property",
-                "DIFFICULTYLEVEL": "question difficulty level"
+                "DIFFICULTYLEVEL": "question difficulty level",
+                "POINTSCATEGORY": "points category"
             },
             "leave": {
                 "REPORTNAMES": "leave report name",

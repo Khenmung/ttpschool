@@ -35,6 +35,8 @@ export class GroupactivityComponent implements OnInit {
   SelectedBatchId = 0;
   Sections = [];
   Classes = [];
+  AchievementAndPoints = [];
+  PointCategory = [];
   dataSource: MatTableDataSource<any>;
   allMasterData = [];
   SelectedClassSubjects = [];
@@ -46,7 +48,7 @@ export class GroupactivityComponent implements OnInit {
   filteredStudents: Observable<IStudent[]>;
   SportsResultData = {
     SportResultId: 0,
-    Secured: '',
+    RankId: 0,
     Achievement: '',
     SportsNameId: 0,
     CategoryId: 0,
@@ -60,11 +62,11 @@ export class GroupactivityComponent implements OnInit {
   SportsResultForUpdate = [];
   displayedColumns = [
     "SportResultId",
-    "Secured",
+    "RankId",
     "Achievement",
     "CategoryId",
     "SubCategoryId",
-    "AchievementDate",
+    "SessionId",
     "Active",
     "Action"
   ];
@@ -133,6 +135,7 @@ export class GroupactivityComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
+
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
@@ -164,7 +167,7 @@ export class GroupactivityComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    if (row.Secured.length == 0) {
+    if (row.RankId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -212,7 +215,7 @@ export class GroupactivityComponent implements OnInit {
           this.SportsResultForUpdate.push(
             {
               SportResultId: row.SportResultId,
-              Secured: row.Secured,
+              RankId: row.RankId,
               Achievement: globalconstants.encodeSpecialChars(row.Achievement),
               SportsNameId: row.SportsNameId,// this.searchForm.get("searchActivityId").value,
               CategoryId: row.CategoryId,
@@ -314,7 +317,7 @@ export class GroupactivityComponent implements OnInit {
     list.fields = [
       "SportResultId",
       "GroupId",
-      "Secured",
+      "RankId",
       "Achievement",
       "SportsNameId",
       "CategoryId",
@@ -329,8 +332,9 @@ export class GroupactivityComponent implements OnInit {
     this.SportsResultList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        var _subCategory = [];
+        var _category = [], _subCategory = [];
         this.SportsResultList = data.value.map(m => {
+          _category = this.allMasterData.filter(a => a.ParentId == m.SportsNameId)
           if (m.CategoryId > 0)
             _subCategory = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
           else
@@ -340,6 +344,7 @@ export class GroupactivityComponent implements OnInit {
             m.SportsName = obj[0].MasterDataName;
           else
             m.SportsName = '';
+          m.Category = _category;
           m.SubCategories = _subCategory;
           m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
           m.Action = false;
@@ -372,23 +377,25 @@ export class GroupactivityComponent implements OnInit {
         this.StudentHouses = this.getDropDownData(globalconstants.MasterDefinitions.school.HOUSE);
         this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
         this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
+        this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
         //this.StudentGroups = [...this.StudentClubs, ...this.StudentHouses, ...this.StudentGroups];
-        this.Groups.push({
-          name: "Club",
-          disable: true,
-          group: this.StudentClubs
-        },
-          {
-            name: "House",
-            disable: true,
-            group: this.StudentHouses
-          },
-          {
-            name: "Student Group",
-            disable: true,
-            group: this.StudentGroups
-          }
-        )
+        // this.Groups.push({
+        //   name: "Club",
+        //   disable: true,
+        //   group: this.StudentClubs
+        // },
+        //   {
+        //     name: "House",
+        //     disable: true,
+        //     group: this.StudentHouses
+        //   },
+        //   {
+        //     name: "Student Group",
+        //     disable: true,
+        //     group: this.StudentGroups
+        //   }
+        // )
+        this.GetPoints();
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
       });
   }
@@ -407,7 +414,7 @@ export class GroupactivityComponent implements OnInit {
     var _sessionId = this.searchForm.get("searchSessionId").value;
     if (_groupId == 0) {
       this.loading = false;
-      this.contentservice.openSnackBar("Please select student group.", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please select house.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
     if (_activityId == 0) {
@@ -421,19 +428,18 @@ export class GroupactivityComponent implements OnInit {
     //   this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
-    // if(_sessionId==0)
-    // {
-    //   this.loading=false;
-    //   this.contentservice.openSnackBar("Please select session.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
+    if (_sessionId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
     var _subCategory = [];
     if (_categoryId > 0)
       _subCategory = this.allMasterData.filter(f => f.ParentId == _categoryId)
 
     var newdata = {
       SportResultId: 0,
-      Secured: '',
+      RankId: 0,
       Achievement: '',
       SportsNameId: _activityId,
       CategoryId: _categoryId,
@@ -441,7 +447,7 @@ export class GroupactivityComponent implements OnInit {
       SubCategories: _subCategory,
       GroupId: _groupId,
       AchievementDate: new Date(),
-      SessionId: this.searchForm.get("searchSessionId").value,
+      SessionId: _sessionId,
       Active: 0,
       Action: false
     };
@@ -471,21 +477,27 @@ export class GroupactivityComponent implements OnInit {
 
   }
 
-  // GetStudentClasses() {
-  //   //debugger;
-  //   var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
+  GetPoints() {
+    //debugger;
+    var filterOrgId = "Active eq true and OrgId eq " + this.LoginUserDetail[0]['orgId'];
 
-  //   let list: List = new List();
-  //   list.fields = ["GroupId,StudentId,ClassId,RollNo,SectionId"];
-  //   list.PageName = "StudentClasses";
-  //   list.filter = [filterOrgIdNBatchId];
+    let list: List = new List();
+    list.fields = ["AchievementAndPointId,Rank,CategoryId,Points,Active"];
+    list.PageName = "AchievementAndPoints";
+    list.filter = [filterOrgId];
 
-  //   this.dataservice.get(list)
-  //     .subscribe((data: any) => {
-  //       this.StudentClasses = [...data.value];
-  //       this.GetStudents();
-  //     })
-  // }
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(f => {
+          var obj = this.PointCategory.filter(a => a.MasterDataId == f.CategoryId);
+          if (obj.length > 0) {
+            if (obj[0].MasterDataName.toLowerCase() == 'group')
+              this.AchievementAndPoints.push(f);
+          }
+        })
+
+      })
+  }
   // GetStudents() {
   //   this.loading = true;
   //   let list: List = new List();
@@ -543,7 +555,7 @@ export class GroupactivityComponent implements OnInit {
 export interface ISportsResult {
   SportResultId: number;
   Achievement: string;
-  Secured: string;
+  RankId: 0;
   SportsNameId: number;
   CategoryId: number;
   SubCategoryId: number;

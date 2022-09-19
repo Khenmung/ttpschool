@@ -38,7 +38,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   Classes = [];
   dataSource: MatTableDataSource<any>;
   GroupActivityParticipantDataSource: MatTableDataSource<any>;
-
+  HouseFilteredStudent =[];
   allMasterData = [];
   SelectedClassSubjects = [];
   //StudentClasses = [];
@@ -62,8 +62,8 @@ export class GroupactivityparticipantComponent implements OnInit {
     "ActivityName",
     "Category",
     "SubCategory",
+    "Session",
     "Action"
-
   ];
   ParticipantDisplayedColumns = [
     "GroupActivityParticipantId",
@@ -106,7 +106,7 @@ export class GroupactivityparticipantComponent implements OnInit {
       .pipe(
         startWith(''),
         map(value => typeof value === 'string' ? value : value.Name),
-        map(Name => Name ? this._filter(Name) : this.Students.slice())
+        map(Name => Name ? this._filter(Name) : this.HouseFilteredStudent.slice())
       );
 
     this.ClassId = this.tokenstorage.getClassId();
@@ -116,7 +116,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   private _filter(name: string): IStudent[] {
 
     const filterValue = name.toLowerCase();
-    return this.Students.filter(option => option.Name.toLowerCase().includes(filterValue));
+    return this.HouseFilteredStudent.filter(option => option.Name.toLowerCase().includes(filterValue));
 
   }
   displayFn(user: IStudent): string {
@@ -265,7 +265,7 @@ export class GroupactivityparticipantComponent implements OnInit {
   GroupActivityList = [];
   GetSportResult() {
     debugger;
-    
+
     var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     var _GroupId = this.searchForm.get("searchGroupId").value;
     var _SportsNameId = this.searchForm.get("searchActivityId").value;
@@ -302,7 +302,7 @@ export class GroupactivityparticipantComponent implements OnInit {
       "SportResultId",
       "StudentClassId",
       "GroupId",
-      "Secured",
+      "RankId",
       "Achievement",
       "SportsNameId",
       "CategoryId",
@@ -337,13 +337,18 @@ export class GroupactivityparticipantComponent implements OnInit {
             m.ActivityName = obj[0].MasterDataName;
           else
             m.ActivityName = '';
-          var objGroup = [];
-          this.Groups.forEach(f => {
-            f.group.forEach(g => {
-              if (g.MasterDataId == _GroupId)
-                objGroup.push(g);
-            })
-          });
+          var objsession = this.ActivitySessions.filter(f => f.MasterDataId == m.SessionId);
+          if (objsession.length > 0)
+            m.Session = objsession[0].MasterDataName;
+          else
+            m.Session = '';
+          var objGroup = this.StudentHouses.filter(s=>s.MasterDataId == _GroupId);
+          // this.Groups.forEach(f => {
+          //   f.group.forEach(g => {
+          //     if (g.MasterDataId == _GroupId)
+          //       objGroup.push(g);
+          //   })
+          // });
 
           if (objGroup.length > 0)
             m.GroupName = objGroup[0].MasterDataName;
@@ -374,6 +379,8 @@ export class GroupactivityparticipantComponent implements OnInit {
     var filterStr = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
     filterStr += " and SportResultId eq " + row.SportResultId;
     this.loading = true;
+    
+    this.HouseFilteredStudent = this.Students.filter(s=>s.HouseId == row.GroupId);
     this.SelectedActivity = [];
     this.SelectedActivity.push(row);
     this.GroupActivityParticipantList = [];
@@ -422,22 +429,22 @@ export class GroupactivityparticipantComponent implements OnInit {
         this.StudentGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGROUP);
         this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
         //this.StudentGroups = [...this.StudentClubs, ...this.StudentHouses, ...this.StudentGroups];
-        this.Groups.push({
-          name: "Club",
-          disable: true,
-          group: this.StudentClubs
-        },
-          {
-            name: "House",
-            disable: true,
-            group: this.StudentHouses
-          },
-          {
-            name: "Student Group",
-            disable: true,
-            group: this.StudentGroups
-          }
-        )
+        // this.Groups.push({
+        //   name: "Club",
+        //   disable: true,
+        //   group: this.StudentClubs
+        // },
+        //   {
+        //     name: "House",
+        //     disable: true,
+        //     group: this.StudentHouses
+        //   },
+        //   {
+        //     name: "Student Group",
+        //     disable: true,
+        //     group: this.StudentGroups
+        //   }
+        // )
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
       });
   }
@@ -468,7 +475,8 @@ export class GroupactivityparticipantComponent implements OnInit {
       'MotherName',
       'ContactNo',
       'FatherContactNo',
-      'MotherContactNo'
+      'MotherContactNo',
+      'HouseId'
     ];
     list.PageName = "Students";
 
@@ -513,6 +521,7 @@ export class GroupactivityparticipantComponent implements OnInit {
                 StudentClassId: _studentClassId,
                 StudentId: student.StudentId,
                 Name: _fullDescription,
+                HouseId:student.HouseId
               });
             }
           })
@@ -521,8 +530,7 @@ export class GroupactivityparticipantComponent implements OnInit {
         this.PageLoading = false;
       })
   }
-  GroupChanged()
-  {
+  GroupChanged() {
     this.cleardata();
   }
   SetCategory() {
@@ -533,7 +541,7 @@ export class GroupactivityparticipantComponent implements OnInit {
       this.ActivityCategory = [];
     this.cleardata();
   }
-  
+
   AddNew() {
     debugger;
 
@@ -578,18 +586,17 @@ export class GroupactivityparticipantComponent implements OnInit {
   onBlur(row) {
     row.Action = true;
   }
-  cleardata(){
-    this.ShowParticipants=false;
-    this.GroupActivityList=[];
+  cleardata() {
+    this.ShowParticipants = false;
+    this.GroupActivityList = [];
     this.dataSource = new MatTableDataSource(this.GroupActivityList);
-    this.GroupActivityParticipantList =[];
+    this.GroupActivityParticipantList = [];
     this.GroupActivityParticipantDataSource = new MatTableDataSource(this.GroupActivityParticipantList);
   }
   CategoryChanged() {
     this.cleardata();
   }
-  SessionChanged()
-  {
+  SessionChanged() {
     this.cleardata();
   }
   UpdateActive(row, event) {

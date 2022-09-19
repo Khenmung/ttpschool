@@ -12,11 +12,11 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
 @Component({
-  selector: 'app-sportsresult',
-  templateUrl: './sportsresult.component.html',
-  styleUrls: ['./sportsresult.component.scss']
+  selector: 'app-StudentActivity',
+  templateUrl: './studentactivity.component.html',
+  styleUrls: ['./studentactivity.component.scss']
 })
-export class SportsResultComponent implements OnInit {
+export class StudentActivityComponent implements OnInit {
   PageLoading = true;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   RowsToUpdate = -1;
@@ -30,6 +30,7 @@ export class SportsResultComponent implements OnInit {
   Permission = '';
   StandardFilter = '';
   loading = false;
+  AchievementAndPoints = [];
   ActivityCategory = [];
   RelevantEvaluationListForSelectedStudent = [];
   SportsResultList: any[] = [];
@@ -43,10 +44,11 @@ export class SportsResultComponent implements OnInit {
   Students = [];
   ActivityNames = [];
   ActivitySessions = [];
+  PointCategory = [];
   filteredStudents: Observable<IStudent[]>;
   SportsResultData = {
     SportResultId: 0,
-    Secured: '',
+    RankId: 0,
     Achievement: '',
     SportsNameId: 0,
     CategoryId: 0,
@@ -60,10 +62,8 @@ export class SportsResultComponent implements OnInit {
   SportsResultForUpdate = [];
   displayedColumns = [
     "SportResultId",
-    "Secured",
+    "RankId",
     "Achievement",
-    //"SportsNameId",
-    //"SessionId",
     "CategoryId",
     "SubCategoryId",
     "AchievementDate",
@@ -131,6 +131,7 @@ export class SportsResultComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
+
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
@@ -168,7 +169,7 @@ export class SportsResultComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    if (row.Secured.length == 0) {
+    if (row.RankId == 0) {
       this.loading = false;
       this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
@@ -209,14 +210,19 @@ export class SportsResultComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
+          var studentObj = this.Students.filter(s => s.StudentClassId == this.StudentClassId)
+          var _groupId = 0;
+          if (studentObj.length > 0)
+            _groupId = studentObj[0].HouseId;
 
           this.SportsResultForUpdate = [];;
           this.SportsResultForUpdate.push(
             {
               SportResultId: row.SportResultId,
-              Secured: row.Secured,
+              RankId: row.RankId,
               Achievement: globalconstants.encodeSpecialChars(row.Achievement),
               SportsNameId: this.searchForm.get("searchActivityId").value,
+              GroupId: _groupId,
               CategoryId: row.CategoryId,
               SubCategoryId: row.SubCategoryId,
               StudentClassId: this.StudentClassId,
@@ -332,7 +338,7 @@ export class SportsResultComponent implements OnInit {
     list.fields = [
       "SportResultId",
       "StudentClassId",
-      "Secured",
+      "RankId",
       "Achievement",
       "SportsNameId",
       "CategoryId",
@@ -386,10 +392,11 @@ export class SportsResultComponent implements OnInit {
       .subscribe((data: any) => {
         this.allMasterData = [...data.value];
         this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
-        //this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
+        this.PointCategory = this.getDropDownData(globalconstants.MasterDefinitions.school.POINTSCATEGORY);
         this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
 
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.GetPoints();
       });
   }
   SetCategory() {
@@ -421,7 +428,7 @@ export class SportsResultComponent implements OnInit {
       _subcategory = this.allMasterData.filter(f => f.ParentId == _categoryId);
     var newdata = {
       SportResultId: 0,
-      Secured: '',
+      RankId: 0,
       Achievement: '',
       SportsNameId: _activityId,
       CategoryId: _categoryId,
@@ -495,6 +502,7 @@ export class SportsResultComponent implements OnInit {
       'FirstName',
       'LastName',
       'ContactNo',
+      'HouseId'
     ];
 
     list.PageName = "Students";
@@ -531,6 +539,7 @@ export class SportsResultComponent implements OnInit {
               this.Students.push({
                 StudentClassId: _studentClassId,
                 StudentId: student.StudentId,
+                HouseId: student.HouseId,
                 ClassId: _classId,
                 Name: _fullDescription,
               });
@@ -540,11 +549,32 @@ export class SportsResultComponent implements OnInit {
         this.loading = false; this.PageLoading = false;
       })
   }
+  GetPoints() {
+    debugger;
+    var filterOrgId = "Active eq true and OrgId eq " + this.LoginUserDetail[0]['orgId'];
+
+    let list: List = new List();
+    list.fields = ["AchievementAndPointId,Rank,CategoryId,Points,Active"];
+    list.PageName = "AchievementAndPoints";
+    list.filter = [filterOrgId];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        data.value.forEach(f => {
+          var obj = this.PointCategory.filter(a => a.MasterDataId == f.CategoryId);
+          if (obj.length > 0) {
+            if (obj[0].MasterDataName.toLowerCase() == 'individual')
+              this.AchievementAndPoints.push(f);
+          }
+        })
+
+      })
+  }
 }
 export interface ISportsResult {
   SportResultId: number;
   Achievement: string;
-  Secured: string;
+  RankId: number;
   SportsNameId: number;
   CategoryId: number;
   SubCategoryId: number;

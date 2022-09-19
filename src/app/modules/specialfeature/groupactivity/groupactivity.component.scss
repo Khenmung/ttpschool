@@ -14,7 +14,7 @@ mat-form-field {
 {
     flex:1 0 40px;
 }
-.mat-column-Secured,
+.mat-column-RankId,
 .mat-column-Active,
 .mat-column-Action{
     flex:1 0 100px;
@@ -28,4 +28,15 @@ mat-form-field {
 .mat-column-AchievementDate,
 .mat-column-SessionId{
     flex:1 0 110px;
+}
+mat-optgroup {
+  display         : block;
+  background-color: lightgray;
+ 
+}
+
+mat-option {
+  display         : block;
+  background-color: #ffffff;
+ 
 }

@@ -1,19 +1,19 @@
 <div style="padding:15px 15px 10px 15px;">
-    <div><strong>Student Group Activity</strong></div>
+    <div><strong>Group Activity</strong></div>
 </div>
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <div style="width: 100%;">
     <form [formGroup]="searchForm">
         <div>
-            <mat-form-field appearance="outline" [style.width.px]="300">
-                <mat-label>Student group</mat-label>
+            <mat-form-field appearance="outline">
+                <mat-label>House</mat-label>
                 <mat-select formControlName="searchGroupId">
                     <mat-option value="0">select</mat-option>
-                    <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled">
-                        <mat-option *ngFor="let list of item.group" [value]="list.MasterDataId">
-                            {{list.MasterDataName}}
-                        </mat-option>
-                    </mat-optgroup>
+                    <!-- <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled"> -->
+                    <mat-option *ngFor="let list of StudentHouses" [value]="list.MasterDataId">
+                        {{list.MasterDataName}}
+                    </mat-option>
+                    <!-- </mat-optgroup> -->
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
@@ -31,14 +31,14 @@
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="outline">
+            <!-- <mat-form-field appearance="outline">
                 <mat-label>Session</mat-label>
                 <mat-select formControlName="searchSessionId">
                     <mat-option value="0">select</mat-option>
                     <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
                         {{item.MasterDataName}}</mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
         </div>
         <div style="width:100%;display: flex; justify-content: center;">
             <button [disabled]="loading" style="margin-right:15px" matTooltip="search" mat-raised-button color="accent"
@@ -62,13 +62,16 @@
                 {{element.SportResultId}}
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Secured">
-            <mat-header-cell *matHeaderCellDef>Title
+        <ng-container matColumnDef="RankId">
+            <mat-header-cell *matHeaderCellDef>Secured
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input matInput [maxlength]="20" (blur)="onBlur(element)" [value]="element.Secured"
-                        [(ngModel)]="element.Secured">
+                    <mat-label>Secured</mat-label>
+                    <mat-select [(ngModel)]="element.RankId" [value]="element.RankId">
+                        <mat-option *ngFor="let item of AchievementAndPoints" [value]="item.AchievementAndPointId">
+                            {{item.Rank}}</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -83,19 +86,6 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="SportsNameId">
-            <mat-header-cell *matHeaderCellDef>Activity
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.SportsNameId" (selectionChange)="onBlur(element)"
-                        [value]="element.SportsNameId">
-                        <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </mat-cell>
-        </ng-container> -->
         <ng-container matColumnDef="CategoryId">
             <mat-header-cell *matHeaderCellDef>Category
             </mat-header-cell>
@@ -103,7 +93,7 @@
                 <mat-form-field appearance="outline">
                     <mat-select [(ngModel)]="element.CategoryId" (selectionChange)="SelectSubCategory(element,$event)"
                         [value]="element.CategoryId">
-                        <mat-option *ngFor="let item of ActivityCategory" [value]="item.MasterDataId">
+                        <mat-option *ngFor="let item of element.Category" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -122,7 +112,7 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="SessionId">
+        <ng-container matColumnDef="SessionId">
             <mat-header-cell *matHeaderCellDef>Session
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
@@ -134,7 +124,7 @@
                     </mat-select>
                 </mat-form-field>
             </mat-cell>
-        </ng-container> -->
+        </ng-container>
         <ng-container matColumnDef="AchievementDate">
             <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
             <mat-cell *matCellDef="let element">

@@ -26,14 +26,14 @@
                 </mat-form-field>
                 <div *ngIf="SportsCertificate">
                     <mat-form-field appearance="outline">
-                        <mat-label>Student group</mat-label>
+                        <mat-label>Houses</mat-label>
                         <mat-select formControlName="searchStudentGroupId" (selectionChange)="clear()">
                             <mat-option value="0">select</mat-option>
-                            <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled">
-                                <mat-option *ngFor="let list of item.group" [value]="list.MasterDataId">
+                            <!-- <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled"> -->
+                                <mat-option *ngFor="let list of Houses" [value]="list.MasterDataId">
                                     {{list.MasterDataName}}
                                 </mat-option>
-                            </mat-optgroup>
+                            <!-- </mat-optgroup> -->
                         </mat-select>
                     </mat-form-field>
                     <mat-form-field appearance="outline">
@@ -143,13 +143,13 @@
             </div>
             <br>
             <div fxLayout="row" fxLayoutAlign="center center">
-                <!-- <button [disabled]="loading || Permission=='read' || CertificateElements.length==0" matTooltip="save"
+                <button [disabled]="loading || Permission=='read' || CertificateElements.length==0" matTooltip="save"
                     mat-raised-button color="accent" (click)="Save()">
                     <mat-icon>save</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
-                </button> -->
+                </button>
                 <!-- <button [disabled]="loading || Permission=='read' || CertificateElements.length==0" mat-raised-button
                     (click)="print()"
                     color="accent" matTooltip="print">

@@ -161,3 +161,14 @@ I've added a few comments on why we're using certain properties
 		background   : linear-gradient(to left, turquoise, greenyellow);
 	}
 }
+mat-optgroup {
+	display         : block;
+	background-color: lightgray;
+   
+  }
+  
+  mat-option {
+	display         : block;
+	background-color: #ffffff;
+   
+  }

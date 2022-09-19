@@ -27,21 +27,8 @@
                 </button>
             </div>
         </form>
-        <!-- <mat-table [dataSource]="dataSourceDayStatistic" matSort *ngIf="DayStatisticDisplay.length>1">
-            <ng-container *ngFor="let disCol of DayStatisticDisplay; let colIndex = index" matColumnDef="{{disCol}}">
-                <mat-header-cell *matHeaderCellDef mat-sort-header>
-                    <div *ngIf="disCol!='FirstCol' && disCol!='TeacherName'">{{disCol}}
-                    </div>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element">
-                    <div *ngIf="disCol!='TeacherName'" style="text-align:center;width:100%">{{element[disCol]}}</div>
-                    <div *ngIf="disCol=='TeacherName'">{{element[disCol]}}</div>
-                </mat-cell>
-            </ng-container>
-            <mat-header-row *matHeaderRowDef="DayStatisticDisplay"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: DayStatisticDisplay;" class="element-row"></mat-row>
-        </mat-table> -->
-        <div>
+        <div id="printSection">
+            <div style="margin:15px;font-weight: 600;">Teacher Time Table for : {{TeacherName}}</div>
             <mat-table [dataSource]="dataSourcePeriodStatistic" style="margin-bottom: 15px;">
                 <ng-container *ngFor="let disCol of PeriodStatisticDisplay;" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
@@ -50,14 +37,6 @@
                         </div>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <!-- <div *ngIf="disCol=='TeacherName'"> {{element[disCol]}}
-                        </div>
-                        <div *ngIf="disCol!='TeacherName' && element[disCol]>1"
-                            style="font-weight:bold;color:red;text-align:center;width:100%"> {{element[disCol]}}
-                        </div>
-                        <div *ngIf="disCol!='TeacherName' && (disCol =='Day' || element[disCol]<=1)"
-                            style="text-align:center;width:100%"> {{element[disCol]}}
-                        </div> -->
                         {{element[disCol]}}
                     </mat-cell>
                 </ng-container>
@@ -65,50 +44,11 @@
                 <mat-row *matRowDef="let row; columns: PeriodStatisticDisplay;" class="element-row"></mat-row>
             </mat-table>
         </div>
-        <!-- <div style="overflow: auto;height: 430px; width: auto;">
-            <mat-table #table [dataSource]="dataSource">
-                <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
-                    <mat-header-cell *matHeaderCellDef>
-                        <span
-                            style="padding-left: 10px;">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>
-                        <div *ngIf="SchoolTimeTableList.length>0">
-                            <button *ngIf="disCol=='Action'" [disabled]="loading || Permission=='read'"
-                                matTooltip="save all" mat-mini-fab (click)="SaveAll()">
-                                <mat-icon>all_out</mat-icon>
-                                <mat-icon *ngIf="loading">
-                                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                                </mat-icon>
-                            </button>
-                        </div>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let element"
-                        [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
-                        <span *ngIf="disCol !='Day' && !disCol.includes('f_') && disCol !='Action'">
-                            <mat-form-field style="width:135px;">
-                                <mat-select (selectionChange)="onBlur(element,$event,disCol)"
-                                    [(ngModel)]="element[disCol]" [value]="element[disCol]">
-                                    <mat-option *ngFor="let item of ClassWiseSubjects" [value]="item.TeacherSubjectId">
-                                        {{item.SubjectName}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </span>
-                        <button *ngIf="disCol=='Action'"
-                            [disabled]="loading || !element['Action'] || Permission=='read'" matTooltip="save"
-                            mat-mini-fab (click)="SaveRow(element)">
-                            <mat-icon>save</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
-                        </button>
-                        <span style="margin-right: 15px;">{{ disCol.includes('f_')?(disCol|slice:2):disCol
-                            =='Day'?element[disCol]:''}}</span>
-                    </mat-cell>
-                </ng-container>
-                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" style="min-height: 40px;"></mat-row>
-            </mat-table>
-        </div> -->
+        <span style="margin-top: 15px;" fxLayout="row">
+            <button [disabled]="loading || ExamStudentResult.length ==0" matTooltip="print"
+                printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
+                <mat-icon>print</mat-icon>
+            </button>            
+        </span>
     </div>
 </div>
-<!-- </div> -->

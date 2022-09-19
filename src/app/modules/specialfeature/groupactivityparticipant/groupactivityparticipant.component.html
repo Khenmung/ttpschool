@@ -6,14 +6,14 @@
     <form [formGroup]="searchForm">
         <div>
             <mat-form-field appearance="outline" [style.width.px]="300">
-                <mat-label>Student group</mat-label>
+                <mat-label>House</mat-label>
                 <mat-select formControlName="searchGroupId" (selectionChange)="GroupChanged()">
                     <mat-option value="0">select</mat-option>
-                    <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled">
-                        <mat-option *ngFor="let list of item.group" [value]="list.MasterDataId">
+                    <!-- <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled"> -->
+                        <mat-option *ngFor="let list of StudentHouses" [value]="list.MasterDataId">
                             {{list.MasterDataName}}
                         </mat-option>
-                    </mat-optgroup>
+                    <!-- </mat-optgroup> -->
                 </mat-select>
             </mat-form-field>
             <mat-form-field appearance="outline">
@@ -80,7 +80,13 @@
                 {{element.SubCategory}}
             </mat-cell>
         </ng-container>
-
+        <ng-container matColumnDef="Session">
+            <mat-header-cell *matHeaderCellDef>Session
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                {{element.Session}}
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="Action">
             <mat-header-cell *matHeaderCellDef>
             </mat-header-cell>

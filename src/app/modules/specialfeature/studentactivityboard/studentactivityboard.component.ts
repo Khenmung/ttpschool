@@ -1,16 +1,18 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { GenerateCertificateComponent } from '../generatecertificate/generatecertificate.component';
-import { SportsResultComponent } from '../sportsresult/sportsresult.component';
+import { StudentActivityComponent } from '../StudentActivity/studentactivity.component';
 import { StudentfamilynfriendComponent } from '../studentfamilynfriend/studentfamilynfriend.component';
 import { StudentDocumentComponent } from '../uploadstudentdocument/uploadstudentdoc.component';
 import {SwUpdate} from '@angular/service-worker';
 import { GroupactivityComponent } from '../groupactivity/groupactivity.component';
 import { GroupactivityparticipantComponent } from '../groupactivityparticipant/groupactivityparticipant.component';
+import { AchievementandpointComponent } from '../achievementandpoint/achievementandpoint.component';
+import { GrouppointComponent } from '../grouppoint/grouppoint.component';
 @Component({
   selector: 'app-studentactivityboard',
   templateUrl: './studentactivityboard.component.html',
@@ -20,13 +22,17 @@ export class StudentactivityboardComponent implements AfterViewInit {
   components:any = [
     GenerateCertificateComponent,
     StudentDocumentComponent,
-    SportsResultComponent,
+    StudentActivityComponent,
     StudentfamilynfriendComponent,
     GroupactivityComponent,
-    GroupactivityparticipantComponent
+    GroupactivityparticipantComponent,
+    AchievementandpointComponent,
+    GrouppointComponent
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -70,6 +76,8 @@ export class StudentactivityboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTGROUP)
     this.GenerateComponent(globalconstants.Pages.edu.STUDENT.GROUPPARTICIPANT)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ACHIEVEMENTNPOINT)
+    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.GROUPPOINT)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -105,7 +113,7 @@ export class StudentactivityboardComponent implements AfterViewInit {
         comindx = this.components.indexOf(StudentDocumentComponent);
         break;      
       case globalconstants.Pages.edu.STUDENT.ACTIVITY:
-        comindx = this.components.indexOf(SportsResultComponent);
+        comindx = this.components.indexOf(StudentActivityComponent);
         break;
       case globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS:
         comindx = this.components.indexOf(StudentfamilynfriendComponent);
@@ -115,6 +123,12 @@ export class StudentactivityboardComponent implements AfterViewInit {
         break;
       case globalconstants.Pages.edu.STUDENT.GROUPPARTICIPANT:
         comindx = this.components.indexOf(GroupactivityparticipantComponent);
+        break;
+      case globalconstants.Pages.edu.STUDENT.ACHIEVEMENTNPOINT:
+        comindx = this.components.indexOf(AchievementandpointComponent);
+        break;
+      case globalconstants.Pages.edu.STUDENT.GROUPPOINT:
+        comindx = this.components.indexOf(GrouppointComponent);
         break;
     }
 

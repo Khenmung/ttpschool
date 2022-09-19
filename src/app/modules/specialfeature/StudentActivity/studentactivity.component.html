@@ -65,13 +65,16 @@
                 {{element.SportResultId}}
             </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="Secured">
+        <ng-container matColumnDef="RankId">
             <mat-header-cell *matHeaderCellDef>Title
             </mat-header-cell>
             <mat-cell *matCellDef="let element">
                 <mat-form-field appearance="outline">
-                    <input matInput [maxlength]="20" (blur)="onBlur(element)" [value]="element.Secured"
-                        [(ngModel)]="element.Secured">
+                    <mat-select [(ngModel)]="element.RankId" (selectionChange)="onBlur(element)"
+                    [value]="element.RankId">
+                    <mat-option *ngFor="let item of AchievementAndPoints" [value]="item.AchievementAndPointId">
+                        {{item.Rank}}</mat-option>
+                </mat-select>
                 </mat-form-field>
             </mat-cell>
         </ng-container>
@@ -86,19 +89,6 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="SportsNameId">
-            <mat-header-cell *matHeaderCellDef>Activity
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.SportsNameId" (selectionChange)="onBlur(element)"
-                        [value]="element.SportsNameId">
-                        <mat-option *ngFor="let item of ActivityNames" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </mat-cell>
-        </ng-container> -->
         <ng-container matColumnDef="CategoryId">
             <mat-header-cell *matHeaderCellDef>Category
             </mat-header-cell>
@@ -125,19 +115,6 @@
                 </mat-form-field>
             </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="SessionId">
-            <mat-header-cell *matHeaderCellDef>Session
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <mat-form-field appearance="outline">
-                    <mat-select [(ngModel)]="element.SessionId" (selectionChange)="onBlur(element)"
-                        [value]="element.SessionId">
-                        <mat-option *ngFor="let item of ActivitySessions" [value]="item.MasterDataId">
-                            {{item.MasterDataName}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </mat-cell>
-        </ng-container> -->
         <ng-container matColumnDef="AchievementDate">
             <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
             <mat-cell *matCellDef="let element">

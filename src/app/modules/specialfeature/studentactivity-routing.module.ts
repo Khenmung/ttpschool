@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
+import { AchievementandpointComponent } from './achievementandpoint/achievementandpoint.component';
 import { GenerateCertificateComponent } from './generatecertificate/generatecertificate.component';
 import { GroupactivityComponent } from './groupactivity/groupactivity.component';
 import { GroupactivityparticipantComponent } from './groupactivityparticipant/groupactivityparticipant.component';
 import { GrouppointComponent } from './grouppoint/grouppoint.component';
-import { SportsResultComponent } from './sportsresult/sportsresult.component';
+import { StudentActivityComponent } from './StudentActivity/studentactivity.component';
 import { StudentactivityboardComponent } from './studentactivityboard/studentactivityboard.component';
 import { StudentactivityhomeComponent } from './studentactivityhome/studentactivityhome.component';
 import { StudentfamilynfriendComponent } from './studentfamilynfriend/studentfamilynfriend.component';
@@ -27,7 +28,7 @@ const routes: Routes = [
 })
 export class StudentactivityRoutingModule { }
 export const StudentActivityComponents=[
-  SportsResultComponent,
+  StudentActivityComponent,
   GenerateCertificateComponent,
   StudentDocumentComponent,
   StudentactivityhomeComponent,
@@ -35,5 +36,6 @@ export const StudentActivityComponents=[
   StudentfamilynfriendComponent,
   GroupactivityComponent,
   GroupactivityparticipantComponent, 
-  GrouppointComponent
+  GrouppointComponent,
+  AchievementandpointComponent
 ]

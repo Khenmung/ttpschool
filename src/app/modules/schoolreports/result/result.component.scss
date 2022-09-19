@@ -7,9 +7,12 @@ mat-cell:first-of-type{
 .mat-column-Student{
     flex:1 0 150px
 }
-.mat-column-Rank,
+
 .mat-column-Grade,
 .mat-column-Percent,
 .mat-column-TotalMarks{
     flex:1 0 100px
+}
+.mat-column-Rank{
+    flex:1 1 60px
 }

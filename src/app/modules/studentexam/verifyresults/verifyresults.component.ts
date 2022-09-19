@@ -455,6 +455,7 @@ export class VerifyResultsComponent implements OnInit {
                   RollNo: s.RollNo,
                   SubjectId: _subjectIdObj[0].SubjectId,
                   Subject: _subject,
+                  Section:_section,
                   ClassId: s.ClassId,
                   StudentId: s.StudentId,
                   SectionId: s.SectionId,
@@ -530,7 +531,7 @@ export class VerifyResultsComponent implements OnInit {
           var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
           var _lastname = stud[0].LastName == null ? '' : " " + stud[0].LastName;
           if (stud.length > 0) {
-            f.Student = stud[0].RollNo +"-"+stud[0].FirstName + _lastname;
+            f.Student = stud[0].RollNo +"-"+stud[0].FirstName + _lastname +"- " + f.Section;
           }
 
         })
@@ -708,10 +709,13 @@ export class VerifyResultsComponent implements OnInit {
                   //}
                 }
               }
+
+              result["Percentage"] = ((result.Total / result.FullMark) * 100).toFixed(2);
+              
               var _notToCalculateRankAndPercentage = ['fail', 'promoted'];
               if (!_notToCalculateRankAndPercentage.includes(result.Division.toLowerCase())) {
                 //result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
-                result["Percentage"] = ((result.Total / result.FullMark) * 100).toFixed(2);
+                
 
                 if (previousTotal != result.Total)
                   rankCount++;

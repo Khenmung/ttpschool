@@ -1,10 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component,  ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import { AttendancelistComponent } from '../attendancelist/attendancelist.component';
 import { AttendancereportComponent } from '../attendancereport/attendancereport.component';
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
-import { StudenttotalattendanceComponent } from '../studenttotalattendance/studenttotalattendance.component';
 import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendance.component';
 
 @Component({
@@ -17,12 +17,13 @@ export class AttendanceboardComponent implements AfterViewInit {
   components: any = [
     StudentAttendanceComponent,
     TeacherAttendanceComponent,
-    //StudenttotalattendanceComponent,
-    AttendancereportComponent
+    AttendancereportComponent,
+    AttendancelistComponent
   ];
   SelectedAppName = '';
   tabNames = [
     { label: 'Student Attendance', faIcon: '' },
+    { label: 'Employee Attendance', faIcon: '' },
     { label: 'Employee Attendance', faIcon: '' },
     { label: 'Employee Attendance', faIcon: '' },
   ];
@@ -66,6 +67,10 @@ export class AttendanceboardComponent implements AfterViewInit {
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.STUDENTATTENDANCE)
       var comindx = this.components.indexOf(StudentAttendanceComponent);
       this.AddRemoveComponent(perObj, comindx);
+      
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCELIST)
+      var comindx = this.components.indexOf(AttendancelistComponent);
+      this.AddRemoveComponent(perObj, comindx);
 
     }
     else if (this.SelectedAppName.toLowerCase() == 'employee management') {
@@ -74,6 +79,12 @@ export class AttendanceboardComponent implements AfterViewInit {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }
+      var comindx = this.components.indexOf(AttendancelistComponent);
+      if (comindx > -1) {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.TEACHERATTENDANCE)
       var comindx = this.components.indexOf(TeacherAttendanceComponent);
       this.AddRemoveComponent(perObj, comindx);
@@ -100,8 +111,6 @@ export class AttendanceboardComponent implements AfterViewInit {
   }
 
   AddRemoveComponent(perObj, pcomindx) {
-
-
 
     if (perObj.length > 0) {
       if (perObj[0].permission == 'deny') {
