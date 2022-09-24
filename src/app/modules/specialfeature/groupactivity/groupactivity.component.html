@@ -6,7 +6,7 @@
     <form [formGroup]="searchForm">
         <div>
             <mat-form-field appearance="outline">
-                <mat-label>House</mat-label>
+                <mat-label>Group</mat-label>
                 <mat-select formControlName="searchGroupId">
                     <mat-option value="0">select</mat-option>
                     <!-- <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled"> -->
@@ -93,7 +93,7 @@
                 <mat-form-field appearance="outline">
                     <mat-select [(ngModel)]="element.CategoryId" (selectionChange)="SelectSubCategory(element,$event)"
                         [value]="element.CategoryId">
-                        <mat-option *ngFor="let item of element.Category" [value]="item.MasterDataId">
+                        <mat-option *ngFor="let item of ActivityCategory" [value]="item.MasterDataId">
                             {{item.MasterDataName}}</mat-option>
                     </mat-select>
                 </mat-form-field>

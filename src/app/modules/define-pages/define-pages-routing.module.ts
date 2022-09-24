@@ -8,11 +8,13 @@ import { DisplaypageComponent } from './displaypage/displaypage.component';
 import { pageDashboardComponent } from './pageDashboard/pageDashboard.component';
 import { pageViewComponent } from './pageView/pageView.component';
 import { TextEditorComponent } from './texteditor/texteditor.component';
+import { PagesboardComponent } from './pagesboard/pagesboard.component';
 
 const routes: Routes = [
   {
     path: "", component: HomeComponent,
     children: [
+      { path: '', component: PagesboardComponent },
       { path: 'editor', component: TextEditorComponent },
       { path: 'page/:id', component: TextEditorComponent },
       { path: 'display/:phid/:pid', component: DisplaypageComponent },      
@@ -31,9 +33,10 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class PhotogalleryRoutingModule { }
+export class DefinePagesRoutingModule { }
 export const DefinePagesComponents = [
   TextEditorComponent,
+  PagesboardComponent,
   pageDashboardComponent,
   pageViewComponent,
   DisplaypageComponent,

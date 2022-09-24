@@ -87,11 +87,7 @@ export class GrouppointComponent implements OnInit {
     debugger;
 
     this.searchForm = this.fb.group({
-      searchGroupId: [0],
-      searchActivityId: [0],
-      searchCategoryId: [0],
-      searchSubCategoryId: [0],
-      searchSessionId: [0]
+       searchSessionId: [0]
     });
     this.ClassId = this.tokenstorage.getClassId();
     this.PageLoad();
@@ -126,7 +122,7 @@ export class GrouppointComponent implements OnInit {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
         this.GetMasterData();
-        this.GetPoints();
+
         if (this.Classes.length == 0) {
           this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
             this.Classes = [...data.value];
@@ -160,30 +156,9 @@ export class GrouppointComponent implements OnInit {
   GetSportsResult() {
     debugger;
     var filterStr = "Active eq 1 and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-    var _GroupId = this.searchForm.get("searchGroupId").value;
-    var _SportsNameId = this.searchForm.get("searchActivityId").value;
-    var _categoryId = this.searchForm.get("searchCategoryId").value;
-    var _subCategoryId = this.searchForm.get("searchSubCategoryId").value;
     var _SessionId = this.searchForm.get("searchSessionId").value;
-    if (_GroupId > 0) {
-      filterStr += " and GroupId eq " + _GroupId;
-    }
-    // else {
-    //   this.contentservice.openSnackBar("Please select student group.", globalconstants.ActionText, globalconstants.RedBackground);
-    //   return;
-    // }
-    if (_SportsNameId > 0) {
-      filterStr += " and SportsNameId eq " + _SportsNameId;
-    }
     if (_SessionId > 0) {
       filterStr += " and SessionId eq " + _SessionId;
-    }
-
-    if (_categoryId > 0) {
-      filterStr += " and CategoryId eq " + _categoryId;
-    }
-    if (_subCategoryId > 0) {
-      filterStr += " and SubCategoryId eq " + _subCategoryId;
     }
 
     this.loading = true;
@@ -228,7 +203,11 @@ export class GrouppointComponent implements OnInit {
             m.SportsName = obj[0].MasterDataName;
           else
             m.SportsName = '';
-          m.Category = this.allMasterData.filter(f => f.MasterDataId == m.CategoryId)[0].MasterDataName;
+          if (m.CategoryId > 0) {
+            var obj = this.allMasterData.filter(f => f.MasterDataId == m.CategoryId);
+            if (obj.length > 0)
+              m.Category = obj[0].MasterDataName;
+          }
           if (m.SubCategoryId > 0)
             m.SubCategory = this.allMasterData.filter(f => f.MasterDataId == m.SubCategoryId)[0].MasterDataName;
           m.Points = m.Rank.Points;
@@ -350,6 +329,7 @@ export class GrouppointComponent implements OnInit {
         //   }
         // )
         this.Sections = this.getDropDownData(globalconstants.MasterDefinitions.school.SECTION);
+        this.GetPoints();
       });
   }
   SetCategory() {
@@ -401,6 +381,7 @@ export class GrouppointComponent implements OnInit {
           }
         })
       })
+    //this.GetSportsResult();
   }
 }
 export interface ISportsResult {

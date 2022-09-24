@@ -31,8 +31,8 @@ export class ResultComponent implements OnInit {
   StandardFilterWithBatchId = '';
   loading = false;
   rowCount = 0;
-  ExamName ='';
-  ClassName='';
+  ExamName = '';
+  ClassName = '';
   ExamStudentResult: IExamStudentResult[] = [];
   ClassFullMark = 0;
   ClassSubjectComponents = [];
@@ -74,6 +74,7 @@ export class ResultComponent implements OnInit {
   displayedColumns = [
     "Rank",
     "Student",
+    "Section",
     "RollNo",
     "TotalMarks",
     "Percent",
@@ -82,12 +83,13 @@ export class ResultComponent implements OnInit {
   ];
   failpromoteddisplayedColumns = [
     "Student",
+    "Section",
     "RollNo",
     "TotalMarks",
     "Percent",
     "Division"
   ];
-  AtAGlancedisplayedColumns=["Text","Val"];
+  AtAGlancedisplayedColumns = ["Text", "Val"];
   searchForm: UntypedFormGroup;
   constructor(private servicework: SwUpdate,
     private contentservice: ContentService,
@@ -221,12 +223,12 @@ export class ResultComponent implements OnInit {
   }
   ResultAtAGlance = [];
   GetExamStudentResults() {
-  
+
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     this.ExamStudentResult = [];
     var orgIdSearchstr = ' and OrgId eq ' + this.LoginUserDetail[0]["orgId"] + ' and BatchId eq ' + this.SelectedBatchId;
     var filterstr = 'Active eq 1 ';
-    var _examId =this.searchForm.get("searchExamId").value
+    var _examId = this.searchForm.get("searchExamId").value
 
     if (_examId == 0) {
       this.contentservice.openSnackBar("Please select exam", globalconstants.ActionText, globalconstants.RedBackground);
@@ -239,12 +241,11 @@ export class ResultComponent implements OnInit {
       return;
     }
     var _section = '';
-    if(_sectionId>0)
-    {
-      _section = " " +this.Sections.filter(s=>s.MasterDataId == _sectionId)[0].MasterDataName;
+    if (_sectionId > 0) {
+      _section = " " + this.Sections.filter(s => s.MasterDataId == _sectionId)[0].MasterDataName;
     }
-    this.ClassName = this.Classes.filter(c=>c.ClassId == _classId)[0].ClassName + _section;
-    this.ExamName = "Exam: " + this.Exams.filter(c=>c.ExamId == _examId)[0].ExamName;
+    this.ClassName = this.Classes.filter(c => c.ClassId == _classId)[0].ClassName + _section;
+    this.ExamName = "Exam: " + this.Exams.filter(c => c.ExamId == _examId)[0].ExamName;
     this.loading = true;
     filterstr = 'ExamId eq ' + _examId;
 
@@ -278,7 +279,7 @@ export class ResultComponent implements OnInit {
         this.ExamStudentResult = this.ExamStudentResult.map(d => {
           var _section = '';
           //var _gradeObj = this.SelectedClassStudentGrades[0].grades.filter(f => f.StudentGradeId == d.Grade);
-          var _sectionObj = this.Sections.filter(s => s.SectionId == d.StudentClass["SectionId"]);
+          var _sectionObj = this.Sections.filter(s => s.MasterDataId == d.StudentClass["SectionId"]);
           if (_sectionObj.length > 0)
             _section = _sectionObj[0].MasterDataName;
           d["Section"] = _section;
@@ -300,9 +301,9 @@ export class ResultComponent implements OnInit {
         var PromotedStudent = this.ExamStudentResult.filter(p => p.Division.toLowerCase() == 'promoted');
         var FailStudent = this.ExamStudentResult.filter(p => p.Division.toLowerCase() == 'fail');
         var NOOFSTUDENT = this.ExamStudentResult.length;
-        var passPercentWSP = ((PassStudent.length + PromotedStudent.length) / NOOFSTUDENT) * 100;
-        var passPercentWithoutSP = (PassStudent.length / NOOFSTUDENT) * 100;
-        this.ResultAtAGlance=[];
+        var passPercentWSP = parseFloat(""+((PassStudent.length + PromotedStudent.length) / NOOFSTUDENT) * 100).toFixed(2);
+        var passPercentWithoutSP = parseFloat(""+(PassStudent.length / NOOFSTUDENT) * 100).toFixed(2);
+        this.ResultAtAGlance = [];
         this.ResultAtAGlance.push(
           { "Text": "No. Of Student", "Val": NOOFSTUDENT },
           { "Text": "No. Of Student Pass", "Val": PassStudent.length },
@@ -313,7 +314,16 @@ export class ResultComponent implements OnInit {
         );
 
         this.AtAGlanceDatasource = new MatTableDataSource(this.ResultAtAGlance);
-        
+        var _rank = 0;
+        var _previouspercent = 0;
+        PassStudent=PassStudent.sort((a, b) => b["Percent"] - a["Percent"])
+        PassStudent.forEach(p => {
+          if (_previouspercent != p["Percent"]) {
+            _rank++;
+          }
+          p.Rank = _rank;
+          _previouspercent = p["Percent"];
+        })
         this.ExamStudentResult = PassStudent.sort((a, b) => a.Rank - b.Rank)
         this.passdataSource = new MatTableDataSource(this.ExamStudentResult);
         this.passdataSource.paginator = this.paginator;
@@ -408,7 +418,7 @@ export class ResultComponent implements OnInit {
             this.ClassGroups = [...data.value];
           });
         this.GetExams();
-        this.GetStudentSubjects();
+        //this.GetStudentSubjects();
         this.GetClassGroupMapping();
       });
   }

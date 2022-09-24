@@ -14,6 +14,13 @@
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
+        <mat-form-field  appearance="outline">
+            <mat-label>role</mat-label>
+            <mat-select formControlName="searchRoleId">
+                <mat-option *ngFor="let item of Roles" [value]="item.MasterDataId">
+                    {{item.MasterDataName}}</mat-option>
+            </mat-select>
+        </mat-form-field>
         <button [disabled]="loading" mat-raised-button color="accent" (click)="GetRoleUser()">
              <mat-icon>search</mat-icon>
                             <mat-icon *ngIf="loading">

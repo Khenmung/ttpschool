@@ -14,6 +14,7 @@ import { TableUtil } from 'src/app/shared/TableUtil';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import * as XLSX from 'xlsx';
 import { SwUpdate } from '@angular/service-worker';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-studentdatadump',
@@ -25,11 +26,12 @@ export class StudentDatadumpComponent implements OnInit {
   @ViewChild("table") tableRef: ElementRef;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+
   loading = false;
   filterOrgIdNBatchId = '';
   filterOrgIdOnly = '';
   filterBatchIdNOrgId = '';
-  ELEMENT_DATA: IStudent[];
+  ELEMENT_DATA: IStudent[]=[];
   dataSource: MatTableDataSource<IStudent>;
   displayedColumns = [];
   allMasterData = [];
@@ -119,24 +121,6 @@ export class StudentDatadumpComponent implements OnInit {
             return f;
           });
         })
-      // this.filteredStudents = this.studentSearchForm.get("searchStudentName").valueChanges
-      //   .pipe(
-      //     startWith(''),
-      //     map(value => typeof value === 'string' ? value : value.Name),
-      //     map(Name => Name ? this._filter(Name) : this.Students.slice())
-      //   );
-      // this.filteredFathers = this.studentSearchForm.get("FatherName").valueChanges
-      //   .pipe(
-      //     startWith(''),
-      //     map(value => typeof value === 'string' ? value : value.FatherName),
-      //     map(FatherName => FatherName ? this._filterF(FatherName) : this.Students.slice())
-      //   );
-      // this.filteredMothers = this.studentSearchForm.get("MotherName").valueChanges
-      //   .pipe(
-      //     startWith(''),
-      //     map(value => typeof value === 'string' ? value : value.MotherName),
-      //     map(MotherName => MotherName ? this._filterM(MotherName) : this.Students.slice())
-      //   );
 
       this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
         this.Classes = [...data.value];
@@ -178,7 +162,7 @@ export class StudentDatadumpComponent implements OnInit {
   displayFnM(stud: IStudent): string {
     return stud && stud.MotherName ? stud.MotherName : '';
   }
-  Groups=[];
+  Groups = [];
   GetMasterData() {
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
       .subscribe((data: any) => {
@@ -254,7 +238,7 @@ export class StudentDatadumpComponent implements OnInit {
             group: this.Remarks
           }
         )
-        
+
         this.shareddata.ChangeHouse(this.Houses);
 
         this.UploadTypes = this.getDropDownData(globalconstants.MasterDefinitions.school.UPLOADTYPE);
@@ -348,17 +332,10 @@ export class StudentDatadumpComponent implements OnInit {
     XLSX.writeFile(wb, 'basicinfo.xlsx');
   }
   exportArray() {
-    const datatoExport: Partial<IStudentDownload>[] = this.ELEMENT_DATA;
-    // .map(x => ({
-    //   StudentId: x.StudentId,
-    //   Name: x.Name,
-    //   FatherName: x.FatherName,
-    //   Class: '',
-    //   RollNo: '',
-    //   Section: '',
-    //   AdmissionDate: null
-    // }));
-    TableUtil.exportArrayToExcel(datatoExport, "StudentInfoDump");
+    if (this.ELEMENT_DATA.length > 0) {
+      const datatoExport: Partial<IStudentDownload>[] = this.ELEMENT_DATA;
+      TableUtil.exportArrayToExcel(datatoExport, "StudentInfoDump");
+    }
   }
   getSelectedBatchStudentIDRollNo() {
     let list: List = new List();
@@ -414,13 +391,21 @@ export class StudentDatadumpComponent implements OnInit {
       checkFilterString += " and " + obj[0].type + " eq " + _remarkId;
       //checkFilterString += " and RemarkId eq " + _remarkId;
     }
-    //var classfilter = '';
-    // if (_ClassId > 0) {
-    //   classfilter = 'ClassId eq ' + _ClassId + ' and '
-    // }
+    var classfilter = '';
+    if (_classes.length > 0) {
+      _classes.forEach(c => {
+        if (classfilter.length == 0)
+          classfilter += '(ClassId eq ' + c.ClassId
+        else
+          classfilter += ' or ClassId eq ' + c.ClassId
+      })
+    }
+
+    classfilter = classfilter.length > 0 ? classfilter + ") and BatchId eq " + this.SelectedBatchId : "BatchId eq " + this.SelectedBatchId;
+
     let list: List = new List();
     list.fields = ["*"];
-    list.lookupFields = ["StudentClasses($filter=BatchId eq " + this.SelectedBatchId + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId)"];
+    list.lookupFields = ["StudentClasses($filter=" + classfilter + ";$select=StudentClassId,HouseId,BatchId,ClassId,RollNo,FeeTypeId,Remarks,SectionId)"];
     list.PageName = "Students";
     list.filter = [this.filterOrgIdOnly + checkFilterString];
     //list.orderBy = "ParentId";
@@ -430,20 +415,8 @@ export class StudentDatadumpComponent implements OnInit {
         ////console.log(data.value);
         if (data.value.length > 0) {
           var formattedData = [];
-          if (_ClassGroupId > 0) {
-            data.value.forEach(f => {
-              if (f.StudentClasses.length > 0) {
-                var cls = this.Classes.filter(c => c.ClassId == f.StudentClasses[0].ClassId);
-                if (cls.length > 0) {
-                  formattedData.push(f);
-                }
-              }
-            });
-          }
-          else {
-            formattedData = [...data.value];
-          }
-          formattedData = formattedData.filter(sc => {
+          //formattedData = [...data.value];
+          data.value.filter(sc => {
             let reason = this.ReasonForLeaving.filter(r => r.MasterDataId == sc.ReasonForLeavingId)
             if (sc.StudentClasses.length > 0) {
               var obj = this.FeeType.filter(f => f.FeeTypeId == sc.StudentClasses[0].FeeTypeId);
@@ -452,13 +425,13 @@ export class StudentDatadumpComponent implements OnInit {
               }
               else
                 sc.FeeType = '';
+
+              delete sc.FeeTypeId;
+              delete sc.ReasonForLeavingId;
+
+              sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
+              formattedData.push(sc);
             }
-
-            delete sc.FeeTypeId;
-            delete sc.ReasonForLeavingId;
-
-            sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
-            return sc;
           });
           this.ELEMENT_DATA = formattedData.map(element => {
             var _lastname = element.LastName == null ? '' : " " + element.LastName;
@@ -702,7 +675,18 @@ export class StudentDatadumpComponent implements OnInit {
               element.PresentAddressState = '';
               element.PresentAddressCity = '';
             }
-
+            if (element.AdmissionDate != null) {
+              element.AdmissionDate = moment(element.AdmissionDate).format('DD/MM/YYYY');
+            }
+            if (element.CreatedDate != null) {
+              element.CreatedDate = moment(element.CreatedDate).format('DD/MM/YYYY');
+            }
+            if (element.UpdatedDate != null) {
+              element.UpdatedDate = moment(element.UpdatedDate).format('DD/MM/YYYY');
+            }
+            if (element.DOB != null) {
+              element.DOB = moment(element.DOB).format('DD/MM/YYYY');
+            }
             delete element.PresentAddressCountryId;
             delete element.PresentAddressStateId;
             delete element.PresentAddressCityId;
@@ -714,26 +698,32 @@ export class StudentDatadumpComponent implements OnInit {
 
             return element;
           })
-
-
+          if (this.ELEMENT_DATA.length == 0) {
+            this.loading = false;
+            this.PageLoading = false;
+            this.ELEMENT_DATA = [];
+            this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+            return;
+          }
         }
         else {
+          this.loading = false;
+          this.PageLoading = false;
           this.ELEMENT_DATA = [];
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+          return;
         }
-        this.exportArray();
-        //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
-        // if (this.ELEMENT_DATA.length > 0) {
-        //   Object.keys(this.ELEMENT_DATA[0]).forEach(prop => {
-        //     if (this.displayedColumns.indexOf(prop) == -1)
-        //       this.displayedColumns.push(prop);
-        //   })
-        // }
-        // console.log("this.ELEMENT_DATA",this.ELEMENT_DATA)
-        // this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
-        // this.dataSource.paginator = this.paginator;
-        // this.dataSource.sort = this.sort;
-        this.loading = false; this.PageLoading = false;
+        var nottoinclude = ['StudentId','StudentClassId','StudentClasses','CreatedBy', 'UpdatedBy']
+        Object.keys(this.ELEMENT_DATA[0]).forEach(studproperty => {
+          if (!this.displayedColumns.includes(studproperty) && !nottoinclude.includes(studproperty)) {
+            this.displayedColumns.push(studproperty);
+          }
+        })
+        this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
+        this.dataSource.paginator = this.paginator;
+        //this.exportArray();
+        this.loading = false;
+        this.PageLoading = false;
       });
 
   }

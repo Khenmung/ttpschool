@@ -9,7 +9,7 @@ import { ExamtimetableComponent } from '../schoolreports/examtimetable/examtimet
 import { ChartReportComponent } from './chartreport/chartreport.component';
 import { ResultComponent } from './result/result.component';
 import { StudentprofilereportComponent } from './studentprofilereport/studentprofilereport.component';
-import { DailytimetablereportComponent } from './dailytimetablereport/dailytimetablereport.component';
+
 const routes: Routes = [{
   path: '', component: HomeComponent,
   children: [
@@ -33,6 +33,6 @@ export const SchoolReportsComponents = [
   ExamtimetableComponent,
   ChartReportComponent,
   ResultComponent,
-  StudentprofilereportComponent,
-  DailytimetablereportComponent
+  StudentprofilereportComponent
+ 
 ]

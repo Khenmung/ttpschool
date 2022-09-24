@@ -28,8 +28,8 @@
             </div>
         </form>
         <div id="printSection">
-            <div style="margin:15px;font-weight: 600;">Teacher Time Table for : {{TeacherName}}</div>
-            <mat-table [dataSource]="dataSourcePeriodStatistic" style="margin-bottom: 15px;">
+            <div style="margin:15px;font-weight: 600;" *ngIf="TeacherName!=''">Teacher Time Table for : {{TeacherName}}</div>
+            <mat-table *ngIf="PeriodStatistics.length>0" [dataSource]="dataSourcePeriodStatistic" style="margin-bottom: 15px;">
                 <ng-container *ngFor="let disCol of PeriodStatisticDisplay;" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
                         <div *ngIf="disCol!='TeacherName'">
@@ -44,11 +44,11 @@
                 <mat-row *matRowDef="let row; columns: PeriodStatisticDisplay;" class="element-row"></mat-row>
             </mat-table>
         </div>
-        <span style="margin-top: 15px;" fxLayout="row">
-            <button [disabled]="loading || ExamStudentResult.length ==0" matTooltip="print"
-                printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
+        <div style="display:flex;justify-content: center; margin-top: 15px;" fxLayout="row" *ngIf="PeriodStatistics.length>0">
+            <button [disabled]="loading || PeriodStatistics.length ==0" matTooltip="print"
+                printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
                 <mat-icon>print</mat-icon>
             </button>            
-        </span>
+        </div>
     </div>
 </div>

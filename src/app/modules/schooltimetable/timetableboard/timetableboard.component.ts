@@ -3,6 +3,7 @@ import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ClassperiodComponent } from '../classperiod/classperiod.component';
+import { DailytimetablereportComponent } from '../dailytimetablereport/dailytimetablereport.component';
 import { SchooltimetableComponent } from '../schooltimetable/schooltimetable.component';
 import { TeacheroffperiodComponent } from '../teacheroffperiod/teacheroffperiod.component';
 import { TeacherperiodComponent } from '../teacherperiod/teacherperiod.component';
@@ -20,11 +21,13 @@ export class TimetableboardComponent implements AfterViewInit {
     ClassperiodComponent,   
     SchooltimetableComponent,
     TeacherperiodComponent,
-    TeacheroffperiodComponent
+    TeacheroffperiodComponent,
+    DailytimetablereportComponent
   ];
 
   tabNames = [
     { label: 'Class Period', faIcon: '' },
+    { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
     { label: 'Class time table', faIcon: '' },
@@ -77,6 +80,11 @@ export class TimetableboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(TeacheroffperiodComponent);
     this.addRemovecomponent(perObj,comindx);
 
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.TIMETABLE.DAILYTIMETABLEREPORT)
+    var comindx = this.components.indexOf(DailytimetablereportComponent);
+    this.addRemovecomponent(perObj, comindx);
+
+    
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
         this.renderComponent(0);

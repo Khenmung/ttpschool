@@ -9,7 +9,7 @@ import { ChartReportComponent } from '../chartreport/chartreport.component';
 import { ResultComponent } from '../result/result.component';
 import { TodayCollectionComponent } from '../today-collection/today-collection.component';
 import { StudentprofilereportComponent } from '../studentprofilereport/studentprofilereport.component';
-import { DailytimetablereportComponent } from '../dailytimetablereport/dailytimetablereport.component';
+
 import {SwUpdate} from '@angular/service-worker';
 @Component({
   selector: 'app-reportboard',
@@ -25,14 +25,12 @@ export class ReportboardComponent implements AfterViewInit {
     ResultComponent,
     ExamtimetableComponent,
     StudentprofilereportComponent,
-    DailytimetablereportComponent
   ];
 
   tabNames = [
     { 'label': '1Exam Time Table', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Fee Payment Status', 'faIcon': '' },
-    { 'label': '1Date Wise Collection', 'faIcon': '' },
     { 'label': '1Date Wise Collection', 'faIcon': '' },
     { 'label': '1Date Wise Collection', 'faIcon': '' },
     { 'label': '1Date Wise Collection', 'faIcon': '' },
@@ -47,7 +45,6 @@ export class ReportboardComponent implements AfterViewInit {
       DatewisePermission: '',
       ChartPermission: '',
       StudentProfileReportPermission: '',
-      DailyTimeTablePermission: ''
     };
   LoginUserDetail = [];
   @ViewChild('container', { read: ViewContainerRef, static: false })
@@ -96,9 +93,6 @@ export class ReportboardComponent implements AfterViewInit {
     var comindx = this.components.indexOf(StudentprofilereportComponent);
     this.AddRemoveComponent(perObj, comindx);
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.REPORT.DAILYTIMETABLEREPORT)
-    var comindx = this.components.indexOf(DailytimetablereportComponent);
-    this.AddRemoveComponent(perObj, comindx);
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     //console.log('this.Permissions.ParentPermission', this.Permissions.ParentPermission);

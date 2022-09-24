@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
@@ -43,8 +43,7 @@ export class PagesboardComponent implements OnInit { PageLoading=true;
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
-    private contentservice: ContentService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    private contentservice: ContentService) {
   }
 ngOnInit(){}
   public ngAfterViewInit(): void {
@@ -64,7 +63,7 @@ ngOnInit(){}
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.website.editor)
     var comindx = this.components.indexOf(TextEditorComponent);
     this.GetComponents(perObj,comindx)
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.website.newsdashboard)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.website.notice)
     var comindx = this.components.indexOf(NewsdashboardComponent);
     this.GetComponents(perObj,comindx)
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

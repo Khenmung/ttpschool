@@ -97,7 +97,7 @@ export class QuestionbankComponent implements OnInit {
       })
     })
     debugger;
-    this.imgURL ='';
+    this.imgURL = '';
     this.StudentClassId = this.tokenstorage.getStudentClassId();
     this.searchForm = this.fb.group({
       searchClassId: [0],
@@ -187,7 +187,7 @@ export class QuestionbankComponent implements OnInit {
       this.SelectedLessons = [];
     this.cleardata();
   }
-  preview(files,row) {
+  preview(files, row) {
     if (files.length === 0)
       return;
 
@@ -522,9 +522,9 @@ export class QuestionbankComponent implements OnInit {
       'Diagram',
       'Active'
     ];
-    
+
     list.PageName = "QuestionBanks";
-    list.lookupFields=["StorageFnPs($select=FileId,FileName)"]
+    list.lookupFields = ["StorageFnPs($select=FileId,FileName)"]
     list.filter = [filterStr];
     this.QuestionBankList = [];
     this.dataservice.get(list)
@@ -532,8 +532,8 @@ export class QuestionbankComponent implements OnInit {
         debugger;
         //  //console.log('data.value', data.value);
         var _imgURL = globalconstants.apiUrl + "/Uploads/" + this.LoginUserDetail[0]["org"] +
-        "/Question photo/"; //+ fileNames[0].FileName;
-        
+          "/Question photo/"; //+ fileNames[0].FileName;
+
         if (data.value.length > 0) {
           data.value.forEach(item => {
             if (item.CategoryId > 0) {
@@ -547,7 +547,8 @@ export class QuestionbankComponent implements OnInit {
               item.SubCategories = [];
               item.Lessons = [];
             }
-            item.Diagram = _imgURL + "/" + item.StorageFnPs[0].FileName; 
+            if (item.StorageFnPs.length > 0)
+              item.Diagram = _imgURL + "/" + item.StorageFnPs[0].FileName;
             item.Questions = globalconstants.decodeSpecialChars(item.Questions);
             this.QuestionBankList.push(item);
 

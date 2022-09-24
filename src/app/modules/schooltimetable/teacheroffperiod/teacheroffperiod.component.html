@@ -40,10 +40,12 @@
                 <mat-header-row *matHeaderRowDef="PeriodStatisticDisplay"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: PeriodStatisticDisplay;" class="element-row"></mat-row>
             </mat-table>
-            <button *ngIf="PeriodStatistics.length>0" [disabled]="loading" matTooltip="print"
-                printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
-                <mat-icon>print</mat-icon>
-            </button>
+            <div style="display:flex;justify-content:center">
+                <button *ngIf="PeriodStatistics.length>0" [disabled]="loading" matTooltip="print"
+                    printSectionId="printSection" [useExistingCss]="true" ngxPrint mat-raised-button color="accent">
+                    <mat-icon>print</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
 </div>

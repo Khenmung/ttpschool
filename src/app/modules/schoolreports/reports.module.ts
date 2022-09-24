@@ -14,11 +14,11 @@ import { TouchedErrorStateMatcher } from 'src/app/shared/formvalidation';
 import { NgxPrintModule } from 'ngx-print';
 import { ChartsModule } from 'ng2-charts';
 //import { MyFilterPipe } from 'src/app/shared/FilterPipe';
-import { DailytimetablereportComponent } from './dailytimetablereport/dailytimetablereport.component';
+//import { DailytimetablereportComponent } from '../schooltimetable/dailytimetablereport/dailytimetablereport.component';
 
 @NgModule({
   declarations: [
-    SchoolReportsComponents,DailytimetablereportComponent
+    SchoolReportsComponents
   ],
   imports: [
     CommonModule,

@@ -177,12 +177,16 @@ export class GroupactivityComponent implements OnInit {
       this.contentservice.openSnackBar("Please enter description.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    // if(row.CategoryId==0)
-    // {
-    //   this.loading=false;
-    //   this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
-    //   return;
-    // }
+    if (row.CategoryId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    if (row.SessionId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
 
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
     let checkFilterString = "GroupId eq " + row.GroupId +
@@ -428,11 +432,7 @@ export class GroupactivityComponent implements OnInit {
     //   this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
     //   return;
     // }
-    if (_sessionId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select session.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
+    
     var _subCategory = [];
     if (_categoryId > 0)
       _subCategory = this.allMasterData.filter(f => f.ParentId == _categoryId)

@@ -11,6 +11,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import {SwUpdate} from '@angular/service-worker';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-news-nevent',
@@ -107,7 +108,11 @@ export class EventComponent implements OnInit { PageLoading=true;
       }
     }
   }
-
+  checkLength(control, len) {
+    debugger;
+    if (control.value.length > len) // 5 is your maxlength
+        control.value = '';
+}
   AddNew() {
 
     var newdata = {
@@ -151,7 +156,7 @@ export class EventComponent implements OnInit { PageLoading=true;
     //debugger;
     this.loading = true;
     let checkFilterString = "EventName eq '" + row.EventName + "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-
+    checkFilterString += " and EventStartDate eq " + moment(row.EventStartDate).format('YYYY-MM-DD');
     if (row.EventId > 0)
       checkFilterString += " and EventId ne " + row.EventId;
     let list: List = new List();
@@ -239,7 +244,11 @@ export class EventComponent implements OnInit { PageLoading=true;
       .subscribe((data: any) => {
         //debugger;
         if (data.value.length > 0) {
-          this.EventsList =[...data.value]; 
+          this.EventsList =data.value.map(m=>{
+            //m.EventStartDate = moment(m.EventStartDate).format('DD/MM/YYYY');
+            //m.EventEndDate = moment(m.EventEndDate).format('DD/MM/YYYY');
+            return m;
+          })
         }
         this.dataSource = new MatTableDataSource<IEvent>(this.EventsList);
         this.dataSource.paginator = this.paging;

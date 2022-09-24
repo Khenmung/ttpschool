@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FullCalendarModule } from '@fullcalendar/angular'; 
 import dayGridPlugin from '@fullcalendar/daygrid'; 
 import interactionPlugin from '@fullcalendar/interaction';
@@ -12,6 +12,7 @@ import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule,DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { CKEditorModule } from 'ng2-ckeditor';
 // import {
 //   NgxMatDatetimePickerModule,
 //   NgxMatNativeDateModule,
@@ -22,11 +23,10 @@ import {
   NgxMatDateFormats,
   NgxMatDatetimePickerModule,
   NgxMatNativeDateModule,
-  NgxMatTimepickerModule,
+  NgxMatTimepickerModule  //CKEditorModule
   //NGX_MAT_DATE_FORMATS
 } from '@angular-material-components/datetime-picker';
-import { RulesorpolicyComponent } from './rulesorpolicy/rulesorpolicy.component';
-import { RulesnpolicyreportComponent } from './rulesnpolicyreport/rulesnpolicyreport.component';
+import { NgxPrintModule } from 'ngx-print';
 //import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 
 const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
@@ -58,6 +58,8 @@ FullCalendarModule.registerPlugins([
     MiscRoutingModule,
     FullCalendarModule,
     NgbModule,
+    CKEditorModule,
+    NgxPrintModule,
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
     NgxMatNativeDateModule,

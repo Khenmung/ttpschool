@@ -115,6 +115,7 @@ export class searchstudentComponent implements OnInit {
         this.FeePaymentPermission = perObj[0].permission;
       }
       //var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
+      this.ELEMENT_DATA =[];
       this.SelectedBatchId = +this.token.getSelectedBatchId();
       this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
       this.SelectedApplicationId = +this.token.getSelectedAPPId();
@@ -124,7 +125,7 @@ export class searchstudentComponent implements OnInit {
         searchSectionId: [0],
         searchRemarkId: [0],
         searchClassId: [0],
-        searchPID: [''],
+        searchPID: [0],
         searchStudentName: [''],
         searchAdmissionNo: [0]
       })
@@ -502,7 +503,8 @@ export class searchstudentComponent implements OnInit {
             sc.ReasonForLeaving = reason.length > 0 ? reason[0].MasterDataName : '';
             return sc;
           });
-          this.ELEMENT_DATA = formattedData.map(item => {
+          this.ELEMENT_DATA = [];
+          formattedData.forEach(item => {
             var _lastname = item.LastName == null ? '' : " " + item.LastName;
             item.Name = item.FirstName + _lastname;
             var _remark = '';
@@ -530,7 +532,7 @@ export class searchstudentComponent implements OnInit {
               else
                 item.ClassName = '';
               item.Action = "";
-              return item;
+              this.ELEMENT_DATA.push(item);
             }
           })
         }
@@ -538,7 +540,7 @@ export class searchstudentComponent implements OnInit {
           this.ELEMENT_DATA = [];
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
-      console.log("this.ELEMENT_DATA",this.ELEMENT_DATA);
+        //console.log("this.ELEMENT_DATA", this.ELEMENT_DATA);
         this.dataSource = new MatTableDataSource<IStudent>(this.ELEMENT_DATA);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -688,7 +690,7 @@ export class searchstudentComponent implements OnInit {
 }
 export interface IStudent {
   StudentId: number;
-  PID:number;
+  PID: number;
   Name: string;
   FatherName: string;
   MotherName: string;

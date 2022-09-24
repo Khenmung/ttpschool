@@ -118,6 +118,10 @@ const routes: Routes = [
   {
     path: 'globaladmin',
     loadChildren: () => import('./modules/globaladmininitial/globaladminInitial.module').then(m => m.GlobaladminInitialModule)
+  },  
+  {
+    path: 'edu/page',
+    loadChildren: () => import('./modules/define-pages/define-pages.module').then(m => m.DefinePagesModule)
   },
   {
     path: 'globaladmin/inv',

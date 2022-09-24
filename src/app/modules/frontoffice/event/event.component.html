@@ -38,6 +38,15 @@
                     <mat-header-cell *matHeaderCellDef> Start </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
+                            <mat-label>Start</mat-label>
+                            <input [value]="element.EventStartDate" matInput 
+                            [(ngModel)]="element.EventStartDate"
+                            [matDatepicker]="EventStartDate" (dateChange)="onBlur(element)"
+                             autocomplete="off">                            
+                            <mat-datepicker-toggle matSuffix [for]="EventStartDate"></mat-datepicker-toggle>
+                            <mat-datepicker #EventStartDate></mat-datepicker>
+                        </mat-form-field>
+                        <!-- <mat-form-field appearance="outline">
                             <input [value]="element.EventStartDate" matInput [(ngModel)]="element.EventStartDate"
                                 [ngxMatDatetimePicker]="EventStartDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="$any(EventStartDate)"></mat-datepicker-toggle>
@@ -45,13 +54,20 @@
                                 [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false"
                                 [enableMeridian]="true">
                             </ngx-mat-datetime-picker>
-                        </mat-form-field>
+                        </mat-form-field> -->
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="EventEndDate">
                     <mat-header-cell *matHeaderCellDef> End </mat-header-cell>
                     <mat-cell *matCellDef="let element">
                         <mat-form-field appearance="outline">
+                            <mat-label>End</mat-label>
+                            <input [value]="element.EventEndDate" matInput [(ngModel)]="element.EventEndDate"
+                            [matDatepicker]="EventEndDate" (dateChange)="onBlur(element)" autocomplete="off">                            
+                            <mat-datepicker-toggle matSuffix [for]="EventEndDate"></mat-datepicker-toggle>
+                            <mat-datepicker #EventEndDate></mat-datepicker>
+                        </mat-form-field>
+                        <!-- <mat-form-field appearance="outline">
                             <input [value]="element.EventEndDate" [(ngModel)]="element.EventEndDate" matInput
                                 [ngxMatDatetimePicker]="EventEndDate" autocomplete="off">
                             <mat-datepicker-toggle matSuffix [for]="$any(EventEndDate)"></mat-datepicker-toggle>
@@ -59,7 +75,7 @@
                                 [stepHour]="1" [stepMinute]="1" [stepSecond]="1" [touchUi]="false"
                                 [enableMeridian]="true">
                             </ngx-mat-datetime-picker>
-                        </mat-form-field>
+                        </mat-form-field> -->
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="Venue">
@@ -104,9 +120,9 @@
             </mat-table>
             <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,100]"></mat-paginator>
         </div>
-        <button type="button" class="btn btn-outline-secondary mr-2" placement="top"
+        <!-- <button type="button" class="btn btn-outline-secondary mr-2" placement="top"
             ngbPopover="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." popoverTitle="Popover on top">
             Popover on top
-        </button>
+        </button> -->
     </div>
 </div>

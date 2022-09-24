@@ -7,7 +7,7 @@ import { List } from "./interface";
 
 export class globalconstants {
     //////"https://api.ttpsolutions.in";"https://ettest.ttpsolutions.in"; environment.apiURL
-    public static apiUrl: string = "https://api.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
+    public static apiUrl: string = "https://ettest.ttpsolutions.in"; //"https://api.ttpsolutions.in";//"http://localhost:8020";
     public static fileUrl: string = '';
     public static RequestLimit = 20971520; //536870912;
     public static CommonPanelID = 329; //536870912;    
@@ -79,7 +79,7 @@ export class globalconstants {
                 "view": 'view',
                 "editor": 'editor',
                 "pagelist": 'page list',
-                "newsdashboard": 'news dashboard',
+                "notice": 'notice',
                 "album": 'album',
                 "carousel": 'carousel',
                 "filedragAndDrop": 'Image drag and drop',
@@ -126,7 +126,7 @@ export class globalconstants {
                     "EVENT": "event",
                     "HOLIDAY": "holiday",
                     "NOOFSTUDENT": "no of students",
-                    "RULESORPOLICY": "rules or policies",
+                    "CREATEHTMLPAGE": "create page",
                     "RULESORPOLICYREPORT": "rules or policies report"
                 }
             },
@@ -185,7 +185,7 @@ export class globalconstants {
                     'VERIFYRESULT': 'verify result',
                     'STUDENTGRADE': 'student grade',
                     'VERIFYRESULTSTATUS': 'verify result status',
-                    'EXAMNCALCULATE':'exam n calculate'
+                    'EXAMNCALCULATE': 'exam n calculate'
                 },
                 'SUBJECT': {
                     'SUBJECT': 'class subject',
@@ -202,7 +202,8 @@ export class globalconstants {
                     'CLASSTIMETABLE': 'class time table',
                     'TEACHERSUBJECT': 'teacher subject',
                     'TEACHERPERIOD': 'teacher period',
-                    'TEACHEROFFPERIOD': 'teacher off period'
+                    'TEACHEROFFPERIOD': 'teacher off period',
+                    'DAILYTIMETABLEREPORT': 'daily time table'
                 },
                 'ATTENDANCE': {
                     'ATTENDANCE': 'attendance',
@@ -234,7 +235,7 @@ export class globalconstants {
                     'DATEWISECOLLECTION': 'date wise collection',
                     'CHARTREPORT': 'Chart Report',
                     'STUDENTPROFILEREPORT': 'student profile report',
-                    'DAILYTIMETABLEREPORT': 'daily time table'
+
                 },
                 'DATA': {
                     'DATA': 'data',
@@ -484,6 +485,7 @@ export class globalconstants {
         }
 
 
+
     public static PERMISSIONTYPES = [
         { 'type': 'rwd', 'val': 1 },
         { 'type': 'rw', 'val': 2 },
@@ -578,7 +580,7 @@ export class globalconstants {
     }
     public static encodeSpecialChars(val) {
         var specialchars = globalconstants.SpecialCharEncodeCharacters()
-        if (val !=null && val.length > 0) {
+        if (val != null && val.length > 0) {
             specialchars.forEach(f => {
                 val = val.replaceAll(f.Text, f.UTF);
             });
@@ -587,7 +589,7 @@ export class globalconstants {
     }
     public static decodeSpecialChars(val) {
         var specialchars = globalconstants.SpecialCharEncodeCharacters()
-        if (val !=null && val.length > 0) {
+        if (val != null && val.length > 0) {
             specialchars.forEach(f => {
                 val = val.replaceAll(f.UTF, f.Text);
             });

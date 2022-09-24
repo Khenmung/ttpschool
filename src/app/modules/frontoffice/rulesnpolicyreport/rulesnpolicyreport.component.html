@@ -1,55 +1,37 @@
 <div>
     <div style="padding:15px 15px 10px 15px;">
-        <div><strong>Rules or Policies</strong></div>
+        <div><strong>Rules or Policies Report</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
     <!-- <alert></alert> -->
-    <!-- <div style="padding: 15px;" fxLayout="row wrap"> -->
-    <form [formGroup]="searchForm">
-        <mat-form-field appearance="outline" [style.width.px]="400">
-            <mat-label>Category</mat-label>
-            <mat-select formControlName="searchCategoryId">
-                <mat-option *ngFor="let item of RulesOrPolicyCategory" [value]="item.MasterDataId">
-                    {{item.MasterDataName}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <button [disabled]="loading" mat-raised-button color="accent" (click)="GetRulesOrPolicy()">
-            <mat-icon>search</mat-icon>
-            <mat-icon *ngIf="loading">
-                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-            </mat-icon>
-        </button>
-    </form>
-    <!-- <div> -->
-    <mat-table [dataSource]="dataSource">
-        <ng-container matColumnDef="SrNo">
-            <mat-header-cell *matHeaderCellDef>Sr. No.
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                {{element.SrNo}}
-            </mat-cell>
-        </ng-container>
-                
-        <ng-container matColumnDef="Description">
-            <mat-header-cell *matHeaderCellDef style="justify-content:center;font-weight: bolder;font-size: 25pt;">{{Category}}
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <span *ngIf="element.DisplayType == 'Heading'" style="color:#A4de02;font-weight: bold;"><pre><span class="pre">{{element.Description}}</span></pre></span>
-                <span *ngIf="element.DisplayType == 'Sub Heading'" style="padding-left:30px; color:#1E5631;font-weight: bold"><pre><span class="pre">{{element.Description}}</span></pre></span>
-                <span *ngIf="element.DisplayType == 'Text'" [innerHTML]="element.Description | encodeHTML"></span>
-            </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" style="display:flex;align-items:center">
-        </mat-row>
-    </mat-table>
-    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,100]">
-    </mat-paginator>
+    <div style="padding: 15px;" fxLayout="row wrap">
+        <form [formGroup]="searchForm">
+            <span>
+                <mat-form-field appearance="outline" [style.width.px]="300">
+                    <mat-label>Title</mat-label>
+                    <mat-select formControlName="searchId">
+                        <mat-option *ngFor="let item of FileNames" [value]="item.RulesOrPolicyId">
+                            {{item.Title}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button [disabled]="loading" mat-raised-button color="accent"
+                    (click)="GetRulesOrPolicy()">
+                    <mat-icon>search</mat-icon>
+                    <mat-icon *ngIf="loading">
+                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                    </mat-icon>
+                </button>
+                <button [disabled]="loading" *ngIf="DetailText.length>0" matTooltip="print" style="margin: 15px;" printSectionId="printSection"
+                    [useExistingCss]="true" ngxPrint class="mat-raised-button">
+                    <mat-icon>print</mat-icon>
+                </button>
+            </span>
+            <mat-divider></mat-divider>
+            <div id="printSection">
+                <div style="margin-bottom: 15px;margin-top: 30px;" [innerHTML]="DetailText |encodeHTML">
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
-<!-- <button type="button" class="btn btn-outline-secondary mr-2" placement="top"
-            ngbPopover="Vivamus sagittis lacus vel augue laoreet rutrum faucibus." popoverTitle="Popover on top">
-            Popover on top
-        </button> -->
-<!-- </div> -->
-<!-- </div> -->

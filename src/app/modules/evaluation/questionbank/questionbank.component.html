@@ -70,13 +70,13 @@
     <ng-container matColumnDef="Questions">
         <mat-header-cell *matHeaderCellDef mat-sort-header>Questions
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" style="display:flex;flex-direction:column;justify-content:flex-start;">
-            <mat-form-field appearance="outline">
-                <textarea [maxlength]="600" #Questions autocomplete="Off" matInput (blur)="onBlur(element)"
+        <mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline" [style.width.px]="300">
+                <textarea [maxlength]="600" [rows]="10" #Questions autocomplete="Off" matInput (blur)="onBlur(element)"
                     [value]="element.Questions" [(ngModel)]="element.Questions"></textarea>
                 <mat-hint align="end" style="margin:5px">{{Questions.value?.length || 0}}/600</mat-hint>
             </mat-form-field>
-            <div style="margin-bottom: 15px;" *ngIf="element.QuestionBankId>0" fxLayout="row"
+            <div *ngIf="element.QuestionBankId>0" fxLayout="row"
                 fxLayoutAlign="space-between center">
                 <span style="color:red;" *ngIf="message">{{message}}</span>
                 <input #inputfile [hidden]="true" type="file" accept='image/*'

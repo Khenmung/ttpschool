@@ -177,6 +177,7 @@ export class StudentviewComponent implements OnInit {
         this.GetFeeTypes();
         this.GetStudentAttendance();
         this.GetSportsResult();
+        this.GetAchievementAndPoint();
         this.contentservice.GetClasses(this.loginUserDetail[0]["orgId"]).subscribe((data: any) => {
           this.Classes = [...data.value];
           this.loading = false;
@@ -384,7 +385,7 @@ export class StudentviewComponent implements OnInit {
     list.fields = [
       "SportResultId",
       "StudentClassId",
-      "Secured",
+      "RankId",
       "Achievement",
       "SportsNameId",
       "CategoryId",
@@ -399,17 +400,20 @@ export class StudentviewComponent implements OnInit {
     this.SportsResultList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.SportsResultList = data.value.map(m => {
-
-          var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
-          if (obj.length > 0)
-            m.SportsName = obj[0].MasterDataName;
-          else
-            m.SportsName = '';
-          m.SubCategories = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
-          m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
-          m.Action = false;
-          return m;
+         data.value.forEach(m => {
+          var objachievement = this.AchievementAndPoints.filter(a => a.AchievementAndPointId == m.RankId);
+          if (objachievement.length > 0) {
+            m.Rank = objachievement[0].Rank;
+            var obj = this.ActivityNames.filter(f => f.MasterDataId == m.SportsNameId);
+            if (obj.length > 0)
+              m.SportsName = obj[0].MasterDataName;
+            else
+              m.SportsName = '';
+            m.SubCategories = this.allMasterData.filter(f => f.ParentId == m.CategoryId);
+            m.Achievement = globalconstants.decodeSpecialChars(m.Achievement);
+            m.Action = false;
+            this.SportsResultList.push(m);
+          }
         })
 
         //this.dataSourceActivity = new MatTableDataSource<any>(this.SportsResultList);
@@ -417,7 +421,21 @@ export class StudentviewComponent implements OnInit {
       });
 
   }
+  AchievementAndPoints = [];
+  GetAchievementAndPoint() {
+    //debugger;
+    var filterOrgId = "Active eq true and OrgId eq " + this.loginUserDetail[0]['orgId'];
 
+    let list: List = new List();
+    list.fields = ["AchievementAndPointId,Rank"];
+    list.PageName = "AchievementAndPoints";
+    list.filter = [filterOrgId];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.AchievementAndPoints = [...data.value];
+      })
+  }
   StudentFamilyNFriendList = [];
   StudentFamilyNFriendListName = 'StudentFamilyNFriends';
 

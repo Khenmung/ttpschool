@@ -41,99 +41,102 @@
                     <mat-icon>clear_all</mat-icon>
                 </button>
             </form>
-            <span id="printSection">
-                <div style="display:flex;font-weight:700;margin: 15px;width: 80%;justify-content: space-between;">
-                    <div>{{ClassName}}</div>
-                    <div>{{ExamName}}</div>
-                </div>
-                <mat-table style="min-width: 600px;max-width: 1000px;" #table [dataSource]="passdataSource" matSort>
+            <div id="printSection">
+                <div style="display:flex;flex-direction: column; justify-content:center">
+                    <div style="display:flex;font-weight:700;margin: 15px;width: 80%;justify-content: space-between;">
+                        <div>{{ClassName}}</div>
+                        <div>{{ExamName}}</div>
+                    </div>
+                    <mat-table #table [dataSource]="passdataSource" matSort>
 
-                    <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
-                        matColumnDef="{{disCol}}">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header
-                            [ngStyle]="{'justify-content':disCol!='Student'?'center':'start'}">
-                            {{disCol!='Action'?disCol:''}}
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':
+                        <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index"
+                            matColumnDef="{{disCol}}">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header
+                                [ngStyle]="{'justify-content':disCol!='Student'?'center':'start'}">
+                                {{disCol!='Action'?disCol:''}}
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':
                         disCol=='Division' 
                         || disCol=='Student'?'start':'center'}">
 
-                            {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}
-                        </mat-cell>
-                    </ng-container>
-                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
+                                {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
 
-                </mat-table>
-                <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100,200]">
-                </mat-paginator>
-                <mat-table style="min-width: 600px;max-width: 1000px;" #table [dataSource]="promoteddataSource" matSort>
+                    </mat-table>
+                    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,25,100,200]">
+                    </mat-paginator>
+                    <mat-table #table [dataSource]="promoteddataSource" matSort>
 
-                    <ng-container *ngFor="let disCol of failpromoteddisplayedColumns; let colIndex = index"
-                        matColumnDef="{{disCol}}">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header
-                            [ngStyle]="{'justify-content':disCol!='Student'?'center':'start'}">
-                            {{disCol=='Student'?'Promoted Students':disCol}}
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':disCol=='Rank' 
+                        <ng-container *ngFor="let disCol of failpromoteddisplayedColumns; let colIndex = index"
+                            matColumnDef="{{disCol}}">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header
+                                [ngStyle]="{'justify-content':disCol!='Student'?'center':'start'}">
+                                {{disCol=='Student'?'Promoted Students':disCol}}
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':disCol=='Rank' 
                         || disCol=='Division' 
                         || disCol=='Student'?'start':'center'}">
 
-                            {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}
-                        </mat-cell>
-                    </ng-container>
-                    <mat-header-row *matHeaderRowDef="failpromoteddisplayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: failpromoteddisplayedColumns;" class="element-row"></mat-row>
-
-                </mat-table>
-                <mat-table style="min-width: 600px;max-width: 1000px;" #table [dataSource]="faildataSource" matSort>
-
-                    <ng-container *ngFor="let disCol of failpromoteddisplayedColumns; let colIndex = index"
-                        matColumnDef="{{disCol}}">
-                        <mat-header-cell *matHeaderCellDef mat-sort-header
-                            [ngStyle]="{'justify-content':disCol!='Student'?'center':'start'}">
-                            {{disCol=='Student'?'Fail Students':disCol}}
-                        </mat-header-cell>
-                        <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':
-                        disCol=='Division' 
-                        || disCol=='Student'?'start':'center'}">
-
-                            {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}
-                        </mat-cell>
-                    </ng-container>
-                    <mat-header-row *matHeaderRowDef="failpromoteddisplayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: failpromoteddisplayedColumns;" class="element-row"></mat-row>
-
-                </mat-table>
-                <div>
-                    <mat-table style="width: 600px;max-width: 1000px;" #table [dataSource]="AtAGlanceDatasource"
-                        matSort>
-
-                        <ng-container *ngFor="let disCol of AtAGlancedisplayedColumns; let colIndex = index"
-                            matColumnDef="{{disCol}}">
-                            <mat-header-cell *matHeaderCellDef mat-sort-header
-                                [ngStyle]="{'justify-content':disCol!='Text'?'center':'start'}">
-                                {{disCol=='Text'?'Result At a Glance':''}}
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':disCol=='Text' 
-                        ?'start':'center'}">
-                                {{element[disCol]}}
+                                {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}
                             </mat-cell>
                         </ng-container>
-                        <mat-header-row *matHeaderRowDef="AtAGlancedisplayedColumns"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: AtAGlancedisplayedColumns;" class="element-row">
+                        <mat-header-row *matHeaderRowDef="failpromoteddisplayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: failpromoteddisplayedColumns;" class="element-row">
                         </mat-row>
 
                     </mat-table>
+                    <mat-table #table [dataSource]="faildataSource" matSort>
+
+                        <ng-container *ngFor="let disCol of failpromoteddisplayedColumns; let colIndex = index"
+                            matColumnDef="{{disCol}}">
+                            <mat-header-cell *matHeaderCellDef mat-sort-header
+                                [ngStyle]="{'justify-content':disCol!='Student'?'center':'start'}">
+                                {{disCol=='Student'?'Fail Students':disCol}}
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':
+                        disCol=='Division' 
+                        || disCol=='Student'?'start':'center'}">
+
+                                {{disCol=='Percent'?[element[disCol]| number : '1.2-2']:element[disCol]}}
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="failpromoteddisplayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: failpromoteddisplayedColumns;" class="element-row">
+                        </mat-row>
+
+                    </mat-table>
+                    <div style="display:flex;justify-content: center;width:100%">
+                        <mat-table style="width: 600px;max-width: 1000px;" #table [dataSource]="AtAGlanceDatasource"
+                            matSort>
+
+                            <ng-container *ngFor="let disCol of AtAGlancedisplayedColumns; let colIndex = index"
+                                matColumnDef="{{disCol}}">
+                                <mat-header-cell *matHeaderCellDef mat-sort-header
+                                    [ngStyle]="{'justify-content':disCol!='Text'?'center':'start'}">
+                                    {{disCol=='Text'?'Result At a Glance':''}}
+                                </mat-header-cell>
+                                <mat-cell *matCellDef="let element" [ngStyle]="{'justify-content':disCol=='Text' 
+                        ?'start':'center'}">
+                                    {{element[disCol]}}
+                                </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="AtAGlancedisplayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: AtAGlancedisplayedColumns;" class="element-row">
+                            </mat-row>
+
+                        </mat-table>
+                    </div>
                 </div>
-            </span>
-            <span style="margin-top: 15px;" fxLayout="row">
+            </div>
+            <div style="display:flex;justify-content: center;width:100%;margin-top: 15px;">
                 <button [disabled]="loading || ExamStudentResult.length ==0" matTooltip="print"
                     printSectionId="printSection" [useExistingCss]="true" ngxPrint class="mat-raised-button">
                     <mat-icon>print</mat-icon>
                 </button>
-                
-            </span>
+            </div>
         </div>
     </div>
 </div>

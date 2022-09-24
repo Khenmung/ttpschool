@@ -8,11 +8,10 @@ import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 //import { AlbumsModule } from '../photogallery/albums/albums.module';
-import { DefinePagesComponents } from './define-pages-routing.module';
-import { PagesboardComponent } from './pagesboard/pagesboard.component';
+import { DefinePagesComponents, DefinePagesRoutingModule } from './define-pages-routing.module';
 
 @NgModule({
-  declarations: [DefinePagesComponents, PagesboardComponent],
+  declarations: [DefinePagesComponents],
   imports: [
     CommonModule,
     CKEditorModule,
@@ -22,7 +21,8 @@ import { PagesboardComponent } from './pagesboard/pagesboard.component';
     SharedModule,
     SharedhomepageModule,
     RouterModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    DefinePagesRoutingModule
   ],
   exports: [DefinePagesComponents]
 })

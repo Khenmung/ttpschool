@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -10,23 +10,23 @@ import { NaomitsuService } from 'src/app/shared/databaseService';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
-  selector: 'app-rulesorpolicy',
-  templateUrl: './rulesorpolicy.component.html',
-  styleUrls: ['./rulesorpolicy.component.scss']
+  selector: 'app-createhtmlpage',
+  templateUrl: './createhtmlpage.component.html',
+  styleUrls: ['./createhtmlpage.component.scss']
 })
-export class RulesorpolicyComponent implements OnInit {
+export class CreatehtmlpageComponent implements OnInit {
   @ViewChild(MatPaginator) paging: MatPaginator;
   RulesOrPolicyTypes = [];
   PageLoading = false;
   LoginUserDetail: any[] = [];
   CurrentRow: any = {};
   RulesOrPolicyListName = 'RulesOrPolicies';
-  RulesOrPolicyDisplayTypes =[];
+  RulesOrPolicyDisplayTypes = [];
   Applications = [];
-  //Categories=[];
+  ckeConfig: any;
   loading = false;
   SelectedBatchId = 0;
   RulesOrPolicyList: IRulesOrPolicy[] = [];
@@ -38,10 +38,7 @@ export class RulesorpolicyComponent implements OnInit {
   Permission = 'deny';
   RulesOrPolicyData = {
     RulesOrPolicyId: 0,
-    RulesOrPolicyCategoryId: 0,
-    RuleOrPolicyTypeId: 0,
-    Deleted:false,
-    Sequence:0,
+    Title: '',
     Description: '',
     OrgId: 0,
     Active: 0
@@ -76,9 +73,14 @@ export class RulesorpolicyComponent implements OnInit {
     })
     //debugger;
     this.searchForm = this.fb.group({
-      searchCategoryId: [0]
+      searchId: [0],
+      Description: [''],
+      Title: [''],
+      RulesOrPolicyId: [0],
+      Active: [true]
       // searchSubCategoryId: [0]
     });
+    this.searchForm.get("RulesOrPolicyId").disable();
     this.PageLoad();
   }
 
@@ -94,7 +96,7 @@ export class RulesorpolicyComponent implements OnInit {
     else {
       this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
       this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.RULESORPOLICY);
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.common.misc.CREATEHTMLPAGE);
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }
@@ -103,28 +105,34 @@ export class RulesorpolicyComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
+        this.ckeConfig = {
+          allowedContent: false,
+          extraPlugins: 'divarea',
+          forcePasteAsPlainText: false,
+          removeButtons: 'About',
+          scayt_autoStartup: true,
+          autoGrow_onStartup: true,
+          autoGrow_minHeight: 500,
+          autoGrow_maxHeight: 600,
+          font_names:"Arial;Times New Roman;Verdana;'Kalam', cursive;",          
+          contentsCss:'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
+        };
 
         this.GetMasterData();
+        this.GetRulesOrPolicys();
       }
     }
   }
 
   AddNew() {
 
-    var newdata = {
+    this.searchForm.patchValue({
       RulesOrPolicyId: 0,
-      RulesOrPolicyCategoryId: 0,
-      RuleOrPolicyTypeId: 0,
+      Title: '',
       Description: '',
-      Sequence:0,
-      OrgId: 0,
       Active: 0,
       Action: false
-    };
-    this.RulesOrPolicyList = [];
-    this.RulesOrPolicyList.push(newdata);
-    this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
-    this.dataSource.paginator = this.paging;
+    });
   }
   onBlur(element) {
     element.Action = true;
@@ -145,38 +153,29 @@ export class RulesorpolicyComponent implements OnInit {
 
         });
   }
-  UpdateOrSave(row) {
+  UpdateOrSave() {
 
     debugger;
     this.loading = true;
-    let checkFilterString = "Description eq '" + globalconstants.encodeSpecialChars(row.Description) + 
-    "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
-    if(row.Description.length==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please enter description.",globalconstants.ActionText,globalconstants.RedBackground);
+    var _title = this.searchForm.get("Title").value;
+    var _description = this.searchForm.get("Description").value;
+    var _rulesOrPolicyId = this.searchForm.get("RulesOrPolicyId").value;
+    var _active = this.searchForm.get("Active").value;
+    let checkFilterString = "Title eq '" + globalconstants.encodeSpecialChars(_title) +
+      "' and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    if (_title.length == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter title.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    else if(row.Description.length>290)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Description exceed 290 characters.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (_description.length == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter page detail.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    if(row.RulesOrPolicyCategoryId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select category.",globalconstants.ActionText,globalconstants.RedBackground);
-      return;
-    }
-    if(row.RuleOrPolicyTypeId==0)
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select display type.",globalconstants.ActionText,globalconstants.RedBackground);
-      return;
-    }
-    if (row.RulesOrPolicyId > 0)
-      checkFilterString += " and RulesOrPolicyId ne " + row.RulesOrPolicyId;
+
+    if (_rulesOrPolicyId > 0)
+      checkFilterString += " and RulesOrPolicyId ne " + _rulesOrPolicyId;
     let list: List = new List();
     list.fields = ["RulesOrPolicyId"];
     list.PageName = this.RulesOrPolicyListName;
@@ -190,30 +189,27 @@ export class RulesorpolicyComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-
-          this.RulesOrPolicyData.RulesOrPolicyId = row.RulesOrPolicyId;
-          this.RulesOrPolicyData.Active = row.Active;
-          this.RulesOrPolicyData.RulesOrPolicyCategoryId = row.RulesOrPolicyCategoryId;
-          this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(row.Description);
-          this.RulesOrPolicyData.RuleOrPolicyTypeId = row.RuleOrPolicyTypeId;
+          var _desc = _description.replaceAll('"',"'")
+          this.RulesOrPolicyData.RulesOrPolicyId = _rulesOrPolicyId;
+          this.RulesOrPolicyData.Active = _active;
+          this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(_desc);
+          this.RulesOrPolicyData.Title = _title;
           this.RulesOrPolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
-          this.RulesOrPolicyData.Sequence = +row.Sequence;
-          this.RulesOrPolicyData.Deleted = false;
 
-          if (this.RulesOrPolicyData.RulesOrPolicyId == 0) {
+          if (_rulesOrPolicyId == 0) {
             this.RulesOrPolicyData["CreatedDate"] = new Date();
             this.RulesOrPolicyData["CreatedBy"] = this.LoginUserDetail[0]["userId"];
             this.RulesOrPolicyData["UpdatedDate"] = new Date();
             delete this.RulesOrPolicyData["UpdatedBy"];
-            console.log("rules",this.RulesOrPolicyData)
-            this.insert(row);
+            console.log("rules", this.RulesOrPolicyData)
+            this.insert();
           }
           else {
             delete this.RulesOrPolicyData["CreatedDate"];
             delete this.RulesOrPolicyData["CreatedBy"];
             this.RulesOrPolicyData["UpdatedDate"] = new Date();
             this.RulesOrPolicyData["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-            this.update(row);
+            this.update();
           }
         }
       });
@@ -221,49 +217,66 @@ export class RulesorpolicyComponent implements OnInit {
   loadingFalse() {
     this.loading = false; this.PageLoading = false;
   }
-  insert(row) {
+  insert() {
 
     //debugger;
     this.dataservice.postPatch(this.RulesOrPolicyListName, this.RulesOrPolicyData, 0, 'post')
       .subscribe(
         (data: any) => {
-          row.RulesOrPolicyId = data.RulesOrPolicyId;
-          row.Action = false;
+          this.searchForm.patchValue({ "RulesOrPolicyId": data.RulesOrPolicyId });
           this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse()
         });
   }
-  update(row) {
+  update() {
 
     this.dataservice.postPatch(this.RulesOrPolicyListName, this.RulesOrPolicyData, this.RulesOrPolicyData.RulesOrPolicyId, 'patch')
       .subscribe(
         (data: any) => {
-          row.Action = false;
           this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
-  GetRulesOrPolicy() {
+  FileNames = [];
+  GetRulesOrPolicys() {
     debugger;
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-    var _searchCategoryId = this.searchForm.get("searchCategoryId").value;
-    //var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
-
-    if (_searchCategoryId == 0) {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select category.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    else
-      filterStr += ' and RulesOrPolicyCategoryId eq ' + _searchCategoryId;
-
-    // if (_searchSubCategoryId > 0) {
-    //   filterStr += ' and RuleOrPolicyTypeId eq ' + _searchSubCategoryId;
-    // }
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var _fields = ["RulesOrPolicyId", "Title"];
 
     this.loading = true;
     let list: List = new List();
-    list.fields = ["*"];
+    list.fields = _fields;
+
+    list.PageName = this.RulesOrPolicyListName;
+    list.filter = [filterStr];
+    this.FileNames = [];
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        this.FileNames = [...data.value];
+
+        this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
+        this.dataSource.paginator = this.paging;
+        this.loadingFalse();
+      });
+
+  }
+  GetRulesOrPolicy() {
+    debugger;
+    let filterStr = 'OrgId eq ' + this.LoginUserDetail[0]["orgId"];
+    var _searchId = this.searchForm.get("searchId").value;
+    //var _searchSubCategoryId = this.searchForm.get("searchSubCategoryId").value;
+    var _fields = ["RulesOrPolicyId", "Title", "Description"];
+    if (_searchId == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select title.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    else
+      filterStr += ' and RulesOrPolicyId eq ' + _searchId;
+
+    this.loading = true;
+    let list: List = new List();
+    list.fields = _fields;
 
     list.PageName = this.RulesOrPolicyListName;
     list.filter = [filterStr];
@@ -271,19 +284,18 @@ export class RulesorpolicyComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.RulesOrPolicyList = data.value.map(map=>{
+          this.RulesOrPolicyList = data.value.map(map => {
             map.Description = globalconstants.decodeSpecialChars(map.Description);
             return map;
+
           })
+          console.log("dsfsalj",this.RulesOrPolicyList);
+          this.searchForm.patchValue({ "RulesOrPolicyId": this.RulesOrPolicyList[0].RulesOrPolicyId, "Title": this.RulesOrPolicyList[0].Title, "Description": this.RulesOrPolicyList[0].Description })
         }
-        this.RulesOrPolicyList = this.RulesOrPolicyList.sort((a,b)=>a.Sequence - b.Sequence);
-        this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
-        this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
 
   }
-
   GetMasterData() {
 
     this.contentservice.GetCommonMasterData(this.LoginUserDetail[0]["orgId"], this.SelectedApplicationId)
@@ -291,7 +303,7 @@ export class RulesorpolicyComponent implements OnInit {
         this.allMasterData = [...data.value];
         this.RulesOrPolicyCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORY)
         this.RulesOrPolicyDisplayTypes = this.getDropDownData(globalconstants.MasterDefinitions.common.RULEORPOLICYCATEGORYDISPLAYTYPE)
-       
+
         //this.GetRulesOrPolicy();
         this.loading = false; this.PageLoading = false;
       });
@@ -315,9 +327,7 @@ export class RulesorpolicyComponent implements OnInit {
 }
 export interface IRulesOrPolicy {
   RulesOrPolicyId: number;
-  RulesOrPolicyCategoryId: number;
-  RuleOrPolicyTypeId: number;
-  Sequence:number;
+  Title: string;
   Description: string;
   Action: boolean;
 }

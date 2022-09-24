@@ -1,13 +1,11 @@
-// :host{
-//     display: flex;
-//     justify-content: center;
-//     min-height: 91vh;
-//     background-color:white;    
-// }
+ :host{
+    width:100%;
+    //height:max-content;
+    margin: 0;
+    padding: 0;
+}
 .mat-card{
     position: relative;
-    height: 91vh;
-    margin: 0px 10px 10px 10px;
     width: 100%;
 }
 
@@ -56,4 +54,15 @@ table{
   }
   .highlight{
     background: #42A948; /* green */
+  }
+  mat-optgroup {
+	display         : block;
+	background-color: lightgray;
+   
+  }
+  
+  mat-option {
+	display         : block;
+	background-color: #ffffff;
+   
   }

@@ -7,7 +7,7 @@ import { DemoComponent } from '../calendar/calendar.component';
 import { EventComponent } from '../event/event.component';
 import { HolidayComponent } from '../holiday/holiday.component';
 import { NoOfStudentComponent } from '../no-of-student/no-of-student.component';
-import { RulesorpolicyComponent } from '../rulesorpolicy/rulesorpolicy.component';
+import { CreatehtmlpageComponent } from '../createhtmlpage/createhtmlpage.component';
 import { SwUpdate } from '@angular/service-worker';
 import { RulesnpolicyreportComponent } from '../rulesnpolicyreport/rulesnpolicyreport.component';
 
@@ -23,7 +23,7 @@ export class MiscboardComponent implements AfterViewInit {
     DemoComponent,
     EventComponent,
     HolidayComponent,
-    RulesorpolicyComponent,
+    CreatehtmlpageComponent,
     RulesnpolicyreportComponent
   ];
 
@@ -66,7 +66,7 @@ export class MiscboardComponent implements AfterViewInit {
     this.GenerateComponent(globalconstants.Pages.common.misc.HOLIDAY)
     this.GenerateComponent(globalconstants.Pages.common.misc.EVENT)
     this.GenerateComponent(globalconstants.Pages.common.misc.NOOFSTUDENT)
-    this.GenerateComponent(globalconstants.Pages.common.misc.RULESORPOLICY)
+    this.GenerateComponent(globalconstants.Pages.common.misc.CREATEHTMLPAGE)
     this.GenerateComponent(globalconstants.Pages.common.misc.RULESORPOLICYREPORT)
     //this.GenerateComponent(globalconstants.Pages.edu.CLASSCOURSE.PREREQUISITE)
 
@@ -109,8 +109,8 @@ export class MiscboardComponent implements AfterViewInit {
       case globalconstants.Pages.common.misc.NOOFSTUDENT:
         comindx = this.components.indexOf(NoOfStudentComponent);
         break;
-      case globalconstants.Pages.common.misc.RULESORPOLICY:
-        comindx = this.components.indexOf(RulesorpolicyComponent);
+      case globalconstants.Pages.common.misc.CREATEHTMLPAGE:
+        comindx = this.components.indexOf(CreatehtmlpageComponent);
         break;
       case globalconstants.Pages.common.misc.RULESORPOLICYREPORT:
         comindx = this.components.indexOf(RulesnpolicyreportComponent);

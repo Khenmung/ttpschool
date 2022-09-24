@@ -6,7 +6,7 @@
     <form [formGroup]="searchForm">
         <div>
             <mat-form-field appearance="outline" [style.width.px]="300">
-                <mat-label>House</mat-label>
+                <mat-label>Group</mat-label>
                 <mat-select formControlName="searchGroupId" (selectionChange)="GroupChanged()">
                     <mat-option value="0">select</mat-option>
                     <!-- <mat-optgroup *ngFor="let item of Groups" [label]="item.name" [disabled]="item.disabled"> -->
@@ -104,7 +104,7 @@
         <mat-row *matRowDef="let row; columns: displayedColumns;let indx=index" class="element-row"
             style="align-items: center;"></mat-row>
     </mat-table>
-    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[3,5,10,20,50]"></mat-paginator>
+    <mat-paginator style="display: flex;justify-content: center;" [pageSizeOptions]="[10,20,50]"></mat-paginator>
     <div *ngIf="ShowParticipants">
         <div style="display:flex;justify-content:flex-end">
             <form [formGroup]="gap">

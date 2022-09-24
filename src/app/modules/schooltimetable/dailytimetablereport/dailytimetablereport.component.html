@@ -24,12 +24,12 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <button [disabled]="loading" matTooltip="search" class="mat-raised-button"
+                    <button [disabled]="loading" matTooltip="search" mat-raised-button color="accent"
                         (click)="GetSchoolTimeTable()">
-                         <mat-icon>search</mat-icon>
-                            <mat-icon *ngIf="loading">
-                                <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                            </mat-icon>
+                        <mat-icon>search</mat-icon>
+                        <mat-icon *ngIf="loading">
+                            <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                        </mat-icon>
                     </button>
                 </div>
             </form>
@@ -38,7 +38,8 @@
 
                 <ng-container *ngFor="let disCol of displayedColumns; let colIndex = index" matColumnDef="{{disCol}}">
                     <mat-header-cell *matHeaderCellDef>
-                        <span style="justify-content:center">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>                        
+                        <span
+                            style="justify-content:center">{{disCol=='Action'?'':disCol.includes('f_')?(disCol|slice:2):disCol}}</span>
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element"
                         [ngStyle]="{'justify-content': disCol == 'Day'?'left' : 'center' }">
@@ -52,14 +53,14 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;" class="element-row"></mat-row>
             </mat-table>
-            <button *ngIf="SchoolTimeTableList.length>0" 
-                          
-                [disabled]="loading" 
-                matTooltip="print" 
-                printSectionId="printSection" [useExistingCss]="true"
-                ngxPrint class="mat-raised-button">
-                <mat-icon>print</mat-icon>
-            </button>
+            <div style="margin:30px;display: flex;">
+                <button *ngIf="SchoolTimeTableList.length>0" [disabled]="loading" matTooltip="print"
+                    color="accent" mat-raised-button
+                    printSectionId="printSection" 
+                    [useExistingCss]="true" ngxPrint>
+                    <mat-icon>print</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
 </div>

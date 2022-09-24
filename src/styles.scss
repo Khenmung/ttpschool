@@ -201,3 +201,28 @@ body {
     margin     : 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+@media print {
+    html, body {
+        
+        //margin: 25mm 25mm 25mm 25mm;
+        padding: 0px;
+        height: 100%;
+        min-width: auto !important;
+        
+    }
+    .element-row{
+        min-height: 29px;   
+       }
+    // mat-header-cell{
+    //     font-size: 14pt;
+    // }
+    mat-table,mat-cell,div,span{
+        font-size: 12pt;
+        box-sizing: border-box;
+        //width:100%;
+    }
+    @page {
+        size: auto;
+      }
+      
+}
