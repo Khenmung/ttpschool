@@ -2,16 +2,15 @@ mat-form-field{
     margin-right:15px;
     width:98%;
 }
+mat-cell{
+    width: 98%;
+}
 .mat-column-QuestionBankId{
     flex:1 1 50px;
 }
 .mat-column-Questions{
-    flex:1 0 500px;
+    flex:1 1 500px;
 }
-// .mat-column-ClassId,
-// .mat-column-ClassSubjectId,
-// .mat-column-CategoryId,
-// .mat-column-SubCategoryId,
 .mat-column-LessonId,
 .mat-column-DifficultyLevelId,
 .mat-column-Active,

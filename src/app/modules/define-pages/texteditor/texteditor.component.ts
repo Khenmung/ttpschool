@@ -8,7 +8,7 @@ import { FileUploadService } from 'src/app/shared/upload.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { ContentService } from 'src/app/shared/content.service';
 
-import {SwUpdate} from '@angular/service-worker';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
 
@@ -20,13 +20,14 @@ import {SwUpdate} from '@angular/service-worker';
 
 })
 
-export class TextEditorComponent implements OnInit { PageLoading=true;
-  OneMB =1048576;
-  processing =false;
+export class TextEditorComponent implements OnInit {
+  PageLoading = true;
+  OneMB = 1048576;
+  processing = false;
   Edit = false;
-  imageCount=0;
+  imageCount = 0;
   message: string;
-  imgURL: any='';
+  imgURL: any = '';
   selectedFile: any;
   //Albums: any;
   errorMessage = '';
@@ -40,7 +41,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
     PageTitle: '',
     ParentId: 0,
     FullPath: '',
-    PhotoPath:'',
+    PhotoPath: '',
     CurrentVersion: 0,
     UpdateDate: new Date(),
     IsTemplate: 1,
@@ -52,8 +53,8 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
   };
   PublishOrDraft: number = 0;
   PageDetailForm = this.fb.group({
-    PhotoPath:[''],
-    PageTitle: ['',[Validators.required, Validators.maxLength(50)]],
+    PhotoPath: [''],
+    PageTitle: ['', [Validators.required, Validators.maxLength(50)]],
     ParentId: [0],
     PageBody: [''],
     PageHistoryId: [0],
@@ -82,7 +83,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
   res: any;
   loading = false;
   constructor(private servicework: SwUpdate,
-    private fb:UntypedFormBuilder,
+    private fb: UntypedFormBuilder,
     private naomitsuService: NaomitsuService,
     private router: Router,
     private ar: ActivatedRoute,
@@ -96,8 +97,10 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
 
   ngOnInit() {
     this.loading = true;
+    debugger;
     this.checklogin();
-    this.GetParentPage();
+    this.GetLatestPage
+    //this.GetParentPage();
     //debugger;
     this.ar.queryParamMap
       .subscribe((params) => {
@@ -106,6 +109,8 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
         if (this.Id != undefined) {
           this.GetLatestPage(this.Id);
         }
+        else
+          this.PageLoading = false;
         this.ckeConfig = {
           allowedContent: false,
           extraPlugins: 'divarea',
@@ -116,6 +121,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
           autoGrow_minHeight: 500,
           autoGrow_maxHeight: 600
         };
+
       });
   }
   ngAfterViewInit() {
@@ -132,10 +138,9 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
     }
     this.selectedFile = files[0];
     //console.log('image size',this.selectedFile.size);
-    
-    if(this.selectedFile.size > this.OneMB)
-    {
-      this.contentservice.openSnackBar('Image size is too big! Please try to upload image size less than 1mb',globalconstants.ActionText,globalconstants.RedBackground);
+
+    if (this.selectedFile.size > this.OneMB) {
+      this.contentservice.openSnackBar('Image size is too big! Please try to upload image size less than 1mb', globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
 
@@ -151,22 +156,22 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
     this.Edit = true;
   }
   delete() {
-    let pageData ={
-      UpdateDate:new Date(),
-      PhotoPath:""
+    let pageData = {
+      UpdateDate: new Date(),
+      PhotoPath: ""
     }
-      this.processing =true;
+    this.processing = true;
     this.naomitsuService.postPatch('Pages', pageData, this.Id, 'patch')
-    .subscribe(
-      (data: any) => {
-        this.imgURL ="";
-        this.contentservice.openSnackBar("Photo deleted successfully.",globalconstants.ActionText,globalconstants.BlueBackground);
-        this.processing=false;
-      });
+      .subscribe(
+        (data: any) => {
+          this.imgURL = "";
+          this.contentservice.openSnackBar("Photo deleted successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+          this.processing = false;
+        });
   }
   uploadFile() {
     let error: boolean = false;
-    this.processing =true;
+    this.processing = true;
     this.formdata = new FormData();
     this.formdata.append("description", "Page photo");
     this.formdata.append("fileOrPhoto", "0");
@@ -187,12 +192,12 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
     //this.formData.append("Image", <File>base64ToFile(this.croppedImage),this.fileName);
     this.fileUploadService.postFile(this.formdata).subscribe(res => {
       //let filename = this.selectedFile.name.substring(0,10).replace(' ','-').
-      this.PageDetailForm.patchValue({"PhotoPath": res});
+      this.PageDetailForm.patchValue({ "PhotoPath": res });
       ////console.log('res',res);
-      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText,globalconstants.BlueBackground);
-      this.imageCount =0;
+      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+      this.imageCount = 0;
       this.Edit = false;
-      this.processing =false;      
+      this.processing = false;
     });
   }
 
@@ -203,12 +208,10 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
   GetLatestPage(ppId: number) {
 
     let list: List = new List();
-    list.fields = ["PageHistoryId", "PageBody", "Version", 
-                   "Published", "Page/PhotoPath", 
-                   "Page/HasSubmenu", "Page/PageTitle",
-                   "Page/link",];
+    list.fields = ["PageHistoryId", "PageBody", "Version",
+      "Published"];
     list.PageName = "PageHistories";
-    list.lookupFields = ["Page"];
+    list.lookupFields = ["Page($select=PhotoPath,PageTitle,link,HasSubmenu)"];
     list.filter = ["ParentPageId eq " + ppId];
     list.orderBy = "PageHistoryId desc";
     list.limitTo = 1;
@@ -222,7 +225,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
             this.imgURL = globalconstants.apiUrl + "/Image/PagePhoto/" + data.value[0].Page.PhotoPath
 
           this.PageDetailForm.patchValue({
-            PhotoPath:data.value[0].Page.PhotoPath,
+            PhotoPath: data.value[0].Page.PhotoPath,
             PageTitle: data.value[0].Page.PageTitle,
             ParentId: +this.ar.snapshot.queryParams.pgid,
             PageBody: data.value[0].PageBody,
@@ -236,7 +239,8 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
           //this.selected = this.ar.snapshot.queryParams.pgid;          
           //this.PageDetailForm.controls.PageGroupId.patchValue(this.ar.snapshot.queryParams.pgid);
         }
-      this.loading=false;this.PageLoading=false;
+        this.loading = false;
+        this.PageLoading = false;
       });
   }
   checklogin() {
@@ -247,7 +251,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
     let token = this.tokenStorage.getToken();
 
     if (token == null) {
-      this.contentservice.openSnackBar("Access denied! login required.",globalconstants.ActionText,globalconstants.BlueBackground);
+      this.contentservice.openSnackBar("Access denied! login required.", globalconstants.ActionText, globalconstants.BlueBackground);
       this.router.navigate(['/home']);
     }
   }
@@ -286,7 +290,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
         active = 0;
     }
     if (duplicate.length > 0) {
-      this.contentservice.openSnackBar('There is already a page named ' + this.PageDetailForm.value.PageTitle,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar('There is already a page named ' + this.PageDetailForm.value.PageTitle, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
       let PageTitle = this.PageDetailForm.get("PageTitle").value;
@@ -326,7 +330,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
             this.naomitsuService.postPatch('PageHistories', this.PageHistory, 0, 'post')
               .subscribe(
                 (history: any) => {
-                  this.contentservice.openSnackBar(globalconstants.AddedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
+                  this.contentservice.openSnackBar(globalconstants.AddedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
                   //debugger;
                   if (this.PublishOrDraft == 1) {
                     if (this.PageDetailForm.value.PageTitle.toUpperCase().includes("NEWS"))
@@ -338,9 +342,9 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
                     this.naomitsuService.postPatch('Pages', this.PageDetail, pageId, 'patch')
                       .subscribe(
                         (data: any) => {
-                          this.loading = false; this.PageLoading=false;
+                          this.loading = false; this.PageLoading = false;
                         }, (error) => {
-                          this.loading = false; this.PageLoading=false;
+                          this.loading = false; this.PageLoading = false;
                           //console.log(error);
                         })
                   }
@@ -362,7 +366,7 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
 
     })
     if (duplicate.length > 0) {
-      this.contentservice.openSnackBar('There is already a page named ' + this.PageDetailForm.value.PageTitle,globalconstants.ActionText,globalconstants.RedBackground);
+      this.contentservice.openSnackBar('There is already a page named ' + this.PageDetailForm.value.PageTitle, globalconstants.ActionText, globalconstants.RedBackground);
     }
     else {
       this.PageDetailForm.patchValue(
@@ -415,8 +419,8 @@ export class TextEditorComponent implements OnInit { PageLoading=true;
             this.naomitsuService.postPatch('PageHistories', this.PageHistory, this.PageHistory.PageHistoryId, 'patch')
               .subscribe(
                 (data: any) => {
-                  this.loading = false; this.PageLoading=false;
-                  this.contentservice.openSnackBar("Data updated Successfully", globalconstants.ActionText,globalconstants.BlueBackground);
+                  this.loading = false; this.PageLoading = false;
+                  this.contentservice.openSnackBar("Data updated Successfully", globalconstants.ActionText, globalconstants.BlueBackground);
                   this.router.navigate(['/home/pages']);
                 });
           });
