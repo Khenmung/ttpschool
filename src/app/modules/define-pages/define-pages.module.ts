@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CKEditorModule } from 'ng2-ckeditor';
+import { CKEditorModule } from '@ckeditor/ckeditor5-build-classic';
 import { MaterialModule } from '../../shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
@@ -14,7 +14,6 @@ import { DefinePagesComponents, DefinePagesRoutingModule } from './define-pages-
   declarations: [DefinePagesComponents],
   imports: [
     CommonModule,
-    CKEditorModule,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,

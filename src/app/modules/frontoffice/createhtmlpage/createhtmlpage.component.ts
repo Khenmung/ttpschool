@@ -11,6 +11,9 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+
 
 @Component({
   selector: 'app-createhtmlpage',
@@ -18,6 +21,8 @@ import { SwUpdate } from '@angular/service-worker';
   styleUrls: ['./createhtmlpage.component.scss']
 })
 export class CreatehtmlpageComponent implements OnInit {
+  public Editor = ClassicEditor;
+
   @ViewChild(MatPaginator) paging: MatPaginator;
   RulesOrPolicyTypes = [];
   PageLoading = false;
@@ -105,18 +110,19 @@ export class CreatehtmlpageComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-        this.ckeConfig = {
-          allowedContent: false,
-          extraPlugins: 'divarea',
-          forcePasteAsPlainText: false,
-          removeButtons: 'About',
-          scayt_autoStartup: true,
-          autoGrow_onStartup: true,
-          autoGrow_minHeight: 500,
-          autoGrow_maxHeight: 600,
-          font_names:"Arial;Times New Roman;Verdana;'Kalam', cursive;",          
-          contentsCss:'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
-        };
+        this.ckeConfig ={};
+        // this.ckeConfig = {
+        //   allowedContent: false,
+        //   extraPlugins: 'divarea',
+        //   forcePasteAsPlainText: false,
+        //   removeButtons: 'About',
+        //   scayt_autoStartup: true,
+        //   autoGrow_onStartup: true,
+        //   autoGrow_minHeight: 500,
+        //   autoGrow_maxHeight: 600,
+        //   font_names:"Arial;Times New Roman;Verdana;'Kalam', cursive;",          
+        //   contentsCss:'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
+        // };
 
         this.GetMasterData();
         this.GetRulesOrPolicys();

@@ -6,6 +6,8 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
+@import '~quill/dist/quill.snow.css';
+
 
 @include mat-core();
 $bv-brand: (50: #ffffff,
