@@ -2,8 +2,9 @@ import { AfterViewInit, ChangeDetectorRef, Component,  ViewChild, ViewContainerR
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { AttendancelistComponent } from '../attendancelist/attendancelist.component';
-import { AttendancereportComponent } from '../attendancereport/attendancereport.component';
+import { AbsentListComponent } from '../absentlist/absentlist.component';
+import { AttendancepercentComponent } from '../attendancepercent/attendancepercent.component';
+import { AttendanceCountComponent } from '../attendancecount/attendancecount.component';
 import { StudentAttendanceComponent } from '../studentattendance/studentattendance.component';
 import { TeacherAttendanceComponent } from '../teacherattendance/teacherattendance.component';
 
@@ -17,15 +18,17 @@ export class AttendanceboardComponent implements AfterViewInit {
   components: any = [
     StudentAttendanceComponent,
     TeacherAttendanceComponent,
-    AttendancereportComponent,
-    AttendancelistComponent
+    AttendanceCountComponent,
+    AbsentListComponent,
+    AttendancepercentComponent
   ];
   SelectedAppName = '';
   tabNames = [
-    { label: 'Student Attendance', faIcon: '' },
-    { label: 'Employee Attendance', faIcon: '' },
-    { label: 'Employee Attendance', faIcon: '' },
-    { label: 'Employee Attendance', faIcon: '' },
+    { label: 'Attendance', faIcon: '' },
+    { label: 'Attendance', faIcon: '' },
+    { label: 'Attendance', faIcon: '' },
+    { label: 'Attendance', faIcon: '' },
+    { label: 'Attendance', faIcon: '' },
   ];
 
   Permissions =
@@ -69,7 +72,11 @@ export class AttendanceboardComponent implements AfterViewInit {
       this.AddRemoveComponent(perObj, comindx);
       
       perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCELIST)
-      var comindx = this.components.indexOf(AttendancelistComponent);
+      var comindx = this.components.indexOf(AbsentListComponent);
+      this.AddRemoveComponent(perObj, comindx);
+      
+      perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCEPERCENT)
+      var comindx = this.components.indexOf(AttendancepercentComponent);
       this.AddRemoveComponent(perObj, comindx);
 
     }
@@ -79,7 +86,12 @@ export class AttendanceboardComponent implements AfterViewInit {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
       }
-      var comindx = this.components.indexOf(AttendancelistComponent);
+      var comindx = this.components.indexOf(AbsentListComponent);
+      if (comindx > -1) {
+        this.components.splice(comindx, 1);
+        this.tabNames.splice(comindx, 1);
+      }
+      var comindx = this.components.indexOf(AttendancepercentComponent);
       if (comindx > -1) {
         this.components.splice(comindx, 1);
         this.tabNames.splice(comindx, 1);
@@ -91,7 +103,7 @@ export class AttendanceboardComponent implements AfterViewInit {
     }
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.ATTENDANCE.ATTENANCEREPORT)
-    var comindx = this.components.indexOf(AttendancereportComponent);
+    var comindx = this.components.indexOf(AttendanceCountComponent);
     this.AddRemoveComponent(perObj, comindx);
 
     if (this.Permissions.ParentPermission != 'deny') {

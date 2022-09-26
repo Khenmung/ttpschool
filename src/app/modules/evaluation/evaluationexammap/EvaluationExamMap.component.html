@@ -86,10 +86,9 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" fxLayoutAlign="space-between center" fxLayout="row">
                     <button [disabled]="
-                    loading || 
-                    !element.Action || 
-                    Permission=='read' ||
-                    element.AlreadyUsed" 
+                    loading  
+                    || !element.Action  
+                    || Permission=='read'"
                     matTooltip="save"
                         mat-raised-button color="accent" (click)="UpdateOrSave(element)">
                         <mat-icon>save</mat-icon>

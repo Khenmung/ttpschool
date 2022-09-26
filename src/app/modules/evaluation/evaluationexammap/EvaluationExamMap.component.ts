@@ -128,11 +128,12 @@ export class EvaluationExamMapComponent implements OnInit {
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
           });
-        // this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
-        //   .subscribe((data: any) => {
-        //     this.ClassGroupMappings = [...data.value];
-        //     this.loading = false; this.PageLoading = false;
-        //   })
+        this.contentservice.GetClassGroupMapping(this.LoginUserDetail[0]["orgId"], 1)
+          .subscribe((data: any) => {
+            this.ClassGroupMappings = [...data.value];
+            this.loading = false; 
+            this.PageLoading = false;
+          })
       }
     }
   }
@@ -328,8 +329,12 @@ export class EvaluationExamMapComponent implements OnInit {
   SelectEvaluation(){
     debugger;
     var _searchClassGroupId = this.searchForm.get("searchClassGroupId").value;
+    var _classesForSelectedClassGroup= this.ClassGroupMappings.filter(m=>m.ClassGroupId == _searchClassGroupId);
+    var allGroupsForAllTheSelectedClasses = this.ClassGroupMappings.filter(g=>_classesForSelectedClassGroup.filter(i=>i.ClassId ==g.ClassId).length>0)
     this.EvaluationMasterForClassGroup = this.EvaluationNames.filter(d => d.ClassGroupId == _searchClassGroupId)
-    this.SelectedClassGroupExam = this.Exams.filter(f=>f.ClassGroupId ==_searchClassGroupId);
+    this.SelectedClassGroupExam = this.Exams.filter(f=>allGroupsForAllTheSelectedClasses.filter(i=> i.ClassGroupId==f.ClassGroupId).length>0);
+
+
   }
   EvaluationMasterForClassGroup=[];
   GetEvaluationExamMap() {

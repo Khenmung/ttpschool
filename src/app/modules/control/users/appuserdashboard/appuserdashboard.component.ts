@@ -240,6 +240,19 @@ export class AppuserdashboardComponent implements OnInit {
               )
             }
           }
+          data.forEach(userdetail => {
+              var existinglogin = this.Users.filter(f => f.Email.toLowerCase() == userdetail.Email.toLowerCase());
+              if (existinglogin.length == 0) {
+                this.Users.push(
+                  {
+                    Id: userdetail.Id,
+                    UserName: userdetail.UserName,
+                    Email: userdetail.Email,
+                    Active: userdetail.Active
+                  }
+                )
+              }
+          })
         })
         this.loading = false; this.PageLoading = false;
       })
@@ -370,11 +383,9 @@ export class AppuserdashboardComponent implements OnInit {
         //var _UserName ='';
         if (data.length > 0) {
           data.forEach(u => {
-            var newlogin = this.UserDetail.filter(f => f.EmailAddress == u.Email);
-            if (newlogin.length > 0) {
               this.AppUsers.push({
                 "Id": u.Id,
-                "UserName": newlogin[0].FullName,
+                "UserName": u.UserName,
                 "EmailAddress": u.Email,
                 "PhoneNumber": u.PhoneNumber,
                 "OrgId": u.OrgId,
@@ -383,7 +394,6 @@ export class AppuserdashboardComponent implements OnInit {
                 "Active": u.Active,
                 "Action": false
               });
-            }
           });
         }
         else {

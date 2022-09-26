@@ -115,7 +115,7 @@ export class searchstudentComponent implements OnInit {
         this.FeePaymentPermission = perObj[0].permission;
       }
       //var perObj = globalconstants.getPermission(this.token, globalconstants.Pages.edu.STUDENT.SEARCHSTUDENT);
-      this.ELEMENT_DATA =[];
+      this.ELEMENT_DATA = [];
       this.SelectedBatchId = +this.token.getSelectedBatchId();
       this.filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.token);
       this.SelectedApplicationId = +this.token.getSelectedAPPId();
@@ -531,9 +531,9 @@ export class searchstudentComponent implements OnInit {
               }
               else
                 item.ClassName = '';
-              item.Action = "";
-              this.ELEMENT_DATA.push(item);
             }
+            item.Action = "";
+            this.ELEMENT_DATA.push(item);
           })
         }
         else {

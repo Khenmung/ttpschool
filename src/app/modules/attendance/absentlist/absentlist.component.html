@@ -1,4 +1,4 @@
-<div style="padding: 15px;"><strong>Student Attendance</strong></div>
+<div style="padding: 15px;"><strong>Absent List</strong></div>
 <!-- <alert></alert> -->
 <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
 <form [formGroup]="searchForm">
@@ -50,6 +50,13 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
             {{element.StudentRollNo}}
+        </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="ClassSubject">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Subject
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+            {{element.ClassSubject}}
         </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ContactNo">

@@ -36,10 +36,12 @@
                 <ng-container matColumnDef="UserName">
                     <mat-header-cell *matHeaderCellDef> Name</mat-header-cell>
                     <mat-cell *matCellDef="let element">
-                        <button [disabled]="loading" mat-button
-                            (click)="expandedElement = expandedElement === element ? null : element">
-                            {{element.UserName}}
-                        </button>
+                        <mat-form-field appearance="outline">
+                            <input matInput [value]="element.UserName"
+                            (blur)="onBlur(element)"
+                            [(ngModel)]="element.UserName"
+                                autocomplete="Off" [maxlength]="100">
+                        </mat-form-field>                       
                     </mat-cell>
                 </ng-container>
                 <!-- <ng-container matColumnDef="ClassName">

@@ -13,15 +13,8 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { CalendarModule,DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 //import { CKEditorModule } from 'ng2-ckeditor';
-import { CKEditorModule } from '@ckeditor/ckeditor5-build-classic';
-import { QuillModule } from 'ngx-quill'
-import { QuillConfigModule } from 'ngx-quill/config';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
-// import {
-//   NgxMatDatetimePickerModule,
-//   NgxMatNativeDateModule,
-//   NgxMatTimepickerModule
-// } from '@angular-material-components/datetime-picker';
 import {
   NgxMatDateFormats,
   NgxMatDatetimePickerModule,
@@ -52,15 +45,9 @@ FullCalendarModule.registerPlugins([
 @NgModule({
   declarations: [MiscComponents],
   imports: [    
-    QuillModule.forRoot(),
-    QuillConfigModule.forRoot({
-      modules: {
-        syntax: true,
-        toolbar: []
-      }
-    }),
     CommonModule,
     FormsModule,
+    CKEditorModule,
     ReactiveFormsModule,
     MaterialModule,
     SharedhomepageModule,
@@ -68,7 +55,6 @@ FullCalendarModule.registerPlugins([
     MiscRoutingModule,
     FullCalendarModule,
     NgbModule,
-    QuillModule,
     NgxPrintModule,
     NgxMatDatetimePickerModule,
     NgxMatTimepickerModule,
@@ -78,7 +64,8 @@ FullCalendarModule.registerPlugins([
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory,
-    }),
+    })
+    
   ],
   providers:[
     //{ provide: ErrorStateMatcher, useClass: TouchedErrorStateMatcher },

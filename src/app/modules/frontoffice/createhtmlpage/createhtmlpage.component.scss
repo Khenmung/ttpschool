@@ -22,3 +22,6 @@ mat-form-field{
 {
     flex:1 0 50px;
 }
+:host ::ng-deep ckeditor{
+    height:500px;
+}

@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,7 +11,14 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+//import * as ClassicEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+import ImageInsert from '@ckeditor/ckeditor5-image/src/imageinsert';
+import { FileUploadService } from 'src/app/shared/upload.service';
+
+// import EditorJS from '@editorjs/editorjs';
+// import Header from '@editorjs/editorjs'; 
+//import List as lst from '@editorjs/editorjs'; 
 
 
 
@@ -21,9 +28,193 @@ import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
   styleUrls: ['./createhtmlpage.component.scss']
 })
 export class CreatehtmlpageComponent implements OnInit {
-  public Editor = ClassicEditor;
+  //public editor=DecoupledEditor;
+  public Editor = DecoupledEditor;
+
+  public onReady(editor) {
+    editor.ui.getEditableElement().parentElement.insertBefore(
+      editor.ui.view.toolbar.element,
+      editor.ui.getEditableElement()
+    );
+    editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+      console.log(btoa(loader.file));
+      return new UploadAdapter(loader);
+    };
+
+
+  }
+
+  public config = {
+    placeholder: 'Type the content here!',
+    toolbar: {
+      items: [
+        'exportPDF', 'exportWord', '|',
+        'findAndReplace', 'selectAll', '|',
+        'heading', '|',
+        'bold', 'italic', 'strikethrough', 'underline', 'code', 'subscript', 'superscript', 'removeFormat', '|',
+        'bulletedList', 'numberedList', 'todoList', '|',
+        'outdent', 'indent', '|',
+        'undo', 'redo',
+        '-',
+        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
+        'alignment', '|',
+        'link','uploadImage', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+        'specialCharacters', 'horizontalLine', 'pageBreak', '|',
+        'textPartLanguage', '|',
+        'sourceEditing'
+      ],
+      shouldNotGroupWhenFull: true
+    },
+    // plugins:[
+    //   uploadImage
+    // ],
+    // Changing the language of the interface requires loading the language file using the <script> tag.
+    // language: 'es',
+    list: {
+      properties: {
+        styles: true,
+        startIndex: true,
+        reversed: true
+      }
+    },
+    // plugins:[
+    //   ImageInsert
+    // ],
+    // https://ckeditor.com/docs/ckeditor5/latest/features/headings.html#configuration
+    heading: {
+      options: [
+        // { model: 'heading', title: 'heading', class: 'ck-heading_paragraph' },
+        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+        { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+        { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+        { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
+      ]
+    },
+    // https://ckeditor.com/docs/ckeditor5/latest/features/editor-placeholder.html#using-the-editor-configuration
+    //placeholder: 'Welcome to CKEditor 5!',
+    // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-family-feature
+    fontFamily: {
+      options: [
+        'default',
+        'Arial, Helvetica, sans-serif',
+        'Courier New, Courier, monospace',
+        'Georgia, serif',
+        'Lucida Sans Unicode, Lucida Grande, sans-serif',
+        'Tahoma, Geneva, sans-serif',
+        'Times New Roman, Times, serif',
+        'Trebuchet MS, Helvetica, sans-serif',
+        'Verdana, Geneva, sans-serif',
+        '"Kama",cursive'
+      ],
+      supportAllValues: true
+    },
+    // https://ckeditor.com/docs/ckeditor5/latest/features/font.html#configuring-the-font-size-feature
+    fontSize: {
+      options: [10, 12, 14, 'default', 18, 20, 22],
+      supportAllValues: true
+    },
+    // Be careful with the setting below. It instructs CKEditor to accept ALL HTML markup.
+    // https://ckeditor.com/docs/ckeditor5/latest/features/general-html-support.html#enabling-all-html-features
+    htmlSupport: {
+      allow: [
+        {
+          name: /.*/,
+          attributes: true,
+          classes: true,
+          styles: true
+        }
+      ]
+    },
+    // Be careful with enabling previews
+    // https://ckeditor.com/docs/ckeditor5/latest/features/html-embed.html#content-previews
+    htmlEmbed: {
+      showPreviews: true
+    },
+    // https://ckeditor.com/docs/ckeditor5/latest/features/link.html#custom-link-attributes-decorators
+    link: {
+      decorators: {
+        addTargetToExternalLinks: true,
+        defaultProtocol: 'https://',
+        toggleDownloadable: {
+          mode: 'manual',
+          label: 'Downloadable',
+          attributes: {
+            download: 'file'
+          }
+        }
+      }
+    },
+    // https://ckeditor.com/docs/ckeditor5/latest/features/mentions.html#configuration
+    mention: {
+      feeds: [
+        {
+          marker: '@',
+          feed: [
+            '@apple', '@bears', '@brownie', '@cake', '@cake', '@candy', '@canes', '@chocolate', '@cookie', '@cotton', '@cream',
+            '@cupcake', '@danish', '@donut', '@dragée', '@fruitcake', '@gingerbread', '@gummi', '@ice', '@jelly-o',
+            '@liquorice', '@macaroon', '@marzipan', '@oat', '@pie', '@plum', '@pudding', '@sesame', '@snaps', '@soufflé',
+            '@sugar', '@sweet', '@topping', '@wafer'
+          ],
+          minimumCharacters: 1
+        }
+      ]
+    },
+    // The "super-build" contains more premium features that require additional configuration, disable them below.
+    // Do not turn them on unless you read the documentation and know how to configure them and setup the editor.
+    removePlugins: [
+      // These two are commercial, but you can try them out without registering to a trial.
+      // 'ExportPdf',
+      // 'ExportWord',
+      'CKBox',
+      'CKFinder',
+      //'EasyImage',
+      // This sample uses the Base64UploadAdapter to handle image uploads as it requires no configuration.
+      // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/base64-upload-adapter.html
+      // Storing images as Base64 is usually a very bad idea.
+      // Replace it on production website with other solutions:
+      // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/image-upload.html
+      // 'Base64UploadAdapter',
+      'RealTimeCollaborativeComments',
+      'RealTimeCollaborativeTrackChanges',
+      'RealTimeCollaborativeRevisionHistory',
+      'PresenceList',
+      'Comments',
+      'TrackChanges',
+      'TrackChangesData',
+      'RevisionHistory',
+      'Pagination',
+      'WProofreader',
+      // Careful, with the Mathtype plugin CKEditor will not load when loading this sample
+      // from a local file system (file://) - load this site via HTTP server if you enable MathType
+      'MathType'
+    ]
+
+    ////////////////////////////
+  }
 
   @ViewChild(MatPaginator) paging: MatPaginator;
+
+
+  // DecoupledEditor
+  //     .create(document.querySelector( '.document-editor__editable' ), {
+  //         cloudServices: {
+  //             ....
+  //         }
+  //     } )
+  //     .then( editor => {
+  //         const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+
+  //         toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+
+  //         window.editor = editor;
+  //     } )
+  //     .catch( err => {
+  //         console.error( err );
+  //     } );
+
+  ///////////////////
   RulesOrPolicyTypes = [];
   PageLoading = false;
   LoginUserDetail: any[] = [];
@@ -64,10 +255,9 @@ export class CreatehtmlpageComponent implements OnInit {
     private dataservice: NaomitsuService,
     private tokenstorage: TokenStorageService,
     private nav: Router,
-    private datepipe: DatePipe,
+    private fileUploadService: FileUploadService,
     private fb: UntypedFormBuilder
   ) { }
-
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
       this.servicework.checkForUpdate().then((value) => {
@@ -110,7 +300,7 @@ export class CreatehtmlpageComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-        this.ckeConfig ={};
+        this.ckeConfig = {};
         // this.ckeConfig = {
         //   allowedContent: false,
         //   extraPlugins: 'divarea',
@@ -129,7 +319,50 @@ export class CreatehtmlpageComponent implements OnInit {
       }
     }
   }
+  formdata:FormData;
+  selectedFile:any;
 
+  uploadFile(loader) {
+    debugger;
+    let error: boolean = false;
+    this.loading = true;
+    if (loader.file == undefined) {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    this.formdata = new FormData();
+    this.formdata.append("description", "document image");
+    this.formdata.append("fileOrPhoto", "0");
+    this.formdata.append("folderName", "document image");
+    this.formdata.append("parentId", "-1");
+
+    this.formdata.append("batchId", "0");
+    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("pageId", "0");
+
+    this.formdata.append("studentId", "0");
+    this.formdata.append("studentClassId", "0");
+    this.formdata.append("questionId","0");
+    this.formdata.append("docTypeId", "0");
+
+    this.formdata.append("image", loader.file, loader.file.name);
+    this.uploadImage();
+  }
+
+  uploadImage() {
+    let options = {
+      autoClose: true,
+      keepAfterRouteChange: true
+    };
+    this.fileUploadService.postFiles(this.formdata).subscribe(res => {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+
+      //this.Edit = false;
+    });
+  }
   AddNew() {
 
     this.searchForm.patchValue({
@@ -195,7 +428,7 @@ export class CreatehtmlpageComponent implements OnInit {
           this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
         }
         else {
-          var _desc = _description.replaceAll('"',"'")
+          var _desc = _description.replaceAll('"', "'")
           this.RulesOrPolicyData.RulesOrPolicyId = _rulesOrPolicyId;
           this.RulesOrPolicyData.Active = _active;
           this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(_desc);
@@ -295,7 +528,7 @@ export class CreatehtmlpageComponent implements OnInit {
             return map;
 
           })
-          console.log("dsfsalj",this.RulesOrPolicyList);
+          console.log("dsfsalj", this.RulesOrPolicyList);
           this.searchForm.patchValue({ "RulesOrPolicyId": this.RulesOrPolicyList[0].RulesOrPolicyId, "Title": this.RulesOrPolicyList[0].Title, "Description": this.RulesOrPolicyList[0].Description })
         }
         this.loadingFalse();
@@ -336,6 +569,35 @@ export interface IRulesOrPolicy {
   Title: string;
   Description: string;
   Action: boolean;
+}
+export class UploadAdapter {
+  private loader;
+  constructor(loader: any) {
+    this.loader = loader;
+    console.log(this.readThis(loader.file));
+  }
+
+  public upload(): Promise<any> {
+    //"data:image/png;base64,"+ btoa(binaryString) 
+    return this.readThis(this.loader.file);
+  }
+
+  readThis(file: File): Promise<any> {
+    console.log(file)
+    let imagePromise: Promise<any> = new Promise((resolve, reject) => {
+      var myReader: FileReader = new FileReader();
+      myReader.onloadend = (e) => {
+        let image = myReader.result;
+        console.log(image);
+        resolve(0);
+        return { default: "data:image/png;base64," + image };
+        
+      }
+      myReader.readAsDataURL(file);
+    });
+    return imagePromise;
+  }
+
 }
 
 

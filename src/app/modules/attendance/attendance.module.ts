@@ -8,6 +8,7 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { AttendancepercentComponent } from './attendancepercent/attendancepercent.component';
 
 
 @NgModule({

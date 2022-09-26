@@ -2,12 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { AttendanceboardComponent } from './attendanceboard/attendanceboard.component';
-import { AttendancelistComponent } from './attendancelist/attendancelist.component';
-import { AttendancereportComponent } from './attendancereport/attendancereport.component';
+import { AbsentListComponent } from './absentlist/absentlist.component';
+import { AttendanceCountComponent } from './attendancecount/attendancecount.component';
 import { EmployeetotalattendanceComponent } from './employeetotalattendance/employeetotalattendance.component';
 import { StudentAttendanceComponent } from './studentattendance/studentattendance.component';
 import { StudenttotalattendanceComponent } from './studenttotalattendance/studenttotalattendance.component';
 import { TeacherAttendanceComponent } from './teacherattendance/teacherattendance.component';
+import { AttendancepercentComponent } from './attendancepercent/attendancepercent.component';
 
 const routes: Routes = [
   {path:'',component:HomeComponent,
@@ -30,7 +31,8 @@ export const AttendanceComponents=[
   AttendanceboardComponent, 
   StudenttotalattendanceComponent, 
   EmployeetotalattendanceComponent,
-  AttendancereportComponent,
-  AttendancelistComponent
+  AttendanceCountComponent,
+  AbsentListComponent,
+  AttendancepercentComponent
 ]
 

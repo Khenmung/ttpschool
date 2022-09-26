@@ -6,7 +6,7 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
-@import '~quill/dist/quill.snow.css';
+//@import '~quill/dist/quill.snow.css';
 
 
 @include mat-core();
@@ -64,10 +64,6 @@ mat-card {
     //min-height : 100vh;
 
 }
-
-
-
-
 
 @media only screen and (max-width: 600px) {
     mat-card {
@@ -227,4 +223,7 @@ body {
         size: auto;
       }
       
+}
+.ck-editor__editable_inline {
+    min-height: 500px !important;
 }

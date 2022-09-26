@@ -16,11 +16,11 @@ import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
 
 @Component({
-  selector: 'app-attendancereport',
-  templateUrl: './attendancereport.component.html',
-  styleUrls: ['./attendancereport.component.scss']
+  selector: 'app-attendancecount',
+  templateUrl: './attendancecount.component.html',
+  styleUrls: ['./attendancecount.component.scss']
 })
-export class AttendancereportComponent implements OnInit {
+export class AttendanceCountComponent implements OnInit {
   PageLoading = true;
 
   //@Input() StudentClassId:number;
@@ -54,7 +54,8 @@ export class AttendancereportComponent implements OnInit {
   allMasterData = [];
   searchForm = this.fb.group({
     searchFromDate: [new Date()],
-    searchToDate: [new Date()]
+    searchToDate: [new Date()],
+    searchSubjectWise: [false]
   });
   StudentClassSubjectId = 0;
   displayedColumns = [
@@ -111,12 +112,12 @@ export class AttendancereportComponent implements OnInit {
   PageLoad() {
 
   }
-  // bindClassSubject() {
-  //   debugger;
-  //   var classId = this.searchForm.get("searchClassId").value;
-  //   this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
+  bindClassSubject() {
+    debugger;
+    var classId = this.searchForm.get("searchClassId").value;
+    this.FilteredClassSubjects = this.ClassSubjects.filter(f => f.ClassId == classId);
 
-  // }
+  }
   // checkall(value) {
   //   this.StudentAttendanceList.forEach(record => {
   //     if (value.checked) {
@@ -157,16 +158,25 @@ export class AttendancereportComponent implements OnInit {
 
     var _fromDate = new Date(this.searchForm.get("searchFromDate").value)
     var _toDate = new Date(this.searchForm.get("searchToDate").value)
+    var _subjectwise = this.searchForm.get("searchSubjectWise").value;
     _fromDate.setHours(0, 0, 0, 0);
     _toDate.setHours(0, 0, 0, 0);
 
-    filterStr += ' and BatchId eq ' + this.SelectedBatchId;
+
 
     this.StudentAttendanceList = [];
 
     var datefilterStr = ' and AttendanceDate ge ' + moment(_fromDate).format('yyyy-MM-DD')
     datefilterStr += ' and AttendanceDate le ' + moment(_toDate).format('yyyy-MM-DD')
     datefilterStr += ' and StudentClassId gt 0'
+
+    datefilterStr += ' and BatchId eq ' + this.SelectedBatchId;
+    if (_subjectwise) {
+      datefilterStr += ' and ClassSubjectId gt 0';
+    }
+    else
+      datefilterStr += ' and ClassSubjectId eq 0';
+
 
     let list: List = new List();
     list.fields = [
@@ -204,7 +214,7 @@ export class AttendancereportComponent implements OnInit {
         var _data = [];
         var sumOfAttendance = alasql("select sum(1) PresentAbsent,ClassName,AttendanceStatus,Sequence from ? group by ClassName,AttendanceStatus,Sequence",
           [this.StudentAttendanceList]);
-        console.log("sumOfAttendance", sumOfAttendance)
+        //console.log("sumOfAttendance", sumOfAttendance)
         sumOfAttendance.forEach(att => {
           var existing = _data.filter(f => f.ClassName == att.ClassName);
           if (existing.length > 0) {
@@ -225,7 +235,7 @@ export class AttendancereportComponent implements OnInit {
         //console.log("_data",_data);
         _data = _data.sort((a, b) => a.Sequence - b.Sequence);
         this.TotalPresent = _data.reduce((acc, current) => acc + current.Present, 0);
-        this.TotalAbsent = _data.reduce((acc, current) => acc + (current.Absent==null?0:current.Absent), 0);
+        this.TotalAbsent = _data.reduce((acc, current) => acc + (current.Absent == null ? 0 : current.Absent), 0);
         this.dataSource = new MatTableDataSource<any>(_data);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

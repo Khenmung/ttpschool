@@ -3,9 +3,8 @@
         <div><strong>Create Page</strong></div>
     </div>
     <mat-spinner *ngIf="PageLoading" diameter="25" style="position:relative;margin-left: 50%;"></mat-spinner>
-    <!-- <alert></alert> -->
-    <div style="padding: 15px;" fxLayout="row wrap">
-        <form [formGroup]="searchForm">
+    <form [formGroup]="searchForm">
+        <div style="display:flex">
             <div>
                 <mat-form-field appearance="outline" [style.width.px]="200">
                     <mat-label>Title</mat-label>
@@ -22,15 +21,8 @@
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="AddNew()">
-                    <mat-icon>add</mat-icon>
-                    <mat-icon *ngIf="loading">
-                        <mat-spinner diameter="20" color="Blue"></mat-spinner>
-                    </mat-icon>
-                </button>
             </div>
-            <mat-divider></mat-divider>
-            <div style="margin-top:15px;">
+            <div>
                 <mat-form-field appearance="outline" style="display:none">
                     <mat-label>Id</mat-label>
                     <input matInput formControlName="RulesOrPolicyId">
@@ -39,24 +31,35 @@
                     <mat-label>Title</mat-label>
                     <input matInput formControlName="Title" [maxlength]="30">
                 </mat-form-field>
-
-            </div>
-
-            <div style="margin-bottom: 15px;">
-                <quill-editor></quill-editor> 
-            </div>
-            <div style="display:flex">
-                <div style="margin-right:15px;">
-                    <mat-checkbox formControlName="Active">
-                    </mat-checkbox>&nbsp; Active
-                </div>
-                <button [disabled]="loading" mat-raised-button color="accent" (click)="UpdateOrSave()">
-                    <mat-icon>save</mat-icon>
+                <button [disabled]="loading" mat-raised-button (click)="AddNew()">
+                    <mat-icon>add</mat-icon>
                     <mat-icon *ngIf="loading">
                         <mat-spinner diameter="20" color="Blue"></mat-spinner>
                     </mat-icon>
                 </button>
             </div>
-        </form>
-    </div>
+        </div>
+        <mat-divider></mat-divider>
+
+        <div style="margin-bottom: 15px;">
+            <!-- <ckeditor [editor]="editor" [config]="config" formControlName="Description">
+                </ckeditor> -->
+            <ckeditor [editor]="Editor" formControlName="Description" [config]="config" (ready)="onReady($event)">
+            </ckeditor>
+
+        </div>
+        <div style="display:flex">
+            <div style="margin-right:15px;">
+                <mat-checkbox formControlName="Active">
+                </mat-checkbox>&nbsp; Active
+            </div>
+            <button [disabled]="loading" mat-raised-button color="accent" (click)="UpdateOrSave()">
+                <mat-icon>save</mat-icon>
+                <mat-icon *ngIf="loading">
+                    <mat-spinner diameter="20" color="Blue"></mat-spinner>
+                </mat-icon>
+            </button>
+        </div>
+    </form>
 </div>
+<!-- </div> -->
