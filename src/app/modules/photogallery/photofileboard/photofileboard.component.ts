@@ -20,10 +20,10 @@ export class PhotofileboardComponent implements OnInit {
 
   components:any = [
     AlbumsComponent,
-    CarouselComponent,
     FiledragAndDropComponent,
-    PhotosComponent,
-    PhotobrowserComponent
+    PhotobrowserComponent,
+    CarouselComponent,    
+    PhotosComponent    
   ];
   LoginUserDetail = [];
   tabNames = [
@@ -49,8 +49,7 @@ export class PhotofileboardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
-    private contentservice: ContentService,
-    private componentFactoryResolver: ComponentFactoryResolver) {
+    private contentservice: ContentService) {
   }
   ngOnInit() { }
   public ngAfterViewInit(): void {
@@ -71,7 +70,7 @@ export class PhotofileboardComponent implements OnInit {
     var comindx = this.components.indexOf(CarouselComponent);
     this.GetComponents(perObj, comindx)
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.website.filedragAndDrop)
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.website.UploadImage)
     var comindx = this.components.indexOf(FiledragAndDropComponent);
     this.GetComponents(perObj, comindx)
 

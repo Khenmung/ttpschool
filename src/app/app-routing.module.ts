@@ -8,6 +8,14 @@ const routes: Routes = [
     loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
   {
+    path: 'edu/photo',
+    loadChildren: () => import('./modules/photogallery/photogallery.module').then(m => m.PhotogalleryModule)
+  },
+  {
+    path: 'edu/questionbank',
+    loadChildren: () => import('./modules/questionbank/questionbank.module').then(m => m.QuestionbankModule)
+  },
+  {
     path: 'web/photo',
     loadChildren: () => import('./modules/photogallery/photogallery.module').then(m => m.PhotogalleryModule)
   },

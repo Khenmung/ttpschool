@@ -3,8 +3,8 @@ import { NgbCarouselConfig } from "@ng-bootstrap/ng-bootstrap";
 import { List } from '../../../shared/interface';
 import { NaomitsuService } from '../../../shared/databaseService'
 import { ActivatedRoute, Router } from '@angular/router';
-import {globalconstants } from '../../../shared/globalconstant';
-import {SwUpdate} from '@angular/service-worker';
+import { globalconstants } from '../../../shared/globalconstant';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'carousel, [carousel]',
@@ -13,16 +13,17 @@ import {SwUpdate} from '@angular/service-worker';
   providers: [NgbCarouselConfig]
 })
 
-export class CarouselComponent implements OnInit { PageLoading=true;
-   
+export class CarouselComponent implements OnInit {
+    PageLoading = true;
+
   selectedAlbum: string;
   selectedAlbumId: number;
-  loading =true;
+  loading = true;
   unique = [];
   Albums: any[];
   name = "Angular " + VERSION.major;
-  error="";
-  folderHierarachy='Image/';
+  error = "";
+  folderHierarachy = 'Image/';
   images = [
     {
       PhotoId: 0,
@@ -32,7 +33,7 @@ export class CarouselComponent implements OnInit { PageLoading=true;
     }
   ];// [100, 500, 700, 800, 807].map(n => `https://picsum.photos/id/${n}/900/500`);
 
-  constructor(private servicework: SwUpdate,private config: NgbCarouselConfig,
+  constructor(private servicework: SwUpdate, private config: NgbCarouselConfig,
     private dataservice: NaomitsuService,
     private route: ActivatedRoute,
     private nav: Router) {
@@ -58,39 +59,42 @@ export class CarouselComponent implements OnInit { PageLoading=true;
     list.fields = ["FileId", "FileName", "Description", "UpdatedFileFolderName", "ParentId"];
     //list.lookupFields = ["Album"];
     list.PageName = "StorageFnPs";
-    list.filter = ["Active eq 1 and FileOrPhoto eq 1 and (FileOrFolder eq 1 or ParentId eq " + this.selectedAlbumId+" or FileId eq " + this.selectedAlbumId+")"];
+    list.filter = ["Active eq 1 and FileOrPhoto eq 1 and (FileOrFolder eq 1 or ParentId eq " + this.selectedAlbumId + " or FileId eq " + this.selectedAlbumId + ")"];
     list.orderBy = "UploadDate desc";
-    this.loading=true;
+    this.loading = true;
     this.dataservice.get(list)
       .subscribe((data: any) => {
         ////debugger;
         if (data.value.length > 0) {
-          var browsePath='';
-          this.selectedAlbum = data.value.filter(item=>{
+          var browsePath = '';
+
+          var obj = data.value.filter(item => {
             return item.FileId == this.selectedAlbumId
-          })[0].UpdatedFileFolderName;
-          this.Albums = [...data.value];  
-          this.getNestedFolders(this.selectedAlbumId);
-          this.images = data.value.filter(item=>{
-            return item.ParentId ==this.selectedAlbumId
           })
-          .map(item=>{
-            //browsePath =globalconstants.apiUrl + "/Image/" + item.Album.AlbumName+ "/" + item.PhotoPath;
-            browsePath = globalconstants.apiUrl + "/" + this.folderHierarachy + item.FileName;
-            return {              
-              PhotoPath: browsePath,
-              Description:item.Description
-            }
-          });
-        //   if (data.value.length == 1)
-        //   //this.config.animation=false;
-        //   this.selectedAlbum = data.value[0].UpdatedFileFolderName;// this.images[0].Album.AlbumName;
-        // ////console.log('this.images',this.images)
+          if (obj.length > 0)
+            this.selectedAlbum = obj[0].UpdatedFileFolderName;
+          this.Albums = [...data.value];
+          this.getNestedFolders(this.selectedAlbumId);
+          this.images = data.value.filter(item => {
+            return item.ParentId == this.selectedAlbumId
+          })
+            .map(item => {
+              //browsePath =globalconstants.apiUrl + "/Image/" + item.Album.AlbumName+ "/" + item.PhotoPath;
+              browsePath = globalconstants.apiUrl + "/" + this.folderHierarachy + item.FileName;
+              return {
+                PhotoPath: browsePath,
+                Description: item.Description
+              }
+            });
+          //   if (data.value.length == 1)
+          //   //this.config.animation=false;
+          //   this.selectedAlbum = data.value[0].UpdatedFileFolderName;// this.images[0].Album.AlbumName;
+          // ////console.log('this.images',this.images)
         }
         else
-        this.error ="No image to display";
+          this.error = "No image to display";
         // setTimeout(() => {
-           this.loading=false;this.PageLoading=false;       
+        this.loading = false; this.PageLoading = false;
       })
   }
   getNestedFolders(fileId) {
@@ -111,10 +115,10 @@ export class CarouselComponent implements OnInit { PageLoading=true;
     //list.limitTo =10;
     this.dataservice.get(list)
       .subscribe((data: any) => {
-        this.Albums = [...data.value]        
+        this.Albums = [...data.value]
       })
   }
-  enlargeImg(element){
+  enlargeImg(element) {
     element.style.transform = "scale(1.5)";
     // Animation effect 
     element.style.transition = "transform 0.25s ease";

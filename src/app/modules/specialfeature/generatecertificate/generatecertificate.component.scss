@@ -1,174 +1,204 @@
-// @import url('https://fonts.googleapis.com/css2?family=Ewert&display=swap');
-// @import '~bootstrap/scss/bootstrap';
-
-
+:host{
+	width:100%;
+}
 mat-form-field,
 button {
 	margin-right: 15px;
 }
 
 mat-table {
-	width:100%;
+	width  : 100%;
 	padding: 0px;
 	margin : 0px;
 }
-
-.header {
-	width    : 100%;
-	font-size: 30px;
-	color    : blue
+.container{
+	position: relative;
+	margin:0px;
+	padding: 0px;
 }
-
-.container {
-	width          : 100%;
-	display        : flex;
-	justify-content: space-between;
-	text-align     : center
+.container img{
+	max-width: 100%;
+	height:auto;
+	z-index: -1;
 }
+// .header {
+// 	width    : 100%;
+// 	font-size: 30px;
+// 	color    : blue
+// }
 
-span {
-	width: 100%;
-}
+// .container {
+// 	width          : 100%;
+// 	display        : flex;
+// 	justify-content: space-between;
+// 	text-align     : center;
+// 	position: relative;
+// 	text-align: center;
+// 	width: 100%;
+// 	margin: 0px;
+// 	padding: 0px;
+// }
 
-.blank {
-	display        : flex;
-	justify-content: center;
-	font-weight    : bold;
-	flex           : 1 1 300px;
-	border-bottom  : 1px solid lightgray;
-	margin-bottom  : 15px
-}
+// .cerBody{
+// 	position: absolute;
+// 	margin-top: 220px;
+// 	margin-left:310px;
+// 	z-index: 100;
+// }
+// @media print{
+// .cerBody{
+// 	position: absolute;
+// 	margin-top: 150px;
+// 	margin-left:310px;
+// 	z-index: 100;
+// }}
+ 
+// span {
+// 	width: 100%;
+// }
 
-.headpad {
-	padding  : 30px 0px 15px 0px;
-	font-size: 30pt
-}
+// .blank {
+// 	display        : flex;
+// 	justify-content: center;
+// 	font-weight    : bold;
+// 	flex           : 1 1 300px;
+// 	border-bottom  : 1px solid lightgray;
+// 	margin-bottom  : 15px
+// }
 
-.txtalign {
-	text-align: center
-}
+// .headpad {
+// 	padding  : 30px 0px 15px 0px;
+// 	font-size: 30pt
+// }
 
-.width100 {
-	width     : 100%;
-	margin    : 0px;
-	text-align: center
-}
+// .txtalign {
+// 	text-align: center
+// }
 
-.red {
-	color      : red;
-	font-weight: bold
-}
+// .width100 {
+// 	width     : 100%;
+// 	margin    : 0px;
+// 	text-align: center
+// }
 
-.cerhead {
-	font-size: 30px;
-	padding  : 50px 0px 50px 0px;
-}
+// .red {
+// 	color      : red;
+// 	font-weight: bold
+// }
 
-.CertificateFont {
-	font-family: "Ewert", cursive;
-}
+// .cerhead {
+// 	font-size: 30px;
+// 	padding  : 50px 0px 50px 0px;
+// }
 
-.contentwrapper {
-	display       : flex;
-	flex-direction: column;
-	margin-top    : 80px;
-	margin-bottom : 120px;
-	width         : 100%;
-}
-.footerwrapper{
-	justify-content: space-between;
-	width:100%;
-	margin-top:150px;
-	//margin-bottom: 150px;
-}
-.element-row {
-	width              : 100%;
-	border-bottom-style: none;
-	min-height         : 0px;
-	//padding-left : 100px;
-	//padding-right: 100px;
-}
+// .CertificateFont {
+// 	font-family: "Ewert", cursive;
+// }
 
-body {
-	font-family          : Roboto, Helvetica Neue;
-	margin               : 60px;
-	display              : grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-	grid-gap             : 60px;
-}
+// .contentwrapper {
+// 	display       : flex;
+// 	flex-direction: column;
+// 	margin-top    : 80px;
+// 	margin-bottom : 120px;
+// 	width         : 100%;
+// }
 
-.border {
-	font-size  : 1.6rem;
-	display    : grid;
-	place-items: center;
-	min-height : 200px;
-	border     : 8px solid;
-	padding    : 1rem;
-}
+// .footerwrapper {
+// 	justify-content: space-between;
+// 	width          : 100%;
+// 	margin-top     : 150px;
+// 	//margin-bottom: 150px;
+// }
 
-.full {
-	border-image: linear-gradient(45deg, turquoise, greenyellow) 1;
-}
+// .element-row {
+// 	width              : 100%;
+// 	border-bottom-style: none;
+// 	min-height         : 0px;
+// 	//padding-left : 100px;
+// 	//padding-right: 100px;
+// }
 
-.sides {
-	border-image: linear-gradient(to left, turquoise, greenyellow) 1 0;
-}
+// body {
+// 	font-family          : Roboto, Helvetica Neue;
+// 	margin               : 60px;
+// 	display              : grid;
+// 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+// 	grid-gap             : 60px;
+// }
 
-.sides-2 {
-	border-image: linear-gradient(to bottom, turquoise, greenyellow) 0 1;
-}
+// .border {
+// 	font-size  : 1.6rem;
+// 	display    : grid;
+// 	place-items: center;
+// 	min-height : 200px;
+// 	border     : 8px solid;
+// 	padding    : 1rem;
+// }
 
-.linear-repeating {
-	border-width: 10px;
-	border-image: repeating-linear-gradient(45deg, turquoise, pink 4%) 1;
-}
+// .full {
+// 	border-image: linear-gradient(45deg, turquoise, greenyellow) 1;
+// }
 
-.radial-repeating {
-	border-width: 20px;
-	border-image: repeating-radial-gradient(circle at 10px,
-			turquoise,
-			pink 2px,
-			greenyellow 4px,
-			pink 2px) 1;
-}
+// .sides {
+// 	border-image: linear-gradient(to left, turquoise, greenyellow) 1 0;
+// }
 
-/* border radius example is drawn from this pen: https://codepen.io/shshaw/pen/MqMZGR
-I've added a few comments on why we're using certain properties
-*/
+// .sides-2 {
+// 	border-image: linear-gradient(to bottom, turquoise, greenyellow) 0 1;
+// }
 
-.full-withradius {
-	position  : relative;
-	background: #fff;
+// .linear-repeating {
+// 	border-width: 10px;
+// 	border-image: repeating-linear-gradient(45deg, turquoise, pink 4%) 1;
+// }
 
-	/*The background extends to the outside edge of the padding. No background is drawn beneath the border.*/
-	background-clip: padding-box;
+// .radial-repeating {
+// 	border-width: 20px;
+// 	border-image: repeating-radial-gradient(circle at 10px,
+// 			turquoise,
+// 			pink 2px,
+// 			greenyellow 4px,
+// 			pink 2px) 1;
+// }
 
-	border       : solid 8px transparent;
-	border-radius: 0.8rem;
+// /* border radius example is drawn from this pen: https://codepen.io/shshaw/pen/MqMZGR
+// I've added a few comments on why we're using certain properties
+// */
 
-	&:before {
-		content      : "";
-		position     : absolute;
-		top          : 0;
-		right        : 0;
-		bottom       : 0;
-		left         : 0;
-		z-index      : -1;
-		margin       : -8px;
-		/* same as border width */
-		border-radius: inherit;
-		/* inherit container box's radius */
-		background   : linear-gradient(to left, turquoise, greenyellow);
-	}
-}
-mat-optgroup {
-	display         : block;
-	background-color: lightgray;
-   
-  }
-  
-  mat-option {
-	display         : block;
-	background-color: #ffffff;
-   
-  }
+// .full-withradius {
+// 	position  : relative;
+// 	background: #fff;
+
+// 	/*The background extends to the outside edge of the padding. No background is drawn beneath the border.*/
+// 	background-clip: padding-box;
+
+// 	border       : solid 8px transparent;
+// 	border-radius: 0.8rem;
+
+// 	&:before {
+// 		content      : "";
+// 		position     : absolute;
+// 		top          : 0;
+// 		right        : 0;
+// 		bottom       : 0;
+// 		left         : 0;
+// 		z-index      : -1;
+// 		margin       : -8px;
+// 		/* same as border width */
+// 		border-radius: inherit;
+// 		/* inherit container box's radius */
+// 		background   : linear-gradient(to left, turquoise, greenyellow);
+// 	}
+// }
+
+// mat-optgroup {
+// 	display         : block;
+// 	background-color: lightgray;
+
+// }
+
+// mat-option {
+// 	display         : block;
+// 	background-color: #ffffff;
+
+// }

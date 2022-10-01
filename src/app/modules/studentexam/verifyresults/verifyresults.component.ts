@@ -20,7 +20,7 @@ import { SwUpdate } from '@angular/service-worker';
   styleUrls: ['./verifyresults.component.scss']
 })
 export class VerifyResultsComponent implements OnInit {
-  
+
   @ViewChild(MatPaginator) nonGradingPaginator: MatPaginator;
 
 
@@ -413,7 +413,7 @@ export class VerifyResultsComponent implements OnInit {
 
     let list: List = new List();
     list.fields = [
-      "StudentId", "RollNo", "SectionId", "ClassId","StudentClassId"
+      "StudentId", "RollNo", "SectionId", "ClassId", "StudentClassId"
     ];
 
     list.PageName = "StudentClasses"
@@ -455,7 +455,7 @@ export class VerifyResultsComponent implements OnInit {
                   RollNo: s.RollNo,
                   SubjectId: _subjectIdObj[0].SubjectId,
                   Subject: _subject,
-                  Section:_section,
+                  Section: _section,
                   ClassId: s.ClassId,
                   StudentId: s.StudentId,
                   SectionId: s.SectionId,
@@ -531,7 +531,7 @@ export class VerifyResultsComponent implements OnInit {
           var stud = this.Students.filter(s => s.StudentClassId == f.StudentClassId);
           var _lastname = stud[0].LastName == null ? '' : " " + stud[0].LastName;
           if (stud.length > 0) {
-            f.Student = stud[0].RollNo +"-"+stud[0].FirstName + _lastname +"- " + f.Section;
+            f.Student = stud[0].RollNo + "-" + stud[0].FirstName + _lastname + "- " + f.Section;
           }
 
         })
@@ -711,11 +711,11 @@ export class VerifyResultsComponent implements OnInit {
               }
 
               result["Percentage"] = ((result.Total / result.FullMark) * 100).toFixed(2);
-              
+
               var _notToCalculateRankAndPercentage = ['fail', 'promoted'];
               if (!_notToCalculateRankAndPercentage.includes(result.Division.toLowerCase())) {
                 //result["Percentage"] = ((result.Total / this.ClassFullMark[0].FullMark) * 100).toFixed(2);
-                
+
 
                 if (previousTotal != result.Total)
                   rankCount++;
@@ -755,11 +755,11 @@ export class VerifyResultsComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IExamStudentSubjectResult>(this.ExamStudentSubjectResult);
         //this.dataSource.paginator = this.nonGradingPaginator;//.toArray()[0];
         //this.dataSource.sort = this.sort.toArray()[0];
-        
+
         this.GradingDataSource = new MatTableDataSource<any[]>(this.ExamStudentSubjectGrading);
         //this.GradingDataSource.paginator = this.paginator.toArray()[1];
         //this.GradingDataSource.sort = this.sort.toArray()[1];
-        this.loading = false; 
+        this.loading = false;
         this.PageLoading = false;
 
       })
@@ -836,7 +836,7 @@ export class VerifyResultsComponent implements OnInit {
     this.contentservice.GetStudentGrade(this.LoginUserDetail[0]["orgId"])
       .subscribe((data: any) => {
         this.StudentGrades = [...data.value];
-        this.loading=false;
+        this.loading = false;
       })
   }
 
@@ -1035,9 +1035,13 @@ export class VerifyResultsComponent implements OnInit {
         debugger;
         this.ClassSubjectComponents = [];
         data.value.forEach(e => {
+          var selectHowManyObj = this.SubjectTypes.filter(f => f.SubjectTypeId == e.ClassSubject.SubjectTypeId)
+          var selectHowMany = 0;
+          if (selectHowManyObj.length > 0)
+            selectHowMany = selectHowManyObj[0].SelectHowMany;
           e.ClassId = e.ClassSubject.ClassId;
           e.SubjectTypeId = e.ClassSubject.SubjectTypeId;
-          e.SelectHowMany = this.SubjectTypes.filter(f => f.SubjectTypeId == e.ClassSubject.SubjectTypeId)[0].SelectHowMany;
+          e.SelectHowMany = selectHowMany;
           if (e.ClassSubject.Active == 1)
             this.ClassSubjectComponents.push(e);
         })

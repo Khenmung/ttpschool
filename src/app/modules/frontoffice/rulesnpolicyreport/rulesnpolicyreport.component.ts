@@ -281,11 +281,12 @@ export class RulesnpolicyreportComponent implements OnInit {
     this.dataservice.get(list)
       .subscribe((data: any) => {
         if (data.value.length > 0) {
-          this.RulesOrPolicyList = data.value.map(map => {
-            map.Description = globalconstants.decodeSpecialChars(map.Description);
-            return map;
+          this.RulesOrPolicyList = [...data.value];
+          // .map(map => {
+          //   map.Description = globalconstants.decodeSpecialChars(map.Description);
+          //   return map;
 
-          })
+          // })
           this.DetailText =this.RulesOrPolicyList[0].Description;
         }
         this.loadingFalse();

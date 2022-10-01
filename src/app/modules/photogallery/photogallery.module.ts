@@ -11,10 +11,10 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-import { PhotofileboardComponent } from './photofileboard/photofileboard.component'
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
-  declarations: [PhotogalleryComponents, PhotofileboardComponent],
+  declarations: [PhotogalleryComponents],
   imports: [
     CommonModule,
     NgbModule,
@@ -29,7 +29,7 @@ import { PhotofileboardComponent } from './photofileboard/photofileboard.compone
     NgxDropzoneModule,
     ImageCropperModule,
     FlexLayoutModule,
-    
+    SharedModule
   ],
   exports:[PhotogalleryComponents]
 })

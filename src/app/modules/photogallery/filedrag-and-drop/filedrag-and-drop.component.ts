@@ -15,33 +15,28 @@ import { TokenStorageService } from '../../../_services/token-storage.service';
   templateUrl: './filedrag-and-drop.component.html',
   styleUrls: ['./filedrag-and-drop.component.scss']
 })
-export class FiledragAndDropComponent implements OnInit { PageLoading=true;
+export class FiledragAndDropComponent implements OnInit {
+  PageLoading = true;
   loading = false;
-  options = {
-    autoClose: true,
-    keepAfterRouteChange: true
-  };
-  optionsNoAutoClose = {
-    autoClose: false,
-    keepAfterRouteChange: true
-  };
   Processing = false;
   Requestsize = 0;
   Albums: any[];
   errorMessage = '';
   formdata: FormData;
-  dragdropForm = new UntypedFormGroup({
+  folderForm = new UntypedFormGroup({
     folderName: new UntypedFormControl(''),
     FileId: new UntypedFormControl(0),
     parentId: new UntypedFormControl(0)
 
   });
-  constructor(private servicework: SwUpdate,private uploadService: FileUploadService,
+  LoginUserDetail = [];
+  constructor(private servicework: SwUpdate,
+    private fileUploadService: FileUploadService,
     private naomitsuService: NaomitsuService,
     private route: Router,
     private tokenStorage: TokenStorageService,
     private contentservice: ContentService) { }
-
+  Permission = '';
   ngOnInit(): void {
     this.servicework.activateUpdate().then(() => {
       this.servicework.checkForUpdate().then((value) => {
@@ -50,9 +45,17 @@ export class FiledragAndDropComponent implements OnInit { PageLoading=true;
         }
       })
     })
-    this.formdata = new FormData();
-    this.checklogin();
-    this.getAlbums();
+    this.LoginUserDetail = this.tokenStorage.getUserDetail();
+    if (this.LoginUserDetail.length != 0) {
+      var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.COLLECTION.UPLOADIMAGE);
+      if (perObj.length > 0) {
+        this.Permission = perObj[0].permission;
+      }
+      if (this.Permission != 'deny') {
+        this.formdata = new FormData();
+        this.getAlbums();
+      }
+    }
   }
   checklogin() {
 
@@ -117,8 +120,8 @@ export class FiledragAndDropComponent implements OnInit { PageLoading=true;
     let error: boolean = false;
     //debugger;
 
-    let selectedAlbum = this.dragdropForm.get("folderName").value;
-    let selectedAlbumId = this.dragdropForm.get("parentId").value;
+    let selectedAlbum = this.folderForm.get("folderName").value;
+    let selectedAlbumId = this.folderForm.get("parentId").value;
     ////console.log(this.Albums);//alert(selectedAlbum);
     if (this.files.length < 1) {
       error = true;
@@ -138,7 +141,7 @@ export class FiledragAndDropComponent implements OnInit { PageLoading=true;
       this.formdata.append("folderName", selectedAlbum);
       this.formdata.append("FileId", selectedAlbumId);
       //if ()
-      this.formdata.append("parentId", this.dragdropForm.get("parentId") != null ? this.dragdropForm.get("parentId").value : "0");
+      this.formdata.append("parentId", this.folderForm.get("parentId") != null ? this.folderForm.get("parentId").value : "0");
       this.formdata.append("description", "");
       this.formdata.append("fileOrPhoto", "0");
       let filteredAlbum: any[] = [];
@@ -153,33 +156,111 @@ export class FiledragAndDropComponent implements OnInit { PageLoading=true;
 
     }
   }
-  uploadFile() {
-    ////console.log('form dasta',this.formdata);
-    this.Processing = true;
-    this.uploadService.postFiles(this.formdata).subscribe(res => {
-      ////console.log("Upload complete");
-      this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-      this.formdata = null;
-      this.files = [];
-      this.getAlbums();
-      this.Processing = false;
-      this.route.navigate(['/home/managefile']);
+  imagePath: string;
+  message: string;
+  imgURL: any = '';
+  selectedFile: any;
+  preview(files) {
+    if (files.length === 0)
+      return;
 
+    var mimeType = files[0].type;
+    if (mimeType.match(/image\/*/) == null) {
+      this.message = "Only images are supported.";
+      return;
+    }
+    debugger;
+    this.selectedFile = files[0];
+    console.log("this.selectedFile.size", this.selectedFile.size)
+    if (this.selectedFile.size > 2000000) {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Image size should be less than 2mb", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var reader = new FileReader();
+    this.imagePath = files;
+    reader.readAsDataURL(files[0]);
+    reader.onload = (_event) => {
+      this.imgURL = reader.result;
+    }
+  }
+  uploadFile() {
+    debugger;
+    let error: boolean = false;
+    this.loading = true;
+    if (this.selectedFile == undefined) {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    var _folderName = this.folderForm.get("folderName").value;
+    var _parentId = this.folderForm.get("parentId").value;
+    var _existingFolder = '';
+    if (_parentId > 0)
+      _existingFolder = this.Albums.filter(a => a.FileId == _parentId)[0].UpdatedFileFolderName
+
+    if (_folderName.length == 0)//only if folder name is empty
+      _folderName = _existingFolder;
+    if (_folderName.length == 0) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter folder name.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    this.formdata = new FormData();
+    this.formdata.append("description", "album");
+    this.formdata.append("fileOrPhoto", "1");
+    //this.formdata.append("FileOrFolder", "1");
+    this.formdata.append("folderName", _folderName);
+    this.formdata.append("parentId",_parentId);
+
+    this.formdata.append("batchId", "0");
+    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
+    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
+    this.formdata.append("pageId", "0");
+
+    this.formdata.append("studentId", "0");
+    this.formdata.append("studentClassId", "0");
+    this.formdata.append("questionId", "0");
+    this.formdata.append("docTypeId", "0");
+
+    this.formdata.append("image", this.selectedFile, this.selectedFile.name);
+    this.uploadImage();
+  }
+
+  uploadImage() {
+    let options = {
+      autoClose: true,
+      keepAfterRouteChange: true
+    };
+    this.fileUploadService.postFiles(this.formdata).subscribe(res => {
+      this.loading = false; this.PageLoading = false;
+      this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
     });
   }
+  // uploadFile() {
+  //   ////console.log('form dasta',this.formdata);
+  //   this.Processing = true;
+  //   this.uploadService.postFiles(this.formdata).subscribe(res => {
+  //     ////console.log("Upload complete");
+  //     this.contentservice.openSnackBar("Files Uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
+  //     this.formdata = null;
+  //     this.files = [];
+  //     this.getAlbums();
+  //     this.Processing = false;
+  //     this.route.navigate(['/home/managefile']);
+
+  //   });
+  // }
   getAlbums() {
     let list: List = new List();
     list.fields = ["FileId", "UpdatedFileFolderName"];
     list.PageName = "StorageFnPs";
-    list.filter = ["Active eq 1 and FileOrFolder eq 1 and FileOrPhoto eq 0"];
+    list.filter = ["OrgId eq " + this.LoginUserDetail[0]["orgId"] + 
+    " and Active eq 1 and FileOrFolder eq 1"];
+
     this.naomitsuService.get(list)
       .subscribe((data: any) => {
-        if (data.value.length > 0) {
-          this.Albums = data.value;
-        }
-        else
-          this.Albums = [];
-
+        this.Albums = [...data.value];
       });
   }
   public fileOver(event) {

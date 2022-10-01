@@ -1,33 +1,24 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { ContentService } from 'src/app/shared/content.service';
 import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
-import { ClassEvaluationComponent } from '../classevaluation/classevaluation.component';
-import { EvaluationExamMapComponent } from '../evaluationexammap/EvaluationExamMap.component';
-import { EvaluationMasterComponent } from '../evaluationmaster/evaluationmaster.component';
-import { EvaluationresultComponent } from '../evaluationresult/evaluationresult.component';
-import { StudentEvaluationComponent } from '../studentevaluation/studentevaluation.component';
+import { QuestionComponent } from '../question/question.component';
+import { SyllabusComponent } from '../syllabus/syllabus.component';
 
 @Component({
-  selector: 'app-evaluationboard',
-  templateUrl: './evaluationboard.component.html',
-  styleUrls: ['./evaluationboard.component.scss']
+  selector: 'app-questionbankboard',
+  templateUrl: './questionbankboard.component.html',
+  styleUrls: ['./questionbankboard.component.scss']
 })
-export class EvaluationboardComponent implements AfterViewInit {
+export class QuestionbankboardComponent implements AfterViewInit {
 
   components: any = [
-    EvaluationMasterComponent,
-    ClassEvaluationComponent,
-    EvaluationExamMapComponent,
-    StudentEvaluationComponent,
-    EvaluationresultComponent,
+    SyllabusComponent,
+    QuestionComponent
   ];
 
   tabNames = [
-    { 'label': '1Exam Result', 'faIcon': '' },
-    { 'label': '1Exam Result', 'faIcon': '' },
-    { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
   ];
@@ -56,31 +47,19 @@ export class EvaluationboardComponent implements AfterViewInit {
     this.LoginUserDetail = this.tokenStorage.getUserDetail();
     this.contentservice.GetApplicationRoleUser(this.LoginUserDetail);
 
-    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATION)
+    var perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.QUESTIONBANK.QUESTIONBANK)
     if (perObj.length > 0) {
       this.Permissions.ParentPermission = perObj[0].permission;
     }
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EXECUTEEVALUATION);
-    var comindx = this.components.indexOf(StudentEvaluationComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.QUESTIONBANK.QUESTION);
+    var comindx = this.components.indexOf(QuestionComponent);
     this.AddRemoveComponent(perObj, comindx);
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONTYPE);
-    var comindx = this.components.indexOf(EvaluationMasterComponent);
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.QUESTIONBANK.SYLLABUS);
+    var comindx = this.components.indexOf(SyllabusComponent);
     this.AddRemoveComponent(perObj, comindx);
 
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONQUESTIONNAIRE)
-    var comindx = this.components.indexOf(ClassEvaluationComponent);
-    this.AddRemoveComponent(perObj, comindx);
-
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EvaluationExamMap)
-    var comindx = this.components.indexOf(EvaluationExamMapComponent);
-    this.AddRemoveComponent(perObj, comindx);
-
-    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.EVALUATION.EVALUATIONRESULT)
-    var comindx = this.components.indexOf(EvaluationresultComponent);
-    this.AddRemoveComponent(perObj, comindx);
-    
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
       setTimeout(() => {
@@ -122,3 +101,4 @@ export class EvaluationboardComponent implements AfterViewInit {
     }
   }
 }
+

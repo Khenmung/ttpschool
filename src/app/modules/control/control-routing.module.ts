@@ -13,6 +13,7 @@ import { HomeComponent } from 'src/app/shared/components/home/home.component';
 import { OrganizationComponent } from './organization/organization.component';
 import { SingleorganizationComponent } from './singleorganization/singleorganization.component';
 import { CustomerPlansComponent } from './customerplans/customerplans.component';
+import { CustomfeaturerolepermissionComponent } from './customfeaturerolepermission/customfeaturerolepermission.component';
 
 const routes: Routes = [
   {
@@ -45,4 +46,5 @@ export const settingsComponent = [
   OrganizationComponent,
   SingleorganizationComponent,
   CustomerPlansComponent,
+  CustomfeaturerolepermissionComponent
 ]

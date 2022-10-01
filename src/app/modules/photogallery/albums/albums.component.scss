@@ -31,7 +31,12 @@ button{
     outline:none;
 }
 mat-form-field{
+    width:100%;
     margin-right: 15px;
+}
+
+.mat-column-UpdatedFileFolderName{
+    flex:1 1 250px;
 }
 // div{
 //     margin:15px;

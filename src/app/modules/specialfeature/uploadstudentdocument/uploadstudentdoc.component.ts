@@ -96,7 +96,7 @@ export class StudentDocumentComponent implements OnInit {
     // }
     // else {
     this.SelectedApplicationId = +this.tokenService.getSelectedAPPId();
-    var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.STUDENT.DOCUMENT);
+    var perObj = globalconstants.getPermission(this.tokenService, globalconstants.Pages.edu.SPECIALFEATURE.DOCUMENT);
     if (perObj.length > 0)
       this.Permission = perObj[0].permission;
     if (this.Permission != 'deny') {

@@ -13,6 +13,7 @@ import { GroupactivityComponent } from '../groupactivity/groupactivity.component
 import { GroupactivityparticipantComponent } from '../groupactivityparticipant/groupactivityparticipant.component';
 import { AchievementandpointComponent } from '../achievementandpoint/achievementandpoint.component';
 import { GrouppointComponent } from '../grouppoint/grouppoint.component';
+import { CertificateconfigComponent } from '../certificateconfig/certificateconfig.component';
 @Component({
   selector: 'app-studentactivityboard',
   templateUrl: './studentactivityboard.component.html',
@@ -21,6 +22,7 @@ import { GrouppointComponent } from '../grouppoint/grouppoint.component';
 export class StudentactivityboardComponent implements AfterViewInit {
   components:any = [
     GenerateCertificateComponent,
+    CertificateconfigComponent,
     StudentDocumentComponent,
     StudentActivityComponent,
     StudentfamilynfriendComponent,
@@ -31,6 +33,7 @@ export class StudentactivityboardComponent implements AfterViewInit {
   ];
 
   tabNames = [
+    { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
     { "label": "khat peuhpeuh", "faIcon": '' },
@@ -70,14 +73,15 @@ export class StudentactivityboardComponent implements AfterViewInit {
       this.Permissions.ParentPermission = perObj[0].permission;
     }
 
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.GENERATECERTIFICATE)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.DOCUMENT)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ACTIVITY)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.STUDENTGROUP)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.GROUPPARTICIPANT)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.ACHIEVEMENTNPOINT)
-    this.GenerateComponent(globalconstants.Pages.edu.STUDENT.GROUPPOINT)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.GENERATECERTIFICATE)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.DOCUMENT)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.ACTIVITY)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.SIBLINGSNFRIENDS)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.STUDENTGROUP)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.GROUPPARTICIPANT)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.ACHIEVEMENTNPOINT)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.GROUPPOINT)
+    this.GenerateComponent(globalconstants.Pages.edu.SPECIALFEATURE.CERTIFICATECONFIG)
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);
     if (this.Permissions.ParentPermission != 'deny') {
@@ -106,29 +110,32 @@ export class StudentactivityboardComponent implements AfterViewInit {
     var perObj = globalconstants.getPermission(this.tokenStorage, featureName)
     var comindx = 0;
     switch (featureName) {
-      case globalconstants.Pages.edu.STUDENT.GENERATECERTIFICATE:
+      case globalconstants.Pages.edu.SPECIALFEATURE.GENERATECERTIFICATE:
         comindx = this.components.indexOf(GenerateCertificateComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.DOCUMENT:
+      case globalconstants.Pages.edu.SPECIALFEATURE.DOCUMENT:
         comindx = this.components.indexOf(StudentDocumentComponent);
         break;      
-      case globalconstants.Pages.edu.STUDENT.ACTIVITY:
+      case globalconstants.Pages.edu.SPECIALFEATURE.ACTIVITY:
         comindx = this.components.indexOf(StudentActivityComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS:
+      case globalconstants.Pages.edu.SPECIALFEATURE.SIBLINGSNFRIENDS:
         comindx = this.components.indexOf(StudentfamilynfriendComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.STUDENTGROUP:
+      case globalconstants.Pages.edu.SPECIALFEATURE.STUDENTGROUP:
         comindx = this.components.indexOf(GroupactivityComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.GROUPPARTICIPANT:
+      case globalconstants.Pages.edu.SPECIALFEATURE.GROUPPARTICIPANT:
         comindx = this.components.indexOf(GroupactivityparticipantComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.ACHIEVEMENTNPOINT:
+      case globalconstants.Pages.edu.SPECIALFEATURE.ACHIEVEMENTNPOINT:
         comindx = this.components.indexOf(AchievementandpointComponent);
         break;
-      case globalconstants.Pages.edu.STUDENT.GROUPPOINT:
+      case globalconstants.Pages.edu.SPECIALFEATURE.GROUPPOINT:
         comindx = this.components.indexOf(GrouppointComponent);
+        break;
+      case globalconstants.Pages.edu.SPECIALFEATURE.CERTIFICATECONFIG:
+        comindx = this.components.indexOf(CertificateconfigComponent);
         break;
     }
 

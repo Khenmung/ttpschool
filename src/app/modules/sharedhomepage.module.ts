@@ -26,7 +26,7 @@ const sharedHomeComponent = [
 
 @NgModule({
   declarations: [
-    sharedHomeComponent ],
+    sharedHomeComponent],
   imports: [
     CommonModule,
     MaterialModule,

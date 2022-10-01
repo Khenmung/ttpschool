@@ -36,5 +36,6 @@ export const PhotogalleryComponents = [
   ImgDragAndDropComponent,
   PhotobrowserComponent,
   PhotosComponent,
-  FiledragAndDropComponent
+  FiledragAndDropComponent,
+  PhotofileboardComponent
 ]

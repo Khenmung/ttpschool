@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CKEditorModule } from '@ckeditor/ckeditor5-build-classic';
+//import { CKEditorModule } from 'ckeditor4-angular';
+
 import { MaterialModule } from '../../shared/material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';

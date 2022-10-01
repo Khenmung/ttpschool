@@ -1,3 +1,7 @@
+:host{
+    width: 100%;
+    box-sizing: border-box;
+}
 mat-form-field{
     width:98%;
     margin-right: 15px;
@@ -22,6 +26,6 @@ mat-form-field{
 {
     flex:1 0 50px;
 }
-:host ::ng-deep ckeditor{
-    height:500px;
-}
+// :host ::ng-deep ckeditor{
+//     height:500px;
+// }

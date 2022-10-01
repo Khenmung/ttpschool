@@ -80,9 +80,9 @@ export class globalconstants {
                 "editor": 'editor',
                 "pagelist": 'page list',
                 "notice": 'notice',
-                "album": 'album',
+                "album": 'folder',
                 "carousel": 'carousel',
-                "filedragAndDrop": 'Image drag and drop',
+                "UploadImage": 'upload image',
                 "photo": 'photo',
                 "photobrowser": 'photo browser'
             },
@@ -151,20 +151,24 @@ export class globalconstants {
                     'SEARCHSTUDENT': 'search student',
                     'STUDENTDETAIL': 'student detail',
                     'STUDENTCLASS': 'student class',
-                    'GENERATECERTIFICATE': 'generate certificate',
-                    'DOCUMENT': 'documents',
+
                     'ATTENDANCEREPORT': 'student attendance record',
                     'PROGRESSREPORT': 'progress report',
                     'FEEPAYMENT': 'fee payment',
                     'FEERECEIPT': 'fee receipt',
                     'STUDENTAPROFILE': 'student profile',
+                    'STUDENTVIEW': 'student view',
+                },
+                "SPECIALFEATURE": {
+                    'GENERATECERTIFICATE': 'generate certificate',
+                    'DOCUMENT': 'documents',
+                    'STUDENTGROUP': 'group activity',
                     'SIBLINGSNFRIENDS': 'siblings n friends',
                     'ACTIVITY': 'student activity',
-                    'STUDENTVIEW': 'student view',
-                    'STUDENTGROUP': 'group activity',
                     'GROUPPARTICIPANT': 'group participant',
                     'ACHIEVEMENTNPOINT': 'achievement and point',
-                    'GROUPPOINT': 'group point'
+                    'GROUPPOINT': 'group point',
+                    'CERTIFICATECONFIG': 'certificate config'
                 },
                 "CLASSCOURSE": {
                     'CLASSCOURSE': 'class-course',
@@ -176,6 +180,13 @@ export class globalconstants {
                     'CLASSTEACHER': 'class teacher',
                     'CLASSEVALUATION': 'class evaluation',
                     'CLASSGROUPING': 'class grouping'
+                },
+                "COLLECTION": {
+                    'ALBUM': 'album',
+                    'PHOTO': 'photo',
+                    'CAROUSEL': 'carousel',
+                    'UPLOADIMAGE': 'upload image',
+                    'PHOTOBROWSER': 'photo browser'
                 },
                 'EXAM': {
                     'EXAM': 'Exam',
@@ -226,7 +237,12 @@ export class globalconstants {
                     'EVALUATIONRESULT': 'evaluation result',
                     'CLASSEVALUATIONOPTION': 'answer option',
                     'EVALUATIONANDEXAM': 'evaluation and exam',
-                    'QUESTIONBANK': 'question bank'
+
+                },
+                'QUESTIONBANK': {
+                    'QUESTIONBANK': 'question bank',
+                    'QUESTION': 'question',
+                    'SYLLABUS': 'syllabus'
                 },
                 'REPORT': {
                     'REPORT': 'report',
@@ -342,7 +358,7 @@ export class globalconstants {
                 "EVALUATIONTYPE": "evaluation type",
                 "SIBLINGSNFRIENDSRELATIONSHIP": "siblings n friends relationship",
                 "SUBJECTCATEGORY": "subject category",
-                "BOOKCATEGORY": "question bank category",
+                "BOOKCONTENTUNIT": "book content unit",
                 "ASSESSMENTPRINTHEADING": "Assessment Print Heading",
                 "STUDENTREMARKS": "student remark",
                 "EXAMRESULTPROPERTY": "exam result property",

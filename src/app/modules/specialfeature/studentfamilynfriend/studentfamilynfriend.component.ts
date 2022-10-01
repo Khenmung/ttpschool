@@ -117,7 +117,7 @@ export class StudentfamilynfriendComponent implements OnInit {
     if (this.LoginUserDetail == null)
       this.nav.navigate(['/auth/login']);
     else {
-      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.STUDENT.SIBLINGSNFRIENDS)
+      var perObj = globalconstants.getPermission(this.tokenstorage, globalconstants.Pages.edu.SPECIALFEATURE.SIBLINGSNFRIENDS)
       if (perObj.length > 0) {
         this.Permission = perObj[0].permission;
       }

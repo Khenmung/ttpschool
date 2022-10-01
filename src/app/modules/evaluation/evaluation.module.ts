@@ -7,13 +7,10 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { NgxPrintModule } from 'ngx-print';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { EvaluationstatusComponent } from './evaluationstatus/evaluationstatus.component';
 
 @NgModule({
   declarations: [
-    EvaluationComponents,
-    EvaluationstatusComponent,
-    
+    EvaluationComponents  
   ],
   imports: [
     CommonModule,

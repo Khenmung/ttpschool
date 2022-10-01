@@ -12,9 +12,10 @@ import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
 //import * as ClassicEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-import ImageInsert from '@ckeditor/ckeditor5-image/src/imageinsert';
+//import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+//import ImageInsert from '@ckeditor/ckeditor5-image/src/imageinsert';
 import { FileUploadService } from 'src/app/shared/upload.service';
+//import AutoImage from '@ckeditor/ckeditor5-image/src/autoimage';
 
 // import EditorJS from '@editorjs/editorjs';
 // import Header from '@editorjs/editorjs'; 
@@ -29,17 +30,17 @@ import { FileUploadService } from 'src/app/shared/upload.service';
 })
 export class CreatehtmlpageComponent implements OnInit {
   //public editor=DecoupledEditor;
-  public Editor = DecoupledEditor;
+  //public Editor = DecoupledEditor;
 
   public onReady(editor) {
     editor.ui.getEditableElement().parentElement.insertBefore(
       editor.ui.view.toolbar.element,
       editor.ui.getEditableElement()
     );
-    editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
-      console.log(btoa(loader.file));
-      return new UploadAdapter(loader);
-    };
+    // editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
+    //   console.log(btoa(loader.file));
+    //   return new UploadAdapter(loader);
+    // };
 
 
   }
@@ -58,7 +59,7 @@ export class CreatehtmlpageComponent implements OnInit {
         '-',
         'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'highlight', '|',
         'alignment', '|',
-        'link','uploadImage', 'insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
+        'link','insertImage', 'blockQuote', 'insertTable', 'mediaEmbed', 'codeBlock', 'htmlEmbed', '|',
         'specialCharacters', 'horizontalLine', 'pageBreak', '|',
         'textPartLanguage', '|',
         'sourceEditing'
@@ -66,7 +67,7 @@ export class CreatehtmlpageComponent implements OnInit {
       shouldNotGroupWhenFull: true
     },
     // plugins:[
-    //   uploadImage
+    //   AutoImage
     // ],
     // Changing the language of the interface requires loading the language file using the <script> tag.
     // language: 'es',
@@ -168,7 +169,7 @@ export class CreatehtmlpageComponent implements OnInit {
       // 'ExportPdf',
       // 'ExportWord',
       'CKBox',
-      'CKFinder',
+      //'CKFinder',
       //'EasyImage',
       // This sample uses the Base64UploadAdapter to handle image uploads as it requires no configuration.
       // https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/base64-upload-adapter.html
@@ -300,19 +301,19 @@ export class CreatehtmlpageComponent implements OnInit {
         //this.nav.navigate(['/edu'])
       }
       else {
-        this.ckeConfig = {};
-        // this.ckeConfig = {
-        //   allowedContent: false,
-        //   extraPlugins: 'divarea',
-        //   forcePasteAsPlainText: false,
-        //   removeButtons: 'About',
-        //   scayt_autoStartup: true,
-        //   autoGrow_onStartup: true,
-        //   autoGrow_minHeight: 500,
-        //   autoGrow_maxHeight: 600,
-        //   font_names:"Arial;Times New Roman;Verdana;'Kalam', cursive;",          
-        //   contentsCss:'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
-        // };
+        //this.ckeConfig = {};
+        this.ckeConfig = {
+          allowedContent: false,
+          extraPlugins: 'divarea',
+          forcePasteAsPlainText: false,
+          removeButtons: 'About',
+          scayt_autoStartup: true,
+          autoGrow_onStartup: true,
+          //autoGrow_minHeight: 500,
+          autoGrow_maxHeight: 600,
+          font_names:"Arial;Times New Roman;Verdana;'Kalam', cursive;",          
+          contentsCss:'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
+        };
 
         this.GetMasterData();
         this.GetRulesOrPolicys();
@@ -431,7 +432,7 @@ export class CreatehtmlpageComponent implements OnInit {
           var _desc = _description.replaceAll('"', "'")
           this.RulesOrPolicyData.RulesOrPolicyId = _rulesOrPolicyId;
           this.RulesOrPolicyData.Active = _active;
-          this.RulesOrPolicyData.Description = globalconstants.encodeSpecialChars(_desc);
+          this.RulesOrPolicyData.Description = _desc;
           this.RulesOrPolicyData.Title = _title;
           this.RulesOrPolicyData.OrgId = this.LoginUserDetail[0]["orgId"];
 
@@ -493,8 +494,8 @@ export class CreatehtmlpageComponent implements OnInit {
       .subscribe((data: any) => {
         this.FileNames = [...data.value];
 
-        this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
-        this.dataSource.paginator = this.paging;
+        //this.dataSource = new MatTableDataSource<IRulesOrPolicy>(this.RulesOrPolicyList);
+        //this.dataSource.paginator = this.paging;
         this.loadingFalse();
       });
 
