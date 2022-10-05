@@ -187,7 +187,6 @@ export class FiledragAndDropComponent implements OnInit {
   uploadFile() {
     debugger;
     let error: boolean = false;
-    this.loading = true;
     if (this.selectedFile == undefined) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
@@ -224,14 +223,14 @@ export class FiledragAndDropComponent implements OnInit {
     this.formdata.append("docTypeId", "0");
 
     this.formdata.append("image", this.selectedFile, this.selectedFile.name);
+    this.loading = true;
+    
     this.uploadImage();
   }
 
   uploadImage() {
-    let options = {
-      autoClose: true,
-      keepAfterRouteChange: true
-    };
+
+    this.loading = true;
     this.fileUploadService.postFiles(this.formdata).subscribe(res => {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);

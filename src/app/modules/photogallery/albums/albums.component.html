@@ -31,7 +31,7 @@
 <div>
     <div fxLayout="row">
         <span *ngIf="error.length>0"> {{error}}</span>
-        <span *ngIf="Albums.length>0">{{folderDisplayHierachy|slice:11}}</span>
+        <!-- <span *ngIf="Albums.length>0">{{folderDisplayHierachy|slice:11}}</span> -->
     </div>
     <mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="PageId" hidden="true">

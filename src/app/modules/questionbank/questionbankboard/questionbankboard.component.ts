@@ -4,6 +4,8 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { SharedataService } from 'src/app/shared/sharedata.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { QuestionComponent } from '../question/question.component';
+import { QuestionandexamComponent } from '../questionandexam/questionandexam.component';
+import { QuestionandexamreportComponent } from '../questionandexamreport/questionandexamreport.component';
 import { SyllabusComponent } from '../syllabus/syllabus.component';
 
 @Component({
@@ -15,10 +17,14 @@ export class QuestionbankboardComponent implements AfterViewInit {
 
   components: any = [
     SyllabusComponent,
-    QuestionComponent
+    QuestionComponent,
+    QuestionandexamComponent,
+    QuestionandexamreportComponent
   ];
 
   tabNames = [
+    { 'label': '1Exam Result', 'faIcon': '' },
+    { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
     { 'label': '1Exam Result', 'faIcon': '' },
   ];
@@ -39,7 +45,7 @@ export class QuestionbankboardComponent implements AfterViewInit {
     private tokenStorage: TokenStorageService,
     private shareddata: SharedataService,
     private contentservice: ContentService,
-    ) {
+  ) {
   }
 
   public ngAfterViewInit(): void {
@@ -58,6 +64,14 @@ export class QuestionbankboardComponent implements AfterViewInit {
 
     perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.QUESTIONBANK.SYLLABUS);
     var comindx = this.components.indexOf(SyllabusComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.QUESTIONBANK.QUESTIONANDEXAM);
+    var comindx = this.components.indexOf(QuestionandexamComponent);
+    this.AddRemoveComponent(perObj, comindx);
+    
+    perObj = globalconstants.getPermission(this.tokenStorage, globalconstants.Pages.edu.QUESTIONBANK.QUESTIONANDEXAMREPORT);
+    var comindx = this.components.indexOf(QuestionandexamreportComponent);
     this.AddRemoveComponent(perObj, comindx);
 
     this.shareddata.ChangePermissionAtParent(this.Permissions.ParentPermission);

@@ -116,7 +116,7 @@ export class AlbumsComponent implements OnInit {
     let list: List = new List();
     list.fields = ["FileId", "FileName", "UpdatedFileFolderName", "FileOrFolder", "UploadDate", "ParentId", "Active"];
     list.PageName = "StorageFnPs";
-    list.filter = ['OrgId eq ' + this.LoginUserDetail[0]['orgId'] + ' and Active eq 1'];// and FileOrPhoto eq ' + this.searchForm.get("FilesNPhoto").value];
+    list.filter = ['FileOrFolder eq 1 and OrgId eq ' + this.LoginUserDetail[0]['orgId'] + ' and Active eq 1'];// and FileOrPhoto eq ' + this.searchForm.get("FilesNPhoto").value];
     list.orderBy = "UploadDate desc";
     //list.limitTo =10;
     this.dataservice.get(list)

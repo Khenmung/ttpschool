@@ -27,7 +27,7 @@ import { MatPaginator } from '@angular/material/paginator';
 export class GenerateCertificateComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild("printSection") printSection: ElementRef;
-  
+
   PageLoading = true;
   backgroundimage = '';
   loading = false;
@@ -123,7 +123,7 @@ export class GenerateCertificateComponent implements OnInit {
     //this.loadTheme();
     //debugger;
     this.searchForm = this.fb.group({
-      searchClassId:[0],
+      searchClassId: [0],
       searchStudentGroupId: [0],
       searchActivityId: [0],
       searchCategoryId: [0],
@@ -190,8 +190,8 @@ export class GenerateCertificateComponent implements OnInit {
     }
   }
 
-  ClearData(){
-    this.GeneratedCertificatelist=[];
+  ClearData() {
+    this.GeneratedCertificatelist = [];
     this.dataSource = new MatTableDataSource<any>(this.GeneratedCertificatelist);
   }
   GetStudentAndGenerateCerts() {
@@ -239,6 +239,7 @@ export class GenerateCertificateComponent implements OnInit {
         "AdhaarNo," +
         "Religion," +
         "ContactNo," +
+        "HouseId," +
         "AlternateContact," +
         "EmailAddress," +
         "LastSchoolPercentage," +
@@ -299,7 +300,7 @@ export class GenerateCertificateComponent implements OnInit {
             _reason = _reasonobj[0].MasterDataName;
           var _batch = this.Batches.filter(c => c.BatchId == d.BatchId)[0].BatchName;
           var _house = '';
-          var objhouse = this.Houses.filter(c => c.MasterDataId == d.HouseId);
+          var objhouse = this.Houses.filter(c => c.MasterDataId == d.Student.HouseId);
           if (objhouse.length > 0)
             _house = objhouse[0].MasterDataName;
           var _lastname = d.Student.LastName == null || d.Student.LastName == '' ? '' : " " + d.Student.LastName;
@@ -353,7 +354,7 @@ export class GenerateCertificateComponent implements OnInit {
           { name: "FeePaidTill", val: this.FeePaidLastMonth },
           { name: "Attendance", val: this.AttendanceStatusSum }
         )
-        ////console.log('this.StudentForVariables',this.StudentForVariables);
+        console.log('this.StudentForVariables',this.StudentForVariables);
         this.GenerateCertificate();
 
       }
@@ -368,28 +369,32 @@ export class GenerateCertificateComponent implements OnInit {
   CertificateDescription = '';
   GenerateCertificate() {
     debugger;
+    this.CertificateDescription='';
     var _certificateBody = JSON.parse(JSON.stringify(this.AllCertificateConfig.filter(a => a.ParentId == this.searchForm.get("searchCertificateTypeId").value)));
     if (_certificateBody.length == 0) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Certificate not defined!", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    var indexOfBackgroundImage = 0;
-    _certificateBody.forEach((c, indx) => {
-      if (c.Title.toLowerCase() == "background-image") {
-        this.backgroundimage =  c.Description;
-        indexOfBackgroundImage = indx;
+
+    for (var i = 0; i < _certificateBody.length; i++) {
+      if (_certificateBody[i].Title.toLowerCase() == "background-image") {
+        this.backgroundimage = _certificateBody[i].Description;
+        _certificateBody.splice(i, 1);
+        i--;
       }
-    })
-    if (indexOfBackgroundImage > -1) {
-      _certificateBody.splice(indexOfBackgroundImage, 1);
+      if (_certificateBody[i].Title.toLowerCase() == "style") {
+        this.StyleStr += _certificateBody[i].Description;
+        _certificateBody.splice(i, 1);
+        i--;
+      }
     }
 
     var certificateavailable = true;
     var _certificateFormula = JSON.parse(JSON.stringify(this.AllCertificateConfig.filter(a => a.CertificateConfigId == this.searchForm.get("searchCertificateTypeId").value)));
     if (_certificateFormula.length > 0) {
       for (var i = 0; i < _certificateFormula.length; i++) {
-        if (_certificateFormula[i].Logic.length > 0) {
+        if (_certificateFormula[i].Logic != undefined && _certificateFormula[i].Logic.length > 0) {
           this.StudentForVariables.forEach(s => {
             if (_certificateFormula[i].Logic.includes('[' + s.name.trim() + ']'))
               _certificateFormula[i].Logic = _certificateFormula[i].Logic.replaceAll('[' + s.name.trim() + ']', s.val);
@@ -422,7 +427,7 @@ export class GenerateCertificateComponent implements OnInit {
       ...this.CommonFooter
     ];
 
-    
+
     this.CertificateElements.forEach(f => {
       f.Logic = f.Logic == null ? '' : f.Logic;
       this.StyleStr += f.Logic
@@ -576,6 +581,7 @@ export class GenerateCertificateComponent implements OnInit {
     row.Action = false;
     this.SelectedActivity = [];
     this.SelectedActivity.push(row);
+    this.CertificateDescription='';
     this.GetStudentAttendance();
   }
   Save() {
@@ -743,7 +749,7 @@ export class GenerateCertificateComponent implements OnInit {
         //this.ClassGroups = this.getDropDownData(globalconstants.MasterDefinitions.school.CLASSGROUP);
         this.StudentGrades = this.getDropDownData(globalconstants.MasterDefinitions.school.STUDENTGRADE);
 
-        
+
         this.ActivityNames = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYNAME);
         this.ActivitySessions = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYSESSION);
         this.ActivityCategory = this.getDropDownData(globalconstants.MasterDefinitions.common.ACTIVITYCATEGORY);
@@ -767,22 +773,21 @@ export class GenerateCertificateComponent implements OnInit {
   GetStudentClasses() {
     debugger;
     var filterOrgIdNBatchId = globalconstants.getStandardFilterWithBatchId(this.tokenstorage);
-    
+
     var _classId = this.searchForm.get("searchClassId").value;
-    if(_classId>0)
-    filterOrgIdNBatchId +=" and ClassId eq " + this.searchForm.get("searchClassId").value;
-    else
-    {
-      this.loading=false;
-      this.contentservice.openSnackBar("Please select class.",globalconstants.ActionText,globalconstants.RedBackground);
+    if (_classId > 0)
+      filterOrgIdNBatchId += " and ClassId eq " + this.searchForm.get("searchClassId").value;
+    else {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please select class.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    this.loading=true;
-    this.Students =[];
+    this.loading = true;
+    this.Students = [];
     let list: List = new List();
     list.fields = ["StudentClassId,StudentId,ClassId,RollNo,SectionId"];
     list.PageName = "StudentClasses";
-    list.lookupFields=["Student($select=StudentId,FirstName,LastName,FatherName,MotherName,ContactNo,FatherContactNo,MotherContactNo)"]
+    list.lookupFields = ["Student($select=StudentId,FirstName,LastName,FatherName,MotherName,ContactNo,FatherContactNo,MotherContactNo)"]
     list.filter = [filterOrgIdNBatchId];
     this.dataservice.get(list)
       .subscribe((data: any) => {
@@ -795,31 +800,31 @@ export class GenerateCertificateComponent implements OnInit {
           //var _studentClassId = 0;
           //var studentclassobj = this.StudentClasses.filter(f => f.StudentId == student.StudentId);
           //if (studentclassobj.length > 0) {
-            //_studentClassId = studentclassobj[0].StudentClassId;
-            var _classNameobj = this.Classes.filter(c => c.ClassId == _classId);
+          //_studentClassId = studentclassobj[0].StudentClassId;
+          var _classNameobj = this.Classes.filter(c => c.ClassId == _classId);
 
-            if (_classNameobj.length > 0)
-              _className = _classNameobj[0].ClassName;
-            var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId)
+          if (_classNameobj.length > 0)
+            _className = _classNameobj[0].ClassName;
+          var _SectionObj = this.Sections.filter(f => f.MasterDataId == student.SectionId)
 
-            if (_SectionObj.length > 0)
-              _section = _SectionObj[0].MasterDataName;
-            _RollNo = student.RollNo == null ? '' : student.RollNo;
+          if (_SectionObj.length > 0)
+            _section = _SectionObj[0].MasterDataName;
+          _RollNo = student.RollNo == null ? '' : student.RollNo;
 
-            student.ContactNo = student.Student.ContactNo == null ? '' : student.Student.ContactNo;
-            var _lastname = student.Student.LastName == null || student.Student.LastName == '' ? '' : " " + student.Student.LastName;
-            _name = student.Student.FirstName + _lastname;
-            var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.Student.ContactNo;
-            this.Students.push({
-              StudentClassId: student.StudentClassId,
-              StudentId: student.StudentId,
-              Name: _fullDescription,
-              FatherName: student.Student.FatherName,
-              MotherName: student.Student.MotherName
-            });
+          student.ContactNo = student.Student.ContactNo == null ? '' : student.Student.ContactNo;
+          var _lastname = student.Student.LastName == null || student.Student.LastName == '' ? '' : " " + student.Student.LastName;
+          _name = student.Student.FirstName + _lastname;
+          var _fullDescription = _name + "-" + _className + "-" + _section + "-" + _RollNo + "-" + student.Student.ContactNo;
+          this.Students.push({
+            StudentClassId: student.StudentClassId,
+            StudentId: student.StudentId,
+            Name: _fullDescription,
+            FatherName: student.Student.FatherName,
+            MotherName: student.Student.MotherName
+          });
           //}
         })
-        this.loading=false;
+        this.loading = false;
       })
   }
   GetStudents() {
@@ -1164,17 +1169,14 @@ export class GenerateCertificateComponent implements OnInit {
   }
   print(): void {
 
-    var str=`.container{
+    var str = `.container{
       position: relative;
       margin:0px;
       padding: 0px;
     }
     .container img{
-      max-width: 100%;
-      height:auto;
-      z-index: -1;
-      margin:0px;
-      padding: 0px;
+      width: 100%;
+      
     }`;
     this.StyleStr += str;
 
@@ -1189,11 +1191,11 @@ export class GenerateCertificateComponent implements OnInit {
           <style>${this.StyleStr}
           </style>
         </head>
-    <body onload="window.print();window.close()">${printContents}</body>
+    <body style='margin:0px;padding:0px' onload="window.print();window.close()">${printContents}</body>
       </html>`
     );
     popupWin.document.close();
-}
+  }
 
   GetStudentAttendance() {
     this.loading = true;

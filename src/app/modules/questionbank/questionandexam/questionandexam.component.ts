@@ -13,14 +13,13 @@ import { List } from 'src/app/shared/interface';
 import { FileUploadService } from 'src/app/shared/upload.service';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { ISyllabus } from '../syllabus/syllabus.component';
-//import { QuestionBankOptionComponent } from '../QuestionBankoption/QuestionBankoption.component';
 
 @Component({
-  selector: 'app-question',
-  templateUrl: './question.component.html',
-  styleUrls: ['./question.component.scss']
+  selector: 'app-questionandexam',
+  templateUrl: './questionandexam.component.html',
+  styleUrls: ['./questionandexam.component.scss']
 })
-export class QuestionComponent implements OnInit {
+export class QuestionandexamComponent implements OnInit {
   PageLoading = true;
   @ViewChild("table") mattable;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -39,7 +38,7 @@ export class QuestionComponent implements OnInit {
   StandardFilter = '';
   loading = false;
   QuestionBankOptionList = [];
-  QuestionBankList: IQuestionBank[] = [];
+  QuestionBankList: IQuestionNExam[] = [];
   //EvaluationMasterId = 0;
   SelectedBatchId = 0;
   QuestionnaireTypes = [];
@@ -49,32 +48,27 @@ export class QuestionComponent implements OnInit {
   Exams = [];
   ExamNames = [];
   SelectedClassSubjects = [];
-  filteredOptions: Observable<IQuestionBank[]>;
-  dataSource: MatTableDataSource<IQuestionBank>;
+  filteredOptions: Observable<IQuestionNExam[]>;
+  dataSource: MatTableDataSource<IQuestionNExam>;
   SyllabusDataSource: MatTableDataSource<ISyllabus>;
   allMasterData = [];
 
-  QuestionBankData = {
+  QuestionBankNExamData = {
     QuestionBankId: 0,
-    SyllabusId: 0,
-    DifficultyLevelId: 0,
-    Question: '',
-    Diagram: '',
+    QuestionBankNExamId: 0,
+    ExamId: 0,
+    BatchId: 0,
     OrgId: 0,
     Active: false
   };
   EvaluationMasterForClassGroup = [];
-  QuestionBankForUpdate = [];
+  QuestionBankNExamForUpdate = [];
   displayedColumns = [
-    'QuestionBankId',
+    'Id',
     'Question',
-    'DifficultyLevelId',
+    'DifficultyLevel',
+    'ExamId',
     'Active',
-    'Action'
-  ];
-  SyllabusDisplayedColumns = [
-    'UnitDetail',
-    'Lesson',
     'Action'
   ];
   searchForm: UntypedFormGroup;
@@ -104,15 +98,14 @@ export class QuestionComponent implements OnInit {
       searchSubjectId: [0],
       searchContentUnitId: [0],
       searchSubContentUnitId: [0],
-      searchLesson: [0],
-      searchUnitDetailId: [0]
+      searchExamId: [0],
+      searchNoOfRandom:[0]
     })
     this.PageLoad();
   }
   displayFn(user: IStudent): string {
     return user && user.Name ? user.Name : '';
   }
-  ckeConfig: any;
 
   PageLoad() {
     debugger;
@@ -127,29 +120,11 @@ export class QuestionComponent implements OnInit {
       }
       if (this.Permission != 'deny') {
         this.SelectedApplicationId = +this.tokenstorage.getSelectedAPPId();
+        this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
         this.StandardFilter = globalconstants.getStandardFilter(this.LoginUserDetail);
-
-        this.ckeConfig = {
-          allowedContent: false,
-          extraPlugins: 'divarea',
-          forcePasteAsPlainText: false,
-          removeButtons: 'About',
-          scayt_autoStartup: true,
-          autoGrow_onStartup: true,
-          //autoGrow_minHeight: 500,
-          autoGrow_maxHeight: 600,
-          font_names: "Arial;Times New Roman;Verdana;'Kalam', cursive;",
-          contentsCss: 'https://fonts.googleapis.com/css2?family=Kalam:wght@300&display=swap'
-        };
         //this.GetEvaluationNames();
         this.GetMasterData();
-        if (this.Classes.length == 0) {
-          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
-            this.Classes = [...data.value];
-            this.loading = false; this.PageLoading = false;
-          });
-          //this.GetQuestionBank();
-        }
+
         this.contentservice.GetClassGroups(this.LoginUserDetail[0]["orgId"])
           .subscribe((data: any) => {
             this.ClassGroups = [...data.value];
@@ -216,7 +191,6 @@ export class QuestionComponent implements OnInit {
     if (this.selectedFile.size > 120000) {
       this.loading = false; this.PageLoading = false;
       this.contentservice.openSnackBar("Image size should be less than 100kb", globalconstants.ActionText, globalconstants.RedBackground);
-      this.selectedFile = null;
       return;
     }
     var reader = new FileReader();
@@ -232,46 +206,6 @@ export class QuestionComponent implements OnInit {
   selectedFile: any;
   formdata: FormData;
 
-  uploadFile(QuestionId) {
-    debugger;
-    let error: boolean = false;
-    this.loading = true;
-    if (this.selectedFile == undefined) {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please select a file.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-    this.formdata = new FormData();
-    this.formdata.append("description", "Question Bank photo");
-    this.formdata.append("fileOrPhoto", "1");
-    this.formdata.append("folderName", "Question photo");
-    this.formdata.append("parentId", "0");
-
-    this.formdata.append("batchId", "0");
-    this.formdata.append("orgName", this.LoginUserDetail[0]["org"]);
-    this.formdata.append("orgId", this.LoginUserDetail[0]["orgId"]);
-    this.formdata.append("pageId", "0");
-
-    this.formdata.append("questionId", QuestionId + "");
-    //this.formdata.append("studentClassId", this.StudentClassId.toString());
-    this.formdata.append("docTypeId", "0");
-
-    this.formdata.append("image", this.selectedFile, this.selectedFile.name);
-    this.uploadImage();
-  }
-
-  uploadImage() {
-    let options = {
-      autoClose: true,
-      keepAfterRouteChange: true
-    };
-    this.fileUploadService.postFiles(this.formdata).subscribe(res => {
-      this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Files uploaded successfully.", globalconstants.ActionText, globalconstants.BlueBackground);
-
-      //this.Edit = false;
-    });
-  }
   GetExams() {
 
     this.contentservice.GetExams(this.LoginUserDetail[0]["orgId"], this.SelectedBatchId)
@@ -304,21 +238,10 @@ export class QuestionComponent implements OnInit {
 
         });
   }
-  // viewchild(row) {
-  //   debugger;
-  //   this.option.GetQuestionBankOption(row.QuestionBankId, row.QuestionBankAnswerOptionParentId);
-  //   this.tabchanged(1);
-  // }
   tabchanged(indx) {
     debugger;
     this.selectedIndex = indx;
   }
-  // Detail(value) {
-  //   debugger;
-  //   this.EvaluationMasterId = value.EvaluationMasterId;
-  //   this.selectedIndex += 1;
-  //   this.PageLoad();
-  // }
   highlight(rowId) {
     if (this.selectedRowIndex == rowId)
       this.selectedRowIndex = -1;
@@ -333,11 +256,9 @@ export class QuestionComponent implements OnInit {
       return;
     }
     var newItem = {
+      QuestionBankNExamId: 0,
       QuestionBankId: 0,
-      SyllabusId: _syllabusId,
-      DifficultyLevelId: 0,
-      Question: '',
-      Diagram: '',
+      ExamId: _syllabusId,
       Active: false,
       Action: false
     }
@@ -361,62 +282,101 @@ export class QuestionComponent implements OnInit {
 
     debugger;
     this.loading = true;
-    if (row.Question.length == 0) {
+    if (row.ExamId == 0) {
       this.loading = false; this.PageLoading = false;
-      this.contentservice.openSnackBar("Please enter Question", globalconstants.ActionText, globalconstants.RedBackground);
+      this.contentservice.openSnackBar("Please enter exam.", globalconstants.ActionText, globalconstants.RedBackground);
       return;
     }
-    //console.log("length:" + row.Question.length)
-    //row.Question = row.Question.replaceAll("'", "''");
-    let checkFilterString = "Question eq '" + row.Question + "'";
-    if (row.DifficultyLevelId > 0)
-      checkFilterString += " and DifficultyLevelId eq " + row.DifficultyLevelId
 
-    this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    this.QuestionBankForUpdate = [];;
-    this.QuestionBankData.QuestionBankId = row.QuestionBankId;
-    this.QuestionBankData.SyllabusId = row.SyllabusId;
-    this.QuestionBankData.Diagram = row.Diagram;
-    this.QuestionBankData.DifficultyLevelId = row.DifficultyLevelId;
-    this.QuestionBankData.Question = row.Question;
-    this.QuestionBankData.OrgId = this.LoginUserDetail[0]['orgId'];
-    this.QuestionBankData.Active = row.Active;
+    let checkFilterString = "OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    if (row.QuestionBankNExamId > 0)
+      checkFilterString += " and QuestionBankNExamId ne " + row.QuestionBankNExamId
 
-    this.QuestionBankForUpdate.push(this.QuestionBankData);
-    console.log('dta', this.QuestionBankForUpdate);
+    checkFilterString += " and QuestionBankId eq " + row.QuestionBankId
+    checkFilterString += " and ExamId eq " + row.ExamId
+    checkFilterString += " and BatchId eq " + this.SelectedBatchId;
 
-    if (this.QuestionBankForUpdate[0].QuestionBankId == 0) {
-      this.QuestionBankForUpdate[0]["CreatedDate"] = new Date();
-      this.QuestionBankForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
-      this.QuestionBankForUpdate[0]["UpdatedDate"] = new Date();
-      delete this.QuestionBankForUpdate[0]["UpdatedBy"];
-      this.insert(row);
-    }
-    else {
-      this.QuestionBankForUpdate[0]["UpdatedDate"] = new Date();
-      this.QuestionBankForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
-      delete this.QuestionBankForUpdate[0]["CreatedDate"];
-      delete this.QuestionBankForUpdate[0]["CreatedBy"];
-      this.update(row);
-    }
+    let list: List = new List();
+    list.fields = ["QuestionBankNExamId"];
+    list.PageName = "QuestionBankNExams";
+    list.filter = [checkFilterString];
+
+    this.dataservice.get(list)
+      .subscribe((data: any) => {
+        //debugger;
+        if (data.value.length > 0) {
+          this.loading = false; this.PageLoading = false;
+          this.contentservice.openSnackBar(globalconstants.RecordAlreadyExistMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        }
+        else {
+          this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
+          this.QuestionBankNExamForUpdate = [];
+          this.QuestionBankNExamData.QuestionBankNExamId = row.QuestionBankNExamId;
+          this.QuestionBankNExamData.QuestionBankId = row.QuestionBankId;
+          this.QuestionBankNExamData.ExamId = row.ExamId;
+          this.QuestionBankNExamData.OrgId = this.LoginUserDetail[0]['orgId'];
+          this.QuestionBankNExamData.BatchId = this.SelectedBatchId;
+          this.QuestionBankNExamData.Active = row.Active;
+
+          this.QuestionBankNExamForUpdate.push(this.QuestionBankNExamData);
+          console.log('dta', this.QuestionBankNExamForUpdate);
+
+          if (this.QuestionBankNExamForUpdate[0].QuestionBankNExamId == 0) {
+            this.QuestionBankNExamForUpdate[0]["CreatedDate"] = new Date();
+            this.QuestionBankNExamForUpdate[0]["CreatedBy"] = this.LoginUserDetail[0]["userId"];
+            this.QuestionBankNExamForUpdate[0]["UpdatedDate"] = new Date();
+            delete this.QuestionBankNExamForUpdate[0]["UpdatedBy"];
+            this.insert(row);
+          }
+          else {
+            this.QuestionBankNExamForUpdate[0]["UpdatedDate"] = new Date();
+            this.QuestionBankNExamForUpdate[0]["UpdatedBy"] = this.LoginUserDetail[0]["userId"];
+            delete this.QuestionBankNExamForUpdate[0]["CreatedDate"];
+            delete this.QuestionBankNExamForUpdate[0]["CreatedBy"];
+            this.update(row);
+          }
+        }
+      })
   }
   RandomArr = [];
-  GetRandomNumber(NoOfRandom) {
-    this.RandomArr = [];
-    while (this.RandomArr.length < NoOfRandom) {
-      var r = Math.floor(Math.random() * 100) + 1;
-      if (this.RandomArr.indexOf(r) === -1) this.RandomArr.push(r);
+  RandomQuestion =[];
+  GetRandomNumber() {
+    debugger;
+    var noofRandom = this.searchForm.get("searchNoOfRandom").value;
+    if (noofRandom < 1) {
+      this.loading = false;
+      this.contentservice.openSnackBar("Please enter no. of random number.", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
     }
+    if(this.QuestionNExams.length<=noofRandom)
+    {
+      this.contentservice.openSnackBar("No of random questions should be less than no. of question available : "+this.QuestionNExams.length + ".", globalconstants.ActionText, globalconstants.RedBackground);
+      return;
+    }
+    this.RandomArr = [];
+    
 
+    while (this.RandomArr.length < noofRandom) {
+      const random = Math.floor(Math.random() * this.QuestionNExams.length);
+      if (this.RandomArr.indexOf(random) === -1 && random>0) 
+        this.RandomArr.push(random);
+    }
+    this.RandomQuestion =[];
+    this.RandomArr.forEach(r=>{
+      var randomItem =this.QuestionNExams.filter(q=>q.Id == r)
+      if(randomItem.length>0)
+      this.RandomQuestion.push(randomItem[0]);
+    })
+    this.dataSource = new MatTableDataSource(this.RandomQuestion);
   }
   loadingFalse() {
     this.loading = false; this.PageLoading = false;
   }
   insert(row) {
-    this.dataservice.postPatch('QuestionBanks', this.QuestionBankForUpdate[0], 0, 'post')
+    this.dataservice.postPatch('QuestionBankNExams', this.QuestionBankNExamForUpdate[0], 0, 'post')
       .subscribe(
         (data: any) => {
-          row.QuestionBankId = data.QuestionBankId;
+          row.QuestionBankNExamId = data.QuestionBankNExamId;
           row.Action = false;
           if (this.RowToUpdate == 0) {
             this.RowToUpdate = -1;
@@ -427,7 +387,7 @@ export class QuestionComponent implements OnInit {
   }
   update(row) {
     //console.log("updating",this.QuestionBankForUpdate);
-    this.dataservice.postPatch('QuestionBanks', this.QuestionBankForUpdate[0], this.QuestionBankForUpdate[0].QuestionBankId, 'patch')
+    this.dataservice.postPatch('QuestionBankNExams', this.QuestionBankNExamForUpdate[0], this.QuestionBankNExamForUpdate[0].QuestionBankNExamId, 'patch')
       .subscribe(
         (data: any) => {
           row.Action = false;
@@ -436,8 +396,6 @@ export class QuestionComponent implements OnInit {
             this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
             this.loadingFalse()
           }
-          //this.contentservice.openSnackBar(globalconstants.UpdatedMessage, globalconstants.ActionText, globalconstants.BlueBackground);
-          //this.contentservice.openSnackBar(globalconstants.UpdatedMessage,globalconstants.ActionText,globalconstants.BlueBackground);
           this.loadingFalse();
         });
   }
@@ -445,7 +403,7 @@ export class QuestionComponent implements OnInit {
     this.UnitDetails = [];
     this.searchForm.patchValue({ 'searchUnitDetailId': 0 });
     this.QuestionBankList = [];
-    this.dataSource = new MatTableDataSource<IQuestionBank>(this.QuestionBankList);
+    this.dataSource = new MatTableDataSource<IQuestionNExam>(this.QuestionBankList);
   }
   Lessons = [];
   ContentUnit = [];
@@ -618,89 +576,79 @@ export class QuestionComponent implements OnInit {
 
           f.UnitDetail = f.ClassName + ", " + f.SubjectName + "-" + f.ContentUnit + "->" + f.SubContentUnit + "->" + f.Lesson;
 
-          forUnitDetail["UnitDetail"] = f.UnitDetail;
-          forUnitDetail["SyllabusId"] = f.SyllabusId;
-          this.UnitDetails.push(forUnitDetail);
+          // forUnitDetail["UnitDetail"]=f.UnitDetail;
+          // forUnitDetail["SyllabusId"]=f.SyllabusId;
+          // this.UnitDetails.push(forUnitDetail);
 
           f.QuestionBanks.forEach(q => {
-
+            var _level = 0
+            var obj = this.DifficultyLevels.filter(d => d.MasterDataId == q.DifficultyLevelId);
+            if (obj.length > 0) {
+              _level = obj[0].MasterDataName;
+            }
             if (q.StorageFnPs.length > 0)
               q.Diagram = _imgURL + "/" + q.StorageFnPs[0].FileName;
             q.Question = globalconstants.decodeSpecialChars(q.Question);
-
+            q.DifficultyLevel = _level;
             this.QuestionBankList.push(q);
           })
         })
-        if (this.QuestionBankList.length == 0) {
-          this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.RedBackground);
+        this.GetQuestionNExam(this.searchForm.get("searchExamId").value);
 
-        }
-        //console.log("QuestionBankList",data.value)
-        this.dataSource = new MatTableDataSource(this.QuestionBankList);
-        this.loading = false;
       })
   }
-  GetQuestionBank(row) {
+  QuestionNExams = [];
+  GetQuestionNExam(pExamId) {
     debugger;
     this.loading = true;
     this.SelectedBatchId = +this.tokenstorage.getSelectedBatchId();
-    let filterStr = 'Active eq true and OrgId eq ' + this.LoginUserDetail[0]["orgId"];
-
-    if (row.SyllabusId > 0)
-      filterStr += " and SyllabusId eq " + row.SyllabusId;
-    else {
-      this.loading = false;
-      this.contentservice.openSnackBar("Please select syllabus detail.", globalconstants.ActionText, globalconstants.RedBackground);
-      return;
-    }
-
+    let filterStr = "Active eq true and OrgId eq " + this.LoginUserDetail[0]["orgId"];
+    if (pExamId > 0)
+      filterStr += " and ExamId eq " + pExamId;
 
     let list: List = new List();
     list.fields = [
+      'QuestionBankNExamId',
       'QuestionBankId',
-      'SyllabusId',
-      'Question',
-      'Diagram',
+      'ExamId',
       'Active'
     ];
 
-    list.PageName = "QuestionBanks";
-    list.lookupFields = ["StorageFnPs($select=FileId,FileName)"]
+    list.PageName = "QuestionBankNExams";
     list.filter = [filterStr];
-    this.QuestionBankList = [];
     this.dataservice.get(list)
       .subscribe((data: any) => {
         debugger;
-        //  //console.log('data.value', data.value);
-        var _imgURL = globalconstants.apiUrl + "/Uploads/" + this.LoginUserDetail[0]["org"] +
-          "/Question photo/"; //+ fileNames[0].FileName;
-
-        if (data.value.length > 0) {
-          data.value.forEach(item => {
-            if (item.ContentUnitId > 0) {
-              item.SubCategories = this.allMasterData.filter(f => f.ParentId == item.ContentUnitId);
-              if (item.LessonId > 0)
-                item.Lessons = this.allMasterData.filter(f => f.ParentId == item.LessonId);
-              else
-                item.Lessons = [];
+        this.QuestionNExams = [];
+        this.QuestionBankList.forEach(item => {
+          if (pExamId > 0) {
+            var existing = data.value.filter(d => d.QuestionBankId == item.QuestionBankId);
+            if (existing.length > 0) {
+              item["ExamId"] = existing[0].ExamId
+              item.QuestionBankNExamId = existing[0].QuestionBankNExamId;
+              item.Active = existing[0].Active;
             }
             else {
-              item.SubCategories = [];
-              item.Lessons = [];
+              item.QuestionBankNExamId = 0;
+              item["ExamId"] = 0;
+              item.Active = false;
             }
-            if (item.StorageFnPs.length > 0)
-              item.Diagram = _imgURL + "/" + item.StorageFnPs[0].FileName;
-            item.Questions = globalconstants.decodeSpecialChars(item.Questions);
-            this.QuestionBankList.push(item);
-
-            //return item;
-          })
-        }
-        else {
+          }
+          else {
+            item.QuestionBankNExamId = 0;
+            item["ExamId"] = 0;
+            item.Active = false;
+          }
+          this.QuestionNExams.push(item);
+        })
+        this.QuestionNExams.forEach((q, indx) => {
+          q.Id = ++indx;
+        })
+        if (this.QuestionNExams.length == 0) {
           this.contentservice.openSnackBar(globalconstants.NoRecordFoundMessage, globalconstants.ActionText, globalconstants.BlueBackground);
         }
-
-        this.dataSource = new MatTableDataSource<IQuestionBank>(this.QuestionBankList);
+        //console.log("this.QuestionNExams",this.QuestionNExams);
+        this.dataSource = new MatTableDataSource<IQuestionNExam>(this.QuestionNExams);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.loadingFalse();
@@ -722,7 +670,6 @@ export class QuestionComponent implements OnInit {
           if (subjectobj.length > 0)
             _subjectname = subjectobj[0].MasterDataName;
           m.SubjectName = _subjectname;
-
           return m;
 
         });
@@ -745,7 +692,15 @@ export class QuestionComponent implements OnInit {
         this.ContentUnit = this.getDropDownData(globalconstants.MasterDefinitions.school.BOOKCONTENTUNIT);
         this.DifficultyLevels = this.getDropDownData(globalconstants.MasterDefinitions.school.DIFFICULTYLEVEL);
         this.GetExams();
-        this.GetClassSubjects();
+        if (this.Classes.length == 0) {
+          this.contentservice.GetClasses(this.LoginUserDetail[0]["orgId"]).subscribe((data: any) => {
+            this.Classes = [...data.value];
+            this.loading = false; this.PageLoading = false;
+            this.GetClassSubjects();
+          });
+          //this.GetQuestionBank();
+        }
+
         //this.GetQuestionBankOption();
         this.loading = false
       });
@@ -795,12 +750,10 @@ export class QuestionComponent implements OnInit {
 
 }
 
-export interface IQuestionBank {
+export interface IQuestionNExam {
+  QuestionBankNExamId: number;
   QuestionBankId: number;
-  SyllabusId: number;
-  DifficultyLevelId: number;
-  Question: string;
-  Diagram: string;
+  ExamId: number;
   Active: boolean;
   Action: boolean;
 }
@@ -810,6 +763,7 @@ export interface IStudent {
   StudentId: number;
   Name: string;
 }
+
 
 
 

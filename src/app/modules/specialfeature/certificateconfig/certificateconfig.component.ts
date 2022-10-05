@@ -177,6 +177,7 @@ export class CertificateconfigComponent implements OnInit {
               ParentId: row.ParentId,
               Sequence:row.Sequence,
               Description: row.Description,
+              Confidential:row.Confidential,
               OrgId: this.LoginUserDetail[0]['orgId'],
               Active: row.Active
             });
@@ -248,6 +249,7 @@ export class CertificateconfigComponent implements OnInit {
       "ParentId",
       "Sequence",
       "Description",
+      "Confidential",
       "Active",
     ];
 
@@ -286,6 +288,7 @@ export class CertificateconfigComponent implements OnInit {
       "ParentId",
       "Sequence",
       "Description",
+      "Confidential",
       "Active",
     ];
 
@@ -333,7 +336,9 @@ export class CertificateconfigComponent implements OnInit {
       CertificateConfigId: 0,
       Title: '',
       ParentId: 0,
-      Description: 0,
+      Description: '',
+      Sequence:0,
+      Confidential:false,
       Active: false,
       Action: false
     };

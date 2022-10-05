@@ -1,5 +1,4 @@
-import { DatePipe } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,17 +10,7 @@ import { globalconstants } from 'src/app/shared/globalconstant';
 import { List } from 'src/app/shared/interface';
 import { TokenStorageService } from 'src/app/_services/token-storage.service';
 import { SwUpdate } from '@angular/service-worker';
-//import * as ClassicEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-//import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
-//import ImageInsert from '@ckeditor/ckeditor5-image/src/imageinsert';
 import { FileUploadService } from 'src/app/shared/upload.service';
-//import AutoImage from '@ckeditor/ckeditor5-image/src/autoimage';
-
-// import EditorJS from '@editorjs/editorjs';
-// import Header from '@editorjs/editorjs'; 
-//import List as lst from '@editorjs/editorjs'; 
-
-
 
 @Component({
   selector: 'app-createhtmlpage',
@@ -29,19 +18,12 @@ import { FileUploadService } from 'src/app/shared/upload.service';
   styleUrls: ['./createhtmlpage.component.scss']
 })
 export class CreatehtmlpageComponent implements OnInit {
-  //public editor=DecoupledEditor;
-  //public Editor = DecoupledEditor;
 
   public onReady(editor) {
     editor.ui.getEditableElement().parentElement.insertBefore(
       editor.ui.view.toolbar.element,
       editor.ui.getEditableElement()
     );
-    // editor.plugins.get('FileRepository').createUploadAdapter = function (loader) {
-    //   console.log(btoa(loader.file));
-    //   return new UploadAdapter(loader);
-    // };
-
 
   }
 

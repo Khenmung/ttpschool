@@ -287,7 +287,7 @@ export class RulesnpolicyreportComponent implements OnInit {
           //   return map;
 
           // })
-          this.DetailText =this.RulesOrPolicyList[0].Description;
+          this.DetailText = globalconstants.decodeSpecialChars(this.RulesOrPolicyList[0].Description);
         }
         this.loadingFalse();
       });

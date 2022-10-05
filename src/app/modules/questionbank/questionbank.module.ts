@@ -6,11 +6,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedhomepageModule } from '../sharedhomepage.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/shared/material/material.module';
+import { NgxPrintModule } from 'ngx-print';
+import { CKEditorModule } from 'ckeditor4-angular';
 
 
 @NgModule({
   declarations: [
-  QuestionBankComponents    
+  QuestionBankComponents,
   ],
   imports: [
     CommonModule,
@@ -19,6 +21,8 @@ import { MaterialModule } from 'src/app/shared/material/material.module';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    NgxPrintModule,
+    CKEditorModule,
     QuestionbankRoutingModule
   ],
   exports:[QuestionBankComponents]
